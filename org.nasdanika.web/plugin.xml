@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="route" name="Route Definitions" schema="schema/route.exsd"/>
+   <extension-point id="security" name="Security " schema="schema/security.exsd"/>
+   <extension-point id="convert" name="Converter definitions" schema="schema/convert.exsd"/>
+
+</plugin>
