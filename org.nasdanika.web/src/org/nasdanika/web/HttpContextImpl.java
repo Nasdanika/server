@@ -24,7 +24,7 @@ public class HttpContextImpl extends ContextImpl implements HttpContext {
 	
 	@Override
 	protected Context createSubContext(String[] subPath, Object target) throws Exception {
-		return new HttpContextImpl(getPrincipal(), subPath, target, getRequestData(), extensionManager, getRequest(), getResponse());
+		return new HttpContextImpl(getPrincipal(), subPath, target, getRequestData(), getExtensionManager(), getRequest(), getResponse());
 	}
 
 	@Override

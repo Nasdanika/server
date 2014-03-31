@@ -1,5 +1,6 @@
 package org.nasdanika.web;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -23,7 +24,7 @@ import org.osgi.framework.Bundle;
  * @author Pavel
  *
  */
-public class ExtensionManager {
+public class ExtensionManager implements AutoCloseable {
 			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
 	public static final String CONVERT_ID = "org.nasdanika.web.convert";				
@@ -90,6 +91,9 @@ public class ExtensionManager {
 				public Object convert(Object source, Class<Object> target, Context context) throws Exception {
 					if (source == null) {
 						return null;
+					}
+					if (target.isInstance(source)) {
+						return source;
 					}
 					for (ConverterEntry ce: ceList) {
 						if (ce.source.isInstance(source) && target.isAssignableFrom(ce.target)) {
@@ -262,6 +266,11 @@ public class ExtensionManager {
 										return actionMethod.invoke(context.getTarget(), args);						
 									}
 
+									@Override
+									public void close() throws Exception {
+										// NOP			
+									}
+
 								};
 								
 							}
@@ -319,7 +328,8 @@ public class ExtensionManager {
 			IConfigurationElement[] actionConfigurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(ExtensionManager.ROUTE_ID);
 			for (IConfigurationElement ce: actionConfigurationElements) {
 				if ("object_route".equals(ce.getName())) {					
-					final Route route = (Route) ce.createExecutableExtension("class");			
+					final Route route = (Route) ce.createExecutableExtension("class");		
+					injectProperties(ce, route);
 					String priorityStr = ce.getAttribute("priority");
 					final int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String patternStr = ce.getAttribute("pattern");					
@@ -396,6 +406,11 @@ public class ExtensionManager {
 									public Object execute() throws Exception {
 										return baseURL;
 									}
+
+									@Override
+									public void close() throws Exception {
+										// NOP			
+									}
 								};
 							}
 							final String subPath = join(Arrays.copyOfRange(context.getPath(), 1, context.getPath().length), "/");
@@ -410,6 +425,11 @@ public class ExtensionManager {
 										}
 									}
 									return new URL(baseURL, subPath);
+								}
+
+								@Override
+								public void close() throws Exception {
+									// NOP			
 								}
 								
 							};
@@ -459,6 +479,7 @@ public class ExtensionManager {
 					}
 				} else if ("root_route".equals(ce.getName())) {					
 					final Route route = (Route) ce.createExecutableExtension("class");			
+					injectProperties(ce, route);
 					String priorityStr = ce.getAttribute("priority");
 					final int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String patternStr = ce.getAttribute("pattern");					
@@ -526,6 +547,11 @@ public class ExtensionManager {
 									public Object execute() throws Exception {
 										return baseURL;
 									}
+
+									@Override
+									public void close() throws Exception {
+										// NOP			
+									}
 								};
 							}
 							final String subPath = join(Arrays.copyOfRange(context.getPath(), 1, context.getPath().length), "/");
@@ -540,6 +566,11 @@ public class ExtensionManager {
 										}
 									}
 									return new URL(baseURL, subPath);
+								}
+
+								@Override
+								public void close() throws Exception {
+									// NOP			
 								}
 								
 							};
@@ -585,8 +616,9 @@ public class ExtensionManager {
 						methodRoutes.add(actionEntry);
 					}
 				} else if ("route_provider".equals(ce.getName())) {
-					RouteProvider actionProvider = (RouteProvider) ce.createExecutableExtension("class");
-					for (final RouteDescriptor routeDescriptor: actionProvider.getRouteDescriptors()) {
+					RouteProvider routeProvider = (RouteProvider) ce.createExecutableExtension("class");
+					injectProperties(ce, routeProvider);
+					for (final RouteDescriptor routeDescriptor: routeProvider.getRouteDescriptors()) {
 						final Pattern pattern = isBlank(routeDescriptor.getPattern()) ? null : Pattern.compile(routeDescriptor.getPattern()); 
 						
 						RouteEntry actionEntry = new RouteEntry() {
@@ -641,6 +673,59 @@ public class ExtensionManager {
 		
 		List<RouteEntry> ret = routeMap.get(method);
 		return ret == null ? Collections.<RouteEntry>emptyList() : ret;
+	}
+
+	public static void injectProperties(IConfigurationElement ce, final Object target) throws IllegalAccessException, InvocationTargetException {
+		for (IConfigurationElement cce: ce.getChildren()) {
+			if ("property".equals(cce.getName())) {
+				injectProperty(target, cce.getAttribute("name").split("\\."), cce.getAttribute("value"));
+			}
+		}
+	}
+
+	private static void injectProperty(Object target, String[] propertyPath, String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+		if (propertyPath.length==1) {
+			String mName = "set"+propertyPath[0].substring(0, 1).toUpperCase()+propertyPath[0].substring(1);
+			for (Method mth: target.getClass().getMethods()) {
+				Class<?>[] pTypes = mth.getParameterTypes();
+				if (pTypes.length==1 && mth.getName().equals(mName) && pTypes[0].isAssignableFrom(String.class)) {
+					mth.invoke(target, value);
+					return;
+				}
+			}
+			throw new IllegalArgumentException("Method "+mName+"(String) not found in "+target.getClass().getName());
+		} else if (propertyPath.length>1) {
+			String mName = "get"+propertyPath[0].substring(0, 1).toUpperCase()+propertyPath[0].substring(1);
+			for (Method mth: target.getClass().getMethods()) {
+				if (mth.getParameterTypes().length==0 && mth.getName().equals(mName)) {
+					Object nextTarget = mth.invoke(target);
+					if (nextTarget == null) {
+						throw new NullPointerException("Cannot set property: "+mth+" returned null");
+					}
+					injectProperty(nextTarget, Arrays.copyOfRange(propertyPath, 1, propertyPath.length), value);
+					return;
+				}
+			}
+			throw new IllegalArgumentException("Method "+mName+"(String) not found in "+target.getClass().getName());			
+		}
+	}
+
+	@Override
+	public void close() throws Exception {
+		// Closing routes.
+		if (routeMap!=null) {
+			for (List<RouteEntry> rl: routeMap.values()) {
+				for (RouteEntry r: rl) {
+					if (r instanceof AutoCloseable) {
+						try {
+							((AutoCloseable) r).close();
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
 	}	
 	
 }

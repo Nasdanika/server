@@ -4,14 +4,19 @@ import java.util.Arrays;
 
 public abstract class ContextImpl implements Context {
 	
-	protected ExtensionManager extensionManager;
-	protected AuthorizationProvider securityManager;
-	protected Converter<Object, Object> converter;
-	protected String[] path;
-	protected Object requestData;
-	protected Object target;
-	protected RouteRegistry routeRegistry;
-	protected Object principal;
+	private ExtensionManager extensionManager;
+	
+	public ExtensionManager getExtensionManager() {
+		return extensionManager;
+	}
+	
+	private AuthorizationProvider securityManager;
+	private Converter<Object, Object> converter;
+	private String[] path;
+	private Object requestData;
+	private Object target;
+	private RouteRegistry routeRegistry;
+	private Object principal;
 
 	public ContextImpl(
 			Object principal, 

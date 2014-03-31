@@ -7,11 +7,13 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 @SuppressWarnings("serial")
@@ -21,6 +23,14 @@ public class RoutingServlet extends HttpServlet {
 	
 	protected ExtensionManager createExtensionManager() {
 		return new ExtensionManager();
+	}
+	
+	private boolean jsonPrettyPrint;
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		jsonPrettyPrint = "true".equals(config.getInitParameter("json-pretty-print"));
 	}
 			
 	@Override
@@ -36,18 +46,17 @@ public class RoutingServlet extends HttpServlet {
 		try {
 			HttpContext context = new HttpContextImpl(getPrincipal(req, resp), path, null, requestData(req), extensionManager, req, resp);
 			for (Route route: extensionManager.getRouteRegistry().matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
-				Action action = route.navigate(context);
-				if (action!=null) {
-					resultToResponse(action.execute(), resp, context);
-					return;
+				try (Action action = route.navigate(context)) {
+					if (action!=null) {
+						resultToResponse(action.execute(), resp, context);
+						return;
+					}
 				}
 			}
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
 		} catch (ServletException | IOException e) {
-			e.printStackTrace(); // For troubleshooting
 			throw e;
 		} catch (Exception e) {
-			e.printStackTrace(); // For troubleshooting
 			throw new ServletException(e);			
 		}
 	}
@@ -62,12 +71,12 @@ public class RoutingServlet extends HttpServlet {
 	 * @return
 	 */
 	public static Object requestData(HttpServletRequest req) {
-		System.out.println(req.getContentType());
-		// TODO Auto-generated method stub
+		// TODO If content type is application/json - parse body and return. Otherwise construct JSON object from parameters 
+		// taking dots in consideration, e.g. a.b=5&a.c=10 shall create { a: { b:5, c:10 }}.
 		return null;
 	}
 
-	public static void resultToResponse(Object result, HttpServletResponse resp, Context context) throws Exception {
+	public void resultToResponse(Object result, HttpServletResponse resp, Context context) throws Exception {
 		if (result instanceof ProcessingError) {
 			ProcessingError processingError = (ProcessingError) result;
 			if (processingError.getMessage()==null) {
@@ -75,9 +84,20 @@ public class RoutingServlet extends HttpServlet {
 			} else {
 				resp.sendError(processingError.getCode(), processingError.getMessage());
 			}
+		} else if (result instanceof JSONArray) {
+			resp.setContentType("application/json");
+			if (jsonPrettyPrint) {
+				resp.getWriter().write(((JSONArray) result).toString(4));
+			} else {
+				((JSONArray) result).write(resp.getWriter());
+			}
 		} else if (result instanceof JSONObject) {
 			resp.setContentType("application/json");
-			((JSONObject) result).write(resp.getWriter());
+			if (jsonPrettyPrint) {
+				resp.getWriter().write(((JSONObject) result).toString(4));
+			} else {
+				((JSONObject) result).write(resp.getWriter());
+			}
 		} else if (result instanceof String) {
 			resp.getWriter().write((String) result);
 		} else if (result instanceof char[]) {
@@ -111,11 +131,28 @@ public class RoutingServlet extends HttpServlet {
 		} else if (result!=null) {
 			JSONObject jsonResult = context.convert(result, JSONObject.class);
 			if (jsonResult == null) {
-				resp.getWriter().write(String.valueOf(result));
+				JSONArray jaResult = context.convert(result, JSONArray.class);
+				if (jaResult==null) {
+					resp.getWriter().write(String.valueOf(result));
+				} else {
+					resultToResponse(jaResult, resp, context);					
+				}
 			} else {
 				resultToResponse(jsonResult, resp, context);
 			}
 		}
+	}
+	
+	@Override
+	public void destroy() {
+		if (extensionManager!=null) {
+			try {
+				extensionManager.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		super.destroy();
 	}
 
 }

@@ -29,11 +29,7 @@ public class WebSocketRoutingServlet extends WebSocketServlet {
     public WebSocket doWebSocketConnect(HttpServletRequest request, String protocol) {
     	try {
 			return new RoutingWebSocket(request, protocol);
-    	} catch (RuntimeException e) {
-    		e.printStackTrace();
-    		throw e;
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
     }
@@ -80,13 +76,15 @@ public class WebSocketRoutingServlet extends WebSocketServlet {
 							// TODO - message context based on connection context.
 							boolean found = false;
 							for (Route route: extensionManager.getRouteRegistry().matchRootRoutes(method, command)) {
-								Action action = route.navigate(context);
-								if (action!=null) {
-									Object replyData = action.execute();
-									if (replyData!=null) {
-										reply.put(DATA_KEY, replyData);									
+								try (Action action = route.navigate(context)) {
+									if (action!=null) {
+										
+										Object replyData = action.execute();
+										if (replyData!=null) {
+											reply.put(DATA_KEY, replyData);									
+										}
+										found = true;								
 									}
-									found = true;								
 								}
 							} 
 							if (!found) {

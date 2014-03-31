@@ -53,6 +53,9 @@
 
    <element name="object_route">
       <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -115,6 +118,9 @@
 
    <element name="root_route">
       <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -295,6 +301,9 @@
 
    <element name="route_provider">
       <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
@@ -303,6 +312,25 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.nasdanika.web.ActionProvider"/>
                </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="property">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

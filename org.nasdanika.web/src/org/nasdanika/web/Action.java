@@ -5,13 +5,18 @@ package org.nasdanika.web;
  * @author Pavel
  *
  */
-public interface Action {
+public interface Action extends AutoCloseable {
 	
 	Action NOT_FOUND = new Action() {
 
 		@Override
 		public Object execute() throws Exception {
 			return ProcessingError.NOT_FOUND;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP			
 		}
 		
 	};
@@ -21,6 +26,25 @@ public interface Action {
 		@Override
 		public Object execute() throws Exception {
 			return ProcessingError.FORBIDDEN;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP			
+		}
+		
+	};	
+	
+	Action INTERNAL_SERVER_ERROR = new Action() {
+
+		@Override
+		public Object execute() throws Exception {
+			return ProcessingError.INTERNAL_SERVER_ERROR;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP			
 		}
 		
 	};	

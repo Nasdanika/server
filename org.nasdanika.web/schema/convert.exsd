@@ -60,7 +60,7 @@
                   Converter class.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.nasdanika.web.Action"/>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.web.Converter"/>
                </appinfo>
             </annotation>
          </attribute>
