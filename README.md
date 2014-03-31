@@ -1,4 +1,4 @@
 nasdanika
 =========
 
-Nasdanika open source components
+Nasdanika open source components, see Wiki for details.
