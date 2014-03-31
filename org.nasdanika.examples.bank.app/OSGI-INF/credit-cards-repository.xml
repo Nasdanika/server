@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="credit_cards_repository">
+   <implementation class="org.nasdanika.cdo.h2.H2RepositoryProvider"/>
+   <service>
+      <provide interface="org.nasdanika.cdo.RepositoryProvider"/>
+   </service>
+   <!-- <property name=".h2.url" type="String" value="_data/credit_cards"/> -->
+   <property name=".repositoryName" type="String" value="credit_cards"/>
+</scr:component>

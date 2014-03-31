@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/router"
+            class="org.nasdanika.web.RoutingServlet">
+         <init-param
+               name="json-pretty-print"
+               value="true">
+         </init-param>
+      </servlet>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.resources">
+      <resource
+            alias="/"
+            base-name="WebContent">
+      </resource>
+   </extension>
+   <extension
+         point="org.nasdanika.web.route">
+      <root_route
+            class="org.nasdanika.cdo.web.CDOViewRoute"
+            method="*"
+            pattern="cc-view(/.*)?">
+      </root_route>
+   </extension>
+
+</plugin>

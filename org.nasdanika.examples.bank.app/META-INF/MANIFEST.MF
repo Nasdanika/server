@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nasdanika Examples Bank Web Application
+Bundle-SymbolicName: org.nasdanika.examples.bank.app;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: Nasdanika LLC
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Service-Component: OSGI-INF/*.xml
+Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.change;bundle-version="2.7.1";visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.8.0";visibility:=reexport,
+ org.eclipse.emf.cdo;bundle-version="4.1.0";visibility:=reexport,
+ org.eclipse.net4j;bundle-version="4.1.0";visibility:=reexport,
+ org.eclipse.emf.cdo.net4j;bundle-version="4.1.0";visibility:=reexport,
+ org.eclipse.net4j.tcp;bundle-version="4.1.0";visibility:=reexport,
+ javax.servlet;bundle-version="3.0.0",
+ org.eclipse.equinox.http.registry;bundle-version="1.1.300",
+ org.eclipse.osgi,
+ org.nasdanika.examples.bank;bundle-version="1.0.0",
+ org.eclipse.jetty.websocket;bundle-version="8.1.14",
+ org.eclipse.jetty.util;bundle-version="8.1.14",
+ org.nasdanika.cdo;bundle-version="0.1.0",
+ org.nasdanika.cdo.h2;bundle-version="0.1.0",
+ org.nasdanika.cdo.xa;bundle-version="0.1.0",
+ org.nasdanika.web;bundle-version="1.0.0",
+ org.nasdanika.cdo.web;bundle-version="1.0.0",
+ org.json;bundle-version="1.0.0"
