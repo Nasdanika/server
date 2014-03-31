@@ -11,4 +11,3 @@ Import-Package: javax.transaction;version="1.1.0",
  org.osgi.framework;version="1.7.0"
 Bundle-ClassPath: lib/transactions-osgi-3.9.3.jar,
  .
-Require-Bundle: org.slf4j.api;bundle-version="1.7.2"
