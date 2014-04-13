@@ -19,13 +19,5 @@
             base-name="WebContent">
       </resource>
    </extension>
-   <extension
-         point="org.nasdanika.web.route">
-      <root_route
-            class="org.nasdanika.cdo.web.CDOViewRoute"
-            method="*"
-            pattern="cc-view(/.*)?">
-      </root_route>
-   </extension>
 
 </plugin>

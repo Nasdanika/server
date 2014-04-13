@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" immediate="false" name="credit_cards_cdo_view_context_provider">
+   <implementation class="org.nasdanika.cdo.CDOViewContextProviderComponent"/>
+   <service>
+      <provide interface="org.nasdanika.cdo.CDOViewContextProvider"/>
+   </service>
+   <reference bind="setSessionProvider" cardinality="1..1" interface="org.eclipse.emf.cdo.session.CDOSessionProvider" name="CDOSessionProvider" policy="static" unbind="clearSessionProvider"/>
+   <!-- <property name=".h2.url" type="String" value="_data/credit_cards"/> -->
+</scr:component>

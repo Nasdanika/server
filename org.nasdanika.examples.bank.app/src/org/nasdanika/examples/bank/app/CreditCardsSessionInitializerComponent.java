@@ -20,15 +20,8 @@ import org.nasdanika.examples.bank.PaymentProcessor;
 import org.nasdanika.examples.bank.Product;
 import org.nasdanika.examples.bank.SystemOfRecords;
 import org.nasdanika.examples.bank.TransactionType;
-import org.nasdanika.web.ActionMethod;
-import org.nasdanika.web.Context;
 
 public class CreditCardsSessionInitializerComponent implements CDOSessionInitializer {
-	
-	@ActionMethod
-	public String welcome(Context context) {
-		return "Welcome!";
-	}
 	
 	private Random random = new Random(System.currentTimeMillis()+hashCode());
 	
