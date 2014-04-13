@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.nasdanika.web.route">
+      <object_route
+            class="org.nasdanika.cdo.web.routes.CDOViewRoute"
+            method="GET"
+            target="org.eclipse.emf.cdo.view.CDOView">
+      </object_route>
+      <object_route
+            class="org.nasdanika.cdo.web.routes.CDOTransactionRoute"
+            method="*"
+            target="org.eclipse.emf.cdo.transaction.CDOTransaction">
+      </object_route>
+      <object_route
+            class="org.nasdanika.cdo.web.routes.CDOPackageRegistryRoute"
+            method="GET"
+            target="org.eclipse.emf.cdo.common.model.CDOPackageRegistry">
+      </object_route>
+      <object_route
+            class="org.nasdanika.cdo.web.routes.EPackageRoute"
+            method="GET"
+            target="org.eclipse.emf.ecore.EPackage">
+      </object_route>
+      <object_route
+            class="org.nasdanika.cdo.web.routes.CDOResourceFolderRoute"
+            method="*"
+            target="org.eclipse.emf.cdo.eresource.CDOResourceFolder">
+      </object_route>
+      <object_route
+            class="org.nasdanika.cdo.web.routes.CDOResourceRoute"
+            method="*"
+            target="org.eclipse.emf.cdo.eresource.CDOResource">
+      </object_route>
+      
+   </extension>
+   <extension
+         point="org.nasdanika.web.convert">
+      <converter
+            class="org.nasdanika.cdo.convert.EObjectToJSONObjectConverter"
+            source="org.eclipse.emf.ecore.EObject"
+            target="org.json.JSONObject">
+      </converter>
+   </extension>
+
+</plugin>
