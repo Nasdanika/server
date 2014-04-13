@@ -7,7 +7,6 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Service-Component: OSGI-INF/*.xml
 Export-Package: org.nasdanika.examples.bank,
  org.nasdanika.examples.bank.impl,
  org.nasdanika.examples.bank.util
