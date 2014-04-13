@@ -7,8 +7,8 @@ package org.nasdanika.web;
  * @param <S>
  * @param <T>
  */
-public interface Converter<S,T> {
+public interface Converter<S,T> extends AutoCloseable {
 	
-	T convert(S source, Class<T> target, Context context) throws Exception;
+	T convert(S source, Class<T> target, WebContext context) throws Exception;
 	
 }

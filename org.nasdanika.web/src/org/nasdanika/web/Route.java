@@ -1,7 +1,7 @@
 package org.nasdanika.web;
 
-public interface Route {
+import org.nasdanika.core.Command;
 
-	Action navigate(Context context) throws Exception;
+public interface Route extends Command<WebContext, Action> {
 		
 }

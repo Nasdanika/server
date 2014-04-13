@@ -12,19 +12,18 @@ public class HttpContextImpl extends ContextImpl implements HttpContext {
 			Object principal, 
 			String[] path, 
 			Object target, 
-			Object requestData, 
 			ExtensionManager extensionManager, 
 			HttpServletRequest req, 
 			HttpServletResponse resp) throws Exception {
 		
-		super(principal, path, target, requestData, extensionManager);
+		super(principal, path, target, extensionManager);
 		this.req = req;
 		this.resp = resp;
 	}
 	
 	@Override
-	protected Context createSubContext(String[] subPath, Object target) throws Exception {
-		return new HttpContextImpl(getPrincipal(), subPath, target, getRequestData(), getExtensionManager(), getRequest(), getResponse());
+	protected WebContext createSubContext(String[] subPath, Object target) throws Exception {
+		return new HttpContextImpl(getPrincipal(), subPath, target, getExtensionManager(), getRequest(), getResponse());
 	}
 
 	@Override

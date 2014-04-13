@@ -15,22 +15,24 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.osgi.framework.InvalidSyntaxException;
 
 @SuppressWarnings("serial")
 public class RoutingServlet extends HttpServlet {
 	
-	protected ExtensionManager extensionManager = createExtensionManager();
+	protected ExtensionManager extensionManager;
 	
-	protected ExtensionManager createExtensionManager() {
-		return new ExtensionManager();
-	}
-	
-	private boolean jsonPrettyPrint;
+	private boolean jsonPrettyPrint;	
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		jsonPrettyPrint = "true".equals(config.getInitParameter("json-pretty-print"));
+		try {
+			extensionManager = new ExtensionManager(null, config.getInitParameter("route-service-filter"));
+		} catch (InvalidSyntaxException e) {
+			throw new ServletException(e);
+		}
 	}
 			
 	@Override
@@ -44,9 +46,9 @@ public class RoutingServlet extends HttpServlet {
 		}
 		String[] path = pathInfo.split("/");
 		try {
-			HttpContext context = new HttpContextImpl(getPrincipal(req, resp), path, null, requestData(req), extensionManager, req, resp);
+			HttpContext context = new HttpContextImpl(getPrincipal(req, resp), path, null, extensionManager, req, resp);
 			for (Route route: extensionManager.getRouteRegistry().matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
-				try (Action action = route.navigate(context)) {
+				try (Action action = route.execute(context)) {
 					if (action!=null) {
 						resultToResponse(action.execute(), resp, context);
 						return;
@@ -65,18 +67,18 @@ public class RoutingServlet extends HttpServlet {
 		return req.getUserPrincipal();
 	}
 
-	/**
-	 * Converts request parameters/body to JSON or other format as applicable.
-	 * @param req
-	 * @return
-	 */
-	public static Object requestData(HttpServletRequest req) {
-		// TODO If content type is application/json - parse body and return. Otherwise construct JSON object from parameters 
-		// taking dots in consideration, e.g. a.b=5&a.c=10 shall create { a: { b:5, c:10 }}.
-		return null;
-	}
+//	/**
+//	 * Converts request parameters/body to JSON or other format as applicable.
+//	 * @param req
+//	 * @return
+//	 */
+//	public static Object requestData(HttpServletRequest req) {
+//		// TODO If content type is application/json - parse body and return. Otherwise construct JSON object from parameters 
+//		// taking dots in consideration, e.g. a.b=5&a.c=10 shall create { a: { b:5, c:10 }}.
+//		return null;
+//	}
 
-	public void resultToResponse(Object result, HttpServletResponse resp, Context context) throws Exception {
+	public void resultToResponse(Object result, HttpServletResponse resp, WebContext context) throws Exception {
 		if (result instanceof ProcessingError) {
 			ProcessingError processingError = (ProcessingError) result;
 			if (processingError.getMessage()==null) {

@@ -2,6 +2,7 @@ package org.nasdanika.web;
 
 import java.io.IOException;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -9,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
 import org.json.JSONObject;
+import org.osgi.framework.InvalidSyntaxException;
 
 // --- Not functional yet - more like a skeleton for further implementation ---
 
@@ -20,8 +22,18 @@ import org.json.JSONObject;
 @SuppressWarnings("serial")
 public class WebSocketRoutingServlet extends WebSocketServlet {
 
-	private ExtensionManager extensionManager = new ExtensionManager();
-	
+	protected ExtensionManager extensionManager;
+
+	@Override
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		try {
+			extensionManager = new ExtensionManager(null, config.getInitParameter("route-service-filter"));
+		} catch (InvalidSyntaxException e) {
+			throw new ServletException(e);
+		}
+	}
+			
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException ,IOException {
 		getServletContext().getNamedDispatcher("default").forward(request,response);    
 	}
@@ -76,7 +88,7 @@ public class WebSocketRoutingServlet extends WebSocketServlet {
 							// TODO - message context based on connection context.
 							boolean found = false;
 							for (Route route: extensionManager.getRouteRegistry().matchRootRoutes(method, command)) {
-								try (Action action = route.navigate(context)) {
+								try (Action action = route.execute(context)) {
 									if (action!=null) {
 										
 										Object replyData = action.execute();

@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * This annotation tells router to wrap object method into an action.
- * ActionMethod may take Context parameter. If method returns value, this value is written to response. 
+ * ActionMethod may take WebContext parameter. If method returns value, this value is written to response. 
  * @author Pavel
  *
  */

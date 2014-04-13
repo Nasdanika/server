@@ -6,10 +6,10 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletResponse;
@@ -17,7 +17,16 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.Platform;
+import org.nasdanika.core.InstanceMethodCommand;
+import org.nasdanika.core.MethodCommand;
+import org.nasdanika.web.RouteDescriptor.RouteType;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Helper class for resolving and caching extensions and references.
@@ -25,12 +34,63 @@ import org.osgi.framework.Bundle;
  *
  */
 public class ExtensionManager implements AutoCloseable {
+	
+	private ServiceTracker<Route, Route> routeServiceTracker;
+	private BundleContext bundleContext;
+	
+	public ExtensionManager(BundleContext context, String routeServiceFilter) throws InvalidSyntaxException {
+		if (context==null) {
+			context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
+		}
+		this.bundleContext = context;
+		if (routeServiceFilter==null || routeServiceFilter.trim().length()==0) {
+			routeServiceTracker = new ServiceTracker<>(context, Route.class.getName(), null);
+		} else {
+			String rootRouteServiceFilter = "(&(" + Constants.OBJECTCLASS + "=" + Route.class.getName() + ")"+routeServiceFilter+")";
+			routeServiceTracker = new ServiceTracker<>(context, context.createFilter(rootRouteServiceFilter), null);
+		}
+		routeServiceTracker.open();
+	}
 			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
 	public static final String CONVERT_ID = "org.nasdanika.web.convert";				
 	private static final String SECURITY_ID = "org.nasdanika.web.security";
 	
 	private Converter<Object, Object> converter;
+	
+	protected static class ConverterServiceEntry implements Converter<Object,Object> {
+		
+		private ServiceTracker<Converter<Object, Object>, Converter<Object, Object>> serviceTracker;		
+		
+		public ConverterServiceEntry(String filter) throws Exception {
+			BundleContext context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
+			if (filter==null || filter.trim().length()==0) {
+				this.serviceTracker = new ServiceTracker<Converter<Object, Object>, Converter<Object, Object>>(context, Converter.class.getName(), null);				
+			} else {
+				filter = "(&(" + Constants.OBJECTCLASS + "=" + Converter.class.getName() + ")"+filter+")";
+				this.serviceTracker = new ServiceTracker<Converter<Object, Object>, Converter<Object, Object>>(context, context.createFilter(filter), null);
+			}
+			this.serviceTracker.open();
+		}
+
+		@Override
+		public void close() throws Exception {
+			serviceTracker.close();			
+		}
+
+		@Override
+		public Object convert(Object source, Class<Object> target, WebContext context) throws Exception {
+			for (Object c: serviceTracker.getServices()) {
+				@SuppressWarnings("unchecked")
+				Object ret = ((Converter<Object,Object>) c).convert(source, target, context);
+				if (ret!=null) {
+					return ret;
+				}
+			}
+			return null;
+		}
+		
+	}
 	
 	public synchronized Converter<Object, Object> getConverter() throws Exception {
 		if (converter==null) {
@@ -88,7 +148,7 @@ public class ExtensionManager implements AutoCloseable {
 			converter = new Converter<Object, Object>() {
 				
 				@Override
-				public Object convert(Object source, Class<Object> target, Context context) throws Exception {
+				public Object convert(Object source, Class<Object> target, WebContext context) throws Exception {
 					if (source == null) {
 						return null;
 					}
@@ -104,6 +164,13 @@ public class ExtensionManager implements AutoCloseable {
 						}
 					}
 					return null;
+				}
+
+				@Override
+				public void close() throws Exception {
+					for (ConverterEntry ce: ceList) {
+						ce.converter.close();
+					}
 				}
 			};
 		}
@@ -151,7 +218,7 @@ public class ExtensionManager implements AutoCloseable {
 			authorizationProvider = new AuthorizationProvider() {
 				
 				@Override
-				public Boolean authorize(Context context, Object target, String action) {
+				public Boolean authorize(WebContext context, Object target, String action) {
 					for (AuthorizationProviderEntry sme: smeList) {
 						Boolean result = sme.sm.authorize(context, target, action);
 						if (result!=null) {
@@ -185,135 +252,281 @@ public class ExtensionManager implements AutoCloseable {
 		return routeRegistry;
 	}
 	
+	protected class MethodRoute extends InstanceMethodCommand<WebContext, Action> implements Route {
+		
+		protected MethodRoute(Object target, Method routeMethod) throws Exception {
+			super(target, new MethodCommand<WebContext, Action>(routeMethod));
+		}
+		
+	}
+	
 	private RouteRegistry routeRegistry = new RouteRegistry() {
 		
 		@Override
 		public List<Route> matchObjectRoutes(RequestMethod method, Object target, String[] path) throws Exception {
-			List<Route> ret = new ArrayList<Route>();
-			List<RouteEntry> methodActions = getRoutes(method);
+			List<RouteEntry> collector = new ArrayList<RouteEntry>();
+			List<RouteEntry> methodActions = getRoutes(RouteType.OBJECT, method);
 			if (methodActions!=null) {
 				for (RouteEntry ma: methodActions) {
-					if (!ma.isRoot() && ma.match(target, path)) {
-						ret.add(ma.getRoute());
+					if (ma.match(target, path)) {
+						collector.add(ma);
 					}
 				}
 			}
 			
-			if (target instanceof Route) {
-				ret.add((Route) target);
+			// Service routes			
+			for (Entry<ServiceReference<Route>, Route> se: routeServiceTracker.getTracked().entrySet()) {	
+				if ("object".equals(se.getKey().getProperty("type"))) {
+					Object methodsProperty = se.getKey().getProperty("methods");					
+					RequestMethod[] methods;
+					if (methodsProperty==null || (methodsProperty instanceof String && "*".equals(((String) methodsProperty).trim()))) {
+						methods = RequestMethod.values(); 
+					} else if (methodsProperty instanceof String) {
+						methods = new RequestMethod[] { RequestMethod.valueOf((String) methodsProperty) };
+					} else if (methodsProperty instanceof String[]) {
+						String[] msa = (String[]) methodsProperty; 
+						methods = new RequestMethod[msa.length];
+						for (int i=0; i<msa.length; ++i) {
+							methods[i] = RequestMethod.valueOf(msa[i]);
+						}
+					} else {
+						throw new IllegalArgumentException("Unexpected methods property type: "+methodsProperty);
+					}
+					Object priorityProperty = se.getKey().getProperty("priority");
+					collector.add(new RouteEntry(
+							RouteDescriptor.RouteType.OBJECT, 
+							methods, 
+							(String) se.getKey().getProperty("pattern"), 
+							bundleContext.getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
+							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
+							se.getValue()));
+				}
 			}
 			
 			if (target!=null) {
-				final List<Method> actionMethods = new ArrayList<>();
-				Z: for (Method actionMethod: target.getClass().getMethods()) {
-					ActionMethod amAnnotation = actionMethod.getAnnotation(ActionMethod.class);
+				for (final Method routeMethod: target.getClass().getMethods()) {
+					ActionMethod amAnnotation = routeMethod.getAnnotation(ActionMethod.class);
 					if (amAnnotation!=null) {
-						for (RequestMethod requestMethod: amAnnotation.value()) {
-							if (method.equals(requestMethod)) {
-								actionMethods.add(actionMethod);
-								continue Z;
-							}
-						}
-					}
-				}
-				
-				Collections.sort(actionMethods, new Comparator<Method>() {
-
-					@Override
-					public int compare(Method o1, Method o2) {
-						return o2.getAnnotation(ActionMethod.class).priority() - o1.getAnnotation(ActionMethod.class).priority();
-					}
-					
-				});				
-				
-				if (!actionMethods.isEmpty()) {
-					ret.add(new Route() {
-						
-						@Override
-						public Action navigate(final Context context) throws Exception {
-							if (context.getPath().length==0) {
-								return null;
-							}
-							String pathStr = join(context.getPath(), "/");
-							for (final Method actionMethod: actionMethods) {
-								final ActionMethod amAnnotation = actionMethod.getAnnotation(ActionMethod.class);
-								if (isBlank(amAnnotation.pattern())) {
-									if (!actionMethod.getName().equals(context.getPath()[0])) {
-										continue;
-									}
-								} else {
-									if (!Pattern.matches(amAnnotation.pattern(), pathStr)) {
-										continue;
-									}
+						collector.add(new RouteEntry(RouteType.OBJECT, amAnnotation.value(), amAnnotation.pattern(), target.getClass(), amAnnotation.priority(), new MethodRoute(target, routeMethod)) {
+							
+							protected boolean match(Object obj, String[] path) {
+								if (getPattern()==null && path.length>0 && !routeMethod.getName().equals(path[0])) {
+									return false;
 								}
-								
-								return new Action() {
-									
-									@Override
-									public Object execute() throws Exception {
-										
-										Class<?>[] parameterTypes = actionMethod.getParameterTypes();
-										Object[] args = new Object[parameterTypes.length];
-										for (int i=0; i<parameterTypes.length; ++i) {
-											if (args[i]==null && parameterTypes[i].isInstance(context)) {
-												args[i] = context;
-												break;
-											}
-										}
-										if (!isBlank(amAnnotation.contentType()) && context instanceof HttpContext) {
-											((HttpContext) context).getResponse().setContentType(amAnnotation.contentType());
-										}
-										return actionMethod.invoke(context.getTarget(), args);						
-									}
-
-									@Override
-									public void close() throws Exception {
-										// NOP			
-									}
-
-								};
-								
-							}
-							return null;
-						}
-						
-					});
+								return super.match(obj, path);
+							};
+						});
+					}
 				}
 			}
-				
+
+			Collections.sort(collector);
+			List<Route> ret = new ArrayList<>();
+			Z: for (RouteEntry re:collector) {
+				for (RequestMethod rm: re.getMethods()) {
+					if (rm.equals(method)) {
+						ret.add(re.getRoute());
+						continue Z;
+					}
+				}
+			}
 			return ret;
 		}
 		
 		@Override
 		public List<Route> matchRootRoutes(RequestMethod method, String[] path) throws Exception {
-			List<RouteEntry> methodRoutes = getRoutes(method);
-			List<Route> ret = new ArrayList<>();
-			if (methodRoutes!=null) {
-				for (RouteEntry re: methodRoutes) {
-					if (re.isRoot() && re.match(null, path)) {
-						ret.add(re.getRoute());
+			List<RouteEntry> collector = new ArrayList<RouteEntry>();
+			List<RouteEntry> methodActions = getRoutes(RouteDescriptor.RouteType.ROOT, method);
+			if (methodActions!=null) {
+				for (RouteEntry ma: methodActions) {
+					if (ma.match(null, path)) {
+						collector.add(ma);
 					}
 				}
 			}
-
+			
+			// Service routes			
+			for (Entry<ServiceReference<Route>, Route> se: routeServiceTracker.getTracked().entrySet()) {	
+				if ("root".equals(se.getKey().getProperty("type"))) {
+					Object methodsProperty = se.getKey().getProperty("methods");					
+					RequestMethod[] methods;
+					if (methodsProperty==null || (methodsProperty instanceof String && "*".equals(((String) methodsProperty).trim()))) {
+						methods = RequestMethod.values(); 
+					} else if (methodsProperty instanceof String) {
+						methods = new RequestMethod[] { RequestMethod.valueOf((String) methodsProperty) };
+					} else if (methodsProperty instanceof String[]) {
+						String[] msa = (String[]) methodsProperty; 
+						methods = new RequestMethod[msa.length];
+						for (int i=0; i<msa.length; ++i) {
+							methods[i] = RequestMethod.valueOf(msa[i]);
+						}
+					} else {
+						throw new IllegalArgumentException("Unexpected methods property type: "+methodsProperty);
+					}
+					Object priorityProperty = se.getKey().getProperty("priority");
+					collector.add(new RouteEntry(
+							RouteDescriptor.RouteType.ROOT, 
+							methods, 
+							(String) se.getKey().getProperty("pattern"), 
+							null, 
+							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
+							se.getValue()));
+				}
+			}
+			
+			Collections.sort(collector);
+			List<Route> ret = new ArrayList<>();
+			Z: for (RouteEntry re:collector) {
+				for (RequestMethod rm: re.getMethods()) {
+					if (rm.equals(method)) {
+						ret.add(re.getRoute());
+						continue Z;
+					}
+				}
+			}
 			return ret;
+		}
+
+		@Override
+		public Route getExtensionRoute(RequestMethod method, Object target, String extension) throws Exception {
+			List<RouteEntry> collector = new ArrayList<RouteEntry>();
+			List<RouteEntry> methodActions = getRoutes(RouteDescriptor.RouteType.EXTENSION, method);
+			if (methodActions!=null) {
+				for (RouteEntry ma: methodActions) {
+					if (ma.match(target, new String[] {extension})) {
+						collector.add(ma);
+					}
+				}
+			}
+			
+			// Service routes			
+			for (Entry<ServiceReference<Route>, Route> se: routeServiceTracker.getTracked().entrySet()) {	
+				if ("extension".equals(se.getKey().getProperty("type"))) {
+					Object methodsProperty = se.getKey().getProperty("methods");					
+					RequestMethod[] methods;
+					if (methodsProperty==null || (methodsProperty instanceof String && "*".equals(((String) methodsProperty).trim()))) {
+						methods = RequestMethod.values(); 
+					} else if (methodsProperty instanceof String) {
+						methods = new RequestMethod[] { RequestMethod.valueOf((String) methodsProperty) };
+					} else if (methodsProperty instanceof String[]) {
+						String[] msa = (String[]) methodsProperty; 
+						methods = new RequestMethod[msa.length];
+						for (int i=0; i<msa.length; ++i) {
+							methods[i] = RequestMethod.valueOf(msa[i]);
+						}
+					} else {
+						throw new IllegalArgumentException("Unexpected methods property type: "+methodsProperty);
+					}
+					Object priorityProperty = se.getKey().getProperty("priority");
+					collector.add(new RouteEntry(
+							RouteDescriptor.RouteType.OBJECT, 
+							methods, 
+							(String) se.getKey().getProperty("extension"), 
+							bundleContext.getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
+							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
+							se.getValue()));
+				}
+			}
+
+			Collections.sort(collector);
+			List<Route> ret = new ArrayList<>();
+			Z: for (RouteEntry re:collector) {
+				for (RequestMethod rm: re.getMethods()) {
+					if (rm.equals(method)) {
+						ret.add(re.getRoute());
+						continue Z;
+					}
+				}
+			}
+			return ret.isEmpty() ? null : ret.get(0);
 		}
 
 	};
 			
-	protected interface RouteEntry extends Comparable<RouteEntry> {
+	protected class RouteEntry implements Comparable<RouteEntry> {
 		
-		boolean match(Object obj, String[] path);
+		private Pattern pattern;
+		private RouteDescriptor.RouteType type;
+		private Class<?> targetType;
+		private int priority;
+		private Route route;
+		private RequestMethod[] methods;	
+
+		public RouteEntry(
+				RouteDescriptor.RouteType type,
+				RequestMethod[] methods,
+				String patternStr, 
+				Class<?> targetType, 
+				int priority, 
+				Route route) {
+			
+			this.type = type;
+			this.methods = methods;
+			if (!isBlank(patternStr)) {
+				pattern = Pattern.compile(patternStr);
+			}
+			this.targetType = targetType;
+			this.priority = priority;
+			this.route = route;
+		}
 		
-		Route getRoute();
+		protected boolean match(Object obj, String[] path) {
+			if (targetType!=null && !targetType.isInstance(obj)) {
+				return false;
+			}
+			return pattern==null ? true : pattern.matcher(ExtensionManager.join(path, "/")).matches();			
+		}
+
+		protected Pattern getPattern() {
+			return pattern;
+		}
+
+		public RouteDescriptor.RouteType getType() {
+			return type;
+		}
 		
-		int getPriority();
-		
-		boolean isRoot();
+		public RequestMethod[] getMethods() {
+			return methods;
+		}
+
+		protected Class<?> getTargetType() {
+			return targetType;
+		}
+
+		protected int getPriority() {
+			return priority;
+		}
+
+		protected Route getRoute() {
+			return route;
+		}
+
+		@Override
+		public int compareTo(RouteEntry o) {
+			if (targetType==null) {
+				if (o.targetType!=null) {
+					return 1; // o is more specific.
+				}
+			} else {
+				if (o.targetType==null) {
+					return -1; // this entry is more specific.
+				}
+				
+				if (targetType.isAssignableFrom(o.getTargetType())) {
+					if (!o.getTargetType().isAssignableFrom(targetType)) {
+						return 1; // o is more specific.
+					}
+				} else if (o.getTargetType().isAssignableFrom(targetType)) {
+					return -1; // this entry is more specific.
+				}
+			}
+			
+			return o.getPriority()-getPriority();
+		}
 		
 	}	
 	
-	private Map<RequestMethod, List<RouteEntry>> routeMap;
+	private Map<RouteType, Map<RequestMethod, List<RouteEntry>>> routeMap;
 
 	/**
 	 * Registered actions
@@ -321,84 +534,74 @@ public class ExtensionManager implements AutoCloseable {
 	 * @return
 	 * @throws Exception
 	 */
-	protected synchronized List<RouteEntry> getRoutes(RequestMethod method) throws Exception {
+	protected synchronized List<RouteEntry> getRoutes(RouteType routeType, RequestMethod method) throws Exception {
 		if (routeMap == null) {
 			routeMap = new HashMap<>();
+			for (RouteType rt: RouteType.values()) {
+				routeMap.put(rt, new HashMap<RequestMethod, List<RouteEntry>>());
+			}
 
 			IConfigurationElement[] actionConfigurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(ExtensionManager.ROUTE_ID);
 			for (IConfigurationElement ce: actionConfigurationElements) {
 				if ("object_route".equals(ce.getName())) {					
-					final Route route = (Route) ce.createExecutableExtension("class");		
+					Route route = (Route) ce.createExecutableExtension("class");		
 					injectProperties(ce, route);
 					String priorityStr = ce.getAttribute("priority");
-					final int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
-					String patternStr = ce.getAttribute("pattern");					
-					final Pattern pattern = isBlank(patternStr) ? null : Pattern.compile(patternStr);					
+					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String targetClassName = ce.getAttribute("target");
 					IContributor contributor = ce.getContributor();		
 					Bundle bundle = Platform.getBundle(contributor.getName());
-					final Class<?> target = (Class<?>) bundle.loadClass(targetClassName.trim());
-					
-					RouteEntry actionEntry = new RouteEntry() {
-
-						@Override
-						public int compareTo(RouteEntry o) {
-							return o.getPriority() - getPriority();
-						}
-
-						@Override
-						public boolean match(Object obj, String[] path) {
-							if (!target.isInstance(obj)) {
-								return false;
-							}
-							return pattern==null ? true : pattern.matcher(ExtensionManager.join(path, "/")).matches();
-						}
-
-						@Override
-						public Route getRoute() {
-							return route;
-						}
-
-						@Override
-						public int getPriority() {
-							return priority;
-						}
-
-						@Override
-						public boolean isRoot() {
-							return false;
-						}
-					};
-					
+					Class<?> targetType = (Class<?>) bundle.loadClass(targetClassName.trim());
 					String methodStr = ce.getAttribute("method");					
 					RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
-					for (RequestMethod actionMethod: routeMethods) {
-						List<RouteEntry> methodRoutes = routeMap.get(actionMethod);
+					RouteEntry routeEntry = new RouteEntry(RouteType.OBJECT, routeMethods, ce.getAttribute("pattern"), targetType, priority, route);
+										
+					for (RequestMethod routeMethod: routeMethods) {
+						List<RouteEntry> methodRoutes = routeMap.get(RouteType.OBJECT).get(routeMethod);
 						if (methodRoutes == null) {
 							methodRoutes = new ArrayList<>();
-							routeMap.put(actionMethod, methodRoutes);
+							routeMap.get(RouteType.OBJECT).put(routeMethod, methodRoutes);
 						}
-						methodRoutes.add(actionEntry);
+						methodRoutes.add(routeEntry);
 					}
+				} else if ("extension_route".equals(ce.getName())) {					
+						Route route = (Route) ce.createExecutableExtension("class");		
+						injectProperties(ce, route);
+						String priorityStr = ce.getAttribute("priority");
+						int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
+						String targetClassName = ce.getAttribute("target");
+						IContributor contributor = ce.getContributor();		
+						Bundle bundle = Platform.getBundle(contributor.getName());
+						Class<?> targetType = (Class<?>) bundle.loadClass(targetClassName.trim());
+						String methodStr = ce.getAttribute("method");					
+						RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
+						RouteEntry routeEntry = new RouteEntry(RouteType.EXTENSION, routeMethods, ce.getAttribute("extension"), targetType, priority, route);
+											
+						for (RequestMethod routeMethod: routeMethods) {
+							List<RouteEntry> methodRoutes = routeMap.get(RouteType.EXTENSION).get(routeMethod);
+							if (methodRoutes == null) {
+								methodRoutes = new ArrayList<>();
+								routeMap.get(RouteType.EXTENSION).put(routeMethod, methodRoutes);
+							}
+							methodRoutes.add(routeEntry);
+						}
 				} else if ("object_resource_route".equals(ce.getName())) {					
 					String priorityStr = ce.getAttribute("priority");
-					final int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
-					String patternStr = ce.getAttribute("pattern");					
-					final Pattern pattern = isBlank(patternStr) ? null : Pattern.compile(patternStr);					
+					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String targetClassName = ce.getAttribute("target");					
 					IContributor contributor = ce.getContributor();		
 					Bundle bundle = Platform.getBundle(contributor.getName());
-					final Class<?> target = (Class<?>) bundle.loadClass(targetClassName.trim());
+					Class<?> targetType = (Class<?>) bundle.loadClass(targetClassName.trim());
 
 					final String rName = ce.getAttribute("resource");			
 					final URL baseURL = bundle.getResource(rName);
 					
 					final String contentType = ce.getAttribute("contentType");					
 					
-					final Route route = new Route() {
+					Route route = new Route() {
 						
 						@Override
-						public Action navigate(final Context context) throws Exception {
+						public Action execute(final WebContext context) throws Exception {
 							if (context.getPath().length==1) { // 0?
 								return new Action() {
 									
@@ -434,100 +637,47 @@ public class ExtensionManager implements AutoCloseable {
 								
 							};
 						}
-					};
-					
-					RouteEntry actionEntry = new RouteEntry() {
 
 						@Override
-						public int compareTo(RouteEntry o) {
-							return o.getPriority() - getPriority();
-						}
-
-						@Override
-						public boolean match(Object obj, String[] path) {
-							if (!target.isInstance(obj)) {
-								return false;
-							}
-							return pattern==null ? true : pattern.matcher(ExtensionManager.join(path, "/")).matches();
-						}
-
-						@Override
-						public Route getRoute() {
-							return route;
-						}
-
-						@Override
-						public int getPriority() {
-							return priority;
-						}
-
-						@Override
-						public boolean isRoot() {
-							return false;
-						}
-					};
-					
-					String methodStr = ce.getAttribute("method");					
-					RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
-					for (RequestMethod actionMethod: routeMethods) {
-						List<RouteEntry> methodRoutes = routeMap.get(actionMethod);
-						if (methodRoutes == null) {
-							methodRoutes = new ArrayList<>();
-							routeMap.put(actionMethod, methodRoutes);
-						}
-						methodRoutes.add(actionEntry);
-					}
-				} else if ("root_route".equals(ce.getName())) {					
-					final Route route = (Route) ce.createExecutableExtension("class");			
-					injectProperties(ce, route);
-					String priorityStr = ce.getAttribute("priority");
-					final int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
-					String patternStr = ce.getAttribute("pattern");					
-					final Pattern pattern = isBlank(patternStr) ? null : Pattern.compile(patternStr);					
-					
-					RouteEntry actionEntry = new RouteEntry() {
-
-						@Override
-						public int compareTo(RouteEntry o) {
-							return o.getPriority() - getPriority();
-						}
-
-						@Override
-						public boolean match(Object obj, String[] path) {
-							return pattern==null ? true : pattern.matcher(ExtensionManager.join(path, "/")).matches();
-						}
-
-						@Override
-						public Route getRoute() {
-							return route;
-						}
-
-						@Override
-						public int getPriority() {
-							return priority;
-						}
-
-						@Override
-						public boolean isRoot() {
+						public boolean canExecute() {
 							return true;
 						}
+
+						@Override
+						public void close() throws Exception {
+							// NOP							
+						}
+						
 					};
 					
+					RouteEntry routeEntry = new RouteEntry(RouteType.OBJECT, new RequestMethod[] {RequestMethod.GET}, ce.getAttribute("pattern"), targetType, priority, route);
+					
+					List<RouteEntry> methodRoutes = routeMap.get(RouteType.OBJECT).get(RequestMethod.GET);
+					if (methodRoutes == null) {
+						methodRoutes = new ArrayList<>();
+						routeMap.get(RouteType.OBJECT).put(RequestMethod.GET, methodRoutes);
+					}
+					methodRoutes.add(routeEntry);
+				} else if ("root_route".equals(ce.getName())) {					
+					Route route = (Route) ce.createExecutableExtension("class");			
+					injectProperties(ce, route);
+					String priorityStr = ce.getAttribute("priority");
+					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String methodStr = ce.getAttribute("method");					
 					RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
-					for (RequestMethod actionMethod: routeMethods) {
-						List<RouteEntry> methodRoutes = routeMap.get(actionMethod);
+					RouteEntry routeEntry = new RouteEntry(RouteType.ROOT, routeMethods, ce.getAttribute("pattern"), null, priority, route);
+					
+					for (RequestMethod routeMethod: routeMethods) {
+						List<RouteEntry> methodRoutes = routeMap.get(RouteType.ROOT).get(routeMethod);
 						if (methodRoutes == null) {
 							methodRoutes = new ArrayList<>();
-							routeMap.put(actionMethod, methodRoutes);
+							routeMap.get(RouteType.ROOT).put(routeMethod, methodRoutes);
 						}
-						methodRoutes.add(actionEntry);
+						methodRoutes.add(routeEntry);
 					}
 				} else if ("root_resource_route".equals(ce.getName())) {					
 					String priorityStr = ce.getAttribute("priority");
-					final int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
-					String patternStr = ce.getAttribute("pattern");					
-					final Pattern pattern = isBlank(patternStr) ? null : Pattern.compile(patternStr);					
+					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					IContributor contributor = ce.getContributor();		
 					Bundle bundle = Platform.getBundle(contributor.getName());
 
@@ -539,7 +689,7 @@ public class ExtensionManager implements AutoCloseable {
 					final Route route = new Route() {
 						
 						@Override
-						public Action navigate(final Context context) throws Exception {
+						public Action execute(final WebContext context) throws Exception {
 							if (context.getPath().length==1) { // 0?
 								return new Action() {
 									
@@ -575,90 +725,40 @@ public class ExtensionManager implements AutoCloseable {
 								
 							};
 						}
-					};
-					
-					RouteEntry actionEntry = new RouteEntry() {
 
 						@Override
-						public int compareTo(RouteEntry o) {
-							return o.getPriority() - getPriority();
-						}
-
-						@Override
-						public boolean match(Object obj, String[] path) {
-							return pattern==null ? true : pattern.matcher(ExtensionManager.join(path, "/")).matches();
-						}
-
-						@Override
-						public Route getRoute() {
-							return route;
-						}
-
-						@Override
-						public int getPriority() {
-							return priority;
-						}
-
-						@Override
-						public boolean isRoot() {
+						public boolean canExecute() {
 							return true;
 						}
+
+						@Override
+						public void close() throws Exception {
+							// NOP							
+						}
+						
 					};
 					
-					String methodStr = ce.getAttribute("method");					
-					RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
-					for (RequestMethod actionMethod: routeMethods) {
-						List<RouteEntry> methodRoutes = routeMap.get(actionMethod);
-						if (methodRoutes == null) {
-							methodRoutes = new ArrayList<>();
-							routeMap.put(actionMethod, methodRoutes);
-						}
-						methodRoutes.add(actionEntry);
+					RouteEntry routeEntry = new RouteEntry(RouteType.ROOT, new RequestMethod[] { RequestMethod.GET } , ce.getAttribute("pattern"), null, priority, route);
+					
+					List<RouteEntry> methodRoutes = routeMap.get(RouteType.ROOT).get(RequestMethod.GET);
+					if (methodRoutes == null) {
+						methodRoutes = new ArrayList<>();
+						routeMap.get(RouteType.ROOT).put(RequestMethod.GET, methodRoutes);
 					}
+					methodRoutes.add(routeEntry);
 				} else if ("route_provider".equals(ce.getName())) {
 					RouteProvider routeProvider = (RouteProvider) ce.createExecutableExtension("class");
 					injectProperties(ce, routeProvider);
 					for (final RouteDescriptor routeDescriptor: routeProvider.getRouteDescriptors()) {
-						final Pattern pattern = isBlank(routeDescriptor.getPattern()) ? null : Pattern.compile(routeDescriptor.getPattern()); 
-						
-						RouteEntry actionEntry = new RouteEntry() {
-
-							@Override
-							public int compareTo(RouteEntry o) {
-								return o.getPriority() - getPriority();
-							}
-
-							@Override
-							public boolean match(Object obj, String[] path) {
-								if (!routeDescriptor.isRoot() && routeDescriptor.getTarget()!=null && !routeDescriptor.getTarget().isInstance(obj)) {
-									return false;
-								}
-								return pattern==null ? true : pattern.matcher(ExtensionManager.join(path, "/")).matches();
-							}
-
-							@Override
-							public Route getRoute() {
-								return routeDescriptor.getRoute();
-							}
-
-							@Override
-							public int getPriority() {
-								return routeDescriptor.getPriority();
-							}
-
-							@Override
-							public boolean isRoot() {
-								return routeDescriptor.isRoot();
-							}
-						};
+						RouteEntry routeEntry = new RouteEntry(routeDescriptor.getType(), routeDescriptor.getMethods(), routeDescriptor.getPattern(), routeDescriptor.getTarget(), routeDescriptor.getPriority(), routeDescriptor.getRoute());
 																
-						for (RequestMethod actionMethod: routeDescriptor.getMethods()) {
-							List<RouteEntry> methodRoutes = routeMap.get(actionMethod);
+						for (RequestMethod routeMethod: routeDescriptor.getMethods()) {
+							List<RouteEntry> methodRoutes = routeMap.get(routeDescriptor.getType()).get(routeMethod);
 							if (methodRoutes == null) {
 								methodRoutes = new ArrayList<>();
-								routeMap.put(actionMethod, methodRoutes);
+								routeMap.get(routeDescriptor.getType()).put(routeMethod, methodRoutes);
 							}
-							methodRoutes.add(actionEntry);
+							methodRoutes.add(routeEntry);
 						}
 						
 					}
@@ -666,12 +766,14 @@ public class ExtensionManager implements AutoCloseable {
 				}
 			}
 
-			for (List<RouteEntry> ame: routeMap.values()) {
-				Collections.sort(ame);
+			for (Map<RequestMethod, List<RouteEntry>> rm: routeMap.values()) {
+				for (List<RouteEntry> ame: rm.values()) {
+					Collections.sort(ame);
+				}
 			}
 		}
 		
-		List<RouteEntry> ret = routeMap.get(method);
+		List<RouteEntry> ret = routeMap.get(routeType).get(method);
 		return ret == null ? Collections.<RouteEntry>emptyList() : ret;
 	}
 
@@ -712,15 +814,23 @@ public class ExtensionManager implements AutoCloseable {
 
 	@Override
 	public void close() throws Exception {
+		routeServiceTracker.close();
+		
+		if (converter!=null) {
+			converter.close();
+		}
+		
 		// Closing routes.
 		if (routeMap!=null) {
-			for (List<RouteEntry> rl: routeMap.values()) {
-				for (RouteEntry r: rl) {
-					if (r instanceof AutoCloseable) {
-						try {
-							((AutoCloseable) r).close();
-						} catch (Exception e) {
-							e.printStackTrace();
+			for (Map<RequestMethod, List<RouteEntry>> rm: routeMap.values()) {
+				for (List<RouteEntry> rl: rm.values()) {
+					for (RouteEntry r: rl) {
+						if (r instanceof AutoCloseable) {
+							try {
+								((AutoCloseable) r).close();
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				}

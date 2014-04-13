@@ -11,6 +11,6 @@ public interface AuthorizationProvider {
 	 * this provider neither allows nor denies the action - used for chaining/stacking of
 	 * security providers.
 	 */
-	Boolean authorize(Context context, Object target, String action);
+	Boolean authorize(WebContext context, Object target, String action);
 	
 }

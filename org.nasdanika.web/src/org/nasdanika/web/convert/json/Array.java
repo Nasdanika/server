@@ -2,7 +2,7 @@ package org.nasdanika.web.convert.json;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nasdanika.web.Context;
+import org.nasdanika.web.WebContext;
 import org.nasdanika.web.Converter;
 
 public class Array {
@@ -13,7 +13,7 @@ public class Array {
 		public JSONArray convert(
 				Object source, 
 				Class<JSONArray> target,
-				Context context) throws Exception {
+				WebContext context) throws Exception {
 			if (source.getClass().isArray()) {
 				JSONArray ret = new JSONArray();
 				Object[] sa = (Object[]) source;
@@ -25,6 +25,11 @@ public class Array {
 			
 			return null;
 		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP
+		}
 		
 	}
 	
@@ -34,12 +39,17 @@ public class Array {
 		public Object convert(
 				JSONArray source, 
 				Class<Object> target,
-				Context context) throws Exception {
+				WebContext context) throws Exception {
 			Object[] ret = new Object[source.length()];
 			for (int i=0; i<ret.length; ++i) {
 				ret[i] = context.convert(source.get(i), Object.class);
 			}
 			return ret;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP
 		}
 		
 	}

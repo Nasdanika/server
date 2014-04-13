@@ -23,6 +23,7 @@
             <element ref="object_resource_route" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="root_route" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="root_resource_route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="extension_route" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -116,6 +117,76 @@
       </complexType>
    </element>
 
+   <element name="extension_route">
+      <annotation>
+         <documentation>
+            Route which matches extension.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.web.Route"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="target" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Object type to which this action applies.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="method" use="required">
+            <annotation>
+               <documentation>
+                  HTTP method for the action.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="DELETE">
+                  </enumeration>
+                  <enumeration value="GET">
+                  </enumeration>
+                  <enumeration value="PATCH">
+                  </enumeration>
+                  <enumeration value="POST">
+                  </enumeration>
+                  <enumeration value="PUT">
+                  </enumeration>
+                  <enumeration value="*">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="extension" type="string">
+            <annotation>
+               <documentation>
+                  Extension without dot, e.g. &apos;json&apos;
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="root_route">
       <complexType>
          <sequence>
@@ -200,29 +271,6 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="method" use="required">
-            <annotation>
-               <documentation>
-                  HTTP method for the action.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="DELETE">
-                  </enumeration>
-                  <enumeration value="GET">
-                  </enumeration>
-                  <enumeration value="PATCH">
-                  </enumeration>
-                  <enumeration value="POST">
-                  </enumeration>
-                  <enumeration value="PUT">
-                  </enumeration>
-                  <enumeration value="*">
-                  </enumeration>
-               </restriction>
-            </simpleType>
-         </attribute>
          <attribute name="pattern" type="string">
             <annotation>
                <documentation>
@@ -258,29 +306,6 @@
                   
                </documentation>
             </annotation>
-         </attribute>
-         <attribute name="method" use="required">
-            <annotation>
-               <documentation>
-                  HTTP method for the action.
-               </documentation>
-            </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="DELETE">
-                  </enumeration>
-                  <enumeration value="GET">
-                  </enumeration>
-                  <enumeration value="PATCH">
-                  </enumeration>
-                  <enumeration value="POST">
-                  </enumeration>
-                  <enumeration value="PUT">
-                  </enumeration>
-                  <enumeration value="*">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
          <attribute name="pattern" type="string">
             <annotation>

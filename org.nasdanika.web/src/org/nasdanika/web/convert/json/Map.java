@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nasdanika.web.Context;
+import org.nasdanika.web.WebContext;
 import org.nasdanika.web.Converter;
 
 public class Map {
@@ -14,7 +14,7 @@ public class Map {
 	public static class ToJSONObject implements Converter<java.util.Map<?,?>, JSONObject> {
 
 		@Override
-		public JSONObject convert(java.util.Map<?, ?> source, Class<JSONObject> target, Context context) throws Exception {
+		public JSONObject convert(java.util.Map<?, ?> source, Class<JSONObject> target, WebContext context) throws Exception {
 			for (Object key: source.keySet()) {
 				if (!(key instanceof String)) {
 					return null;
@@ -27,13 +27,18 @@ public class Map {
 			}
 			return ret;			
 		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP
+		}
 		
 	}
 	
 	public static class ToJSONArray implements Converter<java.util.Map<?,?>, JSONArray> {
 
 		@Override
-		public JSONArray convert(java.util.Map<?, ?> source, Class<JSONArray> target, Context context) throws Exception {
+		public JSONArray convert(java.util.Map<?, ?> source, Class<JSONArray> target, WebContext context) throws Exception {
 			boolean stringKeys = true;
 			for (Object key: source.keySet()) {
 				if (!(key instanceof String)) {
@@ -54,6 +59,11 @@ public class Map {
 			}
 			return ret;
 		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP
+		}
 		
 	}
 	
@@ -63,13 +73,18 @@ public class Map {
 		public HashMap<String, Object> convert(
 				JSONObject source, 
 				Class<HashMap<String, Object>> target, 
-				Context context) throws Exception {
+				WebContext context) throws Exception {
 			
 			HashMap<String, Object> ret = new HashMap<>();
 			for (String key: JSONObject.getNames(source)) {
 				ret.put(key, context.convert(source.get(key), Object.class));
 			}
 			return ret;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP
 		}
 		
 	}

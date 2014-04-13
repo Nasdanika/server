@@ -1,7 +1,9 @@
 package org.nasdanika.web;
 
+import org.nasdanika.core.Context;
 
-public interface Context {
+
+public interface WebContext extends Context {
 	
 	/**
 	 * Checks whether given extensionManager has a permission to execute
@@ -33,8 +35,10 @@ public interface Context {
 	 * @throws Exception
 	 */
 	Action getAction(Object target, int pathOffset) throws Exception;
+	
+	Action getExtensionAction(Object target, String extension) throws Exception;
 		
-	Object getRequestData();
+	//Object getRequestData();
 	
 	Object getTarget();
 	
