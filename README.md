@@ -1,7 +1,12 @@
 nasdanika
 =========
 
-Nasdanika open source components. One of the primary goal of the components is to provide means to expose CDO repositories to the web in a REST-ful fashion through a variety of formats over HTTP and WebSocket with support of different HTTP methods. 
+Nasdanika open source components. The primary goal of this project is to create a collection of OSGi bundles and an OSGi server for running CDO-powered OSGi server applications. The server shall support transactional execution with transactions 
+spanning a single repository, multiple repositories, and multiple repositories participating in a JTA transaction along with other transactional resources. CDO-powered applications promise to be easier and faster to develop than alternatives because
+CDO objects combine persistence and behavior, i.e. there is no need in layering business logic over the persistence logic, no need in complex configuration files - all information can be stored in a repository and transparently loaded to 
+CDO objects. 
+
+The immediate objective is to provide means to expose CDO repositories to the web in a REST-ful fashion through a variety of formats over HTTP and WebSocket with support of different HTTP methods. Adding support for flows, rules, and job scheduling is planned for later stages. 
 
 Nasdanika CDO application is a collection of routes. There are three types of routes:
 * Root routes match URL's paths without context object.
