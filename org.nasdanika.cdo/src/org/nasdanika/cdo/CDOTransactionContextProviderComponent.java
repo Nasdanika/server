@@ -14,6 +14,8 @@ public class CDOTransactionContextProviderComponent implements CDOTransactionCon
 	public void clearSessionProvider(CDOSessionProvider sessionProvider) {
 		this.sessionProvider = null;
 	}	
+	
+	// TODO - transaction handlers references.
 
 	@Override
 	public CDOTransactionContext createContext() {
@@ -21,6 +23,11 @@ public class CDOTransactionContextProviderComponent implements CDOTransactionCon
 			return new CDOTransactionContext() {
 				
 				private CDOTransaction transaction = sessionProvider.getSession().openTransaction();
+				
+				{
+					// TODO - transaction.addTransactionHandler(handler);
+				}
+				
 				private boolean rollbackOnly;
 				
 				@Override
