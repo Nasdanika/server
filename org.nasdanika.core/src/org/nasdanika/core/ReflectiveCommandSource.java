@@ -13,15 +13,15 @@ import org.osgi.framework.FrameworkUtil;
  * @author Pavel
  *
  */
-public class ReflectiveCommandSource implements AutoCloseable {
+public abstract class ReflectiveCommandSource implements AutoCloseable {
 	
 	protected Map<String, InstanceMethodCommand<Context,Object>> commandMap = new HashMap<String, InstanceMethodCommand<Context,Object>>();
 			
-	public ReflectiveCommandSource() throws Exception {
+	protected ReflectiveCommandSource() throws Exception {
 		this(null);
 	}
 	
-	public ReflectiveCommandSource(BundleContext context) throws Exception {
+	protected ReflectiveCommandSource(BundleContext context) throws Exception {
 		if (context==null) {
 			context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		}
@@ -40,6 +40,10 @@ public class ReflectiveCommandSource implements AutoCloseable {
 		for (InstanceMethodCommand<Context, Object> imc: commandMap.values()) {
 			imc.close();
 		}
+	}
+	
+	public Map<String, InstanceMethodCommand<Context, Object>> getCommandMap() {
+		return commandMap;
 	}
 
 }
