@@ -25,6 +25,21 @@
       <url>${kepler-repo.url}</url>
       <layout>p2</layout>
     </repository>
+     <repository>
+      <id>orbit</id>
+      <url>http://download.eclipse.org/tools/orbit/downloads/drops/R20140114142710/repository</url>
+      <layout>p2</layout>
+    </repository>
+     <repository>
+      <id>jetty</id>
+      <url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
+      <layout>p2</layout>
+    </repository>    
+     <repository>
+      <id>third-party</id>
+      <url>http://www.nasdanika.org/third_party_repository</url>
+      <layout>p2</layout>
+    </repository>
   </repositories>
   <build>
     <plugins>
@@ -69,10 +84,12 @@
           </execution>
         </executions>
       </plugin>
-    </plugins>
+    </plugins>       
   </build>
   <modules>
-  	<module>../org.nasdanika.core</module>
-  	<module>../org.nasdanika.core.tests</module>
+  <module>../org.nasdanika.core</module>
+  <module>../org.nasdanika.core.tests</module>
+  <module>../org.nasdanika.feature</module>
+  <module>../org.nasdanika.repository</module>
   </modules>
 </project>
