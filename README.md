@@ -18,7 +18,7 @@ Nasdanika CDO application is a collection of routes. There are three types of ro
 * Object routes match object type and path.
 * Extension routes match extension.
 
-For example, in a URL ``http://localhost/contextpath/servletpath/viewcontext/resourcename/L3.json`` ``viewcontext`` matches a root route which provides ``CDOViewContext``, ``resourcename`` is a CDOResource name in a view, ``L3`` is an object ID in the resource, and ``.json`` matches JSON extension route which, for GET method, converts ``L3`` object, whatever it is into JSON representation. 
+For example, in a URL ``http://localhost/contextpath/servletpath/viewcontext/resourcename/L3.json`` ``viewcontext`` matches a root route which provides ``CDOViewContext``, ``resourcename`` is a CDOResource name in a view, ``L3`` is an object ID in the resource, and ``.json`` matches JSON extension route which, for GET method, converts ``L3`` object, whatever it is, into JSON representation. 
 * ``http://localhost/contextpath/servletpath/viewcontext/resourcename/L3/transactions.json`` addresses ``transactions`` feature of ``L3`` object.
 * ``http://localhost/contextpath/servletpath/viewcontext/resourcename/L3/transactions/3.json`` adresses 4th element of ``transactions`` collection of ``L3`` object.
 
