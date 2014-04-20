@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.nasdanika.feature"
-      label="Nasdanika Bundles"
+      id="org.nasdanika.examples.feature"
+      label="Nasdanika Example Bundles"
       version="1.0.0.qualifier">
 
    <description url="http://www.example.com/description">
@@ -17,28 +17,14 @@
    </license>
 
    <plugin
-         id="org.nasdanika.core"
+         id="org.nasdanika.examples.bank"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.nasdanika.cdo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.nasdanika.cdo.h2"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.nasdanika.web"
+         id="org.nasdanika.examples.bank.app"
          download-size="0"
          install-size="0"
          version="0.0.0"

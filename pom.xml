@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>org.nasdanika</groupId>
+	<artifactId>org.nasdanika.aggregator</artifactId>
+	<version>1.0.0-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<modules>
+		<module>org.nasdanika.core</module>
+		<module>org.nasdanika.core.tests</module>
+		<module>org.nasdanika.web</module>
+		<module>org.nasdanika.cdo.h2</module>
+		<module>org.nasdanika.cdo</module>
+		<module>org.nasdanika.feature</module>
+		<module>org.nasdanika.transaction</module>
+		<module>org.nasdanika.examples.bank</module>
+		<module>org.nasdanika.examples.bank.app</module>
+		<!-- <module>org.nasdanika.repository</module> -->
+	</modules>
+</project>

@@ -11,6 +11,6 @@ Require-Bundle: javax.servlet;bundle-version="3.0.0",
  org.eclipse.jetty.util;bundle-version="8.1.14",
  org.json;bundle-version="1.0.0",
  org.eclipse.osgi,
- org.nasdanika.core;bundle-version="1.0.0"
+ org.nasdanika.core;bundle-version="1.0.0";visibility:=reexport
 Export-Package: org.nasdanika.web,
  org.nasdanika.web.convert.json

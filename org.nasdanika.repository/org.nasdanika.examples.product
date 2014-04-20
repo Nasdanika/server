@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Nasdanika Foundation Server" uid="org.nasdanika.server" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Nasdanika Foundation Server with examples" uid="org.nasdanika.examples" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -93,14 +93,12 @@
       <plugin id="org.eclipse.osgi.util"/>
       <plugin id="org.h2"/>
       <plugin id="org.json"/>
-      <plugin id="org.nasdanika.core"/>
-      <!--
       <plugin id="org.nasdanika.cdo"/>
       <plugin id="org.nasdanika.cdo.h2"/>
-      <plugin id="org.nasdanika.cdo.xa"/>
-      <plugin id="org.nasdanika.transaction"/>
+      <plugin id="org.nasdanika.core"/>
+      <plugin id="org.nasdanika.examples.bank"/>
+      <plugin id="org.nasdanika.examples.bank.app"/>
       <plugin id="org.nasdanika.web"/>
-      -->
       <plugin id="slf4j.api"/>
       <plugin id="slf4j.simple" fragment="true"/>
    </plugins>

@@ -42,6 +42,7 @@ public class ExtensionManager implements AutoCloseable {
 		if (context==null) {
 			context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
 		}
+		// TODO - bundle is still null???
 		this.bundleContext = context;
 		if (routeServiceFilter==null || routeServiceFilter.trim().length()==0) {
 			routeServiceTracker = new ServiceTracker<>(context, Route.class.getName(), null);
