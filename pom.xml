@@ -15,7 +15,7 @@
 		<module>org.nasdanika.cdo.h2</module>
 		<module>org.nasdanika.cdo</module>
 		<module>org.nasdanika.feature</module>
-		<module>org.nasdanika.transaction</module>
+		<!-- <module>org.nasdanika.transaction</module> -->
 		<module>org.nasdanika.examples.bank</module>
 		<module>org.nasdanika.examples.bank.app</module>
 		<module>org.nasdanika.examples.feature</module>
