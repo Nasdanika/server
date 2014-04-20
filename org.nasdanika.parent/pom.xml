@@ -97,5 +97,6 @@
 		<module>../org.nasdanika.examples.bank</module>
 		<module>../org.nasdanika.examples.bank.app</module>
 		<module>../org.nasdanika.repository</module>
+		<module>../org.nasdanika.examples.feature</module>
 	</modules>
 </project>
