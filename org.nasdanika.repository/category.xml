@@ -6,6 +6,12 @@
    <feature url="features/org.nasdanika.examples.feature_1.0.0.qualifier.jar" id="org.nasdanika.examples.feature" version="1.0.0.qualifier">
       <category name="org.nasdanika.category"/>
    </feature>
+   <feature url="features/org.nasdanika.server.third_party.feature_1.0.0.qualifier.jar" id="org.nasdanika.server.third_party.feature" version="1.0.0.qualifier">
+      <category name="org.nasdanika.category"/>
+   </feature>
+   <feature url="features/org.nasdankia.server.jetty.feature_1.0.0.qualifier.jar" id="org.nasdankia.server.jetty.feature" version="1.0.0.qualifier">
+      <category name="org.nasdanika.category"/>
+   </feature>
    <category-def name="org.nasdanika.category" label="Nasdanika">
       <description>
          Nasdanika features.

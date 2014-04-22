@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Nasdanika Web Actions Framework
+Bundle-Name: Nasdanika Web Commands Framework
 Bundle-SymbolicName: org.nasdanika.web;singleton:=true
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: Nasdanika LLC
@@ -14,3 +14,4 @@ Require-Bundle: javax.servlet;bundle-version="3.0.0",
  org.nasdanika.core;bundle-version="1.0.0";visibility:=reexport
 Export-Package: org.nasdanika.web,
  org.nasdanika.web.convert.json
+Bundle-ActivationPolicy: lazy

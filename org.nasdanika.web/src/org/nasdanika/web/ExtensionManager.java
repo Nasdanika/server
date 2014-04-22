@@ -40,7 +40,7 @@ public class ExtensionManager implements AutoCloseable {
 	
 	public ExtensionManager(BundleContext context, String routeServiceFilter) throws InvalidSyntaxException {
 		if (context==null) {
-			context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
+			context = FrameworkUtil.getBundle(Route.class).getBundleContext();
 		}
 		// TODO - bundle is still null???
 		this.bundleContext = context;

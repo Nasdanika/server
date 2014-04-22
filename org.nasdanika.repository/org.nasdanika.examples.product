@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="Nasdanika Foundation Server with examples" uid="org.nasdanika.examples" version="1.0.0.qualifier" useFeatures="false" includeLaunchers="true">
+<product name="Nasdanika Foundation Server with examples" uid="org.nasdanika.examples" version="1.0.0.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
@@ -30,78 +30,14 @@
    </license>
 
    <plugins>
-      <plugin id="javax.annotation"/>
-      <plugin id="javax.inject"/>
-      <plugin id="javax.servlet"/>
-      <plugin id="javax.transaction" fragment="true"/>
-      <plugin id="javax.xml"/>
-      <plugin id="org.apache.commons.fileupload"/>
-      <plugin id="org.apache.commons.io"/>
-      <plugin id="org.apache.felix.gogo.command"/>
-      <plugin id="org.apache.felix.gogo.runtime"/>
-      <plugin id="org.apache.felix.gogo.shell"/>
-      <plugin id="org.apache.felix.webconsole"/>
-      <plugin id="org.eclipse.core.contenttype"/>
-      <plugin id="org.eclipse.core.expressions"/>
-      <plugin id="org.eclipse.core.filesystem"/>
-      <plugin id="org.eclipse.core.jobs"/>
-      <plugin id="org.eclipse.core.resources"/>
-      <plugin id="org.eclipse.core.runtime"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.auth"/>
-      <plugin id="org.eclipse.core.runtime.compatibility.registry" fragment="true"/>
-      <plugin id="org.eclipse.core.variables"/>
-      <plugin id="org.eclipse.emf.cdo"/>
-      <plugin id="org.eclipse.emf.cdo.common"/>
-      <plugin id="org.eclipse.emf.cdo.ecore.retrofit" fragment="true"/>
-      <plugin id="org.eclipse.emf.cdo.net4j"/>
-      <plugin id="org.eclipse.emf.cdo.server"/>
-      <plugin id="org.eclipse.emf.cdo.server.db"/>
-      <plugin id="org.eclipse.emf.cdo.server.net4j"/>
-      <plugin id="org.eclipse.emf.common"/>
-      <plugin id="org.eclipse.emf.ecore"/>
-      <plugin id="org.eclipse.emf.ecore.change"/>
-      <plugin id="org.eclipse.emf.ecore.xmi"/>
-      <plugin id="org.eclipse.equinox.app"/>
-      <plugin id="org.eclipse.equinox.common"/>
-      <plugin id="org.eclipse.equinox.console"/>
-      <plugin id="org.eclipse.equinox.ds"/>
-      <plugin id="org.eclipse.equinox.http.jetty"/>
-      <plugin id="org.eclipse.equinox.http.registry"/>
-      <plugin id="org.eclipse.equinox.http.servlet"/>
-      <plugin id="org.eclipse.equinox.preferences"/>
-      <plugin id="org.eclipse.equinox.registry"/>
-      <plugin id="org.eclipse.equinox.transforms.hook" fragment="true"/>
-      <plugin id="org.eclipse.equinox.util"/>
-      <plugin id="org.eclipse.equinox.weaving.hook" fragment="true"/>
-      <plugin id="org.eclipse.jetty.continuation"/>
-      <plugin id="org.eclipse.jetty.http"/>
-      <plugin id="org.eclipse.jetty.io"/>
-      <plugin id="org.eclipse.jetty.jmx"/>
-      <plugin id="org.eclipse.jetty.security"/>
-      <plugin id="org.eclipse.jetty.server"/>
-      <plugin id="org.eclipse.jetty.servlet"/>
-      <plugin id="org.eclipse.jetty.util"/>
-      <plugin id="org.eclipse.jetty.websocket"/>
-      <plugin id="org.eclipse.net4j"/>
-      <plugin id="org.eclipse.net4j.db"/>
-      <plugin id="org.eclipse.net4j.db.h2"/>
-      <plugin id="org.eclipse.net4j.jvm"/>
-      <plugin id="org.eclipse.net4j.tcp"/>
-      <plugin id="org.eclipse.net4j.util"/>
-      <plugin id="org.eclipse.osgi"/>
-      <plugin id="org.eclipse.osgi.services"/>
-      <plugin id="org.eclipse.osgi.util"/>
-      <plugin id="org.h2"/>
-      <plugin id="org.json"/>
-      <plugin id="org.nasdanika.cdo"/>
-      <plugin id="org.nasdanika.cdo.h2"/>
-      <plugin id="org.nasdanika.core"/>
-      <plugin id="org.nasdanika.examples.bank"/>
-      <plugin id="org.nasdanika.examples.bank.app"/>
-      <plugin id="org.nasdanika.web"/>
-      <plugin id="slf4j.api"/>
-      <plugin id="slf4j.simple" fragment="true"/>
    </plugins>
+
+   <features>
+      <feature id="org.nasdanika.examples.feature" version="1.0.0.qualifier"/>
+      <feature id="org.nasdanika.feature" version="1.0.0.qualifier"/>
+      <feature id="org.nasdanika.server.third_party.feature" version="1.0.0.qualifier"/>
+      <feature id="org.nasdankia.server.jetty.feature" version="1.0.0.qualifier"/>
+   </features>
 
    <configurations>
       <plugin id="org.apache.felix.webconsole" autoStart="true" startLevel="0" />
@@ -111,6 +47,7 @@
       <plugin id="org.eclipse.equinox.http.jetty" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.http.registry" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.osgi" autoStart="true" startLevel="-1" />
+      <plugin id="org.nasdanika.examples.bank.app" autoStart="true" startLevel="0" />
    </configurations>
 
 </product>
