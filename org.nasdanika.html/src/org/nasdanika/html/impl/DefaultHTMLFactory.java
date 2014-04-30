@@ -24,7 +24,7 @@ import org.nasdanika.html.UIElement.Style;
  * @author Pavel
  *
  */
-public class DefaultHTMLBuilder extends AbstractHTMLBuilder {
+public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	
 	private static AtomicLong idCounter = new AtomicLong();
 	

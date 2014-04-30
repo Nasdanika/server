@@ -9,7 +9,7 @@ import org.nasdanika.html.UIElement.Style;
  * @author Pavel
  *
  */
-public interface HTMLBuilder {
+public interface HTMLFactory {
 	
 	/**
 	 * Generates element ID.

@@ -4,15 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.Dropdown;
-import org.nasdanika.html.HTMLBuilder;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Navbar;
 
 class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	
 	private String brand;
-	private HTMLBuilder builder;
+	private HTMLFactory builder;
 
-	NavbarImpl(HTMLBuilder builder, String brand) {
+	NavbarImpl(HTMLFactory builder, String brand) {
 		this.builder = builder;
 		this.brand = brand;
 	}

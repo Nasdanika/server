@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.Accordion;
-import org.nasdanika.html.HTMLBuilder;
+import org.nasdanika.html.HTMLFactory;
 
 class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
-	private HTMLBuilder builder;
+	private HTMLFactory builder;
 	
 	private class Item {
 		String title;
@@ -54,7 +54,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	
 	private List<Item> items = new ArrayList<>();
 
-	public AccordionImpl(HTMLBuilder builder) {
+	public AccordionImpl(HTMLFactory builder) {
 		this.builder = builder;
 		id(builder.nextId()+"_accordion");
 		addClass("panel-group");

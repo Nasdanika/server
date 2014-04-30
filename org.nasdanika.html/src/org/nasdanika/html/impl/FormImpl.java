@@ -6,19 +6,19 @@ import org.nasdanika.html.FieldWriter;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
-import org.nasdanika.html.HTMLBuilder;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
 
 class FormImpl extends UIElementImpl<Form> implements Form {
 	
-	HTMLBuilder builder;
+	HTMLFactory builder;
 	boolean horizontal;
 	boolean inline;
 	DeviceSize deviceSize;
 	int labelWidth;
 	private FieldWriter<Form> writer;
 
-	FormImpl(HTMLBuilder builder) {
+	FormImpl(HTMLFactory builder) {
 		this.builder = builder;
 		writer = new FieldWriterImpl<Form>(this, this);
 		attribute("role", "form");

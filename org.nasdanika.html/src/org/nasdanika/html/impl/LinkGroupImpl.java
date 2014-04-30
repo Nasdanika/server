@@ -3,16 +3,16 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nasdanika.html.HTMLBuilder;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.UIElement;
 
 class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 	
-	private HTMLBuilder builder;
+	private HTMLFactory builder;
 	private List<String> items = new ArrayList<>();
 
-	LinkGroupImpl(HTMLBuilder builder) {
+	LinkGroupImpl(HTMLFactory builder) {
 		this.builder = builder;
 		addClass("list-group");
 	}

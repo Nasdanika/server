@@ -2,7 +2,7 @@ package org.nasdanika.html.impl;
 
 import java.util.Arrays;
 
-import org.nasdanika.html.HTMLBuilder;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.NamedContainer;
 
 /**
@@ -11,7 +11,7 @@ import org.nasdanika.html.NamedContainer;
  * @author Pavel
  *
  */
-public abstract class AbstractHTMLBuilder implements HTMLBuilder {
+public abstract class AbstractHTMLFactory implements HTMLFactory {
 
 	@Override
 	public String ul(Iterable<String> items) {
