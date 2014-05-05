@@ -1,6 +1,12 @@
 package org.nasdanika.web;
 
 import java.util.Arrays;
+import java.util.Map;
+
+import org.nasdanika.core.AuthorizationProvider;
+import org.nasdanika.core.Converter;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.web.html.HTMLRenderer;
 
 public abstract class ContextImpl implements WebContext {
 	
@@ -11,7 +17,7 @@ public abstract class ContextImpl implements WebContext {
 	}
 	
 	private AuthorizationProvider securityManager;
-	private Converter<Object, Object> converter;
+	private Converter<Object, Object, WebContext> converter;
 	private String[] path;
 	private Object target;
 	private RouteRegistry routeRegistry;
@@ -87,5 +93,18 @@ public abstract class ContextImpl implements WebContext {
 	public Object getTarget() {
 		return target;
 	}
+	
+	@Override
+	public String toHTML(Object obj, String profile, Map<String, Object> environment) throws Exception {
+		HTMLRenderer renderer = convert(obj, HTMLRenderer.class);
+		if (renderer == null) {
+			return String.valueOf(obj);
+		}
+		return renderer.render(this, profile, environment);
+	}
 
+	@Override
+	public HTMLFactory getHTMLFactory() {
+		return extensionManager.getHTMLFactory();
+	}
 }

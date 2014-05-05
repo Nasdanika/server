@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="convert" name="Converter definitions" schema="schema/convert.exsd"/>
+  <extension-point id="security" name="Security " schema="schema/security.exsd"/>
+    <extension
+         point="org.nasdanika.core.convert">
+      <converter
+            class="org.nasdanika.core.convert.json.Array$FromJSON"
+            source="org.json.JSONArray"
+            target="java.lang.Object">
+      </converter>
+      <converter
+            class="org.nasdanika.core.convert.json.Array$ToJSON"
+            source="java.lang.Object"
+            target="org.json.JSONArray">
+      </converter>
+      <converter
+            class="org.nasdanika.core.convert.json.Collection$FromJSON"
+            source="org.json.JSONArray"
+            target="java.util.ArrayList">
+      </converter>
+      <converter
+            class="org.nasdanika.core.convert.json.Collection$ToJSON"
+            source="java.util.Collection"
+            target="org.json.JSONArray">
+      </converter>
+      <converter
+            class="org.nasdanika.core.convert.json.Map$FromJSON"
+            source="org.json.JSONObject"
+            target="java.util.HashMap">
+      </converter>
+      <converter
+            class="org.nasdanika.core.convert.json.Map$ToJSONArray"
+            source="java.util.Map"
+            target="org.json.JSONArray">
+      </converter>
+      <converter
+            class="org.nasdanika.core.convert.json.Map$ToJSONObject"
+            source="java.util.Map"
+            target="org.json.JSONObject">
+      </converter>
+   </extension>
+
+</plugin>

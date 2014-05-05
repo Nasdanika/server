@@ -9,6 +9,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>org.nasdanika.html</module>
 		<module>org.nasdanika.core</module>
 		<module>org.nasdanika.core.tests</module>
 		<module>org.nasdanika.web</module>

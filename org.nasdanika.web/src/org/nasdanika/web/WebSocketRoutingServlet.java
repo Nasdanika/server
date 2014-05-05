@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
 import org.json.JSONObject;
-import org.osgi.framework.InvalidSyntaxException;
 
 // --- Not functional yet - more like a skeleton for further implementation ---
 
@@ -28,8 +27,11 @@ public class WebSocketRoutingServlet extends WebSocketServlet {
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		try {
-			extensionManager = new ExtensionManager(null, config.getInitParameter("route-service-filter"));
-		} catch (InvalidSyntaxException e) {
+			extensionManager = new ExtensionManager(
+					null, 
+					config.getInitParameter("route-service-filter"),
+					config.getInitParameter("html-factory"));
+		} catch (Exception e) {
 			throw new ServletException(e);
 		}
 	}

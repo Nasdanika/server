@@ -2,14 +2,15 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Nasdanika Bank</title>
-<link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+	<title>My Application</title>
 
-<script src="js/jquery-2.1.0.min.js"></script>
-<script src="bootstrap/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="/bootstrap/css/bootstrap.min.css">
+	<link rel="stylesheet" href="/bootstrap/css/bootstrap-theme.min.css">
 
-<script src="js/underscore-min.js"></script>
-<script src="js/backbone-min.js"></script>
+	<script src="/js/jquery-2.1.0.min.js"></script>
+	<script src="/js/underscore-min.js"></script>
+	<script src="/js/backbone-min.js"></script>
+	<script src="/bootstrap/js/bootstrap.min.js"></script>
 
 <script>
 
@@ -66,20 +67,16 @@
 				workspace = new Workspace();
 				Backbone.history.start();
 
-				workspace.navigate('router/main/router/ccview.html', {
-					trigger : true
-				});				
+				
+					workspace.navigate('router/main/home.html', {
+						trigger : true
+					});
+				
 			});
 </script>
 </head>
 
 <body>
-	<div class="panel panel-default" style="width:800px; margin: 0 auto; margin-top:10px">
-		<div class="panel-heading">
-			<h3 class="panel-title">Nasdanika Bank</h3>
-		</div>
-		<div id="main" class="panel-body">
-		</div>		
-	</div>				
+	<div id="main"></div>
 </body>
 </html>

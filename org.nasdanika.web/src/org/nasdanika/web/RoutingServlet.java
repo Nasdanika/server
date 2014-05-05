@@ -29,8 +29,11 @@ public class RoutingServlet extends HttpServlet {
 		super.init(config);
 		jsonPrettyPrint = "true".equals(config.getInitParameter("json-pretty-print"));
 		try {
-			extensionManager = new ExtensionManager(null, config.getInitParameter("route-service-filter"));
-		} catch (InvalidSyntaxException e) {
+			extensionManager = new ExtensionManager(
+					null, 
+					config.getInitParameter("route-service-filter"),
+					config.getInitParameter("html-factory"));
+		} catch (Exception e) {
 			throw new ServletException(e);
 		}
 	}

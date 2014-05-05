@@ -17,14 +17,18 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.Platform;
+import org.nasdanika.core.AuthorizationProvider;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.Converter;
 import org.nasdanika.core.InstanceMethodCommand;
 import org.nasdanika.core.MethodCommand;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.web.RouteDescriptor.RouteType;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -37,8 +41,10 @@ public class ExtensionManager implements AutoCloseable {
 	
 	private ServiceTracker<Route, Route> routeServiceTracker;
 	private BundleContext bundleContext;
+	private HTMLFactory htmlFactory;
 	
-	public ExtensionManager(BundleContext context, String routeServiceFilter) throws InvalidSyntaxException {
+	public ExtensionManager(BundleContext context, String routeServiceFilter, String htmlFactoryName) throws Exception {
+		// TODO - converter profiles map: class name -> profile.
 		if (context==null) {
 			context = FrameworkUtil.getBundle(Route.class).getBundleContext();
 		}
@@ -51,25 +57,49 @@ public class ExtensionManager implements AutoCloseable {
 			routeServiceTracker = new ServiceTracker<>(context, context.createFilter(rootRouteServiceFilter), null);
 		}
 		routeServiceTracker.open();
+		
+		IConfigurationElement[] actionConfigurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(HTML_FACTORY_ID);
+		for (IConfigurationElement ce: actionConfigurationElements) {
+			if ("default_html_factory".equals(ce.getName())) {
+				if (htmlFactoryName==null || htmlFactoryName.equals("default")) {
+					DefaultHTMLFactory defaultHTMLFactory = new DefaultHTMLFactory();
+					for (IConfigurationElement s: ce.getChildren("script")) {
+						defaultHTMLFactory.getScripts().add(s.getValue());
+					}
+					for (IConfigurationElement s: ce.getChildren("stylesheet")) {
+						defaultHTMLFactory.getStylesheets().add(s.getValue());
+					}
+					this.htmlFactory = defaultHTMLFactory;
+					break;
+				}
+			} else if ("html_factory".equals(ce.getName())) {
+				if (htmlFactoryName==null || htmlFactoryName.equals(ce.getAttribute("name"))) {
+					this.htmlFactory = (HTMLFactory) ce.createExecutableExtension("class");
+					injectProperties(ce, htmlFactory);
+					break;
+				}
+			}					
+		}		
 	}
 			
+	public static final String HTML_FACTORY_ID = "org.nasdanika.web.html_factory";			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
-	public static final String CONVERT_ID = "org.nasdanika.web.convert";				
-	private static final String SECURITY_ID = "org.nasdanika.web.security";
+	public static final String CONVERT_ID = "org.nasdanika.core.convert";				
+	private static final String SECURITY_ID = "org.nasdanika.core.security";
 	
-	private Converter<Object, Object> converter;
+	private Converter<Object, Object, WebContext> converter;
 	
-	protected static class ConverterServiceEntry implements Converter<Object,Object> {
+	protected static class ConverterServiceEntry implements Converter<Object,Object, WebContext> {
 		
-		private ServiceTracker<Converter<Object, Object>, Converter<Object, Object>> serviceTracker;		
+		private ServiceTracker<Converter<Object, Object, WebContext>, Converter<Object, Object, WebContext>> serviceTracker;		
 		
 		public ConverterServiceEntry(String filter) throws Exception {
 			BundleContext context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
 			if (filter==null || filter.trim().length()==0) {
-				this.serviceTracker = new ServiceTracker<Converter<Object, Object>, Converter<Object, Object>>(context, Converter.class.getName(), null);				
+				this.serviceTracker = new ServiceTracker<Converter<Object, Object, WebContext>, Converter<Object, Object, WebContext>>(context, Converter.class.getName(), null);				
 			} else {
 				filter = "(&(" + Constants.OBJECTCLASS + "=" + Converter.class.getName() + ")"+filter+")";
-				this.serviceTracker = new ServiceTracker<Converter<Object, Object>, Converter<Object, Object>>(context, context.createFilter(filter), null);
+				this.serviceTracker = new ServiceTracker<Converter<Object, Object, WebContext>, Converter<Object, Object, WebContext>>(context, context.createFilter(filter), null);
 			}
 			this.serviceTracker.open();
 		}
@@ -81,9 +111,10 @@ public class ExtensionManager implements AutoCloseable {
 
 		@Override
 		public Object convert(Object source, Class<Object> target, WebContext context) throws Exception {
+			// TODO - iterate over the getTracked(), match profiles.
 			for (Object c: serviceTracker.getServices()) {
 				@SuppressWarnings("unchecked")
-				Object ret = ((Converter<Object,Object>) c).convert(source, target, context);
+				Object ret = ((Converter<Object,Object, WebContext>) c).convert(source, target, context);
 				if (ret!=null) {
 					return ret;
 				}
@@ -93,11 +124,11 @@ public class ExtensionManager implements AutoCloseable {
 		
 	}
 	
-	public synchronized Converter<Object, Object> getConverter() throws Exception {
+	public synchronized Converter<Object, Object, WebContext> getConverter() throws Exception {
 		if (converter==null) {
 			class ConverterEntry implements Comparable<ConverterEntry> {
 				
-				public ConverterEntry(Converter<Object,Object> converter) {
+				public ConverterEntry(Converter<Object,Object,WebContext> converter) {
 					this.converter = converter;
 				}
 				
@@ -106,7 +137,7 @@ public class ExtensionManager implements AutoCloseable {
 				Class<?> source;
 				Class<?> target;
 				
-				Converter<Object, Object> converter;
+				Converter<Object, Object, WebContext> converter;
 
 				@Override
 				public int compareTo(ConverterEntry o) {
@@ -128,7 +159,7 @@ public class ExtensionManager implements AutoCloseable {
 			for (IConfigurationElement ce: actionConfigurationElements) {
 				if ("converter".equals(ce.getName())) {					
 					@SuppressWarnings("unchecked")
-					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object>) ce.createExecutableExtension("class"));
+					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) ce.createExecutableExtension("class"));
 					
 					String priorityStr = ce.getAttribute("priority");
 					if (!isBlank(priorityStr)) {
@@ -140,13 +171,15 @@ public class ExtensionManager implements AutoCloseable {
 					cEntry.source = (Class<?>) bundle.loadClass(ce.getAttribute("source").trim());
 					cEntry.target = (Class<?>) bundle.loadClass(ce.getAttribute("target").trim());
 					
+					// TODO - match profile, navigate target class hierarchy
+					
 					ceList.add(cEntry);
 				}					
 			}
 			
 			Collections.sort(ceList);
 						
-			converter = new Converter<Object, Object>() {
+			converter = new Converter<Object, Object, WebContext>() {
 				
 				@Override
 				public Object convert(Object source, Class<Object> target, WebContext context) throws Exception {
@@ -219,7 +252,7 @@ public class ExtensionManager implements AutoCloseable {
 			authorizationProvider = new AuthorizationProvider() {
 				
 				@Override
-				public Boolean authorize(WebContext context, Object target, String action) {
+				public Boolean authorize(Context context, Object target, String action) {
 					for (AuthorizationProviderEntry sme: smeList) {
 						Boolean result = sme.sm.authorize(context, target, action);
 						if (result!=null) {
@@ -294,13 +327,16 @@ public class ExtensionManager implements AutoCloseable {
 						throw new IllegalArgumentException("Unexpected methods property type: "+methodsProperty);
 					}
 					Object priorityProperty = se.getKey().getProperty("priority");
-					collector.add(new RouteEntry(
+					RouteEntry re = new RouteEntry(
 							RouteDescriptor.RouteType.OBJECT, 
 							methods, 
 							(String) se.getKey().getProperty("pattern"), 
 							bundleContext.getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
-							se.getValue()));
+							se.getValue());
+					if (re.match(target, path)) {
+						collector.add(re);
+					}
 				}
 			}
 			
@@ -308,7 +344,7 @@ public class ExtensionManager implements AutoCloseable {
 				for (final Method routeMethod: target.getClass().getMethods()) {
 					ActionMethod amAnnotation = routeMethod.getAnnotation(ActionMethod.class);
 					if (amAnnotation!=null) {
-						collector.add(new RouteEntry(RouteType.OBJECT, amAnnotation.value(), amAnnotation.pattern(), target.getClass(), amAnnotation.priority(), new MethodRoute(target, routeMethod)) {
+						RouteEntry re = new RouteEntry(RouteType.OBJECT, amAnnotation.value(), amAnnotation.pattern(), target.getClass(), amAnnotation.priority(), new MethodRoute(target, routeMethod)) {
 							
 							protected boolean match(Object obj, String[] path) {
 								if (getPattern()==null && path.length>0 && !routeMethod.getName().equals(path[0])) {
@@ -316,7 +352,10 @@ public class ExtensionManager implements AutoCloseable {
 								}
 								return super.match(obj, path);
 							};
-						});
+						};
+						if (re.match(target, path)) {
+							collector.add(re);
+						}
 					}
 				}
 			}
@@ -365,19 +404,22 @@ public class ExtensionManager implements AutoCloseable {
 						throw new IllegalArgumentException("Unexpected methods property type: "+methodsProperty);
 					}
 					Object priorityProperty = se.getKey().getProperty("priority");
-					collector.add(new RouteEntry(
+					RouteEntry re = new RouteEntry(
 							RouteDescriptor.RouteType.ROOT, 
 							methods, 
 							(String) se.getKey().getProperty("pattern"), 
 							null, 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
-							se.getValue()));
+							se.getValue());
+					if (re.match(null, path)) {
+						collector.add(re);
+					}
 				}
 			}
 			
 			Collections.sort(collector);
 			List<Route> ret = new ArrayList<>();
-			Z: for (RouteEntry re:collector) {
+			Z: for (RouteEntry re: collector) {
 				for (RequestMethod rm: re.getMethods()) {
 					if (rm.equals(method)) {
 						ret.add(re.getRoute());
@@ -837,6 +879,10 @@ public class ExtensionManager implements AutoCloseable {
 				}
 			}
 		}
+	}
+
+	public HTMLFactory getHTMLFactory() {
+		return htmlFactory;
 	}	
 	
 }

@@ -9,9 +9,10 @@ Require-Bundle: javax.servlet;bundle-version="3.0.0",
  org.eclipse.core.runtime;bundle-version="3.9.100",
  org.eclipse.jetty.websocket;bundle-version="8.1.14",
  org.eclipse.jetty.util;bundle-version="8.1.14",
- org.json;bundle-version="1.0.0",
  org.eclipse.osgi,
- org.nasdanika.core;bundle-version="1.0.0";visibility:=reexport
+ org.nasdanika.core;bundle-version="1.0.0";visibility:=reexport,
+ org.nasdanika.html;bundle-version="1.0.0";visibility:=reexport
 Export-Package: org.nasdanika.web,
- org.nasdanika.web.convert.json
+ org.nasdanika.web.html
 Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .

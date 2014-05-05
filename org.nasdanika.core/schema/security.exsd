@@ -1,9 +1,9 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.nasdanika.web" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.nasdanika.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.nasdanika.web" id="security" name="Nasdanika CDO Web Security"/>
+         <meta.schema plugin="org.nasdanika.core" id="security" name="Nasdanika Security"/>
       </appinfo>
       <documentation>
          Security configuration.
@@ -60,7 +60,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.nasdanika.web.AuthorizationProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.core.AuthorizationProvider"/>
                </appinfo>
             </annotation>
          </attribute>

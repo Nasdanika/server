@@ -177,7 +177,7 @@
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="extension" type="string">
+         <attribute name="extension" type="string" use="required">
             <annotation>
                <documentation>
                   Extension without dot, e.g. &apos;json&apos;

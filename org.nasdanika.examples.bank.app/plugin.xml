@@ -19,5 +19,30 @@
             base-name="WebContent">
       </resource>
    </extension>
+   <extension
+         point="org.nasdanika.web.route">
+      <root_route
+            class="org.nasdanika.examples.bank.app.AppRoute"
+            method="GET"
+            pattern="app.html">
+      </root_route>
+   </extension>
+   <extension
+         point="org.nasdanika.web.html_factory">
+      <default_html_factory>
+            <stylesheet>/bootstrap/css/bootstrap.min.css</stylesheet>
+            <stylesheet>
+               /bootstrap/css/bootstrap-theme.min.css
+            </stylesheet>
+            <script>
+               /js/jquery-2.1.0.min.js
+            </script>
+            <script>
+               /js/underscore-min.js
+            </script>
+            <script>/js/backbone-min.js</script>
+            <script>/bootstrap/js/bootstrap.min.js</script>
+      </default_html_factory>
+   </extension>
 
 </plugin>

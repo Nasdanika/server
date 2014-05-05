@@ -1,20 +1,19 @@
-package org.nasdanika.web.convert.json;
+package org.nasdanika.core.convert.json;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nasdanika.web.WebContext;
-import org.nasdanika.web.Converter;
+import org.nasdanika.core.Converter;
+import org.nasdanika.core.ConverterContext;
 
 public class Map {
 	
-	public static class ToJSONObject implements Converter<java.util.Map<?,?>, JSONObject> {
+	public static class ToJSONObject implements Converter<java.util.Map<?,?>, JSONObject, ConverterContext> {
 
 		@Override
-		public JSONObject convert(java.util.Map<?, ?> source, Class<JSONObject> target, WebContext context) throws Exception {
+		public JSONObject convert(java.util.Map<?, ?> source, Class<JSONObject> target, ConverterContext context) throws Exception {
 			for (Object key: source.keySet()) {
 				if (!(key instanceof String)) {
 					return null;
@@ -35,10 +34,10 @@ public class Map {
 		
 	}
 	
-	public static class ToJSONArray implements Converter<java.util.Map<?,?>, JSONArray> {
+	public static class ToJSONArray implements Converter<java.util.Map<?,?>, JSONArray, ConverterContext> {
 
 		@Override
-		public JSONArray convert(java.util.Map<?, ?> source, Class<JSONArray> target, WebContext context) throws Exception {
+		public JSONArray convert(java.util.Map<?, ?> source, Class<JSONArray> target, ConverterContext context) throws Exception {
 			boolean stringKeys = true;
 			for (Object key: source.keySet()) {
 				if (!(key instanceof String)) {
@@ -67,13 +66,13 @@ public class Map {
 		
 	}
 	
-	public static class FromJSON implements Converter<JSONObject, HashMap<String, Object>> {
+	public static class FromJSON implements Converter<JSONObject, HashMap<String, Object>, ConverterContext> {
 
 		@Override
 		public HashMap<String, Object> convert(
 				JSONObject source, 
 				Class<HashMap<String, Object>> target, 
-				WebContext context) throws Exception {
+				ConverterContext context) throws Exception {
 			
 			HashMap<String, Object> ret = new HashMap<>();
 			for (String key: JSONObject.getNames(source)) {

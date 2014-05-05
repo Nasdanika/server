@@ -1,9 +1,12 @@
 package org.nasdanika.web;
 
-import org.nasdanika.core.Context;
+import java.util.Map;
+
+import org.nasdanika.core.ConverterContext;
+import org.nasdanika.html.HTMLFactory;
 
 
-public interface WebContext extends Context {
+public interface WebContext extends ConverterContext {
 	
 	/**
 	 * Checks whether given extensionManager has a permission to execute
@@ -13,16 +16,7 @@ public interface WebContext extends Context {
 	 * @return true if action is allowed, false if denied.
 	 */
 	boolean authorize(Object target, String action);	
-	
-	/**
-	 * Converts source to target type in given extensionManager.
-	 * @param source
-	 * @param targetType
-	 * @return source converted to target type or null if conversion is not possible.
-	 * @throws Exception
-	 */
-	<T> T convert(Object source, Class<T> targetType) throws Exception;
-	
+		
 	RequestMethod getMethod();
 	
 	String[] getPath();
@@ -43,5 +37,16 @@ public interface WebContext extends Context {
 	Object getTarget();
 	
 	Object getPrincipal();
+	
+	/**
+	 * Renders object to HTML 
+	 * @param obj Object to render
+	 * @param profile Optional rendering profile, e.g. "link" profile instructs the renderer to render a link to the element.
+	 * @param environment Additional rendering configuration.
+	 * @return Object rendered to HTML
+	 */
+	String toHTML(Object obj, String profile, Map<String, Object> environment) throws Exception;
+
+	HTMLFactory getHTMLFactory();
 	
 }

@@ -1,12 +1,12 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.nasdanika.web" xmlns="http://www.w3.org/2001/XMLSchema">
+<schema targetNamespace="org.nasdanika.core" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.nasdanika.web" id="action" name="Web Action"/>
+         <meta.schema plugin="org.nasdanika.core" id="convert" name="Converter"/>
       </appinfo>
       <documentation>
-         Action definitions.
+         Converter definitions.
       </documentation>
    </annotation>
 
@@ -88,6 +88,13 @@
             <annotation>
                <documentation>
                   Converter priority.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="profile" type="string">
+            <annotation>
+               <documentation>
+                  Optional profile for the converter. Converter with blank profile matches any profile.
                </documentation>
             </annotation>
          </attribute>
