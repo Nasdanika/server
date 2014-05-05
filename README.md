@@ -1,6 +1,9 @@
 nasdanika
 =========
 
+* [Nasdanika HTML slides](http://www.slideshare.net/slideshow/embed_code/34274148)
+
+
 Nasdanika open source components. The primary goal of this project is to create a collection of OSGi bundles and an OSGi server for running CDO-powered OSGi server applications. The server shall support transactional execution with transactions 
 spanning a single repository, multiple repositories, and multiple repositories participating in a JTA transaction along with other transactional resources. CDO-powered applications promise to be easier and faster to develop than alternatives because
 CDO objects combine persistence and behavior, i.e. there is no need in layering business logic over the persistence logic, no need in complex configuration files - all information can be stored in a repository and transparently loaded to 
