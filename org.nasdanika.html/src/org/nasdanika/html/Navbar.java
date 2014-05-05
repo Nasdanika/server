@@ -2,10 +2,17 @@ package org.nasdanika.html;
 
 public interface Navbar extends UIElement<Navbar> {
 
-	Navbar item(String item, boolean active);
+	/**
+	 * Adds item to the navbar
+	 * @param item Item 
+	 * @param active Active state flag
+	 * @param right If true the item is added to the right part of the navbar
+	 * @return
+	 */
+	Navbar item(Object item, boolean active, boolean right);
 	
-	Dropdown<?> dropdown(String name);
+	Dropdown<?> dropdown(Object name, boolean right);
 	
-	// TODO - forms
+	Form form(boolean right);
 	
 }

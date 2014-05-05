@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.UIElement;
 
 /**
@@ -15,7 +16,7 @@ import org.nasdanika.html.UIElement;
  *
  * @param <T>
  */
-public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement<T> {
+public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement<T>, AutoCloseable {
 
 	private static final String STYLE = "style";
 
@@ -30,6 +31,12 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	private Map<String, String> attributes = new HashMap<>();
 	
 	private Map<String, String> styles = new HashMap<>();
+
+	protected HTMLFactory factory;
+	
+	public UIElementImpl(HTMLFactory factory) {
+		this.factory = factory;
+	}
 	
 	/**
 	 * Renders attributes
@@ -159,6 +166,17 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 			classes.add(clazz);
 		}
 		return (T) this;
+	}
+	
+	/**
+	 * Helper method
+	 * @param o
+	 * @throws Exception
+	 */
+	protected void close(Object o) throws Exception {
+		if (o instanceof AutoCloseable) {
+			((AutoCloseable) o).close();
+		}
 	}
 
 }

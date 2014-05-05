@@ -1,19 +1,23 @@
 package org.nasdanika.html.impl;
 
 import org.nasdanika.html.FormGroup;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.HTMLFactory.Glyphicon;
 
 class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implements FormGroup<T> {
 	
-	private String label;
-	private String controlId;
+	private Object label;
+	private Object controlId;
 	protected C control;
 	private boolean feedback;
 	private Status status;
 	private FormImpl form;
-	private String helpText;
+	private Object helpText;
 
-	FormGroupImpl(FormImpl form, String label, String controlId, C control, String helpText) {
+	FormGroupImpl(HTMLFactory factory, FormImpl form, Object label, Object controlId, C control, Object helpText) {
+		super(factory);
 		this.form = form;
 		this.label = label;
 		this.controlId = controlId;
@@ -51,7 +55,7 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 		}
 		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
 		if (label!=null) {
-			UIElement<?> labelTag = form.builder.tag("label", label).attribute("for", controlId);
+			UIElement<?> labelTag = form.factory.tag("label", label).attribute("for", String.valueOf(controlId));
 			if (form.inline) {
 				labelTag.addClass("sr-only");
 			}
@@ -62,7 +66,7 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 			sb.append(labelTag);
 		}
 		if (form.horizontal) {
-			UIElement<?> controlDiv = form.builder.tag("div", control.toString());
+			UIElement<?> controlDiv = form.factory.div(control.toString());
 			controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
 			if (label==null) {
 				controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
@@ -72,28 +76,38 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 			sb.append(control);
 		}
 		if (feedback && status!=null) {
-			UIElement<?> feedbackSpan = form.builder.tag("span", "").addClass("glyphicon");
+			Tag feedbackSpan = null;
 			switch (status) {
 			case ERROR:
-				feedbackSpan.addClass("glyphicon-remove");
+				feedbackSpan = form.factory.glyphicon(Glyphicon.remove);
 				break;
 			case SUCCESS:
-				feedbackSpan.addClass("glyphicon-ok");
+				feedbackSpan = form.factory.glyphicon(Glyphicon.ok);
 				break;
 			case WARNING:
-				feedbackSpan.addClass("glyphicon-warning-sign");
+				feedbackSpan = form.factory.glyphicon(Glyphicon.warning_sign);
 				break;
 			default:
 				break;			
 			}
-			feedbackSpan.addClass("form-control-feedback");
-			sb.append(feedbackSpan);
+			if (feedbackSpan!=null) {
+				feedbackSpan.addClass("form-control-feedback");
+				sb.append(feedbackSpan);
+			}
 		}
 		if (helpText!=null && !form.horizontal && !form.inline) {
-			sb.append(form.builder.tag("p", helpText).addClass("help-block"));			
+			sb.append(form.factory.tag("p", helpText).addClass("help-block"));			
 		}
 		sb.append("</div>");
 		return sb.toString();
+	}
+
+	@Override
+	public void close() throws Exception {
+		close(control);
+		close(controlId);
+		close(helpText);
+		close(label);		
 	}
 	
 }

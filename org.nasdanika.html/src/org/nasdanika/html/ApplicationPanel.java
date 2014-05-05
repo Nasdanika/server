@@ -8,7 +8,7 @@ package org.nasdanika.html;
  */
 public interface ApplicationPanel extends UIElement<ApplicationPanel> {
 	
-	interface ContentPanel extends UIElement<ContentPanel> {
+	interface ContentPanel extends UIElement<ContentPanel>, Container<ContentPanel> {
 		
 		/**
 		 * Sets panel width for a given device size
@@ -20,25 +20,25 @@ public interface ApplicationPanel extends UIElement<ApplicationPanel> {
 		
 	}
 	
-	ApplicationPanel header(String header);
+	ApplicationPanel header(Object... header);
 	
 	/**
 	 * If this URL is set then header text is rendered as a link.
 	 * @param url
 	 * @return
 	 */
-	ApplicationPanel headerLink(String url);
+	ApplicationPanel headerLink(Object url);
 	
-	ApplicationPanel navigation(String navigation);
+	ApplicationPanel navigation(Object... navigation);
 	
 	/**
 	 * Adds a content column
 	 * @param content column content
 	 * @return
 	 */
-	ContentPanel content(String content);
+	ContentPanel contentPanel(Object... content);
 	
-	ApplicationPanel footer(String footer);
+	ApplicationPanel footer(Object... footer);
 	
 	ApplicationPanel style(Style style);
 	

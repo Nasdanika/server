@@ -4,23 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.Button;
+import org.nasdanika.html.HTMLFactory;
 
 class ButtonImpl extends UIElementImpl<Button> implements Button {
 	
-	private String text;
+	private List<Object> content = new ArrayList<>();
 	private boolean isInputGroupButton;
 
-	public ButtonImpl(String text, boolean isInputGroupButton) {
-		this.text = text;
+	ButtonImpl(HTMLFactory factory, boolean isInputGroupButton, Object... content) {
+		super(factory);
+		content(content);
 		this.isInputGroupButton = isInputGroupButton;
 	}
 	
-	private class DropdownItem {
+	private class DropdownItem implements AutoCloseable {
 		
-		String content;
+		Object content;
 
-		DropdownItem(String content) {
+		DropdownItem(Object content) {
 			this.content = content;
+		}
+
+		@Override
+		public void close() throws Exception {
+			if (content instanceof AutoCloseable) {
+				((AutoCloseable) content).close();
+			}			
 		}
 		
 	}
@@ -35,7 +44,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 
 	private class Header extends DropdownItem {
 		
-		public Header(String header) {
+		public Header(Object header) {
 			super(header);
 		}
 		
@@ -43,7 +52,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 
 	private class Item extends DropdownItem {
 		
-		public Item(String content) {
+		public Item(Object content) {
 			super(content);
 		}
 		
@@ -60,8 +69,10 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	private Type type = Type.BUTTON;
 	
 	@Override
-	public Button item(String item) {
-		items.add(new Item(item));
+	public Button item(Object... item) {
+		for (Object o: item) {
+			items.add(new Item(o));
+		}
 		return this;
 	}
 
@@ -72,7 +83,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	}
 
 	@Override
-	public Button header(String header) {
+	public Button header(Object header) {
 		items.add(new Header(header));
 		return this;
 	}
@@ -171,7 +182,9 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 			}
 			sb.append(attributes("class", "type", "disabled"));
 			sb.append(">");
-			sb.append(text);
+			for (Object c: content) {
+				sb.append(c);
+			}
 			sb.append("</button>");
 			
 			if (isInputGroupButton) {
@@ -217,7 +230,9 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		
 		sb.append(attributes("class", "type", "disabled", "data-toggle"));
 		sb.append(">");
-		sb.append(text);
+		for (Object c: content) {
+			sb.append(c);
+		}
 		if (!split) {
 			sb.append(" <span class=\"caret\"></span>");
 		}
@@ -265,6 +280,26 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		if (active) {
 			sb.append(" active");
 		}
+	}
+	
+	@Override
+	public void close() throws Exception {
+		for (Object o: content) {
+			if (o instanceof AutoCloseable) {
+				((AutoCloseable) o).close();
+			}
+		}
+		for (DropdownItem item: items) {
+			item.close();
+		}
+	}
+	
+	@Override
+	public Button content(Object... content) {
+		for (Object c: content) {
+			this.content.add(c);
+		}
+		return this;
 	}
 
 }

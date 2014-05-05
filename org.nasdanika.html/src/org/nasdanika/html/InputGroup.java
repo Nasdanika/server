@@ -1,5 +1,7 @@
 package org.nasdanika.html;
 
+import org.nasdanika.html.HTMLFactory.Placement;
+
 public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
 
 	/**
@@ -8,7 +10,7 @@ public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
 	 * @return
 	 * @throws IllegalStateException if left button has already been created.
 	 */
-	T leftAddOn(String addOn);
+	T leftAddOn(Object... addOn);
 	
 	T size(Size size);
 	
@@ -18,7 +20,15 @@ public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
 	 * @return
 	 * @throws IllegalStateException if left add-on has already been set. 
 	 */
-	Button leftButton(String text);
+	Button leftButton(Object... content);
+	
+	/**
+	 * Creates left popover help button
+	 * @param text
+	 * @return
+	 * @throws IllegalStateException if left add-on has already been set. 
+	 */
+	Button leftPopoverHelpButton(Placement placement, String title, String body);
 	
 	/**
 	 * Sets right add-on
@@ -26,7 +36,7 @@ public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
 	 * @return
 	 * @throws IllegalStateException if right button has already been created.
 	 */
-	T rightAddOn(String addOn);
+	T rightAddOn(Object... addOn);
 	
 	/**
 	 * Creates rigth button.
@@ -34,6 +44,14 @@ public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
 	 * @return
 	 * @throws IllegalStateException if right add-on has already been set. 
 	 */
-	Button rightButton(String text);
+	Button rightButton(Object... content);
 	
+	/**
+	 * Creates right popover help button
+	 * @param text
+	 * @return
+	 * @throws IllegalStateException if left add-on has already been set. 
+	 */
+	Button rightPopoverHelpButton(Placement placement, String title, String body);
+		
 }

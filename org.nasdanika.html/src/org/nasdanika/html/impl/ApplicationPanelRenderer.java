@@ -88,7 +88,7 @@ public class ApplicationPanelRenderer
     stringBuffer.append(TEXT_20);
      } else { 
     stringBuffer.append(TEXT_21);
-     for (String contentPanel: config.getContentPanels()) { 
+     for (Object contentPanel: config.getContentPanels()) { 
     stringBuffer.append(TEXT_22);
     stringBuffer.append(contentPanel);
     stringBuffer.append(TEXT_23);

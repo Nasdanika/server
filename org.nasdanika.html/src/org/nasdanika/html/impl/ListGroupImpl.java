@@ -5,25 +5,24 @@ import java.util.List;
 
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.ListGroup;
-import org.nasdanika.html.UIElement;
+import org.nasdanika.html.Tag;
 
 class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 	
-	private HTMLFactory builder;
-	private List<String> items = new ArrayList<>();
+	private List<Tag> items = new ArrayList<>();
 
-	ListGroupImpl(HTMLFactory builder) {
-		this.builder = builder;
+	ListGroupImpl(HTMLFactory factory) {
+		super(factory);
 		addClass("list-group");
 	}
 
 	@Override
-	public ListGroup item(String content, Style style) {
-		UIElement<?> li = builder.tag("li", content).addClass("list-group-item");
+	public ListGroup item(Object content, Style style) {
+		Tag li = factory.tag("li", content).addClass("list-group-item");
 		if (style!=null && Style.DEFAULT!=style) {
 			li.addClass("list-group-item-"+style.name().toLowerCase());
 		}
-		items.add(li.toString());
+		items.add(li);
 		return this;
 	}
 	
@@ -32,11 +31,18 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 		StringBuilder ret = new StringBuilder("<ul");
 		ret.append(attributes());
 		ret.append(">");
-		for (String item: items) {
+		for (Tag item: items) {
 			ret.append(item);
 		}
 		ret.append("</ul>");
 		return ret.toString();
+	}
+	
+	@Override
+	public void close() throws Exception {
+		for (Tag item: items) {
+			item.close();
+		}
 	}
 
 }

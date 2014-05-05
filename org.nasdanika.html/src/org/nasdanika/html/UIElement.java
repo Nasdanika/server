@@ -5,7 +5,7 @@ package org.nasdanika.html;
  * @author Pavel
  *
  */
-public interface UIElement<T extends UIElement<?>> {
+public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	
 	enum Style { DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER }
 	
@@ -68,6 +68,8 @@ public interface UIElement<T extends UIElement<?>> {
 	 * @return
 	 */
 	T id(String id);
+	
+	String getId();
 	
 	/**
 	 * Sets element attribute

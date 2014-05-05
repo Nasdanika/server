@@ -25,7 +25,7 @@
 			<%=config.getContentPanels().get(0)%>
 		<% } else { %>		
 			<div class="row">
-				<% for (String contentPanel: config.getContentPanels()) { %>
+				<% for (Object contentPanel: config.getContentPanels()) { %>
 					<%=contentPanel%>
 				<% } %>			
 			</div>

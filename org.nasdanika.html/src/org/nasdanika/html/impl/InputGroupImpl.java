@@ -1,17 +1,20 @@
 package org.nasdanika.html.impl;
 
 import org.nasdanika.html.Button;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.HTMLFactory.Placement;
 import org.nasdanika.html.InputGroup;
 
 class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<InputGroup<?>> {
 
-	private Button leftButton;
-	private String leftAddOn;
-	private Button rightButton;
-	private String rightAddOn;
-	private String control;
+	private Object leftAddOn;
+	private Object rightAddOn;
+	private Object control;
+	private StringBuilder initScript = new StringBuilder();
 
-	InputGroupImpl(String control) {
+	InputGroupImpl(HTMLFactory factory, Object control) {
+		super(factory);
 		this.control = control;
 		addClass("input-group");
 	}
@@ -23,39 +26,39 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 	}
 
 	@Override
-	public InputGroup<?> leftAddOn(String addOn) {
-		if (leftButton!=null) {
-			throw new IllegalStateException("Left button has already been created");
-		}
-		this.leftAddOn = addOn;
-		return this;
-	}
-
-	@Override
-	public Button leftButton(String text) {
+	public InputGroup<?> leftAddOn(Object... addOn) {
 		if (leftAddOn!=null) {
 			throw new IllegalStateException("Left add-on has already been set");
 		}
-		this.leftButton = new ButtonImpl(text, true);
-		return leftButton;
-	}
-
-	@Override
-	public InputGroup<?> rightAddOn(String addOn) {
-		if (rightButton!=null) {
-			throw new IllegalStateException("Right button has already been created");
-		}
-		this.rightAddOn = addOn;
+		this.leftAddOn = new FragmentImpl(addOn);
 		return this;
 	}
 
 	@Override
-	public Button rightButton(String text) {
+	public Button leftButton(Object... content) {
+		if (leftAddOn!=null) {
+			throw new IllegalStateException("Left add-on has already been set");
+		}
+		this.leftAddOn = new ButtonImpl(factory, true, content);
+		return (Button) leftAddOn;
+	}
+
+	@Override
+	public InputGroup<?> rightAddOn(Object... addOn) {
 		if (rightAddOn!=null) {
 			throw new IllegalStateException("Right add-on has already been set");
 		}
-		this.rightButton = new ButtonImpl(text, true);
-		return rightButton;
+		this.rightAddOn = new FragmentImpl(addOn);
+		return this;
+	}
+
+	@Override
+	public Button rightButton(Object... content) {
+		if (rightAddOn!=null) {
+			throw new IllegalStateException("Right add-on has already been set");
+		}
+		this.rightAddOn = new ButtonImpl(factory, true, content);
+		return (Button) rightAddOn;
 	}
 	
 	@Override
@@ -63,21 +66,47 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 		StringBuilder sb = new StringBuilder("<div");
 		sb.append(attributes());
 		sb.append(">");
-		if (leftAddOn!=null) {
-			sb.append("<span class=\"input-group-addon\">"+leftAddOn+"</span>");
-		} else if (leftButton!=null) {
-			sb.append(leftButton.toString());
+		if (leftAddOn instanceof Button) {
+			sb.append(leftAddOn);
+		} else if (leftAddOn!=null) {
+			sb.append(factory.span(leftAddOn).addClass("input-group-addon"));
 		}
 		
 		sb.append(control);
-		
-		if (rightAddOn!=null) {
-			sb.append("<span class=\"input-group-addon\">"+rightAddOn+"</span>");
-		} else if (rightButton!=null) {
-			sb.append(rightButton.toString());
-		}		
+
+		if (rightAddOn instanceof Button) {
+			sb.append(rightAddOn);
+		} else if (rightAddOn!=null) {
+			sb.append(factory.span(rightAddOn).addClass("input-group-addon"));
+		} 	
 		sb.append("</div>");
+		if (initScript.length()>0) {
+			sb.append(factory.tag("script", initScript));
+		}
 		return sb.toString();
+		
 	}
 
+	@Override
+	public void close() throws Exception {
+		close(control);
+		close(leftAddOn);
+		close(rightAddOn);	
+	}
+
+	@Override
+	public Button leftPopoverHelpButton(Placement placement, String title, String body) {
+		Button ret = leftButton(factory.glyphicon(Glyphicon.question_sign)).id(factory.nextId());
+		factory.popover(ret, placement, title, body);
+		initScript.append("$(\"#"+ret.getId()+"\").popover();");
+		return ret;
+	}
+
+	@Override
+	public Button rightPopoverHelpButton(Placement placement, String title, String body) {
+		Button ret = rightButton(factory.glyphicon(Glyphicon.question_sign)).id(factory.nextId());
+		factory.popover(ret, placement, title, body);
+		initScript.append("$(\"#"+ret.getId()+"\").popover();");
+		return ret;
+	}
 }

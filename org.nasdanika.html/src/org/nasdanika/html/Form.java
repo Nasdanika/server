@@ -1,7 +1,7 @@
 package org.nasdanika.html;
 
 
-public interface Form extends UIElement<Form>, FieldWriter<Form> {
+public interface Form extends UIElement<Form>, FieldContainer<Form> {
 	
 	/**
 	 * Sets the form as horizontal.

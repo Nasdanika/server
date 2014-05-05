@@ -1,6 +1,6 @@
 package org.nasdanika.html;
 
-public interface Button extends UIElement<Button>, Dropdown<Button> {
+public interface Button extends UIElement<Button>, Dropdown<Button>, Container<Button> {
 	
 	enum Type { BUTTON, SUBMIT, RESET }
 	

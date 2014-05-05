@@ -3,21 +3,31 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 
 class TableImpl extends UIElementImpl<Table> implements Table {
 	
+	TableImpl(HTMLFactory factory) {
+		super(factory);
+	}
+
 	class RowImpl extends UIElementImpl<Row> implements Row {
+		
+		RowImpl() {
+			super(TableImpl.this.factory);
+		}
 		
 		private List<Cell> cells = new ArrayList<>();
 		
 		class CellImpl extends UIElementImpl<Cell> implements Cell {
 			
-			private String data;
+			private List<Object> content = new ArrayList<>();
 			private boolean isHeader;
 
-			CellImpl(String data, boolean isHeader) {
-				this.data = data;
+			CellImpl(boolean isHeader, Object... content) {
+				super(TableImpl.this.factory);
+				content(content);
 				this.isHeader = isHeader;
 			}
 
@@ -34,24 +44,43 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 			@Override
 			public String toString() {
 				String tagName = isHeader ? "th" : "td";
-				if (data==null) {
+				if (content.isEmpty()) {
 					return "<"+tagName+" "+attributes()+"/>";
+				}				
+				StringBuilder sb = new StringBuilder("<").append(tagName).append(attributes()).append(">");
+				for (Object c: content) {
+					sb.append(c);
 				}
-				return "<"+tagName+attributes()+">"+data+"</"+tagName+">";
+				return sb.append("</").append(tagName).append(">").toString();
+			}
+
+			@Override
+			public void close() throws Exception {
+				for (Object c: content) {
+					close(c);
+				}
+			}
+
+			@Override
+			public Cell content(Object... content) {
+				for (Object c: content) {
+					this.content.add(c);
+				}
+				return this;
 			}
 			
 		}
 
 		@Override
-		public Cell td(String data) {
-			CellImpl cell = new CellImpl(data, false);
+		public Cell cell(Object... content) {
+			CellImpl cell = new CellImpl(false, content);
 			cells.add(cell);
 			return cell;
 		}
 
 		@Override
-		public Cell th(String data) {
-			CellImpl cell = new CellImpl(data, true);
+		public Cell header(Object... content) {
+			CellImpl cell = new CellImpl(true, content);
 			cells.add(cell);
 			return cell;
 		}
@@ -71,6 +100,13 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 			return ret.toString();
 		}
 		
+		@Override
+		public void close() throws Exception {
+			for (Cell c: cells) {
+				c.close();
+			}			
+		}
+		
 	}
 	
 	private List<Row> rows = new ArrayList<>();
@@ -81,7 +117,7 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 	private boolean responsive;
 
 	@Override
-	public Row tr() {
+	public Row row() {
 		Row row = new RowImpl();
 		rows.add(row);
 		return row;
@@ -178,6 +214,13 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 			ret.append("</div>");
 		}
 		return ret.toString();
+	}
+	
+	@Override
+	public void close() throws Exception {
+		for (Row r: rows) {
+			r.close();
+		}		
 	}
 
 }

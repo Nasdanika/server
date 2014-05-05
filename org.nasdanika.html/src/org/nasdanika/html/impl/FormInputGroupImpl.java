@@ -2,15 +2,17 @@ package org.nasdanika.html.impl;
 
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FormInputGroup;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.HTMLFactory.Placement;
 
 class FormInputGroupImpl extends FormGroupImpl<FormInputGroup, InputGroupImpl> implements FormInputGroup {
 		
-	FormInputGroupImpl(FormImpl form, String label, String controlId, String controlDefintion, String helpText) {
-		super(form, label, controlId, new InputGroupImpl(controlDefintion), helpText);
+	FormInputGroupImpl(HTMLFactory factory, FormImpl form, Object label, Object controlId, Object control, Object helpText) {
+		super(factory, form, label, controlId, new InputGroupImpl(factory, control), helpText);
 	}
 
 	@Override
-	public FormInputGroup leftAddOn(String addOn) {
+	public FormInputGroup leftAddOn(Object... addOn) {
 		control.leftAddOn(addOn);
 		return this;
 	}
@@ -22,19 +24,29 @@ class FormInputGroupImpl extends FormGroupImpl<FormInputGroup, InputGroupImpl> i
 	}
 
 	@Override
-	public Button leftButton(String text) {		
-		return control.leftButton(text);
+	public Button leftButton(Object... content) {		
+		return control.leftButton(content);
 	}
 
 	@Override
-	public FormInputGroup rightAddOn(String addOn) {
+	public FormInputGroup rightAddOn(Object... addOn) {
 		control.rightAddOn(addOn);
 		return this;
 	}
 
 	@Override
-	public Button rightButton(String text) {
-		return control.rightButton(text);
+	public Button rightButton(Object... content) {
+		return control.rightButton(content);
+	}
+
+	@Override
+	public Button leftPopoverHelpButton(Placement placement, String title, String body) {
+		return control.leftPopoverHelpButton(placement, title, body);
+	}
+
+	@Override
+	public Button rightPopoverHelpButton(Placement placement, String title, String body) {
+		return control.rightPopoverHelpButton(placement, title, body);
 	}
 	
 }

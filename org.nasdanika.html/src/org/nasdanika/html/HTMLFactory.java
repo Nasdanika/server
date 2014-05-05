@@ -28,7 +28,11 @@ public interface HTMLFactory {
 	 * @param content
 	 * @return
 	 */
-	UIElement<?> tag(String tagName, String content);
+	Tag tag(String tagName, Object... content);
+	
+	Tag div(Object... content);
+	
+	Tag span(Object... content);
 	
 	enum InputType { 
 		button,
@@ -60,6 +64,8 @@ public interface HTMLFactory {
 		}
 	}
 	
+	Fragment fragment(Object... content);
+	
 	/**
 	 * A convenience method for creating form inputs
 	 * @param type Input type
@@ -69,27 +75,19 @@ public interface HTMLFactory {
 	 * @param placeholder Placeholder - optional
 	 * @return
 	 */
-	UIElement<?> input(InputType type, String name, String value, String id, String placeholder);
+	Tag input(InputType type, String name, String value, String id, String placeholder);
 	
-	String ul(Iterable<String> items);
-	
-	String ul(String... items);
-	
-	String ol(Iterable<String> items);
-	
-	String ol(String... items);	
-	
-	ContentNamedContainer createContentNamedContainer(String name, String hint, String content);
-	
-	AjaxNamedContainer createAjaxNamedContainer(String name, String hint, String location);
+	Select select(String name, String id, String placeholder);
 
-	String tabs(Iterable<NamedContainer> tabs);
-
-	String tabs(NamedContainer... tabs);
+	Tag link(String href, Object... content);
 	
-	String panel(UIElement.Style style, String header, String body, String footer);
-			
-	String link(String url, String text, String hint, String target);
+	Tag ul(Iterable<?> items);
+	
+	Tag ol(Iterable<?> items);
+	
+	Tabs tabs();
+	
+	Tag panel(UIElement.Style style, Object header, Object body, Object footer);
 
 	/**
 	 * Build a link for the in-page router.
@@ -99,7 +97,7 @@ public interface HTMLFactory {
 	 * @param hint
 	 * @return
 	 */
-	String routeLink(String targetElement, String path, String text, String hint);	
+	Tag routeLink(String targetElement, String path, Object... content);	
 	
 	/**
 	 * Generates a router application
@@ -109,36 +107,34 @@ public interface HTMLFactory {
 	 * @param body Application body.
 	 * @return
 	 */
-	String routerApplication(String title, String initialRoute, String head, String body);
+	AutoCloseable routerApplication(Object title, Object initialRoute, Object head, Object body);
 
-	ListGroup listGroup();
+	Tag label(Style style, Object... content);
 	
-	LinkGroup linkGroup();
-	
-	String label(String content, Style style);
-	
-	String alert(String content, Style style, boolean dismissable);
+	Tag alert(Style style, boolean dismissable, Object... content);
 	
 	// TODO - code from InputStream/Reader, e.g. from class loader resource, escape for putting to attributes, e.g. onclick() 
 	// String code(InputStream in, boolean escape);
-	
-	// TODO script(String) - wraps into <script> with proper new lines.
 	
 	/****************************
 	 *  Complex elements API's  *
 	 ****************************/
 
-	Navbar navbar(String brand);
+	ListGroup listGroup();
+	
+	LinkGroup linkGroup();
+	
+	Navbar navbar(Object brand);
 	
 	Table table();
 			
 	ApplicationPanel applicationPanel();
 	
-	Button button(String text);
+	Button button(Object... content);
 	
 	Form form();
 	
-	InputGroup<?> inputGroup(String control);
+	InputGroup<?> inputGroup(Object control);
 
 	Accordion accordion();
 	
@@ -156,4 +152,215 @@ public interface HTMLFactory {
 	 */
 	<T extends UIElement<?>> T popover(T element, Placement placement, String title, String text);
 	
+	enum Glyphicon {
+		asterisk,
+		plus,
+		euro,
+		minus,
+		cloud,
+		envelope,
+		pencil,
+		glass,
+		music,
+		search,
+		heart,
+		star,
+		star_empty,
+		user,
+		film,
+		th_large,
+		th,
+		th_list,
+		ok,
+		remove,
+		zoom_in,
+		zoom_out,
+		off,
+		signal,
+		cog,
+		trash,
+		home,
+		file,
+		time,
+		road,
+		download_alt,
+		download,
+		upload,
+		inbox,
+		play_circle,
+		repeat,
+		refresh,
+		list_alt,
+		lock,
+		flag,
+		headphones,
+		volume_off,
+		volume_down,
+		volume_up,
+		qrcode,
+		barcode,
+		tag,
+		tags,
+		book,
+		bookmark,
+		print,
+		camera,
+		font,
+		bold,
+		italic,
+		text_height,
+		text_width,
+		align_left,
+		align_center,
+		align_right,
+		align_justify,
+		list,
+		indent_left,
+		indent_right,
+		facetime_video,
+		picture,
+		map_marker,
+		adjust,
+		tint,
+		edit,
+		share,
+		check,
+		move,
+		step_backward,
+		fast_backward,
+		backward,
+		play,
+		pause,
+		stop,
+		forward,
+		fast_forward,
+		step_forward,
+		eject,
+		chevron_left,
+		chevron_right,
+		plus_sign,
+		minus_sign,
+		remove_sign,
+		ok_sign,
+		question_sign,
+		info_sign,
+		screenshot,
+		remove_circle,
+		ok_circle,
+		ban_circle,
+		arrow_left,
+		arrow_right,
+		arrow_up,
+		arrow_down,
+		share_alt,
+		resize_full,
+		resize_small,
+		exclamation_sign,
+		gift,
+		leaf,
+		fire,
+		eye_open,
+		eye_close,
+		warning_sign,
+		plane,
+		calendar,
+		random,
+		comment,
+		magnet,
+		chevron_up,
+		chevron_down,
+		retweet,
+		shopping_cart,
+		folder_close,
+		folder_open,
+		resize_vertical,
+		resize_horizontal,
+		hdd,
+		bullhorn,
+		bell,
+		certificate,
+		thumbs_up,
+		thumbs_down,
+		hand_right,
+		hand_left,
+		hand_up,
+		hand_down,
+		circle_arrow_right,
+		circle_arrow_left,
+		circle_arrow_up,
+		circle_arrow_down,
+		globe,
+		wrench,
+		tasks,
+		filter,
+		briefcase,
+		fullscreen,
+		dashboard,
+		paperclip,
+		heart_empty,
+		link,
+		phone,
+		pushpin,
+		usd,
+		gbp,
+		sort,
+		sort_by_alphabet,
+		sort_by_alphabet_alt,
+		sort_by_order,
+		sort_by_order_alt,
+		sort_by_attributes,
+		sort_by_attributes_alt,
+		unchecked,
+		expand,
+		collapse_down,
+		collapse_up,
+		log_in,
+		flash,
+		log_out,
+		new_window,
+		record,
+		save,
+		open,
+		saved,
+		import_icon,
+		export,
+		send,
+		floppy_disk,
+		floppy_saved,
+		floppy_remove,
+		floppy_save,
+		floppy_open,
+		credit_card,
+		transfer,
+		cutlery,
+		header,
+		compressed,
+		earphone,
+		phone_alt,
+		tower,
+		stats,
+		sd_video,
+		hd_video,
+		subtitles,
+		sound_stereo,
+		sound_dolby,
+		sound_5_1,
+		sound_6_1,
+		sound_7_1,
+		copyright_mark,
+		registration_mark,
+		cloud_download,
+		cloud_upload,
+		tree_conifer,
+		tree_deciduous;
+		
+		public String code() {
+			if ("import_icon".equals(name())) {
+				return "import";
+			}
+			return name().replace("_", "-");
+		}
+	}
+	
+	Tag glyphicon(Glyphicon glyphicon);
 }

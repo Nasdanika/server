@@ -6,8 +6,12 @@ interface NavbarConfig {
 
 	String getCollapseTargetId();
 
-	String getBrand();
+	Object getBrand();
 
-	String getItems();
+	String getLeftItems();
 
+	String getRightItems();
+	
+	String getForm();
+	
 }

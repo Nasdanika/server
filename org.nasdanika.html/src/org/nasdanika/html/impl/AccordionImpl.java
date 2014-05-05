@@ -8,15 +8,13 @@ import org.nasdanika.html.HTMLFactory;
 
 class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
-	private HTMLFactory builder;
-	
-	private class Item {
-		String title;
-		String body;
+	private class Item implements AutoCloseable {
+		Object title;
+		Object body;
 		Style style;
 		private boolean initial;
 		
-		public Item(String title, String body, Style style, boolean initial) {
+		Item(Object title, Object body, Style style, boolean initial) {
 			super();
 			this.title = title;
 			this.body = body;
@@ -26,7 +24,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 		
 		@Override
 		public String toString() {
-			String id = builder.nextId()+"_collapse";
+			String id = factory.nextId()+"_collapse";
 			StringBuilder ret = new StringBuilder();
 			ret.append("<div class=\"panel panel-"+style.name().toLowerCase()+"\">");
 				ret.append("<div class=\"panel-heading\">");
@@ -49,19 +47,29 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 			ret.append("</div>");				
 			return ret.toString();
 		}
+
+		@Override
+		public void close() throws Exception {
+			if (title instanceof AutoCloseable) {
+				((AutoCloseable) title).close();
+			}
+			if (body instanceof AutoCloseable) {
+				((AutoCloseable) body).close();
+			}			
+		}
 		
 	}
 	
 	private List<Item> items = new ArrayList<>();
 
-	public AccordionImpl(HTMLFactory builder) {
-		this.builder = builder;
-		id(builder.nextId()+"_accordion");
+	public AccordionImpl(HTMLFactory factory) {
+		super(factory);
+		id(factory.nextId()+"_accordion");
 		addClass("panel-group");
 	}
 	
 	@Override
-	public Accordion item(String title, String body, Style style) {
+	public Accordion item(Object title, Object body, Style style) {
 		items.add(new Item(title, body, style, items.isEmpty()));
 		return this;
 	}
@@ -74,6 +82,13 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 		}
 		sb.append("</div>");
 		return sb.toString();
+	}
+
+	@Override
+	public void close() throws Exception {
+		for (Item item: items) {
+			item.close();
+		}		
 	}
 
 }

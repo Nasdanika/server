@@ -2,154 +2,111 @@ package org.nasdanika.html.impl;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.nasdanika.html.Accordion;
-import org.nasdanika.html.AjaxNamedContainer;
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.Button;
-import org.nasdanika.html.ContentNamedContainer;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
-import org.nasdanika.html.NamedContainer;
 import org.nasdanika.html.Navbar;
 import org.nasdanika.html.Table;
+import org.nasdanika.html.Tabs;
+import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Style;
 
 /**
- * HTML builder which relies on Bootstrap styles and scripts.
+ * HTML factory which relies on Bootstrap styles and scripts.
  * @author Pavel
  *
  */
 public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	
-	private static AtomicLong idCounter = new AtomicLong();
-	
-	@Override
-	public String nextId() {
-		return "nsd_"+Long.toString(idCounter.incrementAndGet(), Character.MAX_RADIX);
-	}
-	
-
-	@Override
-	public UIElement<UIElement<?>> tag(final String tagName, final String content) {
-		return new UIElementImpl<UIElement<?>>() {
-			
-			@Override
-			public String toString() {
-				if (content==null) {
-					return "<"+tagName+" "+attributes()+"/>";
-				}
-				return "<"+tagName+attributes()+">"+content+"</"+tagName+">";
-			}
-		};
-	}
-	
 	private RouterApplicationRenderer routerApplicationRenderer = new RouterApplicationRenderer();
 
 	@Override
-	public String routerApplication(
-			final String title, 
-			final String initialRoute,
-			final String head, 
-			final String body) {
-		return routerApplicationRenderer.generate(new RouterApplicationConfig() {
-						
+	public AutoCloseable routerApplication(
+			final Object title, 
+			final Object initialRoute,
+			final Object head, 
+			final Object body) {
+		
+		return new AutoCloseable() {
+			
 			@Override
-			public String getTitle() {
-				return title;
+			public void close() throws Exception {
+				if (title instanceof AutoCloseable) {
+					((AutoCloseable) title).close();
+				}
+				if (initialRoute instanceof AutoCloseable) {
+					((AutoCloseable) initialRoute).close();
+				}
+				if (head instanceof AutoCloseable) {
+					((AutoCloseable) head).close();
+				}
+				if (body instanceof AutoCloseable) {
+					((AutoCloseable) body).close();
+				}
+				
 			}
 			
 			@Override
-			public String getInitialRoute() {
-				return initialRoute;
+			public String toString() {
+				return routerApplicationRenderer.generate(new RouterApplicationConfig() {
+					
+					@Override
+					public Object getTitle() {
+						return title;
+					}
+					
+					@Override
+					public Object getInitialRoute() {
+						return initialRoute;
+					}
+					
+					@Override
+					public Object getHead() {
+						return head == null ? "" : head;
+					}
+					
+					@Override
+					public Object getBody() {
+						return body==null ? "" : body;
+					}
+					
+					@Override
+					public List<String> getScripts() {
+						return scripts;
+					}
+					
+					@Override
+					public List<String> getStylesheets() {
+						return stylesheets;
+					}
+					
+				});
 			}
-			
-			@Override
-			public String getHead() {
-				return head == null ? "" : head;
-			}
-			
-			@Override
-			public String getBody() {
-				return body==null ? "" : body;
-			}
-			
-			@Override
-			public List<String> getScripts() {
-				return scripts;
-			}
-			
-			@Override
-			public List<String> getStylesheets() {
-				return stylesheets;
-			}
-			
-		});
+		};
+		
 	}
 
 	@Override
-	public Navbar navbar(final String brand) {
+	public Navbar navbar(final Object brand) {
 		return new NavbarImpl(this, brand);
 	}
 
 	@Override
 	public ApplicationPanel applicationPanel() {
-		return new ApplicationPanelImpl();
+		return new ApplicationPanelImpl(this);
 	}
 	
 
 	@Override
 	public Table table() {
-		return new TableImpl();
+		return new TableImpl(this);
 	}
-
-	@Override
-	public ContentNamedContainer createContentNamedContainer(final String name, final String hint, final String content) {
-		return new ContentNamedContainer() {
-			
-			@Override
-			public String getName() {
-				return name;
-			}
-			
-			@Override
-			public String getHint() {
-				return hint;
-			}
-			
-			@Override
-			public String getContent() {
-				return content;
-			}
-		};
-	}
-
-	@Override
-	public AjaxNamedContainer createAjaxNamedContainer(final String name, final String hint, final String location) {
-		return new AjaxNamedContainer() {
-			
-			@Override
-			public String getName() {
-				return name;
-			}
-			
-			@Override
-			public String getHint() {
-				return hint;
-			}
-			
-			@Override
-			public String getLocation() {
-				return location;
-			}
-		};
-	}
-	
-	private TabAjaxDataToggleScriptRenderer tabAjaxDataToggleScriptRenderer = new TabAjaxDataToggleScriptRenderer();
 	
 	private List<String> scripts = new ArrayList<>();
 	private List<String> stylesheets = new ArrayList<>();
@@ -161,115 +118,49 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	public List<String> getStylesheets() {
 		return stylesheets;
 	}
-	
-	@Override
-	public String tabs(Iterable<NamedContainer> tabs) {
-		String tabId = "tab_"+Long.toString(idCounter.incrementAndGet(), Character.MAX_RADIX);
-		
-		boolean hasAjaxTabs = false;
-		StringBuilder ret = new StringBuilder();
-		ret.append("<ul class=\"nav nav-tabs\">");
-		int idx = 0;
-		for (NamedContainer tab: tabs) {
-			if (idx==0) {
-				ret.append("<li class=\"active\">");
-			} else {
-				ret.append("<li>");
-			}
-			
-			ret.append("<a ");
-			if (tab.getHint()!=null) {
-				ret.append("title=\""+tab.getHint()+"\" ");
-			}
-			if (tab instanceof ContentNamedContainer) {
-				ret.append("href=\"#" + tabId + "_" + idx + "\" data-toggle=\"tab\">");
-			} else if (tab instanceof AjaxNamedContainer) {
-				ret.append("href=\""+((AjaxNamedContainer) tab).getLocation()+"\" data-target=\"#" + tabId + "_" + idx + "\" data-toggle=\"tabajax\">");	
-				hasAjaxTabs = true;
-			} else {
-				throw new IllegalArgumentException("Unexpected tab type: "+tab);
-			}
-			
-			ret.append(tab.getName()+"</a></li>");
-			
-			++idx;
-		}
-		ret.append("</ul>");
-		ret.append("<div class=\"tab-content\">");
-		
-		idx = 0;
-		for (NamedContainer tab: tabs) {
-			ret.append("<div class=\"tab-pane");
-			
-			if (idx==0) {
-				ret.append(" active");
-			}
-			
-			ret.append("\" id=\"");
-			ret.append(tabId + "_" + idx);
-			ret.append("\">");
-			if (tab instanceof ContentNamedContainer) {
-				ret.append(((ContentNamedContainer) tab).getContent());
-			} else if (tab instanceof AjaxNamedContainer) {
-				// NOP - should be loaded asynchronously.
-			} else {
-				throw new IllegalArgumentException("Unexpected tab type: "+tab);
-			}
-			ret.append("</div>");
-			++idx;
-		}
-		ret.append("</div>");
-		
-		if (hasAjaxTabs) {
-			ret.append(tabAjaxDataToggleScriptRenderer.generate(null));
-		}
-		
-		return ret.toString();
-	}
 
 	@Override
-	public String panel(Style style, String header, String body, String footer) {
-		StringBuilder ret = new StringBuilder();
-		ret.append("<div class=\"panel panel-"+style.name().toLowerCase()+"\">");
+	public Tag panel(Style style, final Object header, final Object body, final Object footer) {
+		Tag panel = div().addClass("panel").addClass("panel-"+style.name().toLowerCase());
 		if (header!=null) {
-			ret.append("<div class=\"panel-heading\">");
-			ret.append("<h3 class=\"panel-title\">"+header+"</h3>");
-			ret.append("</div>");
+			panel.content(div(tag("h3", header).addClass("panel-title")).addClass("panel-heading"));
 		}
 		
-		if (body!=null) {
-			ret.append("<div class=\"panel-body\">");
-			ret.append(body);
-			ret.append("</div>");
+		if (body instanceof Table || body instanceof ListGroup || body instanceof LinkGroup) {
+			panel.content(body);
+		} else if (body!=null) {
+			panel.content(div(body).addClass("panel-body"));
 		}
-								
+		
 		if (footer!=null) {
-			ret.append("<div class=\"panel-footer\">"+footer+"</div>");
+			panel.content(div(footer).addClass("panel-footer"));			
 		}
 		
-		ret.append("</div>");				
-		return ret.toString();
+		return panel;
 	}
 
 	@Override
-	public Button button(String text) {
-		return new ButtonImpl(text, false);
+	public Button button(Object... content) {
+		return new ButtonImpl(this, false, content);
 	}
 
 	@Override
-	public String label(String content, Style style) {
-		return "<span class=\"label label-"+style.name().toLowerCase()+"\">"+content+"</span>";
+	public Tag label(Style style, Object... content) {
+		return span(content).addClass("label").addClass("label-"+style.name().toLowerCase());
 	}
 	
+	private static final String ALERT_CLOSE_BUTTON = "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>";
+	
 	@Override
-	public String alert(String content, Style style, boolean dismissable) {
+	public Tag alert(Style style, boolean dismissable, Object... content) {
 		if (dismissable) {
-			return "<div class=\"alert alert-"+style.name().toLowerCase()+" alert-dismissable\">" + 
-					"<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>" + 
-					content + 
-					"</div>";
+			return div(ALERT_CLOSE_BUTTON)
+					.content(content)
+					.addClass("alert")
+					.addClass("alert-"+style.name().toLowerCase())
+					.addClass("alert-dismissable");			
 		}
-		return "<div class=\"alert alert-"+style.name().toLowerCase()+"\">"+content+"</div>";
+		return div(content).addClass("alert").addClass("alert-"+style.name().toLowerCase());
 	}
 	
 	@Override
@@ -283,8 +174,8 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 	
 	@Override
-	public InputGroup<?> inputGroup(String control) {
-		return new InputGroupImpl(control);
+	public InputGroup<?> inputGroup(Object control) {
+		return new InputGroupImpl(this, control);
 	}
 	
 	@Override
@@ -294,7 +185,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 
 	@Override
 	public Form form() {
-		return new FormImpl(this);
+		return new FormImpl(this, false, false);
 	}
 	
 	@Override
@@ -312,13 +203,32 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public UIElement<?> input(InputType type, String name, String value, String id, String placeholder) {
-		return tag("input", null)
+	public Tag input(InputType type, String name, String value, String id, String placeholder) {
+		return tag("input")
 				.attribute("type", type.code())
 				.attribute("name", name)
 				.attribute("value", value)
 				.id(id)
-				.attribute("placeholder", placeholder);
-		
+				.attribute("placeholder", placeholder).addClass("form-control");		
+	}
+
+	@Override
+	public Tabs tabs() {
+		return new TabsImpl(this);
+	}
+
+	@Override
+	public Tag glyphicon(Glyphicon glyphicon) {		
+		return span("").addClass("glyphicon").addClass("glyphicon-"+glyphicon.code());
+	}
+	
+	@Override
+	public Tag div(Object... content) {
+		return tag("div", content);
+	}
+	
+	@Override
+	public Tag span(Object... content) {
+		return tag("span", content);
 	}
 }

@@ -2,58 +2,60 @@ package org.nasdanika.html.impl;
 
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FieldSet;
-import org.nasdanika.html.FieldWriter;
+import org.nasdanika.html.FormFragment;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
 
 class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 	
-	private FieldWriterImpl<FieldSet> writer;
+	private FieldContainerImpl<FieldSet> container;
 	private boolean disabled;
 
-	FieldSetImpl(FormImpl form) {
-		writer = new FieldWriterImpl<FieldSet>(this, form);				
+	FieldSetImpl(HTMLFactory factory, FormImpl form) {
+		super(factory);
+		container = new FieldContainerImpl<FieldSet>(factory, this, form);				
 	}
 
 	@Override
-	public FieldSet content(String content) {
-		return writer.content(content);
+	public FieldSet content(Object... content) {
+		return container.content(content);
 	}
 
 	@Override
-	public FormGroup<?> formGroup(String label, String controlId, String controlDefintion, String helpText) {
-		return writer.formGroup(label, controlId, controlDefintion, helpText);
+	public FormGroup<?> formGroup(Object label, Object controlId, Object control, Object helpText) {
+		return container.formGroup(label, controlId, control, helpText);
 	}
 
 	@Override
-	public FieldSet checkbox(String label, String checkboxDefinition, boolean inline) {
-		return writer.checkbox(label, checkboxDefinition, inline);
+	public FieldSet checkbox(Object label, Object checkboxControl, boolean inline) {
+		return container.checkbox(label, checkboxControl, inline);
 	}
 
 	@Override
-	public FieldSet radio(String label,	String radioDefinition, boolean inline) {
-		return writer.radio(label, radioDefinition, inline);
+	public FieldSet radio(Object label,	Object radioControl, boolean inline) {
+		return container.radio(label, radioControl, inline);
 	}
 
 	@Override
-	public Button button(String text) {
-		return writer.button(text);
+	public Button button(Object... content) {
+		return container.button(content);
 	}
 
 	@Override
-	public InputGroup<?> inputGroup(String control) {
-		return writer.inputGroup(control);
+	public InputGroup<?> inputGroup(Object control) {
+		return container.inputGroup(control);
 	}
 
 	@Override
 	public FieldSet fieldset() {
-		return writer.fieldset();
+		return container.fieldset();
 	}
 
 	@Override
-	public FieldWriter<?> fieldWriter() {
-		return writer.fieldWriter();
+	public FormFragment formFragment() {
+		return container.formFragment();
 	}
 
 	@Override
@@ -74,14 +76,19 @@ class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 			sb.append(" disabled=\"disabled\"");
 		}
 		sb.append(">");
-		sb.append(writer.toString());
+		sb.append(container.toString());
 		sb.append("</fieldset>");
 		return sb.toString();
 	}
 
 	@Override
-	public FormInputGroup formInputGroup(String label, String controlId, String controlDefintion, String helpText) {
-		return writer.formInputGroup(label, controlId, controlDefintion, helpText);
+	public FormInputGroup formInputGroup(Object label, Object controlId, Object control, Object helpText) {
+		return container.formInputGroup(label, controlId, control, helpText);
+	}
+
+	@Override
+	public void close() throws Exception {
+		container.close();		
 	}
 
 }

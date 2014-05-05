@@ -4,7 +4,7 @@ public interface FormGroup<T extends FormGroup<?>> extends UIElement<T> {
 	
 	enum Status { SUCCESS, WARNING, ERROR }
 
-	T status(FormGroup.Status status);
+	T status(Status status);
 	
 	T feedback(boolean feedback);
 	

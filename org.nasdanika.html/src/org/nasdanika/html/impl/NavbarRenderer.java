@@ -19,9 +19,15 @@ public class NavbarRenderer
   protected final String TEXT_5 = "      " + NL + "      \t<a class=\"navbar-brand\" href=\"#\">";
   protected final String TEXT_6 = "</a>";
   protected final String TEXT_7 = NL + "    </div>" + NL + "" + NL + "    <!-- Collect the nav links, forms, and other content for toggling -->" + NL + "    <div class=\"collapse navbar-collapse\" id=\"";
-  protected final String TEXT_8 = "\">" + NL + "      <ul class=\"nav navbar-nav\">" + NL + "    \t";
-  protected final String TEXT_9 = NL + "      </ul>" + NL + "    </div><!-- /.navbar-collapse -->" + NL + "  </div><!-- /.container-fluid -->" + NL + "</nav>";
-  protected final String TEXT_10 = NL;
+  protected final String TEXT_8 = "\">" + NL + "     \t";
+  protected final String TEXT_9 = NL + "\t      <ul class=\"nav navbar-nav\">" + NL + "\t    \t";
+  protected final String TEXT_10 = NL + "\t      </ul>" + NL + "\t    ";
+  protected final String TEXT_11 = NL + "\t    " + NL + "\t    ";
+  protected final String TEXT_12 = NL + "      " + NL + "     \t";
+  protected final String TEXT_13 = NL + "\t      <ul class=\"nav navbar-nav navbar-right\">" + NL + "\t    \t";
+  protected final String TEXT_14 = NL + "\t      </ul>" + NL + "\t    ";
+  protected final String TEXT_15 = NL + "      " + NL + "    </div><!-- /.navbar-collapse -->" + NL + "  </div><!-- /.container-fluid -->" + NL + "</nav>";
+  protected final String TEXT_16 = NL;
 
   public String generate(Object argument)
   {
@@ -43,9 +49,21 @@ public class NavbarRenderer
     stringBuffer.append(TEXT_7);
     stringBuffer.append(config.getCollapseTargetId());
     stringBuffer.append(TEXT_8);
-    stringBuffer.append(config.getItems());
+     if (config.getLeftItems()!=null) { 
     stringBuffer.append(TEXT_9);
+    stringBuffer.append(config.getLeftItems());
     stringBuffer.append(TEXT_10);
+     } 
+    stringBuffer.append(TEXT_11);
+    stringBuffer.append(config.getForm());
+    stringBuffer.append(TEXT_12);
+     if (config.getRightItems()!=null) { 
+    stringBuffer.append(TEXT_13);
+    stringBuffer.append(config.getRightItems());
+    stringBuffer.append(TEXT_14);
+     } 
+    stringBuffer.append(TEXT_15);
+    stringBuffer.append(TEXT_16);
     return stringBuffer.toString();
   }
 }

@@ -4,7 +4,7 @@ public interface Table extends UIElement<Table> {
 	
 	interface Row extends UIElement<Row> {
 		
-		interface Cell extends UIElement<Cell> {
+		interface Cell extends UIElement<Cell>, Container<Cell> {
 			
 			Cell colspan(int colspan);
 			
@@ -12,15 +12,15 @@ public interface Table extends UIElement<Table> {
 			
 		}				
 		
-		Cell td(String data);
+		Cell cell(Object... content);
 		
-		Cell th(String data);
+		Cell header(Object... content);
 		
 		Row style(Style style);
 		
 	}
 	
-	Row tr();
+	Row row();
 	
 	Table bordered(boolean bordered);
 	

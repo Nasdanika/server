@@ -2,6 +2,8 @@ package org.nasdanika.html.impl;
 
 import java.util.List;
 
+import org.nasdanika.html.ApplicationPanel.ContentPanel;
+
 
 interface ApplicationPanelConfig {
 
@@ -9,13 +11,13 @@ interface ApplicationPanelConfig {
 
 	String getHeader();
 
-	String getHeaderLink();
+	Object getHeaderLink();
 
 	int getMinHeight();
 
 	String getNavigation();
 
-	List<String> getContentPanels();
+	List<ContentPanel> getContentPanels();
 
 	String getFooter();
 

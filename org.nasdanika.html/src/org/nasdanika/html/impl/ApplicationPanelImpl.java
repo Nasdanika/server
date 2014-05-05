@@ -7,28 +7,37 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.HTMLFactory;
 
 class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements ApplicationPanel {
 
-	private String navigation;
-	private String header;
-	private String headerLink;
+	ApplicationPanelImpl(HTMLFactory factory) {
+		super(factory);
+	}
+
+	private List<Object> navigation = new ArrayList<>();
+	private List<Object> header = new ArrayList<>();
+	private Object headerLink;
 
 	@Override
-	public ApplicationPanel header(String header) {
-		this.header = header;
+	public ApplicationPanel header(Object... header) {
+		for (Object h: header) {
+			this.header.add(h);
+		}
 		return this;
 	}
 	
 	@Override
-	public ApplicationPanel headerLink(String url) {
+	public ApplicationPanel headerLink(Object url) {
 		this.headerLink = url;
 		return this;
 	}
 
 	@Override
-	public ApplicationPanel navigation(String navigation) {
-		this.navigation = navigation;
+	public ApplicationPanel navigation(Object... navigation) {
+		for (Object h: navigation) {
+			this.navigation.add(h);
+		}
 		return this;
 	}
 	
@@ -36,15 +45,18 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	private int minHeight;
 	private int width;
 	private org.nasdanika.html.UIElement.Style style = Style.DEFAULT;
-	private String footer;
+	private List<Object> footer = new ArrayList<>();
 	
 	private class ContentPanelImpl extends UIElementImpl<ContentPanel> implements ContentPanel {
 		
 		private Map<DeviceSize, Integer> sizeMap = new HashMap<>();
-		private String content;
+		private List<Object> content = new ArrayList<>();
 		
-		ContentPanelImpl(String content) {
-			this.content = content;
+		ContentPanelImpl(HTMLFactory factory, Object... content) {
+			super(factory);
+			for (Object c: content) {
+				this.content.add(c);
+			}
 		}
 
 		@Override
@@ -62,35 +74,51 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			} else {
 				ret.append(" class=\"");
 				for (Entry<DeviceSize, Integer> se: sizeMap.entrySet()) {
-					ret.append("col-"+se.getKey().code+"-"+se.getValue());
-					ret.append(" ");
+					ret.append("col-"+se.getKey().code+"-"+se.getValue()).append(" ");
 				}
-				ret.append(merge("class"));
-				ret.append("\"");
-				ret.append(attributes("class"));
+				ret.append(merge("class")).append("\"").append(attributes("class"));
 			}
 			
 			ret.append(">");			
-			
-			if (content!=null) {
-				ret.append(content);
+
+			for (Object c: content) {
+				ret.append(c);
 			}
-			ret.append("</div>");
-			return ret.toString();
+			
+			return ret.append("</div>").toString();
+		}
+
+		@Override
+		public ContentPanel content(Object... content) {
+			for (Object c: content) {
+				this.content.add(c);
+			}
+			return this;
+		}
+
+		@Override
+		public void close() throws Exception {
+			for (Object c: content) {
+				if (c instanceof AutoCloseable) {
+					((AutoCloseable) c).close();
+				}
+			}		
 		}
 		
 	}
 
 	@Override
-	public ContentPanel content(final String content) {
-		ContentPanelImpl contentPanel = new ContentPanelImpl(content);
+	public ContentPanel contentPanel(Object... content) {
+		ContentPanelImpl contentPanel = new ContentPanelImpl(factory, content);
 		contentPanels.add(contentPanel);
 		return contentPanel;
 	}
 
 	@Override
-	public ApplicationPanel footer(String footer) {
-		this.footer = footer;
+	public ApplicationPanel footer(Object... footer) {
+		for (Object f: footer) {
+			this.footer.add(f);
+		}
 		return this;
 	}
 
@@ -116,7 +144,6 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	
 	@Override
 	public String toString() {
-		// TODO Auto-generated method stub
 		return applicationPanelRenderer.generate(new ApplicationPanelConfig() {
 			
 			@Override
@@ -131,7 +158,11 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			
 			@Override
 			public String getNavigation() {
-				return navigation == null ? "" : navigation;
+				StringBuilder sb = new StringBuilder();
+				for (Object o: navigation) {
+					sb.append(o);
+				}
+				return sb.toString();
 			}
 			
 			@Override
@@ -140,29 +171,58 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			}
 			
 			@Override
-			public String getHeaderLink() {
+			public Object getHeaderLink() {
 				return headerLink;
 			}
 			
 			@Override
 			public String getHeader() {
-				return header;
+				StringBuilder sb = new StringBuilder();
+				for (Object o: header) {
+					sb.append(o);
+				}
+				return sb.toString();
 			}
 			
 			@Override
 			public String getFooter() {
-				return footer;
+				StringBuilder sb = new StringBuilder();
+				for (Object o: footer) {
+					sb.append(o);
+				}
+				return sb.toString();
 			}
 			
 			@Override
-			public List<String> getContentPanels() {
-				List<String> ret = new ArrayList<>();
-				for (ContentPanel cp: contentPanels) {
-					ret.add(cp.toString());
-				}
-				return ret;
+			public List<ContentPanel> getContentPanels() {
+				return contentPanels;
 			}
 		});
+	}
+
+	@Override
+	public void close() throws Exception {
+		for (Object o: navigation) {
+			if (o instanceof AutoCloseable) {
+				((AutoCloseable) o).close();
+			}
+		}
+		for (Object o: header) {
+			if (o instanceof AutoCloseable) {
+				((AutoCloseable) o).close();
+			}
+		}
+		for (Object o: footer) {
+			if (o instanceof AutoCloseable) {
+				((AutoCloseable) o).close();
+			}
+		}
+		if (headerLink instanceof AutoCloseable) {
+			((AutoCloseable) headerLink).close();
+		}
+		for (ContentPanel cp: contentPanels) {
+			cp.close();
+		}		
 	}
 
 }

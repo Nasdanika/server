@@ -4,26 +4,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.Dropdown;
+import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Navbar;
+import org.nasdanika.html.Tag;
 
 class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	
-	private String brand;
-	private HTMLFactory builder;
+	private Object brand;
 
-	NavbarImpl(HTMLFactory builder, String brand) {
-		this.builder = builder;
+	NavbarImpl(HTMLFactory factory, Object brand) {
+		super(factory);
 		this.brand = brand;
 	}
 	
-	private List<Object> items = new ArrayList<>();
+	private List<Object> leftItems = new ArrayList<>();
+	private List<Object> rightItems = new ArrayList<>();
 	
 	private class ItemEntry {
-		String item;
+		Object item;
 		boolean active;
 		
-		ItemEntry(String item, boolean active) {
+		ItemEntry(Object item, boolean active) {
 			super();
 			this.item = item;
 			this.active = active;
@@ -39,8 +41,8 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	}
 
 	@Override
-	public Navbar item(String item, boolean active) {
-		items.add(new ItemEntry(item, active));
+	public Navbar item(Object item, boolean active, boolean right) {
+		(right ? rightItems : leftItems).add(new ItemEntry(item, active));
 		return this;
 	}
 	
@@ -48,24 +50,30 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	
 	private class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<DropdownImpl> {
 		
-		private String name;
+		private Object name;
 		private List<Object> items = new ArrayList<>();
 
-		public DropdownImpl(String name) {
+		DropdownImpl(Object name) {
+			super(NavbarImpl.this.factory);
 			this.name = name;
 		}
 		
-		private class Header {
-			String header;
+		private class Header implements AutoCloseable {
+			Object header;
 			
-			Header(String header) {
+			Header(Object header) {
 				this.header = header;
+			}
+			
+			@Override
+			public void close() throws Exception {
+				NavbarImpl.this.close(header);				
 			}
 		}
 
 		@Override
-		public DropdownImpl item(String item) {
-			items.add(item);
+		public DropdownImpl item(Object... item) {
+			items.add(factory.fragment(item));
 			return this;
 		}
 
@@ -77,58 +85,79 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 		
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder("<li class=\"dropdown\">");
-			sb.append("<a href=\"#\" class=\"dropdown-toggle\" data-toggle=\"dropdown\">"+name+" <b class=\"caret\"></b></a>");
-	        sb.append("<ul class=\"dropdown-menu\">");
+			Tag li = factory.tag("li").addClass("dropdown");
+			li.content(factory.link("#", name, " ", factory.tag("b", "").addClass("caret")).addClass("dropdown-toggle").attribute("data-toggle", "dropdown"));
+			Tag ul = factory.tag("ul").addClass("dropdown-menu");
+			li.content(ul);
 	        for (Object item: items) {
 	        	if (item==DIVIDER) {
-	        		sb.append("<li class=\"divider\"></li>");
+	        		ul.content(factory.tag("li", "").addClass("divider"));
 	        	} else if (item instanceof Header) {
-	        		sb.append(" <li class=\"dropdown-header\">"+((Header) item).header+"</li>");
+	        		ul.content(factory.tag("li", ((Header) item).header).addClass("dropdown-header"));
 	        	} else {
-	        		sb.append("<li>");
-	        		sb.append(item);
-	        		sb.append("</li>");
+	        		ul.content(factory.tag("li", item));
 	        	}
 	        }
-		    sb.append("</ul>");
-	        sb.append("</li>");
-			return sb.toString();
+			return li.toString();
 		}
 
 		@Override
-		public DropdownImpl header(String header) {
+		public DropdownImpl header(Object header) {
 			items.add(new Header(header));
 			return this;
+		}
+		
+		@Override
+		public void close() throws Exception {
+			close(name);
+			for (Object item: items) {
+				close(item);
+			}
 		}
 		
 	}	
 	
 	@Override
-	public Dropdown<?> dropdown(String name) {
+	public Dropdown<?> dropdown(Object name, boolean right) {
 		Dropdown<?> ret = new DropdownImpl(name);
-		items.add(ret);
+		(right ? rightItems : leftItems).add(ret);
 		return ret;
 	}
 	
 	private NavbarRenderer navbarRenderer = new NavbarRenderer();
+	private FormImpl form;
 	
 	@Override
 	public String toString() {
 		
-		final String collapseTargetId = builder.nextId()+"_collapse";
+		final String collapseTargetId = factory.nextId()+"_collapse";
 
 		return navbarRenderer.generate(new NavbarConfig() {
 			
 			@Override
-			public String getBrand() {
+			public Object getBrand() {
 				return brand;
 			}
 			
 			@Override
-			public String getItems() {
+			public String getLeftItems() {
+				if (leftItems.isEmpty()) {
+					return null;					
+				}
 				StringBuilder ret = new StringBuilder();
-				for (Object item: items) {
+				for (Object item: leftItems) {
+					ret.append(item.toString());
+				}
+				return ret.toString();
+			}
+			
+			@Override
+			public String getRightItems() {
+				if (rightItems.isEmpty()) {
+					return null;					
+				}
+				StringBuilder ret = new StringBuilder();
+				for (Object item: rightItems) {
 					ret.append(item.toString());
 				}
 				return ret.toString();
@@ -141,10 +170,31 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 			
 			@Override
 			public String getAttributes() {
-				NavbarImpl.this.attributes("class", "role");
-				return null;
+				return NavbarImpl.this.attributes("class", "role");
+			}
+
+			@Override
+			public String getForm() {
+				return form==null ? "" : form.toString();
 			}
 		});
+	}
+
+	@Override
+	public void close() throws Exception {
+		for (Object item: leftItems) {
+			close(item);
+		}
+		for (Object item: rightItems) {
+			close(item);
+		}
+		close(form);
+	}
+
+	@Override
+	public Form form(boolean right) {
+		form = new FormImpl(factory, right, false);
+		return form;
 	}
 
 }

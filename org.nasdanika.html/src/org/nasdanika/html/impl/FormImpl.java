@@ -2,8 +2,9 @@ package org.nasdanika.html.impl;
 
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FieldSet;
-import org.nasdanika.html.FieldWriter;
+import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.Form;
+import org.nasdanika.html.FormFragment;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
@@ -11,16 +12,24 @@ import org.nasdanika.html.InputGroup;
 
 class FormImpl extends UIElementImpl<Form> implements Form {
 	
-	HTMLFactory builder;
 	boolean horizontal;
 	boolean inline;
 	DeviceSize deviceSize;
 	int labelWidth;
-	private FieldWriter<Form> writer;
+	private FieldContainer<Form> container;
 
-	FormImpl(HTMLFactory builder) {
-		this.builder = builder;
-		writer = new FieldWriterImpl<Form>(this, this);
+	FormImpl(HTMLFactory factory, boolean nav, boolean navRight) {
+		super(factory);
+		container = new FieldContainerImpl<Form>(factory, this, this);
+		if (nav) {
+			addClass("navbar-form");
+			if (navRight) {
+				addClass("navbar-right");
+			} else {
+				addClass("navbar-left");
+			}
+		} 
+		
 		attribute("role", "form");
 	}
 	
@@ -46,48 +55,48 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	}
 
 	@Override
-	public Form content(String content) {
-		return writer.content(content);
+	public Form content(Object... content) {
+		return container.content(content);
 	}
 
 	@Override
-	public FormGroup<?> formGroup(String label, String controlId, String controlDefintion, String helpText) {
-		return writer.formGroup(label, controlId, controlDefintion, helpText);
+	public FormGroup<?> formGroup(Object label, Object controlId, Object control, Object helpText) {
+		return container.formGroup(label, controlId, control, helpText);
 	}
 
 	@Override
-	public Form checkbox(String label, String checkboxDefinition, boolean inline) {
-		return writer.checkbox(label, checkboxDefinition, inline);
+	public Form checkbox(Object label, Object checkboxControl, boolean inline) {
+		return container.checkbox(label, checkboxControl, inline);
 	}
 
 	@Override
-	public Form radio(String label, String radioDefinition, boolean inline) {
-		return writer.radio(label, radioDefinition, inline);
+	public Form radio(Object label, Object radioControl, boolean inline) {
+		return container.radio(label, radioControl, inline);
 	}
 
 	@Override
-	public Button button(String text) {
-		return writer.button(text);
+	public Button button(Object... content) {
+		return container.button(content);
 	}
 
 	@Override
-	public InputGroup<?> inputGroup(String control) {
-		return writer.inputGroup(control);
+	public InputGroup<?> inputGroup(Object control) {
+		return container.inputGroup(control);
 	}
 
 	@Override
 	public FieldSet fieldset() {
-		return writer.fieldset();
+		return container.fieldset();
+	}
+	
+	@Override
+	public FormFragment formFragment() {
+		return container.formFragment();
 	}
 
 	@Override
-	public FieldWriter<?> fieldWriter() {
-		return writer.fieldWriter();
-	}
-
-	@Override
-	public FormInputGroup formInputGroup(String label, String controlId, String controlDefintion, String helpText) {
-		return writer.formInputGroup(label, controlId, controlDefintion, helpText);
+	public FormInputGroup formInputGroup(Object label, Object controlId, Object control, Object helpText) {
+		return container.formInputGroup(label, controlId, control, helpText);
 	}
 	
 	@Override
@@ -95,9 +104,14 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 		return new StringBuilder("<form")
 			.append(attributes())
 			.append(">")
-			.append(writer.toString())
+			.append(container.toString())
 			.append("</form>")
 			.toString();
+	}
+	
+	@Override
+	public void close() throws Exception {
+		close(container);		
 	}
 
 }
