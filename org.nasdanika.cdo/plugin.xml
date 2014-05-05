@@ -33,14 +33,31 @@
             method="*"
             target="org.eclipse.emf.cdo.eresource.CDOResource">
       </object_route>
+      <extension_route
+            class="org.nasdanika.cdo.web.routes.CDOViewJsonExtensionRoute"
+            extension="json"
+            method="GET"
+            target="org.eclipse.emf.cdo.view.CDOView">
+      </extension_route>
+      <extension_route
+            class="org.nasdanika.cdo.web.routes.CDOViewHtmlExtensionRoute"
+            extension="html"
+            method="GET"
+            target="org.eclipse.emf.cdo.view.CDOView">
+      </extension_route>
       
    </extension>
    <extension
-         point="org.nasdanika.web.convert">
+         point="org.nasdanika.core.convert">
       <converter
             class="org.nasdanika.cdo.convert.EObjectToJSONObjectConverter"
             source="org.eclipse.emf.ecore.EObject"
             target="org.json.JSONObject">
+      </converter>
+      <converter
+            class="org.nasdanika.cdo.web.html.CDOViewToHTMLRendererConverter"
+            source="org.eclipse.emf.cdo.view.CDOView"
+            target="org.nasdanika.web.html.HTMLRenderer">
       </converter>
    </extension>
 

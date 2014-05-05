@@ -15,7 +15,7 @@ public class CDOTransactionContextProviderComponent implements CDOTransactionCon
 		this.sessionProvider = null;
 	}	
 	
-	// TODO - transaction handlers references.
+	// TODO - transaction handlers and content adapters references & extensions.
 
 	@Override
 	public CDOTransactionContext createContext() {
@@ -26,6 +26,7 @@ public class CDOTransactionContextProviderComponent implements CDOTransactionCon
 				
 				{
 					// TODO - transaction.addTransactionHandler(handler);
+					// TODO - content adapters
 				}
 				
 				private boolean rollbackOnly;

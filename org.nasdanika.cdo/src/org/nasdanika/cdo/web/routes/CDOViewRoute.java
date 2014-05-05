@@ -2,7 +2,6 @@ package org.nasdanika.cdo.web.routes;
 
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
-import org.json.JSONArray;
 import org.nasdanika.cdo.web.CDOTransactionHttpContext;
 import org.nasdanika.cdo.web.CDOViewHttpContext;
 import org.nasdanika.web.Action;
@@ -26,24 +25,10 @@ public class CDOViewRoute implements Route {
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
 				if (context.authorize(view, "read")) {
-					final JSONArray viewInfo = new JSONArray();
-					for (CDOResourceNode e: view.getElements()) {
-						viewInfo.put(e.getName());
-					}
-					
-					return new Action() {
-	
-						@Override
-						public Object execute() throws Exception {						
-							return viewInfo;
-						}
-
-						@Override
-						public void close() throws Exception {
-							// NOP.					
-						}
-						
-					};
+					int dotIdx = context.getPath()[0].lastIndexOf(".");
+					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
+					Action extensionAction = context.getExtensionAction(view, extension);
+					return extensionAction==null ? Action.NOT_FOUND : extensionAction;
 				} 
 				return Action.FORBIDDEN;
 			}

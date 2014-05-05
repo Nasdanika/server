@@ -13,11 +13,11 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nasdanika.web.WebContext;
-import org.nasdanika.web.Converter;
+import org.nasdanika.core.Converter;
 import org.nasdanika.web.HttpContext;
+import org.nasdanika.web.WebContext;
 
-public class EObjectToJSONObjectConverter implements Converter<EObject, JSONObject> {
+public class EObjectToJSONObjectConverter implements Converter<EObject, JSONObject, WebContext> {
 	
 	private static final String REF_KEY = "$ref";
 	private static final String REF_ID_KEY = "$refID";
