@@ -1,7 +1,6 @@
 package org.nasdanika.cdo.web;
 
 import org.nasdanika.cdo.CDOViewContext;
-import org.nasdanika.cdo.CDOViewContextProvider;
 import org.nasdanika.web.AbstractContextProviderAutocloseRouteComponent;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContextImpl;
@@ -44,6 +43,7 @@ public class CDOViewContextAutocloseRouteComponent extends AbstractContextProvid
 					httpContext.getExtensionManager(), 
 					httpContext.getRequest(), 
 					httpContext.getResponse(), 
+					httpContext.getContextURL(),
 					context);
 		}
 		throw new IllegalArgumentException("Unsupported context type: "+context);										

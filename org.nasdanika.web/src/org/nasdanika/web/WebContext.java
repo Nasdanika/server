@@ -49,4 +49,11 @@ public interface WebContext extends ConverterContext {
 
 	HTMLFactory getHTMLFactory();
 	
+	/**
+	 * Resolves object URL. Optional operation.
+	 * @param object
+	 * @return
+	 */
+	String getObjectURL(Object object);
+	
 }

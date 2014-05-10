@@ -26,6 +26,11 @@
             method="GET"
             pattern="app.html">
       </root_route>
+      <root_route
+            class="org.nasdanika.examples.bank.app.HomeRoute"
+            method="GET"
+            pattern="index.html">
+      </root_route>
    </extension>
    <extension
          point="org.nasdanika.web.html_factory">

@@ -107,4 +107,12 @@ public abstract class ContextImpl implements WebContext {
 	public HTMLFactory getHTMLFactory() {
 		return extensionManager.getHTMLFactory();
 	}
+	
+	/**
+	 * Default implementation returns null.
+	 */
+	@Override
+	public String getObjectURL(Object object) {
+		return null;
+	}
 }

@@ -8,5 +8,7 @@ public interface HttpContext extends WebContext {
 	HttpServletRequest getRequest();
 	
 	HttpServletResponse getResponse();
+	
+	String getContextURL();
 
 }

@@ -20,15 +20,24 @@ public class CDOTransactionHttpContextImpl extends HttpContextImpl implements CD
 			ExtensionManager extensionManager,
 			HttpServletRequest req, 
 			HttpServletResponse resp,
+			String contextURL,
 			CDOTransactionContext transactionContext) throws Exception {
 		
-		super(principal, path, target, extensionManager, req, resp);
+		super(principal, path, target, extensionManager, req, resp, contextURL);
 		this.transactionContext = transactionContext;
 	}
 	
 	@Override
 	protected WebContext createSubContext(String[] subPath, Object target) throws Exception {
-		return new CDOTransactionHttpContextImpl(getPrincipal(), subPath, target, getExtensionManager(), getRequest(), getResponse(), transactionContext);
+		return new CDOTransactionHttpContextImpl(
+				getPrincipal(), 
+				subPath, 
+				target, 
+				getExtensionManager(), 
+				getRequest(), 
+				getResponse(), 
+				subContextURL(subPath, true),
+				transactionContext);
 	}
 
 	@Override

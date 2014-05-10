@@ -1,6 +1,8 @@
 package org.nasdanika.examples.bank.app;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
@@ -13,11 +15,13 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.HTMLFactory.Placement;
+import org.nasdanika.html.Modal;
 import org.nasdanika.html.Navbar;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.UIElement.Color;
 import org.nasdanika.html.UIElement.DeviceSize;
+import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.Route;
@@ -73,7 +77,19 @@ public class AppRoute implements Route {
 		
 		appPanel.contentPanel(body).width(DeviceSize.LARGE, 8);
 		
-		Button simpleButton = htmlFactory.button("Simple button");
+		body.content(htmlFactory.tag("div", "").style("min-height", "200px"));
+		
+		Modal modal = htmlFactory.modal()
+				.title("Hello")
+				.body("World")
+				.small()
+				.footer(htmlFactory.button("Close").attribute("data-dismiss", "modal"));
+		
+		body.content(modal, modal.bind(htmlFactory.button("Open dialog")));
+		
+		body.content(htmlFactory.tag("div", "").style("min-height", "200px"));		
+		
+		Button simpleButton = htmlFactory.button("Simple button").on(Event.click, "alert('Hello > & ');");
 		body.content(simpleButton, "&nbsp;");
 		
 		Button styledDropDownButton = htmlFactory.button("Styled")
@@ -105,11 +121,20 @@ public class AppRoute implements Route {
 				htmlFactory.input(InputType.text, "login", null, "login", "Enter login"),
 				"Enter your login name").status(Status.SUCCESS);
 		
-		form.formGroup(
+		FormInputGroup passwordFormInputGroup = form.formInputGroup(
 				"Password", 
 				"password", 
 				htmlFactory.input(InputType.password, "password", null, "password", "Enter password"),
 				"Enter password").status(Status.ERROR).feedback();
+		
+		Map<String, Object> options = new HashMap<String, Object>();
+		options.put("html", true);
+		passwordFormInputGroup.leftPopoverHelpButton(
+				Placement.BOTTOM, 
+				"Password", 
+				"Minimum 6 symbols including <I>special</I> characters",
+				options).style(Style.DANGER);
+		
 		
 		form.formGroup(null, null, htmlFactory.button("Log in"), null);		
 		
@@ -131,8 +156,8 @@ public class AppRoute implements Route {
 //		creditCardGroup.rightPopoverHelpButton(
 //				Placement.BOTTOM, 
 //				"Credit card number", 
-//				"Typically 16 digits");
-
+//				"Typically 16 digits",
+//				null);
 		
 		body.content(form);
 		
@@ -243,9 +268,9 @@ public class AppRoute implements Route {
 		final AutoCloseable app = 
 			htmlFactory.routerApplication(
 				"My Application", 
-				"main/../test.html", 
 				null, 
-				htmlFactory.div("").id("main"));
+				null, 
+				body);
 		
 		// TODO Auto-generated method stub
 		return new Action() {

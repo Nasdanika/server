@@ -40,7 +40,16 @@ public class RoutingServlet extends HttpServlet {
 			
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		String reqUrl = req.getRequestURL().toString();		
 		String pathInfo = req.getPathInfo();		
+		if (pathInfo!=null) {
+			if (!reqUrl.endsWith(pathInfo)) {
+				throw new ServletException("Request URL doesn't end with path info!");
+			} else {
+				reqUrl = reqUrl.substring(0, reqUrl.length()-pathInfo.length());
+			}
+		}
+		
 		if (pathInfo==null) {
 			pathInfo = "";
 		}
@@ -49,7 +58,14 @@ public class RoutingServlet extends HttpServlet {
 		}
 		String[] path = pathInfo.split("/");
 		try {
-			HttpContext context = new HttpContextImpl(getPrincipal(req, resp), path, null, extensionManager, req, resp);
+			HttpContext context = new HttpContextImpl(
+					getPrincipal(req, resp), 
+					path, 
+					null, 
+					extensionManager, 
+					req, 
+					resp,
+					reqUrl);
 			for (Route route: extensionManager.getRouteRegistry().matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
 				try (Action action = route.execute(context)) {
 					if (action!=null) {

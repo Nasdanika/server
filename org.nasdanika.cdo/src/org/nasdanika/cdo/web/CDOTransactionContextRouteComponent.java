@@ -29,6 +29,7 @@ public class CDOTransactionContextRouteComponent implements Route {
 					httpContext.getExtensionManager(), 
 					httpContext.getRequest(), 
 					httpContext.getResponse(), 
+					httpContext.getContextURL(),
 					contextProvider.createContext())) {
 				
 				try (Action action = cdoTransactionContext.getAction(cdoTransactionContext.getTransaction(), 0)) {

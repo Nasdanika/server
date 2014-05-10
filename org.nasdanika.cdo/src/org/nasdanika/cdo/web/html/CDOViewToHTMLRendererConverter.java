@@ -9,6 +9,7 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tabs;
+import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
@@ -38,12 +39,14 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 					if (didx!=-1) {
 						pe = pe.substring(0, didx);
 					}
-					elements.add(htmlFactory.routeLink(null, pe+"/"+e.getName()+".html", e.getName()).toString()); // TODO - escape names
+					if (context instanceof HttpContext) {
+						elements.add(htmlFactory.routeLink(null, ((HttpContext) context).getObjectURL(e)+".html", e.getName()).toString()); // TODO - escape names
+					}
 				}
 				
 				Tabs tabs = htmlFactory.tabs();
 				tabs.tab("Elements", null, htmlFactory.ul(elements));
-				tabs.ajaxTab("Packages",  null,  "test.html");
+				tabs.ajaxTab("Packages",  null,  "test.html"); // TODO
 				return htmlFactory.fragment(htmlFactory.tag("h4", "CDO View"), tabs).toString();
 			}
 		};
