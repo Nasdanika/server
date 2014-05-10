@@ -10,6 +10,7 @@ import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
+import org.nasdanika.html.Modal;
 import org.nasdanika.html.Navbar;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
@@ -230,5 +231,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Tag span(Object... content) {
 		return tag("span", content);
+	}
+	
+	@Override
+	public Modal modal() {
+		return new ModalImpl(this);
 	}
 }

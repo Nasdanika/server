@@ -7,3 +7,6 @@ Bundle-Vendor: Nasdanika LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.nasdanika.html,
  org.nasdanika.html.impl
+Bundle-ClassPath: lib/commons-lang3-3.3.2.jar,
+ .
+Require-Bundle: org.json;bundle-version="1.0.0"

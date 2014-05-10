@@ -18,7 +18,13 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 
 	@Override
 	public LinkGroup item(Object content, Object href, Style style, boolean active) {
-		Tag a = factory.tag("a", content).addClass("list-group-item").attribute("href", String.valueOf(href));
+		item(content, style, active).attribute("href", href);
+		return this;
+	}
+	
+	@Override
+	public Tag item(Object content, Style style, boolean active) {
+		Tag a = factory.tag("a", content).addClass("list-group-item");
 		if (style!=null && Style.DEFAULT!=style) {
 			a.addClass("list-group-item-"+style.name().toLowerCase());
 		}
@@ -26,7 +32,7 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 			a.addClass("active");
 		}
 		items.add(a);
-		return this;
+		return a;
 	}
 	
 	@Override

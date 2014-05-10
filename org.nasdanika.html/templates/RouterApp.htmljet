@@ -68,7 +68,7 @@
 					// element with id main
 					routes : {
 						"router/:targetId/*path" : function(targetId, path) {
-							nsdLoad("#"+targetId, path);
+							nsdLoad("#"+targetId, "/"+path); // Absolute path for page portability
 						}
 					}
 

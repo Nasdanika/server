@@ -1,5 +1,7 @@
 package org.nasdanika.html.impl;
 
+import java.util.Map;
+
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
@@ -40,13 +42,13 @@ class FormInputGroupImpl extends FormGroupImpl<FormInputGroup, InputGroupImpl> i
 	}
 
 	@Override
-	public Button leftPopoverHelpButton(Placement placement, String title, String body) {
-		return control.leftPopoverHelpButton(placement, title, body);
+	public Button leftPopoverHelpButton(Placement placement, String title, String body, Map<String, Object> options) {
+		return control.leftPopoverHelpButton(placement, title, body, options);
 	}
 
 	@Override
-	public Button rightPopoverHelpButton(Placement placement, String title, String body) {
-		return control.rightPopoverHelpButton(placement, title, body);
+	public Button rightPopoverHelpButton(Placement placement, String title, String body, Map<String, Object> options) {
+		return control.rightPopoverHelpButton(placement, title, body, options);
 	}
 	
 }

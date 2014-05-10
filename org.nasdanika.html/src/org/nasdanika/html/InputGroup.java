@@ -1,5 +1,7 @@
 package org.nasdanika.html;
 
+import java.util.Map;
+
 import org.nasdanika.html.HTMLFactory.Placement;
 
 public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
@@ -28,7 +30,7 @@ public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
 	 * @return
 	 * @throws IllegalStateException if left add-on has already been set. 
 	 */
-	Button leftPopoverHelpButton(Placement placement, String title, String body);
+	Button leftPopoverHelpButton(Placement placement, String title, String body, Map<String, Object> options);
 	
 	/**
 	 * Sets right add-on
@@ -52,6 +54,6 @@ public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
 	 * @return
 	 * @throws IllegalStateException if left add-on has already been set. 
 	 */
-	Button rightPopoverHelpButton(Placement placement, String title, String body);
+	Button rightPopoverHelpButton(Placement placement, String title, String body, Map<String, Object> options);
 		
 }

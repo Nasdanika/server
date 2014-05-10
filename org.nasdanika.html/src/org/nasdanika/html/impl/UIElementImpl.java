@@ -1,5 +1,11 @@
 package org.nasdanika.html.impl;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -7,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.UIElement;
 
@@ -24,13 +31,13 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	
 	private static final String ID = "id";
 	
-	public String getId() {
+	public Object getId() {
 		return attributes.get(ID);
 	}
 	
-	private Map<String, String> attributes = new HashMap<>();
+	private Map<String, Object> attributes = new HashMap<>();
 	
-	private Map<String, String> styles = new HashMap<>();
+	private Map<String, Object> styles = new HashMap<>();
 
 	protected HTMLFactory factory;
 	
@@ -45,12 +52,12 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	protected String attributes(String... excluded) {
 		StringBuilder attributeBuilder = new StringBuilder();
 		
-		for (Entry<String, String> a: attributes.entrySet()) {
+		for (Entry<String, Object> a: attributes.entrySet()) {
 			if (!STYLE.equals(a.getKey()) && !CLASS.equals(a.getKey()) && !Arrays.asList(excluded).contains(a.getKey())) {
 				if (attributeBuilder.length()>0) {
 					attributeBuilder.append(" ");
 				}
-				attributeBuilder.append(a.getKey()+"=\""+a.getValue()+"\"");
+				attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(String.valueOf(a.getValue()))+"\"");
 			}
 		}
 		
@@ -59,7 +66,7 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 			if (attributes.containsKey(STYLE)) {
 				styleBuilder.append(attributes.get(STYLE));
 			}
-			for (Entry<String, String> se: styles.entrySet()) {
+			for (Entry<String, Object> se: styles.entrySet()) {
 				if (styleBuilder.length()>0 && !styleBuilder.toString().endsWith(";")) {
 					styleBuilder.append(";");
 				}
@@ -75,7 +82,7 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		
 		if (!Arrays.asList(excluded).contains(CLASS)) {
 			StringBuilder classBuilder = new StringBuilder();
-			for (String cls: classes) {
+			for (Object cls: classes) {
 				if (classBuilder.length()>0) {
 					classBuilder.append(" ");
 				}
@@ -109,7 +116,7 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 			if (attributes.containsKey(STYLE)) {
 				styleBuilder.append(attributes.get(STYLE));
 			}
-			for (Entry<String, String> se: styles.entrySet()) {
+			for (Entry<String, Object> se: styles.entrySet()) {
 				if (styleBuilder.length()>0 && !styleBuilder.toString().endsWith(";")) {
 					styleBuilder.append(";");
 				}
@@ -119,20 +126,20 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		}
 		
 		if (attributes.containsKey(attribute)) {
-			return attributes.get(attribute);
+			return StringEscapeUtils.escapeHtml4(String.valueOf(attributes.get(attribute)));
 		}
 		
 		return "";
 	}
 	
 	@Override
-	public T id(String id) {
+	public T id(Object id) {
 		return attribute(ID, id);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T attribute(String name, String value) {
+	public T attribute(String name, Object value) {
 		if (value==null) {
 			attributes.remove(name);
 		} else {
@@ -143,7 +150,7 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public T style(String name, String value) {
+	public T style(String name, Object value) {
 		if (value==null) {
 			styles.remove(name);
 		} else {
@@ -157,13 +164,15 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		return style("background-color", backgroundColor.code);
 	}
 	
-	private List<String> classes = new ArrayList<>();
+	private List<Object> classes = new ArrayList<>();
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public T addClass(String clazz) {
-		if (!classes.contains(clazz)) {
-			classes.add(clazz);
+	public T addClass(Object... clazz) {
+		for (Object clz: clazz) {
+			if (!classes.contains(clz)) {
+				classes.add(clz);
+			}
 		}
 		return (T) this;
 	}
@@ -176,7 +185,53 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	protected void close(Object o) throws Exception {
 		if (o instanceof AutoCloseable) {
 			((AutoCloseable) o).close();
+		} else if (o!=null && o.getClass().isArray()) {
+			for (Object e: (Object[]) o) {
+				close(e);
+			}
+		} else if (o instanceof Iterable) {
+			for (Object e: (Iterable<?>) o) {
+				close(e);
+			}
 		}
 	}
+
+	@Override
+	public T on(Event event, Object handler) {		
+		return on(event.name(), handler);
+	}
+
+	@Override
+	public T on(String event, Object handler) {		
+		return attribute("on"+event, handler);
+	}
+
+	@Override
+	public T on(Event event, Reader handler) throws IOException {
+		return on(event.name(), handler);
+	}
+
+	@Override
+	public T on(String event, Reader handler) throws IOException {
+		StringWriter sw = new StringWriter();
+		char[] cbuf = new char[1024];
+		int l;
+		while ((l=handler.read(cbuf))!=-1) {
+			sw.write(cbuf, 0, l);
+		}
+		sw.close();
+		handler.close();
+		return on(event, sw.toString());
+	}
+
+	@Override
+	public T on(Event event, InputStream handler) throws IOException {
+		return on(event.name(), handler);
+	}
+
+	@Override
+	public T on(String event, InputStream handler) throws IOException {
+		return on(event, new InputStreamReader(handler));
+	}		
 
 }

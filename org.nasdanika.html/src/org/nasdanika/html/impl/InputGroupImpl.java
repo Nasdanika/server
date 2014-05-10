@@ -1,5 +1,8 @@
 package org.nasdanika.html.impl;
 
+import java.util.Map;
+
+import org.json.JSONObject;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
@@ -95,18 +98,20 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 	}
 
 	@Override
-	public Button leftPopoverHelpButton(Placement placement, String title, String body) {
+	public Button leftPopoverHelpButton(Placement placement, String title, String body, Map<String, Object> options) {
 		Button ret = leftButton(factory.glyphicon(Glyphicon.question_sign)).id(factory.nextId());
 		factory.popover(ret, placement, title, body);
-		initScript.append("$(\"#"+ret.getId()+"\").popover();");
+		String opts = options==null ? "" : new JSONObject(options).toString();		
+		initScript.append("$(\"#"+ret.getId()+"\").popover("+opts+");");
 		return ret;
 	}
 
 	@Override
-	public Button rightPopoverHelpButton(Placement placement, String title, String body) {
+	public Button rightPopoverHelpButton(Placement placement, String title, String body, Map<String, Object> options) {
 		Button ret = rightButton(factory.glyphicon(Glyphicon.question_sign)).id(factory.nextId());
 		factory.popover(ret, placement, title, body);
-		initScript.append("$(\"#"+ret.getId()+"\").popover();");
+		String opts = options==null ? "" : new JSONObject(options).toString();		
+		initScript.append("$(\"#"+ret.getId()+"\").popover("+opts+");");
 		return ret;
 	}
 }

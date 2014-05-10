@@ -363,4 +363,6 @@ public interface HTMLFactory {
 	}
 	
 	Tag glyphicon(Glyphicon glyphicon);
+	
+	Modal modal();
 }
