@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.nasdanika.html.feature"
+      label="Nasdanika HTML/Bootstrap UI builder"
+      version="1.2.0.qualifier"
+      license-feature="org.nasdanika.feature"
+      license-feature-version="0.1.0.qualifier">
+
+   <description>
+      Nasdanika HTML/Bootsrapi UI builder.
+   </description>
+
+   <copyright>
+      Property of Nasdanika LLC.
+   </copyright>
+
+   <license url="http://www.example.com/license">
+      [Enter License Description here.]
+   </license>
+
+   <plugin
+         id="org.nasdanika.html"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.nasdanika.thirdparty"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.json"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
