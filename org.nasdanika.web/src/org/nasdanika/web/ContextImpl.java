@@ -1,8 +1,12 @@
 package org.nasdanika.web;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.HTMLFactory;
@@ -11,9 +15,14 @@ import org.nasdanika.web.html.HTMLRenderer;
 public abstract class ContextImpl implements WebContext {
 	
 	private ExtensionManager extensionManager;
+	private Map<Object, String> rootObjectsPaths = new ConcurrentHashMap<>();
 	
 	public ExtensionManager getExtensionManager() {
 		return extensionManager;
+	}
+	
+	public Map<Object, String> getRootObjectsPaths() {
+		return rootObjectsPaths;
 	}
 	
 	private AuthorizationProvider securityManager;
@@ -22,12 +31,14 @@ public abstract class ContextImpl implements WebContext {
 	private Object target;
 	private RouteRegistry routeRegistry;
 	private Object principal;
+	private CompositeObjectPathResolver objectPathResolver;
 
 	public ContextImpl(
 			Object principal, 
 			String[] path, 
 			Object target, 
-			ExtensionManager extensionManager) throws Exception {
+			final ExtensionManager extensionManager,
+			List<TraceEntry> pathTrace) throws Exception {
 		
 		this.extensionManager = extensionManager;
 		this.securityManager = extensionManager.getAuthorizationProvider();
@@ -36,6 +47,12 @@ public abstract class ContextImpl implements WebContext {
 		this.target = target;
 		this.routeRegistry = extensionManager.getRouteRegistry();
 		this.principal = principal;
+		
+		objectPathResolver = extensionManager.getObjectPathResolver();
+		
+		if (pathTrace!=null) {
+			this.pathTrace.addAll(pathTrace);
+		}
 	}
 	
 	@Override
@@ -68,10 +85,23 @@ public abstract class ContextImpl implements WebContext {
 		String[] newPath = Arrays.copyOfRange(oldPath, pathOffset, oldPath.length);
 		WebContext subContext = createSubContext(newPath, target);
 		for (Route r: routeRegistry.matchObjectRoutes(getMethod(), target, newPath)) {
-			Action ret = r.execute(subContext);
-			if (ret!=null) {
-				return ret;
+			final Object ret = r.execute(subContext);
+			if (ret instanceof Action) {
+				return (Action) ret;
 			}
+			
+			return new Action() {
+				
+				@Override
+				public void close() throws Exception {
+					// NOP					
+				}
+				
+				@Override
+				public Object execute() throws Exception {
+					return ret;
+				}
+			};
 		}
 		return null;
 	}
@@ -98,7 +128,7 @@ public abstract class ContextImpl implements WebContext {
 	public String toHTML(Object obj, String profile, Map<String, Object> environment) throws Exception {
 		HTMLRenderer renderer = convert(obj, HTMLRenderer.class);
 		if (renderer == null) {
-			return String.valueOf(obj);
+			return "<pre>"+StringEscapeUtils.escapeHtml4(String.valueOf(obj))+"</pre>";
 		}
 		return renderer.render(this, profile, environment);
 	}
@@ -108,11 +138,31 @@ public abstract class ContextImpl implements WebContext {
 		return extensionManager.getHTMLFactory();
 	}
 	
-	/**
-	 * Default implementation returns null.
-	 */
 	@Override
-	public String getObjectURL(Object object) {
-		return null;
+	public String getObjectPath(Object object) throws Exception {
+		return objectPathResolver.resolve(object, null, this);
+	}
+	
+	@Override
+	public void addPathTraceEntry(final String path, final String displayName) {
+		pathTrace.add(new TraceEntry() {
+			
+			@Override
+			public String getPath() {
+				return path;
+			}
+			
+			@Override
+			public String getDisplayName() {
+				return displayName;
+			}
+		});		
+	}
+	
+	private List<TraceEntry> pathTrace = new ArrayList<>();
+	
+	@Override
+	public List<TraceEntry> getPathTrace() {
+		return pathTrace;
 	}
 }

@@ -29,7 +29,7 @@ public class HomeRoute implements Route {
 		final AutoCloseable app = 
 			htmlFactory.routerApplication(
 				"My Application", 
-				"main/ccview.html", 
+				"main/router/ccview.html", 
 				null, 
 				htmlFactory.div("").id("main"));
 		

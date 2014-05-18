@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup.Status;
@@ -58,15 +59,19 @@ public class AppRoute implements Route {
 				.item(htmlFactory.link("#", "Wire"))
 				.item(htmlFactory.link("#", "Payment Gateway"));
 		
+		Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs()
+				.item("#", "Home")
+				.item("#", "My page")
+				.item(null, "Details");
 		
-		appPanel.navigation(navBar);
+		appPanel.navigation(navBar, breadcrumbs);
 		
 		appPanel.contentPanel(
 				htmlFactory.linkGroup()
 					.item("Item 1", "#", Style.DEFAULT, true)
 					.item("Item 2", "#", Style.DEFAULT, false)
 					.item("Item 3", "#", Style.SUCCESS, false))
-				.width(DeviceSize.LARGE, 2);
+				.width(DeviceSize.LARGE, 2).id("side-panel");
 				
 		Accordion accordion = htmlFactory.accordion()
 				.item("Item 1", "Item 1 body", Style.DEFAULT)
@@ -88,6 +93,8 @@ public class AppRoute implements Route {
 		body.content(modal, modal.bind(htmlFactory.button("Open dialog")));
 		
 		body.content(htmlFactory.tag("div", "").style("min-height", "200px"));		
+		
+		body.content(htmlFactory.inject("#side-panel", "Hello!"));
 		
 		Button simpleButton = htmlFactory.button("Simple button").on(Event.click, "alert('Hello > & ');");
 		body.content(simpleButton, "&nbsp;");
@@ -186,7 +193,7 @@ public class AppRoute implements Route {
 		body.content(htmlFactory.panel(Style.PRIMARY, "Panel header", "Panel with header", null)               );
 		body.content(htmlFactory.panel(Style.WARNING, "Warning", "Something is fishy", "Proceed with caution!"));
 		
-		Button popoverButton = htmlFactory.button("Click me for information!").id("info_button");
+		Button popoverButton = htmlFactory.button("Click me for information!").id("info_button").remoteContent("/test.html");
 		htmlFactory.popover(popoverButton, Placement.RIGHT, null, "Some useful information");
 		body.content(popoverButton);
 		body.content(htmlFactory.tag("script", "$('#info_button').popover();"));	
@@ -214,7 +221,7 @@ public class AppRoute implements Route {
 		
 		Row transaction3 = transactionTable.row().style(Style.WARNING); // below low balance threshold
 		transaction3.cell("05/02/2014");
-		transaction3.cell("Check 1234");
+		transaction3.cell("...").remoteContent("/test.html");
 		transaction3.cell("-100.00").attribute("align", "right");
 		transaction3.cell("50.00").attribute("align", "right");
 		
@@ -270,7 +277,7 @@ public class AppRoute implements Route {
 				"My Application", 
 				null, 
 				null, 
-				body);
+				appPanel);
 		
 		// TODO Auto-generated method stub
 		return new Action() {

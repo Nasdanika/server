@@ -3,8 +3,6 @@ package org.nasdanika.cdo.web.routes;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.json.JSONArray;
-import org.nasdanika.cdo.web.CDOTransactionHttpContext;
-import org.nasdanika.cdo.web.CDOViewHttpContext;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.WebContext;
@@ -13,14 +11,7 @@ public class CDOViewJsonExtensionRoute implements Route {
 
 	@Override
 	public Action execute(WebContext context) throws Exception {
-		CDOView view;
-		if (context instanceof CDOViewHttpContext) {
-			view = ((CDOViewHttpContext) context).getView();
-		} else if (context instanceof CDOTransactionHttpContext) {
-			view = ((CDOTransactionHttpContext) context).getTransaction();
-		} else {
-			return Action.INTERNAL_SERVER_ERROR;
-		}
+		CDOView view = (CDOView) context.getTarget();
 		
 		final JSONArray viewInfo = new JSONArray();
 		for (CDOResourceNode e: view.getElements()) {

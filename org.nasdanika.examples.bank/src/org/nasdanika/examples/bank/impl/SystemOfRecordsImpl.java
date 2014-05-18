@@ -5,10 +5,13 @@ package org.nasdanika.examples.bank.impl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
+import org.nasdanika.core.CommandMethod;
 import org.nasdanika.examples.bank.BankPackage;
 import org.nasdanika.examples.bank.Customer;
 import org.nasdanika.examples.bank.Product;
 import org.nasdanika.examples.bank.SystemOfRecords;
+import org.nasdanika.web.ActionMethod;
+import org.nasdanika.web.HttpContext;
 
 /**
  * <!-- begin-user-doc -->

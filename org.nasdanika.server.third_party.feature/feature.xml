@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.server.third_party.feature"
       label="Nasdanika Server Third Party Bundles"
-      version="1.0.0.qualifier"
+      version="0.1.0.qualifier"
       provider-name="Nasdanika LLC">
 
    <description url="http://www.example.com/description">

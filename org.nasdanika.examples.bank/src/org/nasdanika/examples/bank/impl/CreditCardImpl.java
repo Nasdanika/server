@@ -7,6 +7,8 @@ import java.math.BigDecimal;
 import org.eclipse.emf.ecore.EClass;
 import org.nasdanika.examples.bank.BankPackage;
 import org.nasdanika.examples.bank.CreditCard;
+import org.nasdanika.web.ActionMethod;
+import org.nasdanika.web.HttpContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -77,5 +79,12 @@ public class CreditCardImpl extends LoanAccountImpl implements CreditCard {
 	public void setGracePeriod(int newGracePeriod) {
 		eSet(BankPackage.Literals.CREDIT_CARD__GRACE_PERIOD, newGracePeriod);
 	}
+	
+	
+	@ActionMethod(pattern=".+\\.html")
+	public String home(HttpContext context) {
+		return "he";
+	}
+
 
 } //CreditCardImpl

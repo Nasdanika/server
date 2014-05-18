@@ -15,5 +15,7 @@ public interface EStructuralFeatureClosure<O extends EObject, F extends EStructu
 	O getObject();
 	
 	F getFeature();
+	
+	Object getValue();
 
 }

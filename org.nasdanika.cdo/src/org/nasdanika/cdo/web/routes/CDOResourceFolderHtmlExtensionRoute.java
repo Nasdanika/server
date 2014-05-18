@@ -8,7 +8,7 @@ import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.WebContext;
 
-public class CDOViewHtmlExtensionRoute implements Route {
+public class CDOResourceFolderHtmlExtensionRoute implements Route {
 
 	@Override
 	public Action execute(final WebContext context) throws Exception {

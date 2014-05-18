@@ -19,6 +19,11 @@ import org.eclipse.emf.ecore.EReference;
  *   <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
+ * <!-- begin-model-doc -->
+ * This package contains bank classes.
+ * 
+ * One more line.
+ * <!-- end-model-doc -->
  * @see org.nasdanika.examples.bank.BankFactory
  * @model kind="package"
  * @generated

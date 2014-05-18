@@ -3,19 +3,19 @@ package org.nasdanika.cdo;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 
-public class EReferenceClosure implements EStructuralFeatureClosure<EObject, EReference> {
+public class EReferenceClosure<O extends EObject> implements EStructuralFeatureClosure<O, EReference> {
 
 	private EReference ref;
-	private EObject obj;
+	private O obj;
 
-	public EReferenceClosure(EObject obj, EReference ref) {
+	public EReferenceClosure(O obj, EReference ref) {
 		super();
 		this.obj = obj;
 		this.ref = ref;
 	}
 
 	@Override
-	public EObject getObject() {
+	public O getObject() {
 		return obj;
 	}
 
@@ -24,5 +24,9 @@ public class EReferenceClosure implements EStructuralFeatureClosure<EObject, ERe
 		return ref;
 	}
 
-
+	@Override
+	public Object getValue() {
+		return obj.eGet(ref);
+	}
+	
 }

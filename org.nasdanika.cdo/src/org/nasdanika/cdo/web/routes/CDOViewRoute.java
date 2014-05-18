@@ -1,9 +1,10 @@
 package org.nasdanika.cdo.web.routes;
 
+import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
-import org.nasdanika.cdo.web.CDOTransactionHttpContext;
-import org.nasdanika.cdo.web.CDOViewHttpContext;
+import org.eclipse.emf.ecore.EPackage;
+import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
@@ -13,14 +14,7 @@ public class CDOViewRoute implements Route {
 
 	@Override
 	public Action execute(WebContext context) throws Exception {
-		CDOView view;
-		if (context instanceof CDOViewHttpContext) {
-			view = ((CDOViewHttpContext) context).getView();
-		} else if (context instanceof CDOTransactionHttpContext) {
-			view = ((CDOTransactionHttpContext) context).getTransaction();
-		} else {
-			return Action.INTERNAL_SERVER_ERROR;
-		}
+		CDOView view = (CDOView) context.getTarget();
 		
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
@@ -36,17 +30,37 @@ public class CDOViewRoute implements Route {
 			return Action.NOT_FOUND;
 		} 
 		
-		if ("$packageRegistry".equals(context.getPath()[1])) {
-			Action prAction = context.getAction(view.getSession().getPackageRegistry(), 1);
+		// Router path
+		context.addPathTraceEntry("#router/main"+context.getObjectPath(view)+".html", "CDO View");
+		
+		if ("packages".equals(context.getPath()[1])) {
+			String nsURI = (String) context.getSessionStore().get(NasdanikaCDOUtil.stripExtension(context.getPath()[2]));
+			EPackage ePackage = view.getSession().getPackageRegistry().getEPackage(nsURI);
+			if (ePackage == null) {
+				// put packages to store
+				for (CDOPackageInfo pi: view.getSession().getPackageRegistry().getPackageInfos()) {
+					context.getSessionStore().put(pi.getEPackage().getNsURI());
+				}
+				nsURI = (String) context.getSessionStore().get(NasdanikaCDOUtil.stripExtension(context.getPath()[2]));
+				ePackage = view.getSession().getPackageRegistry().getEPackage(nsURI);
+				if (ePackage == null) {
+					return Action.NOT_FOUND;
+				}
+			}
+			Action prAction = context.getAction(ePackage, 2);
 			return prAction==null ? Action.NOT_FOUND : prAction;
 		}
 		
-		for (CDOResourceNode e: view.getElements()) {
-			if (e.getName().equals(context.getPath()[1])) {
-				final Action eAction = context.getAction(e, 1);
-				return eAction==null ? Action.NOT_FOUND : eAction;
-			}
-		}
+		if ("elements".equals(context.getPath()[1])) {
+			for (CDOResourceNode e: view.getElements()) {
+				if (e.getName().equals(NasdanikaCDOUtil.stripExtension(context.getPath()[2]))) {
+					final Action eAction = context.getAction(e, 2);
+					return eAction==null ? Action.NOT_FOUND : eAction;
+				}
+			}	
+			
+			// TODO - create resources.
+		}		
 		
 		return Action.NOT_FOUND;
 	}

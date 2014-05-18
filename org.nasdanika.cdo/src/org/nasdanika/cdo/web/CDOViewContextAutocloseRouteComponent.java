@@ -36,15 +36,26 @@ public class CDOViewContextAutocloseRouteComponent extends AbstractContextProvid
 	protected CDOViewHttpContextImpl mergeContexts(WebContext webContext, CDOViewContext context) throws Exception {
 		if (webContext instanceof HttpContextImpl) {
 			HttpContextImpl httpContext = (HttpContextImpl) webContext;
-			return new CDOViewHttpContextImpl(
+			CDOViewHttpContextImpl mergedContext = new CDOViewHttpContextImpl(
 					httpContext.getPrincipal(), 
 					httpContext.getPath(), 
 					httpContext.getTarget(), 
 					httpContext.getExtensionManager(), 
+					null,
 					httpContext.getRequest(), 
 					httpContext.getResponse(), 
 					httpContext.getContextURL(),
 					context);
+						
+			String viewPath = httpContext.getPath()[0];
+			int idx = viewPath.lastIndexOf('.');
+			if (idx!=-1) {
+				viewPath = viewPath.substring(0, idx);
+			}
+			
+			mergedContext.getRootObjectsPaths().put(context.getView(), httpContext.getContextURL()+"/"+viewPath);
+
+			return mergedContext;
 		}
 		throw new IllegalArgumentException("Unsupported context type: "+context);										
 	}

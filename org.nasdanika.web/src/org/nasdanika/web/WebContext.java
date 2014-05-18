@@ -1,5 +1,7 @@
 package org.nasdanika.web;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.nasdanika.core.ConverterContext;
@@ -50,10 +52,34 @@ public interface WebContext extends ConverterContext {
 	HTMLFactory getHTMLFactory();
 	
 	/**
-	 * Resolves object URL. Optional operation.
+	 * Resolves object path. Optional operation.
 	 * @param object
 	 * @return
 	 */
-	String getObjectURL(Object object);
+	String getObjectPath(Object object) throws Exception;
+	
+	String getCharacterEncoding();
+	
+	Map<Object, String> getRootObjectsPaths();
+	
+	interface Store {
+		
+		Object get(String key);
+		
+		Object remove(String key);
+		
+		String put(Object obj);
+		
+	}
+	
+	Store getSessionStore();
+	
+	List<TraceEntry> getPathTrace();
+
+	Collection<TraceEntry> getSessionTrace();
+	
+	void addPathTraceEntry(String path, String displayName);
+
+	void addSessionTraceEntry(String path, String displayName);
 	
 }

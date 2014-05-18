@@ -3,7 +3,7 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.examples.bank/src" modelPluginID="org.nasdanika.examples.bank"
     modelName="Bank" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
     reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
-    complianceLevel="7.0" copyrightFields="false">
+    complianceLevel="7.0" suppressGenModelAnnotations="false" copyrightFields="false">
   <foreignModel>bank.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Bank" basePackage="org.nasdanika.examples" disposableProviderFactory="true"

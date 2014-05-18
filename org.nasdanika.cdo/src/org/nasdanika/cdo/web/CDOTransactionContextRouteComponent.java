@@ -27,6 +27,7 @@ public class CDOTransactionContextRouteComponent implements Route {
 					httpContext.getPath(), 
 					httpContext.getTarget(), 
 					httpContext.getExtensionManager(), 
+					null, 
 					httpContext.getRequest(), 
 					httpContext.getResponse(), 
 					httpContext.getContextURL(),

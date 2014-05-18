@@ -11,6 +11,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>System Of Records</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * <html>System of records is the <b>root</b> of the model.</html>
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * <ul>

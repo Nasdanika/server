@@ -43,6 +43,7 @@ public class ExtensionManager implements AutoCloseable {
 	private BundleContext bundleContext;
 	private HTMLFactory htmlFactory;
 	
+	@SuppressWarnings("unchecked")
 	public ExtensionManager(BundleContext context, String routeServiceFilter, String htmlFactoryName) throws Exception {
 		// TODO - converter profiles map: class name -> profile.
 		if (context==null) {
@@ -58,8 +59,7 @@ public class ExtensionManager implements AutoCloseable {
 		}
 		routeServiceTracker.open();
 		
-		IConfigurationElement[] actionConfigurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(HTML_FACTORY_ID);
-		for (IConfigurationElement ce: actionConfigurationElements) {
+		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(HTML_FACTORY_ID)) {
 			if ("default_html_factory".equals(ce.getName())) {
 				if (htmlFactoryName==null || htmlFactoryName.equals("default")) {
 					DefaultHTMLFactory defaultHTMLFactory = new DefaultHTMLFactory();
@@ -79,11 +79,23 @@ public class ExtensionManager implements AutoCloseable {
 					break;
 				}
 			}					
-		}		
+		}	
+		
+		objectPathResolver = new CompositeObjectPathResolver();
+		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(OBJECT_PATH_RESOLVER_ID)) {
+			if ("resolver".equals(ce.getName())) {
+				IContributor contributor = ce.getContributor();		
+				Bundle bundle = Platform.getBundle(contributor.getName());
+				objectPathResolver.addResolver(
+						(Class<Object>) bundle.loadClass(ce.getAttribute("target").trim()),
+						(ObjectPathResolver<Object>) ce.createExecutableExtension("class"));
+			}					
+		}					
 	}
 			
 	public static final String HTML_FACTORY_ID = "org.nasdanika.web.html_factory";			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
+	public static final String OBJECT_PATH_RESOLVER_ID = "org.nasdanika.web.object_path_resolver";			
 	public static final String CONVERT_ID = "org.nasdanika.core.convert";				
 	private static final String SECURITY_ID = "org.nasdanika.core.security";
 	
@@ -144,19 +156,29 @@ public class ExtensionManager implements AutoCloseable {
 					if (source.isAssignableFrom(o.source) && !o.source.isAssignableFrom(source)) {
 						return 1; // o is more specific.
 					}
+					
+					if (o.source.isAssignableFrom(source) && !source.isAssignableFrom(o.source)) {
+						return -1; // this is more specific.
+					}
+					
 					if (o.priority != priority) {
 						return o.priority - priority;
 					}
+					
 					if (target.isAssignableFrom(o.target) && !o.target.isAssignableFrom(target)) {
 						return -1; // o is more specific
 					}
+					
+					if (o.target.isAssignableFrom(target) && !target.isAssignableFrom(o.target)) {
+						return 1; // this is more specific
+					}
+					
 					return 0;
 				}
 				
 			}
 			final List<ConverterEntry> ceList = new ArrayList<>();
-			IConfigurationElement[] actionConfigurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(CONVERT_ID);
-			for (IConfigurationElement ce: actionConfigurationElements) {
+			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(CONVERT_ID)) {
 				if ("converter".equals(ce.getName())) {					
 					@SuppressWarnings("unchecked")
 					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) ce.createExecutableExtension("class"));
@@ -233,8 +255,7 @@ public class ExtensionManager implements AutoCloseable {
 				
 			}
 			final List<AuthorizationProviderEntry> smeList = new ArrayList<>();
-			IConfigurationElement[] actionConfigurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(SECURITY_ID);
-			for (IConfigurationElement ce: actionConfigurationElements) {
+			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(SECURITY_ID)) {
 				if ("security_manager".equals(ce.getName())) {					
 					AuthorizationProviderEntry sme = new AuthorizationProviderEntry((AuthorizationProvider) ce.createExecutableExtension("class"));
 					
@@ -584,8 +605,7 @@ public class ExtensionManager implements AutoCloseable {
 				routeMap.put(rt, new HashMap<RequestMethod, List<RouteEntry>>());
 			}
 
-			IConfigurationElement[] actionConfigurationElements = Platform.getExtensionRegistry().getConfigurationElementsFor(ExtensionManager.ROUTE_ID);
-			for (IConfigurationElement ce: actionConfigurationElements) {
+			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(ExtensionManager.ROUTE_ID)) {
 				if ("object_route".equals(ce.getName())) {					
 					Route route = (Route) ce.createExecutableExtension("class");		
 					injectProperties(ce, route);
@@ -884,5 +904,11 @@ public class ExtensionManager implements AutoCloseable {
 	public HTMLFactory getHTMLFactory() {
 		return htmlFactory;
 	}	
+	
+	private CompositeObjectPathResolver objectPathResolver;
+	
+	public CompositeObjectPathResolver getObjectPathResolver() {
+		return objectPathResolver;
+	}
 	
 }

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nasdanika Examples Bank Web Application
 Bundle-SymbolicName: org.nasdanika.examples.bank.app;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Nasdanika LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Service-Component: OSGI-INF/*.xml
@@ -17,10 +17,10 @@ Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  javax.servlet;bundle-version="3.0.0",
  org.eclipse.equinox.http.registry;bundle-version="1.1.300",
  org.eclipse.osgi,
- org.nasdanika.examples.bank;bundle-version="1.0.0",
+ org.nasdanika.examples.bank;bundle-version="0.1.0",
  org.eclipse.jetty.websocket;bundle-version="8.1.14",
  org.eclipse.jetty.util;bundle-version="8.1.14",
  org.nasdanika.cdo;bundle-version="0.1.0",
  org.nasdanika.cdo.h2;bundle-version="0.1.0",
- org.nasdanika.web;bundle-version="1.0.0",
+ org.nasdanika.web;bundle-version="0.1.0",
  org.json;bundle-version="1.0.0"

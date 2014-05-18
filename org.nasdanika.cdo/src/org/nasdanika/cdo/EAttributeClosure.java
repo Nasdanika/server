@@ -3,19 +3,19 @@ package org.nasdanika.cdo;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 
-public class EAttributeClosure implements EStructuralFeatureClosure<EObject, EAttribute> {
+public class EAttributeClosure<O extends EObject> implements EStructuralFeatureClosure<O, EAttribute> {
 
 	private EAttribute attr;
-	private EObject obj;
+	private O obj;
 
-	public EAttributeClosure(EObject obj, EAttribute attr) {
+	public EAttributeClosure(O obj, EAttribute attr) {
 		super();
 		this.obj = obj;
 		this.attr = attr;
 	}
 
 	@Override
-	public EObject getObject() {
+	public O getObject() {
 		return obj;
 	}
 
@@ -24,5 +24,9 @@ public class EAttributeClosure implements EStructuralFeatureClosure<EObject, EAt
 		return attr;
 	}
 
+	@Override
+	public Object getValue() {
+		return obj.eGet(attr);
+	}
 
 }
