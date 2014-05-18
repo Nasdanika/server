@@ -85,7 +85,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 				ret.append(c);
 			}
 			
-			return ret.append("</div>").toString();
+			return ret.append("</div>").append(genLoadRemoteContentScript()).toString();
 		}
 
 		@Override
@@ -197,11 +197,12 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public List<ContentPanel> getContentPanels() {
 				return contentPanels;
 			}
-		});
+		})+genLoadRemoteContentScript();
 	}
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Object o: navigation) {
 			if (o instanceof AutoCloseable) {
 				((AutoCloseable) o).close();

@@ -5,7 +5,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -165,6 +164,8 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	}
 	
 	private List<Object> classes = new ArrayList<>();
+
+	private Object remoteContent;
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -194,6 +195,20 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 				close(e);
 			}
 		}
+	}
+	
+	@Override
+	public void close() throws Exception {
+		for (Object attr: attributes.values()) {
+			close(attr);
+		}		
+		for (Object cls: classes) {
+			close(cls);
+		}		
+		for (Object style: styles.values()) {
+			close(style);
+		}	
+		close(remoteContent);
 	}
 
 	@Override
@@ -234,4 +249,21 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		return on(event, new InputStreamReader(handler));
 	}		
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public T remoteContent(Object href) {
+		if (getId()==null) {
+			id(factory.nextId());
+		}
+		this.remoteContent = href;
+		return (T) this;
+	}
+	
+	protected String genLoadRemoteContentScript() {
+		if (remoteContent==null) {
+			return "";
+		}
+		
+		return factory.tag("script", "nsdLoad(\"#"+getId()+"\", \""+remoteContent+"\");").toString();
+	}
 }

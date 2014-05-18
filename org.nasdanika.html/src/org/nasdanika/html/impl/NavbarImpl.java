@@ -98,7 +98,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	        		ul.content(factory.tag("li", item));
 	        	}
 	        }
-			return li.toString();
+			return li.toString()+genLoadRemoteContentScript();
 		}
 
 		@Override
@@ -177,11 +177,12 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 			public String getForm() {
 				return form==null ? "" : form.toString();
 			}
-		});
+		})+genLoadRemoteContentScript();
 	}
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Object item: leftItems) {
 			close(item);
 		}

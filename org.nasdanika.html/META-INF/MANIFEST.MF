@@ -1,12 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: HTML Building bundle
+Bundle-Name: HTML/Bootstrap bundle
 Bundle-SymbolicName: org.nasdanika.html
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: Nasdanika LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.nasdanika.html,
  org.nasdanika.html.impl
-Bundle-ClassPath: lib/commons-lang3-3.3.2.jar,
- .
-Require-Bundle: org.json;bundle-version="1.0.0"
+Bundle-ClassPath: .
+Require-Bundle: org.json;bundle-version="1.0.0",
+ org.nasdanika.thirdparty;bundle-version="1.0.0"

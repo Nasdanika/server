@@ -252,5 +252,12 @@ public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	 * @return
 	 */
 	T addClass(Object... clazz);
-	
+
+	/**
+	 * If this method is invoked, then remote content at <code>href</code>
+	 * is loaded to the UI element by <code>nsdLoad</code> function.
+	 * @param href
+	 * @return
+	 */
+	T remoteContent(Object href);
 }

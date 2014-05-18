@@ -51,11 +51,12 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 				for (Object c: content) {
 					sb.append(c);
 				}
-				return sb.append("</").append(tagName).append(">").toString();
+				return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 			}
 
 			@Override
 			public void close() throws Exception {
+				super.close();
 				for (Object c: content) {
 					close(c);
 				}
@@ -97,11 +98,12 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 				ret.append(cell.toString());
 			}
 			ret.append("</tr>");
-			return ret.toString();
+			return ret.append(genLoadRemoteContentScript()).toString();
 		}
 		
 		@Override
 		public void close() throws Exception {
+			super.close();
 			for (Cell c: cells) {
 				c.close();
 			}			
@@ -213,11 +215,12 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 		if (responsive) {
 			ret.append("</div>");
 		}
-		return ret.toString();
+		return ret.append(genLoadRemoteContentScript()).toString();
 	}
 	
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Row r: rows) {
 			r.close();
 		}		

@@ -80,12 +80,13 @@ class SelectImpl extends UIElementImpl<Select> implements Select {
 		for (Object item: items) {
 			sb.append(item);
 		}
-		return sb.append("</select>").toString();
+		return sb.append("</select>").append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override
 	public void close() throws Exception {
-		// NOP		
+		super.close();
+		close(items);	
 	}
 	
 }

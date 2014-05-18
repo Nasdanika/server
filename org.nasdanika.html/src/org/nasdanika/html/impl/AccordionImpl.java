@@ -81,11 +81,12 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 			sb.append(item.toString());
 		}
 		sb.append("</div>");
-		return sb.toString();
+		return sb.append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Item item: items) {
 			item.close();
 		}		

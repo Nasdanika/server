@@ -43,7 +43,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 			return ret;
 		}
 		
-		Object div() {
+		Tag div() {
 			Tag ret = factory.div(tabContent()).addClass("tab-pane").id(tabId+"_"+idx);
 			if (idx==0) {
 				ret.addClass("active");
@@ -117,12 +117,22 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		protected Object[] tabContent() {
 			return new Object[] {""};
 		}
+		
+		@Override
+		Tag div() {
+			Tag ret = super.div();
+			if (idx==0) {
+				ret.remoteContent(location.toString()); // Loading active tab
+			}
+			return ret;
+		}
 	}
 	
 	private List<Tab> tabs = new ArrayList<>();
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Tab tab: tabs) {
 			tab.close();
 		}		
@@ -143,6 +153,10 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	private TabAjaxDataToggleScriptRenderer tabAjaxDataToggleScriptRenderer = new TabAjaxDataToggleScriptRenderer();
 	
 	public String toString() {
+		if (isEmpty()) {
+			return "";
+		}
+		
 		Tag ret = factory.div();
 		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-tabs");
 		ret.content(navUL);
@@ -159,9 +173,13 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		if (hasAjaxTabs) {
 			ret.content(tabAjaxDataToggleScriptRenderer.generate(null));
 		}		
-		return ret.toString();
+		return ret.toString()+genLoadRemoteContentScript();
 	};
 
+	@Override
+	public boolean isEmpty() {
+		return tabs.isEmpty();
+	}
 
 }
 

@@ -35,11 +35,12 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 			ret.append(item);
 		}
 		ret.append("</ul>");
-		return ret.toString();
+		return ret.append(genLoadRemoteContentScript()).toString();
 	}
 	
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Tag item: items) {
 			item.close();
 		}

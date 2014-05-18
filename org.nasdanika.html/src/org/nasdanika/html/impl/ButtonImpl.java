@@ -191,7 +191,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 				return "<span class=\"input-group-btn\">"+sb+"</span>";
 			}
 			
-			return sb.toString();
+			return sb.append(genLoadRemoteContentScript()).toString();
 		}				
 						
 		// Dropdown button 
@@ -284,6 +284,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Object o: content) {
 			if (o instanceof AutoCloseable) {
 				((AutoCloseable) o).close();

@@ -99,11 +99,12 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 			sb.append(form.factory.tag("p", helpText).addClass("help-block"));			
 		}
 		sb.append("</div>");
-		return sb.toString();
+		return sb.append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		close(control);
 		close(controlId);
 		close(helpText);

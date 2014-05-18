@@ -78,7 +78,7 @@ class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 		sb.append(">");
 		sb.append(container.toString());
 		sb.append("</fieldset>");
-		return sb.toString();
+		return sb.append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override
@@ -88,6 +88,7 @@ class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		container.close();		
 	}
 

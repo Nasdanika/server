@@ -63,13 +63,30 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	}
 	
 	@Override
-	public Tag link(String href, final Object... content) {
+	public Tag link(Object href, final Object... content) {
 		return new TagImpl(this, "a", content).attribute("href", href);
 	}
 	
 	@Override
-	public Tag routeLink(String targetElement, String path, Object... content) {
-		return link("#router/"+(targetElement==null ? "main" : targetElement)+"/"+path, content);
+	public Tag routeLink(final Object targetElement, final Object path, Object... content) {
+		AutoCloseable href = new AutoCloseable() {
+			
+			@Override
+			public void close() throws Exception {
+				if (targetElement instanceof AutoCloseable) {
+					((AutoCloseable) targetElement).close();
+				};
+				if (path instanceof AutoCloseable) {
+					((AutoCloseable) path).close();
+				};
+			}
+			
+			@Override
+			public String toString() {
+				return "#router/"+(targetElement==null ? "main" : targetElement)+(String.valueOf(path).startsWith("/") ? path : "/"+path);
+			}
+		};
+		return link(href, content);
 	}
 	
 	@Override

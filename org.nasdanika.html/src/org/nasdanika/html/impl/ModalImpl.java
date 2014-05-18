@@ -49,6 +49,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		close(title);
 		close(body);
 		close(footer);
@@ -94,7 +95,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 			dialogDiv.addClass("modal-sm");
 		}
 		sb.append(dialogDiv);
-		return sb.append("</").append("div").append(">").toString();
+		return sb.append("</").append("div").append(">").append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override

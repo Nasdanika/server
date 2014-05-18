@@ -3,8 +3,10 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
@@ -236,5 +238,42 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Modal modal() {
 		return new ModalImpl(this);
+	}
+	
+	@Override
+	public Tag title(final Object title) {
+		Object escapedTitle = new Object() {
+			public String toString() {
+				return StringEscapeUtils.escapeEcmaScript(String.valueOf(title));				
+			};
+		};
+		return tag("script", "document.title=\"", escapedTitle, "\";");
+	}
+	
+	@Override
+	public Tag inject(final Object selector, Object... content) {
+		final String topId = nextId()+"_inject_container";
+		final String contentId = nextId()+"_inject_content";
+		Object script = new AutoCloseable() {
+			
+			@Override
+			public String toString() {
+				return "if ($(\""+selector+"\").length>0) { $(\""+selector+"\").html($(\"#"+contentId+"\").html()); $(\"#"+topId+"\").remove(); }";
+			}
+									
+			@Override
+			public void close() throws Exception {
+				if (selector instanceof AutoCloseable) {
+					((AutoCloseable) selector).close();
+				}
+				
+			}
+		};
+		return div(div(content).id(contentId), tag("script", script)).id(topId);
+	}
+	
+	@Override
+	public Breadcrumbs breadcrumbs() {
+		return new BreadcrumbsImpl(this);
 	}
 }

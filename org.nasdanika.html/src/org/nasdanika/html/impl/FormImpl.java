@@ -106,11 +106,13 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 			.append(">")
 			.append(container.toString())
 			.append("</form>")
+			.append(genLoadRemoteContentScript())
 			.toString();
 	}
 	
 	@Override
 	public void close() throws Exception {
+		super.close();
 		close(container);		
 	}
 

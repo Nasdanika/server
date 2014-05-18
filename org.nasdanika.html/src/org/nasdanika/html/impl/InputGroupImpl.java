@@ -86,12 +86,13 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 		if (initScript.length()>0) {
 			sb.append(factory.tag("script", initScript));
 		}
-		return sb.toString();
+		return sb.append(genLoadRemoteContentScript()).toString();
 		
 	}
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		close(control);
 		close(leftAddOn);
 		close(rightAddOn);	

@@ -79,7 +79,7 @@ public interface HTMLFactory {
 	
 	Select select(String name, String id, String placeholder);
 
-	Tag link(String href, Object... content);
+	Tag link(Object href, Object... content);
 	
 	Tag ul(Iterable<?> items);
 	
@@ -97,7 +97,7 @@ public interface HTMLFactory {
 	 * @param hint
 	 * @return
 	 */
-	Tag routeLink(String targetElement, String path, Object... content);	
+	Tag routeLink(Object targetElement, Object path, Object... content);	
 	
 	/**
 	 * Generates a router application
@@ -365,4 +365,27 @@ public interface HTMLFactory {
 	Tag glyphicon(Glyphicon glyphicon);
 	
 	Modal modal();
+	
+	/**
+	 * Generates document.title = title script.
+	 * @param title
+	 * @return
+	 */
+	Tag title(Object title);
+	
+	/**
+	 * Generates a DIV and a script to inject content into an element
+	 * specified by selector, if such element exists. After injection the 
+	 * content is removed from DOM tree. If target container does not exist then 
+	 * nothing happens and the content remains where it is. This method can 
+	 * be used in single page applications to update, say, breadcrumbs
+	 * when a new content is loaded in one of page containers.   
+	 * 
+	 * @param selector
+	 * @param content
+	 * @return A DIV contai
+	 */
+	Tag inject(Object selector, Object... content);
+	
+	Breadcrumbs breadcrumbs();
 }

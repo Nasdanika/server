@@ -44,11 +44,12 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 			ret.append(item);
 		}
 		ret.append("</div>");
-		return ret.toString();
+		return ret.append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Tag item: items) {
 			item.close();
 		}

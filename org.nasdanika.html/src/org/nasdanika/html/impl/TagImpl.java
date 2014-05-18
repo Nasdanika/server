@@ -42,11 +42,12 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 		for (Object c: theContent) {
 			sb.append(c);
 		}
-		return sb.append("</").append(tagName).append(">").toString();
+		return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override
 	public void close() throws Exception {
+		super.close();
 		for (Object c: getContent()) {
 			if (c instanceof AutoCloseable) {
 				((AutoCloseable) c).close();
