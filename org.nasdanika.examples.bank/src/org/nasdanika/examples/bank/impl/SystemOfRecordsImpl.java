@@ -2,10 +2,13 @@
  */
 package org.nasdanika.examples.bank.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.nasdanika.core.CommandMethod;
 import org.nasdanika.examples.bank.BankPackage;
 import org.nasdanika.examples.bank.Customer;
 import org.nasdanika.examples.bank.Product;
@@ -132,6 +135,15 @@ public class SystemOfRecordsImpl extends CDOObjectImpl implements SystemOfRecord
 	@SuppressWarnings("unchecked")
 	public EList<Product> getProducts() {
 		return (EList<Product>)eGet(BankPackage.Literals.SYSTEM_OF_RECORDS__PRODUCTS, true);
+	}
+	
+	@ActionMethod(pattern="[^/]+/customers\\.html")
+	public String customersList(HttpContext context) throws Exception {
+		List<Object> cList = new ArrayList<>();
+		for (Customer c: getCustomers()) {
+			cList.add(context.getHTMLFactory().link(context.getObjectPath(c)+".html", StringEscapeUtils.escapeHtml4(c.getName())));
+		}
+		return context.getHTMLFactory().ol(cList).toString();
 	}
 
 } //SystemOfRecordsImpl

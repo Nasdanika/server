@@ -3,10 +3,22 @@
 package org.nasdanika.examples.bank.impl;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
 import org.nasdanika.examples.bank.BankPackage;
 import org.nasdanika.examples.bank.CreditCard;
+import org.nasdanika.examples.bank.Statement;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Select;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.ActionMethod;
 import org.nasdanika.web.HttpContext;
 
@@ -79,12 +91,53 @@ public class CreditCardImpl extends LoanAccountImpl implements CreditCard {
 	public void setGracePeriod(int newGracePeriod) {
 		eSet(BankPackage.Literals.CREDIT_CARD__GRACE_PERIOD, newGracePeriod);
 	}
-	
-	
-	@ActionMethod(pattern=".+\\.html")
-	public String home(HttpContext context) {
-		return "he";
-	}
+		
+	@ActionMethod(pattern="[^/]+\\.html")
+	public String home(HttpContext context) throws Exception {
+		HTMLFactory htmlFactory = context.getHTMLFactory();
+		Table summaryTable = htmlFactory.table().striped();
 
+		Row currentBalanceRow = summaryTable.row();
+		currentBalanceRow.header("Current balance");
+		currentBalanceRow.cell(getBalance().negate());
+		
+		Row minPaymentRow = summaryTable.row();
+		minPaymentRow.header("Minimum payment");
+		minPaymentRow.cell(getBalance().negate().divide(new BigDecimal("100")));
+		
+		Select statementSelect = htmlFactory
+				.select("selectStatement", "selectStatement", "Select statement period")
+				.style("float", "right")
+				.on(Event.change, "nsdLoad($('#transactions'), this.value)");
+		
+		List<Statement> rs = new ArrayList<>(getStatements());
+		Collections.reverse(rs);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		for (Statement st: rs) {
+			if (st.getClosingDate()==null) {
+				statementSelect.option(
+						context.getObjectPath(st)+"/transactions.html", 
+						"Current transactions", 
+						true, 
+						false);
+			} else {
+				statementSelect.option(
+						context.getObjectPath(st)+"/transactions.html", 
+						"Statement "+dateFormat.format(st.getClosingDate()), 
+						false, 
+						false);				
+			}
+		}
+		
+		return htmlFactory.fragment(
+				htmlFactory.panel(Style.INFO, "Account summary", summaryTable, null), 
+				"<p/>", 
+				htmlFactory.panel(
+						Style.INFO, 
+						htmlFactory.fragment("Transactions", statementSelect), 
+						htmlFactory.div("Loading transactions...").id("transactions"), 						
+						null),						
+				htmlFactory.tag("script", "$('#selectStatement')[0].onchange();")).toString();
+	}
 
 } //CreditCardImpl

@@ -2,12 +2,23 @@
  */
 package org.nasdanika.examples.bank.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.examples.bank.Account;
 import org.nasdanika.examples.bank.BankPackage;
 import org.nasdanika.examples.bank.Customer;
+import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.web.ActionMethod;
+import org.nasdanika.web.HttpContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -117,6 +128,47 @@ public class CustomerImpl extends CDOObjectImpl implements Customer {
 	 */
 	public void setPasswordHash(byte[] newPasswordHash) {
 		eSet(BankPackage.Literals.CUSTOMER__PASSWORD_HASH, newPasswordHash);
+	}
+	
+	@ActionMethod(pattern="[^/]+\\.html")
+	public String home(HttpContext context) throws Exception {
+		HTMLFactory htmlFactory = context.getHTMLFactory();
+		ApplicationPanel appPanel = htmlFactory
+				.applicationPanel()
+				.width(800)
+				.minHeight(600)
+				.style(Style.PRIMARY)
+				.header("Nasdanika Bank");
+		
+		appPanel.contentPanel("Loading accounts panel...").id("main");
+		appPanel.footer(htmlFactory.link("#", "Contact Us"));
+		return htmlFactory.routerApplication(
+				"Nasdanika Bank", 
+				"main"+context.getObjectPath(this)+"/accounts.html", 
+				null, 
+				appPanel).toString();
+	}
+	
+	@ActionMethod(pattern="[^/]+/accounts\\.html")
+	public String accountsPanel(HttpContext context) throws Exception {
+		HTMLFactory htmlFactory = context.getHTMLFactory();
+		Table accountsTable = htmlFactory.table();
+		Row hRow = accountsTable.row().style(Style.INFO);
+		hRow.header("Account");
+		hRow.header("Balance").style("text-align", "right");
+		for (Account a: getAccounts()) {
+			Row aRow = accountsTable.row();
+			aRow.cell(htmlFactory.routeLink(
+					"main", 
+					context.getObjectPath(a)+".html", 
+					StringEscapeUtils.escapeHtml4(a.getProduct().getName()+"-"+a.cdoID())));
+			aRow.cell(a.getBalance().negate()).attribute("align", "right");
+		}
+		return htmlFactory.panel(
+				Style.INFO, 
+				"Accounts", 
+				accountsTable, 
+				null).toString()+htmlFactory.title("Accounts");
 	}
 
 } //CustomerImpl
