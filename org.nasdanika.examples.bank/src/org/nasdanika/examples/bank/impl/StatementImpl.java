@@ -14,13 +14,12 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.examples.bank.BankPackage;
-import org.nasdanika.examples.bank.Customer;
 import org.nasdanika.examples.bank.Statement;
 import org.nasdanika.examples.bank.Transaction;
 import org.nasdanika.examples.bank.TransactionType;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Table;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.ActionMethod;
@@ -158,7 +157,7 @@ public class StatementImpl extends CDOObjectImpl implements Statement {
 	@ActionMethod(pattern="[^/]+/transactions\\.html")
 	public String transactionsTable(HttpContext context) throws Exception {
 		HTMLFactory htmlFactory = context.getHTMLFactory();
-		Table tTable = htmlFactory.table().striped();
+		Table tTable = htmlFactory.table().striped().id("transactions");
 		Row hRow = tTable.row().style(Style.INFO);
 		hRow.header(htmlFactory.glyphicon(Glyphicon.calendar), " Date");
 		hRow.header(htmlFactory.glyphicon(Glyphicon.pencil), " Description");

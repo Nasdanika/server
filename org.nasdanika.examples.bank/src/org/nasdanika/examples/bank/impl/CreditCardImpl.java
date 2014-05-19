@@ -6,7 +6,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EClass;
@@ -108,7 +107,7 @@ public class CreditCardImpl extends LoanAccountImpl implements CreditCard {
 		Select statementSelect = htmlFactory
 				.select("selectStatement", "selectStatement", "Select statement period")
 				.style("float", "right")
-				.on(Event.change, "nsdLoad($('#transactions'), this.value)");
+				.on(Event.change, "nsdReplaceWith($('#transactions'), this.value)");
 		
 		List<Statement> rs = new ArrayList<>(getStatements());
 		Collections.reverse(rs);
@@ -135,7 +134,7 @@ public class CreditCardImpl extends LoanAccountImpl implements CreditCard {
 				htmlFactory.panel(
 						Style.INFO, 
 						htmlFactory.fragment("Transactions", statementSelect), 
-						htmlFactory.div("Loading transactions...").id("transactions"), 						
+						htmlFactory.table().id("transactions"), 						
 						null),						
 				htmlFactory.tag("script", "$('#selectStatement')[0].onchange();")).toString();
 	}

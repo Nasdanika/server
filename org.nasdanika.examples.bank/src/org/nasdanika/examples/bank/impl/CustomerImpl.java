@@ -2,9 +2,6 @@
  */
 package org.nasdanika.examples.bank.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;

@@ -8,7 +8,23 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.nasdanika.examples.bank.*;
+import org.nasdanika.examples.bank.Account;
+import org.nasdanika.examples.bank.BankFactory;
+import org.nasdanika.examples.bank.BankPackage;
+import org.nasdanika.examples.bank.Checking;
+import org.nasdanika.examples.bank.CreditCard;
+import org.nasdanika.examples.bank.Customer;
+import org.nasdanika.examples.bank.DepositAccount;
+import org.nasdanika.examples.bank.ExternalTransaction;
+import org.nasdanika.examples.bank.InternalTransaction;
+import org.nasdanika.examples.bank.LoanAccount;
+import org.nasdanika.examples.bank.Mortgage;
+import org.nasdanika.examples.bank.Product;
+import org.nasdanika.examples.bank.Savings;
+import org.nasdanika.examples.bank.Statement;
+import org.nasdanika.examples.bank.SystemOfRecords;
+import org.nasdanika.examples.bank.Transaction;
+import org.nasdanika.examples.bank.TransactionType;
 
 /**
  * <!-- begin-user-doc -->
