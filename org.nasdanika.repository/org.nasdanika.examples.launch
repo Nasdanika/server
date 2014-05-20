@@ -6,11 +6,11 @@
 <stringAttribute key="bootstrap" value=""/>
 <stringAttribute key="checked" value="[NONE]"/>
 <booleanAttribute key="clearConfig" value="true"/>
-<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/Bank Server"/>
+<stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/org.nasdanika.examples"/>
 <booleanAttribute key="default" value="true"/>
 <booleanAttribute key="default_auto_start" value="true"/>
 <intAttribute key="default_start_level" value="4"/>
-<stringAttribute key="deselected_workspace_plugins" value="Playground,com.nasdanika.amur,com.nasdanika.amur.diagram,com.nasdanika.amur.docgen.html,com.nasdanika.amur.edit,com.nasdanika.amur.editor,com.nasdanika.amur.it.js,com.nasdanika.amur.it.js.edit,com.nasdanika.amur.it.js.foundation,com.nasdanika.amur.it.js.foundation.edit,com.nasdanika.amur.it.js.foundation.help,com.nasdanika.amur.it.js.foundation.tests,com.nasdanika.amur.it.js.help,com.nasdanika.amur.it.js.lang,com.nasdanika.amur.it.js.lang.edit,com.nasdanika.amur.it.js.tests,com.nasdanika.amur.lang,com.nasdanika.amur.lang.causality,com.nasdanika.amur.lang.causality.edit,com.nasdanika.amur.lang.edit,com.nasdanika.cdo.xa.tests.launcher,com.nasdanika.common,com.nasdanika.licensing.edit,com.nasdanika.licensing.editor,com.nasdanika.party,com.nasdanika.party.edit,com.nasdanika.party.editor,com.nasdanika.transaction.help,org.nasdanika.cdo.xa,org.nasdanika.cdo.xa.tests,org.nasdanika.cdo.xa.tests.help,org.nasdanika.transaction"/>
+<stringAttribute key="deselected_workspace_plugins" value="org.nasdanika.cdo.xa,org.nasdanika.transaction"/>
 <booleanAttribute key="includeOptional" value="true"/>
 <booleanAttribute key="org.eclipse.jdt.launching.ATTR_USE_START_ON_FIRST_THREAD" value="true"/>
 <stringAttribute key="org.eclipse.jdt.launching.JRE_CONTAINER" value="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
