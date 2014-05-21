@@ -10,7 +10,7 @@ import org.nasdanika.core.Converter;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
-public class EReferenceClosureToHTMLRendererConverter implements Converter<EReferenceClosure, HTMLRenderer, WebContext> {
+public class EReferenceClosureToHTMLRendererConverter implements Converter<EReferenceClosure<?>, HTMLRenderer, WebContext> {
 
 	@Override
 	public void close() throws Exception {
@@ -19,7 +19,7 @@ public class EReferenceClosureToHTMLRendererConverter implements Converter<ERefe
 	}
 
 	@Override
-	public HTMLRenderer convert(final EReferenceClosure source, Class<HTMLRenderer> target, WebContext context) throws Exception {
+	public HTMLRenderer convert(final EReferenceClosure<?> source, Class<HTMLRenderer> target, WebContext context) throws Exception {
 		return new HTMLRenderer() {
 			
 			@Override

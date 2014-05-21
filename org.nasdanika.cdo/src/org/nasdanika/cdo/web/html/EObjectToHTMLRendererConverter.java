@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
@@ -21,9 +21,11 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
-import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -75,46 +77,25 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 					}
 				}
 				
-				List<EStructuralFeature> allStructuralFeatures = new ArrayList<>(source.eClass().getEAllStructuralFeatures());
-				Collections.sort(allStructuralFeatures, new Comparator<EStructuralFeature>() {
-
-					@Override
-					public int compare(EStructuralFeature o1, EStructuralFeature o2) {						
-						return o1.getName().compareTo(o2.getName());
-					}
-					
-				});
-												
-				Table scalarsTable = htmlFactory.table().bordered();
-				Tabs listsAndContainmentsTabs = htmlFactory.tabs();
-				for (EStructuralFeature sf: allStructuralFeatures) {
-					// TODO - security checks
-					String sfName = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(StringUtils.capitalize(sf.getName())), " ");
-					Object value = source.eGet(sf);
-					if (sf.isMany()) {
-						if (!((Collection<?>) source.eGet(sf)).isEmpty() /* || can edit */) {
-							String fPath = context.getObjectPath(source)+"/"+sf.getName()+".html";
-							listsAndContainmentsTabs.ajaxTab(sfName, null, fPath);
-						}
+				Object features = renderFeatures(source, context);
+				Object operations = renderOperations(source, context);
+				Object body;
+				if (features==null) {
+					if (operations==null) {
+						body = "";
 					} else {
-						if (sf instanceof EReference && ((EReference) sf).isContainment() && (source.eIsSet(sf) /* || can edit */)) {
-							String valuePath = context.getObjectPath(value);
-							listsAndContainmentsTabs.ajaxTab(sfName, null, valuePath+".html");
-						} else if (source.eIsSet(sf)) {							
-							Row row = scalarsTable.row();
-							row.header(sfName);
-							if (Boolean.TRUE.equals(value)) {
-								row.cell(htmlFactory.glyphicon(Glyphicon.ok));
-							} else if (Boolean.FALSE.equals(value) || value==null) {
-								row.cell("&nbsp;");
-							} else if (sf instanceof EAttribute) {
-								row.cell(context.toHTML(value, null, null));
-							} else {
-								row.cell(htmlFactory.routeLink("main", context.getObjectPath(value)+".html", context.toHTML(value, "label", null)));
-							}
-						}
+						body = operations;
 					}
-				}
+				} else {
+					if (operations==null) {
+						body = features;
+					} else {
+						Tabs featuresOperationsTabs = htmlFactory.tabs();
+						body = featuresOperationsTabs;
+						featuresOperationsTabs.tab("Features", null, features);
+						featuresOperationsTabs.tab("Operations", null, operations);
+					}
+				}				
 				
 				// TODO - edit/add/delete buttons if there are permissions.
 				
@@ -123,13 +104,104 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 						breadcrumbs, 
 						header, 
 						source instanceof EModelElement ? htmlFactory.tag("p", NasdanikaCDOUtil.getDocumentation((EModelElement) source)) : "", 
-						scalarsTable,
 						htmlFactory.button(htmlFactory.glyphicon(Glyphicon.save), "&nbsp;Export to XML").on(Event.click, "window.location.href='"+context.getObjectPath(source)+".xml'"),
-						"<p/>", 
-						listsAndContainmentsTabs).toString();
+						"<p/>",
+						body).toString();
 			}
 		};
 	}
+	
+	private Object renderFeatures(T source, WebContext context) throws Exception {
+		HTMLFactory htmlFactory = context.getHTMLFactory();
+		List<EStructuralFeature> allStructuralFeatures = new ArrayList<>(source.eClass().getEAllStructuralFeatures());
+		Collections.sort(allStructuralFeatures, new Comparator<EStructuralFeature>() {
 
+			@Override
+			public int compare(EStructuralFeature o1, EStructuralFeature o2) {						
+				return o1.getName().compareTo(o2.getName());
+			}
+			
+		});
+										
+		Table scalarsTable = htmlFactory.table().bordered();
+		Tabs listsAndContainmentsTabs = htmlFactory.tabs();
+		for (EStructuralFeature sf: allStructuralFeatures) {
+			// TODO - security checks
+			String sfLabel = NasdanikaCDOUtil.nameToLabel(sf.getName());
+			Object value = source.eGet(sf);
+			if (sf.isMany()) {
+				if (!((Collection<?>) source.eGet(sf)).isEmpty() /* || can edit */) {
+					String fPath = context.getObjectPath(source)+"/"+sf.getName()+".html";
+					listsAndContainmentsTabs.ajaxTab(sfLabel, null, fPath);
+				}
+			} else {
+				if (sf instanceof EReference && ((EReference) sf).isContainment() && (source.eIsSet(sf) /* || can edit */)) {
+					String valuePath = context.getObjectPath(value);
+					listsAndContainmentsTabs.ajaxTab(sfLabel, null, valuePath+".html");
+				} else if (source.eIsSet(sf)) {							
+					Row row = scalarsTable.row();
+					row.header(sfLabel);
+					if (Boolean.TRUE.equals(value)) {
+						row.cell(htmlFactory.glyphicon(Glyphicon.ok));
+					} else if (Boolean.FALSE.equals(value) || value==null) {
+						row.cell("&nbsp;");
+					} else if (sf instanceof EAttribute) {
+						row.cell(context.toHTML(value, null, null));
+					} else {
+						row.cell(htmlFactory.routeLink("main", context.getObjectPath(value)+".html", context.toHTML(value, "label", null)));
+					}
+				}
+			}
+		}
+		
+		if (scalarsTable.isEmpty()) {
+			if (listsAndContainmentsTabs.isEmpty()) {
+				return null;
+			}
+			return listsAndContainmentsTabs;
+		}
+		
+		if (listsAndContainmentsTabs.isEmpty()) {
+			return scalarsTable;
+		}
+		
+		return htmlFactory.fragment(scalarsTable, listsAndContainmentsTabs);
+	}
+
+	private Object renderOperations(T source, WebContext context) throws Exception {
+		List<EOperation> allOperations = new ArrayList<>(source.eClass().getEAllOperations());
+		if (allOperations.isEmpty()) {
+			return null;
+		}
+		HTMLFactory htmlFactory = context.getHTMLFactory();
+		Collections.sort(allOperations, new Comparator<EOperation>() {
+
+			@Override
+			public int compare(EOperation o1, EOperation o2) {						
+				return o1.getName().compareTo(o2.getName());
+			}
+			
+		});
+										
+		Table operationsTable = htmlFactory.table().bordered();
+		Row hr1 = operationsTable.row().background(Color.GRAY_LIGHTER);
+		hr1.header("Name").rowspan(2);
+		hr1.header("Parameters").colspan(2).style("text-align", "center");
+		hr1.header("Return type").rowspan(2);
+		hr1.header("Description").rowspan(2);
+		Row hr2 = operationsTable.row().background(Color.GRAY_LIGHTER);
+		hr2.header("Name");
+		hr2.header("Type");
+		for (EOperation op: allOperations) {
+			Row oRow = operationsTable.row();
+			oRow.cell(op.getName()); // TODO - rowSpan equal to number of parameters, if more than 1
+			oRow.cell("&nbsp;"); // TODO - Return type with link
+			oRow.cell("&nbsp;"); // TODO - Parameters with links to types
+			oRow.cell("&nbsp;"); // TODO
+			oRow.cell(NasdanikaCDOUtil.getSummary(op));
+		}
+		
+		return operationsTable;
+	}
 	
 }

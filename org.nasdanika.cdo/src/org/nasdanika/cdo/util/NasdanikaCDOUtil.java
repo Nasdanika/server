@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.util;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -52,6 +53,14 @@ public class NasdanikaCDOUtil {
 		String escapedDoc = StringEscapeUtils.escapeHtml4(doc);
 		int idx = escapedDoc.indexOf(".");
 		return idx==-1 ? "<pre>"+escapedDoc+"</pre>" : escapedDoc.substring(0, idx+1);
+	}
+	
+	public static String nameToLabel(String name) {
+		String[] words = StringUtils.splitByCharacterTypeCamelCase(StringUtils.capitalize(name));
+		for (int i=1; i<words.length; ++i) {
+			words[i] = words[i].toLowerCase();
+		}
+		return StringEscapeUtils.escapeHtml4(StringUtils.join(words, " "));
 	}
 	
 }

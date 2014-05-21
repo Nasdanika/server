@@ -9,7 +9,7 @@ import org.nasdanika.html.Table;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
-public class EAttributeClosureToHTMLRendererConverter implements Converter<EAttributeClosure, HTMLRenderer, WebContext> {
+public class EAttributeClosureToHTMLRendererConverter implements Converter<EAttributeClosure<?>, HTMLRenderer, WebContext> {
 
 	@Override
 	public void close() throws Exception {
@@ -18,7 +18,7 @@ public class EAttributeClosureToHTMLRendererConverter implements Converter<EAttr
 	}
 
 	@Override
-	public HTMLRenderer convert(final EAttributeClosure source, Class<HTMLRenderer> target, WebContext context) throws Exception {
+	public HTMLRenderer convert(final EAttributeClosure<?> source, Class<HTMLRenderer> target, WebContext context) throws Exception {
 		return new HTMLRenderer() {
 			
 			@Override

@@ -66,6 +66,11 @@
             method="GET"
             target="org.eclipse.emf.ecore.EObject">
       </extension_route>
+      <object_route
+            class="org.nasdanika.cdo.web.routes.EOperationClosureRoute"
+            method="*"
+            target="org.nasdanika.cdo.EOperationClosure">
+      </object_route>
       
    </extension>
    <extension
@@ -115,6 +120,11 @@
             source="org.nasdanika.cdo.EReferenceClosure"
             target="org.nasdanika.web.html.HTMLRenderer">
       </converter>
+      <converter
+            class="org.nasdanika.cdo.web.html.EAttributeClosureToHTMLRendererConverter"
+            source="org.nasdanika.cdo.EAttributeClosure"
+            target="org.nasdanika.web.html.HTMLRenderer">
+      </converter>
    </extension>
    <extension
          point="org.nasdanika.web.object_path_resolver">
@@ -137,6 +147,10 @@
       <resolver
             class="org.nasdanika.cdo.web.objectpathresolvers.EStructuralFeatureClosurePathResolver"
             target="org.nasdanika.cdo.EStructuralFeatureClosure">
+      </resolver>
+      <resolver
+            class="org.nasdanika.cdo.web.objectpathresolvers.EOperationClosurePathResolver"
+            target="org.nasdanika.cdo.EOperationClosure">
       </resolver>
    </extension>
 

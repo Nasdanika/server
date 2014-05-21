@@ -12,7 +12,7 @@ public class EReferenceClosureRoute implements Route {
 
 	@Override
 	public Action execute(final WebContext context) throws Exception {
-		final EReferenceClosure eReferenceClosure = (EReferenceClosure) context.getTarget();
+		final EReferenceClosure<?> eReferenceClosure = (EReferenceClosure<?>) context.getTarget();
 		
 		// Handle many
 		if (context.getPath().length==1) { 
