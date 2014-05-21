@@ -226,4 +226,9 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 		}		
 	}
 
+	@Override
+	public boolean isEmpty() {
+		return rows.isEmpty();
+	}
+
 }

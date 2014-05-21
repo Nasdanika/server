@@ -41,5 +41,7 @@ public interface Table extends UIElement<Table> {
 	Table condensed();
 	
 	Table responsive();
+	
+	boolean isEmpty();
 
 }
