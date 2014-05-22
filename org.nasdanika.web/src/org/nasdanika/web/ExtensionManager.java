@@ -368,8 +368,8 @@ public class ExtensionManager implements AutoCloseable {
 						RouteEntry re = new RouteEntry(RouteType.OBJECT, amAnnotation.value(), amAnnotation.pattern(), target.getClass(), amAnnotation.priority(), new MethodRoute(target, routeMethod)) {
 							
 							protected boolean match(Object obj, String[] path) {
-								if (getPattern()==null && path.length>0 && !routeMethod.getName().equals(path[0])) {
-									return false;
+								if (getPattern()==null) {
+									return path.length>1 && routeMethod.getName().equals(path[1]);
 								}
 								return super.match(obj, path);
 							};

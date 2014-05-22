@@ -22,7 +22,8 @@ public @interface ActionMethod {
 	RequestMethod[] value() default RequestMethod.GET;
 	
 	/**
-	 * Pattern to match path. Defaults to method name.
+	 * Pattern to match path. If not set then method
+	 * is matched if path's second elements equals to method name.
 	 * @return
 	 */
 	String pattern() default "";
