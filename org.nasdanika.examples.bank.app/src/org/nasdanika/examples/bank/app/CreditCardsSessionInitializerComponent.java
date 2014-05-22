@@ -43,16 +43,17 @@ public class CreditCardsSessionInitializerComponent implements CDOSessionInitial
 				cRes.getContents().add(sor);
 				
 				// Products
-				Product simplicity = BankFactory.eINSTANCE.createProduct();
-				simplicity.setName("Serenity");
-				sor.getProducts().add(simplicity);
+				Product serenity = BankFactory.eINSTANCE.createProduct();
+				serenity.setName("Serenity");
+				sor.getProducts().add(serenity);
 				
-				Product thankYou = BankFactory.eINSTANCE.createProduct();
-				thankYou.setName("Serendipity");
-				sor.getProducts().add(thankYou);
+				Product serendipity = BankFactory.eINSTANCE.createProduct();
+				serendipity.setName("Serendipity");
+				sor.getProducts().add(serendipity);
 								
-				Product diamond = BankFactory.eINSTANCE.createProduct();
-				sor.getProducts().add(diamond);
+				Product emerald = BankFactory.eINSTANCE.createProduct();
+				emerald.setName("Emerald");
+				sor.getProducts().add(emerald);
 				
 				PaymentProcessor visa = new PaymentProcessor() {
 					
@@ -110,8 +111,8 @@ public class CreditCardsSessionInitializerComponent implements CDOSessionInitial
 					}
 				};
 				// Customers				
-				createCustomer(sor, "John Doe", "johnDoe", visa, ach, simplicity, thankYou);
-				createCustomer(sor, "Jane Doe", "janeDoe", visa, ach, thankYou, diamond);
+				createCustomer(sor, "John Doe", "johnDoe", visa, ach, serenity, serendipity);
+				createCustomer(sor, "Jane Doe", "janeDoe", visa, ach, serendipity, emerald);
 				
 				System.out.println("Bank model generated");
 			}
