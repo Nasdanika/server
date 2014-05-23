@@ -23,7 +23,7 @@
 		<module>org.nasdanika.examples.bank.app</module>
 		<module>org.nasdanika.examples.feature</module>
 		<module>org.nasdanika.server.third_party.feature</module>
-		<module>org.nasdankia.server.jetty.feature</module>
+		<module>org.nasdanika.server.jetty.feature</module>
 		<module>org.nasdanika.repository</module>
 	</modules>
 </project>

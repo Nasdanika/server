@@ -9,7 +9,7 @@
    <feature url="features/org.nasdanika.server.third_party.feature_0.1.0.qualifier.jar" id="org.nasdanika.server.third_party.feature" version="0.1.0.qualifier">
       <category name="org.nasdanika.category"/>
    </feature>
-   <feature url="features/org.nasdankia.server.jetty.feature_0.1.0.qualifier.jar" id="org.nasdankia.server.jetty.feature" version="0.1.0.qualifier">
+   <feature url="features/org.nasdanika.server.jetty.feature_0.1.0.qualifier.jar" id="org.nasdanika.server.jetty.feature" version="0.1.0.qualifier">
       <category name="org.nasdanika.category"/>
    </feature>
    <feature url="features/org.nasdanika.html.feature_1.2.0.qualifier.jar" id="org.nasdanika.html.feature" version="1.2.0.qualifier">
