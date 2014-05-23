@@ -2,6 +2,14 @@ nasdanika
 =========
 
 * [Nasdanika HTML slides](http://www.slideshare.net/slideshow/embed_code/34274148)
+* P2 repository - http://www.nasdanika.org/repository
+* Binary distributions
+  * Foundation server
+    * [Windows 64](http://www.nasdanika.org/products/org.nasdanika.server-win32.win32.x86_64.zip)
+    * [Linux GTK x86 64](http://www.nasdanika.org/products/org.nasdanika.server-linux.gtk.x86_64.zip)
+  * Foundation server with examples
+    * [Windows 64](http://www.nasdanika.org/products/org.nasdanika.examples-win32.win32.x86_64.zip)
+    * [Linux GTK x86 64](http://www.nasdanika.org/products/org.nasdanika.examples-linux.gtk.x86_64.zip)
 
 
 Nasdanika open source components. The primary goal of this project is to create a collection of OSGi bundles and an OSGi server for running CDO-powered OSGi server applications. The server shall support transactional execution with transactions 

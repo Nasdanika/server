@@ -2,9 +2,7 @@
 <feature
       id="org.nasdanika.html.feature"
       label="Nasdanika HTML/Bootstrap UI builder"
-      version="1.2.0.qualifier"
-      license-feature="org.nasdanika.feature"
-      license-feature-version="0.1.0.qualifier">
+      version="1.2.0.qualifier">
 
    <description>
       Nasdanika HTML/Bootsrapi UI builder.
@@ -14,8 +12,8 @@
       Property of Nasdanika LLC.
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="http://www.eclipse.org/legal/epl-v10.html">
+      Eclipse Public License.
    </license>
 
    <plugin
