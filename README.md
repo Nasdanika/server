@@ -1,7 +1,8 @@
-nasdanika
+Nasdanika
 =========
 
-* [Nasdanika HTML slides](http://www.slideshare.net/slideshow/embed_code/34274148)
+* [Foundation Server presentation](http://www.slideshare.net/PavelVlasov2/nasdanika-foundation-server)
+* [Nasdanika HTML presentation](http://www.slideshare.net/slideshow/embed_code/34274148)
 * P2 repository - http://www.nasdanika.org/repository
 * Binary distributions
   * Foundation server
