@@ -204,6 +204,16 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 		
 		return element;
 	}
+	
+	@Override
+	public <T extends UIElement<?>> T tooltip(T element, Placement placement, String text) {
+		element
+			.attribute("data-toggle", "tooltip")
+			.attribute("title", text)
+			.attribute("data-placement", placement.name().toLowerCase());
+		
+		return element;
+	}
 
 	@Override
 	public Tag input(InputType type, String name, String value, String id, String placeholder) {

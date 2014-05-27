@@ -152,6 +152,17 @@ public interface HTMLFactory {
 	 */
 	<T extends UIElement<?>> T popover(T element, Placement placement, String title, String text);
 	
+	/**
+	 * Adds tooltip to the element. 
+	 * This method does not initialize the tooltip, it shall be done through JavaScript <code>$(selector).tooltip();</code> e.g.
+	 * <code>$('#my_button').tooltip();</code>
+	 * @param element Element
+	 * @param placement tooltip placement.
+	 * @param text tooltip text
+	 * @return
+	 */
+	<T extends UIElement<?>> T tooltip(T element, Placement placement, String text);
+	
 	enum Glyphicon {
 		asterisk,
 		plus,

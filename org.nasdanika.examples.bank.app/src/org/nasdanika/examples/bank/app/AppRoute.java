@@ -185,7 +185,13 @@ public class AppRoute implements Route {
 //		
 //		body.content(inputGroup);				
 
-		body.content(htmlFactory.label(Style.SUCCESS, "Life is good!"));
+		body.content(
+				htmlFactory.tooltip(
+						htmlFactory.label(Style.SUCCESS, "Life is good!").id("life_is_good"),
+						HTMLFactory.Placement.BOTTOM,
+						"A <B>good</B> life is even <U>better</U>!!!"));
+		body.content(htmlFactory.tag("script", "$('#life_is_good').tooltip({html:true});"));
+		
 		
 		body.content("<p/>");
 		
