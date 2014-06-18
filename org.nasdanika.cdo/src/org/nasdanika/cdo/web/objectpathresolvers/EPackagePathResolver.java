@@ -2,7 +2,6 @@ package org.nasdanika.cdo.web.objectpathresolvers;
 
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EPackage;
-import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.web.ObjectPathResolver;
@@ -14,9 +13,7 @@ public class EPackagePathResolver implements ObjectPathResolver<EPackage> {
 	public String resolve(EPackage obj, ObjectPathResolver<Object> master, Context context) throws Exception {
 		CDOView view;
 		if (context instanceof CDOViewContext) {
-			view = ((CDOViewContext) context).getView();
-		} else if (context instanceof CDOTransactionContext) {
-			view = ((CDOTransactionContext) context).getTransaction();
+			view = ((CDOViewContext<?,?>) context).getView();
 		} else {
 			return null;
 		}

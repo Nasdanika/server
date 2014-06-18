@@ -4,9 +4,11 @@ package org.nasdanika.examples.bank;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.nasdanika.cdo.security.SecurityPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -72,13 +74,58 @@ public interface BankPackage extends EPackage {
 	int SYSTEM_OF_RECORDS = 0;
 
 	/**
+	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM_OF_RECORDS__ACTIONS = SecurityPackage.PROTECTION_DOMAIN__ACTIONS;
+
+	/**
+	 * The feature id for the '<em><b>Groups</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM_OF_RECORDS__GROUPS = SecurityPackage.PROTECTION_DOMAIN__GROUPS;
+
+	/**
+	 * The feature id for the '<em><b>Super Users Group</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM_OF_RECORDS__SUPER_USERS_GROUP = SecurityPackage.PROTECTION_DOMAIN__SUPER_USERS_GROUP;
+
+	/**
+	 * The feature id for the '<em><b>Unauthenticated Principal</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM_OF_RECORDS__UNAUTHENTICATED_PRINCIPAL = SecurityPackage.PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL;
+
+	/**
+	 * The feature id for the '<em><b>Everyone Group</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM_OF_RECORDS__EVERYONE_GROUP = SecurityPackage.PROTECTION_DOMAIN__EVERYONE_GROUP;
+
+	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SYSTEM_OF_RECORDS__ID = 0;
+	int SYSTEM_OF_RECORDS__ID = SecurityPackage.PROTECTION_DOMAIN_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -87,7 +134,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SYSTEM_OF_RECORDS__NAME = 1;
+	int SYSTEM_OF_RECORDS__NAME = SecurityPackage.PROTECTION_DOMAIN_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -96,7 +143,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SYSTEM_OF_RECORDS__DESCRIPTION = 2;
+	int SYSTEM_OF_RECORDS__DESCRIPTION = SecurityPackage.PROTECTION_DOMAIN_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Customers</b></em>' containment reference list.
@@ -105,7 +152,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SYSTEM_OF_RECORDS__CUSTOMERS = 3;
+	int SYSTEM_OF_RECORDS__CUSTOMERS = SecurityPackage.PROTECTION_DOMAIN_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Products</b></em>' containment reference list.
@@ -114,7 +161,16 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SYSTEM_OF_RECORDS__PRODUCTS = 4;
+	int SYSTEM_OF_RECORDS__PRODUCTS = SecurityPackage.PROTECTION_DOMAIN_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Guest</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM_OF_RECORDS__GUEST = SecurityPackage.PROTECTION_DOMAIN_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>System Of Records</em>' class.
@@ -123,7 +179,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SYSTEM_OF_RECORDS_FEATURE_COUNT = 5;
+	int SYSTEM_OF_RECORDS_FEATURE_COUNT = SecurityPackage.PROTECTION_DOMAIN_FEATURE_COUNT + 6;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.examples.bank.impl.CustomerImpl <em>Customer</em>}' class.
@@ -136,13 +192,31 @@ public interface BankPackage extends EPackage {
 	int CUSTOMER = 1;
 
 	/**
+	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CUSTOMER__MEMBER_OF = SecurityPackage.USER__MEMBER_OF;
+
+	/**
+	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CUSTOMER__PERMISSIONS = SecurityPackage.USER__PERMISSIONS;
+
+	/**
 	 * The feature id for the '<em><b>Accounts</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOMER__ACCOUNTS = 0;
+	int CUSTOMER__ACCOUNTS = SecurityPackage.USER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -151,7 +225,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOMER__NAME = 1;
+	int CUSTOMER__NAME = SecurityPackage.USER_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Login</b></em>' attribute.
@@ -160,7 +234,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOMER__LOGIN = 2;
+	int CUSTOMER__LOGIN = SecurityPackage.USER_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Password Hash</b></em>' attribute.
@@ -169,7 +243,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOMER__PASSWORD_HASH = 3;
+	int CUSTOMER__PASSWORD_HASH = SecurityPackage.USER_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>Customer</em>' class.
@@ -178,7 +252,7 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int CUSTOMER_FEATURE_COUNT = 4;
+	int CUSTOMER_FEATURE_COUNT = SecurityPackage.USER_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.examples.bank.impl.AccountImpl <em>Account</em>}' class.
@@ -1102,6 +1176,43 @@ public interface BankPackage extends EPackage {
 	int STATEMENT_FEATURE_COUNT = 5;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.examples.bank.impl.GuestImpl <em>Guest</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.examples.bank.impl.GuestImpl
+	 * @see org.nasdanika.examples.bank.impl.BankPackageImpl#getGuest()
+	 * @generated
+	 */
+	int GUEST = 14;
+
+	/**
+	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST__MEMBER_OF = SecurityPackage.USER__MEMBER_OF;
+
+	/**
+	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST__PERMISSIONS = SecurityPackage.USER__PERMISSIONS;
+
+	/**
+	 * The number of structural features of the '<em>Guest</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST_FEATURE_COUNT = SecurityPackage.USER_FEATURE_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.nasdanika.examples.bank.TransactionType <em>Transaction Type</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1109,7 +1220,18 @@ public interface BankPackage extends EPackage {
 	 * @see org.nasdanika.examples.bank.impl.BankPackageImpl#getTransactionType()
 	 * @generated
 	 */
-	int TRANSACTION_TYPE = 14;
+	int TRANSACTION_TYPE = 15;
+
+
+	/**
+	 * The meta object id for the '<em>Login Password Credentials</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.examples.bank.LoginPasswordCredentials
+	 * @see org.nasdanika.examples.bank.impl.BankPackageImpl#getLoginPasswordCredentials()
+	 * @generated
+	 */
+	int LOGIN_PASSWORD_CREDENTIALS = 16;
 
 
 	/**
@@ -1176,6 +1298,17 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getSystemOfRecords_Products();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.examples.bank.SystemOfRecords#getGuest <em>Guest</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Guest</em>'.
+	 * @see org.nasdanika.examples.bank.SystemOfRecords#getGuest()
+	 * @see #getSystemOfRecords()
+	 * @generated
+	 */
+	EReference getSystemOfRecords_Guest();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.examples.bank.Customer <em>Customer</em>}'.
@@ -1671,6 +1804,16 @@ public interface BankPackage extends EPackage {
 	EAttribute getStatement_ClosingDate();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.examples.bank.Guest <em>Guest</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Guest</em>'.
+	 * @see org.nasdanika.examples.bank.Guest
+	 * @generated
+	 */
+	EClass getGuest();
+
+	/**
 	 * Returns the meta object for enum '{@link org.nasdanika.examples.bank.TransactionType <em>Transaction Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1679,6 +1822,17 @@ public interface BankPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getTransactionType();
+
+	/**
+	 * Returns the meta object for data type '{@link org.nasdanika.examples.bank.LoginPasswordCredentials <em>Login Password Credentials</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Login Password Credentials</em>'.
+	 * @see org.nasdanika.examples.bank.LoginPasswordCredentials
+	 * @model instanceClass="org.nasdanika.examples.bank.LoginPasswordCredentials"
+	 * @generated
+	 */
+	EDataType getLoginPasswordCredentials();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1751,6 +1905,14 @@ public interface BankPackage extends EPackage {
 		 * @generated
 		 */
 		EReference SYSTEM_OF_RECORDS__PRODUCTS = eINSTANCE.getSystemOfRecords_Products();
+
+		/**
+		 * The meta object literal for the '<em><b>Guest</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SYSTEM_OF_RECORDS__GUEST = eINSTANCE.getSystemOfRecords_Guest();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.examples.bank.impl.CustomerImpl <em>Customer</em>}' class.
@@ -2147,6 +2309,16 @@ public interface BankPackage extends EPackage {
 		EAttribute STATEMENT__CLOSING_DATE = eINSTANCE.getStatement_ClosingDate();
 
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.examples.bank.impl.GuestImpl <em>Guest</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.examples.bank.impl.GuestImpl
+		 * @see org.nasdanika.examples.bank.impl.BankPackageImpl#getGuest()
+		 * @generated
+		 */
+		EClass GUEST = eINSTANCE.getGuest();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.examples.bank.TransactionType <em>Transaction Type</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2155,6 +2327,16 @@ public interface BankPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum TRANSACTION_TYPE = eINSTANCE.getTransactionType();
+
+		/**
+		 * The meta object literal for the '<em>Login Password Credentials</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.examples.bank.LoginPasswordCredentials
+		 * @see org.nasdanika.examples.bank.impl.BankPackageImpl#getLoginPasswordCredentials()
+		 * @generated
+		 */
+		EDataType LOGIN_PASSWORD_CREDENTIALS = eINSTANCE.getLoginPasswordCredentials();
 
 	}
 

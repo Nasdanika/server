@@ -131,6 +131,16 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		return "";
 	}
 	
+	/**
+	 * Merges attributes from the source element into this element.
+	 * @param source
+	 */
+	protected void merge(UIElementImpl<?> source) {
+		this.attributes.putAll(source.attributes);
+		this.classes.addAll(source.classes);
+		this.styles.putAll(source.styles);
+	}
+	
 	@Override
 	public T id(Object id) {
 		return attribute(ID, id);

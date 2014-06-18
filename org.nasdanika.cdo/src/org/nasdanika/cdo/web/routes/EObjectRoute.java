@@ -18,7 +18,7 @@ public class EObjectRoute implements Route {
 		final EObject eObject = (EObject) context.getTarget();
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(eObject, "read")) {
+				if (context.authorize(eObject, "read", null, null)) {
 					int dotIdx = context.getPath()[0].lastIndexOf(".");
 					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
 					Action extensionAction = context.getExtensionAction(eObject, extension);
@@ -49,10 +49,10 @@ public class EObjectRoute implements Route {
 		}
 		EStructuralFeature feature = eObject.eClass().getEStructuralFeature(featureName);
 		if (feature instanceof EReference) {
-			return context.getAction(new EReferenceClosure(eObject, (EReference) feature), 1);
+			return context.getAction(new EReferenceClosure<EObject>(eObject, (EReference) feature), 1);
 		}
 		if (feature instanceof EAttribute) {
-			return context.getAction(new EAttributeClosure(eObject, (EAttribute) feature), 1);
+			return context.getAction(new EAttributeClosure<EObject>(eObject, (EAttribute) feature), 1);
 		}
 		return Action.NOT_FOUND;
 	}

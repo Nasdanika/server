@@ -4,10 +4,13 @@ package org.nasdanika.examples.bank.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.examples.bank.Account;
 import org.nasdanika.examples.bank.BankFactory;
 import org.nasdanika.examples.bank.BankPackage;
@@ -16,8 +19,10 @@ import org.nasdanika.examples.bank.CreditCard;
 import org.nasdanika.examples.bank.Customer;
 import org.nasdanika.examples.bank.DepositAccount;
 import org.nasdanika.examples.bank.ExternalTransaction;
+import org.nasdanika.examples.bank.Guest;
 import org.nasdanika.examples.bank.InternalTransaction;
 import org.nasdanika.examples.bank.LoanAccount;
+import org.nasdanika.examples.bank.LoginPasswordCredentials;
 import org.nasdanika.examples.bank.Mortgage;
 import org.nasdanika.examples.bank.Product;
 import org.nasdanika.examples.bank.Savings;
@@ -136,7 +141,21 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass guestEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum transactionTypeEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType loginPasswordCredentialsEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -183,6 +202,9 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		BankPackageImpl theBankPackage = (BankPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof BankPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new BankPackageImpl());
 
 		isInited = true;
+
+		// Initialize simple dependencies
+		SecurityPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
 		theBankPackage.createPackageContents();
@@ -251,6 +273,15 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 	 */
 	public EReference getSystemOfRecords_Products() {
 		return (EReference)systemOfRecordsEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getSystemOfRecords_Guest() {
+		return (EReference)systemOfRecordsEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -672,8 +703,26 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getGuest() {
+		return guestEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getTransactionType() {
 		return transactionTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getLoginPasswordCredentials() {
+		return loginPasswordCredentialsEDataType;
 	}
 
 	/**
@@ -710,6 +759,7 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		createEAttribute(systemOfRecordsEClass, SYSTEM_OF_RECORDS__DESCRIPTION);
 		createEReference(systemOfRecordsEClass, SYSTEM_OF_RECORDS__CUSTOMERS);
 		createEReference(systemOfRecordsEClass, SYSTEM_OF_RECORDS__PRODUCTS);
+		createEReference(systemOfRecordsEClass, SYSTEM_OF_RECORDS__GUEST);
 
 		customerEClass = createEClass(CUSTOMER);
 		createEReference(customerEClass, CUSTOMER__ACCOUNTS);
@@ -770,8 +820,13 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		createEAttribute(statementEClass, STATEMENT__CLOSING_BALANCE);
 		createEAttribute(statementEClass, STATEMENT__CLOSING_DATE);
 
+		guestEClass = createEClass(GUEST);
+
 		// Create enums
 		transactionTypeEEnum = createEEnum(TRANSACTION_TYPE);
+
+		// Create data types
+		loginPasswordCredentialsEDataType = createEDataType(LOGIN_PASSWORD_CREDENTIALS);
 	}
 
 	/**
@@ -797,11 +852,19 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		setNsPrefix(eNS_PREFIX);
 		setNsURI(eNS_URI);
 
+		// Obtain other dependent packages
+		SecurityPackage theSecurityPackage = (SecurityPackage)EPackage.Registry.INSTANCE.getEPackage(SecurityPackage.eNS_URI);
+
 		// Create type parameters
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		EGenericType g1 = createEGenericType(theSecurityPackage.getProtectionDomain());
+		EGenericType g2 = createEGenericType(this.getLoginPasswordCredentials());
+		g1.getETypeArguments().add(g2);
+		systemOfRecordsEClass.getEGenericSuperTypes().add(g1);
+		customerEClass.getESuperTypes().add(theSecurityPackage.getUser());
 		internalTransactionEClass.getESuperTypes().add(this.getTransaction());
 		externalTransactionEClass.getESuperTypes().add(this.getTransaction());
 		depositAccountEClass.getESuperTypes().add(this.getAccount());
@@ -810,6 +873,7 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		savingsEClass.getESuperTypes().add(this.getDepositAccount());
 		creditCardEClass.getESuperTypes().add(this.getLoanAccount());
 		mortgageEClass.getESuperTypes().add(this.getLoanAccount());
+		guestEClass.getESuperTypes().add(theSecurityPackage.getUser());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(systemOfRecordsEClass, SystemOfRecords.class, "SystemOfRecords", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -818,6 +882,7 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		initEAttribute(getSystemOfRecords_Description(), ecorePackage.getEString(), "description", null, 0, 1, SystemOfRecords.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getSystemOfRecords_Customers(), this.getCustomer(), null, "customers", null, 0, -1, SystemOfRecords.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getSystemOfRecords_Products(), this.getProduct(), null, "products", null, 0, -1, SystemOfRecords.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getSystemOfRecords_Guest(), this.getGuest(), null, "guest", null, 0, 1, SystemOfRecords.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(customerEClass, Customer.class, "Customer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getCustomer_Accounts(), this.getAccount(), null, "accounts", null, 0, -1, Customer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -878,10 +943,15 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		initEAttribute(getStatement_ClosingBalance(), ecorePackage.getEBigDecimal(), "closingBalance", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStatement_ClosingDate(), ecorePackage.getEDate(), "closingDate", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(guestEClass, Guest.class, "Guest", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
 		// Initialize enums and add enum literals
 		initEEnum(transactionTypeEEnum, TransactionType.class, "TransactionType");
 		addEEnumLiteral(transactionTypeEEnum, TransactionType.CREDIT);
 		addEEnumLiteral(transactionTypeEEnum, TransactionType.DEBIT);
+
+		// Initialize data types
+		initEDataType(loginPasswordCredentialsEDataType, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -909,7 +979,7 @@ public class BankPackageImpl extends EPackageImpl implements BankPackage {
 		  (systemOfRecordsEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>System of records is the <b>root</b> of the model.</html>"
+			 "documentation", "<html>System of records is the <b>root</b> of the model. Another sentence to be included <I>only</I> in the detailed documentation, but not in summary.</html>"
 		   });
 	}
 

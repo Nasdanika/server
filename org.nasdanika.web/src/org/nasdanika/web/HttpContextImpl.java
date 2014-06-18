@@ -9,11 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicLong;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.NasdanikaException;
 
 public class HttpContextImpl extends ContextImpl implements HttpContext {
@@ -22,34 +26,39 @@ public class HttpContextImpl extends ContextImpl implements HttpContext {
 	private HttpServletRequest req;
 	private HttpServletResponse resp;
 	private String contextURL;
+	private ExportingContext exportingContext;
 
 	public HttpContextImpl(
-			Object principal, 
 			String[] path, 
 			Object target, 
 			ExtensionManager extensionManager, 
+			ClassLoadingContext classLoadingContext,
 			List<TraceEntry> pathTrace,
 			HttpServletRequest req, 
 			HttpServletResponse resp,
-			String contextUrl) throws Exception {
+			String contextUrl,
+			ExportingContext exportingContext) throws Exception {
 		
-		super(principal, path, target, extensionManager, pathTrace);
+		
+		super(path, target, extensionManager, classLoadingContext, pathTrace);
 		this.req = req;
 		this.resp = resp;
 		this.contextURL = contextUrl;
+		this.exportingContext = exportingContext;
 	}
 	
 	@Override
 	protected WebContext createSubContext(String[] subPath, Object target) throws Exception {
 		HttpContextImpl subContext = new HttpContextImpl(
-				getPrincipal(), 
 				subPath, 
 				target, 
 				getExtensionManager(), 
+				this,
 				getPathTrace(),
 				getRequest(), 
 				getResponse(),
-				subContextURL(subPath, false));
+				subContextURL(subPath, false),
+				this);
 		subContext.getRootObjectsPaths().putAll(getRootObjectsPaths());
 		return subContext;
 	}
@@ -179,6 +188,76 @@ public class HttpContextImpl extends ContextImpl implements HttpContext {
 	public String getCharacterEncoding() {
 		String ret = req.getCharacterEncoding();
 		return ret==null ? "UTF-8" : ret;
+	}	
+	
+	private class Exports {
+		AtomicLong counter = new AtomicLong();
+		Map<String, Object> exportedObjects = new ConcurrentHashMap<>();
+		Map<String, Map<RequestMethod,Route>> exportedRoutes = new ConcurrentHashMap<>();
+		String nextId() {
+			return Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
+		}
+	}
+	
+	private static final String EXPORTS_ATTRIBUTE = ExportingContext.class.getName();
+	
+	private static final Object sessionMonitor = new Object();
+
+	@Override
+	public String exportObject(Object obj) {
+		if (exportingContext==null) {
+			HttpSession session = req.getSession();
+			synchronized (sessionMonitor) {
+				Exports exports = (Exports) session.getAttribute(EXPORTS_ATTRIBUTE);
+				if (exports==null) {
+					exports = new Exports();
+					session.setAttribute(EXPORTS_ATTRIBUTE, exports);
+				}
+				String path = getContextURL()+"/exports/"+exports.nextId();
+				exports.exportedObjects.put(path, obj);			
+				return path;
+			}
+		}
+		return exportingContext.exportObject(obj);
+	}
+
+	@Override
+	public String exportRoute(Route route, RequestMethod... method) {
+		if (exportingContext==null) {
+			HttpSession session = req.getSession();
+			synchronized (sessionMonitor) {
+				Exports exports = (Exports) session.getAttribute(EXPORTS_ATTRIBUTE);
+				if (exports==null) {
+					exports = new Exports();
+					session.setAttribute(EXPORTS_ATTRIBUTE, exports);
+				}
+				Map<RequestMethod, Route> methodMap = new HashMap<>();
+				for (RequestMethod m: method) {
+					methodMap.put(m, route);
+				}
+				String path = getContextURL()+"/exports/"+exports.nextId();
+				exports.exportedRoutes.put(path, methodMap);			
+				return path;
+			}
+		}
+		return exportingContext.exportRoute(route, method);
+	}
+
+	@Override
+	public Object unexport(String path) {
+		if (exportingContext==null) {
+			HttpSession session = req.getSession();
+			Exports exports = (Exports) session.getAttribute(EXPORTS_ATTRIBUTE);
+			if (exports==null) {
+				return null;
+			}
+			Object ret = exports.exportedObjects.remove(path);
+			if (ret!=null) {
+				return ret;
+			}
+			return exports.exportedRoutes.remove(path);
+		}
+		return exportingContext.unexport(path);
 	}
 
 }

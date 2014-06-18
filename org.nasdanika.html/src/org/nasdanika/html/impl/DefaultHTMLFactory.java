@@ -8,6 +8,8 @@ import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
+import org.nasdanika.html.ButtonGroup;
+import org.nasdanika.html.ButtonToolbar;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
@@ -285,5 +287,15 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Breadcrumbs breadcrumbs() {
 		return new BreadcrumbsImpl(this);
+	}
+
+	@Override
+	public ButtonGroup buttonGroup(Button... buttons) {
+		return new ButtonGroupImpl(this, buttons);
+	}
+
+	@Override
+	public ButtonToolbar buttonToolbar(ButtonGroup... buttonGroups) {
+		return new ButtonToolbarImpl(this, buttonGroups);
 	}
 }

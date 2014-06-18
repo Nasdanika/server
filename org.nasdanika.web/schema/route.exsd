@@ -335,7 +335,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.nasdanika.web.ActionProvider"/>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.web.RouteProvider"/>
                </appinfo>
             </annotation>
          </attribute>

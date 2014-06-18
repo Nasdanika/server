@@ -2,8 +2,10 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.ProtectionDomain;
 
-public class CDOTransactionContextProviderComponent implements CDOTransactionContextProvider {
+public abstract class CDOTransactionContextProviderComponent<CR> implements CDOTransactionContextProvider<CR> {
 	
 	private CDOSessionProvider sessionProvider;
 	
@@ -18,9 +20,9 @@ public class CDOTransactionContextProviderComponent implements CDOTransactionCon
 	// TODO - transaction handlers and content adapters references & extensions.
 
 	@Override
-	public CDOTransactionContext createContext() {
+	public CDOTransactionContext<CR> createContext() {
 		if (sessionProvider!=null) {			
-			return new CDOTransactionContext() {
+			return new CDOTransactionContext<CR>() {
 				
 				private CDOTransaction transaction = sessionProvider.getSession().openTransaction();
 				
@@ -42,7 +44,7 @@ public class CDOTransactionContextProviderComponent implements CDOTransactionCon
 				}
 				
 				@Override
-				public CDOTransaction getTransaction() {
+				public CDOTransaction getView() {
 					return transaction;
 				}
 
@@ -50,9 +52,38 @@ public class CDOTransactionContextProviderComponent implements CDOTransactionCon
 				public void setRollbackOnly() {
 					rollbackOnly = true;					
 				}
+								
+				private Principal authenticatedPrincipal;
+
+				@Override
+				public Principal getPrincipal() {
+					if (authenticatedPrincipal!=null) {
+						return authenticatedPrincipal;
+					}
+					ProtectionDomain<CR> pd = getProtectionDomain();
+					return pd==null ? null : pd.getUnauthenticatedPrincipal();
+				}
+
+				@Override
+				public ProtectionDomain<CR> getProtectionDomain() {
+					return CDOTransactionContextProviderComponent.this.getProtectionDomain(getView());
+				}
+
+				@Override
+				public boolean authenticate(CR credentials) {
+					ProtectionDomain<CR> pd = getProtectionDomain();
+					if (pd==null) {
+						return false;
+					}
+					authenticatedPrincipal = pd.authenticate(credentials);
+					return authenticatedPrincipal!=null;
+				}
+				
 			};
 		}
 		return null;
 	}
+
+	protected abstract ProtectionDomain<CR> getProtectionDomain(CDOTransaction view);
 
 }

@@ -1,6 +1,7 @@
 package org.nasdanika.web;
 
 import java.io.IOException;
+import java.nio.file.AccessMode;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -10,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.jetty.websocket.WebSocket;
 import org.eclipse.jetty.websocket.WebSocketServlet;
 import org.json.JSONObject;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 
 // --- Not functional yet - more like a skeleton for further implementation ---
 
@@ -30,7 +32,9 @@ public class WebSocketRoutingServlet extends WebSocketServlet {
 			extensionManager = new ExtensionManager(
 					null, 
 					config.getInitParameter("route-service-filter"),
-					config.getInitParameter("html-factory"));
+					config.getInitParameter("ui-part-service-filter"),
+					config.getInitParameter("html-factory"),
+					"deny".equalsIgnoreCase(config.getInitParameter("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}

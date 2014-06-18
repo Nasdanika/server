@@ -153,5 +153,11 @@
             target="org.nasdanika.cdo.EOperationClosure">
       </resolver>
    </extension>
+   <extension
+         point="org.nasdanika.core.security">
+      <authorization_provider
+            class="org.nasdanika.cdo.CDOViewContextAuthorizationProvider">
+      </authorization_provider>
+   </extension>
 
 </plugin>

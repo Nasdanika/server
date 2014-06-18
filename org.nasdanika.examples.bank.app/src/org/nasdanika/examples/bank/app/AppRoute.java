@@ -23,6 +23,7 @@ import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.UIElement.Color;
 import org.nasdanika.html.UIElement.DeviceSize;
 import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.html.UIElement.Size;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.Route;
@@ -74,11 +75,82 @@ public class AppRoute implements Route {
 				.width(DeviceSize.LARGE, 2).id("side-panel");
 				
 		Accordion accordion = htmlFactory.accordion()
-				.item("Item 1", "Item 1 body", Style.DEFAULT)
-				.item("Item 2", "Item 2 body", Style.PRIMARY)
-				.item("Item 3", "Item 3 body", Style.WARNING);
+				.item("Item 1", "Item 1 body")
+				.item("Item 2", Style.PRIMARY, "Item 2 body")
+				.item("Item 3", Style.WARNING, "Item 3 body")
+				.style(Style.SUCCESS);
 		
 		Fragment body = htmlFactory.fragment(accordion);
+		
+		// Button groups 
+		Fragment buttonGroups = htmlFactory.fragment();
+		buttonGroups.content(
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A").on(Event.click, "alert('Here we go!!!');"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A").style(Style.WARNING),
+						htmlFactory.button("B").style(Style.INFO),
+						htmlFactory.button("C")).size(Size.LARGE),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")).vertical().size(Size.EXTRA_SMALL),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")
+							.item(htmlFactory.link("#", "C1"))
+							.divider()
+							.header("C2")
+							.item(htmlFactory.link("#", "C2.1"))
+							.item(htmlFactory.link("#", "C2.2"))),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")
+							.item(htmlFactory.link("#", "C1"))
+							.divider()
+							.header("C2")
+							.item(htmlFactory.link("#", "C2.1"))
+							.item(htmlFactory.link("#", "C2.2"))).vertical(),
+				"<HR/>", 
+				htmlFactory.label(Style.SUCCESS, "This is a button toolbar ", htmlFactory.glyphicon(Glyphicon.arrow_down)),
+				"<P/>",
+				htmlFactory.buttonToolbar(
+						htmlFactory.buttonGroup(
+								htmlFactory.button("A"),
+								htmlFactory.button("B").style(Style.PRIMARY),
+								htmlFactory.button("C")),
+						htmlFactory.buttonGroup(
+								htmlFactory.button("X"),
+								htmlFactory.button("Y").style(Style.PRIMARY),
+								htmlFactory.button("Z")
+								.item(htmlFactory.link("#", "Z1"))
+								.divider()
+								.header("Z2")
+								.item(htmlFactory.link("#", "Z2.1"))
+								.item(htmlFactory.link("#", "Z2.2")))
+						),
+				"<HR/>", 
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")
+							.item(htmlFactory.link("#", "C1"))
+							.divider()
+							.header("C2")
+							.item(htmlFactory.link("#", "C2.1"))
+							.item(htmlFactory.link("#", "C2.2"))).justified()				
+				);
+		
+		
+		body.content(htmlFactory.panel(Style.INFO, "Button Groups &amp; Toolbars", buttonGroups, null));
 		
 		appPanel.contentPanel(body).width(DeviceSize.LARGE, 8);
 		
@@ -247,8 +319,8 @@ public class AppRoute implements Route {
 		
 		body.content(
 				htmlFactory.tabs()
-					.tab("Tab 1", null, "Tab 1 content")
-					.ajaxTab("Tab 2", "Tab 2 tooltip", "tab2.html")
+					.item("Tab 1", "Tab 1 content")
+					.ajaxItem("Tab 2", "tab2.html")
 				);
 		
 		body.content(htmlFactory.tag("div", "").style("min-height", "200px"));

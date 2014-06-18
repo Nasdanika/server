@@ -15,8 +15,13 @@
         eType="#//Customer" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="products" upperBound="-1"
         eType="#//Product" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guest" eType="#//Guest"
+        containment="true"/>
+    <eGenericSuperTypes eClassifier="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//ProtectionDomain">
+      <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
+    </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Customer">
+  <eClassifiers xsi:type="ecore:EClass" name="Customer" eSuperTypes="../../org.nasdanika.cdo.security/model/security.ecore#//User">
     <eStructuralFeatures xsi:type="ecore:EReference" name="accounts" upperBound="-1"
         eType="#//Account" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -83,4 +88,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="closingBalance" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="closingDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="LoginPasswordCredentials" instanceClassName="org.nasdanika.examples.bank.LoginPasswordCredentials"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Guest" eSuperTypes="../../org.nasdanika.cdo.security/model/security.ecore#//User"/>
 </ecore:EPackage>

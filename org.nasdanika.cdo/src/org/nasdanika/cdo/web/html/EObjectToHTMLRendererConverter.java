@@ -25,7 +25,6 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Color;
 import org.nasdanika.html.UIElement.Event;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -84,16 +83,16 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 					if (operations==null) {
 						body = "";
 					} else {
-						body = operations;
+						body = htmlFactory.fragment(htmlFactory.tag("h4", "Operations"), operations);
 					}
 				} else {
 					if (operations==null) {
-						body = features;
+						body = htmlFactory.fragment(htmlFactory.tag("h4", "Features"), features);
 					} else {
 						Tabs featuresOperationsTabs = htmlFactory.tabs();
 						body = featuresOperationsTabs;
-						featuresOperationsTabs.tab("Features", null, features);
-						featuresOperationsTabs.tab("Operations", null, operations);
+						featuresOperationsTabs.item("Features", features);
+						featuresOperationsTabs.item("Operations", operations);
 					}
 				}				
 				
@@ -132,12 +131,12 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 			if (sf.isMany()) {
 				if (!((Collection<?>) source.eGet(sf)).isEmpty() /* || can edit */) {
 					String fPath = context.getObjectPath(source)+"/"+sf.getName()+".html";
-					listsAndContainmentsTabs.ajaxTab(sfLabel, null, fPath);
+					listsAndContainmentsTabs.ajaxItem(sfLabel, fPath);
 				}
 			} else {
 				if (sf instanceof EReference && ((EReference) sf).isContainment() && (source.eIsSet(sf) /* || can edit */)) {
 					String valuePath = context.getObjectPath(value);
-					listsAndContainmentsTabs.ajaxTab(sfLabel, null, valuePath+".html");
+					listsAndContainmentsTabs.ajaxItem(sfLabel, valuePath+".html");
 				} else if (source.eIsSet(sf)) {							
 					Row row = scalarsTable.row();
 					row.header(sfLabel);
@@ -153,6 +152,8 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 				}
 			}
 		}
+		
+		context.buildUICategory("tabs", listsAndContainmentsTabs, null);
 		
 		if (scalarsTable.isEmpty()) {
 			if (listsAndContainmentsTabs.isEmpty()) {

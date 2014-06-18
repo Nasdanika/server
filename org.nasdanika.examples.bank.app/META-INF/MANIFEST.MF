@@ -23,4 +23,5 @@ Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
  org.nasdanika.cdo;bundle-version="0.1.0",
  org.nasdanika.cdo.h2;bundle-version="0.1.0",
  org.nasdanika.web;bundle-version="0.1.0",
- org.json;bundle-version="1.0.0"
+ org.json;bundle-version="1.0.0",
+ org.nasdanika.html

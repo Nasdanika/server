@@ -1,11 +1,5 @@
 package org.nasdanika.html;
 
-public interface Tabs extends UIElement<Tabs> {
+public interface Tabs extends UIElement<Tabs>, NamedItemsContainer<Tabs> {
 	
-	Tabs tab(Object name, Object hint, Object... content);
-	
-	Tabs ajaxTab(Object name, Object hint, Object location);
-	
-	boolean isEmpty();
-
 }

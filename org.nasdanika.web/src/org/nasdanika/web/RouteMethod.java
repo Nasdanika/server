@@ -6,14 +6,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation tells router to wrap object method into an action.
+ * This annotation tells router to wrap object method into a route.
  * ActionMethod may take WebContext parameter. If method returns value, this value is written to response. 
  * @author Pavel
  *
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ActionMethod {
+public @interface RouteMethod {
 	
 	/**
 	 * Supported HTTP methods. Defaults to GET.

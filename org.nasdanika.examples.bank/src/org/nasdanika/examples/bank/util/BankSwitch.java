@@ -5,6 +5,9 @@ package org.nasdanika.examples.bank.util;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
+import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.User;
 import org.nasdanika.examples.bank.*;
 
 /**
@@ -67,12 +70,15 @@ public class BankSwitch<T> extends Switch<T> {
 			case BankPackage.SYSTEM_OF_RECORDS: {
 				SystemOfRecords systemOfRecords = (SystemOfRecords)theEObject;
 				T result = caseSystemOfRecords(systemOfRecords);
+				if (result == null) result = caseProtectionDomain(systemOfRecords);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case BankPackage.CUSTOMER: {
 				Customer customer = (Customer)theEObject;
 				T result = caseCustomer(customer);
+				if (result == null) result = caseUser(customer);
+				if (result == null) result = casePrincipal(customer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -157,6 +163,14 @@ public class BankSwitch<T> extends Switch<T> {
 			case BankPackage.STATEMENT: {
 				Statement statement = (Statement)theEObject;
 				T result = caseStatement(statement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case BankPackage.GUEST: {
+				Guest guest = (Guest)theEObject;
+				T result = caseGuest(guest);
+				if (result == null) result = caseUser(guest);
+				if (result == null) result = casePrincipal(guest);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -371,6 +385,66 @@ public class BankSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseStatement(Statement object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Guest</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Guest</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseGuest(Guest object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Protection Domain</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Protection Domain</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR> T caseProtectionDomain(ProtectionDomain<CR> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Principal</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Principal</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T casePrincipal(Principal object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>User</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>User</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseUser(User object) {
 		return null;
 	}
 

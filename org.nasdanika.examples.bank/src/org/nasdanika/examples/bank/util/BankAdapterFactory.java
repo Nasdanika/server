@@ -6,6 +6,9 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.User;
 import org.nasdanika.examples.bank.*;
 
 /**
@@ -119,6 +122,22 @@ public class BankAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseStatement(Statement object) {
 				return createStatementAdapter();
+			}
+			@Override
+			public Adapter caseGuest(Guest object) {
+				return createGuestAdapter();
+			}
+			@Override
+			public <CR> Adapter caseProtectionDomain(ProtectionDomain<CR> object) {
+				return createProtectionDomainAdapter();
+			}
+			@Override
+			public Adapter casePrincipal(Principal object) {
+				return createPrincipalAdapter();
+			}
+			@Override
+			public Adapter caseUser(User object) {
+				return createUserAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -333,6 +352,62 @@ public class BankAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createStatementAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.examples.bank.Guest <em>Guest</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.examples.bank.Guest
+	 * @generated
+	 */
+	public Adapter createGuestAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.ProtectionDomain <em>Protection Domain</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.ProtectionDomain
+	 * @generated
+	 */
+	public Adapter createProtectionDomainAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.Principal
+	 * @generated
+	 */
+	public Adapter createPrincipalAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.User <em>User</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.User
+	 * @generated
+	 */
+	public Adapter createUserAdapter() {
 		return null;
 	}
 

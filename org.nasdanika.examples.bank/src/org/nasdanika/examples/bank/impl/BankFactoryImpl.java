@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.nasdanika.examples.bank.*;
 import org.nasdanika.examples.bank.Account;
 import org.nasdanika.examples.bank.BankFactory;
 import org.nasdanika.examples.bank.BankPackage;
@@ -84,6 +85,7 @@ public class BankFactoryImpl extends EFactoryImpl implements BankFactory {
 			case BankPackage.CREDIT_CARD: return (EObject)createCreditCard();
 			case BankPackage.MORTGAGE: return (EObject)createMortgage();
 			case BankPackage.STATEMENT: return (EObject)createStatement();
+			case BankPackage.GUEST: return (EObject)createGuest();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -99,6 +101,8 @@ public class BankFactoryImpl extends EFactoryImpl implements BankFactory {
 		switch (eDataType.getClassifierID()) {
 			case BankPackage.TRANSACTION_TYPE:
 				return createTransactionTypeFromString(eDataType, initialValue);
+			case BankPackage.LOGIN_PASSWORD_CREDENTIALS:
+				return createLoginPasswordCredentialsFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -114,6 +118,8 @@ public class BankFactoryImpl extends EFactoryImpl implements BankFactory {
 		switch (eDataType.getClassifierID()) {
 			case BankPackage.TRANSACTION_TYPE:
 				return convertTransactionTypeToString(eDataType, instanceValue);
+			case BankPackage.LOGIN_PASSWORD_CREDENTIALS:
+				return convertLoginPasswordCredentialsToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -264,6 +270,16 @@ public class BankFactoryImpl extends EFactoryImpl implements BankFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Guest createGuest() {
+		GuestImpl guest = new GuestImpl();
+		return guest;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public TransactionType createTransactionTypeFromString(EDataType eDataType, String initialValue) {
 		TransactionType result = TransactionType.get(initialValue);
 		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'");
@@ -277,6 +293,24 @@ public class BankFactoryImpl extends EFactoryImpl implements BankFactory {
 	 */
 	public String convertTransactionTypeToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LoginPasswordCredentials createLoginPasswordCredentialsFromString(EDataType eDataType, String initialValue) {
+		return (LoginPasswordCredentials)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertLoginPasswordCredentialsToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

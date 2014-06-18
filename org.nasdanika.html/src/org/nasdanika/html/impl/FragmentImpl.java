@@ -38,5 +38,10 @@ class FragmentImpl implements Fragment {
 		}
 		return sb.toString();
 	}
+	
+	@Override
+	public boolean isEmpty() {
+		return content.isEmpty();
+	}
 
 }

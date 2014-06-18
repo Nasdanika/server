@@ -19,18 +19,15 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	private abstract class Tab implements AutoCloseable {
 		int idx;
 		Object name;
-		Object hint;
 		
 		@Override
 		public void close() throws Exception {
 			TabsImpl.this.close(name);			
-			TabsImpl.this.close(hint);			
 		}
 
-		Tab(Object name, Object hint, int idx) {
+		Tab(Object name, int idx) {
 			super();
 			this.name = name;
-			this.hint = hint;
 			this.idx = idx;
 		}	
 		
@@ -59,8 +56,8 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	
 	private class ContentTab extends Tab {
 		
-		ContentTab(Object name, Object hint, int idx, Object[] content) {
-			super(name, hint, idx);
+		ContentTab(Object name, int idx, Object[] content) {
+			super(name, idx);
 			this.content = content;
 		}
 
@@ -77,9 +74,6 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		@Override
 		protected Tag link() {
 			Tag link = factory.link("#"+tabId+"_"+idx, name).attribute("data-toggle", "tab");
-			if (hint!=null) {
-				link.attribute("title", hint.toString());
-			}
 			return link;
 		}
 		
@@ -91,8 +85,8 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	
 	private class AjaxTab extends Tab {
 		
-		AjaxTab(Object name, Object hint, int idx, Object location) {
-			super(name, hint, idx);
+		AjaxTab(Object name, int idx, Object location) {
+			super(name, idx);
 			this.location = location;
 		}
 
@@ -107,9 +101,6 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		@Override
 		protected Tag link() {
 			Tag link = factory.link(location.toString(), name).attribute("data-target", "#"+tabId+"_"+idx).attribute("data-toggle", "tabajax");
-			if (hint!=null) {
-				link.attribute("title", hint.toString());
-			}
 			return link;
 		}
 		
@@ -139,14 +130,14 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	}
 
 	@Override
-	public Tabs tab(Object name, Object hint, Object... content) {
-		tabs.add(new ContentTab(name, hint, tabs.size(), content));
+	public Tabs item(Object name, Object... content) {
+		tabs.add(new ContentTab(name, tabs.size(), content));
 		return this;
 	}
 
 	@Override
-	public Tabs ajaxTab(Object name, Object hint, Object location) {
-		tabs.add(new AjaxTab(name, hint, tabs.size(), location));
+	public Tabs ajaxItem(Object name, Object location) {
+		tabs.add(new AjaxTab(name, tabs.size(), location));
 		return this;
 	}
 	

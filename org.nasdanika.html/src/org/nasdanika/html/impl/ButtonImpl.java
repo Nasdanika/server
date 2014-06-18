@@ -303,4 +303,9 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		return this;
 	}
 
+	@Override
+	public boolean isDropdownEmpty() {
+		return items.isEmpty();
+	}
+
 }

@@ -10,23 +10,37 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
 	private class Item implements AutoCloseable {
 		Object title;
-		Object body;
+		Object[] content;
 		Style style;
 		private boolean initial;
+		private Object location;
 		
-		Item(Object title, Object body, Style style, boolean initial) {
+		Item(Object title, Object[] content, Object location, Style style, boolean initial) {
 			super();
 			this.title = title;
-			this.body = body;
-			this.style = style==null ? Style.DEFAULT : style;
+			this.content = content;
+			this.location = location;
+			this.style = style;
 			this.initial = initial;
+		}
+		
+		private Style getStyle() {
+			if (style!=null) {
+				return style;
+			}
+			
+			if (AccordionImpl.this.style!=null) {
+				return AccordionImpl.this.style;
+			}
+			
+			return Style.DEFAULT;
 		}
 		
 		@Override
 		public String toString() {
 			String id = factory.nextId()+"_collapse";
 			StringBuilder ret = new StringBuilder();
-			ret.append("<div class=\"panel panel-"+style.name().toLowerCase()+"\">");
+			ret.append("<div class=\"panel panel-"+getStyle().name().toLowerCase()+"\">");
 				ret.append("<div class=\"panel-heading\">");
 					ret.append("<h4 class=\"panel-title\">");
 						ret.append("<a data-toggle=\"collapse\" data-parent=\"#"+AccordionImpl.this.getId()+"\" href=\"#"+id+"\">");
@@ -40,9 +54,19 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 					ret.append(" in");
 				}
 				ret.append("\">");
+					String bodyId = factory.nextId()+"_panel_body";
 					ret.append("<div class=\"panel-body\">");
-						ret.append(body);
+						if (content!=null) {
+							for (Object o: content) {
+								if (o!=null) {
+									ret.append(o);
+								}
+							}
+						} 
 					ret.append("</div>");
+					if (location!=null) {
+						ret.append(factory.tag("script", "nsdLoad(\"#"+bodyId+"\", \""+location+"\");"));
+					}					
 				ret.append("</div>");												
 			ret.append("</div>");				
 			return ret.toString();
@@ -50,17 +74,15 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
 		@Override
 		public void close() throws Exception {
-			if (title instanceof AutoCloseable) {
-				((AutoCloseable) title).close();
-			}
-			if (body instanceof AutoCloseable) {
-				((AutoCloseable) body).close();
-			}			
+			AccordionImpl.this.close(title);
+			AccordionImpl.this.close(content);
+			AccordionImpl.this.close(location);
 		}
 		
 	}
 	
 	private List<Item> items = new ArrayList<>();
+	private Style style;
 
 	public AccordionImpl(HTMLFactory factory) {
 		super(factory);
@@ -69,8 +91,8 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 	
 	@Override
-	public Accordion item(Object title, Object body, Style style) {
-		items.add(new Item(title, body, style, items.isEmpty()));
+	public Accordion item(Object title, Style style, Object... content) {
+		items.add(new Item(title, content, null, style, items.isEmpty()));
 		return this;
 	}
 	
@@ -90,6 +112,33 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 		for (Item item: items) {
 			item.close();
 		}		
+	}
+	
+	@Override
+	public Accordion style(org.nasdanika.html.UIElement.Style style) {
+		this.style = style;
+		return this;
+	}
+
+	@Override
+	public Accordion item(Object name, Object... content) {
+		return item(name, null, content);
+	}
+
+	@Override
+	public Accordion ajaxItem(Object name, Object location) {
+		return ajaxItem(name, null, location);
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return items.isEmpty();
+	}
+
+	@Override
+	public Accordion ajaxItem(Object title,	Style style, Object location) {
+		items.add(new Item(title, null, location, style, items.isEmpty()));
+		return this;
 	}
 
 }

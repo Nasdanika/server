@@ -1,8 +1,7 @@
 package org.nasdanika.cdo.web.routes;
 
 import org.eclipse.emf.cdo.view.CDOView;
-import org.nasdanika.cdo.web.CDOTransactionHttpContext;
-import org.nasdanika.cdo.web.CDOViewHttpContext;
+import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.Route;
@@ -13,10 +12,8 @@ public class CDOResourceFolderHtmlExtensionRoute implements Route {
 	@Override
 	public Action execute(final WebContext context) throws Exception {
 		CDOView view;
-		if (context instanceof CDOViewHttpContext) {
-			view = ((CDOViewHttpContext) context).getView();
-		} else if (context instanceof CDOTransactionHttpContext) {
-			view = ((CDOTransactionHttpContext) context).getTransaction();
+		if (context instanceof CDOViewContext) {
+			view = ((CDOViewContext<?,?>) context).getView();
 		} else {
 			return Action.INTERNAL_SERVER_ERROR;
 		}

@@ -15,7 +15,7 @@ public class CDOResourceRoute implements Route {
 		final CDOResource cdoResource = (CDOResource) context.getTarget();
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(cdoResource, "read")) {
+				if (context.authorize(cdoResource, "read", null, null)) {
 					int dotIdx = context.getPath()[0].lastIndexOf(".");
 					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
 					Action extensionAction = context.getExtensionAction(cdoResource, extension);

@@ -3,7 +3,8 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.examples.bank/src" modelPluginID="org.nasdanika.examples.bank"
     modelName="Bank" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
     reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
-    complianceLevel="7.0" suppressGenModelAnnotations="false" copyrightFields="false">
+    complianceLevel="7.0" suppressGenModelAnnotations="false" copyrightFields="false"
+    usedGenPackages="../../org.nasdanika.cdo.security/model/security.genmodel#//security">
   <foreignModel>bank.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Bank" basePackage="org.nasdanika.examples" disposableProviderFactory="true"
@@ -12,12 +13,14 @@
       <genEnumLiterals ecoreEnumLiteral="bank.ecore#//TransactionType/Credit"/>
       <genEnumLiterals ecoreEnumLiteral="bank.ecore#//TransactionType/Debit"/>
     </genEnums>
+    <genDataTypes ecoreDataType="bank.ecore#//LoginPasswordCredentials"/>
     <genClasses ecoreClass="bank.ecore#//SystemOfRecords">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute bank.ecore#//SystemOfRecords/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute bank.ecore#//SystemOfRecords/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute bank.ecore#//SystemOfRecords/description"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference bank.ecore#//SystemOfRecords/customers"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference bank.ecore#//SystemOfRecords/products"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference bank.ecore#//SystemOfRecords/guest"/>
     </genClasses>
     <genClasses ecoreClass="bank.ecore#//Customer">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference bank.ecore#//Customer/accounts"/>
@@ -74,5 +77,6 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute bank.ecore#//Statement/closingBalance"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute bank.ecore#//Statement/closingDate"/>
     </genClasses>
+    <genClasses ecoreClass="bank.ecore#//Guest"/>
   </genPackages>
 </genmodel:GenModel>

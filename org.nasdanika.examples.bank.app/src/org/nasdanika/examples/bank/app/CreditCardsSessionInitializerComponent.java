@@ -11,11 +11,13 @@ import org.eclipse.emf.cdo.session.CDOSession;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.util.CommitException;
 import org.nasdanika.cdo.CDOSessionInitializer;
+import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.examples.bank.Account;
 import org.nasdanika.examples.bank.BankFactory;
 import org.nasdanika.examples.bank.BankPackage;
 import org.nasdanika.examples.bank.CreditCard;
 import org.nasdanika.examples.bank.Customer;
+import org.nasdanika.examples.bank.Guest;
 import org.nasdanika.examples.bank.PaymentProcessor;
 import org.nasdanika.examples.bank.Product;
 import org.nasdanika.examples.bank.SystemOfRecords;
@@ -29,6 +31,7 @@ public class CreditCardsSessionInitializerComponent implements CDOSessionInitial
 	public void init(CDOSession session) {
 		CDOPackageRegistry packageRegistry = session.getPackageRegistry();
 		packageRegistry.putEPackage(BankPackage.eINSTANCE);
+		packageRegistry.putEPackage(SecurityPackage.eINSTANCE);
 		
 		// Populate with sample data if empty.
 		CDOTransaction transaction = session.openTransaction();
@@ -41,6 +44,11 @@ public class CreditCardsSessionInitializerComponent implements CDOSessionInitial
 				sor.setName("Nasdanika Bank");
 				sor.setDescription("CDO repository is a system of records for Nasdanika Bank");
 				cRes.getContents().add(sor);
+				
+				// Guest
+				Guest guest = BankFactory.eINSTANCE.createGuest();
+				sor.setGuest(guest);
+				sor.setUnauthenticatedPrincipal(guest);
 				
 				// Products
 				Product serenity = BankFactory.eINSTANCE.createProduct();

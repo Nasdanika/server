@@ -114,6 +114,11 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 				close(item);
 			}
 		}
+
+		@Override
+		public boolean isDropdownEmpty() {
+			return items.isEmpty();
+		}
 		
 	}	
 	

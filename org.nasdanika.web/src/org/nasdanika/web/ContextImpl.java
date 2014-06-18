@@ -1,5 +1,7 @@
 package org.nasdanika.web;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -8,9 +10,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.core.AuthorizationProvider;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.web.html.HTMLRenderer;
+import org.nasdanika.web.html.UIPart;
 
 public abstract class ContextImpl implements WebContext {
 	
@@ -30,14 +35,14 @@ public abstract class ContextImpl implements WebContext {
 	private String[] path;
 	private Object target;
 	private RouteRegistry routeRegistry;
-	private Object principal;
 	private CompositeObjectPathResolver objectPathResolver;
+	private ClassLoadingContext classLoadingContext;
 
 	public ContextImpl(
-			Object principal, 
 			String[] path, 
 			Object target, 
 			final ExtensionManager extensionManager,
+			ClassLoadingContext classLoadingContext,
 			List<TraceEntry> pathTrace) throws Exception {
 		
 		this.extensionManager = extensionManager;
@@ -45,24 +50,19 @@ public abstract class ContextImpl implements WebContext {
 		this.converter = extensionManager.getConverter();
 		this.path = path;
 		this.target = target;
+		this.classLoadingContext = classLoadingContext;
 		this.routeRegistry = extensionManager.getRouteRegistry();
-		this.principal = principal;
-		
+
 		objectPathResolver = extensionManager.getObjectPathResolver();
 		
 		if (pathTrace!=null) {
 			this.pathTrace.addAll(pathTrace);
 		}
 	}
-	
-	@Override
-	public Object getPrincipal() {
-		return principal;
-	}
 
 	@Override
-	public boolean authorize(Object target, String action) {		
-		return securityManager.authorize(this, target, action);
+	public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) {		
+		return AccessDecision.ALLOW.equals(securityManager.authorize(this, target, action, qualifier, environment));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -164,5 +164,31 @@ public abstract class ContextImpl implements WebContext {
 	@Override
 	public List<TraceEntry> getPathTrace() {
 		return pathTrace;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void buildUICategory(
+			String category, 
+			Object out,
+			Map<String, Object> environment) throws Exception {
+		for (@SuppressWarnings("rawtypes") UIPart uiPart: extensionManager.getUIParts(target, category)) {
+			uiPart.create(this, out, environment);
+		}
+	}
+	
+	@Override
+	public Class<?> loadClass(String name) throws ClassNotFoundException {
+		return classLoadingContext.loadClass(name);
+	}
+	
+	@Override
+	public URL getResource(String name) {
+		return classLoadingContext.getResource(name);
+	}
+	
+	@Override
+	public Iterable<URL> getResources(String name) throws IOException {
+		return classLoadingContext.getResources(name);
 	}
 }

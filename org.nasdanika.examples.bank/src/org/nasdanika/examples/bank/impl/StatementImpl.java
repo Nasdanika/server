@@ -22,7 +22,7 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.UIElement.Style;
-import org.nasdanika.web.ActionMethod;
+import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.HttpContext;
 
 /**
@@ -154,7 +154,7 @@ public class StatementImpl extends CDOObjectImpl implements Statement {
 		eSet(BankPackage.Literals.STATEMENT__CLOSING_DATE, newClosingDate);
 	}
 	
-	@ActionMethod(pattern="[^/]+/transactions\\.html")
+	@RouteMethod(pattern="[^/]+/transactions\\.html")
 	public String transactionsTable(HttpContext context) throws Exception {
 		HTMLFactory htmlFactory = context.getHTMLFactory();
 		Table tTable = htmlFactory.table().striped().id("transactions");

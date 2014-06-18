@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.Platform;
 import org.nasdanika.core.AuthorizationProvider;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.Converter;
 import org.nasdanika.core.InstanceMethodCommand;
@@ -25,6 +26,7 @@ import org.nasdanika.core.MethodCommand;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.web.RouteDescriptor.RouteType;
+import org.nasdanika.web.html.UIPart;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -40,17 +42,36 @@ import org.osgi.util.tracker.ServiceTracker;
 public class ExtensionManager implements AutoCloseable {
 	
 	private ServiceTracker<Route, Route> routeServiceTracker;
-	private BundleContext bundleContext;
+	private ServiceTracker<UIPart<?,?>, UIPart<?,?>> uiPartServiceTracker;
 	private HTMLFactory htmlFactory;
 	
+	private static class UIPartEntry implements Comparable<UIPartEntry> {
+		UIPart<?,?> uiPart;
+		int priority;
+		String category;
+		Class<?> target;
+		
+		@Override
+		public int compareTo(UIPartEntry o) {
+			return o.priority - priority;
+		}
+	}
+	
+	private List<UIPartEntry> uiPartEntries = new ArrayList<>();
+	private AccessDecision defaultAccessDecision;
+	
 	@SuppressWarnings("unchecked")
-	public ExtensionManager(BundleContext context, String routeServiceFilter, String htmlFactoryName) throws Exception {
+	public ExtensionManager(
+			BundleContext context, 
+			String routeServiceFilter,
+			String uiPartServiceFilter,
+			String htmlFactoryName,
+			AccessDecision defaultAccessDecision) throws Exception {
 		// TODO - converter profiles map: class name -> profile.
 		if (context==null) {
-			context = FrameworkUtil.getBundle(Route.class).getBundleContext();
+			context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		}
 		// TODO - bundle is still null???
-		this.bundleContext = context;
 		if (routeServiceFilter==null || routeServiceFilter.trim().length()==0) {
 			routeServiceTracker = new ServiceTracker<>(context, Route.class.getName(), null);
 		} else {
@@ -58,6 +79,14 @@ public class ExtensionManager implements AutoCloseable {
 			routeServiceTracker = new ServiceTracker<>(context, context.createFilter(rootRouteServiceFilter), null);
 		}
 		routeServiceTracker.open();
+		
+		if (uiPartServiceFilter==null || uiPartServiceFilter.trim().length()==0) {
+			uiPartServiceTracker = new ServiceTracker<>(context, UIPart.class.getName(), null);
+		} else {
+			String uiPartRouteServiceFilter = "(&(" + Constants.OBJECTCLASS + "=" + UIPart.class.getName() + ")"+uiPartServiceFilter+")";
+			uiPartServiceTracker = new ServiceTracker<>(context, context.createFilter(uiPartRouteServiceFilter), null);
+		}
+		uiPartServiceTracker.open();
 		
 		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(HTML_FACTORY_ID)) {
 			if ("default_html_factory".equals(ce.getName())) {
@@ -81,6 +110,24 @@ public class ExtensionManager implements AutoCloseable {
 			}					
 		}	
 		
+		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(UI_PART_ID)) {
+			if ("ui_part".equals(ce.getName())) {
+				UIPartEntry uiPartEntry = new UIPartEntry();
+				uiPartEntries.add(uiPartEntry);
+				uiPartEntry.uiPart = (UIPart<?,?>) ce.createExecutableExtension("class");
+				injectProperties(ce, uiPartEntry.uiPart);
+				String priorityStr = ce.getAttribute("priority");
+				if (!isBlank(priorityStr)) {
+					uiPartEntry.priority = Integer.parseInt(priorityStr);
+				}
+				uiPartEntry.category = ce.getAttribute("category");
+				
+				IContributor contributor = ce.getContributor();		
+				Bundle bundle = Platform.getBundle(contributor.getName());
+				uiPartEntry.target = (Class<Object>) bundle.loadClass(ce.getAttribute("target").trim());
+			}					
+		}	
+		
 		objectPathResolver = new CompositeObjectPathResolver();
 		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(OBJECT_PATH_RESOLVER_ID)) {
 			if ("resolver".equals(ce.getName())) {
@@ -90,9 +137,12 @@ public class ExtensionManager implements AutoCloseable {
 						(Class<Object>) bundle.loadClass(ce.getAttribute("target").trim()),
 						(ObjectPathResolver<Object>) ce.createExecutableExtension("class"));
 			}					
-		}					
+		}	
+		
+		this.defaultAccessDecision = defaultAccessDecision;
 	}
 			
+	public static final String UI_PART_ID = "org.nasdanika.web.ui_part";			
 	public static final String HTML_FACTORY_ID = "org.nasdanika.web.html_factory";			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
 	public static final String OBJECT_PATH_RESOLVER_ID = "org.nasdanika.web.object_path_resolver";			
@@ -256,8 +306,10 @@ public class ExtensionManager implements AutoCloseable {
 			}
 			final List<AuthorizationProviderEntry> smeList = new ArrayList<>();
 			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(SECURITY_ID)) {
-				if ("security_manager".equals(ce.getName())) {					
-					AuthorizationProviderEntry sme = new AuthorizationProviderEntry((AuthorizationProvider) ce.createExecutableExtension("class"));
+				if ("authorization_provider".equals(ce.getName())) {					
+					AuthorizationProvider ap = (AuthorizationProvider) ce.createExecutableExtension("class");
+					injectProperties(ce, ap);
+					AuthorizationProviderEntry sme = new AuthorizationProviderEntry(ap);
 					
 					String priorityStr = ce.getAttribute("priority");
 					if (!isBlank(priorityStr)) {
@@ -273,15 +325,15 @@ public class ExtensionManager implements AutoCloseable {
 			authorizationProvider = new AuthorizationProvider() {
 				
 				@Override
-				public Boolean authorize(Context context, Object target, String action) {
+				public AccessDecision authorize(Context context, Object target, String action, String qualifier, Map<String, Object> environment) {
 					for (AuthorizationProviderEntry sme: smeList) {
-						Boolean result = sme.sm.authorize(context, target, action);
-						if (result!=null) {
+						AccessDecision result = sme.sm.authorize(context, target, action, qualifier, environment);
+						if (AccessDecision.ALLOW.equals(result) || AccessDecision.DENY.equals(result)) {
 							return result;
 						}
 					}
 
-					return Boolean.TRUE; // Allow by default.
+					return defaultAccessDecision;
 				}
 			};
 		}
@@ -352,7 +404,7 @@ public class ExtensionManager implements AutoCloseable {
 							RouteDescriptor.RouteType.OBJECT, 
 							methods, 
 							(String) se.getKey().getProperty("pattern"), 
-							bundleContext.getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
+							se.getKey().getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
 							se.getValue());
 					if (re.match(target, path)) {
@@ -363,7 +415,7 @@ public class ExtensionManager implements AutoCloseable {
 			
 			if (target!=null) {
 				for (final Method routeMethod: target.getClass().getMethods()) {
-					ActionMethod amAnnotation = routeMethod.getAnnotation(ActionMethod.class);
+					RouteMethod amAnnotation = routeMethod.getAnnotation(RouteMethod.class);
 					if (amAnnotation!=null) {
 						RouteEntry re = new RouteEntry(RouteType.OBJECT, amAnnotation.value(), amAnnotation.pattern(), target.getClass(), amAnnotation.priority(), new MethodRoute(target, routeMethod)) {
 							
@@ -486,7 +538,7 @@ public class ExtensionManager implements AutoCloseable {
 							RouteDescriptor.RouteType.OBJECT, 
 							methods, 
 							(String) se.getKey().getProperty("extension"), 
-							bundleContext.getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
+							se.getKey().getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
 							se.getValue()));
 				}
@@ -878,6 +930,7 @@ public class ExtensionManager implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		routeServiceTracker.close();
+		uiPartServiceTracker.close();
 		
 		if (converter!=null) {
 			converter.close();
@@ -910,5 +963,75 @@ public class ExtensionManager implements AutoCloseable {
 	public CompositeObjectPathResolver getObjectPathResolver() {
 		return objectPathResolver;
 	}
+	
+	public List<UIPart<?,?>> getUIParts(Object target, String category) throws Exception {
+		List<UIPartEntry> collector = new ArrayList<>();
+		for (UIPartEntry ext: uiPartEntries) {
+			if (ext.target.isInstance(target) && ext.category.equals(category)) {
+				collector.add(ext);
+			}
+		}
+		// Service ui parts			
+		for (Entry<ServiceReference<UIPart<?,?>>, UIPart<?,?>> se: uiPartServiceTracker.getTracked().entrySet()) {	
+			if (category.equals(se.getKey().getProperty("category"))) {
+				Class<?> targetClass = se.getKey().getBundle().loadClass((String) se.getKey().getProperty("target"));
+				if (targetClass.isInstance(target)) {
+					UIPartEntry uiPartEntry = new UIPartEntry();
+					collector.add(uiPartEntry);
+					uiPartEntry.uiPart = se.getValue();
+					Object priority = se.getKey().getProperty("priority");
+					if (priority instanceof Number) {
+						uiPartEntry.priority = ((Number) priority).intValue();
+					}
+				}
+			}
+		}
+		
+		Collections.sort(collector);
+		
+		List<UIPart<?,?>> ret = new ArrayList<>();
+		for (UIPartEntry e: collector) {
+			ret.add(e.uiPart);
+		}
+		
+		return ret;
+	}
+	
+//	/**
+//	 * Traverses inheritance hierarchy and finds out whether obj is instance of className without loading
+//	 * the class.
+//	 * @param obj
+//	 * @param className
+//	 * @return
+//	 */
+//	public static boolean isInstance(Object obj, String className) {
+//		if (obj==null) {
+//			return false;
+//		}
+//		
+//		if (isBlank(className)) {
+//			return true;
+//		}
+//		
+//		return isAssignableFrom(obj.getClass(), className);
+//	}
+//		
+//	private static boolean isAssignableFrom(Class<?> subClass, String superClassName) {
+//		if (subClass.getName().equals(superClassName)) {
+//			return true;
+//		}
+//		
+//		if (isAssignableFrom(subClass.getSuperclass(), superClassName)) {
+//			return true;
+//		}
+//		
+//		for (Class<?> i: subClass.getInterfaces()) {
+//			if (isAssignableFrom(i, superClassName)) {
+//				return true;
+//			}
+//		}
+//		
+//		return false;
+//	}
 	
 }

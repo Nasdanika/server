@@ -1,10 +1,24 @@
 package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.view.CDOView;
+import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.core.Context;
 
-public interface CDOViewContext extends Context {
+public interface CDOViewContext<V extends CDOView, CR> extends Context {
 
-	CDOView getView();
+	V getView();
+	
+	Principal getPrincipal();
+	
+	ProtectionDomain<CR> getProtectionDomain();
+	
+	/**
+	 * Authenticates user with provided credentials. 
+	 * Associates user with context/session upon successfull authentication. 
+	 * @param credentials
+	 * @return true if authentication was successfull.
+	 */
+	boolean authenticate(CR credentials) throws Exception;
 	
 }

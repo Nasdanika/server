@@ -5,6 +5,7 @@ package org.nasdanika.examples.bank;
 import org.eclipse.emf.cdo.CDOObject;
 
 import org.eclipse.emf.common.util.EList;
+import org.nasdanika.cdo.security.ProtectionDomain;
 
 /**
  * <!-- begin-user-doc -->
@@ -12,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * <html>System of records is the <b>root</b> of the model.</html>
+ * <html>System of records is the <b>root</b> of the model. Another sentence to be included <I>only</I> in the detailed documentation, but not in summary.</html>
  * <!-- end-model-doc -->
  *
  * <p>
@@ -23,15 +24,15 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.nasdanika.examples.bank.SystemOfRecords#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.examples.bank.SystemOfRecords#getCustomers <em>Customers</em>}</li>
  *   <li>{@link org.nasdanika.examples.bank.SystemOfRecords#getProducts <em>Products</em>}</li>
+ *   <li>{@link org.nasdanika.examples.bank.SystemOfRecords#getGuest <em>Guest</em>}</li>
  * </ul>
  * </p>
  *
  * @see org.nasdanika.examples.bank.BankPackage#getSystemOfRecords()
- * @model
- * @extends CDOObject
+ * @model superTypes="org.nasdanika.cdo.security.ProtectionDomain<org.nasdanika.examples.bank.LoginPasswordCredentials>"
  * @generated
  */
-public interface SystemOfRecords extends CDOObject {
+public interface SystemOfRecords extends ProtectionDomain<LoginPasswordCredentials> {
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -141,5 +142,31 @@ public interface SystemOfRecords extends CDOObject {
 	 * @generated
 	 */
 	EList<Product> getProducts();
+
+	/**
+	 * Returns the value of the '<em><b>Guest</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Guest</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Guest</em>' containment reference.
+	 * @see #setGuest(Guest)
+	 * @see org.nasdanika.examples.bank.BankPackage#getSystemOfRecords_Guest()
+	 * @model containment="true"
+	 * @generated
+	 */
+	Guest getGuest();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.examples.bank.SystemOfRecords#getGuest <em>Guest</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Guest</em>' containment reference.
+	 * @see #getGuest()
+	 * @generated
+	 */
+	void setGuest(Guest value);
 
 } // SystemOfRecords

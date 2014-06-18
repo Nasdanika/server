@@ -4,11 +4,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.ConverterContext;
 import org.nasdanika.html.HTMLFactory;
 
 
-public interface WebContext extends ConverterContext {
+public interface WebContext extends ConverterContext, ExportingContext, ClassLoadingContext {
 	
 	/**
 	 * Checks whether given extensionManager has a permission to execute
@@ -17,7 +18,7 @@ public interface WebContext extends ConverterContext {
 	 * @param action Action ID.
 	 * @return true if action is allowed, false if denied.
 	 */
-	boolean authorize(Object target, String action);	
+	boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment);	
 		
 	RequestMethod getMethod();
 	
@@ -38,8 +39,6 @@ public interface WebContext extends ConverterContext {
 	
 	Object getTarget();
 	
-	Object getPrincipal();
-	
 	/**
 	 * Renders object to HTML 
 	 * @param obj Object to render
@@ -48,6 +47,15 @@ public interface WebContext extends ConverterContext {
 	 * @return Object rendered to HTML
 	 */
 	String toHTML(Object obj, String profile, Map<String, Object> environment) throws Exception;
+	
+	/**
+	 * Renders UI parts for the context object in a given category.
+	 * @param category
+	 * @param out Receiver of rendered parts.
+	 * @param environment
+	 * @throws Exception
+	 */
+	void buildUICategory(String category, Object out, Map<String, Object> environment) throws Exception;
 
 	HTMLFactory getHTMLFactory();
 	

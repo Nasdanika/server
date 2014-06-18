@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
+import java.util.Collections;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -15,14 +16,19 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.osgi.framework.InvalidSyntaxException;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.ClassLoadingContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("serial")
 public class RoutingServlet extends HttpServlet {
 	
 	protected ExtensionManager extensionManager;
 	
-	private boolean jsonPrettyPrint;	
+	private boolean jsonPrettyPrint;
+	
+	private ClassLoadingContext classLoadingContext;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -32,10 +38,37 @@ public class RoutingServlet extends HttpServlet {
 			extensionManager = new ExtensionManager(
 					null, 
 					config.getInitParameter("route-service-filter"),
-					config.getInitParameter("html-factory"));
+					config.getInitParameter("ui-part-service-filter"),
+					config.getInitParameter("html-factory"),
+					"deny".equalsIgnoreCase(config.getInitParameter("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW);
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}
+		
+		final Bundle bundle = FrameworkUtil.getBundle(getClass());
+		
+		classLoadingContext = new ClassLoadingContext() {
+			
+			@Override
+			public void close() throws Exception {
+				// NOP				
+			}
+			
+			@Override
+			public Class<?> loadClass(String name) throws ClassNotFoundException {
+				return bundle.loadClass(name);
+			}
+			
+			@Override
+			public Iterable<URL> getResources(String name) throws IOException {
+				return Collections.<URL>list(bundle.getResources(name));
+			}
+			
+			@Override
+			public URL getResource(String name) {
+				return bundle.getResource(name);
+			}
+		};
 	}
 			
 	@Override
@@ -52,14 +85,15 @@ public class RoutingServlet extends HttpServlet {
 		String[] path = pathInfo.split("/");
 		try {
 			HttpContext context = new HttpContextImpl(
-					getPrincipal(req, resp), 
 					path, 
 					null, 
 					extensionManager, 
+					classLoadingContext,
 					null,
 					req, 
 					resp,
-					reqUrl);
+					reqUrl, 
+					null);
 			for (Route route: extensionManager.getRouteRegistry().matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
 				try (Action action = route.execute(context)) {
 					if (action!=null) {
@@ -74,10 +108,6 @@ public class RoutingServlet extends HttpServlet {
 		} catch (Exception e) {
 			throw new ServletException(e);			
 		}
-	}
-
-	protected Object getPrincipal(HttpServletRequest req, HttpServletResponse resp) {
-		return req.getUserPrincipal();
 	}
 
 //	/**

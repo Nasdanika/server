@@ -6,15 +6,15 @@ import org.nasdanika.web.HttpContextImpl;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.WebContext;
 
-public class CDOTransactionContextRouteComponent implements Route {
+public class CDOTransactionContextRouteComponent<CR> implements Route {
 	
-	private CDOTransactionContextProvider contextProvider;
+	private CDOTransactionContextProvider<CR> contextProvider;
 	
-	public void setContextProvider(CDOTransactionContextProvider contextProvider) {
+	public void setContextProvider(CDOTransactionContextProvider<CR> contextProvider) {
 		this.contextProvider = contextProvider;
 	}
 	
-	public void clearContextProvider(CDOTransactionContextProvider contextProvider) {
+	public void clearContextProvider(CDOTransactionContextProvider<CR> contextProvider) {
 		this.contextProvider = null;
 	}
 
@@ -22,18 +22,19 @@ public class CDOTransactionContextRouteComponent implements Route {
 	public Action execute(WebContext context) throws Exception {
 		if (context instanceof HttpContextImpl) {
 			HttpContextImpl httpContext = (HttpContextImpl) context;
-			try (CDOTransactionHttpContextImpl cdoTransactionContext = new CDOTransactionHttpContextImpl(
-					httpContext.getPrincipal(), 
+			try (CDOTransactionHttpContextImpl<CR> cdoTransactionContext = new CDOTransactionHttpContextImpl<CR>(
 					httpContext.getPath(), 
 					httpContext.getTarget(), 
 					httpContext.getExtensionManager(), 
+					httpContext,
 					null, 
 					httpContext.getRequest(), 
 					httpContext.getResponse(), 
 					httpContext.getContextURL(),
+					null,
 					contextProvider.createContext())) {
 				
-				try (Action action = cdoTransactionContext.getAction(cdoTransactionContext.getTransaction(), 0)) {
+				try (Action action = cdoTransactionContext.getAction(cdoTransactionContext.getView(), 0)) {
 					if (action == null) {
 						return Action.NOT_FOUND;
 					}

@@ -399,4 +399,8 @@ public interface HTMLFactory {
 	Tag inject(Object selector, Object... content);
 	
 	Breadcrumbs breadcrumbs();
+	
+	ButtonGroup buttonGroup(Button... buttons);
+	
+	ButtonToolbar buttonToolbar(ButtonGroup... buttonGroups);
 }

@@ -23,7 +23,7 @@ public class CDOPackageRegistryRoute implements Route {
 				
 				@Override
 				public Object execute() throws Exception {
-					if (context.authorize(registry, "read")) {
+					if (context.authorize(registry, "read", null, null)) {
 						JSONArray piArray = new JSONArray();
 						for (CDOPackageInfo pi: registry.getPackageInfos()) {
 							piArray.put(pi.getPackageURI());

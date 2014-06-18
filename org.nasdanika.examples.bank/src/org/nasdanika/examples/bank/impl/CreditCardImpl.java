@@ -18,7 +18,7 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.html.UIElement.Style;
-import org.nasdanika.web.ActionMethod;
+import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.HttpContext;
 
 /**
@@ -91,7 +91,7 @@ public class CreditCardImpl extends LoanAccountImpl implements CreditCard {
 		eSet(BankPackage.Literals.CREDIT_CARD__GRACE_PERIOD, newGracePeriod);
 	}
 		
-	@ActionMethod(pattern="[^/]+\\.html")
+	@RouteMethod(pattern="[^/]+\\.html")
 	public String home(HttpContext context) throws Exception {
 		HTMLFactory htmlFactory = context.getHTMLFactory();
 		Table summaryTable = htmlFactory.table().striped();

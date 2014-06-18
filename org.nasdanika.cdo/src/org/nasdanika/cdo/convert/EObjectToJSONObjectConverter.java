@@ -55,7 +55,7 @@ public class EObjectToJSONObjectConverter implements Converter<EObject, JSONObje
 				CDOIDUtil.write(idBuilder, id);
 				jsonObject.put(CDO_ID_KEY, idBuilder.toString());
 			}
-			if (context.authorize(obj, "meta")) {
+			if (context.authorize(obj, "meta", null, null)) {
 				JSONObject meta = new JSONObject();
 				meta.put("namespace", eObj.eClass().getEPackage().getNsURI());
 				meta.put("class", eObj.eClass().getName());
@@ -84,7 +84,7 @@ public class EObjectToJSONObjectConverter implements Converter<EObject, JSONObje
 			
 			// Attributes
 			for (EAttribute attr: eObj.eClass().getEAllAttributes()) {
-				if (context.authorize(obj, "read:"+attr.getName())) {
+				if (context.authorize(obj, "read", attr.getName(), null)) {
 					Object val = ((EObject) obj).eGet(attr);
 					if (val!=null) {
 						Object jVal = context.convert(val, JSONObject.class);
@@ -101,7 +101,7 @@ public class EObjectToJSONObjectConverter implements Converter<EObject, JSONObje
 			// References, depth. - containment first.
 			if (depth!=0) {
 				for (EReference rf: eObj.eClass().getEAllContainments()) {
-					if (context.authorize(obj, "read:"+rf.getName())) {
+					if (context.authorize(obj, "read", rf.getName(), null)) {
 						if (rf.isMany()) {
 							JSONArray output = new JSONArray();
 							for (Object val: (Collection<Object>) eObj.eGet(rf)) {
@@ -119,7 +119,7 @@ public class EObjectToJSONObjectConverter implements Converter<EObject, JSONObje
 				
 				for (EReference rf: eObj.eClass().getEAllReferences()) {
 					if (!rf.isContainment()) {
-						if (context.authorize(obj, "read:"+rf.getName())) {
+						if (context.authorize(obj, "read", rf.getName(), null)) {
 							if (rf.isMany()) {
 								JSONArray output = new JSONArray();
 								for (Object val: (Collection<Object>) eObj.eGet(rf)) {

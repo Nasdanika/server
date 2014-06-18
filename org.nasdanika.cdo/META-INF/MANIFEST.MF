@@ -14,7 +14,8 @@ Require-Bundle: org.eclipse.emf.cdo.server;bundle-version="4.1.1",
  org.eclipse.emf.cdo,
  org.json;bundle-version="1.0.0",
  org.nasdanika.web;bundle-version="0.1.0";visibility:=reexport,
- org.nasdanika.thirdparty;bundle-version="1.0.0"
+ org.nasdanika.thirdparty;bundle-version="1.0.0",
+ org.nasdanika.cdo.security;bundle-version="0.1.0"
 Export-Package: org.nasdanika.cdo,
  org.nasdanika.cdo.convert,
  org.nasdanika.cdo.web,

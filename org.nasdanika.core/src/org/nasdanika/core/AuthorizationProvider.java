@@ -1,15 +1,33 @@
 package org.nasdanika.core;
 
+import java.util.Map;
+
 public interface AuthorizationProvider {
+	
+	enum AccessDecision {
+		DENY,
+		ALLOW,
+		ABSTAIN
+	}
 
 	/**
 	 * Checks whether given context has a permission to execute an action on the ojbect
-	 * @param target Target object
-	 * @param action Action ID.
-	 * @return Boolean.TRUE if action is allowed, Boolean.FALSE if denied, null if 
-	 * this provider neither allows nor denies the action - used for chaining/stacking of
+	 * @param context Authorization context.
+	 * @param target Target object.
+	 * @param action Action name, e.g. <code>read</code>
+	 * @param qualifier Additional action qualifier, e.g. <code>accountBalance</code>
+	 * @param environment Environment for conditional actions. E.g. for action
+	 * <code>debit</code> on target of type <code>Account</code> environment map
+	 * may contain transaction amount and action condition may be 
+	 * <code>transactionAmount < actionProperties.transactionAmountThreshold</code>
+	 * @return Access decision, ABSTAIN is used for chaining/stacking of
 	 * security providers.
 	 */
-	Boolean authorize(Context context, Object target, String action);
+	AccessDecision authorize(
+			Context context, 
+			Object target, 
+			String action, 
+			String qualifier,
+			Map<String, Object> environment);
 	
 }

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="Offers UI Part">
+   <implementation class="org.nasdanika.examples.bank.app.OffersUIPart"/>
+   <service>
+      <provide interface="org.nasdanika.web.html.UIPart"/>
+   </service>
+   <property name="target" type="String" value="org.nasdanika.examples.bank.Customer"/>
+   <property name="category" type="String" value="right-panel"/>
+</scr:component>

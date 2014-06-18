@@ -2,9 +2,8 @@
  */
 package org.nasdanika.examples.bank;
 
-import org.eclipse.emf.cdo.CDOObject;
-
 import org.eclipse.emf.common.util.EList;
+import org.nasdanika.cdo.security.User;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,10 +22,9 @@ import org.eclipse.emf.common.util.EList;
  *
  * @see org.nasdanika.examples.bank.BankPackage#getCustomer()
  * @model
- * @extends CDOObject
  * @generated
  */
-public interface Customer extends CDOObject {
+public interface Customer extends User {
 	/**
 	 * Returns the value of the '<em><b>Accounts</b></em>' containment reference list.
 	 * The list contents are of type {@link org.nasdanika.examples.bank.Account}.
@@ -120,5 +118,12 @@ public interface Customer extends CDOObject {
 	 * @generated
 	 */
 	void setPasswordHash(byte[] value);
+	
+	/**
+	 * Computes password hash from login and password. This method must be 
+	 * invoked after login name is set.
+	 * @param password
+	 */
+	void setPassword(String password) throws Exception;
 
 } // Customer
