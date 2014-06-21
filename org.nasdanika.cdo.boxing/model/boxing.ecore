@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="boxing" nsURI="urn:org.nasdanika.cdo.boxing" nsPrefix="org.nasdanika.cdo.boxing">
+  <eClassifiers xsi:type="ecore:EClass" name="Box" abstract="true" interface="true">
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eOperations name="get">
+      <eGenericType eTypeParameter="#//Box/T"/>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Box/C"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="set">
+      <eParameters name="value">
+        <eGenericType eTypeParameter="#//Box/T"/>
+      </eParameters>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Box/C"/>
+      </eParameters>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Context" instanceClassName="org.nasdanika.core.Context"/>
+  <eClassifiers xsi:type="ecore:EClass" name="BigDecimalBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigDecimal"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BigIntegerlBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BooleanBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBooleanObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ByteBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ByteArrayBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CharacterBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ECharacterObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ECharacterObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DateBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DoubleBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDoubleObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FloatBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloatObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EFloatObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IntegerBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LongBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELongObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELongObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ShortBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EShortObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EShortObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ConverterContext" instanceClassName="org.nasdanika.core.ConverterContext"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ListBox">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="#//List">
+        <eTypeArguments eTypeParameter="#//ListBox/T"/>
+      </eTypeArguments>
+      <eTypeArguments eClassifier="#//ConverterContext"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MapBox">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="entries" upperBound="-1"
+        eType="#//StringToEObjectMap" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+      </eTypeArguments>
+      <eTypeArguments eClassifier="#//ConverterContext"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StringToEObjectMap" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StreamBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="#//InputStream"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="InputStream" instanceClassName="java.io.InputStream"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="CDOViewContext" instanceClassName="org.nasdanika.cdo.CDOViewContext"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Reader" instanceClassName="java.io.Reader"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Serializable" instanceClassName="java.io.Serializable"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ReaderBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="#//Reader"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SerializableBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="#//Serializable"/>
+      <eTypeArguments eClassifier="#//CDOViewContext"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceBox">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="NullBox">
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+      <eTypeArguments eClassifier="#//Context"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EClassifierBox">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nsURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eGenericSuperTypes eClassifier="#//Box">
+      <eTypeArguments eClassifier="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EClassifier"/>
+      <eTypeArguments eClassifier="#//CDOViewContext"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+</ecore:EPackage>
