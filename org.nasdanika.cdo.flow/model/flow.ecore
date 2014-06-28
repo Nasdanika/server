@@ -1,0 +1,314 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="flow" nsURI="urn:org.nasdanika.cdo.flow" nsPrefix="org.nasdanika.cdo.flow">
+  <eClassifiers xsi:type="ecore:EClass" name="Then" abstract="true" interface="true">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="R1"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eOperations name="onFulfilled">
+      <eGenericType eTypeParameter="#//Then/R1"/>
+      <eParameters name="value">
+        <eGenericType eTypeParameter="#//Then/R"/>
+      </eParameters>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Then/C"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="onRejected" eType="#//Exception">
+      <eParameters name="reason" eType="#//Exception"/>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Then/C"/>
+      </eParameters>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ThenReference">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="R1"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target">
+      <eGenericType eClassifier="#//Then">
+        <eTypeArguments eTypeParameter="#//ThenReference/R"/>
+        <eTypeArguments eTypeParameter="#//ThenReference/R1"/>
+        <eTypeArguments eTypeParameter="#//ThenReference/C"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//Then">
+      <eTypeArguments eTypeParameter="#//ThenReference/R"/>
+      <eTypeArguments eTypeParameter="#//ThenReference/R1"/>
+      <eTypeArguments eTypeParameter="#//ThenReference/C"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="PromiseState">
+    <eLiterals name="PENDING"/>
+    <eLiterals name="FULFILLED" value="1"/>
+    <eLiterals name="REJECTED" value="2"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Executor" instanceClassName="org.nasdanika.cdo.flow.Executor"
+      abstract="true" interface="true">
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Promise" abstract="true" interface="true">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eOperations name="then">
+      <eGenericType eClassifier="#//Promise">
+        <eTypeArguments eTypeParameter="#//Promise/then/R1"/>
+        <eTypeArguments eTypeParameter="#//Promise/C"/>
+      </eGenericType>
+      <eTypeParameters name="R1"/>
+      <eParameters name="then">
+        <eGenericType eClassifier="#//Then">
+          <eTypeArguments eTypeParameter="#//Promise/R"/>
+          <eTypeArguments eTypeParameter="#//Promise/then/R1"/>
+          <eTypeArguments eTypeParameter="#//Promise/C"/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Promise/C"/>
+      </eParameters>
+      <eParameters name="executor">
+        <eGenericType eClassifier="#//Executor">
+          <eTypeArguments eTypeParameter="#//Promise/C"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eOperations name="getFulfillmentValue">
+      <eGenericType eTypeParameter="#//Promise/R"/>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Promise/C"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="getRejectionReason" eType="#//Exception">
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Promise/C"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="getState" eType="#//PromiseState"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="done" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Command" abstract="true" interface="true">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eOperations name="execute" eExceptions="#//Exception">
+      <eGenericType eTypeParameter="#//Command/R"/>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Command/C"/>
+      </eParameters>
+      <eParameters name="executor">
+        <eGenericType eClassifier="#//Executor">
+          <eTypeArguments eTypeParameter="#//Command/C"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Deferred">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eOperations name="resolve">
+      <eParameters name="value">
+        <eGenericType eTypeParameter="#//Deferred/R"/>
+      </eParameters>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Deferred/C"/>
+      </eParameters>
+      <eParameters name="executor">
+        <eGenericType eClassifier="#//Executor">
+          <eTypeArguments eTypeParameter="#//Deferred/C"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eOperations name="resolve">
+      <eParameters name="promise">
+        <eGenericType eClassifier="#//Promise">
+          <eTypeArguments eTypeParameter="#//Deferred/R"/>
+          <eTypeArguments eTypeParameter="#//Deferred/C"/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Deferred/C"/>
+      </eParameters>
+      <eParameters name="executor">
+        <eGenericType eClassifier="#//Executor">
+          <eTypeArguments eTypeParameter="#//Deferred/C"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eOperations name="reject">
+      <eParameters name="reason" eType="#//Exception"/>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Deferred/C"/>
+      </eParameters>
+      <eParameters name="executor">
+        <eGenericType eClassifier="#//Executor">
+          <eTypeArguments eTypeParameter="#//Deferred/C"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="state" eType="#//PromiseState"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="created" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="resolved" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resolution" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="then" containment="true">
+      <eGenericType eClassifier="#//Then">
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+        <eTypeArguments eTypeParameter="#//Deferred/R"/>
+        <eTypeArguments eTypeParameter="#//Deferred/C"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thenDeferreds" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//Deferred">
+        <eTypeArguments/>
+        <eTypeArguments eTypeParameter="#//Deferred/C"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//Promise">
+      <eTypeArguments eTypeParameter="#//Deferred/R"/>
+      <eTypeArguments eTypeParameter="#//Deferred/C"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//Command">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+      <eTypeArguments eTypeParameter="#//Deferred/C"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Job">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eOperations name="canExecute" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="command">
+      <eGenericType eClassifier="#//Command">
+        <eTypeArguments eTypeParameter="#//Job/R"/>
+        <eTypeArguments eTypeParameter="#//Job/C"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="deferred">
+      <eGenericType eClassifier="#//Deferred">
+        <eTypeArguments eTypeParameter="#//Job/R"/>
+        <eTypeArguments eTypeParameter="#//Job/C"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="created" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="started" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="completed" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" eType="#//JobStatus"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="when" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="failureReason" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="JobStatus">
+    <eLiterals name="PENDING"/>
+    <eLiterals name="RUNNING" value="1"/>
+    <eLiterals name="COMPLETED" value="2"/>
+    <eLiterals name="FAILED" value="3"/>
+    <eLiterals name="ROLLEDBACK" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JobQueue">
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="jobs" upperBound="-1" containment="true">
+      <eGenericType eClassifier="#//Job">
+        <eTypeArguments/>
+        <eTypeArguments eTypeParameter="#//JobQueue/C"/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="ActionState">
+    <eLiterals name="PASSIVE"/>
+    <eLiterals name="ACTIVATING" value="1"/>
+    <eLiterals name="ACTIVE" value="2"/>
+    <eLiterals name="PASSIVATING" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Context" instanceClassName="org.nasdanika.core.Context"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Invocable" abstract="true" interface="true">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eOperations name="invoke" eExceptions="#//Exception">
+      <eGenericType eTypeParameter="#//Invocable/R"/>
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Invocable/C"/>
+      </eParameters>
+      <eParameters name="arguments" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eOperations>
+    <eOperations name="accept" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        eExceptions="#//Exception">
+      <eParameters name="context">
+        <eGenericType eTypeParameter="#//Invocable/C"/>
+      </eParameters>
+      <eParameters name="arguments" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="InvocableReference">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target">
+      <eGenericType eClassifier="#//Invocable">
+        <eTypeArguments eTypeParameter="#//InvocableReference/R"/>
+        <eTypeArguments eTypeParameter="#//InvocableReference/C"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//Invocable">
+      <eTypeArguments eTypeParameter="#//InvocableReference/R"/>
+      <eTypeArguments eTypeParameter="#//InvocableReference/C"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Action" abstract="true">
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="C">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outputs" upperBound="-1"
+        eType="#//ActionOutput" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//Invocable">
+      <eTypeArguments eTypeParameter="#//Action/R"/>
+      <eTypeArguments eTypeParameter="#//Action/C"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ActionOutput" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Invocable"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Dispatch" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="targets" upperBound="-1"
+        eType="#//Invocable" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Exception" instanceClassName="java.lang.Exception"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Publish" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="targets" upperBound="-1"
+        eType="#//Invocable" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeferredInvocation" eSuperTypes="#//Command">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="arguments" upperBound="-1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="result" eType="#//Deferred"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="DeferringInvocable" eSuperTypes="#//Invocable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Invocable"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="invocations" upperBound="-1"
+        eType="#//DeferredInvocation"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="CDOTransactionContext" instanceClassName="org.nasdanika.cdo.CDOTransactionContext"/>
+</ecore:EPackage>
