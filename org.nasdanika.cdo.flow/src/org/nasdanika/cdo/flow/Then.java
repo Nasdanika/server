@@ -20,17 +20,17 @@ public interface Then<R, R1, C extends Context> extends CDOObject {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @model exceptions="org.nasdanika.cdo.flow.Exception"
 	 * @generated
 	 */
-	R1 onFulfilled(R value, C context);
+	R1 onFulfilled(R value, C context) throws Exception;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model dataType="org.nasdanika.cdo.flow.Exception" reasonDataType="org.nasdanika.cdo.flow.Exception"
+	 * @model dataType="org.nasdanika.cdo.flow.Exception" exceptions="org.nasdanika.cdo.flow.Exception" reasonDataType="org.nasdanika.cdo.flow.Exception"
 	 * @generated
 	 */
-	Exception onRejected(Exception reason, C context);
+	Exception onRejected(Exception reason, C context) throws Exception;
 
 } // Then

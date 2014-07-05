@@ -16,6 +16,9 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.flow.Action;
 import org.nasdanika.cdo.flow.ActionState;
+import org.nasdanika.cdo.flow.All;
+import org.nasdanika.cdo.flow.Any;
+import org.nasdanika.cdo.flow.BoundInvocable;
 import org.nasdanika.cdo.flow.Command;
 import org.nasdanika.cdo.flow.Deferred;
 import org.nasdanika.cdo.flow.DeferredInvocation;
@@ -26,10 +29,12 @@ import org.nasdanika.cdo.flow.FlowFactory;
 import org.nasdanika.cdo.flow.FlowPackage;
 import org.nasdanika.cdo.flow.Invocable;
 import org.nasdanika.cdo.flow.InvocableReference;
+import org.nasdanika.cdo.flow.InvocableThen;
 import org.nasdanika.cdo.flow.Job;
 import org.nasdanika.cdo.flow.JobQueue;
 import org.nasdanika.cdo.flow.JobStatus;
 import org.nasdanika.cdo.flow.Promise;
+import org.nasdanika.cdo.flow.PromiseReference;
 import org.nasdanika.cdo.flow.PromiseState;
 import org.nasdanika.cdo.flow.Publish;
 import org.nasdanika.cdo.flow.Then;
@@ -63,6 +68,27 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * @generated
 	 */
 	private EClass promiseEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass promiseReferenceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass allEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass anyEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -111,7 +137,21 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass invocableThenEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass invocableReferenceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass boundInvocableEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -569,6 +609,78 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getPromiseReference() {
+		return promiseReferenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPromiseReference_Target() {
+		return (EReference)promiseReferenceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getAll() {
+		return allEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAll_Promises() {
+		return (EReference)allEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getAll__Init__EList_Executor() {
+		return allEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getAny() {
+		return anyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAny_Promises() {
+		return (EReference)anyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getAny__Init__EList_Executor() {
+		return anyEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getCommand() {
 		return commandEClass;
 	}
@@ -623,6 +735,33 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getInvocableThen() {
+		return invocableThenEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInvocableThen_OnFulfilled() {
+		return (EReference)invocableThenEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInvocableThen_OnRejected() {
+		return (EReference)invocableThenEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getInvocableReference() {
 		return invocableReferenceEClass;
 	}
@@ -634,6 +773,15 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 */
 	public EReference getInvocableReference_Target() {
 		return (EReference)invocableReferenceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getBoundInvocable() {
+		return boundInvocableEClass;
 	}
 
 	/**
@@ -869,6 +1017,17 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		createEOperation(promiseEClass, PROMISE___GET_REJECTION_REASON__CONTEXT);
 		createEOperation(promiseEClass, PROMISE___GET_STATE);
 
+		promiseReferenceEClass = createEClass(PROMISE_REFERENCE);
+		createEReference(promiseReferenceEClass, PROMISE_REFERENCE__TARGET);
+
+		allEClass = createEClass(ALL);
+		createEReference(allEClass, ALL__PROMISES);
+		createEOperation(allEClass, ALL___INIT__ELIST_EXECUTOR);
+
+		anyEClass = createEClass(ANY);
+		createEReference(anyEClass, ANY__PROMISES);
+		createEOperation(anyEClass, ANY___INIT__ELIST_EXECUTOR);
+
 		commandEClass = createEClass(COMMAND);
 		createEOperation(commandEClass, COMMAND___EXECUTE__CONTEXT_EXECUTOR);
 
@@ -902,8 +1061,14 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		createEOperation(invocableEClass, INVOCABLE___INVOKE__CONTEXT_ELIST);
 		createEOperation(invocableEClass, INVOCABLE___ACCEPT__CONTEXT_ELIST);
 
+		invocableThenEClass = createEClass(INVOCABLE_THEN);
+		createEReference(invocableThenEClass, INVOCABLE_THEN__ON_FULFILLED);
+		createEReference(invocableThenEClass, INVOCABLE_THEN__ON_REJECTED);
+
 		invocableReferenceEClass = createEClass(INVOCABLE_REFERENCE);
 		createEReference(invocableReferenceEClass, INVOCABLE_REFERENCE__TARGET);
+
+		boundInvocableEClass = createEClass(BOUND_INVOCABLE);
 
 		actionEClass = createEClass(ACTION);
 		createEReference(actionEClass, ACTION__OUTPUTS);
@@ -970,6 +1135,12 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		ETypeParameter executorEClass_C = addETypeParameter(executorEClass, "C");
 		ETypeParameter promiseEClass_R = addETypeParameter(promiseEClass, "R");
 		ETypeParameter promiseEClass_C = addETypeParameter(promiseEClass, "C");
+		ETypeParameter promiseReferenceEClass_R = addETypeParameter(promiseReferenceEClass, "R");
+		ETypeParameter promiseReferenceEClass_C = addETypeParameter(promiseReferenceEClass, "C");
+		ETypeParameter allEClass_R = addETypeParameter(allEClass, "R");
+		ETypeParameter allEClass_C = addETypeParameter(allEClass, "C");
+		ETypeParameter anyEClass_R = addETypeParameter(anyEClass, "R");
+		ETypeParameter anyEClass_C = addETypeParameter(anyEClass, "C");
 		ETypeParameter commandEClass_R = addETypeParameter(commandEClass, "R");
 		ETypeParameter commandEClass_C = addETypeParameter(commandEClass, "C");
 		ETypeParameter deferredEClass_R = addETypeParameter(deferredEClass, "R");
@@ -979,6 +1150,9 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		ETypeParameter jobQueueEClass_C = addETypeParameter(jobQueueEClass, "C");
 		ETypeParameter invocableEClass_R = addETypeParameter(invocableEClass, "R");
 		ETypeParameter invocableEClass_C = addETypeParameter(invocableEClass, "C");
+		ETypeParameter invocableThenEClass_R = addETypeParameter(invocableThenEClass, "R");
+		ETypeParameter invocableThenEClass_R1 = addETypeParameter(invocableThenEClass, "R1");
+		ETypeParameter invocableThenEClass_C = addETypeParameter(invocableThenEClass, "C");
 		ETypeParameter invocableReferenceEClass_R = addETypeParameter(invocableReferenceEClass, "R");
 		ETypeParameter invocableReferenceEClass_C = addETypeParameter(invocableReferenceEClass, "C");
 		ETypeParameter actionEClass_R = addETypeParameter(actionEClass, "R");
@@ -994,6 +1168,12 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g1 = createEGenericType(this.getContext());
 		promiseEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
+		promiseReferenceEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		allEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		anyEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
 		commandEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
 		deferredEClass_C.getEBounds().add(g1);
@@ -1003,6 +1183,8 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		jobQueueEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
 		invocableEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		invocableThenEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
 		invocableReferenceEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
@@ -1018,6 +1200,26 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g1.getETypeArguments().add(g2);
 		thenReferenceEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(promiseReferenceEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(promiseReferenceEClass_C);
+		g1.getETypeArguments().add(g2);
+		promiseReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(ecorePackage.getEEList());
+		g1.getETypeArguments().add(g2);
+		EGenericType g3 = createEGenericType(allEClass_R);
+		g2.getETypeArguments().add(g3);
+		g2 = createEGenericType(allEClass_C);
+		g1.getETypeArguments().add(g2);
+		allEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(anyEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(anyEClass_C);
+		g1.getETypeArguments().add(g2);
+		anyEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPromise());
 		g2 = createEGenericType(deferredEClass_R);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(deferredEClass_C);
@@ -1029,6 +1231,14 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g2 = createEGenericType(deferredEClass_C);
 		g1.getETypeArguments().add(g2);
 		deferredEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getThen());
+		g2 = createEGenericType(invocableThenEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(invocableThenEClass_R1);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(invocableThenEClass_C);
+		g1.getETypeArguments().add(g2);
+		invocableThenEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getInvocable());
 		g2 = createEGenericType(invocableReferenceEClass_R);
 		g1.getETypeArguments().add(g2);
@@ -1054,6 +1264,7 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		addEParameter(op, g1, "value", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(thenEClass_C);
 		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 		g1 = createEGenericType(thenEClass_R1);
 		initEOperation(op, g1);
 
@@ -1061,6 +1272,7 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		addEParameter(op, this.getException(), "reason", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(thenEClass_C);
 		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
 		initEClass(thenReferenceEClass, ThenReference.class, "ThenReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		g1 = createEGenericType(this.getThen());
@@ -1111,6 +1323,54 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEOperation(getPromise__GetState(), this.getPromiseState(), "getState", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(promiseReferenceEClass, PromiseReference.class, "PromiseReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(promiseReferenceEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(promiseReferenceEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getPromiseReference_Target(), g1, null, "target", null, 0, 1, PromiseReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(allEClass, All.class, "All", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(allEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(allEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getAll_Promises(), g1, null, "promises", null, 0, 1, All.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getAll__Init__EList_Executor(), null, "init", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(allEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(allEClass_C);
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "promises", 0, -1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getExecutor());
+		g2 = createEGenericType(allEClass_C);
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "executor", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(anyEClass, Any.class, "Any", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(anyEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(anyEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getAny_Promises(), g1, null, "promises", null, 0, 1, Any.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getAny__Init__EList_Executor(), null, "init", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(anyEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(anyEClass_C);
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "promises", 0, -1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getExecutor());
+		g2 = createEGenericType(anyEClass_C);
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "executor", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(commandEClass, Command.class, "Command", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1225,6 +1485,20 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		addEParameter(op, ecorePackage.getEJavaObject(), "arguments", 0, -1, IS_UNIQUE, IS_ORDERED);
 		addEException(op, this.getException());
 
+		initEClass(invocableThenEClass, InvocableThen.class, "InvocableThen", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(invocableThenEClass_R1);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(invocableThenEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getInvocableThen_OnFulfilled(), g1, null, "onFulfilled", null, 0, 1, InvocableThen.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(this.getException());
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(invocableThenEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getInvocableThen_OnRejected(), g1, null, "onRejected", null, 0, 1, InvocableThen.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(invocableReferenceEClass, InvocableReference.class, "InvocableReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		g1 = createEGenericType(this.getInvocable());
 		g2 = createEGenericType(invocableReferenceEClass_R);
@@ -1232,6 +1506,8 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g2 = createEGenericType(invocableReferenceEClass_C);
 		g1.getETypeArguments().add(g2);
 		initEReference(getInvocableReference_Target(), g1, null, "target", null, 0, 1, InvocableReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(boundInvocableEClass, BoundInvocable.class, "BoundInvocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(actionEClass, Action.class, "Action", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getAction_Outputs(), this.getActionOutput(), null, "outputs", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

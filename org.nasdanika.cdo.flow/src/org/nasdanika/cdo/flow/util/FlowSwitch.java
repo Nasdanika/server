@@ -91,6 +91,27 @@ public class FlowSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case FlowPackage.PROMISE_REFERENCE: {
+				PromiseReference<?, ?> promiseReference = (PromiseReference<?, ?>)theEObject;
+				T result = casePromiseReference(promiseReference);
+				if (result == null) result = casePromise(promiseReference);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FlowPackage.ALL: {
+				All<?, ?> all = (All<?, ?>)theEObject;
+				T result = caseAll(all);
+				if (result == null) result = casePromise(all);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FlowPackage.ANY: {
+				Any<?, ?> any = (Any<?, ?>)theEObject;
+				T result = caseAny(any);
+				if (result == null) result = casePromise(any);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case FlowPackage.COMMAND: {
 				Command<?, ?> command = (Command<?, ?>)theEObject;
 				T result = caseCommand(command);
@@ -123,10 +144,23 @@ public class FlowSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case FlowPackage.INVOCABLE_THEN: {
+				InvocableThen<?, ?, ?> invocableThen = (InvocableThen<?, ?, ?>)theEObject;
+				T result = caseInvocableThen(invocableThen);
+				if (result == null) result = caseThen(invocableThen);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case FlowPackage.INVOCABLE_REFERENCE: {
 				InvocableReference<?, ?> invocableReference = (InvocableReference<?, ?>)theEObject;
 				T result = caseInvocableReference(invocableReference);
 				if (result == null) result = caseInvocable(invocableReference);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FlowPackage.BOUND_INVOCABLE: {
+				BoundInvocable boundInvocable = (BoundInvocable)theEObject;
+				T result = caseBoundInvocable(boundInvocable);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -221,6 +255,51 @@ public class FlowSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Promise Reference</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Promise Reference</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <R, C extends Context> T casePromiseReference(PromiseReference<R, C> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>All</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>All</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <R, C extends Context> T caseAll(All<R, C> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Any</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Any</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <R, C extends Context> T caseAny(Any<R, C> object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Command</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -311,6 +390,21 @@ public class FlowSwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Invocable Then</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Invocable Then</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <R, R1, C extends Context> T caseInvocableThen(InvocableThen<R, R1, C> object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Invocable Reference</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -322,6 +416,21 @@ public class FlowSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public <R, C extends Context> T caseInvocableReference(InvocableReference<R, C> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Bound Invocable</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Bound Invocable</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseBoundInvocable(BoundInvocable object) {
 		return null;
 	}
 

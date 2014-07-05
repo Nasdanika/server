@@ -168,7 +168,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getCommand()
 	 * @generated
 	 */
-	int COMMAND = 4;
+	int COMMAND = 7;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.Promise <em>Promise</em>}' class.
@@ -188,7 +188,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getDeferred()
 	 * @generated
 	 */
-	int DEFERRED = 5;
+	int DEFERRED = 8;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.JobImpl <em>Job</em>}' class.
@@ -198,7 +198,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getJob()
 	 * @generated
 	 */
-	int JOB = 6;
+	int JOB = 9;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.JobQueueImpl <em>Job Queue</em>}' class.
@@ -208,7 +208,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getJobQueue()
 	 * @generated
 	 */
-	int JOB_QUEUE = 7;
+	int JOB_QUEUE = 10;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.Executor <em>Executor</em>}' class.
@@ -300,6 +300,270 @@ public interface FlowPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROMISE_OPERATION_COUNT = 4;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.PromiseReferenceImpl <em>Promise Reference</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.flow.impl.PromiseReferenceImpl
+	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getPromiseReference()
+	 * @generated
+	 */
+	int PROMISE_REFERENCE = 4;
+
+	/**
+	 * The feature id for the '<em><b>Done</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE__DONE = PROMISE__DONE;
+
+	/**
+	 * The feature id for the '<em><b>Target</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE__TARGET = PROMISE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Promise Reference</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE_FEATURE_COUNT = PROMISE_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Then</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE___THEN__THEN_CONTEXT_EXECUTOR = PROMISE___THEN__THEN_CONTEXT_EXECUTOR;
+
+	/**
+	 * The operation id for the '<em>Get Fulfillment Value</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE___GET_FULFILLMENT_VALUE__CONTEXT = PROMISE___GET_FULFILLMENT_VALUE__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Get Rejection Reason</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE___GET_REJECTION_REASON__CONTEXT = PROMISE___GET_REJECTION_REASON__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Get State</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE___GET_STATE = PROMISE___GET_STATE;
+
+	/**
+	 * The number of operations of the '<em>Promise Reference</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROMISE_REFERENCE_OPERATION_COUNT = PROMISE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.AllImpl <em>All</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.flow.impl.AllImpl
+	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getAll()
+	 * @generated
+	 */
+	int ALL = 5;
+
+	/**
+	 * The feature id for the '<em><b>Done</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL__DONE = PROMISE__DONE;
+
+	/**
+	 * The feature id for the '<em><b>Promises</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL__PROMISES = PROMISE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>All</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL_FEATURE_COUNT = PROMISE_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Then</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL___THEN__THEN_CONTEXT_EXECUTOR = PROMISE___THEN__THEN_CONTEXT_EXECUTOR;
+
+	/**
+	 * The operation id for the '<em>Get Fulfillment Value</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL___GET_FULFILLMENT_VALUE__CONTEXT = PROMISE___GET_FULFILLMENT_VALUE__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Get Rejection Reason</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL___GET_REJECTION_REASON__CONTEXT = PROMISE___GET_REJECTION_REASON__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Get State</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL___GET_STATE = PROMISE___GET_STATE;
+
+	/**
+	 * The operation id for the '<em>Init</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL___INIT__ELIST_EXECUTOR = PROMISE_OPERATION_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>All</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ALL_OPERATION_COUNT = PROMISE_OPERATION_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.AnyImpl <em>Any</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.flow.impl.AnyImpl
+	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getAny()
+	 * @generated
+	 */
+	int ANY = 6;
+
+	/**
+	 * The feature id for the '<em><b>Done</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY__DONE = PROMISE__DONE;
+
+	/**
+	 * The feature id for the '<em><b>Promises</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY__PROMISES = PROMISE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Any</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY_FEATURE_COUNT = PROMISE_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Then</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY___THEN__THEN_CONTEXT_EXECUTOR = PROMISE___THEN__THEN_CONTEXT_EXECUTOR;
+
+	/**
+	 * The operation id for the '<em>Get Fulfillment Value</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY___GET_FULFILLMENT_VALUE__CONTEXT = PROMISE___GET_FULFILLMENT_VALUE__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Get Rejection Reason</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY___GET_REJECTION_REASON__CONTEXT = PROMISE___GET_REJECTION_REASON__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Get State</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY___GET_STATE = PROMISE___GET_STATE;
+
+	/**
+	 * The operation id for the '<em>Init</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY___INIT__ELIST_EXECUTOR = PROMISE_OPERATION_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Any</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ANY_OPERATION_COUNT = PROMISE_OPERATION_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Command</em>' class.
@@ -624,7 +888,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getInvocable()
 	 * @generated
 	 */
-	int INVOCABLE = 8;
+	int INVOCABLE = 11;
 
 	/**
 	 * The number of structural features of the '<em>Invocable</em>' class.
@@ -663,6 +927,70 @@ public interface FlowPackage extends EPackage {
 	int INVOCABLE_OPERATION_COUNT = 2;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.InvocableThenImpl <em>Invocable Then</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.flow.impl.InvocableThenImpl
+	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getInvocableThen()
+	 * @generated
+	 */
+	int INVOCABLE_THEN = 12;
+
+	/**
+	 * The feature id for the '<em><b>On Fulfilled</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE_THEN__ON_FULFILLED = THEN_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>On Rejected</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE_THEN__ON_REJECTED = THEN_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Invocable Then</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE_THEN_FEATURE_COUNT = THEN_FEATURE_COUNT + 2;
+
+	/**
+	 * The operation id for the '<em>On Fulfilled</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE_THEN___ON_FULFILLED__OBJECT_CONTEXT = THEN___ON_FULFILLED__OBJECT_CONTEXT;
+
+	/**
+	 * The operation id for the '<em>On Rejected</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE_THEN___ON_REJECTED__EXCEPTION_CONTEXT = THEN___ON_REJECTED__EXCEPTION_CONTEXT;
+
+	/**
+	 * The number of operations of the '<em>Invocable Then</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCABLE_THEN_OPERATION_COUNT = THEN_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.InvocableReferenceImpl <em>Invocable Reference</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -670,7 +998,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getInvocableReference()
 	 * @generated
 	 */
-	int INVOCABLE_REFERENCE = 9;
+	int INVOCABLE_REFERENCE = 13;
 
 	/**
 	 * The feature id for the '<em><b>Target</b></em>' reference.
@@ -718,6 +1046,34 @@ public interface FlowPackage extends EPackage {
 	int INVOCABLE_REFERENCE_OPERATION_COUNT = INVOCABLE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.BoundInvocableImpl <em>Bound Invocable</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.flow.impl.BoundInvocableImpl
+	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getBoundInvocable()
+	 * @generated
+	 */
+	int BOUND_INVOCABLE = 14;
+
+	/**
+	 * The number of structural features of the '<em>Bound Invocable</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BOUND_INVOCABLE_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Bound Invocable</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BOUND_INVOCABLE_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.impl.ActionImpl <em>Action</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -725,7 +1081,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getAction()
 	 * @generated
 	 */
-	int ACTION = 10;
+	int ACTION = 15;
 
 	/**
 	 * The feature id for the '<em><b>Outputs</b></em>' map.
@@ -780,7 +1136,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getActionOutput()
 	 * @generated
 	 */
-	int ACTION_OUTPUT = 11;
+	int ACTION_OUTPUT = 16;
 
 	/**
 	 * The feature id for the '<em><b>Key</b></em>' attribute.
@@ -826,7 +1182,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getDispatch()
 	 * @generated
 	 */
-	int DISPATCH = 12;
+	int DISPATCH = 17;
 
 	/**
 	 * The feature id for the '<em><b>Targets</b></em>' containment reference list.
@@ -881,7 +1237,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getPublish()
 	 * @generated
 	 */
-	int PUBLISH = 13;
+	int PUBLISH = 18;
 
 	/**
 	 * The feature id for the '<em><b>Targets</b></em>' containment reference list.
@@ -936,7 +1292,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getDeferredInvocation()
 	 * @generated
 	 */
-	int DEFERRED_INVOCATION = 14;
+	int DEFERRED_INVOCATION = 19;
 
 	/**
 	 * The feature id for the '<em><b>Arguments</b></em>' containment reference list.
@@ -991,7 +1347,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getDeferringInvocable()
 	 * @generated
 	 */
-	int DEFERRING_INVOCABLE = 15;
+	int DEFERRING_INVOCABLE = 20;
 
 	/**
 	 * The feature id for the '<em><b>Target</b></em>' containment reference.
@@ -1055,7 +1411,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getPromiseState()
 	 * @generated
 	 */
-	int PROMISE_STATE = 16;
+	int PROMISE_STATE = 21;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.JobStatus <em>Job Status</em>}' enum.
@@ -1065,7 +1421,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getJobStatus()
 	 * @generated
 	 */
-	int JOB_STATUS = 17;
+	int JOB_STATUS = 22;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.flow.ActionState <em>Action State</em>}' enum.
@@ -1075,7 +1431,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getActionState()
 	 * @generated
 	 */
-	int ACTION_STATE = 18;
+	int ACTION_STATE = 23;
 
 	/**
 	 * The meta object id for the '<em>Context</em>' data type.
@@ -1085,7 +1441,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 19;
+	int CONTEXT = 24;
 
 
 	/**
@@ -1096,7 +1452,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getException()
 	 * @generated
 	 */
-	int EXCEPTION = 20;
+	int EXCEPTION = 25;
 
 
 	/**
@@ -1107,7 +1463,7 @@ public interface FlowPackage extends EPackage {
 	 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getCDOTransactionContext()
 	 * @generated
 	 */
-	int CDO_TRANSACTION_CONTEXT = 21;
+	int CDO_TRANSACTION_CONTEXT = 26;
 
 
 	/**
@@ -1469,6 +1825,89 @@ public interface FlowPackage extends EPackage {
 	EOperation getPromise__GetState();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.PromiseReference <em>Promise Reference</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Promise Reference</em>'.
+	 * @see org.nasdanika.cdo.flow.PromiseReference
+	 * @generated
+	 */
+	EClass getPromiseReference();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.flow.PromiseReference#getTarget <em>Target</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Target</em>'.
+	 * @see org.nasdanika.cdo.flow.PromiseReference#getTarget()
+	 * @see #getPromiseReference()
+	 * @generated
+	 */
+	EReference getPromiseReference_Target();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.All <em>All</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>All</em>'.
+	 * @see org.nasdanika.cdo.flow.All
+	 * @generated
+	 */
+	EClass getAll();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.flow.All#getPromises <em>Promises</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Promises</em>'.
+	 * @see org.nasdanika.cdo.flow.All#getPromises()
+	 * @see #getAll()
+	 * @generated
+	 */
+	EReference getAll_Promises();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.flow.All#init(org.eclipse.emf.common.util.EList, org.nasdanika.cdo.flow.Executor) <em>Init</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Init</em>' operation.
+	 * @see org.nasdanika.cdo.flow.All#init(org.eclipse.emf.common.util.EList, org.nasdanika.cdo.flow.Executor)
+	 * @generated
+	 */
+	EOperation getAll__Init__EList_Executor();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.Any <em>Any</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Any</em>'.
+	 * @see org.nasdanika.cdo.flow.Any
+	 * @generated
+	 */
+	EClass getAny();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.flow.Any#getPromises <em>Promises</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Promises</em>'.
+	 * @see org.nasdanika.cdo.flow.Any#getPromises()
+	 * @see #getAny()
+	 * @generated
+	 */
+	EReference getAny_Promises();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.flow.Any#init(org.eclipse.emf.common.util.EList, org.nasdanika.cdo.flow.Executor) <em>Init</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Init</em>' operation.
+	 * @see org.nasdanika.cdo.flow.Any#init(org.eclipse.emf.common.util.EList, org.nasdanika.cdo.flow.Executor)
+	 * @generated
+	 */
+	EOperation getAny__Init__EList_Executor();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.Command <em>Command</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1530,6 +1969,38 @@ public interface FlowPackage extends EPackage {
 	EOperation getInvocable__Accept__Context_EList();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.InvocableThen <em>Invocable Then</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Invocable Then</em>'.
+	 * @see org.nasdanika.cdo.flow.InvocableThen
+	 * @generated
+	 */
+	EClass getInvocableThen();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.flow.InvocableThen#getOnFulfilled <em>On Fulfilled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>On Fulfilled</em>'.
+	 * @see org.nasdanika.cdo.flow.InvocableThen#getOnFulfilled()
+	 * @see #getInvocableThen()
+	 * @generated
+	 */
+	EReference getInvocableThen_OnFulfilled();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.flow.InvocableThen#getOnRejected <em>On Rejected</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>On Rejected</em>'.
+	 * @see org.nasdanika.cdo.flow.InvocableThen#getOnRejected()
+	 * @see #getInvocableThen()
+	 * @generated
+	 */
+	EReference getInvocableThen_OnRejected();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.InvocableReference <em>Invocable Reference</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1549,6 +2020,16 @@ public interface FlowPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getInvocableReference_Target();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.BoundInvocable <em>Bound Invocable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Bound Invocable</em>'.
+	 * @see org.nasdanika.cdo.flow.BoundInvocable
+	 * @generated
+	 */
+	EClass getBoundInvocable();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.flow.Action <em>Action</em>}'.
@@ -2082,6 +2563,76 @@ public interface FlowPackage extends EPackage {
 		EOperation PROMISE___GET_STATE = eINSTANCE.getPromise__GetState();
 
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.impl.PromiseReferenceImpl <em>Promise Reference</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.flow.impl.PromiseReferenceImpl
+		 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getPromiseReference()
+		 * @generated
+		 */
+		EClass PROMISE_REFERENCE = eINSTANCE.getPromiseReference();
+
+		/**
+		 * The meta object literal for the '<em><b>Target</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PROMISE_REFERENCE__TARGET = eINSTANCE.getPromiseReference_Target();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.impl.AllImpl <em>All</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.flow.impl.AllImpl
+		 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getAll()
+		 * @generated
+		 */
+		EClass ALL = eINSTANCE.getAll();
+
+		/**
+		 * The meta object literal for the '<em><b>Promises</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ALL__PROMISES = eINSTANCE.getAll_Promises();
+
+		/**
+		 * The meta object literal for the '<em><b>Init</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ALL___INIT__ELIST_EXECUTOR = eINSTANCE.getAll__Init__EList_Executor();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.impl.AnyImpl <em>Any</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.flow.impl.AnyImpl
+		 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getAny()
+		 * @generated
+		 */
+		EClass ANY = eINSTANCE.getAny();
+
+		/**
+		 * The meta object literal for the '<em><b>Promises</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ANY__PROMISES = eINSTANCE.getAny_Promises();
+
+		/**
+		 * The meta object literal for the '<em><b>Init</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ANY___INIT__ELIST_EXECUTOR = eINSTANCE.getAny__Init__EList_Executor();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.Command <em>Command</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2136,6 +2687,32 @@ public interface FlowPackage extends EPackage {
 		EOperation INVOCABLE___ACCEPT__CONTEXT_ELIST = eINSTANCE.getInvocable__Accept__Context_EList();
 
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.impl.InvocableThenImpl <em>Invocable Then</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.flow.impl.InvocableThenImpl
+		 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getInvocableThen()
+		 * @generated
+		 */
+		EClass INVOCABLE_THEN = eINSTANCE.getInvocableThen();
+
+		/**
+		 * The meta object literal for the '<em><b>On Fulfilled</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference INVOCABLE_THEN__ON_FULFILLED = eINSTANCE.getInvocableThen_OnFulfilled();
+
+		/**
+		 * The meta object literal for the '<em><b>On Rejected</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference INVOCABLE_THEN__ON_REJECTED = eINSTANCE.getInvocableThen_OnRejected();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.impl.InvocableReferenceImpl <em>Invocable Reference</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2152,6 +2729,16 @@ public interface FlowPackage extends EPackage {
 		 * @generated
 		 */
 		EReference INVOCABLE_REFERENCE__TARGET = eINSTANCE.getInvocableReference_Target();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.impl.BoundInvocableImpl <em>Bound Invocable</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.flow.impl.BoundInvocableImpl
+		 * @see org.nasdanika.cdo.flow.impl.FlowPackageImpl#getBoundInvocable()
+		 * @generated
+		 */
+		EClass BOUND_INVOCABLE = eINSTANCE.getBoundInvocable();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.flow.impl.ActionImpl <em>Action</em>}' class.

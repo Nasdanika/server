@@ -9,6 +9,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.flow.Deferred;
 import org.nasdanika.cdo.flow.DeferredInvocation;
+import org.nasdanika.cdo.flow.Executor;
 import org.nasdanika.cdo.flow.FlowPackage;
 
 /**
@@ -88,7 +89,7 @@ public class DeferredInvocationImpl extends CDOObjectImpl implements DeferredInv
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public R execute(C context) throws Exception {
+	public R execute(C context, Executor<C> executor) throws Exception {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
@@ -103,9 +104,9 @@ public class DeferredInvocationImpl extends CDOObjectImpl implements DeferredInv
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case FlowPackage.DEFERRED_INVOCATION___EXECUTE__CONTEXT:
+			case FlowPackage.DEFERRED_INVOCATION___EXECUTE__CONTEXT_EXECUTOR:
 				try {
-					return execute((C)arguments.get(0));
+					return execute((C)arguments.get(0), (Executor<C>)arguments.get(1));
 				}
 				catch (Throwable throwable) {
 					throw new InvocationTargetException(throwable);

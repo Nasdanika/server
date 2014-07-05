@@ -32,6 +32,33 @@ public interface FlowFactory extends EFactory {
 	<R, R1, C extends Context> ThenReference<R, R1, C> createThenReference();
 
 	/**
+	 * Returns a new object of class '<em>Promise Reference</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Promise Reference</em>'.
+	 * @generated
+	 */
+	<R, C extends Context> PromiseReference<R, C> createPromiseReference();
+
+	/**
+	 * Returns a new object of class '<em>All</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>All</em>'.
+	 * @generated
+	 */
+	<R, C extends Context> All<R, C> createAll();
+
+	/**
+	 * Returns a new object of class '<em>Any</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Any</em>'.
+	 * @generated
+	 */
+	<R, C extends Context> Any<R, C> createAny();
+
+	/**
 	 * Returns a new object of class '<em>Deferred</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -59,6 +86,15 @@ public interface FlowFactory extends EFactory {
 	<C extends Context> JobQueue<C> createJobQueue();
 
 	/**
+	 * Returns a new object of class '<em>Invocable Then</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Invocable Then</em>'.
+	 * @generated
+	 */
+	<R, R1, C extends Context> InvocableThen<R, R1, C> createInvocableThen();
+
+	/**
 	 * Returns a new object of class '<em>Invocable Reference</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -66,6 +102,15 @@ public interface FlowFactory extends EFactory {
 	 * @generated
 	 */
 	<R, C extends Context> InvocableReference<R, C> createInvocableReference();
+
+	/**
+	 * Returns a new object of class '<em>Bound Invocable</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Bound Invocable</em>'.
+	 * @generated
+	 */
+	BoundInvocable createBoundInvocable();
 
 	/**
 	 * Returns a new object of class '<em>Dispatch</em>'.

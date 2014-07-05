@@ -29,6 +29,10 @@
     <genDataTypes ecoreDataType="flow.ecore#//Context"/>
     <genDataTypes ecoreDataType="flow.ecore#//Exception"/>
     <genDataTypes ecoreDataType="flow.ecore#//CDOTransactionContext"/>
+    <genClasses image="false" ecoreClass="flow.ecore#//Reference">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Reference/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference flow.ecore#//Reference/target"/>
+    </genClasses>
     <genClasses ecoreClass="flow.ecore#//Then">
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Then/R"/>
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Then/R1"/>
@@ -46,7 +50,6 @@
       <genTypeParameters ecoreTypeParameter="flow.ecore#//ThenReference/R"/>
       <genTypeParameters ecoreTypeParameter="flow.ecore#//ThenReference/R1"/>
       <genTypeParameters ecoreTypeParameter="flow.ecore#//ThenReference/C"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference flow.ecore#//ThenReference/target"/>
     </genClasses>
     <genClasses image="false" ecoreClass="flow.ecore#//Executor">
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Executor/C"/>
@@ -55,6 +58,7 @@
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Promise/R"/>
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Promise/C"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//Promise/done"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//Promise/expires"/>
       <genOperations ecoreOperation="flow.ecore#//Promise/then">
         <genParameters ecoreParameter="flow.ecore#//Promise/then/then"/>
         <genParameters ecoreParameter="flow.ecore#//Promise/then/context"/>
@@ -68,6 +72,29 @@
         <genParameters ecoreParameter="flow.ecore#//Promise/getRejectionReason/context"/>
       </genOperations>
       <genOperations ecoreOperation="flow.ecore#//Promise/getState"/>
+      <genOperations ecoreOperation="flow.ecore#//Promise/cancel"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//PromiseReference">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//PromiseReference/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//PromiseReference/C"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//All">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//All/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//All/C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//All/promises"/>
+      <genOperations ecoreOperation="flow.ecore#//All/init">
+        <genParameters ecoreParameter="flow.ecore#//All/init/promises"/>
+        <genParameters ecoreParameter="flow.ecore#//All/init/executor"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//Any">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Any/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Any/C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Any/promises"/>
+      <genOperations ecoreOperation="flow.ecore#//Any/init">
+        <genParameters ecoreParameter="flow.ecore#//Any/init/promises"/>
+        <genParameters ecoreParameter="flow.ecore#//Any/init/executor"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="flow.ecore#//Command">
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Command/R"/>
@@ -120,6 +147,13 @@
       <genTypeParameters ecoreTypeParameter="flow.ecore#//JobQueue/C"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//JobQueue/jobs"/>
     </genClasses>
+    <genClasses image="false" ecoreClass="flow.ecore#//Actuator">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Actuator/T"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//ActuatorReference">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//ActuatorReference/T"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//ActuatorReference/A"/>
+    </genClasses>
     <genClasses image="false" ecoreClass="flow.ecore#//Invocable">
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Invocable/R"/>
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Invocable/C"/>
@@ -132,33 +166,121 @@
         <genParameters ecoreParameter="flow.ecore#//Invocable/accept/arguments"/>
       </genOperations>
     </genClasses>
+    <genClasses ecoreClass="flow.ecore#//InvocableThen">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//InvocableThen/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//InvocableThen/R1"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//InvocableThen/C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//InvocableThen/onFulfilled"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//InvocableThen/onRejected"/>
+    </genClasses>
     <genClasses ecoreClass="flow.ecore#//InvocableReference">
       <genTypeParameters ecoreTypeParameter="flow.ecore#//InvocableReference/R"/>
       <genTypeParameters ecoreTypeParameter="flow.ecore#//InvocableReference/C"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference flow.ecore#//InvocableReference/target"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//BoundInvocable">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//BoundInvocable/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//BoundInvocable/C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//BoundInvocable/bindings"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//BoundInvocable/target"/>
+      <genOperations ecoreOperation="flow.ecore#//BoundInvocable/bind">
+        <genParameters ecoreParameter="flow.ecore#//BoundInvocable/bind/arguments"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//DeferringInvocable">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//DeferringInvocable/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//DeferringInvocable/C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//DeferringInvocable/target"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference flow.ecore#//DeferringInvocable/invocations"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//DeferredInvocation">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//DeferredInvocation/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//DeferredInvocation/C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//DeferredInvocation/arguments"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//DeferredInvocation/result"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="flow.ecore#//Property">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Property/T"/>
+      <genOperations ecoreOperation="flow.ecore#//Property/get"/>
+      <genOperations ecoreOperation="flow.ecore#//Property/set">
+        <genParameters ecoreParameter="flow.ecore#//Property/set/value"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//PropertyReference">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//PropertyReference/T"/>
     </genClasses>
     <genClasses image="false" ecoreClass="flow.ecore#//Action">
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Action/R"/>
       <genTypeParameters ecoreTypeParameter="flow.ecore#//Action/C"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Action/outputs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Action/errorHandlers"/>
     </genClasses>
-    <genClasses ecoreClass="flow.ecore#//ActionOutput">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//ActionOutput/key"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//ActionOutput/value"/>
+    <genClasses ecoreClass="flow.ecore#//ActionOutputEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//ActionOutputEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//ActionOutputEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//ErrorHandlerEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//ErrorHandlerEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//ErrorHandlerEntry/value"/>
     </genClasses>
     <genClasses ecoreClass="flow.ecore#//Dispatch">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Dispatch/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Dispatch/C"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Dispatch/targets"/>
     </genClasses>
     <genClasses ecoreClass="flow.ecore#//Publish">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Publish/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Publish/C"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Publish/targets"/>
     </genClasses>
-    <genClasses ecoreClass="flow.ecore#//DeferredInvocation">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//DeferredInvocation/arguments"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//DeferredInvocation/result"/>
+    <genClasses image="false" ecoreClass="flow.ecore#//Adaptable"/>
+    <genClasses ecoreClass="flow.ecore#//Flow">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Flow/C"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//Flow/facade"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Flow/contents"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Flow/inputs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Flow/outputs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Flow/errorHandler"/>
     </genClasses>
-    <genClasses ecoreClass="flow.ecore#//DeferringInvocable">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//DeferringInvocable/target"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference flow.ecore#//DeferringInvocable/invocations"/>
+    <genClasses ecoreClass="flow.ecore#//FlowInputEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//FlowInputEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//FlowInputEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//FlowOutputEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//FlowOutputEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//FlowOutputEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//JoinElement">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//JoinElement/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//JoinElement/C"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//JoinElement/consumed"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//JoinElement/collector"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//JoinInput">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//JoinInput/R"/>
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//JoinInput/C"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//JoinInput/outer"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//JoinInput/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//JoinInputEntry">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//JoinInputEntry/C"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//JoinInputEntry/key"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference flow.ecore#//JoinInputEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//Join">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//Join/C"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference flow.ecore#//Join/inputs"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//Join/joiner"/>
+      <genOperations ecoreOperation="flow.ecore#//Join/finishJoin"/>
+    </genClasses>
+    <genClasses ecoreClass="flow.ecore#//ValueProperty">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//ValueProperty/T"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference flow.ecore#//ValueProperty/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="flow.ecore#//AutoCloseable"/>
+    <genClasses ecoreClass="flow.ecore#//ServiceReference">
+      <genTypeParameters ecoreTypeParameter="flow.ecore#//ServiceReference/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//ServiceReference/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute flow.ecore#//ServiceReference/filter"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

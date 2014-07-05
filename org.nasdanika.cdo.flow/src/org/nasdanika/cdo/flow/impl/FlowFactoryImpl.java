@@ -61,10 +61,15 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case FlowPackage.THEN_REFERENCE: return (EObject)createThenReference();
+			case FlowPackage.PROMISE_REFERENCE: return (EObject)createPromiseReference();
+			case FlowPackage.ALL: return (EObject)createAll();
+			case FlowPackage.ANY: return (EObject)createAny();
 			case FlowPackage.DEFERRED: return (EObject)createDeferred();
 			case FlowPackage.JOB: return (EObject)createJob();
 			case FlowPackage.JOB_QUEUE: return (EObject)createJobQueue();
+			case FlowPackage.INVOCABLE_THEN: return (EObject)createInvocableThen();
 			case FlowPackage.INVOCABLE_REFERENCE: return (EObject)createInvocableReference();
+			case FlowPackage.BOUND_INVOCABLE: return (EObject)createBoundInvocable();
 			case FlowPackage.ACTION_OUTPUT: return (EObject)createActionOutput();
 			case FlowPackage.DISPATCH: return (EObject)createDispatch();
 			case FlowPackage.PUBLISH: return (EObject)createPublish();
@@ -136,6 +141,36 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public <R, C extends Context> PromiseReference<R, C> createPromiseReference() {
+		PromiseReferenceImpl<R, C> promiseReference = new PromiseReferenceImpl<R, C>();
+		return promiseReference;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <R, C extends Context> All<R, C> createAll() {
+		AllImpl<R, C> all = new AllImpl<R, C>();
+		return all;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <R, C extends Context> Any<R, C> createAny() {
+		AnyImpl<R, C> any = new AnyImpl<R, C>();
+		return any;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public <R, C extends Context> Deferred<R, C> createDeferred() {
 		DeferredImpl<R, C> deferred = new DeferredImpl<R, C>();
 		return deferred;
@@ -166,9 +201,29 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public <R, R1, C extends Context> InvocableThen<R, R1, C> createInvocableThen() {
+		InvocableThenImpl<R, R1, C> invocableThen = new InvocableThenImpl<R, R1, C>();
+		return invocableThen;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public <R, C extends Context> InvocableReference<R, C> createInvocableReference() {
 		InvocableReferenceImpl<R, C> invocableReference = new InvocableReferenceImpl<R, C>();
 		return invocableReference;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public BoundInvocable createBoundInvocable() {
+		BoundInvocableImpl boundInvocable = new BoundInvocableImpl();
+		return boundInvocable;
 	}
 
 	/**

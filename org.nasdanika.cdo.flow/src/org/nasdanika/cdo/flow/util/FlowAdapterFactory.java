@@ -83,6 +83,18 @@ public class FlowAdapterFactory extends AdapterFactoryImpl {
 				return createPromiseAdapter();
 			}
 			@Override
+			public <R, C extends Context> Adapter casePromiseReference(PromiseReference<R, C> object) {
+				return createPromiseReferenceAdapter();
+			}
+			@Override
+			public <R, C extends Context> Adapter caseAll(All<R, C> object) {
+				return createAllAdapter();
+			}
+			@Override
+			public <R, C extends Context> Adapter caseAny(Any<R, C> object) {
+				return createAnyAdapter();
+			}
+			@Override
 			public <R, C extends Context> Adapter caseCommand(Command<R, C> object) {
 				return createCommandAdapter();
 			}
@@ -103,8 +115,16 @@ public class FlowAdapterFactory extends AdapterFactoryImpl {
 				return createInvocableAdapter();
 			}
 			@Override
+			public <R, R1, C extends Context> Adapter caseInvocableThen(InvocableThen<R, R1, C> object) {
+				return createInvocableThenAdapter();
+			}
+			@Override
 			public <R, C extends Context> Adapter caseInvocableReference(InvocableReference<R, C> object) {
 				return createInvocableReferenceAdapter();
+			}
+			@Override
+			public Adapter caseBoundInvocable(BoundInvocable object) {
+				return createBoundInvocableAdapter();
 			}
 			@Override
 			public <R, C extends Context> Adapter caseAction(Action<R, C> object) {
@@ -193,6 +213,48 @@ public class FlowAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.flow.PromiseReference <em>Promise Reference</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.flow.PromiseReference
+	 * @generated
+	 */
+	public Adapter createPromiseReferenceAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.flow.All <em>All</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.flow.All
+	 * @generated
+	 */
+	public Adapter createAllAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.flow.Any <em>Any</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.flow.Any
+	 * @generated
+	 */
+	public Adapter createAnyAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.flow.Deferred <em>Deferred</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -277,6 +339,20 @@ public class FlowAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.flow.InvocableThen <em>Invocable Then</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.flow.InvocableThen
+	 * @generated
+	 */
+	public Adapter createInvocableThenAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.flow.InvocableReference <em>Invocable Reference</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -287,6 +363,20 @@ public class FlowAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createInvocableReferenceAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.flow.BoundInvocable <em>Bound Invocable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.flow.BoundInvocable
+	 * @generated
+	 */
+	public Adapter createBoundInvocableAdapter() {
 		return null;
 	}
 
