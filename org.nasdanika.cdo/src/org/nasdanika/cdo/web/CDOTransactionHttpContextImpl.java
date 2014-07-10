@@ -95,6 +95,10 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 		}
 		return transactionContext.getPrincipal();
 	}
-	
-	
+
+	@Override
+	public boolean isRollbackOnly() {
+		return transactionContext.isRollbackOnly();
+	}
+		
 }

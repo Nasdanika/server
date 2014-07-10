@@ -19,11 +19,6 @@
             target="org.eclipse.emf.cdo.common.model.CDOPackageRegistry">
       </object_route>
       <object_route
-            class="org.nasdanika.cdo.web.routes.EPackageRoute"
-            method="GET"
-            target="org.eclipse.emf.ecore.EPackage">
-      </object_route>
-      <object_route
             class="org.nasdanika.cdo.web.routes.CDOResourceFolderRoute"
             method="*"
             target="org.eclipse.emf.cdo.eresource.CDOResourceFolder">
@@ -139,10 +134,6 @@
       <resolver
             class="org.nasdanika.cdo.web.objectpathresolvers.EPackagePathResolver"
             target="org.eclipse.emf.ecore.EPackage">
-      </resolver>
-      <resolver
-            class="org.nasdanika.cdo.web.objectpathresolvers.EClassifierPathResolver"
-            target="org.eclipse.emf.ecore.EClassifier">
       </resolver>
       <resolver
             class="org.nasdanika.cdo.web.objectpathresolvers.EStructuralFeatureClosurePathResolver"

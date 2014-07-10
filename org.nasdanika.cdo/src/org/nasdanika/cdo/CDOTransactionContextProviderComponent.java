@@ -78,6 +78,17 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 					authenticatedPrincipal = pd.authenticate(credentials);
 					return authenticatedPrincipal!=null;
 				}
+
+				@SuppressWarnings("unchecked")
+				@Override
+				public <T> T adapt(Class<T> targetType) {					
+					return targetType.isInstance(this) ? (T) this : null;
+				}
+
+				@Override
+				public boolean isRollbackOnly() {
+					return rollbackOnly;
+				}
 				
 			};
 		}

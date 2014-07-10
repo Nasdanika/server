@@ -56,7 +56,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 				}
 				
 				Tabs tabs = htmlFactory.tabs();
-				tabs.item("Elements", null, htmlFactory.ul(elements));
+				tabs.item("Elements", htmlFactory.ul(elements));
 				List<CDOPackageInfo> packageInfos = new ArrayList<>();
 				for (CDOPackageInfo pi: source.getSession().getPackageRegistry().getPackageInfos()) {
 					packageInfos.add(pi);
@@ -95,7 +95,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 					packageRow.cell(pi.isSystemPackage() ? htmlFactory.glyphicon(Glyphicon.ok) : "&nbsp;").attribute("align", "center");
 					packageRow.cell(pi.isTypePackage() ? htmlFactory.glyphicon(Glyphicon.ok) : "&nbsp;").attribute("align", "center");
 				}
-				tabs.item("Packages",  null,  packageTable); // TODO
+				tabs.item("Packages", packageTable); // TODO
 				
 				return htmlFactory.fragment(htmlFactory.tag("h4", "CDO View"), tabs, htmlFactory.title("CDO View")).toString();
 			}
