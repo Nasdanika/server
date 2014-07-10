@@ -12,4 +12,6 @@ public interface TransactionContext extends Context {
 	 */
 	void setRollbackOnly();
 	
+	boolean isRollbackOnly();
+	
 }

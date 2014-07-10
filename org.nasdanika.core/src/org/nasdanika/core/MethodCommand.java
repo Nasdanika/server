@@ -1,15 +1,8 @@
 package org.nasdanika.core;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.List;
 
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.Constants;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Wraps method for further wrapping into a command.
@@ -18,135 +11,22 @@ import org.osgi.util.tracker.ServiceTracker;
  * @param <C>
  * @param <R>
  */
-public class MethodCommand<C extends Context, R> implements AutoCloseable {
-	
-	/**
-	 * Provides information about reference to be injected as method argument.   
-	 * <table cellspacing="0" border="1">
-	 * <tr><th>isMany</th><th>isMandatory</th><th>Cardinality</th></tr>
-	 * <tr><td>&nbsp;</td><td>&nbsp;</td><td align="center">0..1</td></tr>
-	 * <tr><td align="center">X</td><td>&nbsp;</td><td align="center">0..*</td></tr>
-	 * <tr><td>&nbsp;</td><td align="center">X</td><td align="center">1..1</td></tr>
-	 * <tr><td align="center">X</td><td align="center">X</td><td align="center">1..*</td></tr>
-	 * </table>
-	 * @author Pavel
-	 *
-	 */
-	public static class ReferenceInfo {
-		@Override
-		public String toString() {
-			return "ReferenceInfo [type=" + type + ", filter=" + filter
-					+ ", isMandatory=" + isMandatory + ", isMany=" + isMany
-					+ "]";
-		}
-		private Class<Object> type;
-		private boolean isMany;
-		private boolean isMandatory;
-		private String filter;
-		
-		public ReferenceInfo(Class<Object> type, boolean isMany, boolean isMandatory, String filter) {
-			super();
-			this.type = type;
-			this.isMany = isMany;
-			this.isMandatory = isMandatory;
-			this.filter = filter;
-		}
-		public Class<Object> getType() {
-			return type;
-		}
-		public boolean isMany() {
-			return isMany;
-		}
-		public boolean isMandatory() {
-			return isMandatory;
-		}	
-		public String getFilter() {
-			return filter;
-		}
-	}
-	
-	private Method method;
-
-	private static class ReferenceEntry {
-		
-		private ReferenceInfo info;
-		private ServiceTracker<Object, Object> serviceTracker;
-		
-		ReferenceInfo getInfo() {
-			return info;
-		}
-
-		ReferenceEntry(BundleContext context, ReferenceInfo info) throws Exception {			
-			this.info = info;
-			if (info.getFilter()==null || info.getFilter().trim().length()==0) {
-				this.serviceTracker = new ServiceTracker<Object, Object>(context, info.getType(), null);				
-			} else {
-				String filter = "(&(" + Constants.OBJECTCLASS + "=" + info.getType().getName() + ")"+info.getFilter()+")";
-				this.serviceTracker = new ServiceTracker<Object, Object>(context, context.createFilter(filter), null);
-			}
-			this.serviceTracker.open();
-		}
-
-		ServiceTracker<Object, Object> getServiceTracker() {
-			return serviceTracker;
-		}
-
-		public boolean isSatisfied() {
-			return !info.isMandatory() ||  serviceTracker.size() > 0;
-		}
-	}
-	
-	private ReferenceEntry[] referenceEntries;
+public class MethodCommand<C extends Context, R> extends ParameterReferenceManager implements AutoCloseable {
 	
 	public MethodCommand(BundleContext context, Method method, ReferenceInfo[] referenceInfo) throws Exception {
-		this.method = method;
-		referenceEntries = new ReferenceEntry[referenceInfo.length];
-		for (int i=0; i<referenceInfo.length; ++i) {
-			if (referenceInfo[i]!=null) {
-				referenceEntries[i] = new ReferenceEntry(context, referenceInfo[i]);
-			}
-		}
+		super(context, method, referenceInfo);
 	}
 	
 	public MethodCommand(Method method, ReferenceInfo[] referenceInfo) throws Exception {
-		this(FrameworkUtil.getBundle(method.getDeclaringClass()).getBundleContext(), method, referenceInfo);
+		super(method, referenceInfo);
 	}
 	
 	public MethodCommand(BundleContext context, Method method) throws Exception {
-		this(context, method, getReferenceInfoFromAnnotations(method));
+		super(context, method);
 	}
 	
 	public MethodCommand(Method method) throws Exception {
-		this(FrameworkUtil.getBundle(method.getDeclaringClass()).getBundleContext(), method);
-	}
-	
-	@SuppressWarnings("unchecked")
-	public static ReferenceInfo[] getReferenceInfoFromAnnotations(Method method) {
-		Class<?>[] pt = method.getParameterTypes();
-		Annotation[][] pa = method.getParameterAnnotations();
-		ReferenceInfo[] ret = new ReferenceInfo[pa.length];
-		Z: for (int i=0; i<pa.length; ++i) {
-			for (Annotation a: pa[i]) {
-				if (a instanceof Reference) {
-					ret[i] = new ReferenceInfo(
-							(Class<Object>) (pt[i].isArray() ? pt[i].getComponentType() : pt[i]),
-							pt[i].isArray(), 
-							((Reference) a).mandatory(), 
-							((Reference) a).value());
-					continue Z;
-				}
-			}
-		}
-		return ret;
-	}
-	
-	public boolean canExecute() {
-		for (ReferenceEntry re: referenceEntries) {
-			if (re!=null && !re.isSatisfied()) {
-				return false;
-			}
-		}
-		return true;
+		super(method);
 	}
 
 	/**
@@ -164,41 +44,10 @@ public class MethodCommand<C extends Context, R> implements AutoCloseable {
 				if (pt[i].isInstance(context)) {
 					args[i] = context;
 				}
-			} else {
-				if (referenceEntries[i].isSatisfied()) {
-					if (referenceEntries[i].getInfo().isMany()) {
-						Object[] services = referenceEntries[i].getServiceTracker().getServices();
-						if (pt[i].isArray()) {
-							args[i] = Array.newInstance(pt[i].getComponentType(), services.length);
-							System.arraycopy(services, 0, args[i], 0, services.length);
-						} else if (pt[i].isAssignableFrom(List.class)) {
-							args[i] = Arrays.asList(services);
-						} else {
-							throw new IllegalArgumentException("Cannot pass a list of services to parameter of type "+pt[i]);
-						}
-					} else {
-						args[i] = referenceEntries[i].getServiceTracker().getService();
-					}
-				} else {
-					throw new IllegalStateException("Command is not executable - service reference "+referenceEntries[i].getInfo()+" is not satisfied");
-				}
 			}
 		}
+		injectServiceReferences(args);
 		return (R) method.invoke(target, args);
-	}
-
-	@Override
-	public void close() throws Exception {
-		if (referenceEntries!=null) {
-			for (ReferenceEntry re: referenceEntries) {
-				if (re!=null) {
-					ServiceTracker<Object, Object> st = re.getServiceTracker();
-					if (st!=null) {
-						st.close();
-					}
-				}
-			}
-		}		
 	}
 
 }
