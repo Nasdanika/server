@@ -32,17 +32,6 @@
 						<product>
 							<id>org.nasdanika.server</id>
 						</product>
-						<product>
-							<id>org.nasdanika.examples</id>
-							<attachId>examples</attachId>
-
-							<!-- optional parameters (with default values) -->
-							<rootFolder></rootFolder>
-							<rootFolders>
-								<macosx></macosx>
-								<win32></win32>
-							</rootFolders>
-						</product>
 					</products>
 					<!-- global optional parameters (with default values) -->
 					<installFeatures>true</installFeatures>
