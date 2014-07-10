@@ -191,4 +191,11 @@ public abstract class ContextImpl implements WebContext {
 	public Iterable<URL> getResources(String name) throws IOException {
 		return classLoadingContext.getResources(name);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T adapt(Class<T> targetType) {					
+		return targetType.isInstance(this) ? (T) this : null;
+	}
+	
 }

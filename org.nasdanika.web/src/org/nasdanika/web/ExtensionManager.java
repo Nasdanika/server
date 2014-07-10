@@ -21,6 +21,8 @@ import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.Converter;
+import org.nasdanika.core.ConverterProvider;
+import org.nasdanika.core.ConverterProvider.ConverterDescriptor;
 import org.nasdanika.core.InstanceMethodCommand;
 import org.nasdanika.core.MethodCommand;
 import org.nasdanika.html.HTMLFactory;
@@ -42,8 +44,10 @@ import org.osgi.util.tracker.ServiceTracker;
 public class ExtensionManager implements AutoCloseable {
 	
 	private ServiceTracker<Route, Route> routeServiceTracker;
-	private ServiceTracker<UIPart<?,?>, UIPart<?,?>> uiPartServiceTracker;
+	private ServiceTracker<UIPart<?,?>, UIPart<?,?>> uiPartServiceTracker;	
 	private HTMLFactory htmlFactory;
+	
+	// TODO - Converter and ConverterProvider service tracker.
 	
 	private static class UIPartEntry implements Comparable<UIPartEntry> {
 		UIPart<?,?> uiPart;
@@ -231,7 +235,7 @@ public class ExtensionManager implements AutoCloseable {
 			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(CONVERT_ID)) {
 				if ("converter".equals(ce.getName())) {					
 					@SuppressWarnings("unchecked")
-					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) ce.createExecutableExtension("class"));
+					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) injectProperties(ce, ce.createExecutableExtension("class")));
 					
 					String priorityStr = ce.getAttribute("priority");
 					if (!isBlank(priorityStr)) {
@@ -246,7 +250,18 @@ public class ExtensionManager implements AutoCloseable {
 					// TODO - match profile, navigate target class hierarchy
 					
 					ceList.add(cEntry);
-				}					
+				} else if ("converter_provider".equals(ce.getName())) {
+					ConverterProvider cp = (ConverterProvider) injectProperties(ce, ce.createExecutableExtension("class"));
+					for (ConverterDescriptor<?, ?, ?> cd: cp.getConverterDescriptors()) {
+						@SuppressWarnings("unchecked")
+						ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) cd.getConverter());
+						cEntry.priority = cd.getPriority();
+						cEntry.source = cd.getSourceType();
+						cEntry.target = cd.getTargetType();
+						// TODO - match profile.
+						ceList.add(cEntry);
+					}
+				}
 			}
 			
 			Collections.sort(ceList);
@@ -892,12 +907,13 @@ public class ExtensionManager implements AutoCloseable {
 		return ret == null ? Collections.<RouteEntry>emptyList() : ret;
 	}
 
-	public static void injectProperties(IConfigurationElement ce, final Object target) throws IllegalAccessException, InvocationTargetException {
+	public static Object injectProperties(IConfigurationElement ce, final Object target) throws IllegalAccessException, InvocationTargetException {
 		for (IConfigurationElement cce: ce.getChildren()) {
 			if ("property".equals(cce.getName())) {
 				injectProperty(target, cce.getAttribute("name").split("\\."), cce.getAttribute("value"));
 			}
 		}
+		return target;
 	}
 
 	private static void injectProperty(Object target, String[] propertyPath, String value) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {

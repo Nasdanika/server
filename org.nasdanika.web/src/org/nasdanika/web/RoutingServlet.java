@@ -68,6 +68,13 @@ public class RoutingServlet extends HttpServlet {
 			public URL getResource(String name) {
 				return bundle.getResource(name);
 			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public <T> T adapt(Class<T> targetType) {					
+				return targetType.isInstance(this) ? (T) this : null;
+			}
+			
 		};
 	}
 			
