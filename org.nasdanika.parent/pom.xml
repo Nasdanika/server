@@ -94,14 +94,14 @@
 		<module>../org.nasdanika.core.tests</module>
 		<module>../org.nasdanika.web</module>
 		<module>../org.nasdanika.cdo.security</module>
+		<module>../org.nasdanika.cdo.boxing</module>
 		<module>../org.nasdanika.cdo.h2</module>
 		<module>../org.nasdanika.cdo</module>
+		<!-- <module>../org.nasdanika.cdo.boxing</module>  -->
+		<!-- <module>../org.nasdanika.cdo.flow</module>  -->
 		<module>../org.nasdanika.feature</module>
 		<module>../org.nasdanika.transaction</module>
-		<module>../org.nasdanika.examples.bank</module>
-		<module>../org.nasdanika.examples.bank.app</module>
 		<module>../org.nasdanika.repository</module>
-		<module>../org.nasdanika.examples.feature</module>
 		<module>../org.nasdanika.server.jetty.feature</module>
 		<module>../org.nasdanika.server.third_party.feature</module>
 		<module>../org.nasdanika.html.feature</module>
