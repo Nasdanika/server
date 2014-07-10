@@ -5,11 +5,11 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 import org.nasdanika.core.CommandMethod;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ReflectiveCommandSource;
+import org.nasdanika.core.ReflectiveCommandProvider;
 
 public class ReflectiveCommandSourceTest {
 	
-	public static class ReflectiveCommandSourceTestImpl extends ReflectiveCommandSource {
+	public static class ReflectiveCommandSourceTestImpl extends ReflectiveCommandProvider {
 
 		public ReflectiveCommandSourceTestImpl() throws Exception {
 			super();
@@ -24,7 +24,7 @@ public class ReflectiveCommandSourceTest {
 
 	@Test
 	public void testReflectiveCommandSource() throws Exception {
-		try (ReflectiveCommandSource cs = new ReflectiveCommandSourceTestImpl()) {
+		try (ReflectiveCommandProvider cs = new ReflectiveCommandSourceTestImpl()) {
 			assertEquals(1, cs.getCommandMap().size());
 			assertTrue(cs.getCommandMap().containsKey("testCommandMethod"));
 			assertEquals("OK",cs.getCommandMap().get("testCommandMethod").execute(null));
