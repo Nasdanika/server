@@ -8,7 +8,7 @@ import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 
-public class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup {
+class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup {
 	
 	private List<Button> buttons = new ArrayList<>();
 	private boolean vertical;

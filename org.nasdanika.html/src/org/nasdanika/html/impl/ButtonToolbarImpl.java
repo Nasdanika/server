@@ -8,7 +8,7 @@ import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.ButtonToolbar;
 import org.nasdanika.html.HTMLFactory;
 
-public class ButtonToolbarImpl extends UIElementImpl<ButtonToolbar> implements ButtonToolbar {
+class ButtonToolbarImpl extends UIElementImpl<ButtonToolbar> implements ButtonToolbar {
 	
 	private List<ButtonGroup> buttonGroups = new ArrayList<>();
 	
