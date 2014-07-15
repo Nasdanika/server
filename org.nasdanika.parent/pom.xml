@@ -112,4 +112,13 @@
 		<module>../org.nasdanika.server.third_party.feature</module>
 		<module>../org.nasdanika.html.feature</module>
 	</modules>
+	<name>Nasdanika Foundation Server</name>
+	<url>http://www.nasdanika.org/wiki/doku.php?id=products:server:start</url>
+	<organization>
+		<name>Nasdanika LLC</name>
+		<url>http://www.nasdanika.org</url>
+	</organization>
+	<scm>
+		<url>https://github.com/Nasdanika/server</url>
+	</scm>
 </project>
