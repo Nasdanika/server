@@ -70,13 +70,13 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 				}
 
 				@Override
-				public boolean authenticate(CR credentials) {
+				public Principal authenticate(CR credentials) {
 					ProtectionDomain<CR> pd = getProtectionDomain();
 					if (pd==null) {
-						return false;
+						return null;
 					}
 					authenticatedPrincipal = pd.authenticate(credentials);
-					return authenticatedPrincipal!=null;
+					return authenticatedPrincipal;
 				}
 
 				@SuppressWarnings("unchecked")

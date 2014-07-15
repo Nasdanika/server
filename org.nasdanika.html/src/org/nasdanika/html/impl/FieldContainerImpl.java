@@ -31,7 +31,9 @@ class FieldContainerImpl<T extends FieldContainer<?>> implements FieldContainer<
 
 	@Override
 	public T content(Object... content) {
-		this.content.add(content);
+		for (Object c: content) {
+			this.content.add(c);
+		}
 		return master;
 	}
 	

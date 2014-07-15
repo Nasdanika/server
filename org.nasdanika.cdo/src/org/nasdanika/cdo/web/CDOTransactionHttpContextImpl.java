@@ -76,12 +76,13 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 	}
 
 	@Override
-	public boolean authenticate(CR credentials) throws Exception {
-		if (transactionContext.authenticate(credentials)) {
-			getRequest().getSession().setAttribute(PRINCIPAL_ID_KEY, transactionContext.getPrincipal().cdoID());
-			return true;
+	public Principal authenticate(CR credentials) throws Exception {
+		Principal authenticatedPrincipal = transactionContext.authenticate(credentials);
+		if (authenticatedPrincipal==null) {
+			return null;
 		}
-		return false;
+		getRequest().getSession().setAttribute(PRINCIPAL_ID_KEY, authenticatedPrincipal.cdoID());
+		return authenticatedPrincipal;
 	}
 	
 	@Override

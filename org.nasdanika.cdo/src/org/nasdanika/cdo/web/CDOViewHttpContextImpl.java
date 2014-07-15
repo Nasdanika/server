@@ -73,12 +73,13 @@ public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOVi
 	}
 
 	@Override
-	public boolean authenticate(CR credentials) throws Exception {
-		if (viewContext.authenticate(credentials)) {
-			getRequest().getSession().setAttribute(PRINCIPAL_ID_KEY, viewContext.getPrincipal().cdoID());
-			return true;
+	public Principal authenticate(CR credentials) throws Exception {
+		Principal authenticatedPrincipal = viewContext.authenticate(credentials);
+		if (authenticatedPrincipal==null) {
+			return null;
 		}
-		return false;
+		getRequest().getSession().setAttribute(PRINCIPAL_ID_KEY, authenticatedPrincipal.cdoID());
+		return authenticatedPrincipal;
 	}
 	
 	@Override

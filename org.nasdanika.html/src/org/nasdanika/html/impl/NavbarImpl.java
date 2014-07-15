@@ -208,7 +208,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 
 	@Override
 	public Form form(boolean right) {
-		form = new FormImpl(factory, right, false);
+		form = new FormImpl(factory, true, right);
 		return form;
 	}
 

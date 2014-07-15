@@ -111,7 +111,7 @@ public interface HTMLFactory {
 			Object title, 
 			Object initialRoute, 
 			Object head, 
-			Object body);
+			Object... body);
 
 	Tag label(Style style, Object... content);
 	

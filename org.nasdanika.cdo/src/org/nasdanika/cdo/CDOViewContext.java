@@ -17,8 +17,8 @@ public interface CDOViewContext<V extends CDOView, CR> extends Context {
 	 * Authenticates user with provided credentials. 
 	 * Associates user with context/session upon successfull authentication. 
 	 * @param credentials
-	 * @return true if authentication was successfull.
+	 * @return authenticated principal if authentication was successful, or null.
 	 */
-	boolean authenticate(CR credentials) throws Exception;
+	Principal authenticate(CR credentials) throws Exception;
 	
 }

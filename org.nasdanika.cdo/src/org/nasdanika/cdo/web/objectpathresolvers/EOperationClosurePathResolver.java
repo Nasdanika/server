@@ -14,7 +14,7 @@ public class EOperationClosurePathResolver implements ObjectPathResolver<EOperat
 			EOperationClosure<?> obj, 
 			ObjectPathResolver<Object> master, 
 			Context context) throws Exception {
-		return master.resolve(obj.getObject(), master, context)+"/"+URLEncoder.encode(obj.getOperation().getName()+"()", ((WebContext) context).getCharacterEncoding());
+		return master.resolve(obj.getObject(), master, context)+"/operation/"+URLEncoder.encode(obj.getOperation().getName()+"()", ((WebContext) context).getCharacterEncoding());
 	}
 
 

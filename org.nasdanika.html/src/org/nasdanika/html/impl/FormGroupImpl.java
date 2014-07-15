@@ -64,6 +64,7 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 				labelTag.addClass("control-label");
 			}
 			sb.append(labelTag);
+			sb.append(" ");
 		}
 		if (form.horizontal) {
 			UIElement<?> controlDiv = form.factory.div(control.toString());

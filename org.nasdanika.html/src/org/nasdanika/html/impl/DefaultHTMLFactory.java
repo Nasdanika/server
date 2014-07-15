@@ -36,7 +36,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 			final Object title, 
 			final Object initialRoute,
 			final Object head, 
-			final Object body) {
+			final Object... body) {
 		
 		return new AutoCloseable() {
 			
@@ -51,8 +51,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 				if (head instanceof AutoCloseable) {
 					((AutoCloseable) head).close();
 				}
-				if (body instanceof AutoCloseable) {
-					((AutoCloseable) body).close();
+				for (Object b: body) {
+					if (b instanceof AutoCloseable) {
+						((AutoCloseable) b).close();
+					}
 				}
 				
 			}
@@ -78,7 +80,13 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 					
 					@Override
 					public Object getBody() {
-						return body==null ? "" : body;
+						StringBuilder bodyBuilder = new StringBuilder();
+						for (Object b: body) {
+							if (b!=null) {
+								bodyBuilder.append(b);
+							}
+						}
+						return bodyBuilder.toString();
 					}
 					
 					@Override

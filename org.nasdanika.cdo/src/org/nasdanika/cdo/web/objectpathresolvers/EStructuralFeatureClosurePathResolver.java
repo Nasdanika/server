@@ -14,7 +14,7 @@ public class EStructuralFeatureClosurePathResolver implements ObjectPathResolver
 			EStructuralFeatureClosure<?, ?> obj, 
 			ObjectPathResolver<Object> master, 
 			Context context) throws Exception {
-		return master.resolve(obj.getObject(), master, context)+"/"+URLEncoder.encode(obj.getFeature().getName(), ((WebContext) context).getCharacterEncoding());
+		return master.resolve(obj.getObject(), master, context)+"/feature/"+URLEncoder.encode(obj.getFeature().getName(), ((WebContext) context).getCharacterEncoding());
 	}
 
 
