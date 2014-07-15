@@ -107,7 +107,11 @@ public interface HTMLFactory {
 	 * @param body Application body.
 	 * @return
 	 */
-	AutoCloseable routerApplication(Object title, Object initialRoute, Object head, Object body);
+	AutoCloseable routerApplication(
+			Object title, 
+			Object initialRoute, 
+			Object head, 
+			Object body);
 
 	Tag label(Style style, Object... content);
 	
@@ -124,7 +128,7 @@ public interface HTMLFactory {
 	
 	LinkGroup linkGroup();
 	
-	Navbar navbar(Object brand);
+	Navbar navbar(Object brand, Object brandRef);
 	
 	Table table();
 			

@@ -16,7 +16,7 @@
       </button>
       
       <% if (config.getBrand()!=null) { %>      
-      	<a class="navbar-brand" href="#"><%=config.getBrand()%></a>
+      	<a class="navbar-brand" href="<%=config.getBrandRef()%>"><%=config.getBrand()%></a>
       <% } %>
     </div>
 

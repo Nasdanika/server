@@ -12,10 +12,12 @@ import org.nasdanika.html.Tag;
 class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	
 	private Object brand;
+	private Object brandRef;
 
-	NavbarImpl(HTMLFactory factory, Object brand) {
+	NavbarImpl(HTMLFactory factory, Object brand, Object brandRef) {
 		super(factory);
 		this.brand = brand;
+		this.brandRef = brandRef;
 	}
 	
 	private List<Object> leftItems = new ArrayList<>();
@@ -145,6 +147,11 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 			}
 			
 			@Override
+			public Object getBrandRef() {
+				return brandRef==null ? "#" : brandRef;
+			}
+			
+			@Override
 			public String getLeftItems() {
 				if (leftItems.isEmpty()) {
 					return null;					
@@ -195,6 +202,8 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 			close(item);
 		}
 		close(form);
+		close(brand);
+		close(brandRef);
 	}
 
 	@Override

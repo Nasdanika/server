@@ -96,6 +96,10 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 				return createPermissionAdapter();
 			}
 			@Override
+			public Adapter caseLoginPasswordCredentials(LoginPasswordCredentials object) {
+				return createLoginPasswordCredentialsAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -210,6 +214,20 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPermissionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
+	 * @generated
+	 */
+	public Adapter createLoginPasswordCredentialsAdapter() {
 		return null;
 	}
 

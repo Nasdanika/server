@@ -732,6 +732,34 @@ public interface SecurityPackage extends EPackage {
 	int PERMISSION_OPERATION_COUNT = 1;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordCredentials()
+	 * @generated
+	 */
+	int LOGIN_PASSWORD_CREDENTIALS = 7;
+
+	/**
+	 * The number of structural features of the '<em>Login Password Credentials</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_CREDENTIALS_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Login Password Credentials</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_CREDENTIALS_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>Access Decision</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -739,7 +767,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
 	 * @generated
 	 */
-	int ACCESS_DECISION = 7;
+	int ACCESS_DECISION = 8;
 
 
 	/**
@@ -750,7 +778,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 8;
+	int CONTEXT = 9;
 
 
 	/**
@@ -1265,6 +1293,17 @@ public interface SecurityPackage extends EPackage {
 	EOperation getPermission__Authorize__Context_EObject_String_String_Map();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Login Password Credentials</em>'.
+	 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
+	 * @model instanceClass="org.nasdanika.cdo.security.LoginPasswordCredentials"
+	 * @generated
+	 */
+	EClass getLoginPasswordCredentials();
+
+	/**
 	 * Returns the meta object for data type '{@link org.nasdanika.core.AuthorizationProvider.AccessDecision <em>Access Decision</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1706,6 +1745,16 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EOperation PERMISSION___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getPermission__Authorize__Context_EObject_String_String_Map();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordCredentials()
+		 * @generated
+		 */
+		EClass LOGIN_PASSWORD_CREDENTIALS = eINSTANCE.getLoginPasswordCredentials();
 
 		/**
 		 * The meta object literal for the '<em>Access Decision</em>' data type.

@@ -156,7 +156,12 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 		
 		@Override
 		protected ProtectionDomain<?> getProtectionDomain() {
-			return (ProtectionDomain<?>) eContainer();
+			for (EObject container = eContainer(); container != null; container = container.eContainer()) {
+				if (container instanceof ProtectionDomain) {
+					return (ProtectionDomain<?>) container;
+				}
+			}
+			return null;
 		}
 		
 		@Override

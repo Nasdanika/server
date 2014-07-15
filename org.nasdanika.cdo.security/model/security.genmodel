@@ -102,5 +102,6 @@
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/environment"/>
       </genOperations>
     </genClasses>
+    <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
   </genPackages>
 </genmodel:GenModel>

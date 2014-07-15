@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
+import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Property;
@@ -81,6 +82,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	private EClass permissionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass loginPasswordCredentialsEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -594,6 +602,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getLoginPasswordCredentials() {
+		return loginPasswordCredentialsEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getAccessDecision() {
 		return accessDecisionEDataType;
 	}
@@ -689,6 +706,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEAttribute(permissionEClass, PERMISSION__END_DATE);
 		createEAttribute(permissionEClass, PERMISSION__COMMENT);
 		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP);
+
+		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
 
 		// Create data types
 		accessDecisionEDataType = createEDataType(ACCESS_DECISION);
@@ -840,6 +859,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(loginPasswordCredentialsEClass, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize data types
 		initEDataType(accessDecisionEDataType, AccessDecision.class, "AccessDecision", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

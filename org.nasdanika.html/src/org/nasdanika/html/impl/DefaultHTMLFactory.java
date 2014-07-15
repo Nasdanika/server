@@ -98,8 +98,8 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public Navbar navbar(final Object brand) {
-		return new NavbarImpl(this, brand);
+	public Navbar navbar(final Object brand, Object brandRef) {
+		return new NavbarImpl(this, brand, brandRef);
 	}
 
 	@Override
