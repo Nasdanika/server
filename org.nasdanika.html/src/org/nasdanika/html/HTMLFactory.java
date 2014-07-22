@@ -407,4 +407,18 @@ public interface HTMLFactory {
 	ButtonGroup buttonGroup(Button... buttons);
 	
 	ButtonToolbar buttonToolbar(ButtonGroup... buttonGroups);
+	
+	// --- JavaScript ---
+	
+	Function function(Object... param);
+	
+	/**
+	 * Generates RequireJS <code>require([module list], function)</code> 
+	 * @param function
+	 * @param module
+	 * @return
+	 */
+	Require require(Object function, Object... module);
+	
+	
 }
