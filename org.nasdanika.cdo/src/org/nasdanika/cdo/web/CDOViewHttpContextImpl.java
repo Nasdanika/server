@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.Principal;
@@ -20,7 +19,7 @@ import org.nasdanika.web.WebContext;
 
 public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOViewHttpContext<CR> {
 
-	private static final String PRINCIPAL_ID_KEY = Principal.class.getName()+":CDOID";
+	private static final String PRINCIPAL_KEY = Principal.class.getName();
 	private CDOViewContext<CDOView, CR> viewContext;
 
 	public CDOViewHttpContextImpl(
@@ -78,15 +77,15 @@ public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOVi
 		if (authenticatedPrincipal==null) {
 			return null;
 		}
-		getRequest().getSession().setAttribute(PRINCIPAL_ID_KEY, authenticatedPrincipal.cdoID());
+		getRequest().getSession().setAttribute(PRINCIPAL_KEY, authenticatedPrincipal);
 		return authenticatedPrincipal;
 	}
 	
 	@Override
 	public Principal getPrincipal() {
-		Object principalID = getRequest().getSession().getAttribute(PRINCIPAL_ID_KEY);
-		if (principalID instanceof CDOID) {
-			CDOObject principal = getView().getObject((CDOID) principalID);
+		Principal oldPrincipal = (Principal) getRequest().getSession().getAttribute(PRINCIPAL_KEY);
+		if (oldPrincipal!=null) {
+			CDOObject principal = getView().getObject(oldPrincipal.cdoID());
 			if (principal instanceof Principal) {
 				return (Principal) principal;
 			}
