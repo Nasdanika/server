@@ -75,7 +75,7 @@ public interface HTMLFactory {
 	 * @param placeholder Placeholder - optional
 	 * @return
 	 */
-	Tag input(InputType type, String name, String value, String id, String placeholder);
+	Input input(InputType type);
 	
 	Select select(String name, String id, String placeholder);
 

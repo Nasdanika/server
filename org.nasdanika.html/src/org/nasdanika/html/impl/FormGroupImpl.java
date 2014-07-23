@@ -22,6 +22,9 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 		this.label = label;
 		this.controlId = controlId;
 		this.control = control;	
+		if (control instanceof UIElement<?>) {
+			((UIElement<?>) control).addClass("form-control");
+		}
 		this.helpText = helpText;
 		addClass("form-group");
 	}

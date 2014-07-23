@@ -14,6 +14,7 @@ import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.ButtonToolbar;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.Function;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
@@ -230,13 +231,8 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public Tag input(InputType type, String name, String value, String id, String placeholder) {
-		return tag("input")
-				.attribute("type", type.code())
-				.attribute("name", name)
-				.attribute("value", value)
-				.id(id)
-				.attribute("placeholder", placeholder).addClass("form-control");		
+	public Input input(InputType type) {
+		return new InputImpl(this, type);		
 	}
 
 	@Override
