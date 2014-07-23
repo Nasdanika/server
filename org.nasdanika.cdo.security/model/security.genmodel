@@ -9,8 +9,9 @@
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Security" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
       ecorePackage="security.ecore#/">
-    <genDataTypes ecoreDataType="security.ecore#//AccessDecision"/>
     <genDataTypes ecoreDataType="security.ecore#//Context"/>
+    <genDataTypes ecoreDataType="security.ecore#//AccessDecision"/>
+    <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
     <genClasses image="false" ecoreClass="security.ecore#//ProtectionDomain">
       <genTypeParameters ecoreTypeParameter="security.ecore#//ProtectionDomain/CR"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//ProtectionDomain/actions"/>
@@ -24,7 +25,13 @@
       <genOperations ecoreOperation="security.ecore#//ProtectionDomain/clearPermissions">
         <genParameters ecoreParameter="security.ecore#//ProtectionDomain/clearPermissions/obj"/>
       </genOperations>
-      <genOperations ecoreOperation="security.ecore#//ProtectionDomain/getUsers"/>
+      <genOperations ecoreOperation="security.ecore#//ProtectionDomain/getAllUsers"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordProtectionDomain">
+      <genOperations ecoreOperation="security.ecore#//LoginPasswordProtectionDomain/setPasswordHash">
+        <genParameters ecoreParameter="security.ecore#//LoginPasswordProtectionDomain/setPasswordHash/user"/>
+        <genParameters ecoreParameter="security.ecore#//LoginPasswordProtectionDomain/setPasswordHash/password"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//Principal">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Principal/memberOf"/>
@@ -62,6 +69,10 @@
       </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//User"/>
+    <genClasses ecoreClass="security.ecore#//LoginPasswordHashUser">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/login"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/passwordHash"/>
+    </genClasses>
     <genClasses ecoreClass="security.ecore#//Action">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/description"/>
@@ -102,6 +113,5 @@
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/environment"/>
       </genOperations>
     </genClasses>
-    <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
   </genPackages>
 </genmodel:GenModel>

@@ -90,14 +90,6 @@ public interface ProtectionDomain<CR> extends CDOObject {
 	void setSuperUsersGroup(Group value);
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @model kind="operation"
-	 * @generated
-	 */
-	EList<User> getUsers();
-
-	/**
 	 * Returns the value of the '<em><b>Unauthenticated Principal</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -168,5 +160,13 @@ public interface ProtectionDomain<CR> extends CDOObject {
 	 * @generated
 	 */
 	void clearPermissions(EObject obj);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	EList<User> getAllUsers();
 
 } // ProtectionDomain

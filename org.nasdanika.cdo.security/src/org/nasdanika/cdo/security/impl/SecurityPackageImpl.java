@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
+import org.nasdanika.cdo.security.LoginPasswordHashUser;
+import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Property;
@@ -46,6 +48,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass loginPasswordProtectionDomainEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass principalEClass = null;
 
 	/**
@@ -61,6 +70,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	private EClass userEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass loginPasswordHashUserEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -242,8 +258,26 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getProtectionDomain__GetUsers() {
+	public EOperation getProtectionDomain__GetAllUsers() {
 		return protectionDomainEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getLoginPasswordProtectionDomain() {
+		return loginPasswordProtectionDomainEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String() {
+		return loginPasswordProtectionDomainEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -361,6 +395,33 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EClass getUser() {
 		return userEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getLoginPasswordHashUser() {
+		return loginPasswordHashUserEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLoginPasswordHashUser_Login() {
+		return (EAttribute)loginPasswordHashUserEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLoginPasswordHashUser_PasswordHash() {
+		return (EAttribute)loginPasswordHashUserEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -652,6 +713,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		isCreated = true;
 
 		// Create classes and their features
+		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
+
 		protectionDomainEClass = createEClass(PROTECTION_DOMAIN);
 		createEReference(protectionDomainEClass, PROTECTION_DOMAIN__ACTIONS);
 		createEReference(protectionDomainEClass, PROTECTION_DOMAIN__GROUPS);
@@ -660,7 +723,10 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEReference(protectionDomainEClass, PROTECTION_DOMAIN__EVERYONE_GROUP);
 		createEOperation(protectionDomainEClass, PROTECTION_DOMAIN___AUTHENTICATE__OBJECT);
 		createEOperation(protectionDomainEClass, PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT);
-		createEOperation(protectionDomainEClass, PROTECTION_DOMAIN___GET_USERS);
+		createEOperation(protectionDomainEClass, PROTECTION_DOMAIN___GET_ALL_USERS);
+
+		loginPasswordProtectionDomainEClass = createEClass(LOGIN_PASSWORD_PROTECTION_DOMAIN);
+		createEOperation(loginPasswordProtectionDomainEClass, LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING);
 
 		principalEClass = createEClass(PRINCIPAL);
 		createEReference(principalEClass, PRINCIPAL__MEMBER_OF);
@@ -677,6 +743,10 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEOperation(groupEClass, GROUP___IS_MEMBER__PRINCIPAL);
 
 		userEClass = createEClass(USER);
+
+		loginPasswordHashUserEClass = createEClass(LOGIN_PASSWORD_HASH_USER);
+		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__LOGIN);
+		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH);
 
 		actionEClass = createEClass(ACTION);
 		createEAttribute(actionEClass, ACTION__NAME);
@@ -707,11 +777,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEAttribute(permissionEClass, PERMISSION__COMMENT);
 		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP);
 
-		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
-
 		// Create data types
-		accessDecisionEDataType = createEDataType(ACCESS_DECISION);
 		contextEDataType = createEDataType(CONTEXT);
+		accessDecisionEDataType = createEDataType(ACCESS_DECISION);
 	}
 
 	/**
@@ -743,10 +811,17 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		EGenericType g1 = createEGenericType(this.getProtectionDomain());
+		EGenericType g2 = createEGenericType(this.getLoginPasswordCredentials());
+		g1.getETypeArguments().add(g2);
+		loginPasswordProtectionDomainEClass.getEGenericSuperTypes().add(g1);
 		groupEClass.getESuperTypes().add(this.getPrincipal());
 		userEClass.getESuperTypes().add(this.getPrincipal());
+		loginPasswordHashUserEClass.getESuperTypes().add(this.getUser());
 
 		// Initialize classes, features, and operations; add parameters
+		initEClass(loginPasswordCredentialsEClass, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
 		initEClass(protectionDomainEClass, ProtectionDomain.class, "ProtectionDomain", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getProtectionDomain_Actions(), this.getAction(), null, "actions", null, 0, -1, ProtectionDomain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getProtectionDomain_Groups(), this.getGroup(), null, "groups", null, 0, -1, ProtectionDomain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -755,13 +830,19 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEReference(getProtectionDomain_EveryoneGroup(), this.getGroup(), null, "everyoneGroup", null, 0, 1, ProtectionDomain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		EOperation op = initEOperation(getProtectionDomain__Authenticate__Object(), this.getUser(), "authenticate", 0, 1, IS_UNIQUE, IS_ORDERED);
-		EGenericType g1 = createEGenericType(protectionDomainEClass_CR);
+		g1 = createEGenericType(protectionDomainEClass_CR);
 		addEParameter(op, g1, "credentials", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		op = initEOperation(getProtectionDomain__ClearPermissions__EObject(), null, "clearPermissions", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEObject(), "obj", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEOperation(getProtectionDomain__GetUsers(), this.getUser(), "getUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
+		initEOperation(getProtectionDomain__GetAllUsers(), this.getUser(), "getAllUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(loginPasswordProtectionDomainEClass, LoginPasswordProtectionDomain.class, "LoginPasswordProtectionDomain", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		op = initEOperation(getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String(), null, "setPasswordHash", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getLoginPasswordHashUser(), "user", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "password", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(principalEClass, Principal.class, "Principal", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPrincipal_MemberOf(), this.getGroup(), this.getGroup_Members(), "memberOf", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -773,7 +854,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "qualifier", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(ecorePackage.getEMap());
-		EGenericType g2 = createEGenericType(ecorePackage.getEString());
+		g2 = createEGenericType(ecorePackage.getEString());
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
@@ -809,6 +890,10 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		addEParameter(op, this.getPrincipal(), "principal", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(userEClass, User.class, "User", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(loginPasswordHashUserEClass, LoginPasswordHashUser.class, "LoginPasswordHashUser", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getLoginPasswordHashUser_Login(), ecorePackage.getEString(), "login", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLoginPasswordHashUser_PasswordHash(), ecorePackage.getEByteArray(), "passwordHash", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -860,11 +945,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEClass(loginPasswordCredentialsEClass, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-
 		// Initialize data types
-		initEDataType(accessDecisionEDataType, AccessDecision.class, "AccessDecision", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(accessDecisionEDataType, AccessDecision.class, "AccessDecision", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -881,133 +964,139 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	protected void createGenModelAnnotations() {
-		String source = "http://www.eclipse.org/emf/2002/GenModel";		
+		String source = "http://www.eclipse.org/emf/2002/GenModel";	
 		addAnnotation
 		  (protectionDomainEClass, 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Protection domain establishes associations between users and actions which they can execute by the means of groups and permissions. There is no Role class/interface in the domain. A grantable actions is Role.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getProtectionDomain__Authenticate__Object(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Authenticates user given provided credentials, e.g. user login and password pair.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getProtectionDomain__ClearPermissions__EObject(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Removes permissions associated with the object allowing it to be detached from the model.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getProtectionDomain_Actions(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Actions. Each action is associated with EClass.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getProtectionDomain_Groups(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Groups.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getProtectionDomain_SuperUsersGroup(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Superusers have all permissions. If this collection is empty, then any user is treated as a superuser. This functionality allows to configure the system after installation and then secure it by adding superusers.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getProtectionDomain_UnauthenticatedPrincipal(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Unauthenticated principal.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getProtectionDomain_EveryoneGroup(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>If this reference is set then all authenticated users are considered to be implicit members of this group.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (actionEClass, 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Action defined for instances of given EClass</html>"
-		   });		
+		   });	
+		addAnnotation
+		  (getAction_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", ""
+		   });	
 		addAnnotation
 		  (getAction_TargetNamespaceURI(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Namespace URI of the target class\' package.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getAction_TargetClass(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Name of the target class.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getAction_Grantable(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Only grantable actions can have permission associations. Grantable action corresponds to a role. A non-grantable action shall have an impliedBy relationship with at least one grantable action.\r\nUse of grantable actions allows to use fine-grained action permission checks at development time and define coarse-grained roles (grantable actions implying other actions) at runtime time.\r\n</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getAction_Implies(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>References actions which are explicitly implied by this action. Actions are also implicitly implied by using action naming convention with dot as a separator - e.g. <code>myAction</code> implies <code>myAction.mySubAction</code>.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getAction_ImpliedBy(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Opposite to <code>implies</code>.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getAction_PathPatterns(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Path patterns allow to compute permissions using containment path, i.e. container object may define actions on contained objects. Containment path is computed from reference names, e.g. path of a customer account relative to the customer object would be <code>/accounts</code>, and relative to the system of records would be <code>/customers/accounts</code>. Container object\'s path is \'/\', If pathPatterns is empty then it is assumed that the action applies to the target object, i.e. that there is a single pattern <code>/</code>.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (permissionEClass, 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Permission is an association of a repository object with a principal.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getPermission_Allow(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>If true, action is allowed. Otherwise it is denied.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getPermission_Action(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Action to be executed on a target object.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getPermission_Target(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Target object.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getPermission_WithGrantOption(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>If true, user can grant given action to other users.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getPermission_StartDate(), 
 		   source, 
 		   new String[] {
 			 "documentation", "<html>Permission effective start date. Can be null.</html>"
-		   });		
+		   });	
 		addAnnotation
 		  (getPermission_EndDate(), 
 		   source, 

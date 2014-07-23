@@ -66,7 +66,115 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtectionDomain()
 	 * @generated
 	 */
-	int PROTECTION_DOMAIN = 0;
+	int PROTECTION_DOMAIN = 1;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl <em>Login Password Protection Domain</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordProtectionDomain()
+	 * @generated
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN = 2;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.Principal
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipal()
+	 * @generated
+	 */
+	int PRINCIPAL = 3;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.GroupImpl <em>Group</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.GroupImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGroup()
+	 * @generated
+	 */
+	int GROUP = 4;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.User <em>User</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.User
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getUser()
+	 * @generated
+	 */
+	int USER = 5;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.LoginPasswordHashUser
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordHashUser()
+	 * @generated
+	 */
+	int LOGIN_PASSWORD_HASH_USER = 6;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.ActionImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAction()
+	 * @generated
+	 */
+	int ACTION = 7;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PropertyImpl <em>Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.PropertyImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProperty()
+	 * @generated
+	 */
+	int PROPERTY = 8;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PermissionImpl <em>Permission</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.PermissionImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPermission()
+	 * @generated
+	 */
+	int PERMISSION = 9;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordCredentials()
+	 * @generated
+	 */
+	int LOGIN_PASSWORD_CREDENTIALS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Login Password Credentials</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_CREDENTIALS_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Login Password Credentials</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_CREDENTIALS_OPERATION_COUNT = 0;
 
 	/**
 	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
@@ -141,13 +249,13 @@ public interface SecurityPackage extends EPackage {
 	int PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT = 1;
 
 	/**
-	 * The operation id for the '<em>Get Users</em>' operation.
+	 * The operation id for the '<em>Get All Users</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTION_DOMAIN___GET_USERS = 2;
+	int PROTECTION_DOMAIN___GET_ALL_USERS = 2;
 
 	/**
 	 * The number of operations of the '<em>Protection Domain</em>' class.
@@ -159,14 +267,103 @@ public interface SecurityPackage extends EPackage {
 	int PROTECTION_DOMAIN_OPERATION_COUNT = 3;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}' class.
+	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.Principal
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipal()
 	 * @generated
+	 * @ordered
 	 */
-	int PRINCIPAL = 1;
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN__ACTIONS = PROTECTION_DOMAIN__ACTIONS;
+
+	/**
+	 * The feature id for the '<em><b>Groups</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN__GROUPS = PROTECTION_DOMAIN__GROUPS;
+
+	/**
+	 * The feature id for the '<em><b>Super Users Group</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN__SUPER_USERS_GROUP = PROTECTION_DOMAIN__SUPER_USERS_GROUP;
+
+	/**
+	 * The feature id for the '<em><b>Unauthenticated Principal</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL = PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL;
+
+	/**
+	 * The feature id for the '<em><b>Everyone Group</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN__EVERYONE_GROUP = PROTECTION_DOMAIN__EVERYONE_GROUP;
+
+	/**
+	 * The number of structural features of the '<em>Login Password Protection Domain</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN_FEATURE_COUNT = PROTECTION_DOMAIN_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Authenticate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN___AUTHENTICATE__OBJECT = PROTECTION_DOMAIN___AUTHENTICATE__OBJECT;
+
+	/**
+	 * The operation id for the '<em>Clear Permissions</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT = PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT;
+
+	/**
+	 * The operation id for the '<em>Get All Users</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_ALL_USERS = PROTECTION_DOMAIN___GET_ALL_USERS;
+
+	/**
+	 * The operation id for the '<em>Set Password Hash</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING = PROTECTION_DOMAIN_OPERATION_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Login Password Protection Domain</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN_OPERATION_COUNT = PROTECTION_DOMAIN_OPERATION_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -239,16 +436,6 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PRINCIPAL_OPERATION_COUNT = 4;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.GroupImpl <em>Group</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.GroupImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGroup()
-	 * @generated
-	 */
-	int GROUP = 2;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -359,16 +546,6 @@ public interface SecurityPackage extends EPackage {
 	int GROUP_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 1;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.User <em>User</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.User
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getUser()
-	 * @generated
-	 */
-	int USER = 3;
-
-	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -441,14 +618,94 @@ public interface SecurityPackage extends EPackage {
 	int USER_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
+	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.ActionImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAction()
 	 * @generated
+	 * @ordered
 	 */
-	int ACTION = 4;
+	int LOGIN_PASSWORD_HASH_USER__MEMBER_OF = USER__MEMBER_OF;
+
+	/**
+	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER__PERMISSIONS = USER__PERMISSIONS;
+
+	/**
+	 * The feature id for the '<em><b>Login</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER__LOGIN = USER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Password Hash</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH = USER_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Login Password Hash User</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER_FEATURE_COUNT = USER_FEATURE_COUNT + 2;
+
+	/**
+	 * The operation id for the '<em>Authorize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+
+	/**
+	 * The operation id for the '<em>Send Message</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT = USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT;
+
+	/**
+	 * The operation id for the '<em>Send Message</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP = USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP;
+
+	/**
+	 * The operation id for the '<em>Send Message</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING = USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING;
+
+	/**
+	 * The number of operations of the '<em>Login Password Hash User</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER_OPERATION_COUNT = USER_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -568,16 +825,6 @@ public interface SecurityPackage extends EPackage {
 	int ACTION_OPERATION_COUNT = 1;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PropertyImpl <em>Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.PropertyImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProperty()
-	 * @generated
-	 */
-	int PROPERTY = 5;
-
-	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -630,16 +877,6 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROPERTY_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PermissionImpl <em>Permission</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.PermissionImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPermission()
-	 * @generated
-	 */
-	int PERMISSION = 6;
 
 	/**
 	 * The feature id for the '<em><b>Allow</b></em>' attribute.
@@ -732,34 +969,6 @@ public interface SecurityPackage extends EPackage {
 	int PERMISSION_OPERATION_COUNT = 1;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordCredentials()
-	 * @generated
-	 */
-	int LOGIN_PASSWORD_CREDENTIALS = 7;
-
-	/**
-	 * The number of structural features of the '<em>Login Password Credentials</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_PASSWORD_CREDENTIALS_FEATURE_COUNT = 0;
-
-	/**
-	 * The number of operations of the '<em>Login Password Credentials</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_PASSWORD_CREDENTIALS_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '<em>Access Decision</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -767,7 +976,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
 	 * @generated
 	 */
-	int ACCESS_DECISION = 8;
+	int ACCESS_DECISION = 11;
 
 
 	/**
@@ -778,7 +987,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 9;
+	int CONTEXT = 10;
 
 
 	/**
@@ -867,14 +1076,34 @@ public interface SecurityPackage extends EPackage {
 	EOperation getProtectionDomain__ClearPermissions__EObject();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.ProtectionDomain#getUsers() <em>Get Users</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.ProtectionDomain#getAllUsers() <em>Get All Users</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Users</em>' operation.
-	 * @see org.nasdanika.cdo.security.ProtectionDomain#getUsers()
+	 * @return the meta object for the '<em>Get All Users</em>' operation.
+	 * @see org.nasdanika.cdo.security.ProtectionDomain#getAllUsers()
 	 * @generated
 	 */
-	EOperation getProtectionDomain__GetUsers();
+	EOperation getProtectionDomain__GetAllUsers();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordProtectionDomain <em>Login Password Protection Domain</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Login Password Protection Domain</em>'.
+	 * @see org.nasdanika.cdo.security.LoginPasswordProtectionDomain
+	 * @generated
+	 */
+	EClass getLoginPasswordProtectionDomain();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.LoginPasswordProtectionDomain#setPasswordHash(org.nasdanika.cdo.security.LoginPasswordHashUser, java.lang.String) <em>Set Password Hash</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Set Password Hash</em>' operation.
+	 * @see org.nasdanika.cdo.security.LoginPasswordProtectionDomain#setPasswordHash(org.nasdanika.cdo.security.LoginPasswordHashUser, java.lang.String)
+	 * @generated
+	 */
+	EOperation getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}'.
@@ -1010,6 +1239,38 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getUser();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Login Password Hash User</em>'.
+	 * @see org.nasdanika.cdo.security.LoginPasswordHashUser
+	 * @generated
+	 */
+	EClass getLoginPasswordHashUser();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.LoginPasswordHashUser#getLogin <em>Login</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Login</em>'.
+	 * @see org.nasdanika.cdo.security.LoginPasswordHashUser#getLogin()
+	 * @see #getLoginPasswordHashUser()
+	 * @generated
+	 */
+	EAttribute getLoginPasswordHashUser_Login();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.LoginPasswordHashUser#getPasswordHash <em>Password Hash</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Password Hash</em>'.
+	 * @see org.nasdanika.cdo.security.LoginPasswordHashUser#getPasswordHash()
+	 * @see #getLoginPasswordHashUser()
+	 * @generated
+	 */
+	EAttribute getLoginPasswordHashUser_PasswordHash();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
@@ -1415,12 +1676,30 @@ public interface SecurityPackage extends EPackage {
 		EOperation PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT = eINSTANCE.getProtectionDomain__ClearPermissions__EObject();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Users</b></em>' operation.
+		 * The meta object literal for the '<em><b>Get All Users</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation PROTECTION_DOMAIN___GET_USERS = eINSTANCE.getProtectionDomain__GetUsers();
+		EOperation PROTECTION_DOMAIN___GET_ALL_USERS = eINSTANCE.getProtectionDomain__GetAllUsers();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl <em>Login Password Protection Domain</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordProtectionDomain()
+		 * @generated
+		 */
+		EClass LOGIN_PASSWORD_PROTECTION_DOMAIN = eINSTANCE.getLoginPasswordProtectionDomain();
+
+		/**
+		 * The meta object literal for the '<em><b>Set Password Hash</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING = eINSTANCE.getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}' class.
@@ -1531,6 +1810,32 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EClass USER = eINSTANCE.getUser();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.LoginPasswordHashUser
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordHashUser()
+		 * @generated
+		 */
+		EClass LOGIN_PASSWORD_HASH_USER = eINSTANCE.getLoginPasswordHashUser();
+
+		/**
+		 * The meta object literal for the '<em><b>Login</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOGIN_PASSWORD_HASH_USER__LOGIN = eINSTANCE.getLoginPasswordHashUser_Login();
+
+		/**
+		 * The meta object literal for the '<em><b>Password Hash</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH = eINSTANCE.getLoginPasswordHashUser_PasswordHash();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.

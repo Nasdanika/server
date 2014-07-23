@@ -66,9 +66,22 @@ public class SecuritySwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case SecurityPackage.LOGIN_PASSWORD_CREDENTIALS: {
+				LoginPasswordCredentials loginPasswordCredentials = (LoginPasswordCredentials)theEObject;
+				T result = caseLoginPasswordCredentials(loginPasswordCredentials);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case SecurityPackage.PROTECTION_DOMAIN: {
 				ProtectionDomain<?> protectionDomain = (ProtectionDomain<?>)theEObject;
 				T result = caseProtectionDomain(protectionDomain);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN: {
+				LoginPasswordProtectionDomain loginPasswordProtectionDomain = (LoginPasswordProtectionDomain)theEObject;
+				T result = caseLoginPasswordProtectionDomain(loginPasswordProtectionDomain);
+				if (result == null) result = caseProtectionDomain(loginPasswordProtectionDomain);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -92,6 +105,14 @@ public class SecuritySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case SecurityPackage.LOGIN_PASSWORD_HASH_USER: {
+				LoginPasswordHashUser loginPasswordHashUser = (LoginPasswordHashUser)theEObject;
+				T result = caseLoginPasswordHashUser(loginPasswordHashUser);
+				if (result == null) result = caseUser(loginPasswordHashUser);
+				if (result == null) result = casePrincipal(loginPasswordHashUser);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case SecurityPackage.ACTION: {
 				Action action = (Action)theEObject;
 				T result = caseAction(action);
@@ -107,12 +128,6 @@ public class SecuritySwitch<T> extends Switch<T> {
 			case SecurityPackage.PERMISSION: {
 				Permission permission = (Permission)theEObject;
 				T result = casePermission(permission);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.LOGIN_PASSWORD_CREDENTIALS: {
-				LoginPasswordCredentials loginPasswordCredentials = (LoginPasswordCredentials)theEObject;
-				T result = caseLoginPasswordCredentials(loginPasswordCredentials);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -132,6 +147,21 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public <CR> T caseProtectionDomain(ProtectionDomain<CR> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Login Password Protection Domain</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Login Password Protection Domain</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLoginPasswordProtectionDomain(LoginPasswordProtectionDomain object) {
 		return null;
 	}
 
@@ -177,6 +207,21 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseUser(User object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Login Password Hash User</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Login Password Hash User</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLoginPasswordHashUser(LoginPasswordHashUser object) {
 		return null;
 	}
 
