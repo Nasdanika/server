@@ -1,50 +1,76 @@
 package org.nasdanika.cdo.web.routes;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
-import org.nasdanika.cdo.EAttributeClosure;
+import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EOperation;
+import org.eclipse.emf.ecore.EParameter;
+import org.nasdanika.cdo.EOperationClosure;
 import org.nasdanika.web.Action;
-import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.WebContext;
 
 public class EOperationClosureRoute implements Route {
+	
+	private static Map<String, Class<?>> primitivesToBoxesMap = new HashMap<>();
+	
+	static {
+		primitivesToBoxesMap.put("byte", Byte.class);
+		primitivesToBoxesMap.put("short", Short.class);
+		primitivesToBoxesMap.put("int", Integer.class);
+		primitivesToBoxesMap.put("long", Long.class);
+		primitivesToBoxesMap.put("float", Float.class);
+		primitivesToBoxesMap.put("double", Double.class);
+		primitivesToBoxesMap.put("boolean", Boolean.class);
+		primitivesToBoxesMap.put("char", char.class);
+	}	
 
 	@Override
 	public Action execute(final WebContext context) throws Exception {
-		final EAttributeClosure<?> eAttributeClosure = (EAttributeClosure<?>) context.getTarget();
-		
-		// Handle many
-		if (context.getPath().length==1) { 
-			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(eAttributeClosure, "read", null, null)) {
-					int dotIdx = context.getPath()[0].lastIndexOf(".");
-					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
-					Action extensionAction = context.getExtensionAction(eAttributeClosure, extension);
-					return extensionAction==null ? Action.NOT_FOUND : extensionAction;
-				} 
-				return Action.FORBIDDEN;
-			}
-			
-			// TODO - delete, update
-			
-			return Action.NOT_FOUND;
-		} 
-
-		// Router path
-		context.addPathTraceEntry("#router/main"+context.getObjectPath(eAttributeClosure)+".html", context.toHTML(eAttributeClosure, "label", null));
-
-		if (eAttributeClosure.getFeature().isMany()) {		
-			String index = context.getPath()[1];
-			int idx = index.lastIndexOf('.');
-			if (idx!=-1) {
-				index = index.substring(0, idx);
-			}
-			Object element = ((List<?>) eAttributeClosure.getValue()).get(Integer.parseInt(index));
-			return context.getAction(element, 1);
+		final EOperationClosure<?> eOperationClosure = (EOperationClosure<?>) context.getTarget();		
+		EOperation op = eOperationClosure.getOperation();
+		if (context.getPath().length-1<op.getEParameters().size()) {
+			return Action.NOT_FOUND; // Path is shorter than a number of parameters.
 		}
+		if (!context.authorize(eOperationClosure, "invoke", null, null)) {
+			return Action.FORBIDDEN;
+		}
+		EList<Object> args = ECollections.newBasicEList();
+		int idx = 1;		
+		for (EParameter p: op.getEParameters()) {
+			String icn = p.getEType().getInstanceClassName();
+			if (icn==null || "java.lang.String".equals(icn)) {
+				args.add(context.getPath()[idx++]);
+			} else {
+				Class<?> pType = primitivesToBoxesMap.get(icn);
+				if (pType==null) {
+					pType = context.loadClass(icn);
+				}
+				args.add(context.convert(context.getPath()[idx++], pType));
+			}
+		}
+		final Object result = eOperationClosure.invoke(args);
+		if (idx<context.getPath().length) {
+			if (result==null) {
+				return Action.NOT_FOUND;
+			}
+			return context.getAction(result, idx);
+		}
+		
+		return new Action() {
 
-		return Action.NOT_FOUND;
+			@Override
+			public void close() throws Exception {
+				// NOP				
+			}
+
+			@Override
+			public Object execute() throws Exception {
+				return result;
+			}
+		};
 	}
 
 	@Override
