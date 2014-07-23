@@ -20,9 +20,9 @@ public class Array implements Converter<Object, HTMLRenderer, WebContext> {
 				
 				@Override
 				public String render(WebContext context, String profile, java.util.Map<String, Object> environment) throws Exception {
-					java.util.Collection<String> items = new ArrayList<>();
-					for (Object e: (Object[]) source) {
-						items.add(context.toHTML(e, profile, environment));
+					java.util.Collection<String> items = new ArrayList<>();					
+					for (int i=0, l= java.lang.reflect.Array.getLength(source); i<l; ++i) {
+						items.add(context.toHTML(java.lang.reflect.Array.get(source,i), profile, environment));
 					}
 					return context.getHTMLFactory().ol(items).toString();
 				}
