@@ -419,6 +419,7 @@ public interface HTMLFactory {
 	 * @return
 	 */
 	Require require(Object function, Object... module);
-	
+
+	Carousel carousel();
 	
 }
