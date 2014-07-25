@@ -15,17 +15,14 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.boxing.BigDecimalBox;
-import org.nasdanika.cdo.boxing.BigIntegerlBox;
+import org.nasdanika.cdo.boxing.BigIntegerBox;
 import org.nasdanika.cdo.boxing.BooleanBox;
 import org.nasdanika.cdo.boxing.Box;
 import org.nasdanika.cdo.boxing.BoxingFactory;
 import org.nasdanika.cdo.boxing.BoxingPackage;
-
 import org.nasdanika.cdo.boxing.ByteArrayBox;
 import org.nasdanika.cdo.boxing.ByteBox;
 import org.nasdanika.cdo.boxing.CharacterBox;
@@ -73,7 +70,7 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass bigIntegerlBoxEClass = null;
+	private EClass bigIntegerBoxEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -438,8 +435,8 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getBigIntegerlBox() {
-		return bigIntegerlBoxEClass;
+	public EClass getBigIntegerBox() {
+		return bigIntegerBoxEClass;
 	}
 
 	/**
@@ -447,8 +444,8 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getBigIntegerlBox_Value() {
-		return (EAttribute)bigIntegerlBoxEClass.getEStructuralFeatures().get(0);
+	public EAttribute getBigIntegerBox_Value() {
+		return (EAttribute)bigIntegerBoxEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -855,8 +852,8 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		bigDecimalBoxEClass = createEClass(BIG_DECIMAL_BOX);
 		createEAttribute(bigDecimalBoxEClass, BIG_DECIMAL_BOX__VALUE);
 
-		bigIntegerlBoxEClass = createEClass(BIG_INTEGERL_BOX);
-		createEAttribute(bigIntegerlBoxEClass, BIG_INTEGERL_BOX__VALUE);
+		bigIntegerBoxEClass = createEClass(BIG_INTEGER_BOX);
+		createEAttribute(bigIntegerBoxEClass, BIG_INTEGER_BOX__VALUE);
 
 		booleanBoxEClass = createEClass(BOOLEAN_BOX);
 		createEAttribute(booleanBoxEClass, BOOLEAN_BOX__VALUE);
@@ -974,7 +971,7 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(this.getContext());
 		g1.getETypeArguments().add(g2);
-		bigIntegerlBoxEClass.getEGenericSuperTypes().add(g1);
+		bigIntegerBoxEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBox());
 		g2 = createEGenericType(ecorePackage.getEBooleanObject());
 		g1.getETypeArguments().add(g2);
@@ -1114,8 +1111,8 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		initEClass(bigDecimalBoxEClass, BigDecimalBox.class, "BigDecimalBox", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBigDecimalBox_Value(), ecorePackage.getEBigDecimal(), "value", null, 0, 1, BigDecimalBox.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(bigIntegerlBoxEClass, BigIntegerlBox.class, "BigIntegerlBox", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getBigIntegerlBox_Value(), ecorePackage.getEBigInteger(), "value", null, 0, 1, BigIntegerlBox.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(bigIntegerBoxEClass, BigIntegerBox.class, "BigIntegerBox", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getBigIntegerBox_Value(), ecorePackage.getEBigInteger(), "value", null, 0, 1, BigIntegerBox.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(booleanBoxEClass, BooleanBox.class, "BooleanBox", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getBooleanBox_Value(), ecorePackage.getEBooleanObject(), "value", null, 0, 1, BooleanBox.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

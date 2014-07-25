@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>org.nasdanika</groupId>
 		<artifactId>org.nasdanika.parent</artifactId>
-		<version>1.0.0-SNAPSHOT</version>
+		<version>0.1.0-SNAPSHOT</version>
 		<relativePath>../org.nasdanika.parent</relativePath>
 	</parent>
 

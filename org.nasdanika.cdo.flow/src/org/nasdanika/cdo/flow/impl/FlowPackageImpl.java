@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.flow.Action;
 import org.nasdanika.cdo.flow.ActionState;
+import org.nasdanika.cdo.flow.Actuator;
+import org.nasdanika.cdo.flow.ActuatorReference;
 import org.nasdanika.cdo.flow.All;
 import org.nasdanika.cdo.flow.Any;
 import org.nasdanika.cdo.flow.BoundInvocable;
@@ -25,20 +27,33 @@ import org.nasdanika.cdo.flow.DeferredInvocation;
 import org.nasdanika.cdo.flow.DeferringInvocable;
 import org.nasdanika.cdo.flow.Dispatch;
 import org.nasdanika.cdo.flow.Executor;
+import org.nasdanika.cdo.flow.Flow;
 import org.nasdanika.cdo.flow.FlowFactory;
 import org.nasdanika.cdo.flow.FlowPackage;
 import org.nasdanika.cdo.flow.Invocable;
 import org.nasdanika.cdo.flow.InvocableReference;
 import org.nasdanika.cdo.flow.InvocableThen;
+import org.nasdanika.cdo.flow.JavaAction;
+import org.nasdanika.cdo.flow.JavaActionDelegate;
 import org.nasdanika.cdo.flow.Job;
 import org.nasdanika.cdo.flow.JobQueue;
 import org.nasdanika.cdo.flow.JobStatus;
+import org.nasdanika.cdo.flow.Join;
+import org.nasdanika.cdo.flow.JoinElement;
+import org.nasdanika.cdo.flow.JoinInput;
 import org.nasdanika.cdo.flow.Promise;
 import org.nasdanika.cdo.flow.PromiseReference;
 import org.nasdanika.cdo.flow.PromiseState;
+import org.nasdanika.cdo.flow.Property;
+import org.nasdanika.cdo.flow.PropertyReference;
 import org.nasdanika.cdo.flow.Publish;
+import org.nasdanika.cdo.flow.Reference;
+import org.nasdanika.cdo.flow.ServiceReference;
 import org.nasdanika.cdo.flow.Then;
 import org.nasdanika.cdo.flow.ThenReference;
+import org.nasdanika.cdo.flow.ValueProperty;
+import org.nasdanika.core.Adaptable;
+import org.nasdanika.core.Component;
 import org.nasdanika.core.Context;
 
 /**
@@ -48,6 +63,13 @@ import org.nasdanika.core.Context;
  * @generated
  */
 public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass referenceEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -116,6 +138,20 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass actuatorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass actuatorReferenceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass commandEClass = null;
 
 	/**
@@ -165,7 +201,35 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass actionOutputEClass = null;
+	private EClass javaActionDelegateEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass propertyEntryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass javaActionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass actionOutputEntryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass errorHandlerEntryEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -186,7 +250,98 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass adaptableEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass flowEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass flowInputEntryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass flowOutputEntryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass joinElementEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass joinInputEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass joinInputEntryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass joinEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass valuePropertyEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass componentEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass serviceReferenceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass deferredInvocationEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass propertyEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass propertyReferenceEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -303,6 +458,24 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getReference() {
+		return referenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getReference_Target() {
+		return (EReference)referenceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getThen() {
 		return thenEClass;
 	}
@@ -339,15 +512,6 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getThenReference_Target() {
-		return (EReference)thenReferenceEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getPromise() {
 		return promiseEClass;
 	}
@@ -359,6 +523,15 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 */
 	public EAttribute getPromise_Done() {
 		return (EAttribute)promiseEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPromise_Expires() {
+		return (EAttribute)promiseEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -582,6 +755,24 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getActuator() {
+		return actuatorEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getActuatorReference() {
+		return actuatorReferenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EOperation getPromise__GetFulfillmentValue__Context() {
 		return promiseEClass.getEOperations().get(1);
 	}
@@ -609,6 +800,15 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getPromise__Cancel() {
+		return promiseEClass.getEOperations().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPromiseReference() {
 		return promiseReferenceEClass;
 	}
@@ -618,26 +818,8 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getPromiseReference_Target() {
-		return (EReference)promiseReferenceEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getAll() {
 		return allEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getAll_Promises() {
-		return (EReference)allEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -656,15 +838,6 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 */
 	public EClass getAny() {
 		return anyEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getAny_Promises() {
-		return (EReference)anyEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -771,8 +944,8 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getInvocableReference_Target() {
-		return (EReference)invocableReferenceEClass.getEStructuralFeatures().get(0);
+	public EClass getBoundInvocable() {
+		return boundInvocableEClass;
 	}
 
 	/**
@@ -780,8 +953,26 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getBoundInvocable() {
-		return boundInvocableEClass;
+	public EReference getBoundInvocable_Bindings() {
+		return (EReference)boundInvocableEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getBoundInvocable_Target() {
+		return (EReference)boundInvocableEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getBoundInvocable__Bind__Context_EList() {
+		return boundInvocableEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -807,8 +998,8 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getActionOutput() {
-		return actionOutputEClass;
+	public EReference getAction_ErrorHandlers() {
+		return (EReference)actionEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -816,8 +1007,8 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getActionOutput_Key() {
-		return (EAttribute)actionOutputEClass.getEStructuralFeatures().get(0);
+	public EClass getJavaActionDelegate() {
+		return javaActionDelegateEClass;
 	}
 
 	/**
@@ -825,8 +1016,107 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getActionOutput_Value() {
-		return (EReference)actionOutputEClass.getEStructuralFeatures().get(1);
+	public EClass getPropertyEntry() {
+		return propertyEntryEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPropertyEntry_Key() {
+		return (EAttribute)propertyEntryEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPropertyEntry_Value() {
+		return (EReference)propertyEntryEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getJavaAction() {
+		return javaActionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJavaAction_Delegate() {
+		return (EAttribute)javaActionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJavaAction_Properties() {
+		return (EReference)javaActionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getActionOutputEntry() {
+		return actionOutputEntryEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getActionOutputEntry_Key() {
+		return (EAttribute)actionOutputEntryEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getActionOutputEntry_Value() {
+		return (EReference)actionOutputEntryEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getErrorHandlerEntry() {
+		return errorHandlerEntryEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getErrorHandlerEntry_Key() {
+		return (EAttribute)errorHandlerEntryEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getErrorHandlerEntry_Value() {
+		return (EReference)errorHandlerEntryEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -870,6 +1160,294 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getAdaptable() {
+		return adaptableEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getFlow() {
+		return flowEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getFlow_Contents() {
+		return (EReference)flowEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getFlow_Inputs() {
+		return (EReference)flowEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getFlow_Outputs() {
+		return (EReference)flowEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getFlow_ErrorHandler() {
+		return (EReference)flowEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getFlow__Adapt__Class_Context() {
+		return flowEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getFlowInputEntry() {
+		return flowInputEntryEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getFlowInputEntry_Key() {
+		return (EAttribute)flowInputEntryEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getFlowInputEntry_Value() {
+		return (EReference)flowInputEntryEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getFlowOutputEntry() {
+		return flowOutputEntryEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getFlowOutputEntry_Key() {
+		return (EAttribute)flowOutputEntryEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getFlowOutputEntry_Value() {
+		return (EReference)flowOutputEntryEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getJoinElement() {
+		return joinElementEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJoinElement_Consumed() {
+		return (EAttribute)joinElementEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJoinElement_Collector() {
+		return (EReference)joinElementEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getJoinInput() {
+		return joinInputEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJoinInput_Outer() {
+		return (EAttribute)joinInputEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJoinInput_Elements() {
+		return (EReference)joinInputEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getJoinInputEntry() {
+		return joinInputEntryEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJoinInputEntry_Key() {
+		return (EAttribute)joinInputEntryEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJoinInputEntry_Value() {
+		return (EReference)joinInputEntryEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getJoin() {
+		return joinEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJoin_Inputs() {
+		return (EReference)joinEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJoin_Joiner() {
+		return (EReference)joinEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getJoin__FinishJoin() {
+		return joinEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getValueProperty() {
+		return valuePropertyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getValueProperty_Value() {
+		return (EReference)valuePropertyEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getComponent() {
+		return componentEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getServiceReference() {
+		return serviceReferenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getServiceReference_Type() {
+		return (EAttribute)serviceReferenceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getServiceReference_Filter() {
+		return (EAttribute)serviceReferenceEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getDeferredInvocation() {
 		return deferredInvocationEClass;
 	}
@@ -897,6 +1475,42 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getProperty() {
+		return propertyEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getProperty__Get() {
+		return propertyEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getProperty__Set__Object() {
+		return propertyEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getPropertyReference() {
+		return propertyReferenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getDeferringInvocable() {
 		return deferringInvocableEClass;
 	}
@@ -917,6 +1531,15 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 	 */
 	public EReference getDeferringInvocable_Invocations() {
 		return (EReference)deferringInvocableEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getDeferringInvocable_Delay() {
+		return (EAttribute)deferringInvocableEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1001,31 +1624,32 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		isCreated = true;
 
 		// Create classes and their features
+		referenceEClass = createEClass(REFERENCE);
+		createEReference(referenceEClass, REFERENCE__TARGET);
+
 		thenEClass = createEClass(THEN);
 		createEOperation(thenEClass, THEN___ON_FULFILLED__OBJECT_CONTEXT);
 		createEOperation(thenEClass, THEN___ON_REJECTED__EXCEPTION_CONTEXT);
 
 		thenReferenceEClass = createEClass(THEN_REFERENCE);
-		createEReference(thenReferenceEClass, THEN_REFERENCE__TARGET);
 
 		executorEClass = createEClass(EXECUTOR);
 
 		promiseEClass = createEClass(PROMISE);
 		createEAttribute(promiseEClass, PROMISE__DONE);
+		createEAttribute(promiseEClass, PROMISE__EXPIRES);
 		createEOperation(promiseEClass, PROMISE___THEN__THEN_CONTEXT_EXECUTOR);
 		createEOperation(promiseEClass, PROMISE___GET_FULFILLMENT_VALUE__CONTEXT);
 		createEOperation(promiseEClass, PROMISE___GET_REJECTION_REASON__CONTEXT);
 		createEOperation(promiseEClass, PROMISE___GET_STATE);
+		createEOperation(promiseEClass, PROMISE___CANCEL);
 
 		promiseReferenceEClass = createEClass(PROMISE_REFERENCE);
-		createEReference(promiseReferenceEClass, PROMISE_REFERENCE__TARGET);
 
 		allEClass = createEClass(ALL);
-		createEReference(allEClass, ALL__PROMISES);
 		createEOperation(allEClass, ALL___INIT__ELIST_EXECUTOR);
 
 		anyEClass = createEClass(ANY);
-		createEReference(anyEClass, ANY__PROMISES);
 		createEOperation(anyEClass, ANY___INIT__ELIST_EXECUTOR);
 
 		commandEClass = createEClass(COMMAND);
@@ -1057,6 +1681,10 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		jobQueueEClass = createEClass(JOB_QUEUE);
 		createEReference(jobQueueEClass, JOB_QUEUE__JOBS);
 
+		actuatorEClass = createEClass(ACTUATOR);
+
+		actuatorReferenceEClass = createEClass(ACTUATOR_REFERENCE);
+
 		invocableEClass = createEClass(INVOCABLE);
 		createEOperation(invocableEClass, INVOCABLE___INVOKE__CONTEXT_ELIST);
 		createEOperation(invocableEClass, INVOCABLE___ACCEPT__CONTEXT_ELIST);
@@ -1066,16 +1694,48 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		createEReference(invocableThenEClass, INVOCABLE_THEN__ON_REJECTED);
 
 		invocableReferenceEClass = createEClass(INVOCABLE_REFERENCE);
-		createEReference(invocableReferenceEClass, INVOCABLE_REFERENCE__TARGET);
 
 		boundInvocableEClass = createEClass(BOUND_INVOCABLE);
+		createEReference(boundInvocableEClass, BOUND_INVOCABLE__BINDINGS);
+		createEReference(boundInvocableEClass, BOUND_INVOCABLE__TARGET);
+		createEOperation(boundInvocableEClass, BOUND_INVOCABLE___BIND__CONTEXT_ELIST);
+
+		deferringInvocableEClass = createEClass(DEFERRING_INVOCABLE);
+		createEReference(deferringInvocableEClass, DEFERRING_INVOCABLE__TARGET);
+		createEReference(deferringInvocableEClass, DEFERRING_INVOCABLE__INVOCATIONS);
+		createEAttribute(deferringInvocableEClass, DEFERRING_INVOCABLE__DELAY);
+
+		deferredInvocationEClass = createEClass(DEFERRED_INVOCATION);
+		createEReference(deferredInvocationEClass, DEFERRED_INVOCATION__ARGUMENTS);
+		createEReference(deferredInvocationEClass, DEFERRED_INVOCATION__RESULT);
+
+		propertyEClass = createEClass(PROPERTY);
+		createEOperation(propertyEClass, PROPERTY___GET);
+		createEOperation(propertyEClass, PROPERTY___SET__OBJECT);
+
+		propertyReferenceEClass = createEClass(PROPERTY_REFERENCE);
 
 		actionEClass = createEClass(ACTION);
 		createEReference(actionEClass, ACTION__OUTPUTS);
+		createEReference(actionEClass, ACTION__ERROR_HANDLERS);
 
-		actionOutputEClass = createEClass(ACTION_OUTPUT);
-		createEAttribute(actionOutputEClass, ACTION_OUTPUT__KEY);
-		createEReference(actionOutputEClass, ACTION_OUTPUT__VALUE);
+		javaActionDelegateEClass = createEClass(JAVA_ACTION_DELEGATE);
+
+		propertyEntryEClass = createEClass(PROPERTY_ENTRY);
+		createEAttribute(propertyEntryEClass, PROPERTY_ENTRY__KEY);
+		createEReference(propertyEntryEClass, PROPERTY_ENTRY__VALUE);
+
+		javaActionEClass = createEClass(JAVA_ACTION);
+		createEAttribute(javaActionEClass, JAVA_ACTION__DELEGATE);
+		createEReference(javaActionEClass, JAVA_ACTION__PROPERTIES);
+
+		actionOutputEntryEClass = createEClass(ACTION_OUTPUT_ENTRY);
+		createEAttribute(actionOutputEntryEClass, ACTION_OUTPUT_ENTRY__KEY);
+		createEReference(actionOutputEntryEClass, ACTION_OUTPUT_ENTRY__VALUE);
+
+		errorHandlerEntryEClass = createEClass(ERROR_HANDLER_ENTRY);
+		createEAttribute(errorHandlerEntryEClass, ERROR_HANDLER_ENTRY__KEY);
+		createEReference(errorHandlerEntryEClass, ERROR_HANDLER_ENTRY__VALUE);
 
 		dispatchEClass = createEClass(DISPATCH);
 		createEReference(dispatchEClass, DISPATCH__TARGETS);
@@ -1083,13 +1743,48 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		publishEClass = createEClass(PUBLISH);
 		createEReference(publishEClass, PUBLISH__TARGETS);
 
-		deferredInvocationEClass = createEClass(DEFERRED_INVOCATION);
-		createEReference(deferredInvocationEClass, DEFERRED_INVOCATION__ARGUMENTS);
-		createEReference(deferredInvocationEClass, DEFERRED_INVOCATION__RESULT);
+		adaptableEClass = createEClass(ADAPTABLE);
 
-		deferringInvocableEClass = createEClass(DEFERRING_INVOCABLE);
-		createEReference(deferringInvocableEClass, DEFERRING_INVOCABLE__TARGET);
-		createEReference(deferringInvocableEClass, DEFERRING_INVOCABLE__INVOCATIONS);
+		flowEClass = createEClass(FLOW);
+		createEReference(flowEClass, FLOW__CONTENTS);
+		createEReference(flowEClass, FLOW__INPUTS);
+		createEReference(flowEClass, FLOW__OUTPUTS);
+		createEReference(flowEClass, FLOW__ERROR_HANDLER);
+		createEOperation(flowEClass, FLOW___ADAPT__CLASS_CONTEXT);
+
+		flowInputEntryEClass = createEClass(FLOW_INPUT_ENTRY);
+		createEAttribute(flowInputEntryEClass, FLOW_INPUT_ENTRY__KEY);
+		createEReference(flowInputEntryEClass, FLOW_INPUT_ENTRY__VALUE);
+
+		flowOutputEntryEClass = createEClass(FLOW_OUTPUT_ENTRY);
+		createEAttribute(flowOutputEntryEClass, FLOW_OUTPUT_ENTRY__KEY);
+		createEReference(flowOutputEntryEClass, FLOW_OUTPUT_ENTRY__VALUE);
+
+		joinElementEClass = createEClass(JOIN_ELEMENT);
+		createEAttribute(joinElementEClass, JOIN_ELEMENT__CONSUMED);
+		createEReference(joinElementEClass, JOIN_ELEMENT__COLLECTOR);
+
+		joinInputEClass = createEClass(JOIN_INPUT);
+		createEAttribute(joinInputEClass, JOIN_INPUT__OUTER);
+		createEReference(joinInputEClass, JOIN_INPUT__ELEMENTS);
+
+		joinInputEntryEClass = createEClass(JOIN_INPUT_ENTRY);
+		createEAttribute(joinInputEntryEClass, JOIN_INPUT_ENTRY__KEY);
+		createEReference(joinInputEntryEClass, JOIN_INPUT_ENTRY__VALUE);
+
+		joinEClass = createEClass(JOIN);
+		createEReference(joinEClass, JOIN__INPUTS);
+		createEReference(joinEClass, JOIN__JOINER);
+		createEOperation(joinEClass, JOIN___FINISH_JOIN);
+
+		valuePropertyEClass = createEClass(VALUE_PROPERTY);
+		createEReference(valuePropertyEClass, VALUE_PROPERTY__VALUE);
+
+		componentEClass = createEClass(COMPONENT);
+
+		serviceReferenceEClass = createEClass(SERVICE_REFERENCE);
+		createEAttribute(serviceReferenceEClass, SERVICE_REFERENCE__TYPE);
+		createEAttribute(serviceReferenceEClass, SERVICE_REFERENCE__FILTER);
 
 		// Create enums
 		promiseStateEEnum = createEEnum(PROMISE_STATE);
@@ -1126,6 +1821,7 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		setNsURI(eNS_URI);
 
 		// Create type parameters
+		ETypeParameter referenceEClass_T = addETypeParameter(referenceEClass, "T");
 		ETypeParameter thenEClass_R = addETypeParameter(thenEClass, "R");
 		ETypeParameter thenEClass_R1 = addETypeParameter(thenEClass, "R1");
 		ETypeParameter thenEClass_C = addETypeParameter(thenEClass, "C");
@@ -1148,6 +1844,9 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		ETypeParameter jobEClass_R = addETypeParameter(jobEClass, "R");
 		ETypeParameter jobEClass_C = addETypeParameter(jobEClass, "C");
 		ETypeParameter jobQueueEClass_C = addETypeParameter(jobQueueEClass, "C");
+		addETypeParameter(actuatorEClass, "T");
+		ETypeParameter actuatorReferenceEClass_T = addETypeParameter(actuatorReferenceEClass, "T");
+		ETypeParameter actuatorReferenceEClass_A = addETypeParameter(actuatorReferenceEClass, "A");
 		ETypeParameter invocableEClass_R = addETypeParameter(invocableEClass, "R");
 		ETypeParameter invocableEClass_C = addETypeParameter(invocableEClass, "C");
 		ETypeParameter invocableThenEClass_R = addETypeParameter(invocableThenEClass, "R");
@@ -1155,8 +1854,33 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		ETypeParameter invocableThenEClass_C = addETypeParameter(invocableThenEClass, "C");
 		ETypeParameter invocableReferenceEClass_R = addETypeParameter(invocableReferenceEClass, "R");
 		ETypeParameter invocableReferenceEClass_C = addETypeParameter(invocableReferenceEClass, "C");
+		ETypeParameter boundInvocableEClass_R = addETypeParameter(boundInvocableEClass, "R");
+		ETypeParameter boundInvocableEClass_C = addETypeParameter(boundInvocableEClass, "C");
+		ETypeParameter deferringInvocableEClass_R = addETypeParameter(deferringInvocableEClass, "R");
+		ETypeParameter deferringInvocableEClass_C = addETypeParameter(deferringInvocableEClass, "C");
+		ETypeParameter deferredInvocationEClass_R = addETypeParameter(deferredInvocationEClass, "R");
+		ETypeParameter deferredInvocationEClass_C = addETypeParameter(deferredInvocationEClass, "C");
+		ETypeParameter propertyEClass_T = addETypeParameter(propertyEClass, "T");
+		ETypeParameter propertyReferenceEClass_T = addETypeParameter(propertyReferenceEClass, "T");
 		ETypeParameter actionEClass_R = addETypeParameter(actionEClass, "R");
 		ETypeParameter actionEClass_C = addETypeParameter(actionEClass, "C");
+		addETypeParameter(javaActionDelegateEClass, "R");
+		ETypeParameter javaActionDelegateEClass_C = addETypeParameter(javaActionDelegateEClass, "C");
+		ETypeParameter javaActionEClass_R = addETypeParameter(javaActionEClass, "R");
+		ETypeParameter javaActionEClass_C = addETypeParameter(javaActionEClass, "C");
+		ETypeParameter dispatchEClass_R = addETypeParameter(dispatchEClass, "R");
+		ETypeParameter dispatchEClass_C = addETypeParameter(dispatchEClass, "C");
+		ETypeParameter publishEClass_R = addETypeParameter(publishEClass, "R");
+		ETypeParameter publishEClass_C = addETypeParameter(publishEClass, "C");
+		ETypeParameter flowEClass_C = addETypeParameter(flowEClass, "C");
+		ETypeParameter joinElementEClass_R = addETypeParameter(joinElementEClass, "R");
+		ETypeParameter joinElementEClass_C = addETypeParameter(joinElementEClass, "C");
+		ETypeParameter joinInputEClass_R = addETypeParameter(joinInputEClass, "R");
+		ETypeParameter joinInputEClass_C = addETypeParameter(joinInputEClass, "C");
+		ETypeParameter joinInputEntryEClass_C = addETypeParameter(joinInputEntryEClass, "C");
+		ETypeParameter joinEClass_C = addETypeParameter(joinEClass, "C");
+		ETypeParameter valuePropertyEClass_T = addETypeParameter(valuePropertyEClass, "T");
+		ETypeParameter serviceReferenceEClass_T = addETypeParameter(serviceReferenceEClass, "T");
 
 		// Set bounds for type parameters
 		EGenericType g1 = createEGenericType(this.getContext());
@@ -1181,6 +1905,10 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		jobEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
 		jobQueueEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getActuator());
+		EGenericType g2 = createEGenericType(actuatorReferenceEClass_T);
+		g1.getETypeArguments().add(g2);
+		actuatorReferenceEClass_A.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
 		invocableEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
@@ -1188,11 +1916,45 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g1 = createEGenericType(this.getContext());
 		invocableReferenceEClass_C.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
+		boundInvocableEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		deferringInvocableEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		deferredInvocationEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
 		actionEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		javaActionDelegateEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		javaActionEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		dispatchEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		publishEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		flowEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		joinElementEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		joinInputEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		joinInputEntryEClass_C.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		joinEClass_C.getEBounds().add(g1);
 
 		// Add supertypes to classes
+		g1 = createEGenericType(this.getReference());
+		g2 = createEGenericType(this.getThen());
+		g1.getETypeArguments().add(g2);
+		EGenericType g3 = createEGenericType(thenReferenceEClass_R);
+		g2.getETypeArguments().add(g3);
+		g3 = createEGenericType(thenReferenceEClass_R1);
+		g2.getETypeArguments().add(g3);
+		g3 = createEGenericType(thenReferenceEClass_C);
+		g2.getETypeArguments().add(g3);
+		thenReferenceEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getThen());
-		EGenericType g2 = createEGenericType(thenReferenceEClass_R);
+		g2 = createEGenericType(thenReferenceEClass_R);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(thenReferenceEClass_R1);
 		g1.getETypeArguments().add(g2);
@@ -1205,11 +1967,17 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g2 = createEGenericType(promiseReferenceEClass_C);
 		g1.getETypeArguments().add(g2);
 		promiseReferenceEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getPromise());
-		g2 = createEGenericType(ecorePackage.getEEList());
+		g1 = createEGenericType(this.getReference());
+		g2 = createEGenericType(this.getPromise());
 		g1.getETypeArguments().add(g2);
-		EGenericType g3 = createEGenericType(allEClass_R);
+		g3 = createEGenericType(promiseReferenceEClass_R);
 		g2.getETypeArguments().add(g3);
+		g3 = createEGenericType(promiseReferenceEClass_C);
+		g2.getETypeArguments().add(g3);
+		promiseReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(allEClass_R);
+		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(allEClass_C);
 		g1.getETypeArguments().add(g2);
 		allEClass.getEGenericSuperTypes().add(g1);
@@ -1231,6 +1999,18 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g2 = createEGenericType(deferredEClass_C);
 		g1.getETypeArguments().add(g2);
 		deferredEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getActuator());
+		g2 = createEGenericType(actuatorReferenceEClass_T);
+		g1.getETypeArguments().add(g2);
+		actuatorReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getReference());
+		g2 = createEGenericType(actuatorReferenceEClass_A);
+		g1.getETypeArguments().add(g2);
+		actuatorReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getActuator());
+		g2 = createEGenericType(invocableEClass_R);
+		g1.getETypeArguments().add(g2);
+		invocableEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getThen());
 		g2 = createEGenericType(invocableThenEClass_R);
 		g1.getETypeArguments().add(g2);
@@ -1245,18 +2025,116 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		g2 = createEGenericType(invocableReferenceEClass_C);
 		g1.getETypeArguments().add(g2);
 		invocableReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getActuatorReference());
+		g2 = createEGenericType(invocableReferenceEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(this.getInvocable());
+		g1.getETypeArguments().add(g2);
+		g3 = createEGenericType(invocableReferenceEClass_R);
+		g2.getETypeArguments().add(g3);
+		g3 = createEGenericType(invocableReferenceEClass_C);
+		g2.getETypeArguments().add(g3);
+		invocableReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(boundInvocableEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(boundInvocableEClass_C);
+		g1.getETypeArguments().add(g2);
+		boundInvocableEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(this.getPromise());
+		g1.getETypeArguments().add(g2);
+		g3 = createEGenericType(deferringInvocableEClass_R);
+		g2.getETypeArguments().add(g3);
+		g3 = createEGenericType(deferringInvocableEClass_C);
+		g2.getETypeArguments().add(g3);
+		g2 = createEGenericType(deferringInvocableEClass_C);
+		g1.getETypeArguments().add(g2);
+		deferringInvocableEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getCommand());
+		g2 = createEGenericType(deferredInvocationEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(deferredInvocationEClass_C);
+		g1.getETypeArguments().add(g2);
+		deferredInvocationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getActuator());
+		g2 = createEGenericType(propertyEClass_T);
+		g1.getETypeArguments().add(g2);
+		propertyEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getProperty());
+		g2 = createEGenericType(propertyReferenceEClass_T);
+		g1.getETypeArguments().add(g2);
+		propertyReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getActuatorReference());
+		g2 = createEGenericType(propertyReferenceEClass_T);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(this.getProperty());
+		g1.getETypeArguments().add(g2);
+		g3 = createEGenericType(propertyReferenceEClass_T);
+		g2.getETypeArguments().add(g3);
+		propertyReferenceEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getInvocable());
 		g2 = createEGenericType(actionEClass_R);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(actionEClass_C);
 		g1.getETypeArguments().add(g2);
 		actionEClass.getEGenericSuperTypes().add(g1);
-		dispatchEClass.getESuperTypes().add(this.getInvocable());
-		publishEClass.getESuperTypes().add(this.getInvocable());
-		deferredInvocationEClass.getESuperTypes().add(this.getCommand());
-		deferringInvocableEClass.getESuperTypes().add(this.getInvocable());
+		g1 = createEGenericType(this.getAction());
+		g2 = createEGenericType(javaActionEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(javaActionEClass_C);
+		g1.getETypeArguments().add(g2);
+		javaActionEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(dispatchEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(dispatchEClass_C);
+		g1.getETypeArguments().add(g2);
+		dispatchEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(ecorePackage.getEEList());
+		g1.getETypeArguments().add(g2);
+		g3 = createEGenericType(publishEClass_R);
+		g2.getETypeArguments().add(g3);
+		g2 = createEGenericType(publishEClass_C);
+		g1.getETypeArguments().add(g2);
+		publishEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getJobQueue());
+		g2 = createEGenericType(flowEClass_C);
+		g1.getETypeArguments().add(g2);
+		flowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getDeferredInvocation());
+		g2 = createEGenericType(joinElementEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(joinElementEClass_C);
+		g1.getETypeArguments().add(g2);
+		joinElementEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(joinInputEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(joinInputEClass_C);
+		g1.getETypeArguments().add(g2);
+		joinInputEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getJobQueue());
+		g2 = createEGenericType(joinEClass_C);
+		g1.getETypeArguments().add(g2);
+		joinEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getProperty());
+		g2 = createEGenericType(valuePropertyEClass_T);
+		g1.getETypeArguments().add(g2);
+		valuePropertyEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getProperty());
+		g2 = createEGenericType(serviceReferenceEClass_T);
+		g1.getETypeArguments().add(g2);
+		serviceReferenceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getComponent());
+		serviceReferenceEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes, features, and operations; add parameters
+		initEClass(referenceEClass, Reference.class, "Reference", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(referenceEClass_T);
+		initEReference(getReference_Target(), g1, null, "target", null, 0, 1, Reference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(thenEClass, Then.class, "Then", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		EOperation op = initEOperation(getThen__OnFulfilled__Object_Context(), null, "onFulfilled", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1275,19 +2153,12 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		addEException(op, this.getException());
 
 		initEClass(thenReferenceEClass, ThenReference.class, "ThenReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		g1 = createEGenericType(this.getThen());
-		g2 = createEGenericType(thenReferenceEClass_R);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(thenReferenceEClass_R1);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(thenReferenceEClass_C);
-		g1.getETypeArguments().add(g2);
-		initEReference(getThenReference_Target(), g1, null, "target", null, 0, 1, ThenReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(executorEClass, Executor.class, "Executor", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(promiseEClass, Promise.class, "Promise", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPromise_Done(), ecorePackage.getEBoolean(), "done", null, 0, 1, Promise.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPromise_Expires(), ecorePackage.getEDate(), "expires", null, 0, 1, Promise.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = initEOperation(getPromise__Then__Then_Context_Executor(), null, "then", 0, 1, IS_UNIQUE, IS_ORDERED);
 		ETypeParameter t1 = addETypeParameter(op, "R1");
@@ -1324,25 +2195,15 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 
 		initEOperation(getPromise__GetState(), this.getPromiseState(), "getState", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+		initEOperation(getPromise__Cancel(), ecorePackage.getEBoolean(), "cancel", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(promiseReferenceEClass, PromiseReference.class, "PromiseReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		g1 = createEGenericType(this.getPromise());
-		g2 = createEGenericType(promiseReferenceEClass_R);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(promiseReferenceEClass_C);
-		g1.getETypeArguments().add(g2);
-		initEReference(getPromiseReference_Target(), g1, null, "target", null, 0, 1, PromiseReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(allEClass, All.class, "All", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		g1 = createEGenericType(this.getPromise());
-		g2 = createEGenericType(allEClass_R);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(allEClass_C);
-		g1.getETypeArguments().add(g2);
-		initEReference(getAll_Promises(), g1, null, "promises", null, 0, 1, All.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = initEOperation(getAll__Init__EList_Executor(), null, "init", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(this.getPromise());
-		g2 = createEGenericType(allEClass_R);
+		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(allEClass_C);
 		g1.getETypeArguments().add(g2);
@@ -1353,12 +2214,6 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		addEParameter(op, g1, "executor", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(anyEClass, Any.class, "Any", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		g1 = createEGenericType(this.getPromise());
-		g2 = createEGenericType(anyEClass_R);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(anyEClass_C);
-		g1.getETypeArguments().add(g2);
-		initEReference(getAny_Promises(), g1, null, "promises", null, 0, 1, Any.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = initEOperation(getAny__Init__EList_Executor(), null, "init", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(this.getPromise());
@@ -1461,13 +2316,17 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 
 		initEOperation(getJob__CanExecute(), ecorePackage.getEBoolean(), "canExecute", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEClass(jobQueueEClass, JobQueue.class, "JobQueue", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(jobQueueEClass, JobQueue.class, "JobQueue", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		g1 = createEGenericType(this.getJob());
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(jobQueueEClass_C);
 		g1.getETypeArguments().add(g2);
 		initEReference(getJobQueue_Jobs(), g1, null, "jobs", null, 0, -1, JobQueue.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(actuatorEClass, Actuator.class, "Actuator", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(actuatorReferenceEClass, ActuatorReference.class, "ActuatorReference", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(invocableEClass, Invocable.class, "Invocable", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1500,41 +2359,195 @@ public class FlowPackageImpl extends EPackageImpl implements FlowPackage {
 		initEReference(getInvocableThen_OnRejected(), g1, null, "onRejected", null, 0, 1, InvocableThen.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(invocableReferenceEClass, InvocableReference.class, "InvocableReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		g1 = createEGenericType(this.getInvocable());
-		g2 = createEGenericType(invocableReferenceEClass_R);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(invocableReferenceEClass_C);
-		g1.getETypeArguments().add(g2);
-		initEReference(getInvocableReference_Target(), g1, null, "target", null, 0, 1, InvocableReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(boundInvocableEClass, BoundInvocable.class, "BoundInvocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getBoundInvocable_Bindings(), ecorePackage.getEObject(), null, "bindings", null, 0, -1, BoundInvocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(boundInvocableEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(boundInvocableEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getBoundInvocable_Target(), g1, null, "target", null, 0, 1, BoundInvocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(actionEClass, Action.class, "Action", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getAction_Outputs(), this.getActionOutput(), null, "outputs", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		op = initEOperation(getBoundInvocable__Bind__Context_EList(), null, "bind", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(boundInvocableEClass_C);
+		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEJavaObject(), "arguments", 0, -1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
-		initEClass(actionOutputEClass, Map.Entry.class, "ActionOutput", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getActionOutput_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getActionOutput_Value(), this.getInvocable(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(dispatchEClass, Dispatch.class, "Dispatch", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getDispatch_Targets(), this.getInvocable(), null, "targets", null, 0, -1, Dispatch.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(publishEClass, Publish.class, "Publish", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPublish_Targets(), this.getInvocable(), null, "targets", null, 0, -1, Publish.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(deferringInvocableEClass, DeferringInvocable.class, "DeferringInvocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(deferringInvocableEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(deferringInvocableEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getDeferringInvocable_Target(), g1, null, "target", null, 0, 1, DeferringInvocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getDeferredInvocation());
+		g2 = createEGenericType(deferringInvocableEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(deferringInvocableEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getDeferringInvocable_Invocations(), g1, null, "invocations", null, 0, -1, DeferringInvocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDeferringInvocable_Delay(), ecorePackage.getELong(), "delay", null, 0, 1, DeferringInvocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(deferredInvocationEClass, DeferredInvocation.class, "DeferredInvocation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getDeferredInvocation_Arguments(), ecorePackage.getEObject(), null, "arguments", null, 0, -1, DeferredInvocation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getDeferredInvocation_Result(), this.getDeferred(), null, "result", null, 0, 1, DeferredInvocation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getPromise());
+		g2 = createEGenericType(deferredInvocationEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(deferredInvocationEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getDeferredInvocation_Result(), g1, null, "result", null, 0, 1, DeferredInvocation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(deferringInvocableEClass, DeferringInvocable.class, "DeferringInvocable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getDeferringInvocable_Target(), this.getInvocable(), null, "target", null, 0, 1, DeferringInvocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getDeferringInvocable_Invocations(), this.getDeferredInvocation(), null, "invocations", null, 0, -1, DeferringInvocable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(propertyEClass, Property.class, "Property", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		op = initEOperation(getProperty__Get(), null, "get", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(propertyEClass_T);
+		initEOperation(op, g1);
+
+		op = initEOperation(getProperty__Set__Object(), null, "set", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(propertyEClass_T);
+		addEParameter(op, g1, "value", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(propertyReferenceEClass, PropertyReference.class, "PropertyReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(actionEClass, Action.class, "Action", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getAction_Outputs(), this.getActionOutputEntry(), null, "outputs", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAction_ErrorHandlers(), this.getErrorHandlerEntry(), null, "errorHandlers", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(javaActionDelegateEClass, JavaActionDelegate.class, "JavaActionDelegate", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(propertyEntryEClass, Map.Entry.class, "PropertyEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPropertyEntry_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPropertyEntry_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(javaActionEClass, JavaAction.class, "JavaAction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getJavaAction_Delegate(), ecorePackage.getEString(), "delegate", null, 0, 1, JavaAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getJavaAction_Properties(), this.getPropertyEntry(), null, "properties", null, 0, -1, JavaAction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(actionOutputEntryEClass, Map.Entry.class, "ActionOutputEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getActionOutputEntry_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getActuator());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getActionOutputEntry_Value(), g1, null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(errorHandlerEntryEClass, Map.Entry.class, "ErrorHandlerEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getErrorHandlerEntry_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getErrorHandlerEntry_Value(), g1, null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(dispatchEClass, Dispatch.class, "Dispatch", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(dispatchEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(dispatchEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getDispatch_Targets(), g1, null, "targets", null, 0, -1, Dispatch.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(publishEClass, Publish.class, "Publish", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType(publishEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(publishEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getPublish_Targets(), g1, null, "targets", null, 0, -1, Publish.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(adaptableEClass, Adaptable.class, "Adaptable", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(flowEClass, Flow.class, "Flow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getFlow_Contents(), ecorePackage.getEObject(), null, "contents", null, 0, -1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getFlow_Inputs(), this.getFlowInputEntry(), null, "inputs", null, 0, -1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getFlow_Outputs(), this.getFlowOutputEntry(), null, "outputs", null, 0, -1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getInvocableReference());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(flowEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getFlow_ErrorHandler(), g1, null, "errorHandler", null, 0, 1, Flow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getFlow__Adapt__Class_Context(), null, "adapt", 0, 1, IS_UNIQUE, IS_ORDERED);
+		t1 = addETypeParameter(op, "T");
+		g1 = createEGenericType(ecorePackage.getEJavaClass());
+		g2 = createEGenericType(t1);
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "type", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(flowEClass_C);
+		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(t1);
+		initEOperation(op, g1);
+
+		initEClass(flowInputEntryEClass, Map.Entry.class, "FlowInputEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getFlowInputEntry_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getActuator());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getFlowInputEntry_Value(), g1, null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(flowOutputEntryEClass, Map.Entry.class, "FlowOutputEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getFlowOutputEntry_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getActuatorReference());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getFlowOutputEntry_Value(), g1, null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(joinElementEClass, JoinElement.class, "JoinElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getJoinElement_Consumed(), ecorePackage.getEBoolean(), "consumed", null, 0, 1, JoinElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getJoinElement_Collector(), ecorePackage.getEObject(), null, "collector", null, 0, -1, JoinElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(joinInputEClass, JoinInput.class, "JoinInput", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getJoinInput_Outer(), ecorePackage.getEBoolean(), "outer", null, 0, 1, JoinInput.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getJoinElement());
+		g2 = createEGenericType(joinInputEClass_R);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(joinInputEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getJoinInput_Elements(), g1, null, "elements", null, 0, -1, JoinInput.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(joinInputEntryEClass, Map.Entry.class, "JoinInputEntry", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getJoinInputEntry_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getJoinInput());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(joinInputEntryEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getJoinInputEntry_Value(), g1, null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(joinEClass, Join.class, "Join", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(this.getJoinInputEntry());
+		g2 = createEGenericType(joinEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getJoin_Inputs(), g1, null, "inputs", null, 0, 1, Join.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getInvocable());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(joinEClass_C);
+		g1.getETypeArguments().add(g2);
+		initEReference(getJoin_Joiner(), g1, null, "joiner", null, 0, 1, Join.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEOperation(getJoin__FinishJoin(), null, "finishJoin", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(valuePropertyEClass, ValueProperty.class, "ValueProperty", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getValueProperty_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, ValueProperty.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(componentEClass, Component.class, "Component", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(serviceReferenceEClass, ServiceReference.class, "ServiceReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getServiceReference_Type(), ecorePackage.getEString(), "type", null, 0, 1, ServiceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getServiceReference_Filter(), ecorePackage.getEString(), "filter", null, 0, 1, ServiceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(promiseStateEEnum, PromiseState.class, "PromiseState");
 		addEEnumLiteral(promiseStateEEnum, PromiseState.PENDING);
 		addEEnumLiteral(promiseStateEEnum, PromiseState.FULFILLED);
 		addEEnumLiteral(promiseStateEEnum, PromiseState.REJECTED);
+		addEEnumLiteral(promiseStateEEnum, PromiseState.CANCELLED);
 
 		initEEnum(jobStatusEEnum, JobStatus.class, "JobStatus");
 		addEEnumLiteral(jobStatusEEnum, JobStatus.PENDING);

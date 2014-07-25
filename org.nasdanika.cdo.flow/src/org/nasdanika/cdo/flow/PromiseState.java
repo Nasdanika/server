@@ -46,7 +46,15 @@ public enum PromiseState implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	REJECTED(2, "REJECTED", "REJECTED");
+	REJECTED(2, "REJECTED", "REJECTED"), /**
+	 * The '<em><b>CANCELLED</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #CANCELLED_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	CANCELLED(3, "CANCELLED", "CANCELLED");
 
 	/**
 	 * The '<em><b>PENDING</b></em>' literal value.
@@ -94,6 +102,21 @@ public enum PromiseState implements Enumerator {
 	public static final int REJECTED_VALUE = 2;
 
 	/**
+	 * The '<em><b>CANCELLED</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>CANCELLED</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #CANCELLED
+	 * @model
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CANCELLED_VALUE = 3;
+
+	/**
 	 * An array of all the '<em><b>Promise State</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -104,6 +127,7 @@ public enum PromiseState implements Enumerator {
 			PENDING,
 			FULFILLED,
 			REJECTED,
+			CANCELLED,
 		};
 
 	/**
@@ -157,6 +181,7 @@ public enum PromiseState implements Enumerator {
 			case PENDING_VALUE: return PENDING;
 			case FULFILLED_VALUE: return FULFILLED;
 			case REJECTED_VALUE: return REJECTED;
+			case CANCELLED_VALUE: return CANCELLED;
 		}
 		return null;
 	}

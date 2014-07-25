@@ -1,5 +1,6 @@
 package org.nasdanika.web;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -282,6 +283,12 @@ public class ExtensionManager implements AutoCloseable {
 							if (ret!=null) {
 								return ret;
 							}
+						}
+					}
+					// Constructor conversion - last resort
+					for (Constructor<?> c: target.getConstructors()) {
+						if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(source)) {
+							return c.newInstance(source);
 						}
 					}
 					return null;

@@ -116,4 +116,54 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 		close(container);		
 	}
 
+	@Override
+	public Form action(Object action) {
+		return attribute("action", action);
+	}
+
+	@Override
+	public Form autocomplete() {
+		return autocomplete(true);
+	}
+
+	@Override
+	public Form autocomplete(boolean autocomplete) {
+		return attribute("autocomplete", autocomplete ? "on" : "off");
+	}
+
+	@Override
+	public Form enctype(EncType enctype) {
+		return attribute("enctype", enctype.literal);
+	}
+
+	@Override
+	public Form acceptCharset(String charset) {
+		return attribute("accept-charset", charset);
+	}
+
+	@Override
+	public Form method(Method method) {
+		return attribute("method", method.name());
+	}
+
+	@Override
+	public Form name(String name) {
+		return attribute("name", name);
+	}
+
+	@Override
+	public Form novalidate() {
+		return novalidate(true);
+	}
+
+	@Override
+	public Form novalidate(boolean novalidate) {
+		return attribute("novalidate", novalidate ? "on" : null);
+	}
+
+	@Override
+	public Form target(String target) {
+		return attribute("target", target);
+	}
+
 }

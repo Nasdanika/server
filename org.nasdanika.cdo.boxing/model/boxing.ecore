@@ -29,7 +29,7 @@
       <eTypeArguments eClassifier="#//Context"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="BigIntegerlBox">
+  <eClassifiers xsi:type="ecore:EClass" name="BigIntegerBox">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"/>
     <eGenericSuperTypes eClassifier="#//Box">
       <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBigInteger"/>

@@ -1,7 +1,5 @@
 package org.nasdanika.cdo.web.html;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -12,7 +10,7 @@ import org.nasdanika.core.Converter;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
-import org.nasdanika.html.Tag;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -40,12 +38,10 @@ public class EOperationClosureToHTMLRendererConverter implements Converter<EOper
 				for (EParameter p: source.getOperation().getEParameters()) {
 					String inputId = htmlFactory.nextId()+"_"+p.getName();
 					// TODO - different input types depending on parameter type, text for now.
-					Tag input = htmlFactory.input(
-							InputType.text, 
-							p.getName(), 
-							null, 
-							inputId, 
-							p.getEType().getName());
+					Input input = htmlFactory.input(InputType.text)
+							.name(p.getName()) 
+							.id(inputId) 
+							.placeholder(p.getEType().getName());
 					
 					form.formInputGroup(
 							NasdanikaCDOUtil.nameToLabel(p.getName()), 

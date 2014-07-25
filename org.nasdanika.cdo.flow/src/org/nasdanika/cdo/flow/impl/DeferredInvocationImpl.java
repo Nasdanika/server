@@ -3,14 +3,19 @@
 package org.nasdanika.cdo.flow.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.nasdanika.cdo.flow.Deferred;
+import org.nasdanika.cdo.boxing.Box;
 import org.nasdanika.cdo.flow.DeferredInvocation;
+import org.nasdanika.cdo.flow.DeferringInvocable;
 import org.nasdanika.cdo.flow.Executor;
 import org.nasdanika.cdo.flow.FlowPackage;
+import org.nasdanika.cdo.flow.Invocable;
+import org.nasdanika.cdo.flow.Promise;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,7 +31,7 @@ import org.nasdanika.cdo.flow.FlowPackage;
  *
  * @generated
  */
-public class DeferredInvocationImpl extends CDOObjectImpl implements DeferredInvocation {
+public class DeferredInvocationImpl<R, C extends Context> extends CDOObjectImpl implements DeferredInvocation<R, C> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -71,8 +76,8 @@ public class DeferredInvocationImpl extends CDOObjectImpl implements DeferredInv
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Deferred getResult() {
-		return (Deferred)eGet(FlowPackage.Literals.DEFERRED_INVOCATION__RESULT, true);
+	public Promise<R, C> getResult() {
+		return (Promise<R, C>)eGet(FlowPackage.Literals.DEFERRED_INVOCATION__RESULT, true);
 	}
 
 	/**
@@ -80,19 +85,27 @@ public class DeferredInvocationImpl extends CDOObjectImpl implements DeferredInv
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setResult(Deferred newResult) {
+	public void setResult(Promise<R, C> newResult) {
 		eSet(FlowPackage.Literals.DEFERRED_INVOCATION__RESULT, newResult);
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
+	@SuppressWarnings("unchecked")
 	public R execute(C context, Executor<C> executor) throws Exception {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		Invocable<R, Context> target = ((DeferringInvocable<R, Context>) eContainer()).getTarget();
+		EList<Object> args = new BasicEList<Object>();
+		for (EObject b: getArguments()) {
+			if (b instanceof Box) {
+				args.add(((Box<?,C>) b).get(context));
+			} else {
+				args.add(b);
+			}
+		}
+		return target.invoke(context, args);
 	}
 
 	/**

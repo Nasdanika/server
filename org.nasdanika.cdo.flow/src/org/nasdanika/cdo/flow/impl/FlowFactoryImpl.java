@@ -3,15 +3,13 @@
 package org.nasdanika.cdo.flow.impl;
 
 import java.util.Map;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.flow.*;
 import org.nasdanika.core.Context;
@@ -66,15 +64,27 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 			case FlowPackage.ANY: return (EObject)createAny();
 			case FlowPackage.DEFERRED: return (EObject)createDeferred();
 			case FlowPackage.JOB: return (EObject)createJob();
-			case FlowPackage.JOB_QUEUE: return (EObject)createJobQueue();
 			case FlowPackage.INVOCABLE_THEN: return (EObject)createInvocableThen();
 			case FlowPackage.INVOCABLE_REFERENCE: return (EObject)createInvocableReference();
 			case FlowPackage.BOUND_INVOCABLE: return (EObject)createBoundInvocable();
-			case FlowPackage.ACTION_OUTPUT: return (EObject)createActionOutput();
+			case FlowPackage.DEFERRING_INVOCABLE: return (EObject)createDeferringInvocable();
+			case FlowPackage.DEFERRED_INVOCATION: return (EObject)createDeferredInvocation();
+			case FlowPackage.PROPERTY_REFERENCE: return (EObject)createPropertyReference();
+			case FlowPackage.PROPERTY_ENTRY: return (EObject)createPropertyEntry();
+			case FlowPackage.JAVA_ACTION: return (EObject)createJavaAction();
+			case FlowPackage.ACTION_OUTPUT_ENTRY: return (EObject)createActionOutputEntry();
+			case FlowPackage.ERROR_HANDLER_ENTRY: return (EObject)createErrorHandlerEntry();
 			case FlowPackage.DISPATCH: return (EObject)createDispatch();
 			case FlowPackage.PUBLISH: return (EObject)createPublish();
-			case FlowPackage.DEFERRED_INVOCATION: return (EObject)createDeferredInvocation();
-			case FlowPackage.DEFERRING_INVOCABLE: return (EObject)createDeferringInvocable();
+			case FlowPackage.FLOW: return (EObject)createFlow();
+			case FlowPackage.FLOW_INPUT_ENTRY: return (EObject)createFlowInputEntry();
+			case FlowPackage.FLOW_OUTPUT_ENTRY: return (EObject)createFlowOutputEntry();
+			case FlowPackage.JOIN_ELEMENT: return (EObject)createJoinElement();
+			case FlowPackage.JOIN_INPUT: return (EObject)createJoinInput();
+			case FlowPackage.JOIN_INPUT_ENTRY: return (EObject)createJoinInputEntry();
+			case FlowPackage.JOIN: return (EObject)createJoin();
+			case FlowPackage.VALUE_PROPERTY: return (EObject)createValueProperty();
+			case FlowPackage.SERVICE_REFERENCE: return (EObject)createServiceReference();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -191,16 +201,6 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <C extends Context> JobQueue<C> createJobQueue() {
-		JobQueueImpl<C> jobQueue = new JobQueueImpl<C>();
-		return jobQueue;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public <R, R1, C extends Context> InvocableThen<R, R1, C> createInvocableThen() {
 		InvocableThenImpl<R, R1, C> invocableThen = new InvocableThenImpl<R, R1, C>();
 		return invocableThen;
@@ -221,8 +221,8 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public BoundInvocable createBoundInvocable() {
-		BoundInvocableImpl boundInvocable = new BoundInvocableImpl();
+	public <R, C extends Context> BoundInvocable<R, C> createBoundInvocable() {
+		BoundInvocableImpl<R, C> boundInvocable = new BoundInvocableImpl<R, C>();
 		return boundInvocable;
 	}
 
@@ -231,18 +231,8 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Map.Entry<String, Invocable> createActionOutput() {
-		ActionOutputImpl actionOutput = new ActionOutputImpl();
-		return actionOutput;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Dispatch createDispatch() {
-		DispatchImpl dispatch = new DispatchImpl();
+	public <R, C extends Context> Dispatch<R, C> createDispatch() {
+		DispatchImpl<R, C> dispatch = new DispatchImpl<R, C>();
 		return dispatch;
 	}
 
@@ -251,8 +241,8 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Publish createPublish() {
-		PublishImpl publish = new PublishImpl();
+	public <R, C extends Context> Publish<R, C> createPublish() {
+		PublishImpl<R, C> publish = new PublishImpl<R, C>();
 		return publish;
 	}
 
@@ -261,8 +251,99 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public DeferredInvocation createDeferredInvocation() {
-		DeferredInvocationImpl deferredInvocation = new DeferredInvocationImpl();
+	public <C extends Context> Flow<C> createFlow() {
+		FlowImpl<C> flow = new FlowImpl<C>();
+		return flow;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, Actuator<?>> createFlowInputEntry() {
+		FlowInputEntryImpl flowInputEntry = new FlowInputEntryImpl();
+		return flowInputEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, ActuatorReference<?, ?>> createFlowOutputEntry() {
+		FlowOutputEntryImpl flowOutputEntry = new FlowOutputEntryImpl();
+		return flowOutputEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <R, C extends Context> JoinElement<R, C> createJoinElement() {
+		JoinElementImpl<R, C> joinElement = new JoinElementImpl<R, C>();
+		return joinElement;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <R, C extends Context> JoinInput<R, C> createJoinInput() {
+		JoinInputImpl<R, C> joinInput = new JoinInputImpl<R, C>();
+		return joinInput;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@SuppressWarnings("rawtypes")
+	public <C extends Context> Map.Entry createJoinInputEntry() {
+		JoinInputEntryImpl<C> joinInputEntry = new JoinInputEntryImpl<C>();
+		return joinInputEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <C extends Context> Join<C> createJoin() {
+		JoinImpl<C> join = new JoinImpl<C>();
+		return join;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <T> ValueProperty<T> createValueProperty() {
+		ValuePropertyImpl<T> valueProperty = new ValuePropertyImpl<T>();
+		return valueProperty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <T> ServiceReference<T> createServiceReference() {
+		ServiceReferenceImpl<T> serviceReference = new ServiceReferenceImpl<T>();
+		return serviceReference;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <R, C extends Context> DeferredInvocation<R, C> createDeferredInvocation() {
+		DeferredInvocationImpl<R, C> deferredInvocation = new DeferredInvocationImpl<R, C>();
 		return deferredInvocation;
 	}
 
@@ -271,8 +352,58 @@ public class FlowFactoryImpl extends EFactoryImpl implements FlowFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public DeferringInvocable createDeferringInvocable() {
-		DeferringInvocableImpl deferringInvocable = new DeferringInvocableImpl();
+	public <T> PropertyReference<T> createPropertyReference() {
+		PropertyReferenceImpl<T> propertyReference = new PropertyReferenceImpl<T>();
+		return propertyReference;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, EObject> createPropertyEntry() {
+		PropertyEntryImpl propertyEntry = new PropertyEntryImpl();
+		return propertyEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <R, C extends Context> JavaAction<R, C> createJavaAction() {
+		JavaActionImpl<R, C> javaAction = new JavaActionImpl<R, C>();
+		return javaAction;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, Actuator<?>> createActionOutputEntry() {
+		ActionOutputEntryImpl actionOutputEntry = new ActionOutputEntryImpl();
+		return actionOutputEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Map.Entry<String, Invocable<?, ?>> createErrorHandlerEntry() {
+		ErrorHandlerEntryImpl errorHandlerEntry = new ErrorHandlerEntryImpl();
+		return errorHandlerEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <R, C extends Context> DeferringInvocable<R, C> createDeferringInvocable() {
+		DeferringInvocableImpl<R, C> deferringInvocable = new DeferringInvocableImpl<R, C>();
 		return deferringInvocable;
 	}
 

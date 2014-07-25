@@ -31,13 +31,13 @@ public interface BoxingFactory extends EFactory {
 	BigDecimalBox createBigDecimalBox();
 
 	/**
-	 * Returns a new object of class '<em>Big Integerl Box</em>'.
+	 * Returns a new object of class '<em>Big Integer Box</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Big Integerl Box</em>'.
+	 * @return a new object of class '<em>Big Integer Box</em>'.
 	 * @generated
 	 */
-	BigIntegerlBox createBigIntegerlBox();
+	BigIntegerBox createBigIntegerBox();
 
 	/**
 	 * Returns a new object of class '<em>Boolean Box</em>'.

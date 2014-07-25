@@ -5,6 +5,7 @@ import java.util.Map;
 import org.json.JSONObject;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.HTMLFactory.Placement;
 import org.nasdanika.html.InputGroup;
@@ -19,6 +20,9 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 	InputGroupImpl(HTMLFactory factory, Object control) {
 		super(factory);
 		this.control = control;
+		if (control instanceof Input) {
+			((Input) control).addClass("form-control");
+		}		
 		addClass("input-group");
 	}
 	

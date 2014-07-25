@@ -67,7 +67,7 @@ public class ThenReferenceImpl<R, R1, C extends Context> extends CDOObjectImpl i
 	 */
 	@SuppressWarnings("unchecked")
 	public Then<R, R1, C> getTarget() {
-		return (Then<R, R1, C>)eGet(FlowPackage.Literals.THEN_REFERENCE__TARGET, true);
+		return (Then<R, R1, C>)eGet(FlowPackage.Literals.REFERENCE__TARGET, true);
 	}
 
 	/**
@@ -76,7 +76,7 @@ public class ThenReferenceImpl<R, R1, C extends Context> extends CDOObjectImpl i
 	 * @generated
 	 */
 	public void setTarget(Then<R, R1, C> newTarget) {
-		eSet(FlowPackage.Literals.THEN_REFERENCE__TARGET, newTarget);
+		eSet(FlowPackage.Literals.REFERENCE__TARGET, newTarget);
 	}
 
 	/**
@@ -99,6 +99,23 @@ public class ThenReferenceImpl<R, R1, C extends Context> extends CDOObjectImpl i
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
+		if (baseClass == Then.class) {
+			switch (baseOperationID) {
+				case FlowPackage.THEN___ON_FULFILLED__OBJECT_CONTEXT: return FlowPackage.THEN_REFERENCE___ON_FULFILLED__OBJECT_CONTEXT;
+				case FlowPackage.THEN___ON_REJECTED__EXCEPTION_CONTEXT: return FlowPackage.THEN_REFERENCE___ON_REJECTED__EXCEPTION_CONTEXT;
+				default: return -1;
+			}
+		}
+		return super.eDerivedOperationID(baseOperationID, baseClass);
 	}
 
 	/**

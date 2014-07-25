@@ -77,15 +77,6 @@ public interface FlowFactory extends EFactory {
 	<R, C extends Context> Job<R, C> createJob();
 
 	/**
-	 * Returns a new object of class '<em>Job Queue</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Job Queue</em>'.
-	 * @generated
-	 */
-	<C extends Context> JobQueue<C> createJobQueue();
-
-	/**
 	 * Returns a new object of class '<em>Invocable Then</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -110,7 +101,7 @@ public interface FlowFactory extends EFactory {
 	 * @return a new object of class '<em>Bound Invocable</em>'.
 	 * @generated
 	 */
-	BoundInvocable createBoundInvocable();
+	<R, C extends Context> BoundInvocable<R, C> createBoundInvocable();
 
 	/**
 	 * Returns a new object of class '<em>Dispatch</em>'.
@@ -119,7 +110,7 @@ public interface FlowFactory extends EFactory {
 	 * @return a new object of class '<em>Dispatch</em>'.
 	 * @generated
 	 */
-	Dispatch createDispatch();
+	<R, C extends Context> Dispatch<R, C> createDispatch();
 
 	/**
 	 * Returns a new object of class '<em>Publish</em>'.
@@ -128,7 +119,61 @@ public interface FlowFactory extends EFactory {
 	 * @return a new object of class '<em>Publish</em>'.
 	 * @generated
 	 */
-	Publish createPublish();
+	<R, C extends Context> Publish<R, C> createPublish();
+
+	/**
+	 * Returns a new object of class '<em>Flow</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Flow</em>'.
+	 * @generated
+	 */
+	<C extends Context> Flow<C> createFlow();
+
+	/**
+	 * Returns a new object of class '<em>Join Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Join Element</em>'.
+	 * @generated
+	 */
+	<R, C extends Context> JoinElement<R, C> createJoinElement();
+
+	/**
+	 * Returns a new object of class '<em>Join Input</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Join Input</em>'.
+	 * @generated
+	 */
+	<R, C extends Context> JoinInput<R, C> createJoinInput();
+
+	/**
+	 * Returns a new object of class '<em>Join</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Join</em>'.
+	 * @generated
+	 */
+	<C extends Context> Join<C> createJoin();
+
+	/**
+	 * Returns a new object of class '<em>Value Property</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Value Property</em>'.
+	 * @generated
+	 */
+	<T> ValueProperty<T> createValueProperty();
+
+	/**
+	 * Returns a new object of class '<em>Service Reference</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Service Reference</em>'.
+	 * @generated
+	 */
+	<T> ServiceReference<T> createServiceReference();
 
 	/**
 	 * Returns a new object of class '<em>Deferred Invocation</em>'.
@@ -137,7 +182,25 @@ public interface FlowFactory extends EFactory {
 	 * @return a new object of class '<em>Deferred Invocation</em>'.
 	 * @generated
 	 */
-	DeferredInvocation createDeferredInvocation();
+	<R, C extends Context> DeferredInvocation<R, C> createDeferredInvocation();
+
+	/**
+	 * Returns a new object of class '<em>Property Reference</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Property Reference</em>'.
+	 * @generated
+	 */
+	<T> PropertyReference<T> createPropertyReference();
+
+	/**
+	 * Returns a new object of class '<em>Java Action</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Java Action</em>'.
+	 * @generated
+	 */
+	<R, C extends Context> JavaAction<R, C> createJavaAction();
 
 	/**
 	 * Returns a new object of class '<em>Deferring Invocable</em>'.
@@ -146,7 +209,7 @@ public interface FlowFactory extends EFactory {
 	 * @return a new object of class '<em>Deferring Invocable</em>'.
 	 * @generated
 	 */
-	DeferringInvocable createDeferringInvocable();
+	<R, C extends Context> DeferringInvocable<R, C> createDeferringInvocable();
 
 	/**
 	 * Returns the package supported by this factory.

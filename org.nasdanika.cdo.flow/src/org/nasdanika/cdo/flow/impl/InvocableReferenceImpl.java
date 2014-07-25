@@ -10,10 +10,12 @@ import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 
+import org.nasdanika.cdo.flow.ActuatorReference;
 import org.nasdanika.cdo.flow.FlowPackage;
 import org.nasdanika.cdo.flow.Invocable;
 import org.nasdanika.cdo.flow.InvocableReference;
 
+import org.nasdanika.cdo.flow.Reference;
 import org.nasdanika.core.Context;
 
 /**
@@ -66,7 +68,7 @@ public class InvocableReferenceImpl<R, C extends Context> extends CDOObjectImpl 
 	 */
 	@SuppressWarnings("unchecked")
 	public Invocable<R, C> getTarget() {
-		return (Invocable<R, C>)eGet(FlowPackage.Literals.INVOCABLE_REFERENCE__TARGET, true);
+		return (Invocable<R, C>)eGet(FlowPackage.Literals.REFERENCE__TARGET, true);
 	}
 
 	/**
@@ -75,7 +77,7 @@ public class InvocableReferenceImpl<R, C extends Context> extends CDOObjectImpl 
 	 * @generated
 	 */
 	public void setTarget(Invocable<R, C> newTarget) {
-		eSet(FlowPackage.Literals.INVOCABLE_REFERENCE__TARGET, newTarget);
+		eSet(FlowPackage.Literals.REFERENCE__TARGET, newTarget);
 	}
 
 	/**
@@ -98,6 +100,48 @@ public class InvocableReferenceImpl<R, C extends Context> extends CDOObjectImpl 
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == Reference.class) {
+			switch (derivedFeatureID) {
+				case FlowPackage.INVOCABLE_REFERENCE__TARGET: return FlowPackage.REFERENCE__TARGET;
+				default: return -1;
+			}
+		}
+		if (baseClass == ActuatorReference.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
+		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == Reference.class) {
+			switch (baseFeatureID) {
+				case FlowPackage.REFERENCE__TARGET: return FlowPackage.INVOCABLE_REFERENCE__TARGET;
+				default: return -1;
+			}
+		}
+		if (baseClass == ActuatorReference.class) {
+			switch (baseFeatureID) {
+				default: return -1;
+			}
+		}
+		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
 	/**

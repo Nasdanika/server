@@ -231,14 +231,14 @@ public interface BoxingPackage extends EPackage {
 
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.boxing.impl.BigIntegerlBoxImpl <em>Big Integerl Box</em>}' class.
+	 * The meta object id for the '{@link org.nasdanika.cdo.boxing.impl.BigIntegerBoxImpl <em>Big Integer Box</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.boxing.impl.BigIntegerlBoxImpl
-	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getBigIntegerlBox()
+	 * @see org.nasdanika.cdo.boxing.impl.BigIntegerBoxImpl
+	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getBigIntegerBox()
 	 * @generated
 	 */
-	int BIG_INTEGERL_BOX = 2;
+	int BIG_INTEGER_BOX = 2;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -247,16 +247,16 @@ public interface BoxingPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BIG_INTEGERL_BOX__VALUE = BOX_FEATURE_COUNT + 0;
+	int BIG_INTEGER_BOX__VALUE = BOX_FEATURE_COUNT + 0;
 
 	/**
-	 * The number of structural features of the '<em>Big Integerl Box</em>' class.
+	 * The number of structural features of the '<em>Big Integer Box</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BIG_INTEGERL_BOX_FEATURE_COUNT = BOX_FEATURE_COUNT + 1;
+	int BIG_INTEGER_BOX_FEATURE_COUNT = BOX_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>Get</em>' operation.
@@ -265,7 +265,7 @@ public interface BoxingPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BIG_INTEGERL_BOX___GET__CONTEXT = BOX___GET__CONTEXT;
+	int BIG_INTEGER_BOX___GET__CONTEXT = BOX___GET__CONTEXT;
 
 	/**
 	 * The operation id for the '<em>Set</em>' operation.
@@ -274,16 +274,16 @@ public interface BoxingPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int BIG_INTEGERL_BOX___SET__OBJECT_CONTEXT = BOX___SET__OBJECT_CONTEXT;
+	int BIG_INTEGER_BOX___SET__OBJECT_CONTEXT = BOX___SET__OBJECT_CONTEXT;
 
 	/**
-	 * The number of operations of the '<em>Big Integerl Box</em>' class.
+	 * The number of operations of the '<em>Big Integer Box</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int BIG_INTEGERL_BOX_OPERATION_COUNT = BOX_OPERATION_COUNT + 0;
+	int BIG_INTEGER_BOX_OPERATION_COUNT = BOX_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.boxing.impl.BooleanBoxImpl <em>Boolean Box</em>}' class.
@@ -1506,25 +1506,25 @@ public interface BoxingPackage extends EPackage {
 	EAttribute getBigDecimalBox_Value();
 
 	/**
-	 * Returns the meta object for class '{@link org.nasdanika.cdo.boxing.BigIntegerlBox <em>Big Integerl Box</em>}'.
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.boxing.BigIntegerBox <em>Big Integer Box</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Big Integerl Box</em>'.
-	 * @see org.nasdanika.cdo.boxing.BigIntegerlBox
+	 * @return the meta object for class '<em>Big Integer Box</em>'.
+	 * @see org.nasdanika.cdo.boxing.BigIntegerBox
 	 * @generated
 	 */
-	EClass getBigIntegerlBox();
+	EClass getBigIntegerBox();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.boxing.BigIntegerlBox#getValue <em>Value</em>}'.
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.boxing.BigIntegerBox#getValue <em>Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Value</em>'.
-	 * @see org.nasdanika.cdo.boxing.BigIntegerlBox#getValue()
-	 * @see #getBigIntegerlBox()
+	 * @see org.nasdanika.cdo.boxing.BigIntegerBox#getValue()
+	 * @see #getBigIntegerBox()
 	 * @generated
 	 */
-	EAttribute getBigIntegerlBox_Value();
+	EAttribute getBigIntegerBox_Value();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.boxing.BooleanBox <em>Boolean Box</em>}'.
@@ -2097,14 +2097,14 @@ public interface BoxingPackage extends EPackage {
 		EAttribute BIG_DECIMAL_BOX__VALUE = eINSTANCE.getBigDecimalBox_Value();
 
 		/**
-		 * The meta object literal for the '{@link org.nasdanika.cdo.boxing.impl.BigIntegerlBoxImpl <em>Big Integerl Box</em>}' class.
+		 * The meta object literal for the '{@link org.nasdanika.cdo.boxing.impl.BigIntegerBoxImpl <em>Big Integer Box</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.cdo.boxing.impl.BigIntegerlBoxImpl
-		 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getBigIntegerlBox()
+		 * @see org.nasdanika.cdo.boxing.impl.BigIntegerBoxImpl
+		 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getBigIntegerBox()
 		 * @generated
 		 */
-		EClass BIG_INTEGERL_BOX = eINSTANCE.getBigIntegerlBox();
+		EClass BIG_INTEGER_BOX = eINSTANCE.getBigIntegerBox();
 
 		/**
 		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
@@ -2112,7 +2112,7 @@ public interface BoxingPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute BIG_INTEGERL_BOX__VALUE = eINSTANCE.getBigIntegerlBox_Value();
+		EAttribute BIG_INTEGER_BOX__VALUE = eINSTANCE.getBigIntegerBox_Value();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.boxing.impl.BooleanBoxImpl <em>Boolean Box</em>}' class.

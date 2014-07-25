@@ -79,8 +79,8 @@ public class BoxingAdapterFactory extends AdapterFactoryImpl {
 				return createBigDecimalBoxAdapter();
 			}
 			@Override
-			public Adapter caseBigIntegerlBox(BigIntegerlBox object) {
-				return createBigIntegerlBoxAdapter();
+			public Adapter caseBigIntegerBox(BigIntegerBox object) {
+				return createBigIntegerBoxAdapter();
 			}
 			@Override
 			public Adapter caseBooleanBox(BooleanBox object) {
@@ -211,16 +211,16 @@ public class BoxingAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.boxing.BigIntegerlBox <em>Big Integerl Box</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.boxing.BigIntegerBox <em>Big Integer Box</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.boxing.BigIntegerlBox
+	 * @see org.nasdanika.cdo.boxing.BigIntegerBox
 	 * @generated
 	 */
-	public Adapter createBigIntegerlBoxAdapter() {
+	public Adapter createBigIntegerBoxAdapter() {
 		return null;
 	}
 

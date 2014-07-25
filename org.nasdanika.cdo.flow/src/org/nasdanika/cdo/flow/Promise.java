@@ -2,6 +2,7 @@
  */
 package org.nasdanika.cdo.flow;
 
+import java.util.Date;
 import org.eclipse.emf.cdo.CDOObject;
 import org.nasdanika.core.Context;
 
@@ -14,6 +15,7 @@ import org.nasdanika.core.Context;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.flow.Promise#isDone <em>Done</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.flow.Promise#getExpires <em>Expires</em>}</li>
  * </ul>
  * </p>
  *
@@ -50,6 +52,32 @@ public interface Promise<R, C extends Context> extends CDOObject {
 	void setDone(boolean value);
 
 	/**
+	 * Returns the value of the '<em><b>Expires</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Expires</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Expires</em>' attribute.
+	 * @see #setExpires(Date)
+	 * @see org.nasdanika.cdo.flow.FlowPackage#getPromise_Expires()
+	 * @model
+	 * @generated
+	 */
+	Date getExpires();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.cdo.flow.Promise#getExpires <em>Expires</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Expires</em>' attribute.
+	 * @see #getExpires()
+	 * @generated
+	 */
+	void setExpires(Date value);
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @model executorType="org.nasdanika.cdo.flow.Executor<C>"
@@ -80,5 +108,13 @@ public interface Promise<R, C extends Context> extends CDOObject {
 	 * @generated
 	 */
 	PromiseState getState();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	boolean cancel();
 
 } // Promise

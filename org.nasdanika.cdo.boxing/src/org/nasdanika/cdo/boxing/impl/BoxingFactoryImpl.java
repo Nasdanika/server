@@ -63,7 +63,7 @@ public class BoxingFactoryImpl extends EFactoryImpl implements BoxingFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case BoxingPackage.BIG_DECIMAL_BOX: return (EObject)createBigDecimalBox();
-			case BoxingPackage.BIG_INTEGERL_BOX: return (EObject)createBigIntegerlBox();
+			case BoxingPackage.BIG_INTEGER_BOX: return (EObject)createBigIntegerBox();
 			case BoxingPackage.BOOLEAN_BOX: return (EObject)createBooleanBox();
 			case BoxingPackage.BYTE_BOX: return (EObject)createByteBox();
 			case BoxingPackage.BYTE_ARRAY_BOX: return (EObject)createByteArrayBox();
@@ -158,9 +158,9 @@ public class BoxingFactoryImpl extends EFactoryImpl implements BoxingFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public BigIntegerlBox createBigIntegerlBox() {
-		BigIntegerlBoxImpl bigIntegerlBox = new BigIntegerlBoxImpl();
-		return bigIntegerlBox;
+	public BigIntegerBox createBigIntegerBox() {
+		BigIntegerBoxImpl bigIntegerBox = new BigIntegerBoxImpl();
+		return bigIntegerBox;
 	}
 
 	/**

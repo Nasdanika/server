@@ -3,6 +3,7 @@
 package org.nasdanika.cdo.flow;
 
 import org.eclipse.emf.common.util.EList;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -17,13 +18,13 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  *
  * @see org.nasdanika.cdo.flow.FlowPackage#getDispatch()
- * @model
+ * @model CBounds="org.nasdanika.cdo.flow.Context"
  * @generated
  */
-public interface Dispatch extends Invocable {
+public interface Dispatch<R, C extends Context> extends Invocable<R, C> {
 	/**
 	 * Returns the value of the '<em><b>Targets</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.cdo.flow.Invocable}.
+	 * The list contents are of type {@link org.nasdanika.cdo.flow.Invocable}&lt;R, C>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Targets</em>' containment reference list isn't clear,
@@ -35,6 +36,6 @@ public interface Dispatch extends Invocable {
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<Invocable> getTargets();
+	EList<Invocable<R, C>> getTargets();
 
 } // Dispatch

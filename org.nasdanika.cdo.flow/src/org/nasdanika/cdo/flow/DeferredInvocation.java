@@ -4,6 +4,7 @@ package org.nasdanika.cdo.flow;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -19,10 +20,10 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  *
  * @see org.nasdanika.cdo.flow.FlowPackage#getDeferredInvocation()
- * @model
+ * @model CBounds="org.nasdanika.cdo.flow.Context"
  * @generated
  */
-public interface DeferredInvocation extends Command {
+public interface DeferredInvocation<R, C extends Context> extends Command<R, C> {
 	/**
 	 * Returns the value of the '<em><b>Arguments</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.emf.ecore.EObject}.
@@ -48,12 +49,12 @@ public interface DeferredInvocation extends Command {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Result</em>' containment reference.
-	 * @see #setResult(Deferred)
+	 * @see #setResult(Promise)
 	 * @see org.nasdanika.cdo.flow.FlowPackage#getDeferredInvocation_Result()
 	 * @model containment="true"
 	 * @generated
 	 */
-	Deferred getResult();
+	Promise<R, C> getResult();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.cdo.flow.DeferredInvocation#getResult <em>Result</em>}' containment reference.
@@ -63,6 +64,6 @@ public interface DeferredInvocation extends Command {
 	 * @see #getResult()
 	 * @generated
 	 */
-	void setResult(Deferred value);
+	void setResult(Promise<R, C> value);
 
 } // DeferredInvocation

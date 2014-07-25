@@ -31,8 +31,8 @@
     <genClasses ecoreClass="boxing.ecore#//BigDecimalBox">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//BigDecimalBox/value"/>
     </genClasses>
-    <genClasses ecoreClass="boxing.ecore#//BigIntegerlBox">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//BigIntegerlBox/value"/>
+    <genClasses ecoreClass="boxing.ecore#//BigIntegerBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//BigIntegerBox/value"/>
     </genClasses>
     <genClasses ecoreClass="boxing.ecore#//BooleanBox">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//BooleanBox/value"/>

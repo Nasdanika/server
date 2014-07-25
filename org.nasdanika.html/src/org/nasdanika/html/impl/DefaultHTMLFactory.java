@@ -226,16 +226,6 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public Tag input(InputType type, String name, String value, String id, String placeholder) {
-		return tag("input")
-				.attribute("type", type.code())
-				.attribute("name", name)
-				.attribute("value", value)
-				.id(id)
-				.attribute("placeholder", placeholder).addClass("form-control");		
-	}
-
-	@Override
 	public Tabs tabs() {
 		return new TabsImpl(this);
 	}
@@ -243,16 +233,6 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Tag glyphicon(Glyphicon glyphicon) {		
 		return span("").addClass("glyphicon").addClass("glyphicon-"+glyphicon.code());
-	}
-	
-	@Override
-	public Tag div(Object... content) {
-		return tag("div", content);
-	}
-	
-	@Override
-	public Tag span(Object... content) {
-		return tag("span", content);
 	}
 	
 	@Override

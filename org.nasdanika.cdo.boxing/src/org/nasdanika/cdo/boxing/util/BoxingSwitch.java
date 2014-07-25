@@ -82,10 +82,10 @@ public class BoxingSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case BoxingPackage.BIG_INTEGERL_BOX: {
-				BigIntegerlBox bigIntegerlBox = (BigIntegerlBox)theEObject;
-				T1 result = caseBigIntegerlBox(bigIntegerlBox);
-				if (result == null) result = caseBox(bigIntegerlBox);
+			case BoxingPackage.BIG_INTEGER_BOX: {
+				BigIntegerBox bigIntegerBox = (BigIntegerBox)theEObject;
+				T1 result = caseBigIntegerBox(bigIntegerBox);
+				if (result == null) result = caseBox(bigIntegerBox);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -263,17 +263,17 @@ public class BoxingSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Big Integerl Box</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Big Integer Box</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Big Integerl Box</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Big Integer Box</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseBigIntegerlBox(BigIntegerlBox object) {
+	public T1 caseBigIntegerBox(BigIntegerBox object) {
 		return null;
 	}
 

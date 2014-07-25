@@ -34,7 +34,7 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		return attributes.get(ID);
 	}
 	
-	private Map<String, Object> attributes = new HashMap<>();
+	protected Map<String, Object> attributes = new HashMap<>();
 	
 	private Map<String, Object> styles = new HashMap<>();
 
@@ -55,8 +55,14 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 			if (!STYLE.equals(a.getKey()) && !CLASS.equals(a.getKey()) && !Arrays.asList(excluded).contains(a.getKey())) {
 				if (attributeBuilder.length()>0) {
 					attributeBuilder.append(" ");
+				}				
+				Object value = a.getValue();
+				if (Boolean.TRUE.equals(value)) {
+					// boolean attributes
+					attributeBuilder.append(a.getKey());					
+				} else {
+					attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(String.valueOf(value))+"\"");
 				}
-				attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(String.valueOf(a.getValue()))+"\"");
 			}
 		}
 		

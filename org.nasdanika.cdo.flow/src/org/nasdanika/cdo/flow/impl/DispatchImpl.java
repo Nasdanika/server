@@ -9,6 +9,7 @@ import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.flow.Dispatch;
 import org.nasdanika.cdo.flow.FlowPackage;
 import org.nasdanika.cdo.flow.Invocable;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,7 +24,7 @@ import org.nasdanika.cdo.flow.Invocable;
  *
  * @generated
  */
-public class DispatchImpl extends CDOObjectImpl implements Dispatch {
+public class DispatchImpl<R, C extends Context> extends CDOObjectImpl implements Dispatch<R, C> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -59,30 +60,36 @@ public class DispatchImpl extends CDOObjectImpl implements Dispatch {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Invocable> getTargets() {
-		return (EList<Invocable>)eGet(FlowPackage.Literals.DISPATCH__TARGETS, true);
+	public EList<Invocable<R, C>> getTargets() {
+		return (EList<Invocable<R, C>>)eGet(FlowPackage.Literals.DISPATCH__TARGETS, true);
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public R invoke(C context, EList<Object> arguments) throws Exception {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		for (Invocable<R, C> t: getTargets()) {
+			if (t.accept(context, arguments)) {
+				return t.invoke(context, arguments);
+			}
+		}
+		return null;
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public boolean accept(C context, EList<Object> arguments) throws Exception {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		for (Invocable<R, C> t: getTargets()) {
+			if (t.accept(context, arguments)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

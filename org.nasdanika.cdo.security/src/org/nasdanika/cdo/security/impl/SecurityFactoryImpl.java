@@ -77,10 +77,10 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case SecurityPackage.ACCESS_DECISION:
-				return createAccessDecisionFromString(eDataType, initialValue);
 			case SecurityPackage.CONTEXT:
 				return createContextFromString(eDataType, initialValue);
+			case SecurityPackage.ACCESS_DECISION:
+				return createAccessDecisionFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -94,10 +94,10 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case SecurityPackage.ACCESS_DECISION:
-				return convertAccessDecisionToString(eDataType, instanceValue);
 			case SecurityPackage.CONTEXT:
 				return convertContextToString(eDataType, instanceValue);
+			case SecurityPackage.ACCESS_DECISION:
+				return convertAccessDecisionToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}

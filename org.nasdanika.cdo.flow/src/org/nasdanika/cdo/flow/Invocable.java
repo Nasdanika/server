@@ -2,10 +2,7 @@
  */
 package org.nasdanika.cdo.flow;
 
-import org.eclipse.emf.cdo.CDOObject;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.nasdanika.core.Context;
 
 /**
@@ -16,10 +13,9 @@ import org.nasdanika.core.Context;
  *
  * @see org.nasdanika.cdo.flow.FlowPackage#getInvocable()
  * @model interface="true" abstract="true" CBounds="org.nasdanika.cdo.flow.Context"
- * @extends CDOObject
  * @generated
  */
-public interface Invocable<R, C extends Context> extends CDOObject {
+public interface Invocable<R, C extends Context> extends Actuator<R> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

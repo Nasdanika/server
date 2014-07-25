@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="security" nsURI="urn:org.nasdanika.cdo.security" nsPrefix="org.nasdanika.cdo.security">
+  <eClassifiers xsi:type="ecore:EDataType" name="Context" instanceClassName="org.nasdanika.core.Context"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordCredentials" instanceClassName="org.nasdanika.cdo.security.LoginPasswordCredentials"
+      abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="ProtectionDomain" abstract="true" interface="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="&lt;html>Protection domain establishes associations between users and actions which they can execute by the means of groups and permissions. There is no Role class/interface in the domain. A grantable actions is Role.&lt;/html>"/>
@@ -20,7 +23,7 @@
       </eAnnotations>
       <eParameters name="obj" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
     </eOperations>
-    <eOperations name="getUsers" upperBound="-1" eType="#//User"/>
+    <eOperations name="getAllUsers" upperBound="-1" eType="#//User"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
         eType="#//Action" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -49,6 +52,18 @@
         <details key="documentation" value="&lt;html>If this reference is set then all authenticated users are considered to be implicit members of this group.&lt;/html>"/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordProtectionDomain" abstract="true">
+    <eOperations name="setPasswordHash">
+      <eParameters name="user" eType="#//LoginPasswordHashUser"/>
+      <eParameters name="password" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eOperations name="getUser" eType="#//User">
+      <eParameters name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
+    <eGenericSuperTypes eClassifier="#//ProtectionDomain">
+      <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Principal" abstract="true" interface="true">
     <eOperations name="authorize" eType="#//AccessDecision">
@@ -101,6 +116,12 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="User" abstract="true" interface="true"
       eSuperTypes="#//Principal"/>
+  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordHashUser" abstract="true"
+      interface="true" eSuperTypes="#//User">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        iD="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="passwordHash" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Action">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="&lt;html>Action defined for instances of given EClass&lt;/html>"/>
@@ -116,7 +137,11 @@
         </eGenericType>
       </eParameters>
     </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value=""/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetNamespaceURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -211,7 +236,4 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="Context" instanceClassName="org.nasdanika.core.Context"/>
-  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordCredentials" instanceClassName="org.nasdanika.cdo.security.LoginPasswordCredentials"
-      abstract="true" interface="true"/>
 </ecore:EPackage>

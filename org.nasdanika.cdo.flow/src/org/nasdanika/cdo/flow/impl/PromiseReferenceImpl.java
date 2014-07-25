@@ -4,6 +4,7 @@ package org.nasdanika.cdo.flow.impl;
 
 import java.lang.reflect.InvocationTargetException;
 
+import java.util.Date;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -15,6 +16,7 @@ import org.nasdanika.cdo.flow.FlowPackage;
 import org.nasdanika.cdo.flow.Promise;
 import org.nasdanika.cdo.flow.PromiseReference;
 import org.nasdanika.cdo.flow.PromiseState;
+import org.nasdanika.cdo.flow.Reference;
 import org.nasdanika.cdo.flow.Then;
 
 import org.nasdanika.core.Context;
@@ -27,6 +29,7 @@ import org.nasdanika.core.Context;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.flow.impl.PromiseReferenceImpl#isDone <em>Done</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.flow.impl.PromiseReferenceImpl#getExpires <em>Expires</em>}</li>
  *   <li>{@link org.nasdanika.cdo.flow.impl.PromiseReferenceImpl#getTarget <em>Target</em>}</li>
  * </ul>
  * </p>
@@ -86,9 +89,27 @@ public class PromiseReferenceImpl<R, C extends Context> extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Date getExpires() {
+		return (Date)eGet(FlowPackage.Literals.PROMISE__EXPIRES, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setExpires(Date newExpires) {
+		eSet(FlowPackage.Literals.PROMISE__EXPIRES, newExpires);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	public Promise<R, C> getTarget() {
-		return (Promise<R, C>)eGet(FlowPackage.Literals.PROMISE_REFERENCE__TARGET, true);
+		return (Promise<R, C>)eGet(FlowPackage.Literals.REFERENCE__TARGET, true);
 	}
 
 	/**
@@ -97,7 +118,7 @@ public class PromiseReferenceImpl<R, C extends Context> extends CDOObjectImpl im
 	 * @generated
 	 */
 	public void setTarget(Promise<R, C> newTarget) {
-		eSet(FlowPackage.Literals.PROMISE_REFERENCE__TARGET, newTarget);
+		eSet(FlowPackage.Literals.REFERENCE__TARGET, newTarget);
 	}
 
 	/**
@@ -147,6 +168,49 @@ public class PromiseReferenceImpl<R, C extends Context> extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean cancel() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == Reference.class) {
+			switch (derivedFeatureID) {
+				case FlowPackage.PROMISE_REFERENCE__TARGET: return FlowPackage.REFERENCE__TARGET;
+				default: return -1;
+			}
+		}
+		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == Reference.class) {
+			switch (baseFeatureID) {
+				case FlowPackage.REFERENCE__TARGET: return FlowPackage.PROMISE_REFERENCE__TARGET;
+				default: return -1;
+			}
+		}
+		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
@@ -159,6 +223,8 @@ public class PromiseReferenceImpl<R, C extends Context> extends CDOObjectImpl im
 				return getRejectionReason((C)arguments.get(0));
 			case FlowPackage.PROMISE_REFERENCE___GET_STATE:
 				return getState();
+			case FlowPackage.PROMISE_REFERENCE___CANCEL:
+				return cancel();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

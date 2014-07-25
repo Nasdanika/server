@@ -3,20 +3,16 @@
 package org.nasdanika.cdo.flow.impl;
 
 import java.lang.reflect.InvocationTargetException;
-
+import java.util.Date;
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.flow.Any;
 import org.nasdanika.cdo.flow.Executor;
 import org.nasdanika.cdo.flow.FlowPackage;
 import org.nasdanika.cdo.flow.Promise;
 import org.nasdanika.cdo.flow.PromiseState;
 import org.nasdanika.cdo.flow.Then;
-
 import org.nasdanika.core.Context;
 
 /**
@@ -27,7 +23,7 @@ import org.nasdanika.core.Context;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.flow.impl.AnyImpl#isDone <em>Done</em>}</li>
- *   <li>{@link org.nasdanika.cdo.flow.impl.AnyImpl#getPromises <em>Promises</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.flow.impl.AnyImpl#getExpires <em>Expires</em>}</li>
  * </ul>
  * </p>
  *
@@ -86,8 +82,8 @@ public class AnyImpl<R, C extends Context> extends CDOObjectImpl implements Any<
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Promise<R, C> getPromises() {
-		return (Promise<R, C>)eGet(FlowPackage.Literals.ANY__PROMISES, true);
+	public Date getExpires() {
+		return (Date)eGet(FlowPackage.Literals.PROMISE__EXPIRES, true);
 	}
 
 	/**
@@ -95,8 +91,8 @@ public class AnyImpl<R, C extends Context> extends CDOObjectImpl implements Any<
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setPromises(Promise<R, C> newPromises) {
-		eSet(FlowPackage.Literals.ANY__PROMISES, newPromises);
+	public void setExpires(Date newExpires) {
+		eSet(FlowPackage.Literals.PROMISE__EXPIRES, newExpires);
 	}
 
 	/**
@@ -159,6 +155,17 @@ public class AnyImpl<R, C extends Context> extends CDOObjectImpl implements Any<
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean cancel() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
@@ -174,6 +181,8 @@ public class AnyImpl<R, C extends Context> extends CDOObjectImpl implements Any<
 				return getRejectionReason((C)arguments.get(0));
 			case FlowPackage.ANY___GET_STATE:
 				return getState();
+			case FlowPackage.ANY___CANCEL:
+				return cancel();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

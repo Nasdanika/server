@@ -33,6 +33,7 @@ import org.nasdanika.core.NasdanikaException;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.flow.impl.DeferredImpl#isDone <em>Done</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.flow.impl.DeferredImpl#getExpires <em>Expires</em>}</li>
  *   <li>{@link org.nasdanika.cdo.flow.impl.DeferredImpl#getState <em>State</em>}</li>
  *   <li>{@link org.nasdanika.cdo.flow.impl.DeferredImpl#getCreated <em>Created</em>}</li>
  *   <li>{@link org.nasdanika.cdo.flow.impl.DeferredImpl#getResolved <em>Resolved</em>}</li>
@@ -91,6 +92,24 @@ public class DeferredImpl<R, C extends Context> extends CDOObjectImpl implements
 	 */
 	public void setDone(boolean newDone) {
 		eSet(FlowPackage.Literals.PROMISE__DONE, newDone);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Date getExpires() {
+		return (Date)eGet(FlowPackage.Literals.PROMISE__EXPIRES, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setExpires(Date newExpires) {
+		eSet(FlowPackage.Literals.PROMISE__EXPIRES, newExpires);
 	}
 
 	/**
@@ -260,6 +279,7 @@ public class DeferredImpl<R, C extends Context> extends CDOObjectImpl implements
 			resolve(promise.getFulfillmentValue(context), context, executor);
 			break;
 		case PENDING:
+		case CANCELLED:
 			((Deferred<R,C>) promise).getThenDeferreds().add(this);
 			break;
 		case REJECTED:
@@ -310,7 +330,6 @@ public class DeferredImpl<R, C extends Context> extends CDOObjectImpl implements
 		// This method is invoked in a new transaction after containing deferred is resolved
 		// The method invokes Then, if present, and resolves this deferred to then return value.
 		if (eContainer() instanceof Promise) {
-			@SuppressWarnings("unchecked")
 			Promise<?, C> containingPromise = (Promise<?, C>) eContainer();
 			switch (containingPromise.getState()) {
 			case FULFILLED:
@@ -335,6 +354,8 @@ public class DeferredImpl<R, C extends Context> extends CDOObjectImpl implements
 							executor);
 				}				
 				return null;
+			case CANCELLED:
+				throw new IllegalStateException("Containing promise is in CANCELLED state");
 			default:
 				throw new IllegalArgumentException("Unexpected promise state: "+containingPromise.getState());
 			}
@@ -376,6 +397,26 @@ public class DeferredImpl<R, C extends Context> extends CDOObjectImpl implements
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	public boolean cancel() {
+		switch (getState()) {
+		case CANCELLED:
+			return true;
+		case FULFILLED:
+		case REJECTED:
+			return false;
+		case PENDING:
+			setState(PromiseState.CANCELLED);
+			return true;
+		default:
+			throw new IllegalStateException("Unexpected promise state: "+getState());
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
 	@SuppressWarnings("unchecked")
 	public <R1> Promise<R1, C> then(Then<R, R1, C> then, C context, Executor<C> executor) {
 		Deferred<R1, C> ret = FlowFactory.eINSTANCE.createDeferred();
@@ -383,6 +424,7 @@ public class DeferredImpl<R, C extends Context> extends CDOObjectImpl implements
 		getThenDeferreds().add(ret);
 		switch (getState()) {
 		case PENDING:
+		case CANCELLED:
 			// Nothing
 			break;
 		case FULFILLED:
@@ -440,6 +482,8 @@ public class DeferredImpl<R, C extends Context> extends CDOObjectImpl implements
 				return getFulfillmentValue((C)arguments.get(0));
 			case FlowPackage.DEFERRED___GET_REJECTION_REASON__CONTEXT:
 				return getRejectionReason((C)arguments.get(0));
+			case FlowPackage.DEFERRED___CANCEL:
+				return cancel();
 		}
 		return super.eInvoke(operationID, arguments);
 	}
