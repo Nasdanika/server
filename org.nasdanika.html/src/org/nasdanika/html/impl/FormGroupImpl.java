@@ -2,6 +2,7 @@ package org.nasdanika.html.impl;
 
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
@@ -22,8 +23,8 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 		this.label = label;
 		this.controlId = controlId;
 		this.control = control;	
-		if (control instanceof UIElement<?>) {
-			((UIElement<?>) control).addClass("form-control");
+		if (control instanceof Input) {
+			((Input) control).addClass("form-control");
 		}
 		this.helpText = helpText;
 		addClass("form-group");
