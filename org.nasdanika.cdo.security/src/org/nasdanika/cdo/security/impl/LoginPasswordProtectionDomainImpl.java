@@ -5,6 +5,7 @@ package org.nasdanika.cdo.security.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -15,6 +16,7 @@ import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
+import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.User;
 import org.nasdanika.core.NasdanikaException;
@@ -159,6 +161,49 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 			throw new NasdanikaException(e);
 		}
 	}
+		
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public User getUser(String login) {
+		for (User user: getAllUsers()) {
+			if (user instanceof LoginPasswordHashUser && login.equalsIgnoreCase(((LoginPasswordHashUser) user).getLogin())) {
+				return user;
+			}
+		}
+		
+		return null;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public void clearPermissions(EObject obj) {
+		for (User user: getAllUsers()) {
+			Iterator<Permission> pit = user.getPermissions().iterator();
+			while (pit.hasNext()) {
+				Permission p = pit.next();
+				if (p.getTarget().equals(obj)) {
+					pit.remove();
+				}
+			}
+		}
+	}	
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<User> getAllUsers() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -198,6 +243,8 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING:
 				setPasswordHash((LoginPasswordHashUser)arguments.get(0), (String)arguments.get(1));
 				return null;
+			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_USER__STRING:
+				return getUser((String)arguments.get(0));
 			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___AUTHENTICATE__OBJECT:
 				return authenticate((LoginPasswordCredentials)arguments.get(0));
 			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT:

@@ -22,4 +22,12 @@ public interface LoginPasswordProtectionDomain extends ProtectionDomain<LoginPas
 	 * @generated
 	 */
 	void setPasswordHash(LoginPasswordHashUser user, String password);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	User getUser(String login);
 } // LoginPasswordProtectionDomain

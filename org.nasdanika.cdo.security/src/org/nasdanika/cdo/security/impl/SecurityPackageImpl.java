@@ -285,6 +285,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getLoginPasswordProtectionDomain__GetUser__String() {
+		return loginPasswordProtectionDomainEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPrincipal() {
 		return principalEClass;
 	}
@@ -727,6 +736,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		loginPasswordProtectionDomainEClass = createEClass(LOGIN_PASSWORD_PROTECTION_DOMAIN);
 		createEOperation(loginPasswordProtectionDomainEClass, LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING);
+		createEOperation(loginPasswordProtectionDomainEClass, LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_USER__STRING);
 
 		principalEClass = createEClass(PRINCIPAL);
 		createEReference(principalEClass, PRINCIPAL__MEMBER_OF);
@@ -843,6 +853,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		op = initEOperation(getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String(), null, "setPasswordHash", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getLoginPasswordHashUser(), "user", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "password", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getLoginPasswordProtectionDomain__GetUser__String(), this.getUser(), "getUser", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "login", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(principalEClass, Principal.class, "Principal", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPrincipal_MemberOf(), this.getGroup(), this.getGroup_Members(), "memberOf", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

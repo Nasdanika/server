@@ -357,13 +357,22 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING = PROTECTION_DOMAIN_OPERATION_COUNT + 0;
 
 	/**
+	 * The operation id for the '<em>Get User</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_USER__STRING = PROTECTION_DOMAIN_OPERATION_COUNT + 1;
+
+	/**
 	 * The number of operations of the '<em>Login Password Protection Domain</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_PROTECTION_DOMAIN_OPERATION_COUNT = PROTECTION_DOMAIN_OPERATION_COUNT + 1;
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN_OPERATION_COUNT = PROTECTION_DOMAIN_OPERATION_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -1106,6 +1115,16 @@ public interface SecurityPackage extends EPackage {
 	EOperation getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String();
 
 	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.LoginPasswordProtectionDomain#getUser(java.lang.String) <em>Get User</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get User</em>' operation.
+	 * @see org.nasdanika.cdo.security.LoginPasswordProtectionDomain#getUser(java.lang.String)
+	 * @generated
+	 */
+	EOperation getLoginPasswordProtectionDomain__GetUser__String();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1700,6 +1719,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EOperation LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING = eINSTANCE.getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String();
+
+		/**
+		 * The meta object literal for the '<em><b>Get User</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_USER__STRING = eINSTANCE.getLoginPasswordProtectionDomain__GetUser__String();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}' class.

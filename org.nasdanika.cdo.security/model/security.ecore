@@ -58,6 +58,9 @@
       <eParameters name="user" eType="#//LoginPasswordHashUser"/>
       <eParameters name="password" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eOperations>
+    <eOperations name="getUser" eType="#//User">
+      <eParameters name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eOperations>
     <eGenericSuperTypes eClassifier="#//ProtectionDomain">
       <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
     </eGenericSuperTypes>

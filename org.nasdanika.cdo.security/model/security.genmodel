@@ -32,6 +32,9 @@
         <genParameters ecoreParameter="security.ecore#//LoginPasswordProtectionDomain/setPasswordHash/user"/>
         <genParameters ecoreParameter="security.ecore#//LoginPasswordProtectionDomain/setPasswordHash/password"/>
       </genOperations>
+      <genOperations ecoreOperation="security.ecore#//LoginPasswordProtectionDomain/getUser">
+        <genParameters ecoreParameter="security.ecore#//LoginPasswordProtectionDomain/getUser/login"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//Principal">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Principal/memberOf"/>
