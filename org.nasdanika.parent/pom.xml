@@ -100,6 +100,7 @@
 		<module>../org.nasdanika.core</module>
 		<module>../org.nasdanika.core.tests</module>
 		<module>../org.nasdanika.web</module>
+		<module>../org.nasdanika.webtest</module>
 		<module>../org.nasdanika.cdo.security</module>
 		<module>../org.nasdanika.cdo.boxing</module>
 		<module>../org.nasdanika.cdo.h2</module>
