@@ -952,11 +952,24 @@ public class ExtensionManager implements AutoCloseable {
 
 	@Override
 	public void close() throws Exception {
-		routeServiceTracker.close();
-		uiPartServiceTracker.close();
+		try {
+			routeServiceTracker.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			uiPartServiceTracker.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		
 		if (converter!=null) {
-			converter.close();
+			try {
+				converter.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		
 		// Closing routes.
