@@ -13,6 +13,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 class TestResult implements Collector {
 
@@ -37,10 +38,15 @@ class TestResult implements Collector {
 		if (test instanceof WebTest) {
 			WebDriver webDriver = ((WebTest) test).getWebDriver();
 			if (webDriver!=null) {
-		        ScreenshotEntry ret = new ScreenshotEntry(methodResult, currentScreenshot, screenshotsDir, Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES));
-		        currentScreenshot = ret;
-				screenshotExecutor.execute(ret);
-				return ret;				
+				try {
+					//new WebDriverWait(webDriver, 10); - TODO - waits from annotations???
+			        ScreenshotEntry ret = new ScreenshotEntry(methodResult, currentScreenshot, screenshotsDir, Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES));
+			        currentScreenshot = ret;
+					screenshotExecutor.execute(ret);
+					return ret;
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 		}
 		return null;
@@ -123,6 +129,22 @@ class TestResult implements Collector {
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
 		}
+	}
+	
+	/**
+	 * 
+	 * @return successes, failures, pending.
+	 */
+	int[] getStats() {
+		int[] ret = {0, 0, 0};
+		for (TestMethodResult tmr: testMethodResults) {
+			if (tmr.failure==null) {
+				ret[tmr.isPending() ? 2 : 0]++;
+			} else {
+				ret[1]++;
+			}
+		}
+		return ret;
 	}
 
 }

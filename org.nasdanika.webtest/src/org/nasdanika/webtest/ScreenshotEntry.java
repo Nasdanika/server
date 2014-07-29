@@ -9,6 +9,8 @@ import java.util.Arrays;
 
 import javax.imageio.ImageIO;
 
+import org.nasdanika.html.impl.DefaultHTMLFactory;
+
 /**
  * Compares current screenshot with the previous, writes to file if different.
  * @author Pavel Vlasov
@@ -86,9 +88,40 @@ class ScreenshotEntry implements Runnable {
 		}		
 	}
 
-	String getCaption() {
-		// TODO.
-		return id;
+	String getHTMLCaption() {
+		if (methodResult==null) {
+			return id;
+		}
+		return methodResult.getHTMLCaption(new DefaultHTMLFactory());
 	}
+	
+	String getTextCaption() {
+		StringBuilder caption = new StringBuilder();
+		if (methodResult instanceof TestMethodResult) {
+			caption.append("[Test] ");
+		} else if (methodResult instanceof ActorMethodResult) {
+			caption.append("[Actor] ");
+		} else if (methodResult instanceof PageMethodResult) {
+			caption.append("[Page] ");
+		}
+		if (methodResult!=null) {
+			Class<?> dc = methodResult.method.getDeclaringClass();
+			Title classTitle = dc.getAnnotation(Title.class);
+			if (classTitle==null) {
+				caption.append(ReportGenerator.classTitle(dc));
+			} else {
+				caption.append(classTitle.value());
+			}
+			caption.append(" :: ");
+			Title mTitle = methodResult.method.getAnnotation(Title.class);
+			if (mTitle==null) {
+				caption.append(ReportGenerator.title(methodResult.method.getName()));
+			} else {
+				caption.append(mTitle.value());
+			}
+		}
+		return caption.toString();
+	}
+	
 	
 }

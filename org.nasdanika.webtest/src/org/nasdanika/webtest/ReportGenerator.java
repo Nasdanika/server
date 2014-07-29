@@ -20,6 +20,9 @@ import org.nasdanika.html.ApplicationPanel.ContentPanel;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.Table.Row.Cell;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Color;
 import org.nasdanika.html.UIElement.DeviceSize;
@@ -151,20 +154,83 @@ class ReportGenerator {
 				Tag imageTag = htmlFactory.tag("img").attribute("src", imageLocation);
 				Tag link = htmlFactory.link(imageLocation, imageTag)
 						.attribute("data-lightbox", "test-"+testMethodResult.id)
-						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getCaption()));
+						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getTextCaption()));
 				screenshotCarousel.slide()
 					.content(link)
-					.caption(htmlFactory.label(Style.INFO, se.getCaption()).style("opacity", "0.7"));
+					.caption(htmlFactory.label(Style.INFO, se.getHTMLCaption()).style("opacity", "0.7"));
 			}
 			testMethodResultWriter.write(htmlFactory.div(screenshotCarousel).addClass("container").toString());
-			//testMethodResultWriter.write("<script>jQuery('#"+slideCarousel.getId()+"').carousel();</script>");
+			
+			Table methodTable = htmlFactory.table().bordered();
+			Row headerRow = methodTable.row().style(Style.INFO);
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.time), " Duration");
+			testMethodResult.genRows(htmlFactory, methodTable, 0);
+			testMethodResultWriter.write("<P>"+methodTable.toString());			
 		}
 	}
 
 	protected void generateTestResultDetails(TestResult testResult, DefaultHTMLFactory htmlFactory, File contentDir) throws IOException {
-		try (FileWriter testMethodResultWriter = new FileWriter(new File(contentDir, "class_"+testResult.id+".html"))) {
-			testMethodResultWriter.write("TODO - Test result - "+testResult);
+		try (FileWriter testResultWriter = new FileWriter(new File(contentDir, "class_"+testResult.id+".html"))) {
+			testResultWriter.write("<H3>");
+			testResultWriter.write(classTitle(testResult.klass));
+			testResultWriter.write("</H3>");
+			
+			Description description = testResult.klass.getAnnotation(Description.class);
+			if (description!=null) {
+				if (description.html()) {
+					for (String str: description.value()) {
+						testResultWriter.write(str);
+						testResultWriter.write(" ");
+					}
+				} else {
+					testResultWriter.write("<pre>");
+					int idx = 0;
+					for (String str: description.value()) {
+						if (idx++>0) {
+							testResultWriter.write(System.lineSeparator());
+						}
+						testResultWriter.write(StringEscapeUtils.escapeHtml4(str));
+					}
+					testResultWriter.write("</pre>");			
+				}
+			}
+			
+			Table methodTable = htmlFactory.table().bordered();
+			Row headerRow = methodTable.row().style(Style.INFO);
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.time), " Duration");
+			for (TestMethodResult tmr: testResult.testMethodResults) {
+				tmr.genRow(htmlFactory, methodTable);
+			}
+			
+			testResultWriter.write("<P>"+methodTable.toString());			
+
 		}
+	}
+	
+	static String classTitle(Class<?> klass) {
+		return title(klass.getName().substring(klass.getName().lastIndexOf('.')+1));		
+	}
+	
+	static String title(String name) {
+		StringBuilder titleBuilder = new StringBuilder();
+		String[] scna = StringUtils.splitByCharacterTypeCamelCase(name);
+		for (int i=0; i<scna.length; ++i) {
+			if (i==0) {
+				titleBuilder.append(StringUtils.capitalize(scna[i]));
+			} else {
+				titleBuilder.append(" ");
+				if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
+					titleBuilder.append(scna[i]);
+				} else {
+					titleBuilder.append(StringUtils.uncapitalize(scna[i]));
+				}
+			}
+		}
+		return titleBuilder.toString();
 	}
 
 	protected Tag generateTestsLeftPanel(HTMLFactory htmlFactory, File contentDir, boolean includeMetodResults) throws IOException {
@@ -175,20 +241,7 @@ class ReportGenerator {
 			StringBuilder nameBuilder = new StringBuilder();
 			Title testTitle = testResult.klass.getAnnotation(Title.class);
 			if (testTitle==null) {
-				String shortClassName = testResult.klass.getName().substring(testResult.klass.getName().lastIndexOf('.')+1);
-				String[] scna = StringUtils.splitByCharacterTypeCamelCase(shortClassName);
-				for (int i=0; i<scna.length; ++i) {
-					if (i==0) {
-						nameBuilder.append(StringUtils.capitalize(scna[i]));
-					} else {
-						nameBuilder.append(" ");
-						if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
-							nameBuilder.append(scna[i]);
-						} else {
-							nameBuilder.append(StringUtils.uncapitalize(scna[i]));
-						}
-					}
-				}
+				nameBuilder.append(classTitle(klass));
 			} else {
 				nameBuilder.append(testTitle.value());
 			}
@@ -198,59 +251,7 @@ class ReportGenerator {
 			
 			if (includeMetodResults) {
 				for (TestMethodResult tmr : testResult.testMethodResults) {
-					String name = "";
-					Title mTitle = tmr.method.getAnnotation(Title.class);
-					if (mTitle == null) {
-						String[] na = StringUtils.splitByCharacterTypeCamelCase(tmr.method.getName());
-						for (int i=0; i<na.length; ++i) {
-							if (i==0) {
-								name = StringUtils.capitalize(na[i]);
-							} else {
-								name += " ";
-								if (na[i].length()>1 && Character.isUpperCase(na[i].charAt(1))) {
-									name += na[i];
-								} else {
-									name += StringUtils.uncapitalize(na[i]);
-								}
-							}
-						}					
-					} else {
-						name = mTitle.value();
-					}
-					
-					Object methodLabel;
-					String methodDetailsLocation = "content/method_"	+ tmr.id + ".html";
-					if (tmr.failure==null) {
-						if (tmr.allScreenshots().size()==1 || tmr.childResults.isEmpty()) { // Only the first screenshot or no calls to actor/page methods.
-							methodLabel = htmlFactory.span(
-									htmlFactory.glyphicon(Glyphicon.time), 
-									"&nbsp;", 
-									name).style("color", Color.GRAY.code);
-							
-						} else {
-							methodLabel = htmlFactory.routeLink(
-									"main", 
-									methodDetailsLocation, 
-									htmlFactory.glyphicon(Glyphicon.ok), 
-									"&nbsp;", 
-									name).style("color", Color.SUCCESS.code);
-							
-						}
-					} else {
-						methodLabel = htmlFactory.routeLink(
-								"main", 
-								methodDetailsLocation, 
-								htmlFactory.glyphicon(Glyphicon.remove), 
-								"&nbsp;", 
-								name).style("color", Color.DANGER.code);
-						
-					}
-					testsDL.content(htmlFactory.tag("dt", methodLabel).style("padding-left", "15px"));
-	
-					try (FileWriter methodWriter = new FileWriter(new File(contentDir, "method_" + tmr.id + ".html"))) {
-						methodWriter.write("TODO - method results and carousel");
-					}
-	
+					testsDL.content(htmlFactory.tag("dt", tmr.routeLink(htmlFactory, true)).style("padding-left", "15px"));
 				}
 			}
 		}
@@ -259,7 +260,52 @@ class ReportGenerator {
 
 	protected void generateSummary(HTMLFactory htmlFactory, File contentDir) throws IOException {
 		try (FileWriter summaryWriter = new FileWriter(new File(contentDir, "summary.html"))) {
-			summaryWriter.write("TODO - I'm the SUMMARY!");
+			summaryWriter.write("<H3>Summary</H3>");
+			Table classTable = htmlFactory.table().bordered();
+			Row header = classTable.row().background(Color.PRIMARY);
+			int[] totals = {0, 0, 0};
+			header.header(htmlFactory.glyphicon(Glyphicon.search), "&nbsp;Test class");
+			header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
+			header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Success");
+			header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail");
+			header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending");
+			for (TestResult tr: testResults) {
+				Row classRow = classTable.row();
+				classRow.cell(htmlFactory.routeLink("main", "content/class_"+tr.id+".html", classTitle(tr.klass)));
+				Cell descriptionCell = classRow.cell();
+				Description description = tr.klass.getAnnotation(Description.class);
+				if (description==null) {
+					descriptionCell.content("&nbsp;");
+				} else if (description.html()) {
+					for (String str: description.value()) {
+						descriptionCell.content(str, " ");
+					}
+				} else {
+					descriptionCell.content("<pre>");
+					int idx = 0;
+					for (String str: description.value()) {
+						if (idx++>0) {
+							descriptionCell.content(System.lineSeparator());
+						}
+						descriptionCell.content(StringEscapeUtils.escapeHtml4(str));
+					}
+					descriptionCell.content("</pre>");			
+				}
+				int[] stats = tr.getStats();
+				classRow.cell(stats[0]).attribute("align", "center");
+				classRow.cell(stats[1]).attribute("align", "center");
+				classRow.cell(stats[2]).attribute("align", "center");
+				for (int i=0; i<totals.length; ++i) {
+					totals[i]+=stats[i];
+				}
+			}
+			Row totalsRow = classTable.row().style(Style.INFO);
+			totalsRow.cell("Total").colspan(2);
+			totalsRow.cell(totals[0]).attribute("align", "center");
+			totalsRow.cell(totals[1]).attribute("align", "center");
+			totalsRow.cell(totals[2]).attribute("align", "center");
+			
+			summaryWriter.write(classTable.toString());
 		}
 	}
 	
