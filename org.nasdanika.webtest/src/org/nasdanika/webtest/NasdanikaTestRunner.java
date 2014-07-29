@@ -231,7 +231,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 			
 			Executor screenshotExecutor = suite==null ? Executors.newSingleThreadExecutor() : suite.getScreenshotExecutor();
 			
-			TestResult testResult = new TestResult(counter, screenshotsDir, screenshotExecutor);
+			TestResult testResult = new TestResult(getTestClass().getJavaClass(), counter, screenshotsDir, screenshotExecutor);
 			Collector prevCollector = collectorThreadLocal.get();
 			collectorThreadLocal.set(testResult);
 			try {
@@ -275,8 +275,8 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 
 		    @Override
 		    public void evaluate() throws Throwable {
-		    	collectorThreadLocal.get().beforeTestMethod(test, method.getMethod());
 		    	try {
+			    	collectorThreadLocal.get().beforeTestMethod(test, method.getMethod());
 		    		method.invokeExplosively(test);
 		    		collectorThreadLocal.get().afterTestMethod(test, method.getMethod(), null);
 		    	} catch (Throwable th) {

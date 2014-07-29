@@ -1,8 +1,13 @@
 package org.nasdanika.webtest;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Arrays;
+
+import javax.imageio.ImageIO;
 
 /**
  * Compares current screenshot with the previous, writes to file if different.
@@ -28,10 +33,24 @@ class ScreenshotEntry implements Runnable {
 	public File getScreenshotFile() {
 		return screenshotFile;
 	}
+	
+	private int width;
+	private int height;
+	
+	public int getWidth() {
+		return prev==null ? width : prev.getWidth();
+	}
+	
+	public int getHeight() {
+		return prev==null ? height : prev.getHeight();
+	}
 
 	private ScreenshotEntry prev;
 
-	ScreenshotEntry(ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
+	final MethodResult methodResult;
+
+	ScreenshotEntry(MethodResult methodResult, ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
+		this.methodResult = methodResult;
 		this.screenshotsDir = screenshotsDir;
 		this.id = id;
 		this.bytes = bytes;
@@ -40,7 +59,17 @@ class ScreenshotEntry implements Runnable {
 
 	@Override
 	public void run() {
-		if (prev!=null) {
+		if (prev==null) {
+			try {
+				BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
+				if (image!=null) {
+					width = image.getWidth();
+					height = image.getHeight();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
 			if (Arrays.equals(prev.getMaster().bytes, bytes)) {
 				master = prev.getMaster();
 				bytes = null;
@@ -48,13 +77,18 @@ class ScreenshotEntry implements Runnable {
 			}
 		}
 		try {
-			screenshotFile = new File(screenshotsDir, "screenshort_"+id+".png");
+			screenshotFile = new File(screenshotsDir, "screenshot_"+id+".png");
 			try (FileOutputStream fos = new FileOutputStream(screenshotFile)) {
 				fos.write(bytes);
 			}			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
+	}
+
+	String getCaption() {
+		// TODO.
+		return id;
 	}
 	
 }

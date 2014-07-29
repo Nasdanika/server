@@ -24,10 +24,10 @@ public @interface Report {
 	String outputDir() default "nasdanika-web-tests/{2}";
 	
 	/**
-	 * Screenshot slide size in the carousel. 
+	 * Screenshot slide width in the carousel. 
 	 * @return
 	 */
-	int[] slideSize() default {800, 600};
+	int slideWidth() default 800;
 		
 	// Style
 	

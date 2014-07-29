@@ -2,6 +2,7 @@ package org.nasdanika.webtest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 class MethodResult {
@@ -41,5 +42,24 @@ class MethodResult {
 	Throwable failure;
 	
 	List<MethodResult> childResults = new ArrayList<>();
+	
+	List<ScreenshotEntry> allScreenshots() {
+		return collectAllScreenshots( new LinkedList<ScreenshotEntry>()); 
+	}
+	
+	private LinkedList<ScreenshotEntry> collectAllScreenshots(LinkedList<ScreenshotEntry> collector) {
+		if (beforeScreenshot!=null && (collector.isEmpty() || beforeScreenshot.getMaster()!=collector.getLast())) {
+			collector.add(beforeScreenshot.getMaster());
+		}
+		
+		for (MethodResult mr: childResults) {
+			mr.collectAllScreenshots(collector);
+		}
+		
+		if (afterScreenshot!=null && (collector.isEmpty() || afterScreenshot.getMaster()!=collector.getLast())) {
+			collector.add(afterScreenshot.getMaster());
+		}
+		return collector;
+	};
 	
 }

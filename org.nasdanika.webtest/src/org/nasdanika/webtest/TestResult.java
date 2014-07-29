@@ -19,21 +19,25 @@ class TestResult implements Collector {
 	private File screenshotsDir;
 	private Executor screenshotExecutor;
 
-	private AtomicLong counter;	
+	private AtomicLong counter;
+	final Class<?> klass;	
+	final String id;
 
-	TestResult(AtomicLong counter, File screenshotsDir, Executor screenshotExecutor) throws IOException {
+	TestResult(Class<?> klass, AtomicLong counter, File screenshotsDir, Executor screenshotExecutor) throws IOException {
+		this.klass = klass;
 		this.counter = counter;
+		id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
 		this.screenshotsDir = screenshotsDir;
 		this.screenshotExecutor = screenshotExecutor;
 	}
 	
 	private ScreenshotEntry currentScreenshot;
 		
-	private ScreenshotEntry takeScreenshot() {
+	private ScreenshotEntry takeScreenshot(MethodResult methodResult) {
 		if (test instanceof WebTest) {
 			WebDriver webDriver = ((WebTest) test).getWebDriver();
 			if (webDriver!=null) {
-		        ScreenshotEntry ret = new ScreenshotEntry(currentScreenshot, screenshotsDir, Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES));
+		        ScreenshotEntry ret = new ScreenshotEntry(methodResult, currentScreenshot, screenshotsDir, Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES));
 		        currentScreenshot = ret;
 				screenshotExecutor.execute(ret);
 				return ret;				
@@ -60,7 +64,7 @@ class TestResult implements Collector {
 		}		
 	}
 	
-	private List<TestMethodResult> testMethodResults = new ArrayList<>();
+	final List<TestMethodResult> testMethodResults = new ArrayList<>();
 	
 	private MethodResult currentMethodResult;
 	private Object test;
@@ -70,14 +74,14 @@ class TestResult implements Collector {
 		ActorMethodResult amr = new ActorMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
 		actors.get(actor.getClass()).results.add(amr);
 		currentMethodResult = amr;
-		amr.beforeScreenshot = takeScreenshot();
+		amr.beforeScreenshot = takeScreenshot(amr);
 	}
 	@Override
 	public void afterActorMethod(Actor actor, Method method, Object[] args,	Object result, Throwable th) {
 		if (currentMethodResult instanceof ActorMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = takeScreenshot();
+			currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
@@ -88,14 +92,14 @@ class TestResult implements Collector {
 		PageMethodResult pmr = new PageMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
 		pages.get(page.getClass()).results.add(pmr);
 		currentMethodResult = pmr;
-		pmr.beforeScreenshot = takeScreenshot();
+		pmr.beforeScreenshot = takeScreenshot(pmr);
 	}
 	@Override
 	public void afterPageMethod(Page page, Method method, Object[] args, Object result, Throwable th) {
 		if (currentMethodResult instanceof PageMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = takeScreenshot();
+			currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
@@ -106,7 +110,7 @@ class TestResult implements Collector {
 	public void beforeTestMethod(Object test, Method method) {
 		currentMethodResult = new TestMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
 		testMethodResults.add((TestMethodResult) currentMethodResult);
-		currentMethodResult.beforeScreenshot = takeScreenshot();
+		currentMethodResult.beforeScreenshot = takeScreenshot(currentMethodResult);
 		this.test = test;		
 	}
 	@Override
@@ -114,7 +118,7 @@ class TestResult implements Collector {
 		if (currentMethodResult instanceof TestMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = takeScreenshot();
+			currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
