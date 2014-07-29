@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import junit.framework.AssertionFailedError;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
@@ -17,7 +19,9 @@ import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Table.Row.Cell;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.html.UIElement.Style;
+import org.openqa.selenium.NotFoundException;
 
 class MethodResult {
 
@@ -55,6 +59,48 @@ class MethodResult {
 
 	Throwable failure;
 	
+	boolean hasOwnFailure() {
+		if (failure==null) {
+			return false;
+		}
+		
+		Throwable rootCause = getRootCause();
+		for (MethodResult cmr: childResults) {
+			if (isSameRootCause(cmr, rootCause)) {
+				return false;
+			}
+		}
+		
+		return true;
+	}
+	
+	private static boolean isSameRootCause(MethodResult mr, Throwable rootCause) {
+		if (rootCause.equals(mr.getRootCause())) {
+			return true;
+		}
+		for (MethodResult cmr: mr.childResults) {
+			if (isSameRootCause(cmr, rootCause)) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	Throwable getRootCause() {
+		for (Throwable th = failure; th!=null; th = th.getCause()) {
+			if (th.getCause()==null) {
+				return th;
+			}
+		}
+		return failure;
+	}
+	
+	boolean isFailure() {
+		Throwable rootCause = getRootCause();
+		return rootCause instanceof AssertionFailedError 
+				|| rootCause instanceof NotFoundException;
+	}
+	
 	List<MethodResult> childResults = new ArrayList<>();
 	
 	List<ScreenshotEntry> allScreenshots() {
@@ -82,8 +128,10 @@ class MethodResult {
 	
 	void genRow(HTMLFactory htmlFactory, Table methodTable) {
 		Row row = methodTable.row();
-		if (failure!=null) {
+		if (isFailure()) {
 			row.style(Style.DANGER);
+		} else if (failure!=null) {
+			row.style(Style.WARNING);
 		} else if (isPending()) {
 			row.style(Style.DEFAULT);
 		} else {
@@ -122,64 +170,104 @@ class MethodResult {
 			return doStyle ? routeLink.style("color", Color.SUCCESS.code) : routeLink;
 		}
 		
-		Tag routeLink = htmlFactory.routeLink(
+		if (isFailure()) {
+			Tag routeLink = htmlFactory.routeLink(
 					"main", 
 					methodDetailsLocation, 
 					htmlFactory.glyphicon(Glyphicon.remove), 
 					"&nbsp;", 
 					name);
-		return doStyle ? routeLink.style("color", Color.DANGER.code) : routeLink;
+			
+			return doStyle ? routeLink.style("color", Color.DANGER.code) : routeLink;
+		}
+		
+		Tag routeLink = htmlFactory.routeLink(
+					"main", 
+					methodDetailsLocation, 
+					htmlFactory.glyphicon(Glyphicon.warning_sign), 
+					"&nbsp;", 
+					name);
+		return doStyle ? routeLink.style("color", Color.WARNING.code) : routeLink;
 	}
 
 	boolean isPending() {
 		return allScreenshots().size()==1 || childResults.isEmpty();
 	}
-	
-	
-	void genRows(HTMLFactory htmlFactory, Table methodTable, int indent) {
+		
+	void genRows(HTMLFactory htmlFactory, Table methodTable, Object carouselId, List<ScreenshotEntry> screenshots, int indent) {
 		Row row = methodTable.row();
-		if (failure!=null) {
+		if (isFailure()) {
 			row.style(Style.DANGER);
+		} else if (failure!=null) {
+			row.style(Style.WARNING);
 		}
 		
-		row.cell(getHTMLCaption(htmlFactory)).style("padding-left", (indent*30+5)+"px");
+		Object caption = getHTMLCaption(htmlFactory);
+		int slideIdx = -1;
+		if (beforeScreenshot!=null) {
+			slideIdx = screenshots.indexOf(beforeScreenshot.getMaster()); 
+		}
+		if (slideIdx==-1 && afterScreenshot!=null) {
+			slideIdx = screenshots.indexOf(afterScreenshot.getMaster());
+		}
+		if (slideIdx!=-1) {
+			caption = htmlFactory.link("#carousel_"+carouselId, caption)
+					.on(Event.click, "jQuery('#"+carouselId+"').carousel("+slideIdx+"); return true;");
+		}
+		row.cell(caption).style("padding-left", (indent*30+5)+"px");
 		
 		genDescriptionAndDurationCells(htmlFactory, row);
 		
 		for (MethodResult ch: childResults) {
-			ch.genRows(htmlFactory, methodTable, indent+1);
+			ch.genRows(htmlFactory, methodTable, carouselId, screenshots, indent+1);
 		}
+	}
+	
+	String getDescriptionHTML() {
+		Description description = method.getAnnotation(Description.class);
+		if (description==null) {
+			return null;
+		}			
+		
+		StringBuilder ret = new StringBuilder();
+			
+		if (description.html()) {
+			for (String str: description.value()) {
+				ret.append(str).append(" ");
+			}
+		} else {
+			ret.append("<pre>");
+			int idx = 0;
+			for (String str: description.value()) {
+				if (idx++>0) {
+					ret.append(System.lineSeparator());
+				}
+				ret.append(StringEscapeUtils.escapeHtml4(str));
+			}
+			ret.append("</pre>");			
+		}
+		return ret.toString();
 	}
 
 	private void genDescriptionAndDurationCells(HTMLFactory htmlFactory, Row row) {
 		Cell descriptionCell = row.cell();
-		Description description = method.getAnnotation(Description.class);
+		String description = getDescriptionHTML();
+		boolean hasOwnFailure = hasOwnFailure();
 		if (description==null) {
-			if (failure==null) {
+			if (!hasOwnFailure) {
 				descriptionCell.content("&nbsp;");
 			}
-		} else if (description.html()) {
-			for (String str: description.value()) {
-				descriptionCell.content(str, " ");
-			}
 		} else {
-			descriptionCell.content("<pre>");
-			int idx = 0;
-			for (String str: description.value()) {
-				if (idx++>0) {
-					descriptionCell.content(System.lineSeparator());
-				}
-				descriptionCell.content(StringEscapeUtils.escapeHtml4(str));
-			}
-			descriptionCell.content("</pre>");			
+			descriptionCell.content(description);
 		}
 		
-		if (failure!=null) {
+		if (hasOwnFailure) {
 			StringWriter sw = new StringWriter();
-			failure.printStackTrace(new PrintWriter(sw));
+			Throwable rootCause = getRootCause();
+			rootCause.printStackTrace(new PrintWriter(sw));
 			try {
 				sw.close();
-				descriptionCell.content(htmlFactory.collapsible(Style.DANGER, failure, true, "<pre style='color:red'>", sw, "</pre>"));
+				descriptionCell.content(htmlFactory.collapsible(isFailure() ? Style.DANGER : Style.WARNING, "<pre>"+StringEscapeUtils.escapeHtml4(rootCause.toString())+"</pre>", true, "<pre style='color:red'>", sw, "</pre>"));
 			} catch (IOException e) {
 				// Should never happen.
 				e.printStackTrace();

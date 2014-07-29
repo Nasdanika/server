@@ -225,7 +225,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 			File outputDir = suite == null ? configOutputDir(getTestClass().getJavaClass()) : suite.getOutputDir();	
 			
 			File screenshotsDir = new File(outputDir, "screenshots");
-			if (suite==null && !screenshotsDir.mkdir()) {
+			if (!screenshotsDir.exists() && !screenshotsDir.mkdir()) {
 				throw new IOException("Could not create screenshot output directory "+screenshotsDir.getAbsolutePath());			
 			}
 			

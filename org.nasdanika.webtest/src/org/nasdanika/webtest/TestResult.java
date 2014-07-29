@@ -133,15 +133,15 @@ class TestResult implements Collector {
 	
 	/**
 	 * 
-	 * @return successes, failures, pending.
+	 * @return successes, failures, errors, pending.
 	 */
 	int[] getStats() {
-		int[] ret = {0, 0, 0};
+		int[] ret = {0, 0, 0, 0};
 		for (TestMethodResult tmr: testMethodResults) {
 			if (tmr.failure==null) {
-				ret[tmr.isPending() ? 2 : 0]++;
+				ret[tmr.isPending() ? 3 : 0]++;
 			} else {
-				ret[1]++;
+				ret[tmr.isFailure() ? 1 : 2]++;
 			}
 		}
 		return ret;

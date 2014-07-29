@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -20,6 +21,7 @@ import org.nasdanika.html.ApplicationPanel.ContentPanel;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.HTMLFactory.Placement;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Table.Row.Cell;
@@ -85,18 +87,22 @@ class ReportGenerator {
 			title = titleAnnotation.value();
 		}
 		
+		Report reportAnnotation = klass.getAnnotation(Report.class);
+		int slideWidth = reportAnnotation==null ? 800 : reportAnnotation.slideWidth();
+		
+		int width = (int) ((slideWidth+32)*12.0/9.0);
 		ApplicationPanel reportPanel = htmlFactory.applicationPanel()
 				.style(Style.INFO) 
 				.header(title)
 				.headerLink("index.html")
-				.footer("Generated "+new Date());
+				.footer("Generated "+new Date())
+				.width(width); // Assuming large device
 		
-//		Navbar navBar = htmlFactory.navbar("Welcome!", objectPath+".html"); 
+//		Navbar navBar = htmlFactory.navbar("Welcome!", objectPath+".html");
+		
+		int leftPanelWidth = (int) Math.round(250.0*12.0/width);
 
-		ContentPanel leftPanel = reportPanel.contentPanel()
-				.width(DeviceSize.SMALL, 4)
-				.width(DeviceSize.MEDIUM, 3)
-				.width(DeviceSize.LARGE, 2);
+		ContentPanel leftPanel = reportPanel.contentPanel().width(DeviceSize.LARGE, leftPanelWidth);
 		
 		leftPanel.content(htmlFactory.routeLink("main", "content/summary.html", "<b>Summary</b>"), htmlFactory.tag("p"));
 		
@@ -109,11 +115,7 @@ class ReportGenerator {
 		
 		// TODO - Actors, pages.
 		
-		reportPanel.contentPanel()
-			.id("main")
-			.width(DeviceSize.SMALL, 8)
-			.width(DeviceSize.MEDIUM, 9)
-			.width(DeviceSize.LARGE, 10);
+		reportPanel.contentPanel().id("main").width(DeviceSize.LARGE, 12 - leftPanelWidth);
 		
 		try (FileWriter indexWriter = new FileWriter(new File(outputDir, "index.html"))) {
 			indexWriter.write(htmlFactory.routerApplication(
@@ -124,9 +126,6 @@ class ReportGenerator {
 		}
 		
 		generateSummary(htmlFactory, contentDir);
-		
-		Report reportAnnotation = klass.getAnnotation(Report.class);
-		int slideWidth = reportAnnotation==null ? 800 : reportAnnotation.slideWidth(); 
 		
 		for (TestResult testResult: testResults) {
 			generateTestResultDetails(testResult, htmlFactory, contentDir);
@@ -145,29 +144,50 @@ class ReportGenerator {
 			int slideWidth) throws IOException {
 		
 		try (FileWriter testMethodResultWriter = new FileWriter(new File(contentDir, "method_"+testMethodResult.id+".html"))) {
+			StringBuilder initScript = new StringBuilder();
 			Carousel screenshotCarousel = htmlFactory.carousel()
 					.ride(false)
-					.indicatorsBackground(Color.GRAY).style("width", slideWidth+"px")
-					.attribute("data-interval", "false");
-			for (ScreenshotEntry se: testMethodResult.allScreenshots()) {
+					.indicatorsBackground(Color.GRAY)
+					.attribute("data-interval", "false")
+					.id(htmlFactory.nextId()+"_screenshotCarousel");
+			List<ScreenshotEntry> allScreenshots = testMethodResult.allScreenshots();
+			for (ScreenshotEntry se: allScreenshots) {
 				String imageLocation = "screenshots/screenshot_"+se.id+".png";
 				Tag imageTag = htmlFactory.tag("img").attribute("src", imageLocation);
 				Tag link = htmlFactory.link(imageLocation, imageTag)
 						.attribute("data-lightbox", "test-"+testMethodResult.id)
 						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getTextCaption()));
+				String caption = se.getHTMLCaption();
+				if (se.methodResult!=null) {
+					String descr = se.methodResult.getDescriptionHTML();
+					if (descr!=null) {
+						Tag comment = htmlFactory.glyphicon(Glyphicon.comment);
+						comment.id(htmlFactory.nextId()+"_slide_comment");
+						htmlFactory.tooltip(comment, Placement.TOP, descr);
+						initScript.append("jQuery('#"+comment.getId()+"').tooltip({html:true});");
+						caption+="&nbsp;";
+						caption+=comment;		
+					}
+				}
 				screenshotCarousel.slide()
 					.content(link)
-					.caption(htmlFactory.label(Style.INFO, se.getHTMLCaption()).style("opacity", "0.7"));
+					.caption(htmlFactory.label(Style.INFO, caption).style("opacity", "0.7"));
 			}
-			testMethodResultWriter.write(htmlFactory.div(screenshotCarousel).addClass("container").toString());
+			testMethodResultWriter.write("<a name='carousel_"+screenshotCarousel.getId()+"'/>");
+			testMethodResultWriter.write(screenshotCarousel.toString());
 			
 			Table methodTable = htmlFactory.table().bordered();
 			Row headerRow = methodTable.row().style(Style.INFO);
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.time), " Duration");
-			testMethodResult.genRows(htmlFactory, methodTable, 0);
+			testMethodResult.genRows(htmlFactory, methodTable, screenshotCarousel.getId(), allScreenshots, 0);
 			testMethodResultWriter.write("<P>"+methodTable.toString());			
+			if (initScript.length()>0) {
+				testMethodResultWriter.write("<script>");
+				testMethodResultWriter.write(initScript.toString());
+				testMethodResultWriter.write("</script>");				
+			}
 		}
 	}
 
@@ -263,11 +283,12 @@ class ReportGenerator {
 			summaryWriter.write("<H3>Summary</H3>");
 			Table classTable = htmlFactory.table().bordered();
 			Row header = classTable.row().background(Color.PRIMARY);
-			int[] totals = {0, 0, 0};
+			int[] totals = {0, 0, 0, 0};
 			header.header(htmlFactory.glyphicon(Glyphicon.search), "&nbsp;Test class");
 			header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
 			header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Success");
 			header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail");
+			header.header(htmlFactory.glyphicon(Glyphicon.warning_sign), "&nbsp;Error");
 			header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending");
 			for (TestResult tr: testResults) {
 				Row classRow = classTable.row();
@@ -295,6 +316,7 @@ class ReportGenerator {
 				classRow.cell(stats[0]).attribute("align", "center");
 				classRow.cell(stats[1]).attribute("align", "center");
 				classRow.cell(stats[2]).attribute("align", "center");
+				classRow.cell(stats[3]).attribute("align", "center");
 				for (int i=0; i<totals.length; ++i) {
 					totals[i]+=stats[i];
 				}
@@ -304,6 +326,7 @@ class ReportGenerator {
 			totalsRow.cell(totals[0]).attribute("align", "center");
 			totalsRow.cell(totals[1]).attribute("align", "center");
 			totalsRow.cell(totals[2]).attribute("align", "center");
+			totalsRow.cell(totals[3]).attribute("align", "center");
 			
 			summaryWriter.write(classTable.toString());
 		}

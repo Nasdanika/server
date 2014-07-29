@@ -6,7 +6,7 @@ Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: Nasdanika LLC
 Require-Bundle: org.junit;bundle-version="4.11.0";visibility:=reexport,
- org.openqa.selenium;bundle-version="2.42.2";visibility:=reexport,
+ org.openqa.selenium;bundle-version="2.42.2",
  org.nasdanika.html;bundle-version="1.2.0",
  org.nasdanika.thirdparty;bundle-version="1.0.0"
 Export-Package: org.nasdanika.webtest

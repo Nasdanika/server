@@ -8,10 +8,4 @@ package org.nasdanika.webtest;
  */
 public interface Page {
 	
-	/**
-	 * Verifies that what is currently displayed in the browser matches this page.
-	 * @return
-	 */
-	boolean match();
-
 }
