@@ -16,6 +16,8 @@ public interface Carousel extends UIElement<Carousel> {
 	
 	Carousel ride(boolean ride);
 	
+	Carousel indicatorsBackground(Color background);
+	
 	Slide slide();
 		
 }

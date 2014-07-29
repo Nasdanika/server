@@ -11,6 +11,7 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 	
 	private int activeSlide;
 	private List<SlideImpl> slides = new ArrayList<>();
+	private org.nasdanika.html.UIElement.Color indicatorsBackground;
 	
 	private class SlideImpl implements Slide, AutoCloseable {
 		
@@ -97,6 +98,9 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 		}
 		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
 		Tag ol = factory.tag("ol").addClass("carousel-indicators");
+		if (indicatorsBackground!=null) {
+			ol.style("background", indicatorsBackground.code);
+		}
 		for (int i=0; i<slides.size(); ++i) {
 			Tag li = factory.tag("li")
 					.attribute("data-target", "#"+getId())
@@ -143,6 +147,12 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 				.attribute("data-slide", "next"));
 		
 		return sb.append("</div>").toString();
+	}
+
+	@Override
+	public Carousel indicatorsBackground(Color background) {
+		indicatorsBackground = background;
+		return this;
 	}
 
 }
