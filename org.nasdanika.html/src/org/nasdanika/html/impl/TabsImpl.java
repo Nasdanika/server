@@ -22,7 +22,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		
 		@Override
 		public void close() throws Exception {
-			TabsImpl.this.close(name);			
+			UIElementImpl.close(name);			
 		}
 
 		Tab(Object name, int idx) {
@@ -67,7 +67,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		public void close() throws Exception {
 			super.close();
 			for (Object c: content) {
-				TabsImpl.this.close(c);
+				UIElementImpl.close(c);
 			}
 		}
 
@@ -95,7 +95,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		@Override
 		public void close() throws Exception {
 			super.close();
-			TabsImpl.this.close(location);
+			UIElementImpl.close(location);
 		}
 
 		@Override

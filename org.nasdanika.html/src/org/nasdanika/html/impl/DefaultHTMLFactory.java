@@ -292,4 +292,47 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	public Carousel carousel() {
 		return new CarouselImpl(this);
 	}
+
+	@Override
+	public Object collapsible(final Style style, final Object title, final boolean collapsed, final Object... content) {
+		return new AutoCloseable() {
+			
+			@Override
+			public String toString() {
+				String id = nextId()+"_collapsible";
+				StringBuilder ret = new StringBuilder();
+				ret.append("<div class=\"panel panel-"+style.name().toLowerCase()+"\">");
+					ret.append("<div class=\"panel-heading\">");
+						ret.append("<h4 class=\"panel-title\">");
+							ret.append("<a data-toggle=\"collapse\" href=\"#"+id+"\">");
+								ret.append(title);
+							ret.append("</a>");
+						ret.append("</h4>");
+					ret.append("</div>");
+				
+					ret.append("<div id=\""+id+"\" class=\"panel-collapse collapse");
+					if (!collapsed) {
+						ret.append(" in");
+					}
+					ret.append("\">");
+						ret.append("<div class=\"panel-body\">");
+							for (Object o: content) {
+								if (o!=null) {
+									ret.append(o);
+								}
+							}
+						ret.append("</div>");
+					ret.append("</div>");												
+				ret.append("</div>");				
+				return ret.toString();
+			}
+
+			@Override
+			public void close() throws Exception {
+				UIElementImpl.close(title);
+				UIElementImpl.close(content);
+			}
+			
+		};
+	}
 }

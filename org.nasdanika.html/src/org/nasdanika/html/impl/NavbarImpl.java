@@ -69,7 +69,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 			
 			@Override
 			public void close() throws Exception {
-				NavbarImpl.this.close(header);				
+				UIElementImpl.close(header);				
 			}
 		}
 

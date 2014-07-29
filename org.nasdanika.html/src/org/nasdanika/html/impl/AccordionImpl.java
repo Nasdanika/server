@@ -74,9 +74,9 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
 		@Override
 		public void close() throws Exception {
-			AccordionImpl.this.close(title);
-			AccordionImpl.this.close(content);
-			AccordionImpl.this.close(location);
+			UIElementImpl.close(title);
+			UIElementImpl.close(content);
+			UIElementImpl.close(location);
 		}
 		
 	}

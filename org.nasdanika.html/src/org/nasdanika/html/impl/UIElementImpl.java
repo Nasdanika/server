@@ -199,7 +199,7 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	 * @param o
 	 * @throws Exception
 	 */
-	protected void close(Object o) throws Exception {
+	protected static void close(Object o) throws Exception {
 		if (o instanceof AutoCloseable) {
 			((AutoCloseable) o).close();
 		} else if (o!=null && o.getClass().isArray()) {

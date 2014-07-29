@@ -142,6 +142,8 @@ public interface HTMLFactory {
 
 	Accordion accordion();
 	
+	Object collapsible(Style style, Object title, boolean collapsed, Object... content);
+	
 	enum Placement { LEFT, TOP, RIGHT, BOTTOM }
 	
 	/**
