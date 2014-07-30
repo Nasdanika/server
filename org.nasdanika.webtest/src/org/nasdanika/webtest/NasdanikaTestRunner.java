@@ -262,7 +262,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 
 	static File configOutputDir(Class<?> klass) throws IOException {
 		Report reportAnnotation = klass.getAnnotation(Report.class);
-		String outputDirTemplate = reportAnnotation==null ? "nasdanika-web-tests/{2}" : reportAnnotation.outputDir();
+		String outputDirTemplate = reportAnnotation==null ? "target/nasdanika-web-tests/{2}" : reportAnnotation.outputDir();
 		String className = klass.getName();
 		String shortClassName = className.substring(className.lastIndexOf('.')+1);
 		String outputDirName = MessageFormat.format(outputDirTemplate.replace('/', File.separatorChar), new Object[] {shortClassName, className, className.replace('.', File.separatorChar)});

@@ -21,7 +21,7 @@ public @interface Report {
 	 * get replaced with the platform file separator.
 	 * @return
 	 */
-	String outputDir() default "nasdanika-web-tests/{2}";
+	String outputDir() default "target/nasdanika-web-tests/{2}";
 	
 	/**
 	 * Screenshot slide width in the carousel. 
