@@ -261,7 +261,7 @@ class ReportGenerator {
 			StringBuilder nameBuilder = new StringBuilder();
 			Title testTitle = testResult.klass.getAnnotation(Title.class);
 			if (testTitle==null) {
-				nameBuilder.append(classTitle(klass));
+				nameBuilder.append(classTitle(testResult.klass));
 			} else {
 				nameBuilder.append(testTitle.value());
 			}

@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
@@ -97,7 +95,7 @@ class MethodResult {
 	
 	boolean isFailure() {
 		Throwable rootCause = getRootCause();
-		return rootCause instanceof AssertionFailedError 
+		return rootCause instanceof AssertionError 
 				|| rootCause instanceof NotFoundException;
 	}
 	
