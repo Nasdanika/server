@@ -13,7 +13,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 class TestResult implements Collector {
 

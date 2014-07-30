@@ -71,26 +71,30 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			collectorThreadLocal.get().beforePageMethod(page, method, args);
-			try {
-				Object res = method.invoke(page, args);
-				collectorThreadLocal.get().afterPageMethod(page, method, args, res, null);
-				if (res instanceof Page) {
-					Class<? extends Object> resClass = res.getClass();
-					if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
-						return res;
+			if (Page.class.isAssignableFrom(method.getDeclaringClass())) {
+				collectorThreadLocal.get().beforePageMethod(page, method, args);
+				try {
+					Object res = method.invoke(page, args);
+					collectorThreadLocal.get().afterPageMethod(page, method, args, res, null);
+					if (res instanceof Page) {
+						Class<? extends Object> resClass = res.getClass();
+						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
+							return res;
+						}
+						return Proxy.newProxyInstance(
+								resClass.getClassLoader(), 
+								resClass.getInterfaces(), 
+								new PageInvocationHandler((Page) res));
 					}
-					return Proxy.newProxyInstance(
-							resClass.getClassLoader(), 
-							resClass.getInterfaces(), 
-							new PageInvocationHandler((Page) res));
+					
+					return res;
+				} catch (Throwable th) {
+					collectorThreadLocal.get().afterPageMethod(page, method, args, null, th);
+					throw th;
 				}
-				
-				return res;
-			} catch (Throwable th) {
-				collectorThreadLocal.get().afterPageMethod(page, method, args, null, th);
-				throw th;
 			}
+			
+			return method.invoke(page, args); // No recording for non-page methods.
 		}
 	};
 	
@@ -137,26 +141,30 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			collectorThreadLocal.get().beforeActorMethod(actor, method, args);
-			try {
-				Object res = method.invoke(actor, args);
-				collectorThreadLocal.get().afterActorMethod(actor, method, args, res, null);
-				if (res instanceof Actor) {
-					Class<? extends Object> resClass = res.getClass();
-					if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
-						return res;
+			if (Actor.class.isAssignableFrom(method.getDeclaringClass())) {
+				collectorThreadLocal.get().beforeActorMethod(actor, method, args);
+				try {
+					Object res = method.invoke(actor, args);
+					collectorThreadLocal.get().afterActorMethod(actor, method, args, res, null);
+					if (res instanceof Actor) {
+						Class<? extends Object> resClass = res.getClass();
+						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
+							return res;
+						}
+						return Proxy.newProxyInstance(
+								resClass.getClassLoader(), 
+								resClass.getInterfaces(), 
+								new ActorInvocationHandler((Actor) res));
 					}
-					return Proxy.newProxyInstance(
-							resClass.getClassLoader(), 
-							resClass.getInterfaces(), 
-							new ActorInvocationHandler((Actor) res));
+					
+					return res;
+				} catch (Throwable th) {
+					collectorThreadLocal.get().afterActorMethod(actor, method, args, null, th);
+					throw th;
 				}
-				
-				return res;
-			} catch (Throwable th) {
-				collectorThreadLocal.get().afterActorMethod(actor, method, args, null, th);
-				throw th;
 			}
+			
+			return method.invoke(actor, args); // No recording for non-actor methods.
 		}
 	};
 	
