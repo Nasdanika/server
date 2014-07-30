@@ -6,7 +6,12 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -83,7 +88,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 						}
 						return Proxy.newProxyInstance(
 								resClass.getClassLoader(), 
-								resClass.getInterfaces(), 
+								allInterfaces(resClass).toArray(new Class[0]), 
 								new PageInvocationHandler((Page) res));
 					}
 					
@@ -109,7 +114,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		Class<? extends Object> pageFactoryClass = pageFactory.getClass();
 		return (T) Proxy.newProxyInstance(
 				pageFactoryClass.getClassLoader(), 
-				pageFactoryClass.getInterfaces(),
+				allInterfaces(pageFactoryClass).toArray(new Class[0]), 
 				new InvocationHandler() {
 					
 					@Override
@@ -122,7 +127,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 							}
 							return Proxy.newProxyInstance(
 									retClass.getClassLoader(), 
-									retClass.getInterfaces(), 
+									allInterfaces(retClass).toArray(new Class[0]), 
 									new PageInvocationHandler((Page) ret));
 						}
 						return ret;
@@ -153,7 +158,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 						}
 						return Proxy.newProxyInstance(
 								resClass.getClassLoader(), 
-								resClass.getInterfaces(), 
+								allInterfaces(resClass).toArray(new Class[0]),  
 								new ActorInvocationHandler((Actor) res));
 					}
 					
@@ -179,7 +184,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		Class<? extends Object> actorFactoryClass = actorFactory.getClass();
 		return (T) Proxy.newProxyInstance(
 				actorFactoryClass.getClassLoader(), 
-				actorFactoryClass.getInterfaces(),
+				allInterfaces(actorFactoryClass).toArray(new Class[0]),
 				new InvocationHandler() {
 					
 					@Override
@@ -192,14 +197,30 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 							}
 							return Proxy.newProxyInstance(
 									retClass.getClassLoader(), 
-									retClass.getInterfaces(), 
+									allInterfaces(retClass).toArray(new Class[0]),  
 									new ActorInvocationHandler((Actor) ret));
 						}
 						return ret;
 					}
 				});
 	}
-
+	
+	static List<Class<?>> allInterfaces(Class<?> klass) {
+		if (klass==null) {
+			return Collections.emptyList();
+		}
+		List<Class<?>> ret = new ArrayList<Class<?>>(Arrays.asList(klass.getInterfaces()));
+		Z: for (Class<?> i: allInterfaces(klass.getSuperclass())) {
+			for (Class<?> ei: ret) {
+				if (i.isAssignableFrom(ei)) {
+					continue Z;
+				}
+			}
+			ret.add(i);
+		}
+		return ret;
+	}
+	
 	private NasdanikaTestSuite suite;
 
 	public NasdanikaTestRunner(Class<?> klass) throws InitializationError {
@@ -283,9 +304,26 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 
 		    @Override
 		    public void evaluate() throws Throwable {
+		    	boolean isPending = false;
+		    	Pending pendingAnnotation = method.getMethod().getAnnotation(Pending.class);
+		    	if (pendingAnnotation!=null) {
+		    		String until = pendingAnnotation.until();
+		    		if (until.trim().length()==0) {
+		    			isPending = true; // No expiration date - ignore the test
+		    		} else {
+		    			try {
+		    				isPending = new SimpleDateFormat("yyyy-MM-dd").parse(until).getTime() > System.currentTimeMillis();
+		    			} catch (ParseException e) {
+		    				System.err.println("Invalid until date: "+until);
+		    			}
+		    		}
+		    		
+		    	}
 		    	try {
 			    	collectorThreadLocal.get().beforeTestMethod(test, method.getMethod());
-		    		method.invokeExplosively(test);
+			    	if (!isPending) {
+			    		method.invokeExplosively(test);
+			    	}
 		    		collectorThreadLocal.get().afterTestMethod(test, method.getMethod(), null);
 		    	} catch (Throwable th) {
 		    		collectorThreadLocal.get().afterTestMethod(test, method.getMethod(), th);
