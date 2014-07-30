@@ -68,7 +68,7 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 				}
 				breadcrumbs.item(null, label(source));				
 				
-				Tag header = htmlFactory.tag("h4", htmlFactory.routeLink("main", context.getObjectPath(source.eClass())+".html", StringEscapeUtils.escapeHtml4(source.eClass().getName())));
+				Tag header = htmlFactory.tag("h4", htmlFactory.routeLink("main", "/"+context.getObjectPath(source.eClass())+".html", StringEscapeUtils.escapeHtml4(source.eClass().getName())));
 				
 				for (EAttribute attr: source.eClass().getEAllAttributes()) {
 					if (attr.isID()) {
@@ -147,7 +147,7 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 					} else if (sf instanceof EAttribute) {
 						row.cell(context.toHTML(value, null, null));
 					} else {
-						row.cell(htmlFactory.routeLink("main", context.getObjectPath(value)+".html", context.toHTML(value, "label", null)));
+						row.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(value)+".html", context.toHTML(value, "label", null)));
 					}
 				}
 			}

@@ -51,7 +51,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 						pe = pe.substring(0, didx);
 					}
 					if (context instanceof HttpContext) {
-						elements.add(htmlFactory.routeLink(null, ((HttpContext) context).getObjectPath(e)+".html", e.getName()).toString()); // TODO - escape names
+						elements.add(htmlFactory.routeLink(null, "/"+((HttpContext) context).getObjectPath(e)+".html", e.getName()).toString()); // TODO - escape names
 					}
 				}
 				
@@ -87,7 +87,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 				for (CDOPackageInfo pi: sortedPackageInfos) {
 					Row packageRow = packageTable.row();
 					EPackage ePackage = pi.getEPackage();
-					packageRow.cell(htmlFactory.routeLink("main", context.getObjectPath(ePackage)+".html", StringEscapeUtils.escapeHtml4(ePackage.getName()))); // TODO - link
+					packageRow.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(ePackage)+".html", StringEscapeUtils.escapeHtml4(ePackage.getName()))); // TODO - link
 					packageRow.cell(StringEscapeUtils.escapeHtml4(ePackage.getNsURI()));
 					packageRow.cell(NasdanikaCDOUtil.getSummary(ePackage));
 					packageRow.cell(pi.isCorePackage() ? htmlFactory.glyphicon(Glyphicon.ok) : "&nbsp;").attribute("align", "center");

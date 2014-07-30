@@ -40,7 +40,7 @@ public class CDOResourceFolderToHTMLRendererConverter implements Converter<CDORe
 						pe = pe.substring(0, didx);
 					}
 					if (context instanceof HttpContext) {
-						nodes.add(htmlFactory.routeLink(null, ((HttpContext) context).getObjectPath(e)+".html", StringEscapeUtils.escapeHtml4(e.getName())).toString());
+						nodes.add(htmlFactory.routeLink(null, "/"+((HttpContext) context).getObjectPath(e)+".html", StringEscapeUtils.escapeHtml4(e.getName())).toString());
 					}
 				}				
 				

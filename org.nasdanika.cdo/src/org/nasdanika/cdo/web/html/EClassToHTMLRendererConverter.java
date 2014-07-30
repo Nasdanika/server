@@ -73,7 +73,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 					hRow.header("Description");
 					for (EClass st: source.getESuperTypes()) {
 						Row row = scTable.row();
-						Tag classifierLink = htmlFactory.routeLink("main", context.getObjectPath(st)+".html", StringEscapeUtils.escapeHtml4(st.getName()));
+						Tag classifierLink = htmlFactory.routeLink("main", "/"+context.getObjectPath(st)+".html", StringEscapeUtils.escapeHtml4(st.getName()));
 						row.cell(st.isAbstract() ? htmlFactory.tag("i", classifierLink) : classifierLink);						
 						row.cell(NasdanikaCDOUtil.getSummary(st));						
 					}
@@ -92,9 +92,9 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 					hRow.header("Description");
 					for (EAttribute a: source.getEAttributes()) {
 						Row row = aTable.row();
-						row.cell(htmlFactory.routeLink("main", context.getObjectPath(a)+".html", StringEscapeUtils.escapeHtml4(a.getName())));
+						row.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(a)+".html", StringEscapeUtils.escapeHtml4(a.getName())));
 						if (a.getEType()!=null) {
-							row.cell(htmlFactory.routeLink("main", context.getObjectPath(a.getEType())+".html", StringEscapeUtils.escapeHtml4(a.getEType().getName())));
+							row.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(a.getEType())+".html", StringEscapeUtils.escapeHtml4(a.getEType().getName())));
 						} else {
 							row.cell("&nbsp;"); // TODO - generic type.
 						}
@@ -117,9 +117,9 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 					hRow.header("Description");
 					for (EReference r: source.getEReferences()) {
 						Row row = rTable.row();
-						row.cell(htmlFactory.routeLink("main", context.getObjectPath(r)+".html", StringEscapeUtils.escapeHtml4(r.getName())));
+						row.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(r)+".html", StringEscapeUtils.escapeHtml4(r.getName())));
 						if (r.getEType()!=null) {
-							row.cell(htmlFactory.routeLink("main", context.getObjectPath(r.getEType())+".html", StringEscapeUtils.escapeHtml4(r.getEType().getName())));
+							row.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(r.getEType())+".html", StringEscapeUtils.escapeHtml4(r.getEType().getName())));
 						} else {
 							row.cell("&nbsp;"); // TODO - generic type.
 						}
@@ -130,9 +130,9 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 							row.cell("&nbsp;");
 						} else {
 							row.cell(
-									htmlFactory.routeLink("main", context.getObjectPath(r.getEOpposite().getEContainingClass())+".html", StringEscapeUtils.escapeHtml4(r.getEOpposite().getEContainingClass().getName())),
+									htmlFactory.routeLink("main", "/"+context.getObjectPath(r.getEOpposite().getEContainingClass())+".html", StringEscapeUtils.escapeHtml4(r.getEOpposite().getEContainingClass().getName())),
 									".",
-									htmlFactory.routeLink("main", context.getObjectPath(r.getEOpposite())+".html", StringEscapeUtils.escapeHtml4(r.getEOpposite().getName())));
+									htmlFactory.routeLink("main", "/"+context.getObjectPath(r.getEOpposite())+".html", StringEscapeUtils.escapeHtml4(r.getEOpposite().getName())));
 						}
 						row.cell(NasdanikaCDOUtil.getSummary(r));
 					}
@@ -151,9 +151,9 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 					hRow.header("Description");
 					for (EOperation op: source.getEOperations()) {
 						Row row = oTable.row();
-						row.cell(htmlFactory.routeLink("main", context.getObjectPath(op)+".html", StringEscapeUtils.escapeHtml4(op.getName())));
+						row.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(op)+".html", StringEscapeUtils.escapeHtml4(op.getName())));
 						if (op.getEType()!=null) {
-							row.cell(htmlFactory.routeLink("main", context.getObjectPath(op.getEType())+".html", StringEscapeUtils.escapeHtml4(op.getEType().getName())));
+							row.cell(htmlFactory.routeLink("main", "/"+context.getObjectPath(op.getEType())+".html", StringEscapeUtils.escapeHtml4(op.getEType().getName())));
 						} else {
 							row.cell("&nbsp;"); // TODO - generic type.
 						}
@@ -162,16 +162,16 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 						List<Object> params = new ArrayList<>();
 						for (EParameter p: op.getEParameters()) {
 							params.add(htmlFactory.fragment(
-									htmlFactory.routeLink("main", context.getObjectPath(p)+".html", StringEscapeUtils.escapeHtml4(p.getName())),
+									htmlFactory.routeLink("main", "/"+context.getObjectPath(p)+".html", StringEscapeUtils.escapeHtml4(p.getName())),
 									" : ",
-									p.getEType()==null ? "void" : htmlFactory.routeLink("main", context.getObjectPath(p.getEType())+".html", StringEscapeUtils.escapeHtml4(p.getEType().getName())),
+									p.getEType()==null ? "void" : "/"+htmlFactory.routeLink("main", context.getObjectPath(p.getEType())+".html", StringEscapeUtils.escapeHtml4(p.getEType().getName())),
 									p.isMany() ? " *" : ""));
 						}
 						row.cell(htmlFactory.ol(params));						
 						
 						List<Object> exs = new ArrayList<>();
 						for (EClassifier ex: op.getEExceptions()) {
-							params.add(htmlFactory.routeLink("main", context.getObjectPath(ex)+".html", StringEscapeUtils.escapeHtml4(ex.getName())));
+							params.add(htmlFactory.routeLink("main", "/"+context.getObjectPath(ex)+".html", StringEscapeUtils.escapeHtml4(ex.getName())));
 						}
 						row.cell(htmlFactory.ul(exs));
 						

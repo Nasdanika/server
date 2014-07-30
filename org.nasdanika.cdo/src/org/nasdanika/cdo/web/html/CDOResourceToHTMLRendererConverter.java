@@ -48,7 +48,7 @@ public class CDOResourceToHTMLRendererConverter implements Converter<CDOResource
 						pe = pe.substring(0, didx);
 					}
 					if (context instanceof HttpContext) {
-						contents.add(htmlFactory.routeLink(null, ((HttpContext) context).getObjectPath(e)+".html", context.toHTML(e, "label", null)).toString());
+						contents.add(htmlFactory.routeLink(null, "/"+((HttpContext) context).getObjectPath(e)+".html", context.toHTML(e, "label", null)).toString());
 					}
 				}
 								

@@ -74,7 +74,7 @@ public class EPackageToHTMLRendererConverter implements Converter<EPackage, HTML
 				
 				for (EClassifier ec: classifiers) {
 					Row row = classifiersTable.row();
-					Tag classifierLink = htmlFactory.routeLink("main", context.getObjectPath(ec)+".html", StringEscapeUtils.escapeHtml4(ec.getName()));
+					Tag classifierLink = htmlFactory.routeLink("main", "/"+context.getObjectPath(ec)+".html", StringEscapeUtils.escapeHtml4(ec.getName()));
 					row.cell(ec instanceof EClass && ((EClass) ec).isAbstract() ? htmlFactory.tag("i", classifierLink) : classifierLink);
 					if (ec instanceof EClass) {
 						row.cell(((EClass) ec).isInterface() ? "Interface" : "Class").attribute("align", "center");
