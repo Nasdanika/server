@@ -19,7 +19,7 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Color;
 import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.html.UIElement.Style;
-import org.openqa.selenium.NotFoundException;
+import org.openqa.selenium.WebDriverException;
 
 class MethodResult {
 
@@ -95,8 +95,10 @@ class MethodResult {
 	
 	boolean isFailure() {
 		Throwable rootCause = getRootCause();
+		// Maybe need to refine which subclasses of WebDriverException shall be treated as failures,
+		// maybe make configurable through @Report annotation
 		return rootCause instanceof AssertionError 
-				|| rootCause instanceof NotFoundException;
+				|| rootCause instanceof WebDriverException; 
 	}
 	
 	List<MethodResult> childResults = new ArrayList<>();
