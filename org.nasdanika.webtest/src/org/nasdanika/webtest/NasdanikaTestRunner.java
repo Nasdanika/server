@@ -55,10 +55,16 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 				public void afterActorMethod(Actor actor, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
-				public void beforeTestMethod(Object test, Method method) {}
-				
+				public void beforeTestMethod(Method method) {}
+
 				@Override
-				public void afterTestMethod(Object test, Method method,	Throwable th) {}
+				public void takeBeforeTestMethodScreenshot(Object test) {}
+
+				@Override
+				public void afterTestMethod(Method method, Throwable th) {}
+
+				@Override
+				public void takeAfterTestMethodScreenshot() {}
 				
 			};
 		};
@@ -299,11 +305,12 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 	}
 	
 	@Override
-	protected Statement methodInvoker(final FrameworkMethod method, final Object test) {		
+	protected Statement methodBlock(final FrameworkMethod method) {
+		final Statement superStatement =  super.methodBlock(method);
 		return new Statement() {
 
-		    @Override
-		    public void evaluate() throws Throwable {
+			@Override
+			public void evaluate() throws Throwable {
 		    	boolean isPending = false;
 		    	Pending pendingAnnotation = method.getMethod().getAnnotation(Pending.class);
 		    	if (pendingAnnotation!=null) {
@@ -319,15 +326,32 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		    		}
 		    		
 		    	}
-		    	try {
-			    	collectorThreadLocal.get().beforeTestMethod(test, method.getMethod());
-			    	if (!isPending) {
-			    		method.invokeExplosively(test);
+				if (!isPending) {
+			    	collectorThreadLocal.get().beforeTestMethod(method.getMethod());
+			    	try {
+			    		superStatement.evaluate();
+			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), null);
+			    	} catch (Throwable th) {
+			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), th);
+			    		throw th;
 			    	}
-		    		collectorThreadLocal.get().afterTestMethod(test, method.getMethod(), null);
-		    	} catch (Throwable th) {
-		    		collectorThreadLocal.get().afterTestMethod(test, method.getMethod(), th);
-		    		throw th;
+				}
+			}
+			
+		};
+	}
+	
+	@Override
+	protected Statement methodInvoker(final FrameworkMethod method, final Object test) {		
+		return new Statement() {
+
+		    @Override
+		    public void evaluate() throws Throwable {
+		    	try {		    		
+		    		collectorThreadLocal.get().takeBeforeTestMethodScreenshot(test);
+			    	method.invokeExplosively(test);
+		    	} finally {
+		    		collectorThreadLocal.get().takeAfterTestMethodScreenshot();
 		    	}
 		    }
 		    

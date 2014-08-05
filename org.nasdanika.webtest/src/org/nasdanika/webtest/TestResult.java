@@ -112,22 +112,32 @@ class TestResult implements Collector {
 	}
 	
 	@Override
-	public void beforeTestMethod(Object test, Method method) {
+	public void beforeTestMethod(Method method) {
 		currentMethodResult = new TestMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
 		testMethodResults.add((TestMethodResult) currentMethodResult);
-		currentMethodResult.beforeScreenshot = takeScreenshot(currentMethodResult);
-		this.test = test;		
 	}
+	
 	@Override
-	public void afterTestMethod(Object test, Method method, Throwable th) {
+	public void takeBeforeTestMethodScreenshot(Object test) {
+		this.test = test;		
+		currentMethodResult.beforeScreenshot = takeScreenshot(currentMethodResult);		
+	}
+	
+	@Override
+	public void afterTestMethod(Method method, Throwable th) {
 		if (currentMethodResult instanceof TestMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
 		}
+	}
+	
+	@Override
+	public void takeAfterTestMethodScreenshot() {
+		currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
+		test = null; // Disables snapshots in @After
 	}
 	
 	/**

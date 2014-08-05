@@ -16,8 +16,12 @@ interface Collector {
 	
 	void afterActorMethod(Actor actor, Method method, Object[] args, Object result, Throwable th);
 	
-	void beforeTestMethod(Object test, Method method);
+	void beforeTestMethod(Method method);
 	
-	void afterTestMethod(Object test, Method method, Throwable th);
+	void takeBeforeTestMethodScreenshot(Object test);
+	
+	void afterTestMethod(Method method, Throwable th);
+	
+	void takeAfterTestMethodScreenshot();
 		
 }
