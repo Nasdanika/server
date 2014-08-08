@@ -8,7 +8,7 @@ import java.util.List;
  * @author Pavel Vlasov
  *
  */
-class PageResult {
+public class PageResult {
 
 	final Class<? extends Page> pageClass;
 
@@ -18,4 +18,11 @@ class PageResult {
 	
 	List<PageMethodResult> results = new ArrayList<>();
 
+	public List<PageMethodResult> getResults() {
+		return results;
+	}
+	
+	public Class<? extends Page> getPageClass() {
+		return pageClass;
+	}
 }

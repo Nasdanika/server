@@ -9,7 +9,7 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
  * @author Pavel Vlasov
  *
  */
-class PageMethodResult extends MethodResult {
+public class PageMethodResult extends MethodResult {
 
 	PageMethodResult(String id, Method method, MethodResult parent) {
 		super(id, method, parent);

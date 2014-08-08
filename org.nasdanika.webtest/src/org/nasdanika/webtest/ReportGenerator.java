@@ -34,10 +34,10 @@ import org.nasdanika.html.impl.DefaultHTMLFactory;
 class ReportGenerator {
 
 	private Class<?> klass;
-	private Collection<TestResult> testResults;
+	private Collection<? extends TestResult> testResults;
 	private File outputDir;
 
-	ReportGenerator(Class<?> klass, File outputDir, Collection<TestResult> testResults) {
+	ReportGenerator(Class<?> klass, File outputDir, Collection<? extends TestResult> testResults) {
 		this.klass = klass;
 		this.outputDir = outputDir;
 		this.testResults = testResults;

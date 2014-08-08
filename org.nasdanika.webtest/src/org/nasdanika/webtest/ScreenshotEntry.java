@@ -16,13 +16,17 @@ import org.nasdanika.html.impl.DefaultHTMLFactory;
  * @author Pavel Vlasov
  *
  */
-class ScreenshotEntry implements Runnable {
+public class ScreenshotEntry implements Runnable {
 	
 	final String id;
 	
+	public String getId() {
+		return id;
+	}
+	
 	ScreenshotEntry master;
 	
-	ScreenshotEntry getMaster() {
+	public ScreenshotEntry getMaster() {
 		return master==null ? this : master.getMaster();
 	}
 	
@@ -50,6 +54,10 @@ class ScreenshotEntry implements Runnable {
 	private ScreenshotEntry prev;
 
 	final MethodResult methodResult;
+	
+	public MethodResult getMethodResult() {
+		return methodResult;
+	}
 
 	ScreenshotEntry(MethodResult methodResult, ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
 		this.methodResult = methodResult;
@@ -122,6 +130,5 @@ class ScreenshotEntry implements Runnable {
 		}
 		return caption.toString();
 	}
-	
-	
+		
 }

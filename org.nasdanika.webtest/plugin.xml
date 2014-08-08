@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension-point id="test" name="Test class to include into the White Board suite" schema="schema/test.exsd"/>
+   <extension-point id="collectors" name="Test result collectors" schema="schema/collectors.exsd"/>
+
+</plugin>

@@ -4,17 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
-
-class TestResult implements Collector {
+public class TestResult implements Collector {
 
 	private File screenshotsDir;
 	private Executor screenshotExecutor;
@@ -22,6 +19,14 @@ class TestResult implements Collector {
 	private AtomicLong counter;
 	final Class<?> klass;	
 	final String id;
+	
+	public Class<?> getTestClass() {
+		return klass;
+	}
+	
+	public String getId() {
+		return id;
+	}
 
 	TestResult(Class<?> klass, AtomicLong counter, File screenshotsDir, Executor screenshotExecutor) throws IOException {
 		this.klass = klass;
@@ -33,26 +38,28 @@ class TestResult implements Collector {
 	
 	private ScreenshotEntry currentScreenshot;
 		
-	private ScreenshotEntry takeScreenshot(MethodResult methodResult) {
-		if (test instanceof WebTest) {
-			WebDriver webDriver = ((WebTest) test).getWebDriver();
-			if (webDriver!=null) {
-				try {
-					//new WebDriverWait(webDriver, 10); - TODO - waits from annotations???
-			        ScreenshotEntry ret = new ScreenshotEntry(methodResult, currentScreenshot, screenshotsDir, Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES));
-			        currentScreenshot = ret;
-					screenshotExecutor.execute(ret);
-					return ret;
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		return null;
+	private ScreenshotEntry createScreenshotEntry(MethodResult methodResult, byte[] screenshot) {
+        ScreenshotEntry ret = new ScreenshotEntry(
+        		methodResult, 
+        		currentScreenshot, 
+        		screenshotsDir, 
+        		Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), 
+        		screenshot);
+        currentScreenshot = ret;
+		screenshotExecutor.execute(ret);
+		return ret;
 	}
 	
 	Map<Class<? extends Actor>, ActorResult> actors = new HashMap<>();
 	Map<Class<? extends Page>, PageResult> pages = new HashMap<>();
+	
+	public Collection<ActorResult> getActorResults() {
+		return actors.values();
+	}
+	
+	public Collection<PageResult> getPageResults() {
+		return pages.values();
+	}	
 
 	@Override
 	public void onPageProxying(Page page) {
@@ -72,39 +79,38 @@ class TestResult implements Collector {
 	final List<TestMethodResult> testMethodResults = new ArrayList<>();
 	
 	private MethodResult currentMethodResult;
-	private Object test;
 	
 	@Override
-	public void beforeActorMethod(Actor actor, Method method, Object[] args) {
+	public void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args) {
 		ActorMethodResult amr = new ActorMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
 		actors.get(actor.getClass()).results.add(amr);
 		currentMethodResult = amr;
-		amr.beforeScreenshot = takeScreenshot(amr);
+		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot);
 	}
 	@Override
-	public void afterActorMethod(Actor actor, Method method, Object[] args,	Object result, Throwable th) {
+	public void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args,	Object result, Throwable th) {
 		if (currentMethodResult instanceof ActorMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
+			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
 		}
 	}
 	@Override
-	public void beforePageMethod(Page page, Method method, Object[] args) {
+	public void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args) {
 		PageMethodResult pmr = new PageMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
 		pages.get(page.getClass()).results.add(pmr);
 		currentMethodResult = pmr;
-		pmr.beforeScreenshot = takeScreenshot(pmr);
+		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot);
 	}
 	@Override
-	public void afterPageMethod(Page page, Method method, Object[] args, Object result, Throwable th) {
+	public void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
 		if (currentMethodResult instanceof PageMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
+			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
@@ -112,15 +118,18 @@ class TestResult implements Collector {
 	}
 	
 	@Override
-	public void beforeTestMethod(Method method) {
-		currentMethodResult = new TestMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
+	public void beforeTestMethod(Method method, Object[] parameters) {
+		currentMethodResult = new TestMethodResult(
+				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
+				method, 
+				currentMethodResult,
+				parameters);
 		testMethodResults.add((TestMethodResult) currentMethodResult);
 	}
 	
 	@Override
-	public void takeBeforeTestMethodScreenshot(Object test) {
-		this.test = test;		
-		currentMethodResult.beforeScreenshot = takeScreenshot(currentMethodResult);		
+	public void beforeTestMethodScreenshot(byte[] screenshot) {
+		currentMethodResult.beforeScreenshot = createScreenshotEntry(currentMethodResult, screenshot);		
 	}
 	
 	@Override
@@ -135,9 +144,8 @@ class TestResult implements Collector {
 	}
 	
 	@Override
-	public void takeAfterTestMethodScreenshot() {
-		currentMethodResult.afterScreenshot = takeScreenshot(currentMethodResult);
-		test = null; // Disables snapshots in @After
+	public void afterTestMethodScreenshot(byte[] screenshot) {
+		currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
 	}
 	
 	/**
@@ -154,6 +162,11 @@ class TestResult implements Collector {
 			}
 		}
 		return ret;
+	}
+	
+	@Override
+	public void close() throws Exception {
+		// NOP		
 	}
 
 }

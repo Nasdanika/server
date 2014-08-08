@@ -21,13 +21,25 @@ import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.html.UIElement.Style;
 import org.openqa.selenium.WebDriverException;
 
-class MethodResult {
+public class MethodResult {
 
 	final Method method;
 
 	final MethodResult parent;
 
 	final String id;
+	
+	public Method getMethod() {
+		return method;
+	}
+	
+	public MethodResult getParent() {
+		return parent;
+	}
+	
+	public String getId() {
+		return id;
+	}
 
 	MethodResult(String id, Method method, MethodResult parent) {
 		this.id = id;
@@ -47,15 +59,31 @@ class MethodResult {
 				", failure=" + failure + "]";
 	}
 
-	long start = System.currentTimeMillis();
+	private long start = System.currentTimeMillis();
+	
+	public long getStart() {
+		return start;
+	}
 	
 	ScreenshotEntry beforeScreenshot;
 	
+	public ScreenshotEntry getBeforeScreenshot() {
+		return beforeScreenshot;
+	}
+	
 	long finish;
+	
+	public long getFinish() {
+		return finish;
+	}
 	
 	ScreenshotEntry afterScreenshot;
 
 	Throwable failure;
+	
+	public Throwable getFailure() {
+		return failure;
+	}
 	
 	boolean hasOwnFailure() {
 		if (failure==null) {
@@ -84,7 +112,7 @@ class MethodResult {
 		return false;
 	}
 	
-	Throwable getRootCause() {
+	public Throwable getRootCause() {
 		for (Throwable th = failure; th!=null; th = th.getCause()) {
 			if (th.getCause()==null) {
 				return th;
@@ -93,7 +121,7 @@ class MethodResult {
 		return failure;
 	}
 	
-	boolean isFailure() {
+	public boolean isFailure() {
 		Throwable rootCause = getRootCause();
 		// Maybe need to refine which subclasses of WebDriverException shall be treated as failures,
 		// maybe make configurable through @Report annotation
@@ -103,7 +131,11 @@ class MethodResult {
 	
 	List<MethodResult> childResults = new ArrayList<>();
 	
-	List<ScreenshotEntry> allScreenshots() {
+	public List<MethodResult> getChildren() {
+		return childResults;
+	}
+	
+	public List<ScreenshotEntry> allScreenshots() {
 		return collectAllScreenshots( new LinkedList<ScreenshotEntry>()); 
 	}
 	
@@ -190,7 +222,7 @@ class MethodResult {
 		return doStyle ? routeLink.style("color", Color.WARNING.code) : routeLink;
 	}
 
-	boolean isPending() {
+	public boolean isPending() {
 		return allScreenshots().size()==1 || childResults.isEmpty();
 	}
 		

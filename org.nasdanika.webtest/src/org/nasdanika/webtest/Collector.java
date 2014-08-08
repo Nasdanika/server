@@ -2,26 +2,31 @@ package org.nasdanika.webtest;
 
 import java.lang.reflect.Method;
 
-interface Collector {
+/**
+ * Collects 
+ * @author Pavel Vlasov
+ *
+ */
+public interface Collector extends AutoCloseable {
 	
 	void onPageProxying(Page page);
 	
-	void beforePageMethod(Page page, Method method, Object[] args);
+	void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args);
 	
-	void afterPageMethod(Page page, Method method, Object[] args, Object result, Throwable th);
+	void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);
 
 	void onActorProxying(Actor actor);
 	
-	void beforeActorMethod(Actor actor, Method method, Object[] args);
+	void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args);
 	
-	void afterActorMethod(Actor actor, Method method, Object[] args, Object result, Throwable th);
+	void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);
 	
-	void beforeTestMethod(Method method);
+	void beforeTestMethod(Method method, Object[] parameters);
 	
-	void takeBeforeTestMethodScreenshot(Object test);
+	void beforeTestMethodScreenshot(byte[] screenshot);
 	
 	void afterTestMethod(Method method, Throwable th);
 	
-	void takeAfterTestMethodScreenshot();
+	void afterTestMethodScreenshot(byte[] screenshot);
 		
 }

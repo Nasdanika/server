@@ -8,7 +8,7 @@ import java.util.List;
  * @author Pavel Vlasov
  *
  */
-class ActorResult {
+public class ActorResult {
 
 	final Class<? extends Actor> actorClass;
 
@@ -17,5 +17,13 @@ class ActorResult {
 	}
 	
 	List<ActorMethodResult> results = new ArrayList<>();
+	
+	public List<ActorMethodResult> getResults() {
+		return results;
+	}
+	
+	public Class<? extends Actor> getActorClass() {
+		return actorClass;
+	}
 
 }

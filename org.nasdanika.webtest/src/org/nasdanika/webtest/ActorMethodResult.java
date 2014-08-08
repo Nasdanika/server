@@ -9,7 +9,7 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
  * @author Pavel Vlasov
  *
  */
-class ActorMethodResult extends MethodResult {
+public class ActorMethodResult extends MethodResult {
 
 	ActorMethodResult(String id, Method method, MethodResult parent) {
 		super(id, method, parent);

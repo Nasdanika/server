@@ -12,23 +12,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
+import org.openqa.selenium.WebDriver;
 
 /**
+ * Base class for test runners which report results to {@link Collector}.
  * @author Pavel Vlasov
  *
  */
-public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestResultSource {
+public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRunner implements TestResultSource {
 	
 	private static ThreadLocal<Collector> collectorThreadLocal = new ThreadLocal<Collector>() {
 		
@@ -40,36 +39,52 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 				public void onPageProxying(Page page) {}
 
 				@Override
-				public void beforePageMethod(Page page, Method method, Object[] args) {}
+				public void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args) {}
 
 				@Override
-				public void afterPageMethod(Page page, Method method, Object[] args, Object result, Throwable th) {}
+				public void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
 				public void onActorProxying(Actor actor) {}
 
 				@Override
-				public void beforeActorMethod(Actor actor, Method method, Object[] args) {}
+				public void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args) {}
 
 				@Override
-				public void afterActorMethod(Actor actor, Method method, Object[] args, Object result, Throwable th) {}
+				public void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
-				public void beforeTestMethod(Method method) {}
+				public void beforeTestMethod(Method method, Object[] parameters) {}
 
 				@Override
-				public void takeBeforeTestMethodScreenshot(Object test) {}
+				public void beforeTestMethodScreenshot(byte[] screenshot) {}
 
 				@Override
 				public void afterTestMethod(Method method, Throwable th) {}
 
 				@Override
-				public void takeAfterTestMethodScreenshot() {}
+				public void afterTestMethodScreenshot(byte[] screenshot) {}
+
+				@Override
+				public void close() throws Exception {}
 				
 			};
 		};
 		
 	};
+	
+	private static ThreadLocal<Object> testThreadLocal = new ThreadLocal<Object>();
+	
+	private static byte[] takeScreenshot() {
+		Object test = testThreadLocal.get();
+		if (test instanceof WebTest) {
+			WebDriver webDriver = ((WebTest) test).getWebDriver();
+			if (webDriver instanceof TakesScreenshot) {
+				return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+			}
+		}
+		return null;
+	}
 	
 	private static class PageInvocationHandler implements InvocationHandler {
 		
@@ -83,10 +98,10 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if (Page.class.isAssignableFrom(method.getDeclaringClass())) {
-				collectorThreadLocal.get().beforePageMethod(page, method, args);
+				collectorThreadLocal.get().beforePageMethod(page, takeScreenshot(), method, args);
 				try {
 					Object res = method.invoke(page, args);
-					collectorThreadLocal.get().afterPageMethod(page, method, args, res, null);
+					collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, res, null);
 					if (res instanceof Page) {
 						Class<? extends Object> resClass = res.getClass();
 						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
@@ -100,7 +115,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 					
 					return res;
 				} catch (Throwable th) {
-					collectorThreadLocal.get().afterPageMethod(page, method, args, null, th);
+					collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, null, th);
 					throw th;
 				}
 			}
@@ -153,10 +168,10 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if (Actor.class.isAssignableFrom(method.getDeclaringClass())) {
-				collectorThreadLocal.get().beforeActorMethod(actor, method, args);
+				collectorThreadLocal.get().beforeActorMethod(actor, takeScreenshot(), method, args);
 				try {
 					Object res = method.invoke(actor, args);
-					collectorThreadLocal.get().afterActorMethod(actor, method, args, res, null);
+					collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, res, null);
 					if (res instanceof Actor) {
 						Class<? extends Object> resClass = res.getClass();
 						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
@@ -170,7 +185,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 					
 					return res;
 				} catch (Throwable th) {
-					collectorThreadLocal.get().afterActorMethod(actor, method, args, null, th);
+					collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, null, th);
 					throw th;
 				}
 			}
@@ -227,15 +242,15 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		return ret;
 	}
 	
-	private NasdanikaTestSuite suite;
+	protected TestResultCollector testResultCollector;
 
-	public NasdanikaTestRunner(Class<?> klass) throws InitializationError {
+	protected AbstractNasdanikaWebTestRunner(Class<?> klass) throws InitializationError {
 		super(klass);
 	}
 
 	@Override
-	public void setSuite(NasdanikaTestSuite suite) {
-		this.suite = suite;		
+	public void setTestResultCollector(TestResultCollector testResultCollector) {
+		this.testResultCollector = testResultCollector;		
 	}
 		
 	static void delete(File file) throws IOException {
@@ -250,36 +265,19 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 			}
 		} 
 	}	
+	
+	protected abstract Collector createCollector(TestResultCollector testResultCollector) throws Exception;
 			
 	@Override
 	public void run(RunNotifier notifier) {
-		
-		AtomicLong counter = suite==null ? new AtomicLong() : suite.getCounter();
-				
 		try {
-			File outputDir = suite == null ? configOutputDir(getTestClass().getJavaClass()) : suite.getOutputDir();	
-			
-			File screenshotsDir = new File(outputDir, "screenshots");
-			if (!screenshotsDir.exists() && !screenshotsDir.mkdir()) {
-				throw new IOException("Could not create screenshot output directory "+screenshotsDir.getAbsolutePath());			
-			}
-			
-			Executor screenshotExecutor = suite==null ? Executors.newSingleThreadExecutor() : suite.getScreenshotExecutor();
-			
-			TestResult testResult = new TestResult(getTestClass().getJavaClass(), counter, screenshotsDir, screenshotExecutor);
 			Collector prevCollector = collectorThreadLocal.get();
-			collectorThreadLocal.set(testResult);
+			collectorThreadLocal.set(createCollector(testResultCollector));
 			try {
 				super.run(notifier);
 			} finally {
-				collectorThreadLocal.set(prevCollector);
-				if (suite==null) {
-					((ExecutorService) screenshotExecutor).shutdown();
-					((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
-					new ReportGenerator(getTestClass().getJavaClass(), outputDir, Collections.singleton(testResult)).generate();
-				} else {
-					suite.addResult(testResult);
-				}
+				collectorThreadLocal.get().close();
+				collectorThreadLocal.set(prevCollector);				
 			}
 		} catch (Exception e) {			
 			System.err.println("Report generation failed: "+e);
@@ -327,7 +325,7 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		    		
 		    	}
 				if (!isPending) {
-			    	collectorThreadLocal.get().beforeTestMethod(method.getMethod());
+			    	collectorThreadLocal.get().beforeTestMethod(method.getMethod(), getParameters());
 			    	try {
 			    		superStatement.evaluate();
 			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), null);
@@ -341,6 +339,13 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		};
 	}
 	
+	/**
+	 * @return Test parameters if test is parameterized.
+	 */
+	protected Object[] getParameters() {
+		return null;
+	}
+	
 	@Override
 	protected Statement methodInvoker(final FrameworkMethod method, final Object test) {		
 		return new Statement() {
@@ -348,10 +353,12 @@ public class NasdanikaTestRunner extends BlockJUnit4ClassRunner implements TestR
 		    @Override
 		    public void evaluate() throws Throwable {
 		    	try {		    		
-		    		collectorThreadLocal.get().takeBeforeTestMethodScreenshot(test);
+		    		testThreadLocal.set(test);
+		    		collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot());
 			    	method.invokeExplosively(test);
 		    	} finally {
-		    		collectorThreadLocal.get().takeAfterTestMethodScreenshot();
+		    		collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot());
+		    		testThreadLocal.set(null);
 		    	}
 		    }
 		    
