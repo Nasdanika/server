@@ -10,7 +10,7 @@ import java.lang.annotation.Target;
  * @author Pavel Vlasov
  *
  */
-@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER})
+@Target({ElementType.TYPE, ElementType.METHOD, ElementType.PARAMETER, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Title {
 

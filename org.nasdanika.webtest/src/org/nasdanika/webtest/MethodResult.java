@@ -24,6 +24,16 @@ import org.openqa.selenium.WebDriverException;
 public class MethodResult {
 
 	final Method method;
+	
+	private Object target;
+	
+	public void setTarget(Object target) {
+		this.target = target;
+	}
+	
+	public Object getTarget() {
+		return target;
+	}
 
 	final MethodResult parent;
 

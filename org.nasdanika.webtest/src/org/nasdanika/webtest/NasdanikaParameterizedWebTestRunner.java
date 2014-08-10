@@ -7,6 +7,9 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -225,12 +228,14 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 
 	private List<TestResult> testResults = new ArrayList<>();
 	private File outputDir;
+	private String id;
 	
 	@Override
 	public void run(RunNotifier notifier) {
 		try {
 			outputDir = testResultCollector == null ? NasdanikaWebTestRunner.configOutputDir(getTestClass().getJavaClass()) : testResultCollector.getOutputDir();	
 			counter = testResultCollector == null ? new AtomicLong() : testResultCollector.getCounter();
+			id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
 			screenshotExecutor = testResultCollector == null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 			try {
 				super.run(notifier);
@@ -262,16 +267,45 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 	
 	@Override
 	public void addResult(TestResult testResult) {
-		if (testResultCollector==null) {
-			testResults.add(testResult);
-		} else {
-			testResultCollector.addResult(testResult);
-		}
+		testResults.add(testResult);
 	}
 
 	@Override
 	public void setTestResultCollector(TestResultCollector testResultCollector) {
-		this.testResultCollector = testResultCollector;		
+		this.testResultCollector = testResultCollector;	
+		this.testResultCollector.addResult(new ParameterizedTestResult() {
+			
+			@Override
+			public Class<?> getTestClass() {
+				return NasdanikaParameterizedWebTestRunner.this.getTestClass().getJavaClass();
+			}
+			
+			@Override
+			public String getId() {
+				return id;
+			}
+			
+			@Override
+			public List<TestResult> getChildren() {
+				return testResults;
+			}
+						
+			@Override
+			public Map<TestStatus, Integer> getStats() {
+				Map<TestStatus, Integer> ret = new TreeMap<>();
+				for (TestStatus ts: TestStatus.values()) {
+					ret.put(ts, 0);
+				}
+				for (TestResult child: testResults) {
+					for (Entry<TestStatus, Integer> cs: child.getStats().entrySet()) {
+						ret.put(cs.getKey(), ret.get(cs.getKey())+cs.getValue());
+					}
+					
+				}
+				return ret;
+			}
+			
+		});
 	}
 
 	@Override

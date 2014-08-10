@@ -67,6 +67,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 
 				@Override
 				public void close() throws Exception {}
+
+				@Override
+				public void setTest(Object test) {}
 				
 			};
 		};
@@ -354,6 +357,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    public void evaluate() throws Throwable {
 		    	try {		    		
 		    		testThreadLocal.set(test);
+		    		collectorThreadLocal.get().setTest(test);
 		    		collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot());
 			    	method.invokeExplosively(test);
 		    	} finally {

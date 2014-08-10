@@ -1,172 +1,20 @@
 package org.nasdanika.webtest;
 
-import java.io.File;
-import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicLong;
 
-public class TestResult implements Collector {
-
-	private File screenshotsDir;
-	private Executor screenshotExecutor;
-
-	private AtomicLong counter;
-	final Class<?> klass;	
-	final String id;
+/**
+ * Base interface for test results
+ * @author Pavel Vlasov
+ *
+ */
+public interface TestResult {
 	
-	public Class<?> getTestClass() {
-		return klass;
-	}
+	Class<?> getTestClass();
 	
-	public String getId() {
-		return id;
-	}
-
-	TestResult(Class<?> klass, AtomicLong counter, File screenshotsDir, Executor screenshotExecutor) throws IOException {
-		this.klass = klass;
-		this.counter = counter;
-		id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
-		this.screenshotsDir = screenshotsDir;
-		this.screenshotExecutor = screenshotExecutor;
-	}
+	enum TestStatus {Pass, Fail, Error, Pending}
 	
-	private ScreenshotEntry currentScreenshot;
-		
-	private ScreenshotEntry createScreenshotEntry(MethodResult methodResult, byte[] screenshot) {
-        ScreenshotEntry ret = new ScreenshotEntry(
-        		methodResult, 
-        		currentScreenshot, 
-        		screenshotsDir, 
-        		Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), 
-        		screenshot);
-        currentScreenshot = ret;
-		screenshotExecutor.execute(ret);
-		return ret;
-	}
+	Map<TestStatus, Integer> getStats();
 	
-	Map<Class<? extends Actor>, ActorResult> actors = new HashMap<>();
-	Map<Class<? extends Page>, PageResult> pages = new HashMap<>();
-	
-	public Collection<ActorResult> getActorResults() {
-		return actors.values();
-	}
-	
-	public Collection<PageResult> getPageResults() {
-		return pages.values();
-	}	
-
-	@Override
-	public void onPageProxying(Page page) {
-		Class<? extends Page> pageClass = page.getClass();
-		if (!pages.containsKey(pageClass)) {
-			pages.put(pageClass, new PageResult(pageClass));
-		}		
-	}
-	@Override
-	public void onActorProxying(Actor actor) {
-		Class<? extends Actor> actorClass = actor.getClass();
-		if (!actors.containsKey(actorClass)) {
-			actors.put(actorClass, new ActorResult(actorClass));
-		}		
-	}
-	
-	final List<TestMethodResult> testMethodResults = new ArrayList<>();
-	
-	private MethodResult currentMethodResult;
-	
-	@Override
-	public void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args) {
-		ActorMethodResult amr = new ActorMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
-		actors.get(actor.getClass()).results.add(amr);
-		currentMethodResult = amr;
-		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot);
-	}
-	@Override
-	public void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args,	Object result, Throwable th) {
-		if (currentMethodResult instanceof ActorMethodResult && method.equals(currentMethodResult.method)) {
-			currentMethodResult.failure = th;
-			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
-			currentMethodResult = currentMethodResult.parent;
-		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
-		}
-	}
-	@Override
-	public void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args) {
-		PageMethodResult pmr = new PageMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
-		pages.get(page.getClass()).results.add(pmr);
-		currentMethodResult = pmr;
-		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot);
-	}
-	@Override
-	public void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
-		if (currentMethodResult instanceof PageMethodResult && method.equals(currentMethodResult.method)) {
-			currentMethodResult.failure = th;
-			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
-			currentMethodResult = currentMethodResult.parent;
-		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
-		}
-	}
-	
-	@Override
-	public void beforeTestMethod(Method method, Object[] parameters) {
-		currentMethodResult = new TestMethodResult(
-				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
-				method, 
-				currentMethodResult,
-				parameters);
-		testMethodResults.add((TestMethodResult) currentMethodResult);
-	}
-	
-	@Override
-	public void beforeTestMethodScreenshot(byte[] screenshot) {
-		currentMethodResult.beforeScreenshot = createScreenshotEntry(currentMethodResult, screenshot);		
-	}
-	
-	@Override
-	public void afterTestMethod(Method method, Throwable th) {
-		if (currentMethodResult instanceof TestMethodResult && method.equals(currentMethodResult.method)) {
-			currentMethodResult.failure = th;
-			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult = currentMethodResult.parent;
-		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
-		}
-	}
-	
-	@Override
-	public void afterTestMethodScreenshot(byte[] screenshot) {
-		currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
-	}
-	
-	/**
-	 * 
-	 * @return successes, failures, errors, pending.
-	 */
-	int[] getStats() {
-		int[] ret = {0, 0, 0, 0};
-		for (TestMethodResult tmr: testMethodResults) {
-			if (tmr.failure==null) {
-				ret[tmr.isPending() ? 3 : 0]++;
-			} else {
-				ret[tmr.isFailure() ? 1 : 2]++;
-			}
-		}
-		return ret;
-	}
-	
-	@Override
-	public void close() throws Exception {
-		// NOP		
-	}
+	String getId();
 
 }

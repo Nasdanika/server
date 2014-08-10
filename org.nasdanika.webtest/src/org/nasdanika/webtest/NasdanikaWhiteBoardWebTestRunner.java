@@ -199,6 +199,13 @@ public class NasdanikaWhiteBoardWebTestRunner extends AbstractNasdanikaWebTestRu
 					c.afterActorMethod(actor, screenshot, method, args, result, th);
 				}
 			}
+
+			@Override
+			public void setTest(Object test) {
+				for (Collector c: collectors) {
+					c.setTest(test);
+				}
+			}
 		};
 	}
 

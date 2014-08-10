@@ -39,7 +39,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 		
 		final Executor screenshotExecutor = testResultCollector==null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 		
-		return new TestResult(getTestClass().getJavaClass(), counter, screenshotsDir, screenshotExecutor) {
+		return new TestClassResult(getTestClass().getJavaClass(), counter, screenshotsDir, screenshotExecutor) {
 			
 			@Override
 			public void close() throws Exception {

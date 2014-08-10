@@ -23,6 +23,12 @@ public interface Collector extends AutoCloseable {
 	
 	void beforeTestMethod(Method method, Object[] parameters);
 	
+	/**
+	 * Sets a reference to test instance.
+	 * @param test
+	 */
+	void setTest(Object test);
+	
 	void beforeTestMethodScreenshot(byte[] screenshot);
 	
 	void afterTestMethod(Method method, Throwable th);
