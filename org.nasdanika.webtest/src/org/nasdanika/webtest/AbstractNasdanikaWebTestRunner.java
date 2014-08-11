@@ -21,6 +21,7 @@ import org.junit.runners.model.Statement;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 
 /**
  * Base class for test runners which report results to {@link Collector}.
@@ -29,6 +30,10 @@ import org.openqa.selenium.WebDriver;
  */
 public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRunner implements TestResultSource {
 	
+	private static final int SCREENSHOT_ATTEMPTS = 5;
+
+	private static final int SCREENSHOT_RETAKE_WAIT_INTERVAL = 2000;
+
 	private static ThreadLocal<Collector> collectorThreadLocal = new ThreadLocal<Collector>() {
 		
 		protected Collector initialValue() {
@@ -83,7 +88,22 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		if (test instanceof WebTest) {
 			WebDriver webDriver = ((WebTest) test).getWebDriver();
 			if (webDriver instanceof TakesScreenshot) {
-				return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+				for (int i=0; ; ++i) {
+					try {
+						return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+					} catch (WebDriverException wde) {
+						if (i<SCREENSHOT_ATTEMPTS && wde.getMessage()!=null && wde.getMessage().startsWith("Could not take screenshot of current page - Error: Page is not loaded yet, try later")) {							
+							try {
+								System.out.println("Retaking screenshot");
+								Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						} else {
+							throw wde;
+						}
+					}
+				}
 			}
 		}
 		return null;
