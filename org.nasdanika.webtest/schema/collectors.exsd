@@ -19,7 +19,7 @@
       <complexType>
          <choice>
             <element ref="collector" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="test_result_collector" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="test_result_listener" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -90,7 +90,7 @@
       </complexType>
    </element>
 
-   <element name="test_result_collector">
+   <element name="test_result_listener">
       <annotation>
          <documentation>
             Collects aggregated results of multiple tests.
@@ -106,7 +106,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.nasdanika.webtest.TestResultCollector"/>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.webtest.TestResultListener"/>
                </appinfo>
             </annotation>
          </attribute>

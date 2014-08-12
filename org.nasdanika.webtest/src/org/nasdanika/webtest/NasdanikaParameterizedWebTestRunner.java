@@ -229,6 +229,17 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 	private List<TestResult> testResults = new ArrayList<>();
 	private File outputDir;
 	private String id;
+		
+	private List<TestResultListener> listeners = new ArrayList<>();
+
+	@Override
+	public void addListener(TestResultListener testResultListener) {
+		if (testResultCollector==null) {
+			listeners.add(testResultListener);		
+		} else {
+			testResultCollector.addListener(testResultListener);
+		}
+	}
 	
 	@Override
 	public void run(RunNotifier notifier) {
@@ -299,8 +310,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				for (TestResult child: testResults) {
 					for (Entry<TestStatus, Integer> cs: child.getStats().entrySet()) {
 						ret.put(cs.getKey(), ret.get(cs.getKey())+cs.getValue());
-					}
-					
+					}					
 				}
 				return ret;
 			}
@@ -313,7 +323,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 		((ExecutorService) screenshotExecutor).shutdown();
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
 		new ReportGenerator(getTestClass().getJavaClass(), outputDir, testResults).generate();
-	}
-    
+		WebTestUtil.publishTestResults(testResults);		
+	}    
     
 }

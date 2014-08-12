@@ -43,6 +43,17 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 	private List<TestResult> testResults = new ArrayList<>();
 	private File outputDir;
 	private String id;
+		
+	private List<TestResultListener> listeners = new ArrayList<>();
+	
+	@Override
+	public void addListener(TestResultListener testResultListener) {
+		if (testResultCollector==null) {
+			listeners.add(testResultListener);		
+		} else {
+			testResultCollector.addListener(testResultListener);
+		}
+	}	
 	
 	@Override
 	public void run(RunNotifier notifier) {
@@ -140,6 +151,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 		((ExecutorService) screenshotExecutor).shutdown();
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
 		new ReportGenerator(getTestClass().getJavaClass(), outputDir, testResults).generate();
+		WebTestUtil.publishTestResults(testResults);
 	}
 	
 }

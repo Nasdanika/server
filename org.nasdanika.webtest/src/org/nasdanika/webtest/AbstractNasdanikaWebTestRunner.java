@@ -97,7 +97,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 								System.out.println("Retaking screenshot");
 								Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
 							} catch (InterruptedException e) {
-								e.printStackTrace();
+								return null; 
 							}
 						} else {
 							throw wde;

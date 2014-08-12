@@ -39,7 +39,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 		
 		final Executor screenshotExecutor = testResultCollector==null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 		
-		return new TestClassResult(getTestClass().getJavaClass(), counter, screenshotsDir, screenshotExecutor) {
+		TestClassResult testClassResult = new TestClassResult(getTestClass().getJavaClass(), counter, screenshotsDir, screenshotExecutor) {
 			
 			@Override
 			public void close() throws Exception {
@@ -48,12 +48,15 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 					((ExecutorService) screenshotExecutor).shutdown();
 					((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
 					new ReportGenerator(getTestClass(), outputDir, Collections.singleton(this)).generate();
+					WebTestUtil.publishTestResults(Collections.singleton(this));		
 				} else {
 					testResultCollector.addResult(this);
 				}
 			}
 			
 		};
+		
+		return WebTestUtil.createCollector(testClassResult);
 	}
 	
 	static File configOutputDir(Class<?> klass) throws IOException {

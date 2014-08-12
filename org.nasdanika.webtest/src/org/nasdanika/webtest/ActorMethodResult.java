@@ -11,8 +11,8 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
  */
 public class ActorMethodResult extends MethodResult {
 
-	ActorMethodResult(String id, Method method, MethodResult parent) {
-		super(id, method, parent);
+	ActorMethodResult(String id, Method method, Object[] arguments, MethodResult parent) {
+		super(id, method, arguments, parent);
 	}
 	
 	Glyphicon getGlyphicon() {

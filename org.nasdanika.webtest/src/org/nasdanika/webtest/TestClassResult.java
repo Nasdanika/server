@@ -84,11 +84,14 @@ public class TestClassResult implements Collector, TestResult {
 	}
 	
 	private MethodResult currentMethodResult;
-	private Object test;
 	
 	@Override
 	public void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args) {
-		ActorMethodResult amr = new ActorMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
+		ActorMethodResult amr = new ActorMethodResult(
+				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
+				method,
+				args,
+				currentMethodResult);
 		actors.get(actor.getClass()).results.add(amr);
 		currentMethodResult = amr;
 		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot);
@@ -106,7 +109,11 @@ public class TestClassResult implements Collector, TestResult {
 	}
 	@Override
 	public void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args) {
-		PageMethodResult pmr = new PageMethodResult(Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),method, currentMethodResult);
+		PageMethodResult pmr = new PageMethodResult(
+				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
+				method,
+				args,
+				currentMethodResult);
 		pages.get(page.getClass()).results.add(pmr);
 		currentMethodResult = pmr;
 		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot);
@@ -128,6 +135,7 @@ public class TestClassResult implements Collector, TestResult {
 		currentMethodResult = new TestMethodResult(
 				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
 				method, 
+				null,
 				currentMethodResult,
 				parameters);
 		testMethodResults.add((TestMethodResult) currentMethodResult);

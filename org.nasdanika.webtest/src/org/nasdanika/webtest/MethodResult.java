@@ -38,6 +38,12 @@ public class MethodResult {
 	final MethodResult parent;
 
 	final String id;
+
+	private Object[] arguments;
+	
+	public Object[] getArguments() {
+		return arguments;
+	}
 	
 	public Method getMethod() {
 		return method;
@@ -51,9 +57,10 @@ public class MethodResult {
 		return id;
 	}
 
-	MethodResult(String id, Method method, MethodResult parent) {
+	MethodResult(String id, Method method, Object[] arguments, MethodResult parent) {
 		this.id = id;
 		this.method = method;
+		this.arguments = arguments;
 		this.parent = parent;
 		if (parent!=null) {
 			parent.childResults.add(this);
@@ -275,7 +282,7 @@ public class MethodResult {
 			
 		if (description.html()) {
 			for (String str: description.value()) {
-				ret.append(str).append(" ");
+				ret.append(formatDescription(str)).append(" ");
 			}
 		} else {
 			ret.append("<pre>");
@@ -284,11 +291,18 @@ public class MethodResult {
 				if (idx++>0) {
 					ret.append(System.lineSeparator());
 				}
-				ret.append(StringEscapeUtils.escapeHtml4(str));
+				ret.append(StringEscapeUtils.escapeHtml4(formatDescription(str)));
 			}
 			ret.append("</pre>");			
 		}
 		return ret.toString();
+	}
+	
+	protected String formatDescription(String description) {
+		if (arguments==null || arguments.length==0) {
+			return description;
+		}
+		return MessageFormat.format(description, arguments);
 	}
 
 	private void genDescriptionAndDurationCells(HTMLFactory htmlFactory, Row row) {
@@ -343,6 +357,26 @@ public class MethodResult {
 			caption.append(mTitle.value());
 		}
 		caption.append("</i>");
+		return caption.toString();
+	}
+	
+	
+	public String getName() {
+		StringBuilder caption = new StringBuilder();
+		Class<?> dc = method.getDeclaringClass();
+		Title classTitle = dc.getAnnotation(Title.class);
+		if (classTitle==null) {
+			caption.append(ReportGenerator.classTitle(dc));
+		} else {
+			caption.append(classTitle.value());
+		}
+		caption.append(" : ");
+		Title mTitle = method.getAnnotation(Title.class);
+		if (mTitle==null) {
+			caption.append(ReportGenerator.title(method.getName()));
+		} else {
+			caption.append(mTitle.value());
+		}
 		return caption.toString();
 	}
 	

@@ -38,7 +38,6 @@ public class NasdanikaWhiteBoardWebTestSuite extends NasdanikaWebTestSuite {
 
 	public NasdanikaWhiteBoardWebTestSuite(RunnerBuilder builder, Class<?> klass, Class<?>[] suiteClasses) throws InitializationError {
 		super(builder, klass, loadTestsFromExtensions(suiteClasses));
-		// TODO - load test collectors.
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -56,12 +55,6 @@ public class NasdanikaWhiteBoardWebTestSuite extends NasdanikaWebTestSuite {
 			}					
 		}	
 		return ret.toArray(new Class<?>[ret.size()]);
-	}
-	
-	@Override
-	public void addResult(TestResult testResult) {
-		super.addResult(testResult);
-		// TODO report to test collectors
 	}
 	
 }

@@ -503,12 +503,14 @@ class ReportGenerator {
 		
 		Row paramNamesRow = classTable.row().style(Style.INFO);
 		for (String[] pi: paramInfo) {
-			Cell prmHeader = paramNamesRow.header(pi[0]);
+			Object prmHeader = pi[0];
 			if (pi[1] != null && pi[1].trim().length()!=0) {
-				htmlFactory.tooltip(prmHeader, Placement.TOP, pi[1]);
-				prmHeader.id("parameterHeader_"+htmlFactory.nextId());
-				tooltipInitializers.append("$('#"+prmHeader.getId()+"').tooltip();");
+				prmHeader = htmlFactory.span(prmHeader);
+				htmlFactory.tooltip((Tag) prmHeader, Placement.TOP, pi[1]);
+				((Tag) prmHeader).id("parameterHeader_"+htmlFactory.nextId());
+				tooltipInitializers.append("$('#"+((Tag) prmHeader).getId()+"').tooltip();");
 			}
+			paramNamesRow.header(prmHeader);
 		}
 		int testIdx = 1;
 		for (TestResult tr: testSuiteResult.getChildren()) {
