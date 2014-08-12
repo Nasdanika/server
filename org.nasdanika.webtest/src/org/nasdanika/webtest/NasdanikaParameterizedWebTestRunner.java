@@ -39,9 +39,12 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 
         private final String fName;
 
-        TestClassRunnerForParameters(Class<?> type, Object[] parameters, String name) throws InitializationError {
+		private int index;
+
+        TestClassRunnerForParameters(Class<?> type, int index, Object[] parameters, String name) throws InitializationError {
             super(type);
             this.parameters = parameters;
+            this.index = index;
             fName = name;
             setTestResultCollector(NasdanikaParameterizedWebTestRunner.this);
         }
@@ -49,6 +52,11 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
         @Override
         protected Object[] getParameters() {
         	return parameters;
+        }
+        
+        @Override
+        protected int getIndex() {
+        	return index;
         }
 
         @Override
@@ -184,13 +192,14 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 
     private void createRunnersForParameters(Iterable<Object[]> allParameters, String namePattern) throws InitializationError, Exception {
         try {
-            int i = 0;
             for (Object[] parametersOfSingleTest : allParameters) {
-                String name = nameFor(namePattern, i++, parametersOfSingleTest);
+                String name = nameFor(namePattern, runners.size(), parametersOfSingleTest);
                 runners.add(new TestClassRunnerForParameters(
-                		getTestClass().getJavaClass(), 
+                		getTestClass().getJavaClass(),
+                		runners.size(),
                         parametersOfSingleTest,
                         name));
+                
             }
         } catch (ClassCastException e) {
             throw parametersMethodReturnedWrongType();

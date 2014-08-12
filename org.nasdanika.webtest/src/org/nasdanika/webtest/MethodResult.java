@@ -282,7 +282,7 @@ public class MethodResult {
 			
 		if (description.html()) {
 			for (String str: description.value()) {
-				ret.append(formatDescription(str)).append(" ");
+				ret.append(format(str)).append(" ");
 			}
 		} else {
 			ret.append("<pre>");
@@ -291,18 +291,18 @@ public class MethodResult {
 				if (idx++>0) {
 					ret.append(System.lineSeparator());
 				}
-				ret.append(StringEscapeUtils.escapeHtml4(formatDescription(str)));
+				ret.append(StringEscapeUtils.escapeHtml4(format(str)));
 			}
 			ret.append("</pre>");			
 		}
 		return ret.toString();
 	}
 	
-	protected String formatDescription(String description) {
-		if (arguments==null || arguments.length==0) {
-			return description;
+	protected String format(String str) {
+		if (str==null || arguments==null || arguments.length==0) {
+			return str;
 		}
-		return MessageFormat.format(description, arguments);
+		return MessageFormat.format(str, arguments);
 	}
 
 	private void genDescriptionAndDurationCells(HTMLFactory htmlFactory, Row row) {
@@ -377,7 +377,7 @@ public class MethodResult {
 		} else {
 			caption.append(mTitle.value());
 		}
-		return caption.toString();
+		return format(caption.toString());
 	}
 	
 }

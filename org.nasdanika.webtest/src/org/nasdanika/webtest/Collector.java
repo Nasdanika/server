@@ -21,7 +21,7 @@ public interface Collector extends AutoCloseable {
 	
 	void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);
 	
-	void beforeTestMethod(Method method, Object[] parameters);
+	void beforeTestMethod(Method method, int index, Object[] parameters);
 	
 	/**
 	 * Sets a reference to test instance.

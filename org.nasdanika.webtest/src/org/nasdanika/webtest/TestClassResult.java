@@ -131,12 +131,13 @@ public class TestClassResult implements Collector, TestResult {
 	}
 	
 	@Override
-	public void beforeTestMethod(Method method, Object[] parameters) {
+	public void beforeTestMethod(Method method, int index, Object[] parameters) {
 		currentMethodResult = new TestMethodResult(
 				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
 				method, 
 				null,
 				currentMethodResult,
+				index,
 				parameters);
 		testMethodResults.add((TestMethodResult) currentMethodResult);
 	}

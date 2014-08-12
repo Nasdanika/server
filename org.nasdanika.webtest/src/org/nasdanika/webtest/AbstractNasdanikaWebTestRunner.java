@@ -59,7 +59,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				public void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
-				public void beforeTestMethod(Method method, Object[] parameters) {}
+				public void beforeTestMethod(Method method, int index, Object[] parameters) {}
 
 				@Override
 				public void beforeTestMethodScreenshot(byte[] screenshot) {}
@@ -348,7 +348,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    		
 		    	}
 				if (!isPending) {
-			    	collectorThreadLocal.get().beforeTestMethod(method.getMethod(), getParameters());
+			    	collectorThreadLocal.get().beforeTestMethod(method.getMethod(), getIndex(), getParameters());
 			    	try {
 			    		superStatement.evaluate();
 			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), null);
@@ -367,6 +367,10 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	 */
 	protected Object[] getParameters() {
 		return null;
+	}
+	
+	protected int getIndex() {
+		return 0;
 	}
 	
 	@Override

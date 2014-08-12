@@ -8,9 +8,11 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
 public class TestMethodResult  extends MethodResult {
 
 	private Object[] parameters;
+	private int index;
 
-	TestMethodResult(String id, Method method, Object[] arguments, MethodResult parent, Object[] parameters) {
+	TestMethodResult(String id, Method method, Object[] arguments, MethodResult parent, int index, Object[] parameters) {
 		super(id, method, arguments, parent);
+		this.index = index;
 		this.parameters = parameters;
 	}
 	
@@ -25,11 +27,15 @@ public class TestMethodResult  extends MethodResult {
 	/**
 	 * Use parameters instead of arguments in format.
 	 */
-	protected String formatDescription(String description) {
-		if (parameters==null || parameters.length==0) {
-			return description;
+	protected String format(String str) {
+		if (str == null) {
+			return null;
 		}
-		return MessageFormat.format(description, parameters);
+		String pattern = str.replaceAll("\\{index\\}", Integer.toString(index));
+		if (parameters==null || parameters.length==0) {
+			return pattern;
+		}
+		return MessageFormat.format(pattern, parameters);
 	}	
 
 }

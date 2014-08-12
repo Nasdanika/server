@@ -185,9 +185,9 @@ public class WebTestUtil {
 			}
 			
 			@Override
-			public void beforeTestMethod(Method method, Object[] parameters) {
+			public void beforeTestMethod(Method method, int index, Object[] parameters) {
 				for (Collector c: collectors) {
-					c.beforeTestMethod(method, parameters);
+					c.beforeTestMethod(method, index, parameters);
 				}
 			}
 			
