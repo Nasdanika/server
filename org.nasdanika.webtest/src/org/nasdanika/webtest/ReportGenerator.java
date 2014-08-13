@@ -203,7 +203,12 @@ class ReportGenerator {
 
 	private void writeTitleAndDescription(Class<?> klass, FileWriter testResultWriter) throws IOException {
 		testResultWriter.write("<H3>");
-		testResultWriter.write(classTitle(klass));
+		Title title = klass.getAnnotation(Title.class);
+		if (title==null) {
+			testResultWriter.write(classTitle(klass));
+		} else {
+			testResultWriter.write(title.value()); // TODO - format for parameterized
+		}
 		testResultWriter.write("</H3>");
 		
 		Description description = klass.getAnnotation(Description.class);

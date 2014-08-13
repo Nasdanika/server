@@ -196,7 +196,7 @@ public class MethodResult {
 		if (mTitle == null) {
 			name = ReportGenerator.title(method.getName());
 		} else {
-			name = mTitle.value();
+			name = format(mTitle.value());
 		}
 		
 		String methodDetailsLocation = "content/method_"	+ id + ".html";
@@ -354,7 +354,7 @@ public class MethodResult {
 		if (mTitle==null) {
 			caption.append(ReportGenerator.title(method.getName()));
 		} else {
-			caption.append(mTitle.value());
+			caption.append(format(mTitle.value()));
 		}
 		caption.append("</i>");
 		return caption.toString();
