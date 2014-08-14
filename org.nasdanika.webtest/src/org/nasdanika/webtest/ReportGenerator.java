@@ -82,7 +82,7 @@ class ReportGenerator {
 		htmlFactory.getStylesheets().add("bootstrap/css/bootstrap-theme.min.css");
 		htmlFactory.getStylesheets().add("css/lightbox.css");
 		
-		htmlFactory.getScripts().add("js/jquery-2.1.0.min.js");
+		htmlFactory.getScripts().add("js/jquery-1.11.1.min.js");
 		htmlFactory.getScripts().add("js/underscore-min.js");
 		htmlFactory.getScripts().add("js/backbone-min.js");
 		htmlFactory.getScripts().add("bootstrap/js/bootstrap.min.js");
