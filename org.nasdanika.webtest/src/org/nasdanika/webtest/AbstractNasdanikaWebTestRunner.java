@@ -2,6 +2,7 @@ package org.nasdanika.webtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -10,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -22,6 +24,9 @@ import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Base class for test runners which report results to {@link Collector}.
@@ -82,6 +87,12 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	};
 	
 	private static ThreadLocal<Object> testThreadLocal = new ThreadLocal<Object>();
+	private static ThreadLocal<List<ServiceReference<?>>> serviceReferencesThreadLocal = new ThreadLocal<List<ServiceReference<?>>>() {
+		
+		protected java.util.List<org.osgi.framework.ServiceReference<?>> initialValue() {
+			return new ArrayList<ServiceReference<?>>();
+		};
+	};
 	
 	private static byte[] takeScreenshot() {
 		Object test = testThreadLocal.get();
@@ -155,6 +166,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T proxyPageFactory(final T pageFactory) {
+		if (pageFactory == null) {
+			return null;
+		}
 		Class<? extends Object> pageFactoryClass = pageFactory.getClass();
 		return (T) Proxy.newProxyInstance(
 				pageFactoryClass.getClassLoader(), 
@@ -225,6 +239,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T proxyActorFactory(final T actorFactory) {
+		if (actorFactory==null) {
+			return null;
+		}
 		Class<? extends Object> actorFactoryClass = actorFactory.getClass();
 		return (T) Proxy.newProxyInstance(
 				actorFactoryClass.getClassLoader(), 
@@ -355,6 +372,14 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 			    	} catch (Throwable th) {
 			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), th);
 			    		throw th;
+			    	} finally {
+			    		// Unget factory services if any
+			    		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			    		for (ServiceReference<?> sr: serviceReferencesThreadLocal.get()) {
+			    			bundleContext.ungetService(sr);
+			    		}
+			    		
+			    		serviceReferencesThreadLocal.get().clear();
 			    	}
 				}
 			}
@@ -374,12 +399,14 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	}
 	
 	@Override
-	protected Statement methodInvoker(final FrameworkMethod method, final Object test) {		
+	protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
+		injectFactories(test);
+		
 		return new Statement() {
 
 		    @Override
 		    public void evaluate() throws Throwable {
-		    	try {		    		
+		    	try {		
 		    		testThreadLocal.set(test);
 		    		collectorThreadLocal.get().setTest(test);
 		    		collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot());
@@ -391,6 +418,51 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    }
 		    
 		};
+	}
+
+	private void injectFactories(final Object test) {
+		try {
+			BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			for (Field field: test.getClass().getFields()) {
+				ActorFactory afa = field.getAnnotation(ActorFactory.class);
+				if (afa!=null) {
+					if (afa.filter().trim().length()==0) {
+						ServiceReference<?> sr = bundleContext.getServiceReference(field.getType());
+						if (sr!=null) {
+							serviceReferencesThreadLocal.get().add(sr);
+							field.set(test, proxyActorFactory(bundleContext.getService(sr)));
+						}
+					} else {
+						Collection<?> src = bundleContext.getServiceReferences(field.getType(), afa.filter());
+						if (!src.isEmpty()) {
+							ServiceReference<?> sr = (ServiceReference<?>) src.iterator().next();
+							serviceReferencesThreadLocal.get().add(sr);
+							field.set(test, proxyActorFactory(bundleContext.getService(sr)));
+						}		    					
+					}
+				} else {
+					PageFactory pfa = field.getAnnotation(PageFactory.class);
+					if (pfa!=null) {
+						if (pfa.filter().trim().length()==0) {
+							ServiceReference<?> sr = bundleContext.getServiceReference(field.getType());
+							if (sr!=null) {
+								serviceReferencesThreadLocal.get().add(sr);
+								field.set(test, proxyPageFactory(bundleContext.getService(sr)));
+							}
+						} else {
+							Collection<?> src = bundleContext.getServiceReferences(field.getType(), pfa.filter());
+							if (!src.isEmpty()) {
+								ServiceReference<?> sr = (ServiceReference<?>) src.iterator().next();
+								serviceReferencesThreadLocal.get().add(sr);
+								field.set(test, proxyPageFactory(bundleContext.getService(sr)));
+							}		    					
+						}
+					}		    				
+				}
+			}
+		} catch (Exception e) {
+			throw new RuntimeException("Factroy injection failed: "+e, e);
+		}			
 	}
 
 }
