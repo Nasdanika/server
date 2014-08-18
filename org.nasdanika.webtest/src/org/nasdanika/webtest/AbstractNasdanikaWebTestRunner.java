@@ -422,7 +422,10 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 
 	private void injectFactories(final Object test) {
 		try {
-			BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			BundleContext bundleContext = FrameworkUtil.getBundle(test.getClass()).getBundleContext();
+			if (bundleContext==null) {
+				throw new NullPointerException("Cannot acquire bundle context for class "+test.getClass());
+			}
 			for (Field field: test.getClass().getFields()) {
 				ActorFactory afa = field.getAnnotation(ActorFactory.class);
 				if (afa!=null) {
