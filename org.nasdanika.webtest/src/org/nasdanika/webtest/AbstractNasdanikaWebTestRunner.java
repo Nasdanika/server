@@ -11,7 +11,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,8 +24,9 @@ import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * Base class for test runners which report results to {@link Collector}.
@@ -87,10 +87,10 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	};
 	
 	private static ThreadLocal<Object> testThreadLocal = new ThreadLocal<Object>();
-	private static ThreadLocal<List<ServiceReference<?>>> serviceReferencesThreadLocal = new ThreadLocal<List<ServiceReference<?>>>() {
+	private static ThreadLocal<List<ServiceTracker<?,?>>> serviceTrackersThreadLocal = new ThreadLocal<List<ServiceTracker<?,?>>>() {
 		
-		protected java.util.List<org.osgi.framework.ServiceReference<?>> initialValue() {
-			return new ArrayList<ServiceReference<?>>();
+		protected java.util.List<ServiceTracker<?,?>> initialValue() {
+			return new ArrayList<ServiceTracker<?,?>>();
 		};
 	};
 	
@@ -373,13 +373,12 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), th);
 			    		throw th;
 			    	} finally {
-			    		// Unget factory services if any
-			    		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
-			    		for (ServiceReference<?> sr: serviceReferencesThreadLocal.get()) {
-			    			bundleContext.ungetService(sr);
+			    		// Close service trackers if any
+			    		for (ServiceTracker<?,?> st: serviceTrackersThreadLocal.get()) {
+			    			st.close();
 			    		}
 			    		
-			    		serviceReferencesThreadLocal.get().clear();
+			    		serviceTrackersThreadLocal.get().clear();
 			    	}
 				}
 			}
@@ -420,6 +419,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		};
 	}
 
+	@SuppressWarnings("unchecked")
 	private void injectFactories(final Object test) {
 		try {
 			BundleContext bundleContext = FrameworkUtil.getBundle(test.getClass()).getBundleContext();
@@ -430,35 +430,31 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				ActorFactory afa = field.getAnnotation(ActorFactory.class);
 				if (afa!=null) {
 					if (afa.filter().trim().length()==0) {
-						ServiceReference<?> sr = bundleContext.getServiceReference(field.getType());
-						if (sr!=null) {
-							serviceReferencesThreadLocal.get().add(sr);
-							field.set(test, proxyActorFactory(bundleContext.getService(sr)));
-						}
+						ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
+						st.open();
+						serviceTrackersThreadLocal.get().add(st);
+						field.set(test, proxyActorFactory(st.waitForService(2000)));
 					} else {
-						Collection<?> src = bundleContext.getServiceReferences(field.getType(), afa.filter());
-						if (!src.isEmpty()) {
-							ServiceReference<?> sr = (ServiceReference<?>) src.iterator().next();
-							serviceReferencesThreadLocal.get().add(sr);
-							field.set(test, proxyActorFactory(bundleContext.getService(sr)));
-						}		    					
+						String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+afa.filter()+")";
+						ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
+						st.open();
+						serviceTrackersThreadLocal.get().add(st);
+						field.set(test, proxyActorFactory(st.waitForService(2000)));
 					}
 				} else {
 					PageFactory pfa = field.getAnnotation(PageFactory.class);
 					if (pfa!=null) {
 						if (pfa.filter().trim().length()==0) {
-							ServiceReference<?> sr = bundleContext.getServiceReference(field.getType());
-							if (sr!=null) {
-								serviceReferencesThreadLocal.get().add(sr);
-								field.set(test, proxyPageFactory(bundleContext.getService(sr)));
-							}
+							ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
+							st.open();
+							serviceTrackersThreadLocal.get().add(st);
+							field.set(test, proxyPageFactory(st.waitForService(2000)));
 						} else {
-							Collection<?> src = bundleContext.getServiceReferences(field.getType(), pfa.filter());
-							if (!src.isEmpty()) {
-								ServiceReference<?> sr = (ServiceReference<?>) src.iterator().next();
-								serviceReferencesThreadLocal.get().add(sr);
-								field.set(test, proxyPageFactory(bundleContext.getService(sr)));
-							}		    					
+							String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+pfa.filter()+")";
+							ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
+							st.open();
+							serviceTrackersThreadLocal.get().add(st);
+							field.set(test, proxyPageFactory(st.waitForService(2000)));
 						}
 					}		    				
 				}
