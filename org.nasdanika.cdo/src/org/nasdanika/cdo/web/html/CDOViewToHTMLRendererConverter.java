@@ -43,7 +43,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 			@Override
 			public String render(WebContext context, String profile, Map<String, Object> environment) throws Exception {				
 				List<String> elements = new ArrayList<>();				
-				HTMLFactory htmlFactory = context.getHTMLFactory();
+				HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 				for (CDOResourceNode e: source.getElements()) {
 					String pe = context.getPath()[0];
 					int didx = pe.lastIndexOf('.');

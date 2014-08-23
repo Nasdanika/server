@@ -1,7 +1,6 @@
 package org.nasdanika.web;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -18,12 +17,14 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.Platform;
+import org.nasdanika.core.AdapterManager;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.Converter;
 import org.nasdanika.core.ConverterProvider;
 import org.nasdanika.core.ConverterProvider.ConverterDescriptor;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.InstanceMethodCommand;
 import org.nasdanika.core.MethodCommand;
 import org.nasdanika.html.HTMLFactory;
@@ -42,7 +43,7 @@ import org.osgi.util.tracker.ServiceTracker;
  * @author Pavel
  *
  */
-public class ExtensionManager implements AutoCloseable {
+public class ExtensionManager extends AdapterManager {
 	
 	private ServiceTracker<Route, Route> routeServiceTracker;
 	private ServiceTracker<UIPart<?,?>, UIPart<?,?>> uiPartServiceTracker;	
@@ -67,14 +68,18 @@ public class ExtensionManager implements AutoCloseable {
 	
 	@SuppressWarnings("unchecked")
 	public ExtensionManager(
+			Object target,
 			BundleContext context, 
+			String adapterServiceFilter,
 			String routeServiceFilter,
 			String uiPartServiceFilter,
 			String htmlFactoryName,
 			AccessDecision defaultAccessDecision) throws Exception {
+		super(target, context, adapterServiceFilter);
+		
 		// TODO - converter profiles map: class name -> profile.
 		if (context==null) {
-			context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+			context = FrameworkUtil.getBundle(target.getClass()).getBundleContext();
 		}
 		// TODO - bundle is still null???
 		if (routeServiceFilter==null || routeServiceFilter.trim().length()==0) {
@@ -109,7 +114,7 @@ public class ExtensionManager implements AutoCloseable {
 			} else if ("html_factory".equals(ce.getName())) {
 				if (htmlFactoryName==null || htmlFactoryName.equals(ce.getAttribute("name"))) {
 					this.htmlFactory = (HTMLFactory) ce.createExecutableExtension("class");
-					injectProperties(ce, htmlFactory);
+					CoreUtil.injectProperties(ce, htmlFactory);
 					break;
 				}
 			}					
@@ -120,9 +125,9 @@ public class ExtensionManager implements AutoCloseable {
 				UIPartEntry uiPartEntry = new UIPartEntry();
 				uiPartEntries.add(uiPartEntry);
 				uiPartEntry.uiPart = (UIPart<?,?>) ce.createExecutableExtension("class");
-				injectProperties(ce, uiPartEntry.uiPart);
+				CoreUtil.injectProperties(ce, uiPartEntry.uiPart);
 				String priorityStr = ce.getAttribute("priority");
-				if (!isBlank(priorityStr)) {
+				if (!CoreUtil.isBlank(priorityStr)) {
 					uiPartEntry.priority = Integer.parseInt(priorityStr);
 				}
 				uiPartEntry.category = ce.getAttribute("category");
@@ -236,10 +241,10 @@ public class ExtensionManager implements AutoCloseable {
 			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(CONVERT_ID)) {
 				if ("converter".equals(ce.getName())) {					
 					@SuppressWarnings("unchecked")
-					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) injectProperties(ce, ce.createExecutableExtension("class")));
+					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
 					
 					String priorityStr = ce.getAttribute("priority");
-					if (!isBlank(priorityStr)) {
+					if (!CoreUtil.isBlank(priorityStr)) {
 						cEntry.priority = Integer.parseInt(priorityStr);
 					}
 					
@@ -252,7 +257,7 @@ public class ExtensionManager implements AutoCloseable {
 					
 					ceList.add(cEntry);
 				} else if ("converter_provider".equals(ce.getName())) {
-					ConverterProvider cp = (ConverterProvider) injectProperties(ce, ce.createExecutableExtension("class"));
+					ConverterProvider cp = (ConverterProvider) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class"));
 					for (ConverterDescriptor<?, ?, ?> cd: cp.getConverterDescriptors()) {
 						@SuppressWarnings("unchecked")
 						ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) cd.getConverter());
@@ -330,11 +335,11 @@ public class ExtensionManager implements AutoCloseable {
 			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(SECURITY_ID)) {
 				if ("authorization_provider".equals(ce.getName())) {					
 					AuthorizationProvider ap = (AuthorizationProvider) ce.createExecutableExtension("class");
-					injectProperties(ce, ap);
+					CoreUtil.injectProperties(ce, ap);
 					AuthorizationProviderEntry sme = new AuthorizationProviderEntry(ap);
 					
 					String priorityStr = ce.getAttribute("priority");
-					if (!isBlank(priorityStr)) {
+					if (!CoreUtil.isBlank(priorityStr)) {
 						sme.priority = Integer.parseInt(priorityStr);
 					}
 					
@@ -361,22 +366,6 @@ public class ExtensionManager implements AutoCloseable {
 		}
 		return authorizationProvider;
 	}
-		
-	public static boolean isBlank(String str) {
-		return str==null || str.trim().length()==0;
-	}
-		
-	public static String join(String[] sa, String separator) {
-		StringBuilder sb = new StringBuilder();
-		for (String pe: sa) {
-			if (sb.length()>0) {
-				sb.append(separator);
-			}
-			sb.append(pe);
-		}
-		return sb.toString();
-	}
-
 	public RouteRegistry getRouteRegistry() {
 		return routeRegistry;
 	}
@@ -600,7 +589,7 @@ public class ExtensionManager implements AutoCloseable {
 			
 			this.type = type;
 			this.methods = methods;
-			if (!isBlank(patternStr)) {
+			if (!CoreUtil.isBlank(patternStr)) {
 				pattern = Pattern.compile(patternStr);
 			}
 			this.targetType = targetType;
@@ -612,7 +601,7 @@ public class ExtensionManager implements AutoCloseable {
 			if (targetType!=null && !targetType.isInstance(obj)) {
 				return false;
 			}
-			return pattern==null ? true : pattern.matcher(ExtensionManager.join(path, "/")).matches();			
+			return pattern==null ? true : pattern.matcher(CoreUtil.join(path, "/")).matches();			
 		}
 
 		protected Pattern getPattern() {
@@ -682,9 +671,9 @@ public class ExtensionManager implements AutoCloseable {
 			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(ExtensionManager.ROUTE_ID)) {
 				if ("object_route".equals(ce.getName())) {					
 					Route route = (Route) ce.createExecutableExtension("class");		
-					injectProperties(ce, route);
+					CoreUtil.injectProperties(ce, route);
 					String priorityStr = ce.getAttribute("priority");
-					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
+					int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String targetClassName = ce.getAttribute("target");
 					IContributor contributor = ce.getContributor();		
 					Bundle bundle = Platform.getBundle(contributor.getName());
@@ -703,9 +692,9 @@ public class ExtensionManager implements AutoCloseable {
 					}
 				} else if ("extension_route".equals(ce.getName())) {					
 						Route route = (Route) ce.createExecutableExtension("class");		
-						injectProperties(ce, route);
+						CoreUtil.injectProperties(ce, route);
 						String priorityStr = ce.getAttribute("priority");
-						int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
+						int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 						String targetClassName = ce.getAttribute("target");
 						IContributor contributor = ce.getContributor();		
 						Bundle bundle = Platform.getBundle(contributor.getName());
@@ -724,7 +713,7 @@ public class ExtensionManager implements AutoCloseable {
 						}
 				} else if ("object_resource_route".equals(ce.getName())) {					
 					String priorityStr = ce.getAttribute("priority");
-					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
+					int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String targetClassName = ce.getAttribute("target");					
 					IContributor contributor = ce.getContributor();		
 					Bundle bundle = Platform.getBundle(contributor.getName());
@@ -753,14 +742,14 @@ public class ExtensionManager implements AutoCloseable {
 									}
 								};
 							}
-							final String subPath = join(Arrays.copyOfRange(context.getPath(), 1, context.getPath().length), "/");
+							final String subPath = CoreUtil.join(Arrays.copyOfRange(context.getPath(), 1, context.getPath().length), "/");
 							return new Action() {
 								
 								@Override
 								public Object execute() throws Exception {
-									if (!isBlank(contentType) && context instanceof HttpContext) {
+									if (!CoreUtil.isBlank(contentType) && context instanceof HttpContext) {
 										HttpServletResponse resp = ((HttpContext) context).getResponse();
-										if (isBlank(resp.getContentType())) {
+										if (CoreUtil.isBlank(resp.getContentType())) {
 											resp.setContentType(contentType);
 										}
 									}
@@ -797,9 +786,9 @@ public class ExtensionManager implements AutoCloseable {
 					methodRoutes.add(routeEntry);
 				} else if ("root_route".equals(ce.getName())) {					
 					Route route = (Route) ce.createExecutableExtension("class");			
-					injectProperties(ce, route);
+					CoreUtil.injectProperties(ce, route);
 					String priorityStr = ce.getAttribute("priority");
-					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
+					int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String methodStr = ce.getAttribute("method");					
 					RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
 					RouteEntry routeEntry = new RouteEntry(RouteType.ROOT, routeMethods, ce.getAttribute("pattern"), null, priority, route);
@@ -814,7 +803,7 @@ public class ExtensionManager implements AutoCloseable {
 					}
 				} else if ("root_resource_route".equals(ce.getName())) {					
 					String priorityStr = ce.getAttribute("priority");
-					int priority = ExtensionManager.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
+					int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					IContributor contributor = ce.getContributor();		
 					Bundle bundle = Platform.getBundle(contributor.getName());
 
@@ -841,14 +830,14 @@ public class ExtensionManager implements AutoCloseable {
 									}
 								};
 							}
-							final String subPath = join(Arrays.copyOfRange(context.getPath(), 1, context.getPath().length), "/");
+							final String subPath = CoreUtil.join(Arrays.copyOfRange(context.getPath(), 1, context.getPath().length), "/");
 							return new Action() {
 								
 								@Override
 								public Object execute() throws Exception {
-									if (!isBlank(contentType) && context instanceof HttpContext) {
+									if (!CoreUtil.isBlank(contentType) && context instanceof HttpContext) {
 										HttpServletResponse resp = ((HttpContext) context).getResponse();
-										if (isBlank(resp.getContentType())) {
+										if (CoreUtil.isBlank(resp.getContentType())) {
 											resp.setContentType(contentType);
 										}
 									}
@@ -885,7 +874,7 @@ public class ExtensionManager implements AutoCloseable {
 					methodRoutes.add(routeEntry);
 				} else if ("route_provider".equals(ce.getName())) {
 					RouteProvider routeProvider = (RouteProvider) ce.createExecutableExtension("class");
-					injectProperties(ce, routeProvider);
+					CoreUtil.injectProperties(ce, routeProvider);
 					for (final RouteDescriptor routeDescriptor: routeProvider.getRouteDescriptors()) {
 						RouteEntry routeEntry = new RouteEntry(routeDescriptor.getType(), routeDescriptor.getMethods(), routeDescriptor.getPattern(), routeDescriptor.getTarget(), routeDescriptor.getPriority(), routeDescriptor.getRoute());
 																
@@ -913,93 +902,6 @@ public class ExtensionManager implements AutoCloseable {
 		List<RouteEntry> ret = routeMap.get(routeType).get(method);
 		return ret == null ? Collections.<RouteEntry>emptyList() : ret;
 	}
-
-	public static Object injectProperties(IConfigurationElement ce, final Object target) throws Exception {
-		for (IConfigurationElement cce: ce.getChildren()) {
-			if ("property".equals(cce.getName())) {
-				injectProperty(target, cce.getAttribute("name").split("\\."), cce.getAttribute("value"));
-			}
-		}
-		return target;
-	}
-
-	private static void injectProperty(Object target, String[] propertyPath, String value) throws Exception {
-		if (propertyPath.length==1) {
-			String mName = "set"+propertyPath[0].substring(0, 1).toUpperCase()+propertyPath[0].substring(1);
-			
-			// Methods
-			// String injection first
-			for (Method mth: target.getClass().getMethods()) {
-				Class<?>[] pTypes = mth.getParameterTypes();
-				if (pTypes.length==1 && mth.getName().equals(mName) && pTypes[0].isAssignableFrom(String.class)) {
-					mth.invoke(target, value);
-					return;
-				}								
-			}
-			
-			// Constructor conversion 
-			for (Method mth: target.getClass().getMethods()) {
-				Class<?>[] pTypes = mth.getParameterTypes();
-				if (pTypes.length==1 && mth.getName().equals(mName)) {
-					Class<?> pType = pTypes[0];
-					for (Constructor<?> c: pType.getConstructors()) {
-						if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(value)) {
-							mth.invoke(target, c.newInstance(value));
-							return;
-						}
-					}
-				}								
-			}
-			
-			// Fields
-			for (Field fld: target.getClass().getFields()) {
-				if (fld.getType().isAssignableFrom(String.class)) {
-					fld.set(target, value);
-					return;
-				}								
-			}
-			
-			// Constructor conversion 
-			for (Field fld: target.getClass().getFields()) {
-				for (Constructor<?> c: fld.getType().getConstructors()) {
-					if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(value)) {
-						fld.set(target, c.newInstance(value));
-						return;
-					}
-				}
-			}
-			
-			throw new IllegalArgumentException("Cannot inject property "+propertyPath[0]+" with value '"+value+"' into "+target.getClass().getName());
-		} else if (propertyPath.length>1) {
-			String mName = "get"+propertyPath[0].substring(0, 1).toUpperCase()+propertyPath[0].substring(1);
-			// Method
-			for (Method mth: target.getClass().getMethods()) {
-				if (mth.getParameterTypes().length==0 && mth.getName().equals(mName)) {
-					Object nextTarget = mth.invoke(target);
-					if (nextTarget == null) {
-						throw new NullPointerException("Cannot set property: "+mth+" returned null");
-					}
-					injectProperty(nextTarget, Arrays.copyOfRange(propertyPath, 1, propertyPath.length), value);
-					return;
-				}
-			}
-			
-			// Field
-			for (Field fld: target.getClass().getFields()) {
-				if (fld.getName().equals(propertyPath[0])) {
-					Object nextTarget = fld.get(target);
-					if (nextTarget == null) {
-						throw new NullPointerException("Cannot set property: "+propertyPath[0]+" is null");
-					}
-					injectProperty(nextTarget, Arrays.copyOfRange(propertyPath, 1, propertyPath.length), value);
-					return;
-				}
-			}			
-			
-			throw new IllegalArgumentException("There is no property "+propertyPath[0]+" in "+target.getClass().getName());			
-		}
-	}
-
 	@Override
 	public void close() throws Exception {
 		try {

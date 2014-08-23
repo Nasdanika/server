@@ -3,6 +3,7 @@ package org.nasdanika.web.html.convert;
 import java.util.Map.Entry;
 
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.UIElement.Style;
@@ -22,7 +23,7 @@ public class Map implements Converter<java.util.Map<?,?>, HTMLRenderer, WebConte
 			
 			@Override
 			public String render(WebContext context, String profile, java.util.Map<String, Object> environment) throws Exception {
-				Table table = context.getHTMLFactory().table().bordered();
+				Table table = context.adapt(HTMLFactory.class).table().bordered();
 				Row header = table.row().style(Style.INFO);
 				header.header("Key");
 				header.header("Value");

@@ -33,7 +33,7 @@ public class CDOResourceToHTMLRendererConverter implements Converter<CDOResource
 			
 			@Override
 			public String render(WebContext context, String profile, Map<String, Object> environment) throws Exception {				
-				HTMLFactory htmlFactory = context.getHTMLFactory();
+				HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 				Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
 				for (TraceEntry te: context.getPathTrace()) {
 					breadcrumbs.item(te.getPath(), te.getDisplayName());

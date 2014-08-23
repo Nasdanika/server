@@ -132,11 +132,6 @@ public abstract class ContextImpl implements WebContext {
 		}
 		return renderer.render(this, profile, environment);
 	}
-
-	@Override
-	public HTMLFactory getHTMLFactory() {
-		return extensionManager.getHTMLFactory();
-	}
 	
 	@Override
 	public String getObjectPath(Object object) throws Exception {
@@ -192,10 +187,20 @@ public abstract class ContextImpl implements WebContext {
 		return classLoadingContext.getResources(name);
 	}
 	
+//	TODO - Explicitly add adapters, adapter map from parent.
+	
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T adapt(Class<T> targetType) {					
-		return targetType.isInstance(this) ? (T) this : null;
+	public <T> T adapt(Class<T> targetType) throws Exception {					
+		if (targetType.isInstance(this)) {
+			return (T) this;
+		}
+		
+		if (targetType.isAssignableFrom(HTMLFactory.class)) {
+			return (T) extensionManager.getHTMLFactory();
+		}
+		
+		return extensionManager.adapt(targetType);
 	}
 	
 }

@@ -48,7 +48,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 					return StringEscapeUtils.escapeHtml4(source.getName());
 				}
 				
-				HTMLFactory htmlFactory = context.getHTMLFactory();
+				HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 				Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
 				for (TraceEntry te: context.getPathTrace()) {
 					breadcrumbs.item(te.getPath(), te.getDisplayName());

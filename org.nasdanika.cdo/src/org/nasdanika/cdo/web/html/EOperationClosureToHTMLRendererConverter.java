@@ -33,7 +33,7 @@ public class EOperationClosureToHTMLRendererConverter implements Converter<EOper
 					return StringEscapeUtils.escapeHtml4(source.getOperation().getName());
 				}
 				
-				HTMLFactory htmlFactory = context.getHTMLFactory();
+				HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 				Form form = htmlFactory.form().attribute("method", "post");
 				for (EParameter p: source.getOperation().getEParameters()) {
 					String inputId = htmlFactory.nextId()+"_"+p.getName();

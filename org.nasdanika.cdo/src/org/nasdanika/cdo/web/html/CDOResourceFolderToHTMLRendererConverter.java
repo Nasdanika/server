@@ -32,7 +32,7 @@ public class CDOResourceFolderToHTMLRendererConverter implements Converter<CDORe
 			@Override
 			public String render(WebContext context, String profile, Map<String, Object> environment) throws Exception {				
 				List<String> nodes = new ArrayList<>();				
-				HTMLFactory htmlFactory = context.getHTMLFactory();
+				HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 				for (CDOResourceNode e: source.getNodes()) {
 					String pe = context.getPath()[0];
 					int didx = pe.lastIndexOf('.');

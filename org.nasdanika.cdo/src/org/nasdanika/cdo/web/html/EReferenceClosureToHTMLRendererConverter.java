@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.cdo.EReferenceClosure;
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
@@ -30,9 +31,9 @@ public class EReferenceClosureToHTMLRendererConverter implements Converter<ERefe
 				if (source.getFeature().isMany()) {
 					List<Object> elements = new ArrayList<>();
 					for (Object e: (Iterable<?>) source.getValue()) {
-						elements.add(context.getHTMLFactory().routeLink("main", "/"+context.getObjectPath(e)+".html", context.toHTML(e, "label", null)));						
+						elements.add(context.adapt(HTMLFactory.class).routeLink("main", "/"+context.getObjectPath(e)+".html", context.toHTML(e, "label", null)));						
 					}
-					return context.getHTMLFactory().ol(elements).toString();
+					return context.adapt(HTMLFactory.class).ol(elements).toString();
 				}
 				return context.toHTML(source.getValue(), null, null);
 			}

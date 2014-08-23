@@ -3,6 +3,7 @@ package org.nasdanika.web.html.convert;
 import java.util.ArrayList;
 
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
@@ -24,7 +25,7 @@ public class Array implements Converter<Object, HTMLRenderer, WebContext> {
 					for (int i=0, l= java.lang.reflect.Array.getLength(source); i<l; ++i) {
 						items.add(context.toHTML(java.lang.reflect.Array.get(source,i), profile, environment));
 					}
-					return context.getHTMLFactory().ol(items).toString();
+					return context.adapt(HTMLFactory.class).ol(items).toString();
 				}
 			};
 		}

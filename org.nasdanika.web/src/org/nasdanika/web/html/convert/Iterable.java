@@ -3,6 +3,7 @@ package org.nasdanika.web.html.convert;
 import java.util.ArrayList;
 
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
@@ -27,7 +28,7 @@ public class Iterable implements Converter<java.lang.Iterable<?>, HTMLRenderer, 
 				for (Object e: source) {
 					items.add(context.toHTML(e, profile, environment));
 				}
-				return context.getHTMLFactory().ol(items).toString();
+				return context.adapt(HTMLFactory.class).ol(items).toString();
 			}
 		};
 	}

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.cdo.EAttributeClosure;
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -27,7 +28,7 @@ public class EAttributeClosureToHTMLRendererConverter implements Converter<EAttr
 					return StringEscapeUtils.escapeHtml4(source.getFeature().getName());
 				}
 				if (source.getFeature().isMany()) {
-					Table data = context.getHTMLFactory().table().bordered();
+					Table data = context.adapt(HTMLFactory.class).table().bordered();
 					for (Object e: (Iterable<?>) source.getValue()) {
 						data.row().cell(context.toHTML(e, "label", null));						
 					}

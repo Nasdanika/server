@@ -36,7 +36,9 @@ public class RoutingServlet extends HttpServlet {
 		jsonPrettyPrint = "true".equals(config.getInitParameter("json-pretty-print"));
 		try {
 			extensionManager = new ExtensionManager(
+					this,
 					null, 
+					config.getInitParameter("adapter-service-filter"),
 					config.getInitParameter("route-service-filter"),
 					config.getInitParameter("ui-part-service-filter"),
 					config.getInitParameter("html-factory"),

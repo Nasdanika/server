@@ -60,7 +60,7 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 				if ("label".equals(profile)) {
 					return label(source);
 				}				
-				HTMLFactory htmlFactory = context.getHTMLFactory();
+				HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 				
 				Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
 				for (TraceEntry te: context.getPathTrace()) {
@@ -111,7 +111,7 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 	}
 	
 	private Object renderFeatures(T source, WebContext context) throws Exception {
-		HTMLFactory htmlFactory = context.getHTMLFactory();
+		HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 		List<EStructuralFeature> allStructuralFeatures = new ArrayList<>(source.eClass().getEAllStructuralFeatures());
 		Collections.sort(allStructuralFeatures, new Comparator<EStructuralFeature>() {
 
@@ -174,7 +174,7 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 		if (allOperations.isEmpty()) {
 			return null;
 		}
-		HTMLFactory htmlFactory = context.getHTMLFactory();
+		HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 		Collections.sort(allOperations, new Comparator<EOperation>() {
 
 			@Override

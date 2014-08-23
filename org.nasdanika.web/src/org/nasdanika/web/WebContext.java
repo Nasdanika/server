@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.ConverterContext;
-import org.nasdanika.html.HTMLFactory;
 
 
 public interface WebContext extends ConverterContext, ExportingContext, ClassLoadingContext {
@@ -56,8 +55,6 @@ public interface WebContext extends ConverterContext, ExportingContext, ClassLoa
 	 * @throws Exception
 	 */
 	void buildUICategory(String category, Object out, Map<String, Object> environment) throws Exception;
-
-	HTMLFactory getHTMLFactory();
 	
 	/**
 	 * Resolves object path. Optional operation.

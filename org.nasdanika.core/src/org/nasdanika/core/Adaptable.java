@@ -2,6 +2,6 @@ package org.nasdanika.core;
 
 public interface Adaptable {
 	
-	<T> T adapt(Class<T> targetType);
+	<T> T adapt(Class<T> targetType) throws Exception;
 
 }
