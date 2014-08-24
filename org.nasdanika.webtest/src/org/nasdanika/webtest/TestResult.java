@@ -1,5 +1,6 @@
 package org.nasdanika.webtest;
 
+import java.util.Collection;
 import java.util.Map;
 
 /**
@@ -16,5 +17,9 @@ public interface TestResult {
 	Map<TestStatus, Integer> getStats();
 	
 	String getId();
+		
+	Collection<ActorResult> getActorResults();
+	
+	Collection<PageResult> getPageResults();
 
 }

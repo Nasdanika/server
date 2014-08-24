@@ -5,7 +5,9 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -322,6 +324,38 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 					}					
 				}
 				return ret;
+			}
+
+			@Override
+			public Collection<ActorResult> getActorResults() {
+				Map<Class<?>, ActorResult> collector = new HashMap<>();
+				for (TestResult tr: getChildren()) {
+					for (ActorResult car: tr.getActorResults()) {
+						ActorResult aar = collector.get(car.getActorClass());
+						if (aar==null) {
+							aar = new ActorResult(car.getActorClass());
+							collector.put(car.getActorClass(), aar);
+						}
+						aar.merge(car);
+					}
+				}
+				return collector.values();
+			}
+
+			@Override
+			public Collection<PageResult> getPageResults() {
+				Map<Class<?>, PageResult> collector = new HashMap<>();
+				for (TestResult tr: getChildren()) {
+					for (PageResult cpr: tr.getPageResults()) {
+						PageResult apr = collector.get(cpr.getPageClass());
+						if (apr==null) {
+							apr = new PageResult(cpr.getPageClass());
+							collector.put(cpr.getPageClass(), apr);
+						}
+						apr.merge(cpr);
+					}
+				}
+				return collector.values();
 			}
 			
 		});

@@ -281,6 +281,21 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		}
 		return ret;
 	}
+		
+	static Method getOverridenInterfaceMethod(Method m, Class<?> interf) {
+		Class<?>[] pt = m.getParameterTypes();
+		for (Class<?> i: AbstractNasdanikaWebTestRunner.allInterfaces(m.getDeclaringClass())) {
+			if (interf.isAssignableFrom(i) && !interf.equals(i)) {
+				try {
+					Method iMeth = i.getMethod(m.getName(), pt);
+					return iMeth.getDeclaringClass().equals(interf) ? null : iMeth;
+				} catch (NoSuchMethodException e) {
+					// Nothing - continue.
+				}
+			}
+		}
+		return null;
+	}	
 	
 	protected TestResultCollector testResultCollector;
 

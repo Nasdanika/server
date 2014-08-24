@@ -12,13 +12,18 @@ import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -35,6 +40,7 @@ import org.nasdanika.html.HTMLFactory.Placement;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Table.Row.Cell;
+import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Color;
 import org.nasdanika.html.UIElement.DeviceSize;
@@ -45,14 +51,66 @@ import org.nasdanika.webtest.TestResult.TestStatus;
 class ReportGenerator {
 
 	private Class<?> klass;
-	private Collection<? extends TestResult> testResults;
+	private List<? extends TestResult> testResults;
 	private File outputDir;
+	private List<ActorResult> actorResults;
+	private List<PageResult> pageResults;
 
 	ReportGenerator(Class<?> klass, File outputDir, Collection<? extends TestResult> testResults) {
 		this.klass = klass;
 		this.outputDir = outputDir;
-		this.testResults = testResults;
+		
+		this.testResults = new ArrayList<>(testResults);
+		Collections.sort(this.testResults, new Comparator<TestResult>() {
+
+			@Override
+			public int compare(TestResult o1, TestResult o2) {
+				return classTitle(o1.getTestClass()).compareTo(classTitle(o2.getTestClass()));
+			}
+			
+		});
+		
+		Map<Class<?>, ActorResult> actorResultCollector = new HashMap<>();
+		for (TestResult tr: testResults) {
+			for (ActorResult car: tr.getActorResults()) {
+				ActorResult aar = actorResultCollector.get(car.getActorClass());
+				if (aar==null) {
+					aar = new ActorResult(car.getActorClass(), Integer.toString(actorResultCollector.size(), Character.MAX_RADIX));
+					actorResultCollector.put(car.getActorClass(), aar);
+				}
+				aar.merge(car);
+			}
+		}
+		actorResults = new ArrayList<>(actorResultCollector.values());
+		Collections.sort(actorResults, new Comparator<ActorResult>() {
+
+			@Override
+			public int compare(ActorResult o1, ActorResult o2) {
+				return classTitle(o1.getActorClass()).compareTo(classTitle(o2.getActorClass()));
+			}
+		});
+
+		Map<Class<?>, PageResult> pageResultCollector = new HashMap<>();
+		for (TestResult tr: testResults) {
+			for (PageResult cpr: tr.getPageResults()) {
+				PageResult apr = pageResultCollector.get(cpr.getPageClass());
+				if (apr==null) {
+					apr = new PageResult(cpr.getPageClass(), Integer.toString(pageResultCollector.size(), Character.MAX_RADIX));
+					pageResultCollector.put(cpr.getPageClass(), apr);
+				}
+				apr.merge(cpr);
+			}
+		}
+		pageResults = new ArrayList<>(pageResultCollector.values());
+		Collections.sort(pageResults, new Comparator<PageResult>() {
+
+			@Override
+			public int compare(PageResult o1, PageResult o2) {
+				return classTitle(o1.getPageClass()).compareTo(classTitle(o2.getPageClass()));
+			}
+		});
 	}
+	
 	
 	void generate() throws Exception {
 		
@@ -122,7 +180,13 @@ class ReportGenerator {
 		contentDir.mkdir();
 		
 		// TODO - test class methods threshold 
-		leftPanel.content(htmlFactory.panel(Style.INFO, "Tests", generateTestsLeftPanel(htmlFactory, contentDir, true), null));
+		leftPanel.content(htmlFactory.collapsible(Style.INFO, htmlFactory.glyphicon(Glyphicon.search)+" Tests", false, generateTestsLeftPanel(htmlFactory, contentDir, true), null));
+		if (!actorResults.isEmpty()) {
+			leftPanel.content(htmlFactory.collapsible(Style.INFO, htmlFactory.glyphicon(Glyphicon.user)+" Actors", false, generateActorsLeftPanel(htmlFactory, contentDir), null));
+		}
+		if (!pageResults.isEmpty()) {
+			leftPanel.content(htmlFactory.collapsible(Style.INFO, htmlFactory.glyphicon(Glyphicon.list_alt)+" Pages", false, generatePagesLeftPanel(htmlFactory, contentDir), null));
+		}
 		
 		// TODO - Actors, pages.
 		
@@ -142,9 +206,17 @@ class ReportGenerator {
 			generateTestResultDetails(testResult, htmlFactory, contentDir, slideWidth);
 		}
 		
+		for (ActorResult actorResult: actorResults) {
+			generateActorResultDetails(actorResult, htmlFactory, contentDir, slideWidth);			
+		}
+				
+		for (PageResult pageResult: pageResults) {
+			generatePageResultDetails(pageResult, htmlFactory, contentDir, slideWidth);			
+		}		
+		
 		System.out.println("Nasdanika Web Test Report generated in "+outputDir.getAbsolutePath());		
 	}
-	
+
 	protected void generateTestResultDetails(
 			TestResult testResult, 
 			DefaultHTMLFactory htmlFactory, 
@@ -152,7 +224,7 @@ class ReportGenerator {
 			int slideWidth) throws IOException {
 		
 		try (FileWriter testResultWriter = new FileWriter(new File(contentDir, "class_"+testResult.getId()+".html"))) {
-			writeTitleAndDescription(testResult.getTestClass(), testResultWriter);
+			writeTitleAndDescription(testResult, htmlFactory, testResultWriter);
 			if (testResult instanceof TestClassResult) {
 				generateTestClassResultDetails((TestClassResult) testResult, htmlFactory, testResultWriter, contentDir, slideWidth);
 			} else {
@@ -171,7 +243,16 @@ class ReportGenerator {
 		if (testSuiteResult instanceof ParameterizedTestResult) {
 			testResultWriter.write(genParameterizedTestResultTable(htmlFactory, testSuiteResult).toString());
 		} else {
-			testResultWriter.write(genTestResultTable(htmlFactory, testSuiteResult.getChildren()).toString());
+			List<TestResult> children = new ArrayList<>(testSuiteResult.getChildren());
+			Collections.sort(children, new Comparator<TestResult>() {
+
+				@Override
+				public int compare(TestResult o1, TestResult o2) {
+					return classTitle(o1.getTestClass()).compareTo(classTitle(o2.getTestClass()));
+				}
+				
+			});
+			testResultWriter.write(genTestResultTable(htmlFactory, children).toString());
 		}
 		for (TestResult tr: testSuiteResult.getChildren()) {
 			generateTestResultDetails(tr, htmlFactory, contentDir, slideWidth);
@@ -201,14 +282,17 @@ class ReportGenerator {
 		}		
 	}
 
-	private void writeTitleAndDescription(Class<?> klass, FileWriter testResultWriter) throws IOException {
+	private void writeTitleAndDescription(TestResult testResult, HTMLFactory htmlFactory, FileWriter testResultWriter) throws IOException {
 		testResultWriter.write("<H3>");
-		Title title = klass.getAnnotation(Title.class);
-		if (title==null) {
-			testResultWriter.write(classTitle(klass));
+		if (testResult instanceof TestClassResult) {
+			testResultWriter.write(htmlFactory.glyphicon(Glyphicon.search).toString());
+		} else if (testResult instanceof ParameterizedTestResult) {
+			testResultWriter.write(htmlFactory.glyphicon(Glyphicon.tasks).toString());			
 		} else {
-			testResultWriter.write(title.value()); // TODO - format for parameterized
+			testResultWriter.write(htmlFactory.glyphicon(Glyphicon.folder_open).toString());
 		}
+		testResultWriter.write(" ");
+		testResultWriter.write(classTitle(testResult.getTestClass())); // TODO - format for parameterized
 		testResultWriter.write("</H3>");
 		
 		Description description = klass.getAnnotation(Description.class);
@@ -230,8 +314,7 @@ class ReportGenerator {
 				testResultWriter.write("</pre>");			
 			}
 		}
-	}
-	
+	}	
 
 	protected void generateTestMethodResultDetails(
 			TestMethodResult testMethodResult, 
@@ -240,6 +323,13 @@ class ReportGenerator {
 			int slideWidth) throws IOException {
 		
 		try (FileWriter testMethodResultWriter = new FileWriter(new File(contentDir, "method_"+testMethodResult.id+".html"))) {
+			
+			testMethodResultWriter.write("<H3>");
+			testMethodResultWriter.write(htmlFactory.glyphicon(testMethodResult.getGlyphicon()).toString());
+			testMethodResultWriter.write(" ");
+			testMethodResultWriter.write(testMethodResult.getName());
+			testMethodResultWriter.write("</H3>");
+			
 			StringBuilder initScript = new StringBuilder();
 			Carousel screenshotCarousel = htmlFactory.carousel()
 					.ride(false)
@@ -288,7 +378,12 @@ class ReportGenerator {
 	}
 	
 	static String classTitle(Class<?> klass) {
-		return title(klass.getName().substring(klass.getName().lastIndexOf('.')+1));		
+		Title ta = klass.getAnnotation(Title.class);
+		String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
+		if (!klass.isInterface() && className.endsWith("Impl")) {
+			className = className.substring(0, className.length()-4);
+		}
+		return ta==null ? title(className) : ta.value();		
 	}
 	
 	static String title(String name) {
@@ -310,8 +405,6 @@ class ReportGenerator {
 	}
 
 	protected Tag generateTestsLeftPanel(HTMLFactory htmlFactory, File contentDir, boolean secondLevel) throws IOException {
-		// TODO - categorize, sort alphabetically
-		
 		Tag container = htmlFactory.tag("dl");		
 		for (TestResult testResult: testResults) {
 			if (testResult instanceof TestClassResult) {
@@ -340,14 +433,15 @@ class ReportGenerator {
 			File contentDir, 
 			boolean secondLevel) {
 		Tag testNameDD = htmlFactory.tag("dd", routeLink(testClassResult, htmlFactory)).style("font-weight", "bold");
-		container.content(testNameDD); // TODO - Link to test class summary
+		container.content(testNameDD);
 		
 		if (secondLevel) {
 			for (TestMethodResult tmr : testClassResult.getTestMethodResults()) {
-				container.content(htmlFactory.tag("dt", tmr.routeLink(htmlFactory, true)).style("padding-left", "15px"));
+				container.content(htmlFactory.tag("dt", tmr.routeLink(htmlFactory, true))
+						.style("font-weight", "normal")
+						.style("padding-left", "15px"));
 			}
-		}
-		
+		}		
 	}
 	
 	protected void generateTestSuiteResultLeftPanelEntry(
@@ -378,13 +472,7 @@ class ReportGenerator {
 		}
 		
 		nameBuilder.append("&nbsp;");			
-			
-		Title testTitle = testResult.getTestClass().getAnnotation(Title.class);
-		if (testTitle==null) {
-			nameBuilder.append(ReportGenerator.classTitle(testResult.getTestClass()));
-		} else {
-			nameBuilder.append(testTitle.value());
-		}
+		nameBuilder.append(ReportGenerator.classTitle(testResult.getTestClass()));
 		
 		return htmlFactory.routeLink("main", "content/class_"+testResult.getId()+".html", nameBuilder);
 	}	
@@ -392,8 +480,21 @@ class ReportGenerator {
 	protected void generateSummary(HTMLFactory htmlFactory, File contentDir) throws IOException {
 		try (FileWriter summaryWriter = new FileWriter(new File(contentDir, "summary.html"))) {
 			summaryWriter.write("<H3>Summary</H3>");
-			Table classTable = genTestResultTable(htmlFactory, testResults);			
-			summaryWriter.write(classTable.toString());
+			if (actorResults.size()+pageResults.size()>0) {				
+				// Tabs
+				Tabs tabs = htmlFactory.tabs();
+				tabs.item("Tests", genTestResultTable(htmlFactory, this.testResults));
+				if (!actorResults.isEmpty()) {
+					tabs.item("Actors", genActorTable(htmlFactory));
+				}
+				if (!pageResults.isEmpty()) {
+					tabs.item("Pages", genPageTable(htmlFactory));
+				}
+				summaryWriter.write(tabs.toString());
+			} else {			
+				Table classTable = genTestResultTable(htmlFactory, this.testResults);			
+				summaryWriter.write(classTable.toString());
+			}
 		}
 	}
 
@@ -590,4 +691,314 @@ class ReportGenerator {
 		}
 		return pi;
 	}
+		
+	private void generatePageResultDetails(
+			PageResult pageResult,
+			DefaultHTMLFactory htmlFactory, 
+			File contentDir, 
+			int slideWidth) throws Exception {
+		
+		try (FileWriter pageResultWriter = new FileWriter(new File(contentDir, "page_"+pageResult.getId()+".html"))) {
+			pageResultWriter.write("<H3>");
+			pageResultWriter.write(htmlFactory.glyphicon(Glyphicon.list_alt).toString());
+			pageResultWriter.write(" ");
+			pageResultWriter.write(classTitle(pageResult.getPageInterface()));
+			pageResultWriter.write("</H3>");
+			
+			Description description = pageResult.getPageInterface().getAnnotation(Description.class);
+			if (description!=null) {
+				if (description.html()) {
+					for (String str: description.value()) {
+						pageResultWriter.write(str);
+						pageResultWriter.write(" ");
+					}
+				} else {
+					pageResultWriter.write("<pre>");
+					int idx = 0;
+					for (String str: description.value()) {
+						if (idx++>0) {
+							pageResultWriter.write(System.lineSeparator());
+						}
+						pageResultWriter.write(StringEscapeUtils.escapeHtml4(str));
+					}
+					pageResultWriter.write("</pre>");			
+				}
+			}
+			
+			Map<String, Object[]> strCoverage = new TreeMap<>();			
+			for (Entry<Method, Integer> ce: pageResult.getCoverage().entrySet()) {
+				String descr = "";
+				Description mDescription = ce.getKey().getAnnotation(Description.class);
+				if (mDescription==null) {
+					descr = "&nbsp;";
+				} else {
+					if (mDescription.html()) {
+						for (String str: mDescription.value()) {
+							descr+=str;
+							descr+=" ";
+						}
+					} else {
+						descr+="<pre>";
+						int idx = 0;
+						for (String str: mDescription.value()) {
+							if (idx++>0) {
+								descr+=System.lineSeparator();
+							}
+							descr+=StringEscapeUtils.escapeHtml4(str);
+						}
+						descr+="</pre>";			
+					}
+				}
+
+				Title mTitle = ce.getKey().getAnnotation(Title.class);
+				if (mTitle==null) {
+					StringBuilder pListBuilder = new StringBuilder();
+					for (Class<?> pt: ce.getKey().getParameterTypes()) {
+						if (pListBuilder.length()>0) {
+							pListBuilder.append(", ");
+						}
+						pListBuilder.append(pt.getName().substring(pt.getName().lastIndexOf('.')+1));
+					}
+					strCoverage.put(ce.getKey().getName()+"("+pListBuilder+")", new Object[] {descr, ce.getValue()});
+				} else {
+					strCoverage.put(mTitle.value(), new Object[] {descr, ce.getValue()});					
+				}
+			}
+			
+			Table methodTable = htmlFactory.table().bordered();
+			Row headerRow = methodTable.row().style(Style.INFO);
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Calls");
+			for (Entry<String, Object[]> ce: strCoverage.entrySet()) {
+				Row methodRow = methodTable.row();
+				methodRow.cell(ce.getKey());
+				methodRow.cell(ce.getValue()[0]);				
+				methodRow.cell(ce.getValue()[1]).attribute("align", "right");
+			}
+			
+			pageResultWriter.write("<P>"+methodTable.toString());			
+		}
+	}
+
+
+	private void generateActorResultDetails(
+			ActorResult actorResult,
+			DefaultHTMLFactory htmlFactory, 
+			File contentDir, 
+			int slideWidth) throws Exception {
+		
+		try (FileWriter actorResultWriter = new FileWriter(new File(contentDir, "actor_"+actorResult.getId()+".html"))) {
+			actorResultWriter.write("<H3>");
+			actorResultWriter.write(htmlFactory.glyphicon(Glyphicon.user).toString());
+			actorResultWriter.write(" ");
+			actorResultWriter.write(classTitle(actorResult.getActorInterface()));
+			actorResultWriter.write("</H3>");
+			
+			Description description = actorResult.getActorInterface().getAnnotation(Description.class);
+			if (description!=null) {
+				if (description.html()) {
+					for (String str: description.value()) {
+						actorResultWriter.write(str);
+						actorResultWriter.write(" ");
+					}
+				} else {
+					actorResultWriter.write("<pre>");
+					int idx = 0;
+					for (String str: description.value()) {
+						if (idx++>0) {
+							actorResultWriter.write(System.lineSeparator());
+						}
+						actorResultWriter.write(StringEscapeUtils.escapeHtml4(str));
+					}
+					actorResultWriter.write("</pre>");			
+				}
+			}
+			
+			Map<String, Object[]> strCoverage = new TreeMap<>();			
+			for (Entry<Method, Integer> ce: actorResult.getCoverage().entrySet()) {
+				String descr = "";
+				Description mDescription = ce.getKey().getAnnotation(Description.class);
+				if (mDescription==null) {
+					descr = "&nbsp;";
+				} else {
+					if (mDescription.html()) {
+						for (String str: mDescription.value()) {
+							descr+=str;
+							descr+=" ";
+						}
+					} else {
+						descr+="<pre>";
+						int idx = 0;
+						for (String str: mDescription.value()) {
+							if (idx++>0) {
+								descr+=System.lineSeparator();
+							}
+							descr+=StringEscapeUtils.escapeHtml4(str);
+						}
+						descr+="</pre>";			
+					}
+				}
+
+				Title mTitle = ce.getKey().getAnnotation(Title.class);
+				if (mTitle==null) {
+					StringBuilder pListBuilder = new StringBuilder();
+					for (Class<?> pt: ce.getKey().getParameterTypes()) {
+						if (pListBuilder.length()>0) {
+							pListBuilder.append(", ");
+						}
+						pListBuilder.append(pt.getName().substring(pt.getName().lastIndexOf('.')+1));
+					}
+					strCoverage.put(ce.getKey().getName()+"("+pListBuilder+")", new Object[] {descr, ce.getValue()});
+				} else {
+					strCoverage.put(mTitle.value(), new Object[] {descr, ce.getValue()});					
+				}
+			}
+			
+			Table methodTable = htmlFactory.table().bordered();
+			Row headerRow = methodTable.row().style(Style.INFO);
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
+			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Calls");
+			for (Entry<String, Object[]> ce: strCoverage.entrySet()) {
+				Row methodRow = methodTable.row();
+				methodRow.cell(ce.getKey());
+				methodRow.cell(ce.getValue()[0]);				
+				methodRow.cell(ce.getValue()[1]).attribute("align", "right");
+			}
+			
+			actorResultWriter.write("<P>"+methodTable.toString());			
+		}
+	}
+
+	private Object generatePagesLeftPanel(DefaultHTMLFactory htmlFactory, File contentDir) {
+		Tag container = htmlFactory.tag("dl");		
+		for (PageResult pr: pageResults) {
+			Tag pageNameDD = htmlFactory.tag("dd", htmlFactory.routeLink("main", "content/page_"+pr.getId()+".html", classTitle(pr.getPageInterface()))).style("font-weight", "bold");
+			container.content(pageNameDD);
+		}
+		return container;
+	}
+	
+	private Object generateActorsLeftPanel(DefaultHTMLFactory htmlFactory, File contentDir) {
+		Tag container = htmlFactory.tag("dl");		
+		for (ActorResult ar: actorResults) {
+			Tag actorNameDD = htmlFactory.tag("dd", htmlFactory.routeLink("main", "content/actor_"+ar.getId()+".html", classTitle(ar.getActorInterface()))).style("font-weight", "bold");
+			container.content(actorNameDD);
+		}
+		return container;
+	}
+	
+	private Table genPageTable(HTMLFactory htmlFactory) {
+		Table pageTable = htmlFactory.table().bordered();
+		Row header = pageTable.row().style(Style.INFO);
+		int[] totals = {0, 0, 0};
+		header.header(htmlFactory.glyphicon(Glyphicon.list_alt), "&nbsp;Page class");
+		header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
+		header.header("Methods");
+		header.header("Invocations");
+		header.header("Coverage");
+		for (PageResult pr: pageResults) {
+			Row pageRow = pageTable.row();
+			pageRow.cell(htmlFactory.routeLink("main", "content/page_"+pr.getId()+".html", classTitle(pr.getPageInterface())));
+			Cell descriptionCell = pageRow.cell();
+			Description description = pr.getPageInterface().getAnnotation(Description.class);
+			if (description==null) {
+				descriptionCell.content("&nbsp;");
+			} else if (description.html()) {
+				for (String str: description.value()) {
+					descriptionCell.content(str, " ");
+				}
+			} else {
+				descriptionCell.content("<pre>");
+				int idx = 0;
+				for (String str: description.value()) {
+					if (idx++>0) {
+						descriptionCell.content(System.lineSeparator());
+					}
+					descriptionCell.content(StringEscapeUtils.escapeHtml4(str));
+				}
+				descriptionCell.content("</pre>");			
+			}
+			Map<Method, Integer> coverage = pr.getCoverage();
+			int covered = 0;
+			int calls = 0;
+			for (Integer mc: coverage.values()) {
+				if (mc!=0) {
+					++covered;
+				}
+				calls+=mc;
+			}
+			pageRow.cell(coverage.size()).attribute("align", "center");
+			pageRow.cell(calls).attribute("align", "center");
+			pageRow.cell(covered+MessageFormat.format(" ({0,number,#.##}%)", 100.0*covered/coverage.size())).attribute("align", "center");
+			totals[0]+=coverage.size();
+			totals[1]+=calls;
+			totals[2]+=covered;
+		}
+		Row totalsRow = pageTable.row().style(Style.INFO);
+		totalsRow.cell("Total").colspan(2);
+		totalsRow.cell(totals[0]).attribute("align", "center");
+		totalsRow.cell(totals[1]).attribute("align", "center");
+		totalsRow.cell(totals[2]+MessageFormat.format(" ({0,number,#.##}%)", 100.0*totals[2]/totals[0])).attribute("align", "center");
+		return pageTable;
+	}
+
+
+	private Table genActorTable(HTMLFactory htmlFactory) {
+		Table actorTable = htmlFactory.table().bordered();
+		Row header = actorTable.row().style(Style.INFO);
+		int[] totals = {0, 0, 0};
+		header.header(htmlFactory.glyphicon(Glyphicon.user), "&nbsp;Actor class");
+		header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
+		header.header("Methods");
+		header.header("Invocations");
+		header.header("Coverage");
+		for (ActorResult ar: actorResults) {
+			Row pageRow = actorTable.row();
+			pageRow.cell(htmlFactory.routeLink("main", "content/actor_"+ar.getId()+".html", classTitle(ar.getActorInterface())));
+			Cell descriptionCell = pageRow.cell();
+			Description description = ar.getActorInterface().getAnnotation(Description.class);
+			if (description==null) {
+				descriptionCell.content("&nbsp;");
+			} else if (description.html()) {
+				for (String str: description.value()) {
+					descriptionCell.content(str, " ");
+				}
+			} else {
+				descriptionCell.content("<pre>");
+				int idx = 0;
+				for (String str: description.value()) {
+					if (idx++>0) {
+						descriptionCell.content(System.lineSeparator());
+					}
+					descriptionCell.content(StringEscapeUtils.escapeHtml4(str));
+				}
+				descriptionCell.content("</pre>");			
+			}
+			Map<Method, Integer> coverage = ar.getCoverage();
+			int covered = 0;
+			int calls = 0;
+			for (Integer mc: coverage.values()) {
+				if (mc!=0) {
+					++covered;
+				}
+				calls+=mc;
+			}
+			pageRow.cell(coverage.size()).attribute("align", "center");
+			pageRow.cell(calls).attribute("align", "center");
+			pageRow.cell(covered+MessageFormat.format(" ({0,number,#.##}%)", 100.0*covered/coverage.size())).attribute("align", "center");
+			totals[0]+=coverage.size();
+			totals[1]+=calls;
+			totals[2]+=covered;
+		}
+		Row totalsRow = actorTable.row().style(Style.INFO);
+		totalsRow.cell("Total").colspan(2);
+		totalsRow.cell(totals[0]).attribute("align", "center");
+		totalsRow.cell(totals[1]).attribute("align", "center");
+		totalsRow.cell(totals[2]+MessageFormat.format(" ({0,number,#.##}%)", 100.0*totals[2]/totals[0])).attribute("align", "center");
+		return actorTable;
+	}
+
+	
 }

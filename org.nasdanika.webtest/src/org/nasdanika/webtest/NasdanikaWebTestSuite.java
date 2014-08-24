@@ -2,6 +2,8 @@ package org.nasdanika.webtest;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -142,6 +144,38 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 			public String getId() {
 				return id;
 			}
+			
+			@Override
+			public Collection<ActorResult> getActorResults() {
+				Map<Class<?>, ActorResult> collector = new HashMap<>();
+				for (TestResult tr: getChildren()) {
+					for (ActorResult car: tr.getActorResults()) {
+						ActorResult aar = collector.get(car.getActorClass());
+						if (aar==null) {
+							aar = new ActorResult(car.getActorClass());
+							collector.put(car.getActorClass(), aar);
+						}
+						aar.merge(car);
+					}
+				}
+				return collector.values();
+			}
+
+			@Override
+			public Collection<PageResult> getPageResults() {
+				Map<Class<?>, PageResult> collector = new HashMap<>();
+				for (TestResult tr: getChildren()) {
+					for (PageResult cpr: tr.getPageResults()) {
+						PageResult apr = collector.get(cpr.getPageClass());
+						if (apr==null) {
+							apr = new PageResult(cpr.getPageClass());
+							collector.put(cpr.getPageClass(), apr);
+						}
+						apr.merge(cpr);
+					}
+				}
+				return collector.values();
+			}			
 			
 		});
 	}

@@ -114,12 +114,7 @@ public class ScreenshotEntry implements Runnable {
 		}
 		if (methodResult!=null) {
 			Class<?> dc = methodResult.method.getDeclaringClass();
-			Title classTitle = dc.getAnnotation(Title.class);
-			if (classTitle==null) {
-				caption.append(ReportGenerator.classTitle(dc));
-			} else {
-				caption.append(classTitle.value());
-			}
+			caption.append(ReportGenerator.classTitle(dc));
 			caption.append(" :: ");
 			Title mTitle = methodResult.method.getAnnotation(Title.class);
 			if (mTitle==null) {

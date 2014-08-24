@@ -343,12 +343,7 @@ public class MethodResult {
 		caption.append(htmlFactory.glyphicon(getGlyphicon()));
 		caption.append(" <b>");
 		Class<?> dc = method.getDeclaringClass();
-		Title classTitle = dc.getAnnotation(Title.class);
-		if (classTitle==null) {
-			caption.append(ReportGenerator.classTitle(dc));
-		} else {
-			caption.append(classTitle.value());
-		}
+		caption.append(ReportGenerator.classTitle(dc));
 		caption.append("</b> <i>");
 		Title mTitle = method.getAnnotation(Title.class);
 		if (mTitle==null) {
@@ -364,12 +359,7 @@ public class MethodResult {
 	public String getName() {
 		StringBuilder caption = new StringBuilder();
 		Class<?> dc = method.getDeclaringClass();
-		Title classTitle = dc.getAnnotation(Title.class);
-		if (classTitle==null) {
-			caption.append(ReportGenerator.classTitle(dc));
-		} else {
-			caption.append(classTitle.value());
-		}
+		caption.append(ReportGenerator.classTitle(dc));
 		caption.append(" : ");
 		Title mTitle = method.getAnnotation(Title.class);
 		if (mTitle==null) {
