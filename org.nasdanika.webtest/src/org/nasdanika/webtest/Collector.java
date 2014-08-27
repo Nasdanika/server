@@ -2,24 +2,26 @@ package org.nasdanika.webtest;
 
 import java.lang.reflect.Method;
 
+import org.openqa.selenium.WebDriver;
+
 /**
  * Collects 
  * @author Pavel Vlasov
  *
  */
-public interface Collector extends AutoCloseable {
+public interface Collector<D extends WebDriver> extends AutoCloseable {
 	
-	void onPageProxying(Page page);
+	void onPageProxying(Page<D> page);
 	
-	void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args);
+	void beforePageMethod(Page<D> page, byte[] screenshot, Method method, Object[] args);
 	
-	void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);
+	void afterPageMethod(Page<D> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);
 
-	void onActorProxying(Actor actor);
+	void onActorProxying(Actor<D> actor);
 	
-	void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args);
+	void beforeActorMethod(Actor<D> actor, byte[] screenshot, Method method, Object[] args);
 	
-	void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);
+	void afterActorMethod(Actor<D> actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);
 	
 	void beforeTestMethod(Method method, int index, Object[] parameters);
 	

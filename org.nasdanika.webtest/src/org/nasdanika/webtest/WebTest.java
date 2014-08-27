@@ -11,8 +11,8 @@ import org.openqa.selenium.WebDriver;
  * @author Pavel Vlasov
  *
  */
-public interface WebTest {
+public interface WebTest<D extends WebDriver> {
 	
-	WebDriver getWebDriver();
+	D getWebDriver();
 
 }

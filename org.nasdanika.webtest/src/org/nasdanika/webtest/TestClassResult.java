@@ -12,7 +12,9 @@ import java.util.TreeMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class TestClassResult implements Collector, TestResult {
+import org.openqa.selenium.WebDriver;
+
+public class TestClassResult implements Collector<WebDriver>, TestResult {
 
 	private File screenshotsDir;
 	private Executor screenshotExecutor;
@@ -51,8 +53,8 @@ public class TestClassResult implements Collector, TestResult {
 		return ret;
 	}
 	
-	Map<Class<? extends Actor>, ActorResult> actors = new HashMap<>();
-	Map<Class<? extends Page>, PageResult> pages = new HashMap<>();
+	Map<Class<? extends Actor<WebDriver>>, ActorResult> actors = new HashMap<>();
+	Map<Class<? extends Page<WebDriver>>, PageResult> pages = new HashMap<>();
 	
 	public Collection<ActorResult> getActorResults() {
 		return actors.values();
@@ -63,15 +65,17 @@ public class TestClassResult implements Collector, TestResult {
 	}	
 
 	@Override
-	public void onPageProxying(Page page) {
-		Class<? extends Page> pageClass = page.getClass();
+	public void onPageProxying(Page<WebDriver> page) {
+		@SuppressWarnings("unchecked")
+		Class<? extends Page<WebDriver>> pageClass = (Class<? extends Page<WebDriver>>) page.getClass();
 		if (!pages.containsKey(pageClass)) {
 			pages.put(pageClass, new PageResult(pageClass));
 		}		
 	}
 	@Override
-	public void onActorProxying(Actor actor) {
-		Class<? extends Actor> actorClass = actor.getClass();
+	public void onActorProxying(Actor<WebDriver> actor) {
+		@SuppressWarnings("unchecked")
+		Class<? extends Actor<WebDriver>> actorClass = (Class<? extends Actor<WebDriver>>) actor.getClass();
 		if (!actors.containsKey(actorClass)) {
 			actors.put(actorClass, new ActorResult(actorClass));
 		}		
@@ -86,7 +90,7 @@ public class TestClassResult implements Collector, TestResult {
 	private MethodResult currentMethodResult;
 	
 	@Override
-	public void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args) {
+	public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args) {
 		ActorMethodResult amr = new ActorMethodResult(
 				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
 				method,
@@ -97,7 +101,7 @@ public class TestClassResult implements Collector, TestResult {
 		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot);
 	}
 	@Override
-	public void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args,	Object result, Throwable th) {
+	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args,	Object result, Throwable th) {
 		if (currentMethodResult instanceof ActorMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
@@ -108,7 +112,7 @@ public class TestClassResult implements Collector, TestResult {
 		}
 	}
 	@Override
-	public void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args) {
+	public void beforePageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args) {
 		PageMethodResult pmr = new PageMethodResult(
 				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
 				method,
@@ -119,7 +123,7 @@ public class TestClassResult implements Collector, TestResult {
 		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot);
 	}
 	@Override
-	public void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
+	public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
 		if (currentMethodResult instanceof PageMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();

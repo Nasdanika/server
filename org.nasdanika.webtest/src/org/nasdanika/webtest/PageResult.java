@@ -2,10 +2,11 @@ package org.nasdanika.webtest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openqa.selenium.WebDriver;
 
 /**
  * Contains results of page use throughout tests.
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class PageResult {
 
-	final Class<? extends Page> pageClass;
+	final Class<? extends Page<WebDriver>> pageClass;
 	
 	private String id;
 	
@@ -22,11 +23,11 @@ public class PageResult {
 		return id;
 	}
 
-	PageResult(Class<? extends Page> pageClass) {
+	PageResult(Class<? extends Page<WebDriver>> pageClass) {
 		this.pageClass = pageClass;
 	}
 
-	PageResult(Class<? extends Page> pageClass, String id) {
+	PageResult(Class<? extends Page<WebDriver>> pageClass, String id) {
 		this(pageClass);
 		this.id = id;
 	}
@@ -37,15 +38,15 @@ public class PageResult {
 		return results;
 	}
 	
-	public Class<? extends Page> getPageClass() {
+	public Class<? extends Page<WebDriver>> getPageClass() {
 		return pageClass;
 	}
 		
 	@SuppressWarnings("unchecked")
-	public Class<? extends Page> getPageInterface() {
+	public Class<? extends Page<WebDriver>> getPageInterface() {
 		for (Class<?> i: pageClass.getInterfaces()) {
 			if (Page.class.isAssignableFrom(i)) {
-				return (Class<? extends Page>) i;
+				return (Class<? extends Page<WebDriver>>) i;
 			}
 		}
 		return pageClass;

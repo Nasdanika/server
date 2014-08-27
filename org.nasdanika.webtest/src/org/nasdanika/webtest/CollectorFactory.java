@@ -1,5 +1,7 @@
 package org.nasdanika.webtest;
 
+import org.openqa.selenium.WebDriver;
+
 /**
  * This interface shall be implemented and exposed by 
  * collector service components.
@@ -8,6 +10,6 @@ package org.nasdanika.webtest;
  */
 public interface CollectorFactory {
 
-	Collector createCollector();
+	Collector<WebDriver> createCollector();
 	
 }

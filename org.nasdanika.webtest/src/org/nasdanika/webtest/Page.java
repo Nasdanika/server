@@ -8,8 +8,8 @@ import org.openqa.selenium.WebDriver;
  * @author Pavel Vlasov
  *
  */
-public interface Page {
+public interface Page<D extends WebDriver> {
 
-	WebDriver getWebDriver();
+	D getWebDriver();
 	
 }

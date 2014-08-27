@@ -2,10 +2,11 @@ package org.nasdanika.webtest;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.openqa.selenium.WebDriver;
 
 /**
  * Contains results of actor use throughout tests.
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class ActorResult {
 
-	final Class<? extends Actor> actorClass;
+	final Class<? extends Actor<WebDriver>> actorClass;
 	
 	private String id;
 	
@@ -22,11 +23,11 @@ public class ActorResult {
 		return id;
 	}
 
-	ActorResult(Class<? extends Actor> actorClass) {
+	ActorResult(Class<? extends Actor<WebDriver>> actorClass) {
 		this.actorClass = actorClass;		
 	}
 	
-	ActorResult(Class<? extends Actor> actorClass, String id) {
+	ActorResult(Class<? extends Actor<WebDriver>> actorClass, String id) {
 		this(actorClass);
 		this.id = id;		
 	}
@@ -37,15 +38,15 @@ public class ActorResult {
 		return results;
 	}
 	
-	public Class<? extends Actor> getActorClass() {
+	public Class<? extends Actor<WebDriver>> getActorClass() {
 		return actorClass;
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Class<? extends Actor> getActorInterface() {
+	public Class<? extends Actor<WebDriver>> getActorInterface() {
 		for (Class<?> i: actorClass.getInterfaces()) {
 			if (Actor.class.isAssignableFrom(i)) {
-				return (Class<? extends Actor>) i;
+				return (Class<? extends Actor<WebDriver>>) i;
 			}
 		}
 		return actorClass;

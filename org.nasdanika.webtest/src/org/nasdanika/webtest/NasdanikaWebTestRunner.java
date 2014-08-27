@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.runners.model.InitializationError;
+import org.openqa.selenium.WebDriver;
 
 /**
  * Test runner for generating a standalone report or reporting 
@@ -26,7 +27,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 	}
 			
 	@Override
-	protected Collector createCollector(final TestResultCollector testResultCollector) throws Exception {
+	protected Collector<WebDriver> createCollector(final TestResultCollector testResultCollector) throws Exception {
 		
 		final AtomicLong counter = testResultCollector==null ? new AtomicLong() : testResultCollector.getCounter();
 		
@@ -56,7 +57,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 			
 		};
 		
-		return WebTestUtil.createCollector(testClassResult);
+		return WebTestUtil.<WebDriver>createCollector(testClassResult);
 	}
 	
 	static File configOutputDir(Class<?> klass) throws IOException {

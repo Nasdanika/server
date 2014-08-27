@@ -39,29 +39,29 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 
 	private static final int SCREENSHOT_RETAKE_WAIT_INTERVAL = 2000;
 
-	private static ThreadLocal<Collector> collectorThreadLocal = new ThreadLocal<Collector>() {
+	private static ThreadLocal<Collector<WebDriver>> collectorThreadLocal = new ThreadLocal<Collector<WebDriver>>() {
 		
-		protected Collector initialValue() {
+		protected Collector<WebDriver> initialValue() {
 			// NOP Collector to avoid exceptions.
-			return new Collector() {
+			return new Collector<WebDriver>() {
 
 				@Override
-				public void onPageProxying(Page page) {}
+				public void onPageProxying(Page<WebDriver> page) {}
 
 				@Override
-				public void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args) {}
+				public void beforePageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args) {}
 
 				@Override
-				public void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
+				public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
-				public void onActorProxying(Actor actor) {}
+				public void onActorProxying(Actor<WebDriver> actor) {}
 
 				@Override
-				public void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args) {}
+				public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args) {}
 
 				@Override
-				public void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
+				public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
 				public void beforeTestMethod(Method method, int index, Object[] parameters) {}
@@ -97,7 +97,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	private static byte[] takeScreenshot() {
 		Object test = testThreadLocal.get();
 		if (test instanceof WebTest) {
-			WebDriver webDriver = ((WebTest) test).getWebDriver();
+			WebDriver webDriver = ((WebTest<?>) test).getWebDriver();
 			if (webDriver instanceof TakesScreenshot) {
 				for (int i=0; ; ++i) {
 					try {
@@ -122,13 +122,14 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	
 	private static class PageInvocationHandler implements InvocationHandler {
 		
-		private Page page;
+		private Page<WebDriver> page;
 
-		PageInvocationHandler(Page page) {
+		PageInvocationHandler(Page<WebDriver> page) {
 			this.page = page;
 			collectorThreadLocal.get().onPageProxying(page);
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if (Page.class.isAssignableFrom(method.getDeclaringClass())) {
@@ -144,7 +145,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						return Proxy.newProxyInstance(
 								resClass.getClassLoader(), 
 								allInterfaces(resClass).toArray(new Class[0]), 
-								new PageInvocationHandler((Page) res));
+								new PageInvocationHandler((Page<WebDriver>) res));
 					}
 					
 					return res;
@@ -186,7 +187,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 							return Proxy.newProxyInstance(
 									retClass.getClassLoader(), 
 									allInterfaces(retClass).toArray(new Class[0]), 
-									new PageInvocationHandler((Page) ret));
+									new PageInvocationHandler((Page<WebDriver>) ret));
 						}
 						return ret;
 					}
@@ -195,13 +196,14 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	
 	private static class ActorInvocationHandler implements InvocationHandler {
 		
-		private Actor actor;
+		private Actor<WebDriver> actor;
 
-		ActorInvocationHandler(Actor actor) {
+		ActorInvocationHandler(Actor<WebDriver> actor) {
 			this.actor = actor;
 			collectorThreadLocal.get().onActorProxying(actor);
 		}
 		
+		@SuppressWarnings("unchecked")
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if (Actor.class.isAssignableFrom(method.getDeclaringClass())) {
@@ -217,7 +219,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						return Proxy.newProxyInstance(
 								resClass.getClassLoader(), 
 								allInterfaces(resClass).toArray(new Class[0]),  
-								new ActorInvocationHandler((Actor) res));
+								new ActorInvocationHandler((Actor<WebDriver>) res));
 					}
 					
 					return res;
@@ -259,7 +261,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 							return Proxy.newProxyInstance(
 									retClass.getClassLoader(), 
 									allInterfaces(retClass).toArray(new Class[0]),  
-									new ActorInvocationHandler((Actor) ret));
+									new ActorInvocationHandler((Actor<WebDriver>) ret));
 						}
 						return ret;
 					}
@@ -321,12 +323,12 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		} 
 	}	
 	
-	protected abstract Collector createCollector(TestResultCollector testResultCollector) throws Exception;
+	protected abstract Collector<WebDriver> createCollector(TestResultCollector testResultCollector) throws Exception;
 			
 	@Override
 	public void run(RunNotifier notifier) {
 		try {
-			Collector prevCollector = collectorThreadLocal.get();
+			Collector<WebDriver> prevCollector = collectorThreadLocal.get();
 			collectorThreadLocal.set(createCollector(testResultCollector));
 			try {
 				super.run(notifier);

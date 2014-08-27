@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.openqa.selenium.WebDriver;
 
 /**
  * Utility class 
@@ -139,103 +140,105 @@ public class WebTestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static Collector createCollector(Collector... chain) throws Exception {
-		final List<Collector> collectors = new ArrayList<>();
-		for (Collector c: chain) {
+	@SuppressWarnings("unchecked")
+	@SafeVarargs
+	public static <D extends WebDriver> Collector<D> createCollector(Collector<D>... chain) throws Exception {
+		final List<Collector<D>> collectors = new ArrayList<>();
+		for (Collector<D> c: chain) {
 			if (c!=null) {
 				collectors.add(c);
 			}
 		}
 		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor("org.nasdanika.webtest.collectors")) {
 			if ("collector".equals(ce.getName())) {
-				collectors.add(injectProperties(ce, (Collector) ce.createExecutableExtension("class")));
+				collectors.add(injectProperties(ce, (Collector<D>) ce.createExecutableExtension("class")));
 			}					
 		}	
 		
 		// TODO - collect from CollectorFactory services.
 		
-		return new Collector() {
+		return new Collector<D>() {
 			
 			@Override
 			public void close() throws Exception {
-				for (Collector c: collectors) {
+				for (Collector<D> c: collectors) {
 					c.close();
 				}				
 			}
 			
 			@Override
-			public void onPageProxying(Page page) {
-				for (Collector c: collectors) {
+			public void onPageProxying(Page<D> page) {
+				for (Collector<D> c: collectors) {
 					c.onPageProxying(page);
 				}
 			}
 			
 			@Override
-			public void onActorProxying(Actor actor) {
-				for (Collector c: collectors) {
+			public void onActorProxying(Actor<D> actor) {
+				for (Collector<D> c: collectors) {
 					c.onActorProxying(actor);
 				}
 			}
 			
 			@Override
 			public void beforeTestMethodScreenshot(byte[] screenshot) {
-				for (Collector c: collectors) {
+				for (Collector<D> c: collectors) {
 					c.beforeTestMethodScreenshot(screenshot);
 				}
 			}
 			
 			@Override
 			public void beforeTestMethod(Method method, int index, Object[] parameters) {
-				for (Collector c: collectors) {
+				for (Collector<D> c: collectors) {
 					c.beforeTestMethod(method, index, parameters);
 				}
 			}
 			
 			@Override
-			public void beforePageMethod(Page page, byte[] screenshot, Method method, Object[] args) {
-				for (Collector c: collectors) {
+			public void beforePageMethod(Page<D> page, byte[] screenshot, Method method, Object[] args) {
+				for (Collector<D> c: collectors) {
 					c.beforePageMethod(page, screenshot, method, args);
 				}
 			}
 			
 			@Override
-			public void beforeActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args) {
-				for (Collector c: collectors) {
+			public void beforeActorMethod(Actor<D> actor, byte[] screenshot, Method method, Object[] args) {
+				for (Collector<D> c: collectors) {
 					c.beforeActorMethod(actor, screenshot, method, args);
 				}
 			}
 			
 			@Override
 			public void afterTestMethodScreenshot(byte[] screenshot) {
-				for (Collector c: collectors) {
+				for (Collector<D> c: collectors) {
 					c.afterTestMethodScreenshot(screenshot);
 				}
 			}
 			
 			@Override
 			public void afterTestMethod(Method method, Throwable th) {
-				for (Collector c: collectors) {
+				for (Collector<D> c: collectors) {
 					c.afterTestMethod(method, th);
 				}
 			}
 			
 			@Override
-			public void afterPageMethod(Page page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
-				for (Collector c: collectors) {
+			public void afterPageMethod(Page<D> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
+				for (Collector<D> c: collectors) {
 					c.afterPageMethod(page, screenshot, method, args, result, th);
 				}
 			}
 			
 			@Override
-			public void afterActorMethod(Actor actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
-				for (Collector c: collectors) {
+			public void afterActorMethod(Actor<D> actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
+				for (Collector<D> c: collectors) {
 					c.afterActorMethod(actor, screenshot, method, args, result, th);
 				}
 			}
 
 			@Override
 			public void setTest(Object test) {
-				for (Collector c: collectors) {
+				for (Collector<D> c: collectors) {
 					c.setTest(test);
 				}
 			}
