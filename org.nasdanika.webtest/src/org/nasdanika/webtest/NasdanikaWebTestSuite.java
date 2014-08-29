@@ -57,6 +57,15 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 		}
 	}	
 	
+	// Calling thread executor by default.
+	private Executor childExecutor = new Executor() {
+		
+		@Override
+		public void execute(Runnable command) {
+			command.run();
+		}
+	};
+	
 	@Override
 	public void run(RunNotifier notifier) {
 		try {
@@ -64,9 +73,22 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 			counter = testResultCollector == null ? new AtomicLong() : testResultCollector.getCounter();
 			id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
 			screenshotExecutor = testResultCollector == null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
+			Concurrent concurrent = getTestClass().getJavaClass().getAnnotation(Concurrent.class);
+			if (concurrent!=null) {
+				if (concurrent.value()>0) {
+					childExecutor = Executors.newFixedThreadPool(concurrent.value());
+				} else {
+					childExecutor = Executors.newCachedThreadPool();
+				}
+			}
 			try {
 				super.run(notifier);
 			} finally {
+				if (childExecutor instanceof ExecutorService) {
+					((ExecutorService) childExecutor).shutdown();
+					((ExecutorService) childExecutor).awaitTermination(10, TimeUnit.MINUTES); // TODO - from @Concurrent?
+				}
+				
 				if (testResultCollector==null) {
 					close();
 				} 				
@@ -78,11 +100,18 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 	}
 	
 	@Override
-	protected void runChild(Runner runner, RunNotifier notifier) {
-		if (runner instanceof TestResultSource) {
-			((TestResultSource) runner).setTestResultCollector(testResultCollector==null ? this : testResultCollector);
-		}
-		super.runChild(runner, notifier);
+	protected void runChild(final Runner runner, final RunNotifier notifier) {
+		childExecutor.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				if (runner instanceof TestResultSource) {
+					((TestResultSource) runner).setTestResultCollector(testResultCollector==null ? NasdanikaWebTestSuite.this : testResultCollector);
+				}
+				NasdanikaWebTestSuite.super.runChild(runner, notifier);
+			}
+			
+		});
 	}
 	
 	private TestResultCollector testResultCollector;

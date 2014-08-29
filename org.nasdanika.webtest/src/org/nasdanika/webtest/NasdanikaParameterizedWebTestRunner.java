@@ -252,6 +252,8 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 		}
 	}
 	
+	private Map<String, Executor> executors = new HashMap<>();
+	
 	@Override
 	public void run(RunNotifier notifier) {
 		try {
@@ -262,6 +264,13 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 			try {
 				super.run(notifier);
 			} finally {
+				for (Executor ex: executors.values()) {
+					if (ex instanceof ExecutorService) {
+						((ExecutorService) ex).shutdown();
+						((ExecutorService) ex).awaitTermination(10, TimeUnit.MINUTES); // TODO - from @Concurrent?
+					}
+				}
+				// TODO - shutdown executors
 				if (testResultCollector==null) {
 					close();
 				} 				
@@ -359,6 +368,34 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 			}
 			
 		});
+	}
+	
+	@Override
+	protected void runChild(final Runner runner, final RunNotifier notifier) {
+		Concurrent concurrent = getTestClass().getJavaClass().getAnnotation(Concurrent.class);
+		if (concurrent==null) {
+			super.runChild(runner, notifier);
+		} else {
+			String key = MessageFormat.format(concurrent.executorKey(), ((TestClassRunnerForParameters) runner).getParameters());
+			Executor executor = executors.get(key);
+			if (executor==null) {
+				if (concurrent.value()>0) {
+					executor = Executors.newFixedThreadPool(concurrent.value());
+				} else {
+					executor = Executors.newCachedThreadPool();
+				}
+				executors.put(key, executor);
+			}
+			executor.execute(new Runnable() {
+				
+				@Override
+				public void run() {
+					NasdanikaParameterizedWebTestRunner.super.runChild(runner, notifier);
+				}
+				
+			});
+			
+		}
 	}
 
 	@Override
