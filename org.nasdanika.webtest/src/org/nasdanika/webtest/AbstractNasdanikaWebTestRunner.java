@@ -133,10 +133,29 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if (Page.class.isAssignableFrom(method.getDeclaringClass())) {
-				collectorThreadLocal.get().beforePageMethod(page, takeScreenshot(), method, args);
+				Object test = testThreadLocal.get();
+	    		if (test instanceof WebTest) {
+	    			WebTestUtil.doWait(((WebTest<?>) test).getWebDriver(), method);
+	    		}
+				Screenshot screenshotAnnotation = method.getAnnotation(Screenshot.class);
+	    		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
+	    		if (test instanceof WebTest) {
+	    			delay += ((WebTest<?>) test).getScreenshotDelay();
+	    		}
+	    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+	    			if (delay>0) {
+	    				Thread.sleep(delay);
+	    			}
+					collectorThreadLocal.get().beforePageMethod(page, takeScreenshot(), method, args);
+	    		}
 				try {
 					Object res = method.invoke(page, args);
-					collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, res, null);
+		    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+		    			if (delay>0) {
+		    				Thread.sleep(delay);
+		    			}
+		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, res, null);
+		    		}
 					if (res instanceof Page) {
 						Class<? extends Object> resClass = res.getClass();
 						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
@@ -150,7 +169,12 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					
 					return res;
 				} catch (Throwable th) {
-					collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, null, th);
+		    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+		    			if (delay>0) {
+		    				Thread.sleep(delay);
+		    			}
+		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, null, th);
+		    		}
 					throw th;
 				}
 			}
@@ -207,10 +231,30 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 			if (Actor.class.isAssignableFrom(method.getDeclaringClass())) {
-				collectorThreadLocal.get().beforeActorMethod(actor, takeScreenshot(), method, args);
+				Object test = testThreadLocal.get();
+	    		if (test instanceof WebTest) {
+	    			WebTestUtil.doWait(((WebTest<?>) test).getWebDriver(), method);
+	    		}
+				Screenshot screenshotAnnotation = method.getAnnotation(Screenshot.class);
+	    		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
+	    		if (test instanceof WebTest) {
+	    			delay += ((WebTest<?>) test).getScreenshotDelay();
+	    		}
+	    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+	    			if (delay>0) {
+	    				Thread.sleep(delay);
+	    			}
+					collectorThreadLocal.get().beforeActorMethod(actor, takeScreenshot(), method, args);
+	    		}
+				
 				try {
 					Object res = method.invoke(actor, args);
-					collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, res, null);
+		    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+		    			if (delay>0) {
+		    				Thread.sleep(delay);
+		    			}
+		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, res, null);
+		    		}
 					if (res instanceof Actor) {
 						Class<? extends Object> resClass = res.getClass();
 						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
@@ -224,7 +268,12 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					
 					return res;
 				} catch (Throwable th) {
-					collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, null, th);
+		    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+		    			if (delay>0) {
+		    				Thread.sleep(delay);
+		    			}
+		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, null, th);
+		    		}
 					throw th;
 				}
 			}
@@ -422,13 +471,32 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 
 		    @Override
 		    public void evaluate() throws Throwable {
-		    	try {		
+	    		Method theMethod = method.getMethod();
+	    		Screenshot screenshotAnnotation = theMethod.getAnnotation(Screenshot.class);
+	    		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
+	    		if (test instanceof WebTest) {
+	    			delay += ((WebTest<?>) test).getScreenshotDelay();
+	    		}
+		    	try {				    		
 		    		testThreadLocal.set(test);
 		    		collectorThreadLocal.get().setTest(test);
-		    		collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot());
+		    		if (test instanceof WebTest) {
+		    			WebTestUtil.doWait(((WebTest<?>) test).getWebDriver(), theMethod);
+		    		}
+		    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+		    			if (delay>0) {
+		    				Thread.sleep(delay);
+		    			}
+		    			collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot());
+		    		}
 			    	method.invokeExplosively(test);
 		    	} finally {
-		    		collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot());
+		    		if (screenshotAnnotation==null || screenshotAnnotation.value()) {
+		    			if (delay>0) {
+		    				Thread.sleep(delay);
+		    			}
+		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot());
+		    		}
 		    		testThreadLocal.set(null);
 		    	}
 		    }

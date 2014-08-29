@@ -14,5 +14,10 @@ import org.openqa.selenium.WebDriver;
 public interface WebTest<D extends WebDriver> {
 	
 	D getWebDriver();
+	
+	/**
+	 * @return Delay before taking a screenshot. 
+	 */
+	long getScreenshotDelay();
 
 }
