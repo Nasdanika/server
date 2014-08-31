@@ -114,9 +114,11 @@
 				Backbone.history.start();
 
 				<% if (config.getInitialRoute() != null) { %>
-					workspace.navigate('router/<%=config.getInitialRoute()%>', {
-						trigger : true
-					});
+					if (!document.location.hash) {
+						workspace.navigate('router/<%=config.getInitialRoute()%>', {
+							trigger : true
+						});
+					}
 				<% } %>
 			});
 </script>
