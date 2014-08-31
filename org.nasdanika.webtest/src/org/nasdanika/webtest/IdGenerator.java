@@ -1,7 +1,7 @@
 package org.nasdanika.webtest;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
@@ -11,8 +11,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class IdGenerator {
 
-	private AtomicLong counter = new AtomicLong();
-	private Set<String> taken = new HashSet<>();
+	private Map<String, AtomicLong> taken = new HashMap<>();
 	
 	/**
 	 * Generates id useing object to hash and suffix to construct
@@ -35,14 +34,12 @@ public class IdGenerator {
 			hint.append(suffix);
 		}
 		String id = hint.toString();
-		while (id.isEmpty() || !taken.add(id)) {
-			if (hint.length()==0) {
-				id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
-			} else {
-				id = hint+"_"+Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
-			}
+		AtomicLong counter = taken.get(id);
+		if (counter==null) {
+			taken.put(id, new AtomicLong());
+			return id;
 		}
-		return id;
+		return id+"_"+ Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
 	}
 
 }
