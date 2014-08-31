@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.openqa.selenium.WebDriver;
 
@@ -19,7 +18,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	private File screenshotsDir;
 	private Executor screenshotExecutor;
 
-	private AtomicLong counter;
+	private IdGenerator idGenerator;
 	final Class<?> klass;	
 	final String id;
 	
@@ -31,22 +30,25 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return id;
 	}
 
-	TestClassResult(Class<?> klass, AtomicLong counter, File screenshotsDir, Executor screenshotExecutor) throws IOException {
+	TestClassResult(Class<?> klass, IdGenerator idGenerator, int idx, File screenshotsDir, Executor screenshotExecutor) throws IOException {
 		this.klass = klass;
-		this.counter = counter;
-		id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
+		this.idGenerator = idGenerator;
+		id = idGenerator.genId(klass.getName(), idx==-1 ? null : Integer.toString(idx, Character.MAX_RADIX));
 		this.screenshotsDir = screenshotsDir;
 		this.screenshotExecutor = screenshotExecutor;
 	}
 	
 	private ScreenshotEntry currentScreenshot;
 		
-	private ScreenshotEntry createScreenshotEntry(MethodResult methodResult, byte[] screenshot) {
+	private ScreenshotEntry createScreenshotEntry(MethodResult methodResult, byte[] screenshot, Screenshot.When when) {
+		if (screenshot==null) {
+			return null;
+		}
         ScreenshotEntry ret = new ScreenshotEntry(
         		methodResult, 
         		currentScreenshot, 
         		screenshotsDir, 
-        		Long.toString(counter.incrementAndGet(), Character.MAX_RADIX), 
+        		idGenerator.genId(methodResult.getMethod().toString(), when.name()), 
         		screenshot);
         currentScreenshot = ret;
 		screenshotExecutor.execute(ret);
@@ -92,20 +94,20 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	@Override
 	public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args) {
 		ActorMethodResult amr = new ActorMethodResult(
-				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
+				idGenerator.genId(method.toString(), null),
 				method,
 				args,
 				currentMethodResult);
 		actors.get(actor.getClass()).results.add(amr);
 		currentMethodResult = amr;
-		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot);
+		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot, Screenshot.When.BEFORE);
 	}
 	@Override
 	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args,	Object result, Throwable th) {
 		if (currentMethodResult instanceof ActorMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
+			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.AFTER);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
@@ -114,20 +116,20 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	@Override
 	public void beforePageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args) {
 		PageMethodResult pmr = new PageMethodResult(
-				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
+				idGenerator.genId(method.toString(), null),
 				method,
 				args,
 				currentMethodResult);
 		pages.get(page.getClass()).results.add(pmr);
 		currentMethodResult = pmr;
-		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot);
+		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot, Screenshot.When.BEFORE);
 	}
 	@Override
 	public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
 		if (currentMethodResult instanceof PageMethodResult && method.equals(currentMethodResult.method)) {
 			currentMethodResult.failure = th;
 			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
+			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.AFTER);
 			currentMethodResult = currentMethodResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
@@ -137,7 +139,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	@Override
 	public void beforeTestMethod(Method method, int index, Object[] parameters) {
 		currentMethodResult = new TestMethodResult(
-				Long.toString(counter.incrementAndGet(), Character.MAX_RADIX),
+				idGenerator.genId(method.toString(), null),
 				method, 
 				null,
 				currentMethodResult,
@@ -148,7 +150,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	@Override
 	public void beforeTestMethodScreenshot(byte[] screenshot) {
-		currentMethodResult.beforeScreenshot = createScreenshotEntry(currentMethodResult, screenshot);		
+		currentMethodResult.beforeScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.BEFORE);		
 	}
 	
 	@Override
@@ -164,7 +166,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	@Override
 	public void afterTestMethodScreenshot(byte[] screenshot) {
-		currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot);
+		currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.AFTER);
 	}
 		
 	@Override

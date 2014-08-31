@@ -277,11 +277,9 @@ public class WebTestUtil {
 			}
 
 			@Override
-			public void afterActorMethod(Actor<D> actor, byte[] screenshot,
-					Method method, Object[] args, Object result, Throwable th) {
+			public void afterActorMethod(Actor<D> actor, byte[] screenshot,	Method method, Object[] args, Object result, Throwable th) {
 				for (Collector<D> c : collectors) {
-					c.afterActorMethod(actor, screenshot, method, args, result,
-							th);
+					c.afterActorMethod(actor, screenshot, method, args, result,	th);
 				}
 			}
 

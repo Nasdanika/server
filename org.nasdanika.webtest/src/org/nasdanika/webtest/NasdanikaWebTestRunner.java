@@ -8,7 +8,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.runners.model.InitializationError;
 import org.openqa.selenium.WebDriver;
@@ -29,7 +28,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 	@Override
 	protected Collector<WebDriver> createCollector(final TestResultCollector testResultCollector) throws Exception {
 		
-		final AtomicLong counter = testResultCollector==null ? new AtomicLong() : testResultCollector.getCounter();
+		final IdGenerator idGenerator = testResultCollector==null ? new IdGenerator() : testResultCollector.getIdGenerator();
 		
 		final File outputDir = testResultCollector == null ? configOutputDir(getTestClass().getJavaClass()) : testResultCollector.getOutputDir();	
 		
@@ -40,7 +39,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 		
 		final Executor screenshotExecutor = testResultCollector==null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 		
-		TestClassResult testClassResult = new TestClassResult(getTestClass().getJavaClass(), counter, screenshotsDir, screenshotExecutor) {
+		TestClassResult testClassResult = new TestClassResult(getTestClass().getJavaClass(), idGenerator, getIndex(), screenshotsDir, screenshotExecutor) {
 			
 			@Override
 			public void close() throws Exception {

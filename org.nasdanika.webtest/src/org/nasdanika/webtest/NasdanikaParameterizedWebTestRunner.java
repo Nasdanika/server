@@ -16,7 +16,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -42,7 +41,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
         private final String fName;
 
 		private int index;
-
+		
         TestClassRunnerForParameters(Class<?> type, int index, Object[] parameters, String name) throws InitializationError {
             super(type);
             this.parameters = parameters;
@@ -234,7 +233,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
     
 	
 	private TestResultCollector testResultCollector;
-	private AtomicLong counter;
+	private IdGenerator idGenerator;
 	private Executor screenshotExecutor;
 
 	private List<TestResult> testResults = new ArrayList<>();
@@ -258,8 +257,8 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 	public void run(RunNotifier notifier) {
 		try {
 			outputDir = testResultCollector == null ? NasdanikaWebTestRunner.configOutputDir(getTestClass().getJavaClass()) : testResultCollector.getOutputDir();	
-			counter = testResultCollector == null ? new AtomicLong() : testResultCollector.getCounter();
-			id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
+			idGenerator = testResultCollector == null ? new IdGenerator() : testResultCollector.getIdGenerator();
+			id = idGenerator.genId(getTestClass().getJavaClass().getName(), null);
 			screenshotExecutor = testResultCollector == null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 			try {
 				super.run(notifier);
@@ -270,7 +269,6 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 						((ExecutorService) ex).awaitTermination(10, TimeUnit.MINUTES); // TODO - from @Concurrent?
 					}
 				}
-				// TODO - shutdown executors
 				if (testResultCollector==null) {
 					close();
 				} 				
@@ -282,8 +280,8 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 	}
 	
 	@Override
-	public AtomicLong getCounter() {
-		return testResultCollector == null ? counter : testResultCollector.getCounter();
+	public IdGenerator getIdGenerator() {
+		return testResultCollector == null ? idGenerator : testResultCollector.getIdGenerator();
 	}
 	
 	@Override

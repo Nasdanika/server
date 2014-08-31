@@ -6,6 +6,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -240,7 +241,9 @@ public class MethodResult {
 	}
 
 	public boolean isPending() {
-		return allScreenshots().size()==1 || childResults.isEmpty();
+		Screenshot screenshot = getMethod().getAnnotation(Screenshot.class);
+		int expectedScreenshots = screenshot==null || Arrays.asList(screenshot.value()).contains(Screenshot.When.BEFORE) ? 2 : 1;
+		return allScreenshots().size()<expectedScreenshots && childResults.isEmpty();
 	}
 		
 	void genRows(HTMLFactory htmlFactory, Table methodTable, Object carouselId, List<ScreenshotEntry> screenshots, int indent) {

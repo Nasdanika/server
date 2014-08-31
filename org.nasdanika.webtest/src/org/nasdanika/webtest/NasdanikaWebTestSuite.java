@@ -70,8 +70,8 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 	public void run(RunNotifier notifier) {
 		try {
 			outputDir = testResultCollector == null ? NasdanikaWebTestRunner.configOutputDir(getTestClass().getJavaClass()) : testResultCollector.getOutputDir();	
-			counter = testResultCollector == null ? new AtomicLong() : testResultCollector.getCounter();
-			id = Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
+			idGenerator = testResultCollector == null ? new IdGenerator() : testResultCollector.getIdGenerator();
+			id = idGenerator.genId(getTestClass().getJavaClass().getName(), null);
 			screenshotExecutor = testResultCollector == null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 			Concurrent concurrent = getTestClass().getJavaClass().getAnnotation(Concurrent.class);
 			if (concurrent!=null) {
@@ -115,12 +115,12 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 	}
 	
 	private TestResultCollector testResultCollector;
-	private AtomicLong counter;
+	private IdGenerator idGenerator;
 	private Executor screenshotExecutor;
 	
 	@Override
-	public AtomicLong getCounter() {
-		return testResultCollector == null ? counter : testResultCollector.getCounter();
+	public IdGenerator getIdGenerator() {
+		return testResultCollector == null ? idGenerator : testResultCollector.getIdGenerator();
 	}
 	
 	@Override

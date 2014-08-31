@@ -14,8 +14,15 @@ import java.lang.annotation.Target;
 @Target({ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Screenshot {
+	
+	/**
+	 * Indicates when to take a screenshot.
+	 * @author Pavel Vlasov
+	 *
+	 */
+	enum When { BEFORE, AFTER, EXCEPTION }
 
-	boolean value() default true;
+	When[] value() default {When.BEFORE, When.AFTER, When.EXCEPTION};
 	
 	/**
 	 * Delay in milliseconds. This delay is added to the delay value returned by {@link WebTest}.getScreenshotDelay();

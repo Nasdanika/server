@@ -16,7 +16,9 @@ import java.lang.annotation.Target;
 public @interface PageFactory {
 
 	/**
-	 * Service filter.
+	 * Service filter. It can contain {0}...{n} tokens expanded with parameter values for parameterized tests. It allows to select
+	 * different actor factory implementations based on parameter, e.g. Appium implementation when testing iOS device, Selendroid implementation when testing
+	 * an older Android device, and a regular Selenium implementation for testing in a browser.
 	 * @return
 	 */
 	String filter() default "";
