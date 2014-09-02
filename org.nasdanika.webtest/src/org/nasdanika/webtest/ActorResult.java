@@ -15,7 +15,7 @@ import org.openqa.selenium.WebDriver;
  */
 public class ActorResult {
 
-	final Class<? extends Actor<WebDriver>> actorClass;
+	private final Class<? extends Actor<WebDriver>> actorClass;
 	
 	private String id;
 	
@@ -44,6 +44,9 @@ public class ActorResult {
 	
 	@SuppressWarnings("unchecked")
 	public Class<? extends Actor<WebDriver>> getActorInterface() {
+		if (actorClass.isInterface()) {
+			return actorClass;
+		}
 		for (Class<?> i: actorClass.getInterfaces()) {
 			if (Actor.class.isAssignableFrom(i)) {
 				return (Class<? extends Actor<WebDriver>>) i;
@@ -52,28 +55,21 @@ public class ActorResult {
 		return actorClass;
 	}
 	
-	public boolean merge(ActorResult anotherResult) {
-		if (anotherResult.getActorClass().getName().equals(actorClass.getName())) {
-			results.addAll(anotherResult.getResults());
-			return true;
-		}
-		return false;
+	public void merge(ActorResult anotherResult) {
+		results.addAll(anotherResult.getResults());
 	}
 	
 	public Map<Method, Integer> getCoverage() {
 		Map<Method, Integer> ret = new HashMap<>();
 		for (Method m: actorClass.getMethods()) {
-			Method om = AbstractNasdanikaWebTestRunner.getOverridenInterfaceMethod(m, Actor.class);
-			if (om!=null) { 
-				int counter = 0;
-				for (ActorMethodResult r: results) {
-					if (om.equals(r.getMethod())) {
-						++counter;
-					}
+			int counter = 0;
+			for (ActorMethodResult r: results) {
+				if (m.equals(r.getMethod())) {
+					++counter;
 				}
-				
-				ret.put(om, counter);
 			}
+			
+			ret.put(m, counter);
 		}
 		return ret;
 	}	

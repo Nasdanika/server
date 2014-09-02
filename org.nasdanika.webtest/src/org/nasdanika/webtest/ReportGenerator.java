@@ -47,6 +47,7 @@ import org.nasdanika.html.UIElement.DeviceSize;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.webtest.TestResult.TestStatus;
+import org.openqa.selenium.WebDriver;
 
 class ReportGenerator {
 
@@ -56,7 +57,8 @@ class ReportGenerator {
 	private List<ActorResult> actorResults;
 	private List<PageResult> pageResults;
 
-	ReportGenerator(Class<?> klass, File outputDir, Collection<? extends TestResult> testResults) {
+	@SuppressWarnings("unchecked")
+	ReportGenerator(Class<?> klass, File outputDir, IdGenerator idGenerator, Collection<? extends TestResult> testResults) {
 		this.klass = klass;
 		this.outputDir = outputDir;
 		
@@ -71,12 +73,34 @@ class ReportGenerator {
 		});
 		
 		Map<Class<?>, ActorResult> actorResultCollector = new HashMap<>();
+		Map<Class<?>, PageResult> pageResultCollector = new HashMap<>();
+		Report reportAnnotation = klass.getAnnotation(Report.class);
+		if (reportAnnotation!=null) {
+			for (Class<?> cc: reportAnnotation.coverage()) {
+				if (Actor.class.isAssignableFrom(cc)) {
+					ActorResult aar = actorResultCollector.get(cc);
+					if (aar==null) {
+						aar = new ActorResult((Class<? extends Actor<WebDriver>>) cc, idGenerator.genId(cc.getName(), null));
+						actorResultCollector.put(cc, aar);
+					}
+				}
+				
+				if (Page.class.isAssignableFrom(cc)) {
+					PageResult apr = pageResultCollector.get(cc);
+					if (apr==null) {
+						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null));
+						pageResultCollector.put(cc, apr);
+					}
+				}
+			}
+		}	
+		
 		for (TestResult tr: testResults) {
 			for (ActorResult car: tr.getActorResults()) {
-				ActorResult aar = actorResultCollector.get(car.getActorClass());
+				ActorResult aar = actorResultCollector.get(car.getActorInterface());
 				if (aar==null) {
-					aar = new ActorResult(car.getActorClass(), Integer.toString(actorResultCollector.size(), Character.MAX_RADIX));
-					actorResultCollector.put(car.getActorClass(), aar);
+					aar = new ActorResult(car.getActorInterface(), idGenerator.genId(car.getActorInterface().getName(), null));
+					actorResultCollector.put(car.getActorInterface(), aar);
 				}
 				aar.merge(car);
 			}
@@ -86,17 +110,16 @@ class ReportGenerator {
 
 			@Override
 			public int compare(ActorResult o1, ActorResult o2) {
-				return classTitle(o1.getActorClass()).compareTo(classTitle(o2.getActorClass()));
+				return classTitle(o1.getActorInterface()).compareTo(classTitle(o2.getActorInterface()));
 			}
 		});
 
-		Map<Class<?>, PageResult> pageResultCollector = new HashMap<>();
 		for (TestResult tr: testResults) {
 			for (PageResult cpr: tr.getPageResults()) {
-				PageResult apr = pageResultCollector.get(cpr.getPageClass());
+				PageResult apr = pageResultCollector.get(cpr.getPageInterface());
 				if (apr==null) {
-					apr = new PageResult(cpr.getPageClass(), Integer.toString(pageResultCollector.size(), Character.MAX_RADIX));
-					pageResultCollector.put(cpr.getPageClass(), apr);
+					apr = new PageResult(cpr.getPageInterface(), idGenerator.genId(cpr.getPageInterface().getName(), null));
+					pageResultCollector.put(cpr.getPageInterface(), apr);
 				}
 				apr.merge(cpr);
 			}
@@ -106,7 +129,7 @@ class ReportGenerator {
 
 			@Override
 			public int compare(PageResult o1, PageResult o2) {
-				return classTitle(o1.getPageClass()).compareTo(classTitle(o2.getPageClass()));
+				return classTitle(o1.getPageInterface()).compareTo(classTitle(o2.getPageInterface()));
 			}
 		});
 	}
@@ -789,7 +812,7 @@ class ReportGenerator {
 			int slideWidth) throws Exception {
 		
 		try (FileWriter actorResultWriter = new FileWriter(new File(contentDir, "actor_"+actorResult.getId()+".html"))) {
-			actorResultWriter.write("<H3>");
+			actorResultWriter.write("<H3 title='"+actorResult.getActorClass().getName()+"'>");
 			actorResultWriter.write(htmlFactory.glyphicon(Glyphicon.user).toString());
 			actorResultWriter.write(" ");
 			actorResultWriter.write(classTitle(actorResult.getActorInterface()));

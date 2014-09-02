@@ -12,7 +12,7 @@ import org.openqa.selenium.WebDriver;
 public interface Collector<D extends WebDriver> extends AutoCloseable {
 	
 	void onPageProxying(Page<D> page);
-	
+		
 	void beforePageMethod(Page<D> page, byte[] screenshot, Method method, Object[] args);
 	
 	void afterPageMethod(Page<D> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th);

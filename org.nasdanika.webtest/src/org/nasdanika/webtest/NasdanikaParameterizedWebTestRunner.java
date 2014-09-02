@@ -338,10 +338,10 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				Map<Class<?>, ActorResult> collector = new HashMap<>();
 				for (TestResult tr: getChildren()) {
 					for (ActorResult car: tr.getActorResults()) {
-						ActorResult aar = collector.get(car.getActorClass());
+						ActorResult aar = collector.get(car.getActorInterface());
 						if (aar==null) {
-							aar = new ActorResult(car.getActorClass());
-							collector.put(car.getActorClass(), aar);
+							aar = new ActorResult(car.getActorInterface());
+							collector.put(car.getActorInterface(), aar);
 						}
 						aar.merge(car);
 					}
@@ -354,10 +354,10 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				Map<Class<?>, PageResult> collector = new HashMap<>();
 				for (TestResult tr: getChildren()) {
 					for (PageResult cpr: tr.getPageResults()) {
-						PageResult apr = collector.get(cpr.getPageClass());
+						PageResult apr = collector.get(cpr.getPageInterface());
 						if (apr==null) {
-							apr = new PageResult(cpr.getPageClass());
-							collector.put(cpr.getPageClass(), apr);
+							apr = new PageResult(cpr.getPageInterface());
+							collector.put(cpr.getPageInterface(), apr);
 						}
 						apr.merge(cpr);
 					}
@@ -400,7 +400,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 	public void close() throws Exception {
 		((ExecutorService) screenshotExecutor).shutdown();
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
-		new ReportGenerator(getTestClass().getJavaClass(), outputDir, testResults).generate();
+		new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
 		WebTestUtil.publishTestResults(testResults);		
 	}    
     

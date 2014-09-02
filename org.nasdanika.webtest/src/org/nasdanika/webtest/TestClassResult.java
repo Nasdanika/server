@@ -64,23 +64,30 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	public Collection<PageResult> getPageResults() {
 		return pages.values();
-	}	
-
-	@Override
-	public void onPageProxying(Page<WebDriver> page) {
-		@SuppressWarnings("unchecked")
-		Class<? extends Page<WebDriver>> pageClass = (Class<? extends Page<WebDriver>>) page.getClass();
+	}
+	
+	private void onPageClass(Class<? extends Page<WebDriver>> pageClass) {
 		if (!pages.containsKey(pageClass)) {
 			pages.put(pageClass, new PageResult(pageClass));
 		}		
 	}
+
+	@SuppressWarnings("unchecked")
 	@Override
-	public void onActorProxying(Actor<WebDriver> actor) {
-		@SuppressWarnings("unchecked")
-		Class<? extends Actor<WebDriver>> actorClass = (Class<? extends Actor<WebDriver>>) actor.getClass();
+	public void onPageProxying(Page<WebDriver> page) {
+		onPageClass((Class<? extends Page<WebDriver>>) page.getClass());
+	}
+	
+	private void onActorClass(Class<? extends Actor<WebDriver>> actorClass) {
 		if (!actors.containsKey(actorClass)) {
 			actors.put(actorClass, new ActorResult(actorClass));
 		}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void onActorProxying(Actor<WebDriver> actor) {
+		onActorClass((Class<? extends Actor<WebDriver>>) actor.getClass());
 	}
 	
 	private final List<TestMethodResult> testMethodResults = new ArrayList<>();

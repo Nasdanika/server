@@ -47,7 +47,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 				if (testResultCollector==null) {
 					((ExecutorService) screenshotExecutor).shutdown();
 					((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
-					new ReportGenerator(getTestClass(), outputDir, Collections.singleton(this)).generate();
+					new ReportGenerator(getTestClass(), outputDir, idGenerator, Collections.singleton(this)).generate();
 					WebTestUtil.publishTestResults(Collections.singleton(this));		
 				} else {
 					testResultCollector.addResult(this);

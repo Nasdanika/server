@@ -28,6 +28,15 @@ public @interface Report {
 	 * @return
 	 */
 	int slideWidth() default 800;
+	
+	/**
+	 * Actor, page, and factories classes to collect actors/pages for coverage report. Without this attribute only 
+	 * pages/actors and factories used by tests will be included into the coverage report, e.g. if ActorX shall be tested, but
+	 * there are no tests (yet) using ActorX, then ActorX.class shall be added to this attribute in order to have correct coverage
+	 * reporting. 
+	 * @return
+	 */
+	Class<?>[] coverage() default {};
 		
 	// Style
 	

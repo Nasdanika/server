@@ -15,7 +15,7 @@ import org.openqa.selenium.WebDriver;
  */
 public class PageResult {
 
-	final Class<? extends Page<WebDriver>> pageClass;
+	private final Class<? extends Page<WebDriver>> pageClass;
 	
 	private String id;
 	
@@ -38,12 +38,15 @@ public class PageResult {
 		return results;
 	}
 	
-	public Class<? extends Page<WebDriver>> getPageClass() {
-		return pageClass;
-	}
+//	public Class<? extends Page<WebDriver>> getPageClass() {
+//		return pageClass;
+//	}
 		
 	@SuppressWarnings("unchecked")
 	public Class<? extends Page<WebDriver>> getPageInterface() {
+		if (pageClass.isInterface()) {
+			return pageClass;
+		}
 		for (Class<?> i: pageClass.getInterfaces()) {
 			if (Page.class.isAssignableFrom(i)) {
 				return (Class<? extends Page<WebDriver>>) i;
@@ -52,28 +55,21 @@ public class PageResult {
 		return pageClass;
 	}
 		
-	public boolean merge(PageResult anotherResult) {
-		if (anotherResult.getPageClass().getName().equals(pageClass.getName())) {
-			results.addAll(anotherResult.getResults());
-			return true;
-		}
-		return false;
+	public void merge(PageResult anotherResult) {
+		results.addAll(anotherResult.getResults());
 	}
 	
 	public Map<Method, Integer> getCoverage() {
 		Map<Method, Integer> ret = new HashMap<>();
 		for (Method m: pageClass.getMethods()) {
-			Method om = AbstractNasdanikaWebTestRunner.getOverridenInterfaceMethod(m, Page.class);
-			if (om!=null) { 
-				int counter = 0;
-				for (PageMethodResult r: results) {
-					if (om.equals(r.getMethod())) {
-						++counter;
-					}
+			int counter = 0;
+			for (PageMethodResult r: results) {
+				if (m.equals(r.getMethod())) {
+					++counter;
 				}
-				
-				ret.put(om, counter);
 			}
+			
+			ret.put(m, counter);
 		}
 		return ret;
 	}
