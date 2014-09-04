@@ -367,8 +367,8 @@ class ReportGenerator {
 						.attribute("data-lightbox", "test-"+testMethodResult.id)
 						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getTextCaption()));
 				String caption = se.getHTMLCaption();
-				if (se.methodResult!=null) {
-					String descr = se.methodResult.getDescriptionHTML();
+				if (se.operationResult!=null) {
+					String descr = se.operationResult.getDescriptionHTML();
 					if (descr!=null) {
 						Tag comment = htmlFactory.glyphicon(Glyphicon.comment);
 						comment.id(htmlFactory.nextId()+"_slide_comment");
@@ -401,6 +401,9 @@ class ReportGenerator {
 	}
 	
 	static String classTitle(Class<?> klass) {
+		if (klass==null) {
+			return "";
+		}
 		Title ta = klass.getAnnotation(Title.class);
 		String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
 		if (!klass.isInterface() && className.endsWith("Impl")) {

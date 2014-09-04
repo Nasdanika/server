@@ -11,7 +11,7 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
  */
 public class PageMethodResult extends MethodResult {
 
-	PageMethodResult(String id, Method method, Object[] arguments, MethodResult parent) {
+	PageMethodResult(String id, Method method, Object[] arguments, OperationResult<?> parent) {
 		super(id, method, arguments, parent);
 	}
 	

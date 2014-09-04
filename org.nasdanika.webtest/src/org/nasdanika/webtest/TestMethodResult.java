@@ -10,7 +10,7 @@ public class TestMethodResult  extends MethodResult {
 	private Object[] parameters;
 	private int index;
 
-	TestMethodResult(String id, Method method, Object[] arguments, MethodResult parent, int index, Object[] parameters) {
+	TestMethodResult(String id, Method method, Object[] arguments, OperationResult<?> parent, int index, Object[] parameters) {
 		super(id, method, arguments, parent);
 		this.index = index;
 		this.parameters = parameters;

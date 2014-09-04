@@ -80,6 +80,18 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 
 				@Override
 				public void setTest(Object test) {}
+
+				@Override
+				public void beforePageInitialization(
+						Class<? extends Page<WebDriver>> pageClass,
+						byte[] screenshot) {}
+
+				@Override
+				public void afterPageInitialization(
+						Class<? extends Page<WebDriver>> pageClass, 
+						Page<WebDriver> page, 
+						byte[] screenshot, 
+						Throwable th) {}
 				
 			};
 		};
@@ -97,22 +109,26 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	private static byte[] takeScreenshot() {
 		Object test = testThreadLocal.get();
 		if (test instanceof WebTest) {
-			WebDriver webDriver = ((WebTest<?>) test).getWebDriver();
-			if (webDriver instanceof TakesScreenshot) {
-				for (int i=0; ; ++i) {
-					try {
-						return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
-					} catch (WebDriverException wde) {
-						if (i<SCREENSHOT_ATTEMPTS && wde.getMessage()!=null && wde.getMessage().startsWith("Could not take screenshot of current page - Error: Page is not loaded yet, try later")) {							
-							try {
-								System.out.println("Retaking screenshot");
-								Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
-							} catch (InterruptedException e) {
-								return null; 
-							}
-						} else {
-							throw wde;
+			takeScreenshot(((WebTest<?>) test).getWebDriver());
+		}
+		return null;
+	}
+	
+	private static byte[] takeScreenshot(WebDriver webDriver) {
+		if (webDriver instanceof TakesScreenshot) {
+			for (int i=0; ; ++i) {
+				try {
+					return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+				} catch (WebDriverException wde) {
+					if (i<SCREENSHOT_ATTEMPTS && wde.getMessage()!=null && wde.getMessage().startsWith("Could not take screenshot of current page - Error: Page is not loaded yet, try later")) {							
+						try {
+							System.out.println("Retaking screenshot");
+							Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
+						} catch (InterruptedException e) {
+							return null; 
 						}
+					} else {
+						throw wde;
 					}
 				}
 			}
@@ -592,4 +608,67 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		}			
 	}
 
+	public static void beforePageInitialization(WebDriver driver, Class<? extends Page<WebDriver>> pageClass) {
+		Screenshot screenshotAnnotation = pageClass.getAnnotation(Screenshot.class);
+		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
+		Object test = testThreadLocal.get();
+		if (test instanceof WebTest) {
+			delay += ((WebTest<?>) test).getScreenshotDelay();
+		}
+		if (shallTakeBeforeScreenshot(screenshotAnnotation)) {
+			if (delay>0) {
+				try {
+					Thread.sleep(delay);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			collectorThreadLocal.get().beforePageInitialization(pageClass, takeScreenshot(driver));
+		} else {
+			collectorThreadLocal.get().beforePageInitialization(pageClass, null);
+		}
+	}
+
+	public static void afterPageInitialization(
+			WebDriver driver,
+			Class<? extends Page<WebDriver>> pageClass, 
+			Page<WebDriver> page,
+			Throwable th) {
+		Screenshot screenshotAnnotation = pageClass.getAnnotation(Screenshot.class);
+		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
+		Object test = testThreadLocal.get();
+		if (test instanceof WebTest) {
+			delay += ((WebTest<?>) test).getScreenshotDelay();
+		}
+		if (th==null) {
+			if (shallTakeAfterScreenshot(screenshotAnnotation)) {
+				if (delay>0) {
+					try {
+						Thread.sleep(delay);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), null);
+			} else {
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, null);
+			}
+		} else {
+			if (shallTakeExceptionScreenshot(screenshotAnnotation)) {
+				if (delay>0) {
+					try {
+						Thread.sleep(delay);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+				}
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), th);
+			} else {
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, th);
+			}			
+		}
+	}
+
+	
+	
 }

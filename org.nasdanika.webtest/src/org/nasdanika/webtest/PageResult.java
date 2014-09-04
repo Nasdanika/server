@@ -32,9 +32,9 @@ public class PageResult {
 		this.id = id;
 	}
 	
-	List<PageMethodResult> results = new ArrayList<>();
+	List<OperationResult<?>> results = new ArrayList<>();
 
-	public List<PageMethodResult> getResults() {
+	public List<OperationResult<?>> getResults() {
 		return results;
 	}
 	
@@ -63,8 +63,8 @@ public class PageResult {
 		Map<Method, Integer> ret = new HashMap<>();
 		for (Method m: pageClass.getMethods()) {
 			int counter = 0;
-			for (PageMethodResult r: results) {
-				if (m.equals(r.getMethod())) {
+			for (OperationResult<?> r: results) {
+				if (m.equals(r.getOperation())) {
 					++counter;
 				}
 			}

@@ -2,6 +2,7 @@ package org.nasdanika.webtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,15 +41,15 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	private ScreenshotEntry currentScreenshot;
 		
-	private ScreenshotEntry createScreenshotEntry(MethodResult methodResult, byte[] screenshot, Screenshot.When when) {
+	private ScreenshotEntry createScreenshotEntry(OperationResult<?> operationResult, byte[] screenshot, Screenshot.When when) {
 		if (screenshot==null) {
 			return null;
 		}
         ScreenshotEntry ret = new ScreenshotEntry(
-        		methodResult, 
+        		operationResult, 
         		currentScreenshot, 
         		screenshotsDir, 
-        		idGenerator.genId(methodResult.getMethod().toString(), when.name()), 
+        		idGenerator.genId(operationResult.getOperation().toString(), when.name()), 
         		screenshot);
         currentScreenshot = ret;
 		screenshotExecutor.execute(ret);
@@ -96,7 +97,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return testMethodResults;
 	}
 	
-	private MethodResult currentMethodResult;
+	private OperationResult<?> currentOperationResult;
 	
 	@Override
 	public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args) {
@@ -104,20 +105,46 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				idGenerator.genId(method.toString(), null),
 				method,
 				args,
-				currentMethodResult);
+				currentOperationResult);
 		actors.get(actor.getClass()).results.add(amr);
-		currentMethodResult = amr;
+		currentOperationResult = amr;
 		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot, Screenshot.When.BEFORE);
 	}
 	@Override
 	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args,	Object result, Throwable th) {
-		if (currentMethodResult instanceof ActorMethodResult && method.equals(currentMethodResult.method)) {
-			currentMethodResult.failure = th;
-			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.AFTER);
-			currentMethodResult = currentMethodResult.parent;
+		if (currentOperationResult instanceof ActorMethodResult && method.equals(currentOperationResult.operation)) {
+			currentOperationResult.failure = th;
+			currentOperationResult.finish = System.currentTimeMillis();
+			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult = currentOperationResult.parent;
 		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
+			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+		}
+	}
+	
+	@Override
+	public void beforePageInitialization(Class<? extends Page<WebDriver>> pageClass, byte[] screenshot) {
+		onPageClass(pageClass);
+		InitializationResult pir = new InitializationResult(
+				idGenerator.genId(pageClass.getName(), "_init"),
+				pageClass, 
+				currentOperationResult);
+		pages.get(pageClass).results.add(pir);
+		currentOperationResult = pir;
+		pir.beforeScreenshot = createScreenshotEntry(pir, screenshot, Screenshot.When.BEFORE);
+	}
+	@Override
+	public void afterPageInitialization(
+			Class<? extends Page<WebDriver>> pageClass, 
+			Page<WebDriver> page,
+			byte[] screenshot, Throwable th) {
+		if (currentOperationResult instanceof InitializationResult && pageClass.equals(currentOperationResult.operation)) {
+			currentOperationResult.failure = th;
+			currentOperationResult.finish = System.currentTimeMillis();
+			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult = currentOperationResult.parent;
+		} else {
+			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
 		}
 	}
 	@Override
@@ -126,54 +153,54 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				idGenerator.genId(method.toString(), null),
 				method,
 				args,
-				currentMethodResult);
+				currentOperationResult);
 		pages.get(page.getClass()).results.add(pmr);
-		currentMethodResult = pmr;
+		currentOperationResult = pmr;
 		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot, Screenshot.When.BEFORE);
 	}
 	@Override
 	public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
-		if (currentMethodResult instanceof PageMethodResult && method.equals(currentMethodResult.method)) {
-			currentMethodResult.failure = th;
-			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.AFTER);
-			currentMethodResult = currentMethodResult.parent;
+		if (currentOperationResult instanceof PageMethodResult && method.equals(currentOperationResult.operation)) {
+			currentOperationResult.failure = th;
+			currentOperationResult.finish = System.currentTimeMillis();
+			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult = currentOperationResult.parent;
 		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
+			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
 		}
 	}
 	
 	@Override
 	public void beforeTestMethod(Method method, int index, Object[] parameters) {
-		currentMethodResult = new TestMethodResult(
+		currentOperationResult = new TestMethodResult(
 				idGenerator.genId(method.toString(), null),
 				method, 
 				null,
-				currentMethodResult,
+				currentOperationResult,
 				index,
 				parameters);
-		testMethodResults.add((TestMethodResult) currentMethodResult);
+		testMethodResults.add((TestMethodResult) currentOperationResult);
 	}
 	
 	@Override
 	public void beforeTestMethodScreenshot(byte[] screenshot) {
-		currentMethodResult.beforeScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.BEFORE);		
+		currentOperationResult.beforeScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.BEFORE);		
 	}
 	
 	@Override
 	public void afterTestMethod(Method method, Throwable th) {
-		if (currentMethodResult instanceof TestMethodResult && method.equals(currentMethodResult.method)) {
-			currentMethodResult.failure = th;
-			currentMethodResult.finish = System.currentTimeMillis();
-			currentMethodResult = currentMethodResult.parent;
+		if (currentOperationResult instanceof TestMethodResult && method.equals(currentOperationResult.operation)) {
+			currentOperationResult.failure = th;
+			currentOperationResult.finish = System.currentTimeMillis();
+			currentOperationResult = currentOperationResult.parent;
 		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentMethodResult);
+			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
 		}
 	}
 	
 	@Override
 	public void afterTestMethodScreenshot(byte[] screenshot) {
-		currentMethodResult.afterScreenshot = createScreenshotEntry(currentMethodResult, screenshot, Screenshot.When.AFTER);
+		currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
 	}
 		
 	@Override
@@ -234,7 +261,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 
 	@Override
 	public void setTest(Object test) {
-		currentMethodResult.setTarget(test);
+		currentOperationResult.setTarget(test);
 	}
 
 }

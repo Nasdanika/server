@@ -64,7 +64,7 @@ public class ActorResult {
 		for (Method m: actorClass.getMethods()) {
 			int counter = 0;
 			for (ActorMethodResult r: results) {
-				if (m.equals(r.getMethod())) {
+				if (m.equals(r.getOperation())) {
 					++counter;
 				}
 			}

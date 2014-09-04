@@ -6,6 +6,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -289,6 +290,20 @@ public class WebTestUtil {
 					c.setTest(test);
 				}
 			}
+
+			@Override
+			public void beforePageInitialization(Class<? extends Page<D>> pageClass, byte[] screenshot) {
+				for (Collector<D> c : collectors) {
+					c.beforePageInitialization(pageClass, screenshot);
+				}
+			}
+
+			@Override
+			public void afterPageInitialization(Class<? extends Page<D>> pageClass, Page<D> page, byte[] screenshot, Throwable th) {
+				for (Collector<D> c : collectors) {
+					c.afterPageInitialization(pageClass, page, screenshot, th);
+				}
+			}
 		};
 	}
 
@@ -301,9 +316,17 @@ public class WebTestUtil {
 	 * @param pageClassToProxy
 	 * @return
 	 */
-	public static <T> T initElements(WebDriver driver, Class<T> pageClassToProxy) {
+	public static <T extends Page<WebDriver>> T initElements(WebDriver driver, Class<T> pageClassToProxy) {
 		doWait(driver, pageClassToProxy);
-		return PageFactory.initElements(driver, pageClassToProxy);
+		AbstractNasdanikaWebTestRunner.beforePageInitialization(driver, pageClassToProxy);
+		try {
+			T page = PageFactory.initElements(driver, pageClassToProxy);
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, pageClassToProxy, page, null);
+			return page;
+		} catch (Throwable th) {
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, pageClassToProxy, null, th);
+			throw th;
+		}
 	}
 
 	/**
@@ -315,9 +338,16 @@ public class WebTestUtil {
 	 * @param pageClassToProxy
 	 * @return
 	 */
-	public static void initElements(WebDriver driver, Object page) {
+	@SuppressWarnings("unchecked")
+	public static void initElements(WebDriver driver, Page<WebDriver> page) {
 		doWait(driver, page.getClass());
-		PageFactory.initElements(driver, page);
+		AbstractNasdanikaWebTestRunner.beforePageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass());
+		try {
+			PageFactory.initElements(driver, page);
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, null);
+		} catch (Throwable th) {
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);			
+		}
 	}
 
 	/**
@@ -329,10 +359,16 @@ public class WebTestUtil {
 	 * @param pageClassToProxy
 	 * @return
 	 */
-	public static void initElements(WebDriver driver,
-			ElementLocatorFactory factory, Object page) {
+	@SuppressWarnings("unchecked")
+	public static void initElements(WebDriver driver, ElementLocatorFactory factory, Page<WebDriver> page) {
 		doWait(driver, page.getClass());
-		PageFactory.initElements(factory, page);
+		AbstractNasdanikaWebTestRunner.beforePageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass());
+		try {
+			PageFactory.initElements(factory, page);
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, null);
+		} catch (Throwable th) {
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);			
+		}
 	}
 
 	/**
@@ -344,10 +380,16 @@ public class WebTestUtil {
 	 * @param pageClassToProxy
 	 * @return
 	 */
-	public static void initElements(WebDriver driver, FieldDecorator decorator,
-			Object page) {
+	@SuppressWarnings("unchecked")
+	public static void initElements(WebDriver driver, FieldDecorator decorator,	Page<WebDriver> page) {
 		doWait(driver, page.getClass());
-		PageFactory.initElements(decorator, page);
+		AbstractNasdanikaWebTestRunner.beforePageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass());
+		try {
+			PageFactory.initElements(decorator, page);
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, null);
+		} catch (Throwable th) {
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);			
+		}
 	}
 
 	/**
@@ -359,28 +401,47 @@ public class WebTestUtil {
 	 */
 	private static class WaitAnnotations extends Annotations {
 
-		private Wait wait;
-		private Waits waits;
+		private List<Wait> waitList = new ArrayList<>();
 
 		WaitAnnotations(Class<?> pageClass) {
 			super(null);
-			this.wait = pageClass.getAnnotation(Wait.class);
-			this.waits = pageClass.getAnnotation(Waits.class);
+			
+			List<Class<?>> inheritanceChain = new ArrayList<Class<?>>();
+			for (Class<?> cls = pageClass; Page.class.isAssignableFrom(cls); cls = cls.getSuperclass()) {
+				inheritanceChain.add(cls);
+			}
+			Collections.reverse(inheritanceChain);
+			for (Class<?> pCls: inheritanceChain) {				
+				Wait wait = pCls.getAnnotation(Wait.class);
+				if (wait!=null) {
+					waitList.add(wait);
+				}
+				Waits waits = pCls.getAnnotation(Waits.class);
+				if (waits!=null) {
+					waitList.addAll(Arrays.asList(waits.value()));
+				}
+			}
 		}
 
 		public WaitAnnotations(Method pageMethod) {
 			super(null);
-			this.wait = pageMethod.getAnnotation(Wait.class);
-			this.waits = pageMethod.getAnnotation(Waits.class);
-		}
-
-		private void assertValidAnnotations() {
-			if (wait != null && waits != null) {
-				throw new IllegalArgumentException(
-						"If you use a '@Waits' annotation, "
-								+ "you must not also use a '@Wait' annotation");
+			Wait wait = pageMethod.getAnnotation(Wait.class);
+			if (wait!=null) {
+				waitList.add(wait);
+			}
+			Waits waits = pageMethod.getAnnotation(Waits.class);
+			if (waits!=null) {
+				waitList.addAll(Arrays.asList(waits.value()));
 			}
 		}
+
+//		private void assertValidAnnotations() {
+//			if (wait != null && waits != null) {
+//				throw new IllegalArgumentException(
+//						"If you use a '@Waits' annotation, "
+//								+ "you must not also use a '@Wait' annotation");
+//			}
+//		}
 
 		private By buildBy(final Wait wait) {
 			return buildByFromFindBy(new FindBy() {
@@ -444,12 +505,7 @@ public class WebTestUtil {
 
 		void doWait(WebDriver driver) {
 			//assertValidAnnotations(); No harm to have both wait and waits.
-			if (waits!=null) {
-				for (Wait wait: waits.value()) {
-					doWait(driver, wait);
-				}
-			}
-			if (wait!=null) {
+			for (Wait wait: waitList) {
 				doWait(driver, wait);
 			}
 		}

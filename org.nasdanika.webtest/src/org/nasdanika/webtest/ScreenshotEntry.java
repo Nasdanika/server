@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Member;
 import java.util.Arrays;
 
 import javax.imageio.ImageIO;
@@ -53,14 +54,14 @@ public class ScreenshotEntry implements Runnable {
 
 	private ScreenshotEntry prev;
 
-	final MethodResult methodResult;
+	final OperationResult operationResult;
 	
-	public MethodResult getMethodResult() {
-		return methodResult;
+	public OperationResult getMethodResult() {
+		return operationResult;
 	}
 
-	ScreenshotEntry(MethodResult methodResult, ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
-		this.methodResult = methodResult;
+	ScreenshotEntry(OperationResult operationResult, ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
+		this.operationResult = operationResult;
 		this.screenshotsDir = screenshotsDir;
 		this.id = id;
 		this.bytes = bytes;
@@ -97,28 +98,28 @@ public class ScreenshotEntry implements Runnable {
 	}
 
 	String getHTMLCaption() {
-		if (methodResult==null) {
+		if (operationResult==null) {
 			return id;
 		}
-		return methodResult.getHTMLCaption(new DefaultHTMLFactory());
+		return operationResult.getHTMLCaption(new DefaultHTMLFactory());
 	}
 	
 	String getTextCaption() {
 		StringBuilder caption = new StringBuilder();
-		if (methodResult instanceof TestMethodResult) {
+		if (operationResult instanceof TestMethodResult) {
 			caption.append("[Test] ");
-		} else if (methodResult instanceof ActorMethodResult) {
+		} else if (operationResult instanceof ActorMethodResult) {
 			caption.append("[Actor] ");
-		} else if (methodResult instanceof PageMethodResult) {
+		} else if (operationResult instanceof PageMethodResult) {
 			caption.append("[Page] ");
 		}
-		if (methodResult!=null) {
-			Class<?> dc = methodResult.method.getDeclaringClass();
+		if (operationResult!=null) {
+			Class<?> dc = operationResult.operation instanceof Member ? ((Member) operationResult.operation).getDeclaringClass() : null;
 			caption.append(ReportGenerator.classTitle(dc));
 			caption.append(" :: ");
-			Title mTitle = methodResult.method.getAnnotation(Title.class);
+			Title mTitle = operationResult.operation.getAnnotation(Title.class);
 			if (mTitle==null) {
-				caption.append(ReportGenerator.title(methodResult.method.getName()));
+				caption.append(ReportGenerator.title(operationResult.getName()));
 			} else {
 				caption.append(mTitle.value());
 			}

@@ -6,12 +6,12 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Allows to suppress screenshot on actor/page method by setting value to false or to introduce delay before
+ * Allows to suppress screenshot on actor/page method or initialization by setting value to false or to introduce delay before
  * taking screenshot.
  * @author Pavel Vlasov
  *
  */
-@Target({ElementType.METHOD})
+@Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Screenshot {
 	
