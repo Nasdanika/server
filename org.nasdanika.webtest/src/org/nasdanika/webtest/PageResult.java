@@ -62,14 +62,16 @@ public class PageResult {
 	public Map<Method, Integer> getCoverage() {
 		Map<Method, Integer> ret = new HashMap<>();
 		for (Method m: pageClass.getMethods()) {
-			int counter = 0;
-			for (OperationResult<?> r: results) {
-				if (m.equals(r.getOperation())) {
-					++counter;
+			if (!Page.class.equals(m.getDeclaringClass())) {
+				int counter = 0;
+				for (OperationResult<?> r: results) {
+					if (m.equals(r.getOperation())) {
+						++counter;
+					}
 				}
+				
+				ret.put(m, counter);
 			}
-			
-			ret.put(m, counter);
 		}
 		return ret;
 	}

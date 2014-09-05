@@ -62,14 +62,16 @@ public class ActorResult {
 	public Map<Method, Integer> getCoverage() {
 		Map<Method, Integer> ret = new HashMap<>();
 		for (Method m: actorClass.getMethods()) {
-			int counter = 0;
-			for (ActorMethodResult r: results) {
-				if (m.equals(r.getOperation())) {
-					++counter;
+			if (!Actor.class.equals(m.getDeclaringClass())) {
+				int counter = 0;
+				for (ActorMethodResult r: results) {
+					if (m.equals(r.getOperation())) {
+						++counter;
+					}
 				}
+				
+				ret.put(m, counter);
 			}
-			
-			ret.put(m, counter);
 		}
 		return ret;
 	}	

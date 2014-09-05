@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 
-public class TestMethodResult  extends MethodResult {
+public class TestMethodResult extends MethodResult {
 
 	private Object[] parameters;
 	private int index;

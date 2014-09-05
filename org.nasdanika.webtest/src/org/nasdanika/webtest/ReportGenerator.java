@@ -345,7 +345,7 @@ class ReportGenerator {
 			File contentDir, 
 			int slideWidth) throws IOException {
 		
-		try (FileWriter testMethodResultWriter = new FileWriter(new File(contentDir, "method_"+testMethodResult.id+".html"))) {
+		try (FileWriter testMethodResultWriter = new FileWriter(new File(contentDir, "operation_"+testMethodResult.id+".html"))) {
 			
 			testMethodResultWriter.write("<H3>");
 			testMethodResultWriter.write(htmlFactory.glyphicon(testMethodResult.getGlyphicon()).toString());
@@ -362,7 +362,7 @@ class ReportGenerator {
 			List<ScreenshotEntry> allScreenshots = testMethodResult.allScreenshots();
 			for (ScreenshotEntry se: allScreenshots) {
 				String imageLocation = "screenshots/screenshot_"+se.id+".png";
-				Tag imageTag = htmlFactory.tag("img").attribute("src", imageLocation);
+				Tag imageTag = htmlFactory.tag("img").attribute("src", imageLocation).style("margin", "auto");
 				Tag link = htmlFactory.link(imageLocation, imageTag)
 						.attribute("data-lightbox", "test-"+testMethodResult.id)
 						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getTextCaption()));

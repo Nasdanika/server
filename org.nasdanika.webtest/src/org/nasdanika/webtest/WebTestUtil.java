@@ -13,6 +13,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
@@ -346,7 +347,8 @@ public class WebTestUtil {
 			PageFactory.initElements(driver, page);
 			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, null);
 		} catch (Throwable th) {
-			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);			
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);
+			throw th;
 		}
 	}
 
@@ -367,7 +369,8 @@ public class WebTestUtil {
 			PageFactory.initElements(factory, page);
 			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, null);
 		} catch (Throwable th) {
-			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);			
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);
+			throw th;
 		}
 	}
 
@@ -388,7 +391,8 @@ public class WebTestUtil {
 			PageFactory.initElements(decorator, page);
 			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, null);
 		} catch (Throwable th) {
-			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);			
+			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, (Class<? extends Page<WebDriver>>) page.getClass(), page, th);
+			throw th;
 		}
 	}
 

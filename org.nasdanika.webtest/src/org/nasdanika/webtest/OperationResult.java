@@ -210,7 +210,7 @@ public class OperationResult<O extends AnnotatedElement> {
 			name = format(mTitle.value());
 		}
 		
-		String methodDetailsLocation = "content/method_"	+ id + ".html";
+		String methodDetailsLocation = "content/operation_"	+ id + ".html";
 		if (failure==null) {
 			if (isPending()) { // Only the first screenshot or no calls to actor/page methods.
 				Tag routeLink = htmlFactory.span(

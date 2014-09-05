@@ -13,8 +13,9 @@ public class InitializationResult extends OperationResult<Class<?>> {
 		super(id, klass, null, parent);
 	}
 	
-	public String getName() {
-		return operation.getName()+"::init";
+	protected String getOperationName() {
+		String oName = operation.getName();
+		return oName.substring(oName.lastIndexOf('.')+1)+"::init";
 	}
 	
 	@Override

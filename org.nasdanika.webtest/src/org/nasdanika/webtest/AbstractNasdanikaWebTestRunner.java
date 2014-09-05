@@ -109,28 +109,33 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	private static byte[] takeScreenshot() {
 		Object test = testThreadLocal.get();
 		if (test instanceof WebTest) {
-			takeScreenshot(((WebTest<?>) test).getWebDriver());
+			return takeScreenshot(((WebTest<?>) test).getWebDriver());
 		}
 		return null;
 	}
 	
 	private static byte[] takeScreenshot(WebDriver webDriver) {
 		if (webDriver instanceof TakesScreenshot) {
-			for (int i=0; ; ++i) {
-				try {
-					return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
-				} catch (WebDriverException wde) {
-					if (i<SCREENSHOT_ATTEMPTS && wde.getMessage()!=null && wde.getMessage().startsWith("Could not take screenshot of current page - Error: Page is not loaded yet, try later")) {							
-						try {
-							System.out.println("Retaking screenshot");
-							Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
-						} catch (InterruptedException e) {
-							return null; 
+			try {
+				for (int i=0; ; ++i) {
+					try {
+						return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+					} catch (WebDriverException wde) {
+						if (i<SCREENSHOT_ATTEMPTS && wde.getMessage()!=null && wde.getMessage().startsWith("Could not take screenshot of current page - Error: Page is not loaded yet, try later")) {							
+							try {
+								System.out.println("Retaking screenshot");
+								Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
+							} catch (InterruptedException e) {
+								return null; 
+							}
+						} else {
+							throw wde;
 						}
-					} else {
-						throw wde;
-					}
+					} 
 				}
+			} catch (Exception e) {
+				System.err.println("Error taking screenshot: "+e);
+				e.printStackTrace();
 			}
 		}
 		return null;
@@ -160,7 +165,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		@SuppressWarnings("unchecked")
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			if (Page.class.isAssignableFrom(method.getDeclaringClass())) {
+			if (Page.class.isAssignableFrom(method.getDeclaringClass()) && !Page.class.equals(method.getDeclaringClass())) {
 				Method pageImplMethod = page.getClass().getMethod(method.getName(), method.getParameterTypes());
 				Object test = testThreadLocal.get();
 	    		if (test instanceof WebTest) {
@@ -265,7 +270,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		@SuppressWarnings("unchecked")
 		@Override
 		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			if (Actor.class.isAssignableFrom(method.getDeclaringClass())) {
+			if (Actor.class.isAssignableFrom(method.getDeclaringClass()) && !Actor.class.equals(method.getDeclaringClass())) {
 				Method actorImplMethod = actor.getClass().getMethod(method.getName(), method.getParameterTypes());
 				Object test = testThreadLocal.get();
 	    		if (test instanceof WebTest) {
