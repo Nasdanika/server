@@ -22,6 +22,9 @@
 		<module>org.nasdanika.cdo</module>
 		<!-- <module>org.nasdanika.cdo.boxing</module> -->
 		<!-- <module>org.nasdanika.cdo.flow</module> -->
+		<module>org.nasdanika.equinox.feature</module>
+		<module>org.nasdanika.cdo.feature</module>
+		<module>org.nasdanika.webtest.feature</module>
 		<module>org.nasdanika.feature</module>
 		<!-- <module>org.nasdanika.transaction</module> -->
 		<module>org.nasdanika.server.third_party.feature</module>
