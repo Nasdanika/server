@@ -12,6 +12,15 @@
    <feature url="features/org.nasdanika.html.feature_1.2.0.qualifier.jar" id="org.nasdanika.html.feature" version="1.2.0.qualifier">
       <category name="org.nasdanika.category"/>
    </feature>
+   <feature url="features/org.nasdanika.cdo.feature_0.1.0.qualifier.jar" id="org.nasdanika.cdo.feature" version="0.1.0.qualifier">
+      <category name="org.nasdanika.category"/>
+   </feature>
+   <feature url="features/org.nasdanika.equinox.feature_0.1.0.qualifier.jar" id="org.nasdanika.equinox.feature" version="0.1.0.qualifier">
+      <category name="org.nasdanika.category"/>
+   </feature>
+   <feature url="features/org.nasdanika.webtest.feature_1.2.0.qualifier.jar" id="org.nasdanika.webtest.feature" version="1.2.0.qualifier">
+      <category name="org.nasdanika.category"/>
+   </feature>
    <category-def name="org.nasdanika.category" label="Nasdanika">
       <description>
          Nasdanika features.
