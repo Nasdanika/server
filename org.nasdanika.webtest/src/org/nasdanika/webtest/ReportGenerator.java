@@ -624,12 +624,12 @@ class ReportGenerator {
 		
 		header.header("#").rowspan(2);
 		
-		header.header("Parameters").colspan(paramInfo.size());
+		header.header("Parameters").colspan(paramInfo.size()).attribute("align", "center");
 		
-		header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Pass").rowspan(2);
-		header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail").rowspan(2);
-		header.header(htmlFactory.glyphicon(Glyphicon.warning_sign), "&nbsp;Error").rowspan(2);
-		header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending").rowspan(2);
+		header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Pass").rowspan(2).attribute("align", "center");
+		header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail").rowspan(2).attribute("align", "center");
+		header.header(htmlFactory.glyphicon(Glyphicon.warning_sign), "&nbsp;Error").rowspan(2).attribute("align", "center");
+		header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending").rowspan(2).attribute("align", "center");
 		
 		StringBuilder tooltipInitializers = new StringBuilder();
 		
