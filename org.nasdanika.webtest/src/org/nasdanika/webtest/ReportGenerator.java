@@ -530,10 +530,10 @@ class ReportGenerator {
 		int[] totals = {0, 0, 0, 0};
 		header.header(htmlFactory.glyphicon(Glyphicon.search), "&nbsp;Test class");
 		header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
-		header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Pass");
-		header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail");
-		header.header(htmlFactory.glyphicon(Glyphicon.warning_sign), "&nbsp;Error");
-		header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending");
+		header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Pass").style("text-align", "center").attribute("nowrap", "true");
+		header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail").style("text-align", "center").attribute("nowrap", "true");
+		header.header(htmlFactory.glyphicon(Glyphicon.warning_sign), "&nbsp;Error").style("text-align", "center").attribute("nowrap", "true");
+		header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending").style("text-align", "center").attribute("nowrap", "true");
 		for (TestResult tr: testResults) {
 			Row classRow = classTable.row();
 			classRow.cell(routeLink(tr, htmlFactory));
@@ -624,12 +624,12 @@ class ReportGenerator {
 		
 		header.header("#").rowspan(2);
 		
-		header.header("Parameters").colspan(paramInfo.size()).attribute("align", "center");
+		header.header("Parameters").colspan(paramInfo.size()).style("text-align", "center").attribute("nowrap", "true");
 		
-		header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Pass").rowspan(2).attribute("align", "center");
-		header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail").rowspan(2).attribute("align", "center");
-		header.header(htmlFactory.glyphicon(Glyphicon.warning_sign), "&nbsp;Error").rowspan(2).attribute("align", "center");
-		header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending").rowspan(2).attribute("align", "center");
+		header.header(htmlFactory.glyphicon(Glyphicon.ok), "&nbsp;Pass").rowspan(2).style("text-align", "center").attribute("nowrap", "true");
+		header.header(htmlFactory.glyphicon(Glyphicon.remove), "&nbsp;Fail").rowspan(2).style("text-align", "center").attribute("nowrap", "true");
+		header.header(htmlFactory.glyphicon(Glyphicon.warning_sign), "&nbsp;Error").rowspan(2).style("text-align", "center").attribute("nowrap", "true");
+		header.header(htmlFactory.glyphicon(Glyphicon.time), "&nbsp;Pending").rowspan(2).style("text-align", "center").attribute("nowrap", "true");
 		
 		StringBuilder tooltipInitializers = new StringBuilder();
 		
