@@ -27,16 +27,9 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 			
 	@Override
 	protected Collector<WebDriver> createCollector(final TestResultCollector testResultCollector) throws Exception {
-		
 		final IdGenerator idGenerator = testResultCollector==null ? new IdGenerator() : testResultCollector.getIdGenerator();
-		
 		final File outputDir = testResultCollector == null ? configOutputDir(getTestClass().getJavaClass()) : testResultCollector.getOutputDir();	
-		
 		final File screenshotsDir = new File(outputDir, "screenshots");
-		if (!screenshotsDir.exists() && !screenshotsDir.mkdir()) {
-			throw new IOException("Could not create screenshot output directory "+screenshotsDir.getAbsolutePath());			
-		}
-		
 		final Executor screenshotExecutor = testResultCollector==null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 		
 		TestClassResult testClassResult = new TestClassResult(getTestClass().getJavaClass(), idGenerator, getIndex(), screenshotsDir, screenshotExecutor) {
@@ -72,7 +65,12 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 			}
 		} else if (!outputDir.mkdirs()) {
 			throw new IOException("Could not create output directory "+outputDir.getAbsolutePath());
+		}		
+		File screenshotsDir = new File(outputDir, "screenshots");
+		if (!screenshotsDir.exists() && !screenshotsDir.mkdir()) {
+			throw new IOException("Could not create screenshot output directory "+screenshotsDir.getAbsolutePath());			
 		}
+		
 		return outputDir;
 	}
 		
