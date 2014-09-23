@@ -15,6 +15,7 @@ import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -27,6 +28,7 @@ import org.nasdanika.core.Context;
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getMemberOf <em>Member Of</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getPermissions <em>Permissions</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getProtectionDomain <em>Protection Domain</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getMembers <em>Members</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getDescription <em>Description</em>}</li>
@@ -83,6 +85,22 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 	@SuppressWarnings("unchecked")
 	public EList<Permission> getPermissions() {
 		return (EList<Permission>)eGet(SecurityPackage.Literals.PRINCIPAL__PERMISSIONS, true);
+	}
+
+	/**
+	 * Traverses containers looking for a protection domain.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public ProtectionDomain<?> getProtectionDomain() {
+		for (EObject container = eContainer(); container != null; container = container.eContainer()) {
+			if (container instanceof ProtectionDomain) {
+				return (ProtectionDomain<?>) container;
+			}
+		}
+
+		return null; //(ProtectionDomain<?>)eGet(SecurityPackage.Literals.PRINCIPAL__PROTECTION_DOMAIN, true);
 	}
 
 	/**
@@ -152,31 +170,15 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 		return false;
 	}
 
-	private AuthorizationHelper authorizationHelper = new AuthorizationHelper() {
-		
-		@Override
-		protected ProtectionDomain<?> getProtectionDomain() {
-			for (EObject container = eContainer(); container != null; container = container.eContainer()) {
-				if (container instanceof ProtectionDomain) {
-					return (ProtectionDomain<?>) container;
-				}
-			}
-			return null;
-		}
-		
-		@Override
-		protected Principal getPrincipal() {
-			return GroupImpl.this;
-		}
-	};
-
+	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);
+	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
-		return authorizationHelper.authorize(context, target, action, qualifier, environment);
+	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+		return authorizationHelper.authorize(securityPolicy, context, target, action, qualifier, environment);
 	}
 
 	/**
@@ -223,8 +225,8 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 		switch (operationID) {
 			case SecurityPackage.GROUP___IS_MEMBER__PRINCIPAL:
 				return isMember((Principal)arguments.get(0));
-			case SecurityPackage.GROUP___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP:
-				return authorize((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
+			case SecurityPackage.GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP:
+				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), (EObject)arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
 			case SecurityPackage.GROUP___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT:
 				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), arguments.get(3));
 				return null;

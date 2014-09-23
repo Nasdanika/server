@@ -6,12 +6,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Iterator;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
@@ -28,8 +26,6 @@ import org.nasdanika.core.NasdanikaException;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getActions <em>Actions</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getGroups <em>Groups</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getSuperUsersGroup <em>Super Users Group</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getUnauthenticatedPrincipal <em>Unauthenticated Principal</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getEveryoneGroup <em>Everyone Group</em>}</li>
@@ -69,26 +65,6 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	@Override
 	protected int eStaticFeatureCount() {
 		return 0;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public EList<Action> getActions() {
-		return (EList<Action>)eGet(SecurityPackage.Literals.PROTECTION_DOMAIN__ACTIONS, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public EList<Group> getGroups() {
-		return (EList<Group>)eGet(SecurityPackage.Literals.PROTECTION_DOMAIN__GROUPS, true);
 	}
 
 	/**
@@ -212,7 +188,7 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 */
 	public LoginPasswordHashUser authenticate(LoginPasswordCredentials credentials) {
 		for (User user: getAllUsers()) {
-			if (user instanceof LoginPasswordHashUser) {
+			if (user instanceof LoginPasswordHashUser && !user.isDisabled()) {
 				LoginPasswordHashUser lphUser = (LoginPasswordHashUser) user;
 				if (lphUser.getLogin()!=null && lphUser.getLogin().equalsIgnoreCase(credentials.getLogin())) {
 					try {

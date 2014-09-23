@@ -61,9 +61,12 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case SecurityPackage.GROUP: return (EObject)createGroup();
+			case SecurityPackage.ACTION_KEY: return (EObject)createActionKey();
 			case SecurityPackage.ACTION: return (EObject)createAction();
 			case SecurityPackage.PROPERTY: return (EObject)createProperty();
 			case SecurityPackage.PERMISSION: return (EObject)createPermission();
+			case SecurityPackage.ACTION_CONTAINER: return (EObject)createActionContainer();
+			case SecurityPackage.SECURITY_POLICY_CONTAINER: return (EObject)createSecurityPolicyContainer();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -118,6 +121,16 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ActionKey createActionKey() {
+		ActionKeyImpl actionKey = new ActionKeyImpl();
+		return actionKey;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public Action createAction() {
 		ActionImpl action = new ActionImpl();
 		return action;
@@ -141,6 +154,26 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	public Permission createPermission() {
 		PermissionImpl permission = new PermissionImpl();
 		return permission;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ActionContainer createActionContainer() {
+		ActionContainerImpl actionContainer = new ActionContainerImpl();
+		return actionContainer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SecurityPolicyContainer createSecurityPolicyContainer() {
+		SecurityPolicyContainerImpl securityPolicyContainer = new SecurityPolicyContainerImpl();
+		return securityPolicyContainer;
 	}
 
 	/**

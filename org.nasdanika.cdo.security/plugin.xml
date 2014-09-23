@@ -5,6 +5,7 @@
 -->
 
 <plugin>
+   <extension-point id="security_policy" name="Security Policy" schema="schema/security_policy.exsd"/>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated security -->

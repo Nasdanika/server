@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.security;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -14,19 +15,25 @@ import org.nasdanika.core.Context;
  * @author Pavel
  *
  */
-public abstract class AuthorizationHelper {
+public class AuthorizationHelper {
 
 	private static final String SLASH = "/";
-
-	protected abstract Principal getPrincipal();
+	private Principal principal;
 	
-	protected abstract ProtectionDomain<?> getProtectionDomain();
-	
-	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
-		return authorize(getPrincipal(), context, target, action, qualifier, SLASH, environment, new HashSet<Principal>());
+	public AuthorizationHelper(Principal principal) {
+		this.principal = principal;
 	}
 	
-	private AccessDecision authorize(
+	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+		if (target!=null) {
+			environment = environment == null ? new HashMap<String, Object>() : new HashMap<String, Object>(environment);
+			environment.put("target", target);
+		}
+		return authorize(securityPolicy, principal, context, target, action, qualifier, SLASH, environment, new HashSet<Principal>());
+	}
+	
+	private static AccessDecision authorize(
+			SecurityPolicy securityPolicy,
 			Principal principal, 
 			Context context,
 			EObject target, 
@@ -38,7 +45,7 @@ public abstract class AuthorizationHelper {
 		
 		if (traversed.add(principal)) { // prevention of infinite loops if groups are cyclically nested.
 			// Superuser
-			ProtectionDomain<?> protectionDomain = getProtectionDomain();
+			ProtectionDomain<?> protectionDomain = principal.getProtectionDomain();
 			if (protectionDomain.getSuperUsersGroup()!=null && protectionDomain.getSuperUsersGroup().isMember(principal)) {
 				return AccessDecision.ALLOW;
 			}
@@ -52,7 +59,7 @@ public abstract class AuthorizationHelper {
 					}
 					qualifiedPath+=qualifier;
 				}
-				AccessDecision accessDecision = p.authorize(context, target, action, qualifiedPath, environment);
+				AccessDecision accessDecision = p.authorize(securityPolicy, context, target, action, qualifiedPath, environment);
 				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 					return accessDecision;
 				}
@@ -60,7 +67,7 @@ public abstract class AuthorizationHelper {
 			
 			// Groups
 			for (Group g: principal.getMemberOf()) {
-				AccessDecision accessDecision = authorize(g, context, target, action, qualifier, path, environment, traversed);
+				AccessDecision accessDecision = authorize(securityPolicy, g, context, target, action, qualifier, path, environment, traversed);
 				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 					return accessDecision;
 				}			
@@ -71,7 +78,7 @@ public abstract class AuthorizationHelper {
 				if (!principal.equals(protectionDomain.getUnauthenticatedPrincipal())) {
 					Group everyoneGroup = protectionDomain.getEveryoneGroup();
 					if (everyoneGroup!=null) {
-						AccessDecision accessDecision = authorize(everyoneGroup, context, target, action, qualifier, path, environment, traversed);
+						AccessDecision accessDecision = authorize(securityPolicy, everyoneGroup, context, target, action, qualifier, path, environment, traversed);
 						if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 							return accessDecision;
 						}
@@ -87,7 +94,7 @@ public abstract class AuthorizationHelper {
 					path+=SLASH;
 				}
 				path+=targetContainingFeature.getName();
-				AccessDecision accessDecision = authorize(principal, context, targetContainer, action, qualifier, path, environment, traversed);
+				AccessDecision accessDecision = authorize(securityPolicy, principal, context, targetContainer, action, qualifier, path, environment, traversed);
 				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 					return accessDecision;
 				}

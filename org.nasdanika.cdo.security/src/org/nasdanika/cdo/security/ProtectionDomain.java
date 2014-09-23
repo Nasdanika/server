@@ -3,9 +3,7 @@
 package org.nasdanika.cdo.security;
 
 import org.eclipse.emf.cdo.CDOObject;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -20,8 +18,6 @@ import org.eclipse.emf.ecore.EObject;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getActions <em>Actions</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getGroups <em>Groups</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getSuperUsersGroup <em>Super Users Group</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getUnauthenticatedPrincipal <em>Unauthenticated Principal</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getEveryoneGroup <em>Everyone Group</em>}</li>
@@ -34,36 +30,6 @@ import org.eclipse.emf.ecore.EObject;
  * @generated
  */
 public interface ProtectionDomain<CR> extends CDOObject {
-	/**
-	 * Returns the value of the '<em><b>Actions</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.cdo.security.Action}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <html>Actions. Each action is associated with EClass.</html>
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Actions</em>' containment reference list.
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getProtectionDomain_Actions()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<Action> getActions();
-
-	/**
-	 * Returns the value of the '<em><b>Groups</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.cdo.security.Group}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <html>Groups.</html>
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Groups</em>' containment reference list.
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getProtectionDomain_Groups()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<Group> getGroups();
-
 	/**
 	 * Returns the value of the '<em><b>Super Users Group</b></em>' reference.
 	 * <!-- begin-user-doc -->

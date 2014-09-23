@@ -96,6 +96,10 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 				return createLoginPasswordHashUserAdapter();
 			}
 			@Override
+			public Adapter caseActionKey(ActionKey object) {
+				return createActionKeyAdapter();
+			}
+			@Override
 			public Adapter caseAction(Action object) {
 				return createActionAdapter();
 			}
@@ -106,6 +110,18 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter casePermission(Permission object) {
 				return createPermissionAdapter();
+			}
+			@Override
+			public Adapter caseActionContainer(ActionContainer object) {
+				return createActionContainerAdapter();
+			}
+			@Override
+			public Adapter caseSecurityPolicy(SecurityPolicy object) {
+				return createSecurityPolicyAdapter();
+			}
+			@Override
+			public Adapter caseSecurityPolicyContainer(SecurityPolicyContainer object) {
+				return createSecurityPolicyContainerAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -212,6 +228,20 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.ActionKey <em>Action Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.ActionKey
+	 * @generated
+	 */
+	public Adapter createActionKeyAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -250,6 +280,48 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPermissionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.ActionContainer <em>Action Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.ActionContainer
+	 * @generated
+	 */
+	public Adapter createActionContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.SecurityPolicy <em>Policy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.SecurityPolicy
+	 * @generated
+	 */
+	public Adapter createSecurityPolicyAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.SecurityPolicyContainer <em>Policy Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.SecurityPolicyContainer
+	 * @generated
+	 */
+	public Adapter createSecurityPolicyContainerAdapter() {
 		return null;
 	}
 

@@ -8,14 +8,12 @@
   <foreignModel>security.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Security" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
-      ecorePackage="security.ecore#/">
+      fileExtensions="nasdanika_security" ecorePackage="security.ecore#/">
     <genDataTypes ecoreDataType="security.ecore#//Context"/>
     <genDataTypes ecoreDataType="security.ecore#//AccessDecision"/>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
     <genClasses image="false" ecoreClass="security.ecore#//ProtectionDomain">
       <genTypeParameters ecoreTypeParameter="security.ecore#//ProtectionDomain/CR"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//ProtectionDomain/actions"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//ProtectionDomain/groups"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//ProtectionDomain/superUsersGroup"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//ProtectionDomain/unauthenticatedPrincipal"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//ProtectionDomain/everyoneGroup"/>
@@ -39,7 +37,9 @@
     <genClasses image="false" ecoreClass="security.ecore#//Principal">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Principal/memberOf"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Principal/permissions"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Principal/protectionDomain"/>
       <genOperations ecoreOperation="security.ecore#//Principal/authorize">
+        <genParameters ecoreParameter="security.ecore#//Principal/authorize/securityPolicy"/>
         <genParameters ecoreParameter="security.ecore#//Principal/authorize/context"/>
         <genParameters ecoreParameter="security.ecore#//Principal/authorize/target"/>
         <genParameters ecoreParameter="security.ecore#//Principal/authorize/action"/>
@@ -71,22 +71,28 @@
         <genParameters ecoreParameter="security.ecore#//Group/isMember/principal"/>
       </genOperations>
     </genClasses>
-    <genClasses image="false" ecoreClass="security.ecore#//User"/>
+    <genClasses image="false" ecoreClass="security.ecore#//User">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//User/disabled"/>
+    </genClasses>
     <genClasses ecoreClass="security.ecore#//LoginPasswordHashUser">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/login"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/passwordHash"/>
     </genClasses>
+    <genClasses ecoreClass="security.ecore#//ActionKey">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//ActionKey/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//ActionKey/targetNamespaceURI"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//ActionKey/targetClass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//ActionKey/qualifier"/>
+    </genClasses>
     <genClasses ecoreClass="security.ecore#//Action">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/description"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/targetNamespaceURI"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/targetClass"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/grantable"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Action/implies"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Action/impliedBy"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/pathPatterns"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/condition"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Action/properties"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/category"/>
       <genOperations ecoreOperation="security.ecore#//Action/match">
         <genParameters ecoreParameter="security.ecore#//Action/match/context"/>
         <genParameters ecoreParameter="security.ecore#//Action/match/action"/>
@@ -102,19 +108,28 @@
     </genClasses>
     <genClasses ecoreClass="security.ecore#//Permission">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/allow"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Permission/action"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Permission/target"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/withGrantOption"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/startDate"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/endDate"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/comment"/>
       <genOperations ecoreOperation="security.ecore#//Permission/authorize">
+        <genParameters ecoreParameter="security.ecore#//Permission/authorize/securityPolicy"/>
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/context"/>
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/target"/>
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/action"/>
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/path"/>
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/environment"/>
       </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="security.ecore#//ActionContainer">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//ActionContainer/actions"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="security.ecore#//SecurityPolicy"/>
+    <genClasses ecoreClass="security.ecore#//SecurityPolicyContainer">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//SecurityPolicyContainer/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//SecurityPolicyContainer/description"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//SecurityPolicyContainer/imports"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

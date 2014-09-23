@@ -9,10 +9,10 @@ import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -24,7 +24,6 @@ import org.nasdanika.core.Context;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#isAllow <em>Allow</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getAction <em>Action</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#isWithGrantOption <em>With Grant Option</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getStartDate <em>Start Date</em>}</li>
@@ -35,7 +34,7 @@ import org.nasdanika.core.Context;
  *
  * @generated
  */
-public class PermissionImpl extends CDOObjectImpl implements Permission {
+public class PermissionImpl extends ActionKeyImpl implements Permission {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -60,16 +59,6 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	protected int eStaticFeatureCount() {
-		return 0;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public boolean isAllow() {
 		return (Boolean)eGet(SecurityPackage.Literals.PERMISSION__ALLOW, true);
 	}
@@ -81,24 +70,6 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 	 */
 	public void setAllow(boolean newAllow) {
 		eSet(SecurityPackage.Literals.PERMISSION__ALLOW, newAllow);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Action getAction() {
-		return (Action)eGet(SecurityPackage.Literals.PERMISSION__ACTION, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setAction(Action newAction) {
-		eSet(SecurityPackage.Literals.PERMISSION__ACTION, newAction);
 	}
 
 	/**
@@ -196,8 +167,11 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public AccessDecision authorize(Context context, EObject target, String action, String path, Map<String, Object> environment) {
-		if (target.equals(getTarget()) && getAction().match(context, action, path, environment)) {
+	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String path, Map<String, Object> environment) {
+		Action permissionAction = securityPolicy==null ? null : securityPolicy.getAction(this);
+		if (permissionAction!=null 
+				&& (target==null && getTarget()==null || target.equals(getTarget()))
+				&& permissionAction.match(context, action, path, environment)) {
 			return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
 		}
 		return AccessDecision.ABSTAIN;
@@ -212,8 +186,8 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SecurityPackage.PERMISSION___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP:
-				return authorize((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
+			case SecurityPackage.PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP:
+				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), (EObject)arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

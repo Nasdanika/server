@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.security;
 
 import java.util.Map;
-import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.EList;
 import org.nasdanika.core.Context;
 
@@ -19,54 +18,22 @@ import org.nasdanika.core.Context;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.Action#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getDescription <em>Description</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Action#getTargetNamespaceURI <em>Target Namespace URI</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Action#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#isGrantable <em>Grantable</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getImplies <em>Implies</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getImpliedBy <em>Implied By</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getPathPatterns <em>Path Patterns</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getCondition <em>Condition</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getProperties <em>Properties</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Action#getCategory <em>Category</em>}</li>
  * </ul>
  * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getAction()
  * @model
- * @extends CDOObject
  * @generated
  */
-public interface Action extends CDOObject {
-	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * 
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_Name()
-	 * @model
-	 * @generated
-	 */
-	String getName();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Action#getName <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
-	 * @generated
-	 */
-	void setName(String value);
-
+public interface Action extends ActionKey, ActionContainer {
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -92,56 +59,6 @@ public interface Action extends CDOObject {
 	 * @generated
 	 */
 	void setDescription(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Target Namespace URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <html>Namespace URI of the target class' package.</html>
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Target Namespace URI</em>' attribute.
-	 * @see #setTargetNamespaceURI(String)
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_TargetNamespaceURI()
-	 * @model
-	 * @generated
-	 */
-	String getTargetNamespaceURI();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Action#getTargetNamespaceURI <em>Target Namespace URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Target Namespace URI</em>' attribute.
-	 * @see #getTargetNamespaceURI()
-	 * @generated
-	 */
-	void setTargetNamespaceURI(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Target Class</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <html>Name of the target class.</html>
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Target Class</em>' attribute.
-	 * @see #setTargetClass(String)
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_TargetClass()
-	 * @model
-	 * @generated
-	 */
-	String getTargetClass();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Action#getTargetClass <em>Target Class</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Target Class</em>' attribute.
-	 * @see #getTargetClass()
-	 * @generated
-	 */
-	void setTargetClass(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Grantable</b></em>' attribute.
@@ -260,6 +177,21 @@ public interface Action extends CDOObject {
 	 * @generated
 	 */
 	EList<Property> getProperties();
+
+	/**
+	 * Returns the value of the '<em><b>Category</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * <html>Path patterns allow to compute permissions using containment path, i.e. container object may define actions on contained objects. Containment path is computed from reference names, e.g. path of a customer account relative to the customer object would be <code>/accounts</code>, and relative to the system of records would be <code>/customers/accounts</code>. Container object's path is '/', If pathPatterns is empty then it is assumed that the action applies to the target object, i.e. that there is a single pattern <code>/</code>.</html>
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Category</em>' attribute list.
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_Category()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getCategory();
 
 	/**
 	 * <!-- begin-user-doc -->

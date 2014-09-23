@@ -31,6 +31,15 @@ public interface SecurityFactory extends EFactory {
 	Group createGroup();
 
 	/**
+	 * Returns a new object of class '<em>Action Key</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Action Key</em>'.
+	 * @generated
+	 */
+	ActionKey createActionKey();
+
+	/**
 	 * Returns a new object of class '<em>Action</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -56,6 +65,24 @@ public interface SecurityFactory extends EFactory {
 	 * @generated
 	 */
 	Permission createPermission();
+
+	/**
+	 * Returns a new object of class '<em>Action Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Action Container</em>'.
+	 * @generated
+	 */
+	ActionContainer createActionContainer();
+
+	/**
+	 * Returns a new object of class '<em>Policy Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Policy Container</em>'.
+	 * @generated
+	 */
+	SecurityPolicyContainer createSecurityPolicyContainer();
 
 	/**
 	 * Returns the package supported by this factory.

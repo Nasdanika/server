@@ -126,7 +126,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAction()
 	 * @generated
 	 */
-	int ACTION = 7;
+	int ACTION = 8;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PropertyImpl <em>Property</em>}' class.
@@ -136,7 +136,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProperty()
 	 * @generated
 	 */
-	int PROPERTY = 8;
+	int PROPERTY = 9;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PermissionImpl <em>Permission</em>}' class.
@@ -146,7 +146,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPermission()
 	 * @generated
 	 */
-	int PERMISSION = 9;
+	int PERMISSION = 10;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
@@ -177,31 +177,13 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_CREDENTIALS_OPERATION_COUNT = 0;
 
 	/**
-	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROTECTION_DOMAIN__ACTIONS = 0;
-
-	/**
-	 * The feature id for the '<em><b>Groups</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROTECTION_DOMAIN__GROUPS = 1;
-
-	/**
 	 * The feature id for the '<em><b>Super Users Group</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTION_DOMAIN__SUPER_USERS_GROUP = 2;
+	int PROTECTION_DOMAIN__SUPER_USERS_GROUP = 0;
 
 	/**
 	 * The feature id for the '<em><b>Unauthenticated Principal</b></em>' reference.
@@ -210,7 +192,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL = 3;
+	int PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL = 1;
 
 	/**
 	 * The feature id for the '<em><b>Everyone Group</b></em>' reference.
@@ -219,7 +201,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTION_DOMAIN__EVERYONE_GROUP = 4;
+	int PROTECTION_DOMAIN__EVERYONE_GROUP = 2;
 
 	/**
 	 * The number of structural features of the '<em>Protection Domain</em>' class.
@@ -228,7 +210,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTION_DOMAIN_FEATURE_COUNT = 5;
+	int PROTECTION_DOMAIN_FEATURE_COUNT = 3;
 
 	/**
 	 * The operation id for the '<em>Authenticate</em>' operation.
@@ -265,24 +247,6 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROTECTION_DOMAIN_OPERATION_COUNT = 3;
-
-	/**
-	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_PASSWORD_PROTECTION_DOMAIN__ACTIONS = PROTECTION_DOMAIN__ACTIONS;
-
-	/**
-	 * The feature id for the '<em><b>Groups</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_PASSWORD_PROTECTION_DOMAIN__GROUPS = PROTECTION_DOMAIN__GROUPS;
 
 	/**
 	 * The feature id for the '<em><b>Super Users Group</b></em>' reference.
@@ -393,13 +357,22 @@ public interface SecurityPackage extends EPackage {
 	int PRINCIPAL__PERMISSIONS = 1;
 
 	/**
+	 * The feature id for the '<em><b>Protection Domain</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL__PROTECTION_DOMAIN = 2;
+
+	/**
 	 * The number of structural features of the '<em>Principal</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PRINCIPAL_FEATURE_COUNT = 2;
+	int PRINCIPAL_FEATURE_COUNT = 3;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -408,7 +381,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = 0;
+	int PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = 0;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -465,6 +438,15 @@ public interface SecurityPackage extends EPackage {
 	int GROUP__PERMISSIONS = PRINCIPAL__PERMISSIONS;
 
 	/**
+	 * The feature id for the '<em><b>Protection Domain</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GROUP__PROTECTION_DOMAIN = PRINCIPAL__PROTECTION_DOMAIN;
+
+	/**
 	 * The feature id for the '<em><b>Members</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -507,7 +489,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int GROUP___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+	int GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -573,13 +555,31 @@ public interface SecurityPackage extends EPackage {
 	int USER__PERMISSIONS = PRINCIPAL__PERMISSIONS;
 
 	/**
+	 * The feature id for the '<em><b>Protection Domain</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int USER__PROTECTION_DOMAIN = PRINCIPAL__PROTECTION_DOMAIN;
+
+	/**
+	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int USER__DISABLED = PRINCIPAL_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>User</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int USER_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 0;
+	int USER_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -588,7 +588,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+	int USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -645,6 +645,24 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_HASH_USER__PERMISSIONS = USER__PERMISSIONS;
 
 	/**
+	 * The feature id for the '<em><b>Protection Domain</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER__PROTECTION_DOMAIN = USER__PROTECTION_DOMAIN;
+
+	/**
+	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER__DISABLED = USER__DISABLED;
+
+	/**
 	 * The feature id for the '<em><b>Login</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -678,7 +696,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_HASH_USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+	int LOGIN_PASSWORD_HASH_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -717,22 +735,23 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_HASH_USER_OPERATION_COUNT = USER_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionKeyImpl <em>Action Key</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.ActionKeyImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getActionKey()
+	 * @generated
+	 */
+	int ACTION_KEY = 7;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__NAME = 0;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ACTION__DESCRIPTION = 1;
+	int ACTION_KEY__NAME = 0;
 
 	/**
 	 * The feature id for the '<em><b>Target Namespace URI</b></em>' attribute.
@@ -741,7 +760,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__TARGET_NAMESPACE_URI = 2;
+	int ACTION_KEY__TARGET_NAMESPACE_URI = 1;
 
 	/**
 	 * The feature id for the '<em><b>Target Class</b></em>' attribute.
@@ -750,7 +769,88 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__TARGET_CLASS = 3;
+	int ACTION_KEY__TARGET_CLASS = 2;
+
+	/**
+	 * The feature id for the '<em><b>Qualifier</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION_KEY__QUALIFIER = 3;
+
+	/**
+	 * The number of structural features of the '<em>Action Key</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION_KEY_FEATURE_COUNT = 4;
+
+	/**
+	 * The number of operations of the '<em>Action Key</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION_KEY_OPERATION_COUNT = 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__NAME = ACTION_KEY__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Target Namespace URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__TARGET_NAMESPACE_URI = ACTION_KEY__TARGET_NAMESPACE_URI;
+
+	/**
+	 * The feature id for the '<em><b>Target Class</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__TARGET_CLASS = ACTION_KEY__TARGET_CLASS;
+
+	/**
+	 * The feature id for the '<em><b>Qualifier</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__QUALIFIER = ACTION_KEY__QUALIFIER;
+
+	/**
+	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__ACTIONS = ACTION_KEY_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__DESCRIPTION = ACTION_KEY_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Grantable</b></em>' attribute.
@@ -759,7 +859,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__GRANTABLE = 4;
+	int ACTION__GRANTABLE = ACTION_KEY_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Implies</b></em>' reference list.
@@ -768,7 +868,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__IMPLIES = 5;
+	int ACTION__IMPLIES = ACTION_KEY_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Implied By</b></em>' reference list.
@@ -777,7 +877,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__IMPLIED_BY = 6;
+	int ACTION__IMPLIED_BY = ACTION_KEY_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Path Patterns</b></em>' attribute list.
@@ -786,7 +886,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__PATH_PATTERNS = 7;
+	int ACTION__PATH_PATTERNS = ACTION_KEY_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -795,7 +895,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__CONDITION = 8;
+	int ACTION__CONDITION = ACTION_KEY_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
@@ -804,7 +904,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__PROPERTIES = 9;
+	int ACTION__PROPERTIES = ACTION_KEY_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__CATEGORY = ACTION_KEY_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of structural features of the '<em>Action</em>' class.
@@ -813,7 +922,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION_FEATURE_COUNT = 10;
+	int ACTION_FEATURE_COUNT = ACTION_KEY_FEATURE_COUNT + 9;
 
 	/**
 	 * The operation id for the '<em>Match</em>' operation.
@@ -822,7 +931,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION___MATCH__CONTEXT_STRING_STRING_MAP = 0;
+	int ACTION___MATCH__CONTEXT_STRING_STRING_MAP = ACTION_KEY_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Action</em>' class.
@@ -831,7 +940,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION_OPERATION_COUNT = 1;
+	int ACTION_OPERATION_COUNT = ACTION_KEY_OPERATION_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -888,22 +997,49 @@ public interface SecurityPackage extends EPackage {
 	int PROPERTY_OPERATION_COUNT = 0;
 
 	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__NAME = ACTION_KEY__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Target Namespace URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__TARGET_NAMESPACE_URI = ACTION_KEY__TARGET_NAMESPACE_URI;
+
+	/**
+	 * The feature id for the '<em><b>Target Class</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__TARGET_CLASS = ACTION_KEY__TARGET_CLASS;
+
+	/**
+	 * The feature id for the '<em><b>Qualifier</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__QUALIFIER = ACTION_KEY__QUALIFIER;
+
+	/**
 	 * The feature id for the '<em><b>Allow</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__ALLOW = 0;
-
-	/**
-	 * The feature id for the '<em><b>Action</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERMISSION__ACTION = 1;
+	int PERMISSION__ALLOW = ACTION_KEY_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Target</b></em>' reference.
@@ -912,7 +1048,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__TARGET = 2;
+	int PERMISSION__TARGET = ACTION_KEY_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>With Grant Option</b></em>' attribute.
@@ -921,7 +1057,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__WITH_GRANT_OPTION = 3;
+	int PERMISSION__WITH_GRANT_OPTION = ACTION_KEY_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
@@ -930,7 +1066,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__START_DATE = 4;
+	int PERMISSION__START_DATE = ACTION_KEY_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>End Date</b></em>' attribute.
@@ -939,7 +1075,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__END_DATE = 5;
+	int PERMISSION__END_DATE = ACTION_KEY_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Comment</b></em>' attribute.
@@ -948,7 +1084,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__COMMENT = 6;
+	int PERMISSION__COMMENT = ACTION_KEY_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Permission</em>' class.
@@ -957,7 +1093,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION_FEATURE_COUNT = 7;
+	int PERMISSION_FEATURE_COUNT = ACTION_KEY_FEATURE_COUNT + 6;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -966,7 +1102,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = 0;
+	int PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = ACTION_KEY_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Permission</em>' class.
@@ -975,7 +1111,136 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION_OPERATION_COUNT = 1;
+	int PERMISSION_OPERATION_COUNT = ACTION_KEY_OPERATION_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionContainerImpl <em>Action Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.ActionContainerImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getActionContainer()
+	 * @generated
+	 */
+	int ACTION_CONTAINER = 11;
+
+	/**
+	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION_CONTAINER__ACTIONS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Action Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION_CONTAINER_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Action Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION_CONTAINER_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.SecurityPolicy <em>Policy</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.SecurityPolicy
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getSecurityPolicy()
+	 * @generated
+	 */
+	int SECURITY_POLICY = 12;
+
+	/**
+	 * The number of structural features of the '<em>Policy</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>Policy</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl <em>Policy Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getSecurityPolicyContainer()
+	 * @generated
+	 */
+	int SECURITY_POLICY_CONTAINER = 13;
+
+	/**
+	 * The feature id for the '<em><b>Actions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_CONTAINER__ACTIONS = SECURITY_POLICY_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_CONTAINER__NAME = SECURITY_POLICY_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_CONTAINER__DESCRIPTION = SECURITY_POLICY_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Imports</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_CONTAINER__IMPORTS = SECURITY_POLICY_FEATURE_COUNT + 3;
+
+	/**
+	 * The number of structural features of the '<em>Policy Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_CONTAINER_FEATURE_COUNT = SECURITY_POLICY_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of operations of the '<em>Policy Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SECURITY_POLICY_CONTAINER_OPERATION_COUNT = SECURITY_POLICY_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '<em>Access Decision</em>' data type.
@@ -985,7 +1250,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
 	 * @generated
 	 */
-	int ACCESS_DECISION = 11;
+	int ACCESS_DECISION = 15;
 
 
 	/**
@@ -996,7 +1261,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 10;
+	int CONTEXT = 14;
 
 
 	/**
@@ -1008,28 +1273,6 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getProtectionDomain();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.cdo.security.ProtectionDomain#getActions <em>Actions</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Actions</em>'.
-	 * @see org.nasdanika.cdo.security.ProtectionDomain#getActions()
-	 * @see #getProtectionDomain()
-	 * @generated
-	 */
-	EReference getProtectionDomain_Actions();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.cdo.security.ProtectionDomain#getGroups <em>Groups</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Groups</em>'.
-	 * @see org.nasdanika.cdo.security.ProtectionDomain#getGroups()
-	 * @see #getProtectionDomain()
-	 * @generated
-	 */
-	EReference getProtectionDomain_Groups();
 
 	/**
 	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.ProtectionDomain#getSuperUsersGroup <em>Super Users Group</em>}'.
@@ -1157,14 +1400,25 @@ public interface SecurityPackage extends EPackage {
 	EReference getPrincipal_Permissions();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
+	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.Principal#getProtectionDomain <em>Protection Domain</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Protection Domain</em>'.
+	 * @see org.nasdanika.cdo.security.Principal#getProtectionDomain()
+	 * @see #getPrincipal()
+	 * @generated
+	 */
+	EReference getPrincipal_ProtectionDomain();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Authorize</em>' operation.
-	 * @see org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map)
+	 * @see org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map)
 	 * @generated
 	 */
-	EOperation getPrincipal__Authorize__Context_EObject_String_String_Map();
+	EOperation getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
 
 	/**
 	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String, java.lang.Object) <em>Send Message</em>}' operation.
@@ -1260,6 +1514,17 @@ public interface SecurityPackage extends EPackage {
 	EClass getUser();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.User#isDisabled <em>Disabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Disabled</em>'.
+	 * @see org.nasdanika.cdo.security.User#isDisabled()
+	 * @see #getUser()
+	 * @generated
+	 */
+	EAttribute getUser_Disabled();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1292,6 +1557,60 @@ public interface SecurityPackage extends EPackage {
 	EAttribute getLoginPasswordHashUser_PasswordHash();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.ActionKey <em>Action Key</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Action Key</em>'.
+	 * @see org.nasdanika.cdo.security.ActionKey
+	 * @generated
+	 */
+	EClass getActionKey();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.ActionKey#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.nasdanika.cdo.security.ActionKey#getName()
+	 * @see #getActionKey()
+	 * @generated
+	 */
+	EAttribute getActionKey_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.ActionKey#getTargetNamespaceURI <em>Target Namespace URI</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Target Namespace URI</em>'.
+	 * @see org.nasdanika.cdo.security.ActionKey#getTargetNamespaceURI()
+	 * @see #getActionKey()
+	 * @generated
+	 */
+	EAttribute getActionKey_TargetNamespaceURI();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.ActionKey#getTargetClass <em>Target Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Target Class</em>'.
+	 * @see org.nasdanika.cdo.security.ActionKey#getTargetClass()
+	 * @see #getActionKey()
+	 * @generated
+	 */
+	EAttribute getActionKey_TargetClass();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.ActionKey#getQualifier <em>Qualifier</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Qualifier</em>'.
+	 * @see org.nasdanika.cdo.security.ActionKey#getQualifier()
+	 * @see #getActionKey()
+	 * @generated
+	 */
+	EAttribute getActionKey_Qualifier();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1300,17 +1619,6 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getAction();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Action#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.nasdanika.cdo.security.Action#getName()
-	 * @see #getAction()
-	 * @generated
-	 */
-	EAttribute getAction_Name();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Action#getDescription <em>Description</em>}'.
@@ -1322,28 +1630,6 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getAction_Description();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Action#getTargetNamespaceURI <em>Target Namespace URI</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Target Namespace URI</em>'.
-	 * @see org.nasdanika.cdo.security.Action#getTargetNamespaceURI()
-	 * @see #getAction()
-	 * @generated
-	 */
-	EAttribute getAction_TargetNamespaceURI();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Action#getTargetClass <em>Target Class</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Target Class</em>'.
-	 * @see org.nasdanika.cdo.security.Action#getTargetClass()
-	 * @see #getAction()
-	 * @generated
-	 */
-	EAttribute getAction_TargetClass();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Action#isGrantable <em>Grantable</em>}'.
@@ -1410,6 +1696,17 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getAction_Properties();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.cdo.security.Action#getCategory <em>Category</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Category</em>'.
+	 * @see org.nasdanika.cdo.security.Action#getCategory()
+	 * @see #getAction()
+	 * @generated
+	 */
+	EAttribute getAction_Category();
 
 	/**
 	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#match(org.nasdanika.core.Context, java.lang.String, java.lang.String, java.util.Map) <em>Match</em>}' operation.
@@ -1497,17 +1794,6 @@ public interface SecurityPackage extends EPackage {
 	EAttribute getPermission_Allow();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Action</em>'.
-	 * @see org.nasdanika.cdo.security.Permission#getAction()
-	 * @see #getPermission()
-	 * @generated
-	 */
-	EReference getPermission_Action();
-
-	/**
 	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.Permission#getTarget <em>Target</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1563,14 +1849,89 @@ public interface SecurityPackage extends EPackage {
 	EAttribute getPermission_Comment();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Authorize</em>' operation.
-	 * @see org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map)
+	 * @see org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map)
 	 * @generated
 	 */
-	EOperation getPermission__Authorize__Context_EObject_String_String_Map();
+	EOperation getPermission__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.ActionContainer <em>Action Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Action Container</em>'.
+	 * @see org.nasdanika.cdo.security.ActionContainer
+	 * @generated
+	 */
+	EClass getActionContainer();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.cdo.security.ActionContainer#getActions <em>Actions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Actions</em>'.
+	 * @see org.nasdanika.cdo.security.ActionContainer#getActions()
+	 * @see #getActionContainer()
+	 * @generated
+	 */
+	EReference getActionContainer_Actions();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.SecurityPolicy <em>Policy</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Policy</em>'.
+	 * @see org.nasdanika.cdo.security.SecurityPolicy
+	 * @model instanceClass="org.nasdanika.cdo.security.SecurityPolicy"
+	 * @generated
+	 */
+	EClass getSecurityPolicy();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.SecurityPolicyContainer <em>Policy Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Policy Container</em>'.
+	 * @see org.nasdanika.cdo.security.SecurityPolicyContainer
+	 * @generated
+	 */
+	EClass getSecurityPolicyContainer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.SecurityPolicyContainer#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.nasdanika.cdo.security.SecurityPolicyContainer#getName()
+	 * @see #getSecurityPolicyContainer()
+	 * @generated
+	 */
+	EAttribute getSecurityPolicyContainer_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.SecurityPolicyContainer#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.nasdanika.cdo.security.SecurityPolicyContainer#getDescription()
+	 * @see #getSecurityPolicyContainer()
+	 * @generated
+	 */
+	EAttribute getSecurityPolicyContainer_Description();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.nasdanika.cdo.security.SecurityPolicyContainer#getImports <em>Imports</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Imports</em>'.
+	 * @see org.nasdanika.cdo.security.SecurityPolicyContainer#getImports()
+	 * @see #getSecurityPolicyContainer()
+	 * @generated
+	 */
+	EReference getSecurityPolicyContainer_Imports();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}'.
@@ -1637,22 +1998,6 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EClass PROTECTION_DOMAIN = eINSTANCE.getProtectionDomain();
-
-		/**
-		 * The meta object literal for the '<em><b>Actions</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PROTECTION_DOMAIN__ACTIONS = eINSTANCE.getProtectionDomain_Actions();
-
-		/**
-		 * The meta object literal for the '<em><b>Groups</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PROTECTION_DOMAIN__GROUPS = eINSTANCE.getProtectionDomain_Groups();
 
 		/**
 		 * The meta object literal for the '<em><b>Super Users Group</b></em>' reference feature.
@@ -1755,12 +2100,20 @@ public interface SecurityPackage extends EPackage {
 		EReference PRINCIPAL__PERMISSIONS = eINSTANCE.getPrincipal_Permissions();
 
 		/**
+		 * The meta object literal for the '<em><b>Protection Domain</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PRINCIPAL__PROTECTION_DOMAIN = eINSTANCE.getPrincipal_ProtectionDomain();
+
+		/**
 		 * The meta object literal for the '<em><b>Authorize</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getPrincipal__Authorize__Context_EObject_String_String_Map();
+		EOperation PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
 
 		/**
 		 * The meta object literal for the '<em><b>Send Message</b></em>' operation.
@@ -1839,6 +2192,14 @@ public interface SecurityPackage extends EPackage {
 		EClass USER = eINSTANCE.getUser();
 
 		/**
+		 * The meta object literal for the '<em><b>Disabled</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute USER__DISABLED = eINSTANCE.getUser_Disabled();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1865,6 +2226,48 @@ public interface SecurityPackage extends EPackage {
 		EAttribute LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH = eINSTANCE.getLoginPasswordHashUser_PasswordHash();
 
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionKeyImpl <em>Action Key</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.ActionKeyImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getActionKey()
+		 * @generated
+		 */
+		EClass ACTION_KEY = eINSTANCE.getActionKey();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTION_KEY__NAME = eINSTANCE.getActionKey_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Target Namespace URI</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTION_KEY__TARGET_NAMESPACE_URI = eINSTANCE.getActionKey_TargetNamespaceURI();
+
+		/**
+		 * The meta object literal for the '<em><b>Target Class</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTION_KEY__TARGET_CLASS = eINSTANCE.getActionKey_TargetClass();
+
+		/**
+		 * The meta object literal for the '<em><b>Qualifier</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTION_KEY__QUALIFIER = eINSTANCE.getActionKey_Qualifier();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1875,36 +2278,12 @@ public interface SecurityPackage extends EPackage {
 		EClass ACTION = eINSTANCE.getAction();
 
 		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ACTION__NAME = eINSTANCE.getAction_Name();
-
-		/**
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
 		EAttribute ACTION__DESCRIPTION = eINSTANCE.getAction_Description();
-
-		/**
-		 * The meta object literal for the '<em><b>Target Namespace URI</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ACTION__TARGET_NAMESPACE_URI = eINSTANCE.getAction_TargetNamespaceURI();
-
-		/**
-		 * The meta object literal for the '<em><b>Target Class</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ACTION__TARGET_CLASS = eINSTANCE.getAction_TargetClass();
 
 		/**
 		 * The meta object literal for the '<em><b>Grantable</b></em>' attribute feature.
@@ -1953,6 +2332,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EReference ACTION__PROPERTIES = eINSTANCE.getAction_Properties();
+
+		/**
+		 * The meta object literal for the '<em><b>Category</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTION__CATEGORY = eINSTANCE.getAction_Category();
 
 		/**
 		 * The meta object literal for the '<em><b>Match</b></em>' operation.
@@ -2023,14 +2410,6 @@ public interface SecurityPackage extends EPackage {
 		EAttribute PERMISSION__ALLOW = eINSTANCE.getPermission_Allow();
 
 		/**
-		 * The meta object literal for the '<em><b>Action</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PERMISSION__ACTION = eINSTANCE.getPermission_Action();
-
-		/**
 		 * The meta object literal for the '<em><b>Target</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2076,7 +2455,69 @@ public interface SecurityPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation PERMISSION___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getPermission__Authorize__Context_EObject_String_String_Map();
+		EOperation PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getPermission__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionContainerImpl <em>Action Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.ActionContainerImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getActionContainer()
+		 * @generated
+		 */
+		EClass ACTION_CONTAINER = eINSTANCE.getActionContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Actions</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ACTION_CONTAINER__ACTIONS = eINSTANCE.getActionContainer_Actions();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.SecurityPolicy <em>Policy</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.SecurityPolicy
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getSecurityPolicy()
+		 * @generated
+		 */
+		EClass SECURITY_POLICY = eINSTANCE.getSecurityPolicy();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl <em>Policy Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getSecurityPolicyContainer()
+		 * @generated
+		 */
+		EClass SECURITY_POLICY_CONTAINER = eINSTANCE.getSecurityPolicyContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SECURITY_POLICY_CONTAINER__NAME = eINSTANCE.getSecurityPolicyContainer_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SECURITY_POLICY_CONTAINER__DESCRIPTION = eINSTANCE.getSecurityPolicyContainer_Description();
+
+		/**
+		 * The meta object literal for the '<em><b>Imports</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SECURITY_POLICY_CONTAINER__IMPORTS = eINSTANCE.getSecurityPolicyContainer_Imports();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.

@@ -113,9 +113,17 @@ public class SecuritySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case SecurityPackage.ACTION_KEY: {
+				ActionKey actionKey = (ActionKey)theEObject;
+				T result = caseActionKey(actionKey);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case SecurityPackage.ACTION: {
 				Action action = (Action)theEObject;
 				T result = caseAction(action);
+				if (result == null) result = caseActionKey(action);
+				if (result == null) result = caseActionContainer(action);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -128,6 +136,27 @@ public class SecuritySwitch<T> extends Switch<T> {
 			case SecurityPackage.PERMISSION: {
 				Permission permission = (Permission)theEObject;
 				T result = casePermission(permission);
+				if (result == null) result = caseActionKey(permission);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.ACTION_CONTAINER: {
+				ActionContainer actionContainer = (ActionContainer)theEObject;
+				T result = caseActionContainer(actionContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.SECURITY_POLICY: {
+				SecurityPolicy securityPolicy = (SecurityPolicy)theEObject;
+				T result = caseSecurityPolicy(securityPolicy);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.SECURITY_POLICY_CONTAINER: {
+				SecurityPolicyContainer securityPolicyContainer = (SecurityPolicyContainer)theEObject;
+				T result = caseSecurityPolicyContainer(securityPolicyContainer);
+				if (result == null) result = caseSecurityPolicy(securityPolicyContainer);
+				if (result == null) result = caseActionContainer(securityPolicyContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -226,6 +255,21 @@ public class SecuritySwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Action Key</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Action Key</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseActionKey(ActionKey object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Action</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -267,6 +311,51 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T casePermission(Permission object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Action Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Action Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseActionContainer(ActionContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Policy</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Policy</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSecurityPolicy(SecurityPolicy object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Policy Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Policy Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseSecurityPolicyContainer(SecurityPolicyContainer object) {
 		return null;
 	}
 

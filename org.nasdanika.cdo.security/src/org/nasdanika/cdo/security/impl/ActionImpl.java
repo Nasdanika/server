@@ -13,13 +13,14 @@ import javax.script.ScriptEngineManager;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.Action;
+import org.nasdanika.cdo.security.ActionContainer;
 import org.nasdanika.cdo.security.Property;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 
 /**
@@ -29,22 +30,21 @@ import org.nasdanika.core.NasdanikaException;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getDescription <em>Description</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getTargetNamespaceURI <em>Target Namespace URI</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#isGrantable <em>Grantable</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getImplies <em>Implies</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getImpliedBy <em>Implied By</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getPathPatterns <em>Path Patterns</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getCondition <em>Condition</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getProperties <em>Properties</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getCategory <em>Category</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ActionImpl extends CDOObjectImpl implements Action {
+public class ActionImpl extends ActionKeyImpl implements Action {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -69,27 +69,9 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	protected int eStaticFeatureCount() {
-		return 0;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getName() {
-		return (String)eGet(SecurityPackage.Literals.ACTION__NAME, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setName(String newName) {
-		eSet(SecurityPackage.Literals.ACTION__NAME, newName);
+	@SuppressWarnings("unchecked")
+	public EList<Action> getActions() {
+		return (EList<Action>)eGet(SecurityPackage.Literals.ACTION_CONTAINER__ACTIONS, true);
 	}
 
 	/**
@@ -108,42 +90,6 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 */
 	public void setDescription(String newDescription) {
 		eSet(SecurityPackage.Literals.ACTION__DESCRIPTION, newDescription);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getTargetNamespaceURI() {
-		return (String)eGet(SecurityPackage.Literals.ACTION__TARGET_NAMESPACE_URI, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTargetNamespaceURI(String newTargetNamespaceURI) {
-		eSet(SecurityPackage.Literals.ACTION__TARGET_NAMESPACE_URI, newTargetNamespaceURI);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getTargetClass() {
-		return (String)eGet(SecurityPackage.Literals.ACTION__TARGET_CLASS, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTargetClass(String newTargetClass) {
-		eSet(SecurityPackage.Literals.ACTION__TARGET_CLASS, newTargetClass);
 	}
 
 	/**
@@ -225,16 +171,70 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<String> getCategory() {
+		return (EList<String>)eGet(SecurityPackage.Literals.ACTION__CATEGORY, true);
+	}
+	
+	/**
+	 * Inherits path patterns.
+	 * @return
+	 */
+	private EList<String> getEffectivePathPatterns() {
+		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
+			EList<String> pathPatterns = a.getPathPatterns();
+			if (!pathPatterns.isEmpty()) {
+				return pathPatterns;
+			}
+		}
+		return getPathPatterns();
+	}
+
+	/**
+	 * Inherits condition.
+	 * @return
+	 */
+	private String getEffectiveCondition() {
+		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
+			String condition = a.getCondition();
+			if (!CoreUtil.isBlank(condition)) {
+				return condition;
+			}
+		}
+		return getCondition();
+	}
+	
+	/**
+	 * Inherits name.
+	 * @return
+	 */
+	private String getEffectiveName() {
+		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
+			String name = a.getName();
+			if (!CoreUtil.isBlank(name)) {
+				return name;
+			}
+		}
+		return getName();
+	}
+	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public boolean match(Context context, String action, String path, Map<String, Object> environment) {
-		if ("*".equals(getName()) || getName().equals(action)) {
-			if (getPathPatterns().isEmpty()) {
+		String name = getEffectiveName();
+		if ("*".equals(name) || name.equals(action)) {
+			EList<String> pathPatterns = getEffectivePathPatterns();
+			if (pathPatterns.isEmpty()) {
 				if ("/".equals(path)) {
 					return eval(context, environment);
 				}
 			} else {
-				for (String p: getPathPatterns()) {
+				for (String p: pathPatterns) {
 					if (Pattern.matches(p, path)) {
 						return true;
 					}
@@ -246,14 +246,52 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 					return true;
 				}
 			}
+			for (Action a: getActions()) {
+				if (a.match(context, action, path, environment)) {
+					return true;
+				}
+			}
 		}
 		
 		return false;
 	}
 	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == ActionContainer.class) {
+			switch (derivedFeatureID) {
+				case SecurityPackage.ACTION__ACTIONS: return SecurityPackage.ACTION_CONTAINER__ACTIONS;
+				default: return -1;
+			}
+		}
+		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == ActionContainer.class) {
+			switch (baseFeatureID) {
+				case SecurityPackage.ACTION_CONTAINER__ACTIONS: return SecurityPackage.ACTION__ACTIONS;
+				default: return -1;
+			}
+		}
+		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
 	private Boolean eval(Context context, Map<String, Object> environment) {
 		try {
-			if (getCondition()==null || getCondition().trim().length()==0) {
+			String condition = getEffectiveCondition();
+			if (CoreUtil.isBlank(condition)) {
 				return true;
 			}
 			ScriptEngineManager sm = new ScriptEngineManager();
@@ -262,24 +300,38 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 			if (environment!=null) {
 				b.putAll(environment);
 			}
-			Map<String, Object> actionProperties = new HashMap<>();
-			b.put("actionProperties", actionProperties);
-			for (Property p: getProperties()) {
-				if (p.getType()==null || p.getType().trim().length()==0 || String.class.getName().equals(p.getType())) {
-					actionProperties.put(p.getName(), p.getValue());
-				} else {
-					Class<?> propertyType = ((ClassLoadingContext) context).loadClass(p.getType());
-					Object propertyValue = ((ConverterContext) context).convert(p.getValue(), propertyType);
-					if (propertyValue==null) {
-						throw new NasdanikaException("Cannot convert '"+p.getValue()+"' to "+p.getType());
-					}
-					actionProperties.put(p.getName(), propertyValue);
-				}
-			}
-			return Boolean.TRUE.equals(s.eval(getCondition(), b));
+			b.put("actionProperties", effectiveActionProperties(context));
+			return Boolean.TRUE.equals(s.eval(condition, b));
 		} catch (Exception e) {
 			throw new NasdanikaException("Action condition evaluation error", e);
 		}
+	}
+
+	/**
+	 * Collects properties from self and parent actions.
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	private Map<String, Object> effectiveActionProperties(Context context) throws Exception {
+		Map<String, Object> actionProperties = new HashMap<>();
+		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
+			for (Property p: a.getProperties()) {
+				if (!actionProperties.containsKey(p.getName())) {
+					if (CoreUtil.isBlank(p.getType())|| String.class.getName().equals(p.getType())) {
+						actionProperties.put(p.getName(), p.getValue());
+					} else {
+						Class<?> propertyType = ((ClassLoadingContext) context).loadClass(p.getType());
+						Object propertyValue = ((ConverterContext) context).convert(p.getValue(), propertyType);
+						if (propertyValue==null) {
+							throw new NasdanikaException("Cannot convert '"+p.getValue()+"' to "+p.getType());
+						}
+						actionProperties.put(p.getName(), propertyValue);
+					}
+				}
+			}
+		}
+		return actionProperties;
 	}
 
 	/**

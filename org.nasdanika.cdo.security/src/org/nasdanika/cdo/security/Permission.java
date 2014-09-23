@@ -3,10 +3,7 @@
 package org.nasdanika.cdo.security;
 
 import java.util.Date;
-
 import java.util.Map;
-import org.eclipse.emf.cdo.CDOObject;
-
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
@@ -24,7 +21,6 @@ import org.nasdanika.core.Context;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Permission#isAllow <em>Allow</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#isWithGrantOption <em>With Grant Option</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getStartDate <em>Start Date</em>}</li>
@@ -35,10 +31,9 @@ import org.nasdanika.core.Context;
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPermission()
  * @model
- * @extends CDOObject
  * @generated
  */
-public interface Permission extends CDOObject {
+public interface Permission extends ActionKey {
 	/**
 	 * Returns the value of the '<em><b>Allow</b></em>' attribute.
 	 * The default value is <code>"true"</code>.
@@ -64,31 +59,6 @@ public interface Permission extends CDOObject {
 	 * @generated
 	 */
 	void setAllow(boolean value);
-
-	/**
-	 * Returns the value of the '<em><b>Action</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <html>Action to be executed on a target object.</html>
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Action</em>' reference.
-	 * @see #setAction(Action)
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_Action()
-	 * @model required="true"
-	 * @generated
-	 */
-	Action getAction();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Action</em>' reference.
-	 * @see #getAction()
-	 * @generated
-	 */
-	void setAction(Action value);
 
 	/**
 	 * Returns the value of the '<em><b>Target</b></em>' reference.
@@ -219,9 +189,9 @@ public interface Permission extends CDOObject {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" contextDataType="org.nasdanika.cdo.security.Context"
+	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" securityPolicyType="org.nasdanika.cdo.security.SecurityPolicy" contextDataType="org.nasdanika.cdo.security.Context"
 	 * @generated
 	 */
-	AccessDecision authorize(Context context, EObject target, String action, String path, Map<String, Object> environment);
+	AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String path, Map<String, Object> environment);
 
 } // Permission

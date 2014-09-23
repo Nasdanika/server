@@ -22,6 +22,7 @@ import org.nasdanika.core.Context;
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Principal#getMemberOf <em>Member Of</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Principal#getPermissions <em>Permissions</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Principal#getProtectionDomain <em>Protection Domain</em>}</li>
  * </ul>
  * </p>
  *
@@ -66,12 +67,27 @@ public interface Principal extends CDOObject {
 	EList<Permission> getPermissions();
 
 	/**
+	 * Returns the value of the '<em><b>Protection Domain</b></em>' reference.
 	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Protection Domain</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
 	 * <!-- end-user-doc -->
-	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" contextDataType="org.nasdanika.cdo.security.Context"
+	 * @return the value of the '<em>Protection Domain</em>' reference.
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getPrincipal_ProtectionDomain()
+	 * @model transient="true" changeable="false" volatile="true" derived="true"
 	 * @generated
 	 */
-	AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment);
+	ProtectionDomain<?> getProtectionDomain();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" securityPolicyType="org.nasdanika.cdo.security.SecurityPolicy" contextDataType="org.nasdanika.cdo.security.Context"
+	 * @generated
+	 */
+	AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String qualifier, Map<String, Object> environment);
 
 	/**
 	 * <!-- begin-user-doc -->
