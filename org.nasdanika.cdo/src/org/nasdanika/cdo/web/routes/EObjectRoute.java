@@ -44,9 +44,17 @@ public class EObjectRoute implements Route {
 
 		// Router path
 		context.addPathTraceEntry("#router/main"+context.getObjectPath(eObject)+".html", context.toHTML(eObject, "label", null));
+		
+		if (context.getPath().length==2 && ("self".equals(context.getPath()[1]) || context.getPath()[1].startsWith("self.")) ) {
+				return context.getAction(eObject, 1);
+		}				
 
+		if (context.getPath().length>=2 && ("container".equals(context.getPath()[1]) || context.getPath()[1].startsWith("container.")) ) {
+			return context.getAction(eObject.eContainer(), 1);
+		}
+		
 		if (context.getPath().length>2) {
-			switch (context.getPath()[1]) {
+			switch (context.getPath()[1]) {			
 			case "feature":
 				String featureName = context.getPath()[2];
 				int idx = featureName.lastIndexOf('.');

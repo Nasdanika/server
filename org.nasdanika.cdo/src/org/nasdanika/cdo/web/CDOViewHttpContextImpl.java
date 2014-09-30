@@ -92,5 +92,12 @@ public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOVi
 		}
 		return viewContext.getPrincipal();
 	}
+		
+	@Override
+	public <T> T adapt(Class<T> targetType) throws Exception {
+		T ret = viewContext.adapt(targetType);
+		return ret==null ? super.adapt(targetType) : ret;
+	}
+	
 
 }

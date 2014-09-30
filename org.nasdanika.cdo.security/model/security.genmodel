@@ -8,7 +8,7 @@
   <foreignModel>security.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Security" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
-      fileExtensions="nasdanika_security" ecorePackage="security.ecore#/">
+      fileExtensions="nasdanika_cdo_security" ecorePackage="security.ecore#/">
     <genDataTypes ecoreDataType="security.ecore#//Context"/>
     <genDataTypes ecoreDataType="security.ecore#//AccessDecision"/>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
@@ -71,12 +71,11 @@
         <genParameters ecoreParameter="security.ecore#//Group/isMember/principal"/>
       </genOperations>
     </genClasses>
-    <genClasses image="false" ecoreClass="security.ecore#//User">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//User/disabled"/>
-    </genClasses>
+    <genClasses image="false" ecoreClass="security.ecore#//User"/>
     <genClasses ecoreClass="security.ecore#//LoginPasswordHashUser">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/login"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/passwordHash"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/disabled"/>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//ActionKey">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//ActionKey/name"/>

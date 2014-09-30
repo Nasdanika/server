@@ -564,22 +564,13 @@ public interface SecurityPackage extends EPackage {
 	int USER__PROTECTION_DOMAIN = PRINCIPAL__PROTECTION_DOMAIN;
 
 	/**
-	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int USER__DISABLED = PRINCIPAL_FEATURE_COUNT + 0;
-
-	/**
 	 * The number of structural features of the '<em>User</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int USER_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 1;
+	int USER_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 0;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -654,15 +645,6 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_HASH_USER__PROTECTION_DOMAIN = USER__PROTECTION_DOMAIN;
 
 	/**
-	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_PASSWORD_HASH_USER__DISABLED = USER__DISABLED;
-
-	/**
 	 * The feature id for the '<em><b>Login</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -681,13 +663,22 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH = USER_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_HASH_USER__DISABLED = USER_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>Login Password Hash User</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_HASH_USER_FEATURE_COUNT = USER_FEATURE_COUNT + 2;
+	int LOGIN_PASSWORD_HASH_USER_FEATURE_COUNT = USER_FEATURE_COUNT + 3;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -1514,17 +1505,6 @@ public interface SecurityPackage extends EPackage {
 	EClass getUser();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.User#isDisabled <em>Disabled</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Disabled</em>'.
-	 * @see org.nasdanika.cdo.security.User#isDisabled()
-	 * @see #getUser()
-	 * @generated
-	 */
-	EAttribute getUser_Disabled();
-
-	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1555,6 +1535,17 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getLoginPasswordHashUser_PasswordHash();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.LoginPasswordHashUser#isDisabled <em>Disabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Disabled</em>'.
+	 * @see org.nasdanika.cdo.security.LoginPasswordHashUser#isDisabled()
+	 * @see #getLoginPasswordHashUser()
+	 * @generated
+	 */
+	EAttribute getLoginPasswordHashUser_Disabled();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.ActionKey <em>Action Key</em>}'.
@@ -2192,14 +2183,6 @@ public interface SecurityPackage extends EPackage {
 		EClass USER = eINSTANCE.getUser();
 
 		/**
-		 * The meta object literal for the '<em><b>Disabled</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute USER__DISABLED = eINSTANCE.getUser_Disabled();
-
-		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2224,6 +2207,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH = eINSTANCE.getLoginPasswordHashUser_PasswordHash();
+
+		/**
+		 * The meta object literal for the '<em><b>Disabled</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LOGIN_PASSWORD_HASH_USER__DISABLED = eINSTANCE.getLoginPasswordHashUser_Disabled();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionKeyImpl <em>Action Key</em>}' class.

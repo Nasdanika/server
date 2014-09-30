@@ -100,5 +100,11 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 	public boolean isRollbackOnly() {
 		return transactionContext.isRollbackOnly();
 	}
+	
+	@Override
+	public <T> T adapt(Class<T> targetType) throws Exception {
+		T ret = transactionContext.adapt(targetType);
+		return ret==null ? super.adapt(targetType) : ret;
+	}
 		
 }

@@ -8,7 +8,9 @@ import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.ActionContainer;
 import org.nasdanika.cdo.security.ActionKey;
+import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyContainer;
 
 /**
@@ -147,10 +149,27 @@ public class SecurityPolicyContainerImpl extends CDOObjectImpl implements Securi
 
 	@Override
 	public Action getAction(ActionKey actionKey) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		Action ret = AuthorizationHelper.findAction(actionKey, this, null, null, null);
+		if (ret!=null) {
+			return ret;
+		}
+		
+		for (ActionContainer ip: getImports()) {
+			if (ip instanceof SecurityPolicy) {
+				Action action = ((SecurityPolicy) ip).getAction(actionKey);
+				if (action!=null) {
+					return action;
+				}
+			} else {
+				Action action = AuthorizationHelper.findAction(actionKey, ip, null, null, null);
+				if (action!=null) {
+					return action;
+				}
+			}			
+		}
+		return null;
 	}
-
+	
 	@Override
 	public Iterable<Action> getGrantableActions(String targetNamespaceURI, String targetClass) {
 		// TODO Auto-generated method stub

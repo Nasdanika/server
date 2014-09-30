@@ -14,7 +14,11 @@
 		<module>org.nasdanika.html</module>
 		<module>org.nasdanika.html.feature</module>
 		<module>org.nasdanika.core</module>
+		<module>org.nasdanika.function</module>
 		<module>org.nasdanika.cdo.security</module>
+		<module>org.nasdanika.cdo.security.edit</module>
+		<module>org.nasdanika.cdo.security.editor</module>
+		<module>org.nasdanika.cdo.security.feature</module>
 		<module>org.nasdanika.core.tests</module>
 		<module>org.nasdanika.web</module>
 		<module>org.nasdanika.webtest</module>

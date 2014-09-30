@@ -434,15 +434,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getUser_Disabled() {
-		return (EAttribute)userEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getLoginPasswordHashUser() {
 		return loginPasswordHashUserEClass;
 	}
@@ -463,6 +454,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EAttribute getLoginPasswordHashUser_PasswordHash() {
 		return (EAttribute)loginPasswordHashUserEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLoginPasswordHashUser_Disabled() {
+		return (EAttribute)loginPasswordHashUserEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -865,11 +865,11 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEOperation(groupEClass, GROUP___IS_MEMBER__PRINCIPAL);
 
 		userEClass = createEClass(USER);
-		createEAttribute(userEClass, USER__DISABLED);
 
 		loginPasswordHashUserEClass = createEClass(LOGIN_PASSWORD_HASH_USER);
 		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__LOGIN);
 		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH);
+		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__DISABLED);
 
 		actionKeyEClass = createEClass(ACTION_KEY);
 		createEAttribute(actionKeyEClass, ACTION_KEY__NAME);
@@ -1037,11 +1037,11 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		addEParameter(op, this.getPrincipal(), "principal", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(userEClass, User.class, "User", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getUser_Disabled(), ecorePackage.getEBoolean(), "disabled", null, 0, 1, User.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(loginPasswordHashUserEClass, LoginPasswordHashUser.class, "LoginPasswordHashUser", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLoginPasswordHashUser_Login(), ecorePackage.getEString(), "login", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLoginPasswordHashUser_PasswordHash(), ecorePackage.getEByteArray(), "passwordHash", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLoginPasswordHashUser_Disabled(), ecorePackage.getEBoolean(), "disabled", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(actionKeyEClass, ActionKey.class, "ActionKey", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getActionKey_Name(), ecorePackage.getEString(), "name", null, 0, 1, ActionKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
