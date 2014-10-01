@@ -59,11 +59,15 @@ public class SecurityPolicyManager implements AutoCloseable, SecurityPolicy {
 				IContributor contributor = ce.getContributor();		
 				Bundle bundle = Platform.getBundle(contributor.getName());				
 				URL resURL = bundle.getResource(ce.getAttribute("resource"));
-				URI uri = URI.createURI(resURL.toString());
-				Resource resource = resourceSet.getResource(uri, true);
-				for (EObject eObject : resource.getContents()) {
-					if (eObject instanceof SecurityPolicy) {
-						extensionSecurityPolicies.add((SecurityPolicy) eObject);
+				if (resURL==null) {
+					System.err.println("Security policy resource not found: "+ce.getAttribute("resource"));
+				} else {
+					URI uri = URI.createURI(resURL.toString());
+					Resource resource = resourceSet.getResource(uri, true);
+					for (EObject eObject : resource.getContents()) {
+						if (eObject instanceof SecurityPolicy) {
+							extensionSecurityPolicies.add((SecurityPolicy) eObject);
+						}
 					}
 				}
 			} else if ("policy_class".equals(ce.getName())) {
