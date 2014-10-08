@@ -57,7 +57,7 @@
     <eOperations name="authorize" eType="#//AccessDecision">
       <eParameters name="securityPolicy" eType="#//SecurityPolicy"/>
       <eParameters name="context" eType="#//Context"/>
-      <eParameters name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+      <eParameters name="target" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
       <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="qualifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="environment">
@@ -202,7 +202,7 @@
     <eOperations name="authorize" eType="#//AccessDecision">
       <eParameters name="securityPolicy" eType="#//SecurityPolicy"/>
       <eParameters name="context" eType="#//Context"/>
-      <eParameters name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+      <eParameters name="target" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
       <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eParameters name="environment">

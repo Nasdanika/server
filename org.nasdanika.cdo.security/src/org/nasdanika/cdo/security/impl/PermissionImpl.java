@@ -167,11 +167,27 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String path, Map<String, Object> environment) {
+	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String path, Map<String, Object> environment) {
+		Date now = new Date();
+		if (getStartDate()!=null && getStartDate().after(now)) {
+			return AccessDecision.ABSTAIN;
+		}
+		if (getEndDate()!=null && getEndDate().before(now)) {
+			return AccessDecision.ABSTAIN;
+		}
+		
 		Action permissionAction = securityPolicy==null ? null : securityPolicy.getAction(this);
-		if (permissionAction!=null 
-				&& (target==null && getTarget()==null || target.equals(getTarget()))
-				&& permissionAction.match(context, action, path, environment)) {
+		if (permissionAction==null) {
+			return AccessDecision.ABSTAIN;
+		}
+		
+		if ((target instanceof EClass || target instanceof Class) && getTarget()==null) {
+			if (permissionAction.match(context, "class:"+action, path, environment)) {
+				return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
+			}
+			return AccessDecision.ABSTAIN;
+		}
+		if ((getTarget()==null || (target!=null && target.equals(getTarget()))) && permissionAction.match(context, action, path, environment)) {
 			return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
 		}
 		return AccessDecision.ABSTAIN;
@@ -186,8 +202,8 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SecurityPackage.PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP:
-				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), (EObject)arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
+			case SecurityPackage.PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP:
+				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

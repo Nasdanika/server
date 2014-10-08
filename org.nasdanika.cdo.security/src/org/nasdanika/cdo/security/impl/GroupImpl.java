@@ -177,7 +177,7 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String qualifier, Map<String, Object> environment) {
 		return authorizationHelper.authorize(securityPolicy, context, target, action, qualifier, environment);
 	}
 

@@ -1093,7 +1093,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = ACTION_KEY_OPERATION_COUNT + 0;
+	int PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = ACTION_KEY_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Permission</em>' class.
@@ -1402,11 +1402,11 @@ public interface SecurityPackage extends EPackage {
 	EReference getPrincipal_ProtectionDomain();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, java.lang.Object, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Authorize</em>' operation.
-	 * @see org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map)
+	 * @see org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, java.lang.Object, java.lang.String, java.lang.String, java.util.Map)
 	 * @generated
 	 */
 	EOperation getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
@@ -1840,14 +1840,14 @@ public interface SecurityPackage extends EPackage {
 	EAttribute getPermission_Comment();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, java.lang.Object, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Authorize</em>' operation.
-	 * @see org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map)
+	 * @see org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, java.lang.Object, java.lang.String, java.lang.String, java.util.Map)
 	 * @generated
 	 */
-	EOperation getPermission__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
+	EOperation getPermission__Authorize__SecurityPolicy_Context_Object_String_String_Map();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.ActionContainer <em>Action Container</em>}'.
@@ -2446,7 +2446,7 @@ public interface SecurityPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getPermission__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
+		EOperation PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = eINSTANCE.getPermission__Authorize__SecurityPolicy_Context_Object_String_String_Map();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionContainerImpl <em>Action Container</em>}' class.

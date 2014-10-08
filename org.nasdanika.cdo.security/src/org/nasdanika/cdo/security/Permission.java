@@ -192,6 +192,6 @@ public interface Permission extends ActionKey {
 	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" securityPolicyType="org.nasdanika.cdo.security.SecurityPolicy" contextDataType="org.nasdanika.cdo.security.Context"
 	 * @generated
 	 */
-	AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String path, Map<String, Object> environment);
+	AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String path, Map<String, Object> environment);
 
 } // Permission

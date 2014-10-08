@@ -1,10 +1,16 @@
 package org.nasdanika.cdo.security;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
@@ -25,9 +31,9 @@ public class AuthorizationHelper {
 		this.principal = principal;
 	}
 	
-	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String qualifier, Map<String, Object> environment) {
 		if (target!=null) {
-			environment = environment == null ? new HashMap<String, Object>() : new HashMap<String, Object>(environment);
+			environment = environment == null ? new HashMap<String, Object>() : new HashMap<String, Object>(environment); 
 			environment.put("target", target);
 		}
 		return authorize(securityPolicy, principal, context, target, action, qualifier, SLASH, environment, new HashSet<Principal>());
@@ -37,7 +43,7 @@ public class AuthorizationHelper {
 			SecurityPolicy securityPolicy,
 			Principal principal, 
 			Context context,
-			EObject target, 
+			Object target, 
 			String action,
 			String qualifier,
 			String path, 
@@ -51,7 +57,7 @@ public class AuthorizationHelper {
 		}
 		
 		// Own permissions and implies
-		for (Permission p: principal.getPermissions()) {
+		for (Permission p: filterAndSortPermissions(principal.getPermissions(), target)) {			
 			String qualifiedPath = path;
 			if (qualifier!=null) {
 				if (!qualifiedPath.endsWith(SLASH)) {
@@ -104,30 +110,187 @@ public class AuthorizationHelper {
 		}
 
 		// Containment
-		EObject targetContainer = target.eContainer();
-		EStructuralFeature targetContainingFeature = target.eContainingFeature();
-		if (targetContainer!=null && targetContainingFeature!=null) {
-			if (path.equals(SLASH)) {
-				path=SLASH+targetContainingFeature.getName();
-			} else {
-				path=SLASH+targetContainingFeature.getName()+path;
-			}
-			AccessDecision accessDecision = authorize(securityPolicy, principal, context, targetContainer, action, qualifier, path, environment, traversed);
-			if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
-				return accessDecision;
+		if (target instanceof EObject) {
+			EObject targetContainer = ((EObject) target).eContainer();
+			EStructuralFeature targetContainingFeature = ((EObject) target).eContainingFeature();
+			if (targetContainer!=null && targetContainingFeature!=null) {
+				if (path.equals(SLASH)) {
+					path=SLASH+targetContainingFeature.getName();
+				} else {
+					path=SLASH+targetContainingFeature.getName()+path;
+				}
+				AccessDecision accessDecision = authorize(securityPolicy, principal, context, targetContainer, action, qualifier, path, environment, traversed);
+				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
+					return accessDecision;
+				}
 			}
 		}
 		
 		return AccessDecision.ABSTAIN;
 	}
 
+	private static List<Permission> filterAndSortPermissions(EList<Permission> permissions, Object target) {
+		// Global permissions
+		if (target==null) { 
+			List<Permission> ret = new ArrayList<>();
+			for (Permission p: permissions) {
+				if (CoreUtil.isBlank(p.getTargetNamespaceURI()) && CoreUtil.isBlank(p.getTargetClass())) {
+					ret.add(p);
+				}
+			}	
+			return ret;
+		}
+		
+		// Class permissions
+		class PermissionEntry implements Comparable<PermissionEntry> {
+			Permission permission;
+			int distance;
+			public PermissionEntry(Permission permission, int distance) {
+				this.permission = permission;
+				this.distance = distance;
+			}
+			@Override
+			public int compareTo(PermissionEntry o) {
+				if (permission.getTarget()==o.permission.getTarget()) {
+					int dd = distance - o.distance;
+					return dd==0 ? permission.hashCode() - o.permission.hashCode() : dd;
+				}
+				
+				if (permission.getTarget()==null) {
+					return 1;
+				}
+				
+				if (o.permission.getTarget()==null) {
+					return -1;
+				}
+				
+				return permission.hashCode() - o.permission.hashCode();
+			}
+		}
+		List<PermissionEntry> tmp = new ArrayList<>();
+		if (target instanceof EObject) {
+			EClass eClass = target instanceof EClass ? (EClass) target : ((EObject) target).eClass();
+			for (Permission p: permissions) {
+				int distance = distance(p, eClass);
+				if (distance!=-1) {
+					tmp.add(new PermissionEntry(p, distance));
+				}
+			}
+		} else {
+			Class<? extends Object> targetClass = target instanceof Class ? (Class<?>) target : target.getClass();
+			for (Permission p: permissions) {
+				int distance = distance(p, targetClass);
+				if (distance!=-1) {
+					tmp.add(new PermissionEntry(p, distance));
+				}
+			}			
+		}
+		Collections.sort(tmp);
+		List<Permission> ret = new ArrayList<>();
+		for (PermissionEntry pe: tmp) {
+			ret.add(pe.permission);
+		}
+		return ret;
+	}
+
+	private static int distance(Permission p, EClass eClass) {
+		if (eClass.getName().equals(p.getTargetClass()) && eClass.getEPackage().getNsURI().equals(p.getTargetNamespaceURI())) {
+			return 0;
+		}
+		for (EClass sc: eClass.getESuperTypes()) {
+			int sd = distance(p, sc);
+			if (sd!=-1) {
+				return sd+1;
+			}
+		}
+		return -1;
+	}
+	
+	private static String[] classQualifiedName(Class<?> clazz) {
+		String className = clazz.getName();
+		int idx = className.lastIndexOf('.');
+		if (idx==-1) {
+			return new String[] {"java://default", className};
+		}
+		return new String[] {"java://"+className.substring(0, idx), className.substring(idx+1)};
+	}
+
+	private static int distance(Permission p, Class<?> clazz) {
+		if (clazz==null) {
+			return -1;
+		}
+		String[] qName = classQualifiedName(clazz);
+		if (qName[1].equals(p.getTargetClass()) && qName[0].equals(p.getTargetNamespaceURI())) {
+			return 0;
+		}
+		int sd = distance(p, clazz.getSuperclass());
+		if (sd!=-1) {
+			return sd;
+		}
+		for (Class<?> i: clazz.getInterfaces()) {
+			int id = distance(p, i);
+			if (id!=-1) {
+				return id+1;
+			}
+		}
+		return -1;
+	}
+	
+	/**
+	 * Inherits condition.
+	 * @return
+	 */
+	public static String effectiveTargetNamespaceURI(Action action) {
+		for (Action a = action; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
+			String ret = a.getTargetNamespaceURI();
+			if (!CoreUtil.isBlank(ret)) {
+				return ret;
+			}
+		}
+		return action.getTargetNamespaceURI();
+	}
+		
+	/**
+	 * Inherits condition.
+	 * @return
+	 */
+	public static String effectiveTargetClass(Action action) {
+		for (Action a = action; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
+			String ret = a.getTargetClass();
+			if (!CoreUtil.isBlank(ret)) {
+				return ret;
+			}
+		}
+		return action.getTargetClass();
+	}
+
 	public static SecurityPolicy asSecurityPolicy(final ActionContainer actionContainer) {
 		return new SecurityPolicy() {
 			
+			private void getGrantableActions(Action action, String targetNamespaceURI, String targetClass, Collection<Action> collector) {
+				if (action.isGrantable()
+						&& equal(effectiveTargetNamespaceURI(action), targetNamespaceURI)
+						&& equal(effectiveTargetClass(action), targetClass)) {
+					collector.add(action);
+				}
+				for (Action c: action.getActions()) {
+					getGrantableActions(c, targetNamespaceURI, targetClass, collector);
+				}
+			}
+			
 			@Override
-			public Iterable<Action> getGrantableActions(String targetNamespaceURI, String targetClass) {
-				// TODO
-				throw new UnsupportedOperationException();
+			public Collection<Action> getGrantableActions(String targetNamespaceURI, String targetClass) {
+				List<Action> ret = new ArrayList<>();
+				if (actionContainer instanceof Action 
+						&& ((Action) actionContainer).isGrantable()
+						&& equal(effectiveTargetNamespaceURI((Action) actionContainer), targetNamespaceURI)
+						&& equal(effectiveTargetClass((Action) actionContainer), targetClass)) {
+					ret.add((Action) actionContainer);
+				}
+				for (Action a: actionContainer.getActions()) {
+					getGrantableActions(a, targetNamespaceURI, targetClass, ret);
+				}
+				return ret;
 			}
 			
 			@Override

@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.security;
 
+import java.util.Collection;
+
 public interface SecurityPolicy {
 	
 	/**
@@ -10,11 +12,11 @@ public interface SecurityPolicy {
 	Action getAction(ActionKey actionKey);
 	
 	/**
-	 * Grantable actions for a given class.
+	 * Grantable actions for a given class, not including supertypes.
 	 * @param targetNamespaceURI
 	 * @param targetClass
 	 * @return
 	 */
-	Iterable<Action> getGrantableActions(String targetNamespaceURI, String targetClass);
+	Collection<Action> getGrantableActions(String targetNamespaceURI, String targetClass);
 
 }

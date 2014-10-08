@@ -2,6 +2,9 @@
  */
 package org.nasdanika.cdo.security.impl;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
@@ -12,6 +15,7 @@ import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyContainer;
+import org.nasdanika.core.CoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -170,10 +174,45 @@ public class SecurityPolicyContainerImpl extends CDOObjectImpl implements Securi
 		return null;
 	}
 	
+	private static boolean equal(String str1, String str2) {
+		if (CoreUtil.isBlank(str1)) {
+			return CoreUtil.isBlank(str2);
+		}
+		if (CoreUtil.isBlank(str2)) {
+			return false;
+		}
+		return str1.trim().equals(str2.trim());
+	}
+	
+	private void getGrantableActions(Action action, String targetNamespaceURI, String targetClass, Collection<Action> collector) {
+		if (action.isGrantable()
+				&& equal(AuthorizationHelper.effectiveTargetNamespaceURI(action), targetNamespaceURI)
+				&& equal(AuthorizationHelper.effectiveTargetClass(action), targetClass)) {
+			collector.add(action);
+		}
+		for (Action c: action.getActions()) {
+			getGrantableActions(c, targetNamespaceURI, targetClass, collector);
+		}
+	}
+			
 	@Override
-	public Iterable<Action> getGrantableActions(String targetNamespaceURI, String targetClass) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+	public Collection<Action> getGrantableActions(String targetNamespaceURI, String targetClass) {
+		Collection<Action> ret = new ArrayList<>();
+		for (Action a: getActions()) {
+			getGrantableActions(a, targetNamespaceURI, targetClass, ret);
+		}				
+		// Duplicates elimination??
+		for (ActionContainer i: getImports()) {			
+			if (i instanceof SecurityPolicy) {
+				ret.addAll(((SecurityPolicy) i).getGrantableActions(targetNamespaceURI, targetClass));
+			} else {
+				for (Action a: i.getActions()) {
+					getGrantableActions(a, targetNamespaceURI, targetClass, ret);
+				}				
+			}			
+		}
+		
+		return ret;
 	}
 
 } //SecurityPolicyContainerImpl

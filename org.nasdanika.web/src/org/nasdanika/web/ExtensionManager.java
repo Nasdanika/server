@@ -45,6 +45,7 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public class ExtensionManager extends AdapterManager {
 	
+	private static final String BUNDLE_ID_TOKEN = "${bundleId}";
 	private ServiceTracker<Route, Route> routeServiceTracker;
 	private ServiceTracker<UIPart<?,?>, UIPart<?,?>> uiPartServiceTracker;	
 	private HTMLFactory htmlFactory;
@@ -160,6 +161,21 @@ public class ExtensionManager extends AdapterManager {
 	private static final String SECURITY_ID = "org.nasdanika.core.security";
 	
 	private Converter<Object, Object, WebContext> converter;
+	
+	/**
+	 * Expands ${bundleId} token.
+	 * @param property
+	 * @param bundle
+	 * @return
+	 */
+	private static String expandTokens(String str, Bundle bundle) {
+		StringBuilder ret = new StringBuilder(str);
+		String id = String.valueOf(bundle.getBundleId());
+		for (int i=ret.indexOf(BUNDLE_ID_TOKEN); i!=-1; i=ret.indexOf(BUNDLE_ID_TOKEN, i+id.length())) {
+			ret.replace(i, i+BUNDLE_ID_TOKEN.length(), id);
+		}
+		return ret.toString();
+	}
 	
 	protected static class ConverterServiceEntry implements Converter<Object,Object, WebContext> {
 		
@@ -414,7 +430,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry re = new RouteEntry(
 							RouteDescriptor.RouteType.OBJECT, 
 							methods, 
-							(String) se.getKey().getProperty("pattern"), 
+							expandTokens((String) se.getKey().getProperty("pattern"), se.getKey().getBundle()), 
 							se.getKey().getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
 							se.getValue());
@@ -456,7 +472,7 @@ public class ExtensionManager extends AdapterManager {
 			}
 			return ret;
 		}
-		
+
 		@Override
 		public List<Route> matchRootRoutes(RequestMethod method, String[] path) throws Exception {
 			List<RouteEntry> collector = new ArrayList<RouteEntry>();
@@ -491,7 +507,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry re = new RouteEntry(
 							RouteDescriptor.RouteType.ROOT, 
 							methods, 
-							(String) se.getKey().getProperty("pattern"), 
+							expandTokens((String) se.getKey().getProperty("pattern"), se.getKey().getBundle()), 
 							null, 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
 							se.getValue());
@@ -680,7 +696,13 @@ public class ExtensionManager extends AdapterManager {
 					Class<?> targetType = (Class<?>) bundle.loadClass(targetClassName.trim());
 					String methodStr = ce.getAttribute("method");					
 					RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
-					RouteEntry routeEntry = new RouteEntry(RouteType.OBJECT, routeMethods, ce.getAttribute("pattern"), targetType, priority, route);
+					RouteEntry routeEntry = new RouteEntry(
+							RouteType.OBJECT, 
+							routeMethods, 
+							expandTokens(ce.getAttribute("pattern"), bundle),
+							targetType, 
+							priority, 
+							route);
 										
 					for (RequestMethod routeMethod: routeMethods) {
 						List<RouteEntry> methodRoutes = routeMap.get(RouteType.OBJECT).get(routeMethod);
@@ -776,7 +798,13 @@ public class ExtensionManager extends AdapterManager {
 						
 					};
 					
-					RouteEntry routeEntry = new RouteEntry(RouteType.OBJECT, new RequestMethod[] {RequestMethod.GET}, ce.getAttribute("pattern"), targetType, priority, route);
+					RouteEntry routeEntry = new RouteEntry(
+							RouteType.OBJECT, 
+							new RequestMethod[] {RequestMethod.GET}, 
+							expandTokens(ce.getAttribute("pattern"), bundle), 
+							targetType, 
+							priority, 
+							route);
 					
 					List<RouteEntry> methodRoutes = routeMap.get(RouteType.OBJECT).get(RequestMethod.GET);
 					if (methodRoutes == null) {
@@ -791,7 +819,13 @@ public class ExtensionManager extends AdapterManager {
 					int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String methodStr = ce.getAttribute("method");					
 					RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
-					RouteEntry routeEntry = new RouteEntry(RouteType.ROOT, routeMethods, ce.getAttribute("pattern"), null, priority, route);
+					RouteEntry routeEntry = new RouteEntry(
+							RouteType.ROOT, 
+							routeMethods, 
+							expandTokens(ce.getAttribute("pattern"), Platform.getBundle(ce.getContributor().getName())), 
+							null, 
+							priority, 
+							route);
 					
 					for (RequestMethod routeMethod: routeMethods) {
 						List<RouteEntry> methodRoutes = routeMap.get(RouteType.ROOT).get(routeMethod);
@@ -864,7 +898,13 @@ public class ExtensionManager extends AdapterManager {
 						
 					};
 					
-					RouteEntry routeEntry = new RouteEntry(RouteType.ROOT, new RequestMethod[] { RequestMethod.GET } , ce.getAttribute("pattern"), null, priority, route);
+					RouteEntry routeEntry = new RouteEntry(
+							RouteType.ROOT, 
+							new RequestMethod[] { RequestMethod.GET } , 
+							expandTokens(ce.getAttribute("pattern"), Platform.getBundle(ce.getContributor().getName())), 
+							null, 
+							priority, 
+							route);
 					
 					List<RouteEntry> methodRoutes = routeMap.get(RouteType.ROOT).get(RequestMethod.GET);
 					if (methodRoutes == null) {

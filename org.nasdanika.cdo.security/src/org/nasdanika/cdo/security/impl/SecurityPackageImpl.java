@@ -713,7 +713,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getPermission__Authorize__SecurityPolicy_Context_EObject_String_String_Map() {
+	public EOperation getPermission__Authorize__SecurityPolicy_Context_Object_String_String_Map() {
 		return permissionEClass.getEOperations().get(0);
 	}
 
@@ -901,7 +901,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEAttribute(permissionEClass, PERMISSION__START_DATE);
 		createEAttribute(permissionEClass, PERMISSION__END_DATE);
 		createEAttribute(permissionEClass, PERMISSION__COMMENT);
-		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP);
+		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP);
 
 		actionContainerEClass = createEClass(ACTION_CONTAINER);
 		createEReference(actionContainerEClass, ACTION_CONTAINER__ACTIONS);
@@ -997,7 +997,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		op = initEOperation(getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getSecurityPolicy(), "securityPolicy", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEJavaObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "qualifier", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(ecorePackage.getEMap());
@@ -1084,10 +1084,10 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEAttribute(getPermission_EndDate(), ecorePackage.getEDate(), "endDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		op = initEOperation(getPermission__Authorize__SecurityPolicy_Context_EObject_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getPermission__Authorize__SecurityPolicy_Context_Object_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getSecurityPolicy(), "securityPolicy", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEJavaObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "path", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(ecorePackage.getEMap());

@@ -2,6 +2,7 @@ package org.nasdanika.cdo.security;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -124,7 +125,7 @@ public class SecurityPolicyManager implements AutoCloseable, SecurityPolicy {
 	}
 	
 	@Override
-	public Iterable<Action> getGrantableActions(String targetNamespaceURI, String targetClass) {
+	public Collection<Action> getGrantableActions(String targetNamespaceURI, String targetClass) {
 		List<Action> ret = new ArrayList<Action>();
 		// TODO Eliminate possible duplicates
 		for (SecurityPolicy sp: extensionSecurityPolicies) {
