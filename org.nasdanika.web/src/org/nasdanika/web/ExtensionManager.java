@@ -169,6 +169,9 @@ public class ExtensionManager extends AdapterManager {
 	 * @return
 	 */
 	private static String expandTokens(String str, Bundle bundle) {
+		if (str==null) {
+			return str;
+		}
 		StringBuilder ret = new StringBuilder(str);
 		String id = String.valueOf(bundle.getBundleId());
 		for (int i=ret.indexOf(BUNDLE_ID_TOKEN); i!=-1; i=ret.indexOf(BUNDLE_ID_TOKEN, i+id.length())) {
