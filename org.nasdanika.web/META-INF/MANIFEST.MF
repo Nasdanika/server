@@ -13,6 +13,7 @@ Require-Bundle: javax.servlet;bundle-version="3.0.0";visibility:=reexport,
  org.nasdanika.html;bundle-version="1.2.0";visibility:=reexport,
  org.nasdanika.thirdparty;bundle-version="1.0.0"
 Export-Package: org.nasdanika.web,
- org.nasdanika.web.html
+ org.nasdanika.web.html,
+ org.nasdanika.web.routes
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: .

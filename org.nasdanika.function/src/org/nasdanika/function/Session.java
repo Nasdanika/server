@@ -22,6 +22,16 @@ public interface Session {
 			Object target, 
 			String methodName, 
 			Class<?>... parameterTypes);
+	
+	Function createParticipantFunction(String participantFilter, String operationName);
+	
+	/**
+	 * Wraps participant into an interface.
+	 * @param type Proxy interface. The interface methods return type shall be either void or {@link Promise}.
+	 * @param participantFilter
+	 * @return
+	 */
+	<T> T createParticipantProxy(Class<T> type, String participantFilter);			
 
 	enum EngineSelectorType { EXTENSION, MIME_TYPE, NAME }
 	

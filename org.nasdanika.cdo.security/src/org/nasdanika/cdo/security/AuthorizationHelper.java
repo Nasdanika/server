@@ -56,6 +56,13 @@ public class AuthorizationHelper {
 			return AccessDecision.ALLOW;
 		}
 		
+		if (target!=null 
+				&& (target.getClass().getName().startsWith("[") 
+						|| target.getClass().getName().startsWith("java.") 
+						|| target.getClass().getName().startsWith("javax."))) {			
+			return AccessDecision.ALLOW; // No security on JDK classes and arrays.
+		}
+		
 		// Own permissions and implies
 		for (Permission p: filterAndSortPermissions(principal.getPermissions(), target)) {			
 			String qualifiedPath = path;

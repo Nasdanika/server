@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.ClassLoadingContext;
@@ -184,12 +185,16 @@ public class RoutingServlet extends HttpServlet {
 			resultToResponse(((URL) result).openStream(), resp, context);
 		} else if (result!=null) {
 			JSONObject jsonResult = context.convert(result, JSONObject.class);
-			if (jsonResult == null) {
-				JSONArray jaResult = context.convert(result, JSONArray.class);
-				if (jaResult==null) {
-					resp.getWriter().write(String.valueOf(result));
-				} else {
-					resultToResponse(jaResult, resp, context);					
+			if (jsonResult == null || jsonResult.length()==0) {
+				try {
+					JSONArray jaResult = context.convert(result, JSONArray.class);
+					if (jaResult==null) {
+						resp.getWriter().write(String.valueOf(result));
+					} else {
+						resultToResponse(jaResult, resp, context);					
+					}
+				} catch (Exception e) {
+					resp.getWriter().write(String.valueOf(result));					
 				}
 			} else {
 				resultToResponse(jsonResult, resp, context);

@@ -23,4 +23,22 @@
             target="org.nasdanika.web.html.HTMLRenderer">
       </converter>
    </extension>
+   <extension
+         point="org.nasdanika.web.route">
+      <object_route
+            class="org.nasdanika.web.routes.ObjectRoute"
+            method="*"
+            target="java.lang.Object">
+      </object_route>
+      <object_route
+            class="org.nasdanika.web.routes.MapRoute"
+            method="*"
+            target="java.util.Map">
+      </object_route>
+      <object_route
+            class="org.nasdanika.web.routes.ListRoute"
+            method="*"
+            target="java.util.List">
+      </object_route>
+   </extension>
 </plugin>

@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.routes;
 
 import java.util.List;
 
+import org.eclipse.emf.common.util.EMap;
 import org.nasdanika.cdo.EReferenceClosure;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.RequestMethod;
@@ -17,7 +18,7 @@ public class EReferenceClosureRoute implements Route {
 		// Handle many
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(eReferenceClosure, "read", null, null)) {
+				if (context.authorize(eReferenceClosure, "read", null, null)) {					
 					int dotIdx = context.getPath()[0].lastIndexOf(".");
 					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
 					Action extensionAction = context.getExtensionAction(eReferenceClosure, extension);
@@ -40,7 +41,16 @@ public class EReferenceClosureRoute implements Route {
 			if (idx!=-1) {
 				index = index.substring(0, idx);
 			}
-			Object element = ((List<?>) eReferenceClosure.getValue()).get(Integer.parseInt(index));
+			
+			List<?> value = (List<?>) eReferenceClosure.getValue();
+			// EMap - try as a key first
+			if (value instanceof EMap) {				
+				Object element = ((EMap<?,?>) value).get(index);
+				if (element!=null) {
+					return context.getAction(element, 1);
+				}
+			}
+			Object element = value.get(Integer.parseInt(index));
 			return context.getAction(element, 1);
 		}
 		

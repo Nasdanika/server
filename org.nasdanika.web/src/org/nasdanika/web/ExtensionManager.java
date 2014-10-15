@@ -447,7 +447,13 @@ public class ExtensionManager extends AdapterManager {
 				for (final Method routeMethod: target.getClass().getMethods()) {
 					RouteMethod amAnnotation = routeMethod.getAnnotation(RouteMethod.class);
 					if (amAnnotation!=null) {
-						RouteEntry re = new RouteEntry(RouteType.OBJECT, amAnnotation.value(), amAnnotation.pattern(), target.getClass(), amAnnotation.priority(), new MethodRoute(target, routeMethod)) {
+						RouteEntry re = new RouteEntry(
+								RouteType.OBJECT, 
+								amAnnotation.value(), 
+								amAnnotation.pattern(), 
+								target.getClass(), 
+								amAnnotation.priority(), 
+								new MethodRoute(target, routeMethod)) {
 							
 							protected boolean match(Object obj, String[] path) {
 								if (getPattern()==null) {

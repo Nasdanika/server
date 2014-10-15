@@ -86,6 +86,9 @@ public abstract class ContextImpl implements WebContext {
 		WebContext subContext = createSubContext(newPath, target);
 		for (Route r: routeRegistry.matchObjectRoutes(getMethod(), target, newPath)) {
 			final Object ret = r.execute(subContext);
+			if (ret==null || ret==Action.NOT_FOUND) {
+				continue;
+			}
 			if (ret instanceof Action) {
 				return (Action) ret;
 			}

@@ -4,6 +4,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 
@@ -12,6 +15,22 @@ public class CoreUtil {
 	private CoreUtil() {
 		// Utility class
 	}
+	
+	public static Map<Class<?>, Class<?>> PRIMITIVES_TO_BOXES_MAP; 
+	
+	static {		
+		Map<Class<?>, Class<?>> primitivesToBoxesMap = new HashMap<>();
+		primitivesToBoxesMap.put(byte.class, Byte.class);
+		primitivesToBoxesMap.put(short.class, Short.class);
+		primitivesToBoxesMap.put(int.class, Integer.class);
+		primitivesToBoxesMap.put(long.class, Long.class);
+		primitivesToBoxesMap.put(float.class, Float.class);
+		primitivesToBoxesMap.put(double.class, Double.class);
+		primitivesToBoxesMap.put(boolean.class, Boolean.class);
+		primitivesToBoxesMap.put(char.class, char.class);
+		PRIMITIVES_TO_BOXES_MAP = Collections.unmodifiableMap(primitivesToBoxesMap);
+	}	
+	
 	
 
 	public static <T> T injectProperties(IConfigurationElement ce, final T target) throws Exception {
@@ -42,6 +61,10 @@ public class CoreUtil {
 				Class<?>[] pTypes = mth.getParameterTypes();
 				if (pTypes.length==1 && mth.getName().equals(mName)) {
 					Class<?> pType = pTypes[0];
+					Class<?> bType = PRIMITIVES_TO_BOXES_MAP.get(pType);
+					if (bType!=null) {
+						pType = bType;
+					}
 					for (Constructor<?> c: pType.getConstructors()) {
 						if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(value)) {
 							mth.invoke(target, c.newInstance(value));
