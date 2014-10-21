@@ -1,0 +1,7 @@
+public class CLASS {
+
+
+public String generate(WorkspaceWizard wizard) throws Exception {
+     return "";
+   }
+ }

@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Workspace Wizard
+Bundle-SymbolicName: org.nasdanika.workspace.wizard;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Nasdanika LLC
+Require-Bundle: org.eclipse.core.resources,
+ org.eclipse.ui,
+ org.eclipse.ui.ide,
+ org.eclipse.core.runtime,
+ org.eclipse.jdt.core;bundle-version="3.10.0",
+ org.eclipse.pde.ui;bundle-version="3.8.100",
+ org.eclipse.emf.codegen.ecore.ui;bundle-version="2.10.0",
+ org.eclipse.core.databinding,
+ org.eclipse.core.databinding.beans,
+ org.eclipse.core.databinding.observable,
+ org.eclipse.core.databinding.property,
+ org.eclipse.jface.databinding,
+ com.ibm.icu
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

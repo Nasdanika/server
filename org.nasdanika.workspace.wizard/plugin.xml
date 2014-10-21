@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         point="org.eclipse.ui.newWizards">
+      <category
+            name="Nasdanika"
+            id="org.nasdanika.Wizard.category.ID">
+      </category>
+      <wizard
+            name="Nasdanika Application Workspace"
+            icon="icons/sample.gif"
+            category="org.nasdanika.Wizard.category.ID"
+            class="org.nasdanika.workspace.wizard.WorkspaceWizard"
+            id="org.nasdanika.workspace.wizard.WorkspaceWizard">
+      </wizard>
+   </extension>
+
+</plugin>

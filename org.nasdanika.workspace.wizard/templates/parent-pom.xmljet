@@ -1,0 +1,114 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="ParentPomRenderer" skeleton="Renderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<project
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId><%=wizard.getGroupId()%></groupId>
+	<artifactId><%=wizard.getParentArtifactId()%></artifactId>
+	<version><%=wizard.getVersion()%>-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<!-- tycho requires maven >= 3.0 -->
+	<prerequisites>
+		<maven>3.0</maven>
+	</prerequisites>
+
+	<properties>
+		<tycho-version>0.21.0</tycho-version>
+		<luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
+	</properties>
+	 
+	<repositories>
+		<repository>
+			<id>luna</id>
+			<url>${luna-repo.url}</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>orbit</id>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>jetty</id>
+			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>third-party</id>
+			<url>http://www.nasdanika.org/third_party_repository</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
+			<id>nasdanika-server</id>
+			<url>http://www.nasdanika.org/server/repository</url>
+			<layout>p2</layout>
+		</repository>
+	</repositories>
+ 	
+ 	<build>
+		<sourceDirectory>src</sourceDirectory>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.9.1</version>
+			</plugin>
+			<plugin>
+				<!-- enable tycho build extension -->
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-maven-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>target-platform-configuration</artifactId>
+				<version>${tycho-version}</version>
+				<configuration>
+					<target>
+						<artifact>
+							<groupId><%=wizard.getGroupId()%></groupId>
+							<artifactId><%=wizard.getGroupId()%>.target</artifactId>
+							<version><%=wizard.getVersion()%>-SNAPSHOT</version>
+						</artifact>
+					</target>
+					<pomDependencies>consider</pomDependencies>
+					<!-- configure the p2 target environments for multi-platform build -->
+					<environments>
+						<environment>
+							<os>linux</os>
+							<ws>gtk</ws>
+							<arch>x86_64</arch>
+						</environment>
+						<environment>
+							<os>win32</os>
+							<ws>win32</ws>
+							<arch>x86_64</arch>
+						</environment>
+					</environments>
+				</configuration>
+			</plugin>
+			<!-- enable source bundle generation -->
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-source-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions>
+					<execution>
+						<id>plugin-source</id>
+						<goals>
+							<goal>plugin-source</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+	<modules>
+	<% for (String module: wizard.getModules()) { %>
+		<module>../<%=module%></module>
+	<% } %>
+	</modules>
+</project>
