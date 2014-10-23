@@ -100,6 +100,21 @@ public interface HTMLFactory {
 	Tag routeLink(Object targetElement, Object path, Object... content);	
 	
 	/**
+	 * Generates a router application with Bootstrap script and style.
+	 * @param title Application title.
+	 * @param initialRoute Initial route to navigate.
+	 * @param head Declarations to add to head, e.g. script and css references.
+	 * @param body Application body.
+	 * @return
+	 */
+	AutoCloseable bootstrapRouterApplication(
+			Theme theme,
+			Object title, 
+			Object initialRoute, 
+			Object head, 
+			Object... body);
+	
+	/**
 	 * Generates a router application
 	 * @param title Application title.
 	 * @param initialRoute Initial route to navigate.

@@ -103,6 +103,7 @@ public class ExtensionManager extends AdapterManager {
 			if ("default_html_factory".equals(ce.getName())) {
 				if (htmlFactoryName==null || htmlFactoryName.equals("default")) {
 					DefaultHTMLFactory defaultHTMLFactory = new DefaultHTMLFactory();
+					defaultHTMLFactory.setBootstrapCssContainer(ce.getAttribute("bootstrapCssContainer"));
 					for (IConfigurationElement s: ce.getChildren("script")) {
 						defaultHTMLFactory.getScripts().add(s.getValue());
 					}

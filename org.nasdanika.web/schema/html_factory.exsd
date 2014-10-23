@@ -103,6 +103,13 @@
             <element ref="stylesheet" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="script" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
+         <attribute name="bootstrapCssContainer" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 

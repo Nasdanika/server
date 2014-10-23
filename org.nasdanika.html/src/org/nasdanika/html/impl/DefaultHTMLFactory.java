@@ -20,6 +20,7 @@ import org.nasdanika.html.Navbar;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Style;
 
@@ -31,6 +32,36 @@ import org.nasdanika.html.UIElement.Style;
 public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	
 	private RouterApplicationRenderer routerApplicationRenderer = new RouterApplicationRenderer();
+	
+	@Override
+	public AutoCloseable bootstrapRouterApplication(
+			Theme theme, 
+			Object title,
+			Object initialRoute, 
+			Object head, 
+			Object... body) {		
+		if (bootstrapCssContainer==null) {
+			return routerApplication(title, initialRoute, head, body);
+		}
+		List<String> effectiveStylesheets = new ArrayList<>();
+		if (theme==null) {
+			theme = Theme.None;
+		}
+		switch (theme) {
+		case None:
+			effectiveStylesheets.add(bootstrapCssContainer+"/bootstrap.min.css");
+			break;
+		case Default:
+			effectiveStylesheets.add(bootstrapCssContainer+"/bootstrap.min.css");
+			effectiveStylesheets.add(bootstrapCssContainer+"/bootstrap-theme.min.css");
+			break;
+		default:
+			effectiveStylesheets.add(bootstrapCssContainer+"/bootstrap-"+theme.name().toLowerCase()+".min.css");
+			break;
+		}
+		effectiveStylesheets.addAll(stylesheets);
+		return routerApplication(effectiveStylesheets, title, initialRoute, head, body);
+	}
 
 	@Override
 	public AutoCloseable routerApplication(
@@ -38,7 +69,16 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 			final Object initialRoute,
 			final Object head, 
 			final Object... body) {
+		return routerApplication(stylesheets, title, initialRoute, head, body);
+	}
 		
+	private AutoCloseable routerApplication(
+			final List<String> effectiveStylesheets,
+			final Object title, 
+			final Object initialRoute,
+			final Object head, 
+			final Object[] body) {
+			
 		return new AutoCloseable() {
 			
 			@Override
@@ -97,7 +137,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 					
 					@Override
 					public List<String> getStylesheets() {
-						return stylesheets;
+						return effectiveStylesheets;
 					}
 					
 				});
@@ -124,6 +164,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	
 	private List<String> scripts = new ArrayList<>();
 	private List<String> stylesheets = new ArrayList<>();
+	private String bootstrapCssContainer;
 	
 	public List<String> getScripts() {
 		return scripts;
@@ -131,6 +172,14 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	
 	public List<String> getStylesheets() {
 		return stylesheets;
+	}
+	
+	/**
+	 * URL of the folder containing bootstrap.min.css, bootstrap-theme.min.css, and bootstrap-<code>&lt;theme name&gt;</code> files.
+	 * @param bootstrapCssContainer
+	 */
+	public void setBootstrapCssContainer(String bootstrapCssContainer) {
+		this.bootstrapCssContainer = bootstrapCssContainer;
 	}
 
 	@Override

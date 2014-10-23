@@ -1,0 +1,15 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="TargetRenderer" skeleton="Renderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?pde version="3.8"?>
+<target includeMode="feature" name="<%=wizard.getGroupId()%>.target" sequenceNumber="3">
+	<locations>
+		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
+			<% if (wizard.isIncludeJetty()) { %><unit id="org.nasdanika.server.jetty.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
+			<% if (wizard.isIncludeNasdanika()) { %><unit id="org.nasdanika.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
+			<% if (wizard.isIncludeEquinox()) { %><unit id="org.nasdanika.equinox.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
+			<% if (wizard.isIncludeWebTest()) { %><unit id="org.nasdanika.webtest.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
+			<% if (wizard.isIncludeCdo()) { %><unit id="org.nasdanika.cdo.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
+			<repository location="http://www.nasdanika.org/server/repository"/>
+		</location>
+	</locations>
+</target>

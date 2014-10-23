@@ -13,18 +13,18 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class ApplicationConfigurationPage extends WizardPage {
-	private Text routingServletAlias;
-	private Text webContentAlias;
-	private Text webContentBaseName;
-	private Button btnRoutingServlet;
-	private Button btnWebContent;
-	private Button btnRepository;
-	private Button btnServer;
-	private Button btnTransactionContextProvider;
-	private Button btnTransactionRoute;
-	private Button btnSessionInitializer;
-	private Label lblPattern;
-	private Text transactionContextRoutePattern;
+	Text routingServletAlias;
+	Text webContentAlias;
+	Text webContentBaseName;
+	Button btnRoutingServlet;
+	Button btnWebContent;
+	Button btnRepository;
+	Button btnServer;
+	Button btnTransactionContextProvider;
+	Button btnTransactionRoute;
+	Button btnSessionInitializer;
+	Label lblPattern;
+	Text transactionContextRoutePattern;
 
 	/**
 	 * Create the wizard.

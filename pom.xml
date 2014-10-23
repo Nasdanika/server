@@ -22,6 +22,10 @@
 		<module>org.nasdanika.core.tests</module>
 		<module>org.nasdanika.web</module>
 		<module>org.nasdanika.webtest</module>
+				
+		<module>org.nasdanika.workspace.wizard</module>
+		<module>org.nasdanika.workspace.wizard.feature</module>
+		
 		<module>org.nasdanika.cdo.h2</module>
 		<module>org.nasdanika.cdo</module>
 		<!-- <module>org.nasdanika.cdo.boxing</module> -->

@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.webtest.feature"
       label="Nasdanika WebTest"
-      version="1.2.0.qualifier">
+      version="0.1.0.qualifier">
 
    <description>
       Nasdanika HTML/Bootsrapi UI builder.
