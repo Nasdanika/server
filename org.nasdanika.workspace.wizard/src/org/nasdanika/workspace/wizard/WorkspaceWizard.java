@@ -1,22 +1,29 @@
 package org.nasdanika.workspace.wizard;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,6 +41,7 @@ import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.edit.ui.provider.ExtendedImageRegistry;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -50,6 +58,17 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.nasdanika.workspace.wizard.render.app.ApplicationPluginRenderer;
+import org.nasdanika.workspace.wizard.render.app.ApplicationPomRenderer;
+import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderComponentRenderer;
+import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderRenderer;
+import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextRouteRenderer;
+import org.nasdanika.workspace.wizard.render.app.IndexRenderer;
+import org.nasdanika.workspace.wizard.render.app.RepositoryRenderer;
+import org.nasdanika.workspace.wizard.render.app.SecurityPolicyRenderer;
+import org.nasdanika.workspace.wizard.render.app.ServerRenderer;
+import org.nasdanika.workspace.wizard.render.app.SessionInitializerComponentRenderer;
+import org.nasdanika.workspace.wizard.render.app.SessionInitializerRenderer;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -151,6 +170,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				getActorSpecArtifactId(), 
 				Collections.singletonList("mybundle"), 
 				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
 				Collections.singletonList("my.package"), 
 				progressMonitor);
 		// TODO - factory, Actor
@@ -161,6 +181,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		IJavaProject project = createPluginProject(
 				getPageSpecArtifactId(), 
 				Collections.singletonList("mybundle"), 
+				Collections.<String>emptyList(), 
 				Collections.<String>emptyList(), 
 				Collections.singletonList("my.package"), 
 				progressMonitor);
@@ -173,6 +194,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				getActorImplArtifactId(), 
 				Collections.singletonList("mybundle"), 
 				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
 				Collections.singletonList("my.package"), 
 				progressMonitor);
 		// TODO - factory, Actor
@@ -184,20 +206,197 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				getPageImplArtifactId(), 
 				Collections.singletonList("mybundle"), 
 				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
 				Collections.singletonList("my.package"), 
 				progressMonitor);
 		// TODO - factory, Actor
 	}
 
 	private void generateApplicationProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO Condition
-		createPluginProject(
-				getGroupId()+"."+projectsPage.applicationSuffix.getText(), 
-				Collections.singletonList("mybundle"), 
-				Collections.<String>emptyList(), 
-				Collections.singletonList("my.package"), 
-				progressMonitor);
-		// TODO - plugin.xml, components
+		if (projectsPage.btnApplication.getSelection()) {
+			Collection<String> requiredBundles = new HashSet<>();
+			
+			if (projectsPage.btnModel.getSelection()) {
+				requiredBundles.add(getModelArtifactId());
+			}
+			if (projectsPage.btnActorSpec.getSelection()) {
+				requiredBundles.add(getActorSpecArtifactId());
+			} else if (projectsPage.btnPageSpec.getSelection()) {
+				requiredBundles.add(getPageSpecArtifactId());
+			}
+			if (applicationConfigurationPage.btnRepository.getSelection()) {
+				requiredBundles.add("org.nasdanika.cdo.h2");
+			}
+			if (applicationConfigurationPage.btnServer.getSelection()) {
+				requiredBundles.add("org.nasdanika.cdo");
+			}
+			if (applicationConfigurationPage.btnRoutingServlet.getSelection()
+					|| applicationConfigurationPage.btnWebContent.getSelection()) {
+				requiredBundles.add("org.nasdanika.web");				
+				requiredBundles.add("org.eclipse.equinox.http.registry");				
+			}
+			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
+				requiredBundles.add("org.nasdanika.cdo");								
+				requiredBundles.add("org.eclipse.emf.cdo");								
+				requiredBundles.add("org.eclipse.emf.ecore");								
+			}
+//			Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
+//					 org.eclipse.emf.ecore.change;bundle-version="2.10.0";visibility:=reexport,
+//					 org.eclipse.emf.ecore.xmi;bundle-version="2.10.1";visibility:=reexport,
+//					 org.eclipse.net4j;bundle-version="4.3.0";visibility:=reexport,
+//					 org.eclipse.emf.cdo.net4j;bundle-version="4.1.200";visibility:=reexport,
+//					 org.eclipse.net4j.tcp;bundle-version="4.1.200";visibility:=reexport,
+//					 org.eclipse.osgi;bundle-version="3.10.0",
+//					 org.eclipse.jetty.util;bundle-version="8.1.14",
+//					 org.json;bundle-version="1.0.0",
+
+			Collection<String> components = new ArrayList<>();
+			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
+				components.add("OSGI-INF/"+getDashedName()+"-session-initializer.xml");
+			}
+			if (applicationConfigurationPage.btnRepository.getSelection()) {
+				components.add("OSGI-INF/"+getDashedName()+"-repository.xml");
+			}
+			if (applicationConfigurationPage.btnServer.getSelection()) {				
+				components.add("OSGI-INF/"+getDashedName()+(applicationConfigurationPage.btnRepository.getSelection() ? "-server.xml" : "-session-provider.xml"));
+			}
+			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {
+				components.add("OSGI-INF/"+getDashedName()+"-transaction-context-provider.xml");
+			}
+			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
+				components.add("OSGI-INF/"+getDashedName()+"-transaction-route.xml");
+			}
+			IJavaProject project = createPluginProject(
+					getGroupId()+"."+projectsPage.applicationSuffix.getText(), 
+					requiredBundles, 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					components, 
+					progressMonitor);
+			
+			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
+				IFolder sourceFolder = project.getProject().getFolder("src");
+				IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getApplicationArtifactId(), false, progressMonitor);
+				pkg.createCompilationUnit(getJavaName()+"SessionInitializerComponent.java", new SessionInitializerRenderer().generate(this), false, progressMonitor);
+				
+				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+				if (!osgiInfFolder.exists()) {
+					osgiInfFolder.create(false, true, progressMonitor);
+				}
+				osgiInfFolder.getFile(getDashedName()+"-session-initializer.xml").create(new ByteArrayInputStream(new SessionInitializerComponentRenderer().generate(this).getBytes()), false, progressMonitor);		
+			}
+			
+			if (applicationConfigurationPage.btnWebContent.getSelection()) {
+				try (InputStream resourcesZipStream = new BufferedInputStream(this.getClass().getResourceAsStream("WebContent.zip"))) {
+					if (resourcesZipStream!=null) {
+						try (ZipInputStream resourceStream = new ZipInputStream(resourcesZipStream)) {
+							ZipEntry entry;
+							while ((entry = resourceStream.getNextEntry())!=null) {
+								String entryPath = applicationConfigurationPage.webContentBaseName.getText().trim();
+								if (entryPath.length()==0) {
+									entryPath = entry.getName();
+								} else {
+									entryPath += "/" + entry.getName();
+								}
+								if (entry.isDirectory()) {
+									createResource(project.getProject(), entryPath, null, progressMonitor);
+								} else {
+									createResource(
+											project.getProject(), 
+											entryPath, 
+											new FilterInputStream(resourceStream) {
+												
+												@Override
+												public void close()	throws IOException {
+													// NOP.
+												}
+												
+											}, 
+											progressMonitor);
+								}
+							}
+						}
+					}
+				}
+				
+				if (applicationConfigurationPage.btnRoutingServlet.getSelection()) {
+					IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/index.html");	
+					target.create(new ByteArrayInputStream(new IndexRenderer().generate(this).getBytes()), false, progressMonitor);		
+				}				
+			}
+			
+			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ApplicationPomRenderer().generate(this).getBytes()), false, progressMonitor);		
+			project.getProject().getFile("plugin.xml").create(new ByteArrayInputStream(new ApplicationPluginRenderer().generate(this).getBytes()), false, progressMonitor);		
+			project.getProject().getFile(getDashedName()+".nasdanika_cdo_security").create(new ByteArrayInputStream(new SecurityPolicyRenderer().generate(this).getBytes()), false, progressMonitor);		
+
+			if (applicationConfigurationPage.btnRepository.getSelection()) {
+				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+				if (!osgiInfFolder.exists()) {
+					osgiInfFolder.create(false, true, progressMonitor);
+				}
+				osgiInfFolder.getFile(getDashedName()+"-repository.xml").create(new ByteArrayInputStream(new RepositoryRenderer().generate(this).getBytes()), false, progressMonitor);						
+			}
+			if (applicationConfigurationPage.btnServer.getSelection()) {
+				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+				if (!osgiInfFolder.exists()) {
+					osgiInfFolder.create(false, true, progressMonitor);
+				}
+				osgiInfFolder.getFile(getDashedName()+(applicationConfigurationPage.btnRepository.getSelection() ? "-server.xml" : "-session-provider.xml")).create(new ByteArrayInputStream(new ServerRenderer().generate(this).getBytes()), false, progressMonitor);						
+			}
+			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {
+				IFolder sourceFolder = project.getProject().getFolder("src");
+				IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getApplicationArtifactId(), false, progressMonitor);
+				pkg.createCompilationUnit(getJavaName()+"CDOTransactionContextProviderComponent.java", new CDOTransactionContextProviderRenderer().generate(this), false, progressMonitor);
+				
+				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+				if (!osgiInfFolder.exists()) {
+					osgiInfFolder.create(false, true, progressMonitor);
+				}
+				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-provider.xml").create(new ByteArrayInputStream(new CDOTransactionContextProviderComponentRenderer().generate(this).getBytes()), false, progressMonitor);										
+			}
+			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
+				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+				if (!osgiInfFolder.exists()) {
+					osgiInfFolder.create(false, true, progressMonitor);
+				}
+				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-route.xml").create(new ByteArrayInputStream(new CDOTransactionContextRouteRenderer().generate(this).getBytes()), false, progressMonitor);														
+			}
+			// TODO - components, META-INF entries
+		}
+	}
+	
+	public boolean isRepositoryComponent() {
+		return applicationConfigurationPage.btnRepository.getSelection();
+	}
+	
+	private IResource createResource(IProject project, String path, InputStream content, IProgressMonitor progressMonitor) throws CoreException {
+		while (path.endsWith("/")) {
+			path = path.substring(0, path.length()-1);
+		}
+		int idx = path.lastIndexOf('/');
+		IContainer container = idx==-1 ? project : (IContainer) createResource(project, path.substring(0, idx), null, progressMonitor);
+		if (content==null) {
+			IFolder ret = container.getFolder(new Path(path.substring(idx+1)));
+			if (!ret.exists()) {
+				ret.create(false, true, progressMonitor);
+			}
+			return ret;
+		}
+		IFile ret = container.getFile(new Path(path.substring(idx+1)));
+		ret.create(content, true, progressMonitor);
+		return ret;
+	}
+
+	public String getJavaName() {
+		String[] tokens = generalInformationPage.nameField.getText().split(" ");
+		for (int i=0; i<tokens.length; ++i) {
+			tokens[i] = StringUtils.capitalize(tokens[i]);
+		}
+		return StringUtils.join(tokens);
+	}
+
+	public String getDashedName() {
+		return generalInformationPage.nameField.getText().toLowerCase().replace(' ', '-');
 	}
 
 	private void generateTestsProject(IProgressMonitor progressMonitor) throws Exception {
@@ -205,6 +404,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		createPluginProject(
 				getTestsArtifactId(), 
 				Collections.singletonList("mybundle"), 
+				Collections.<String>emptyList(), 
 				Collections.<String>emptyList(), 
 				Collections.singletonList("my.package"), 
 				progressMonitor);
@@ -221,7 +421,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		FeatureData featureData = new FeatureData();
 		featureData.id = getGroupId()+".feature";
 		featureData.name = generalInformationPage.nameField.getText()+" feature";
-		featureData.version = getVersion();
+		featureData.version = getVersion()+".qualifier";
 		new CreateFeatureProjectOperation(project, location, featureData, null, getShell()) {
 			
 			@Override
@@ -407,12 +607,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
 		}
 
-		IFile pom = project.getFile("pom.xml");	
-		// TODO - repository renderer
-		pom.create(new ByteArrayInputStream(new AggregatorPomRenderer().generate(this).getBytes()), false, progressMonitor);
-		// TODO - category, product(s)
+		project.getFile("pom.xml").create(new ByteArrayInputStream(new RepositoryPomRenderer().generate(this).getBytes()), false, progressMonitor);
+		project.getFile("category.xml").create(new ByteArrayInputStream(new CategoryRenderer().generate(this).getBytes()), false, progressMonitor);
+		project.getFile(getGroupId()+".product").create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
 	}
-
+	
 	private void generateTargetProject(IProgressMonitor progressMonitor) throws Exception {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
@@ -473,10 +672,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			manifest.print("Bundle-Name: ");
 			manifest.println(genModelContainerPath.segment(0));
 			manifest.print("Bundle-SymbolicName: ");
-			manifest.print(CodeGenUtil.validPluginID(genModelContainerPath
-					.segment(0)));
+			manifest.print(CodeGenUtil.validPluginID(genModelContainerPath.segment(0)));
 			manifest.println("; singleton:=true");
-			manifest.println("Bundle-Version: 0.1.0.qualifier");
+			manifest.println("Bundle-Version: "+getVersion()+".qualifier");
 			manifest.print("Require-Bundle: ");
 			String[] requiredBundles = getRequiredBundles();
 			for (int i = 0, size = requiredBundles.length; i < size;) {
@@ -573,6 +771,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	public String getActorImplArtifactId() {		
+		if (!projectsPage.btnActorImpl.getSelection()) {
+			return null;
+		}
 		String ret = getGroupId();
 		if (projectsPage.uiDriverSuffix.getText().trim().length()>0) {
 			ret+="."+projectsPage.uiDriverSuffix.getText();
@@ -584,6 +785,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	public String getPageImplArtifactId() {		
+		if (!projectsPage.btnPageImpl.getSelection()) {
+			return null;
+		}
 		String ret = getGroupId();
 		if (projectsPage.uiDriverSuffix.getText().trim().length()>0) {
 			ret+="."+projectsPage.uiDriverSuffix.getText();
@@ -648,6 +852,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			Iterable<String> requiredBundles,
 			Collection<String> importedPackages, 
 			Collection<String> exportedPackages, 
+			Collection<String> serviceComponents,
 			IProgressMonitor progressMonitor) throws Exception {
 		
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -712,7 +917,14 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]),	new SubProgressMonitor(progressMonitor, 1));
 
 		javaProject.setOutputLocation(new Path("/" + name + "/bin"), new SubProgressMonitor(progressMonitor, 1));
-		createManifest(name, requiredBundles, importedPackages, exportedPackages, progressMonitor, project);
+		createManifest(
+				name, 
+				requiredBundles, 
+				importedPackages, 
+				exportedPackages, 
+				serviceComponents,
+				progressMonitor, 
+				project);
 		createBuildProps(progressMonitor, project);
 		return javaProject;
 	}
@@ -747,6 +959,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			Iterable<String> requiredBundles,
 			Collection<String> importedPackages,
 			Collection<String> exportedPackages, 
+			Collection<String> serviceComponents,
 			IProgressMonitor progressMonitor, 
 			IProject project) throws Exception {
 		StringBuilder manifestBuilder = new StringBuilder("Manifest-Version: 1.0").append(System.lineSeparator());
@@ -763,6 +976,18 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				manifestBuilder.append(",");				
 			}
 			manifestBuilder.append(System.lineSeparator());
+		}
+
+		if (serviceComponents != null && !serviceComponents.isEmpty()) {
+			manifestBuilder.append("Service-Component:");
+			Iterator<String> scit = serviceComponents.iterator();
+			while (scit.hasNext()) {
+				manifestBuilder.append(" ").append(scit.next());
+				if (scit.hasNext()) {
+					manifestBuilder.append(",");				
+				}
+				manifestBuilder.append(System.lineSeparator());
+			}
 		}
 
 		if (exportedPackages != null && !exportedPackages.isEmpty()) {
@@ -828,6 +1053,32 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 						|| applicationConfigurationPage.btnSessionInitializer.getSelection()
 						|| applicationConfigurationPage.btnTransactionContextProvider.getSelection()
 						|| applicationConfigurationPage.btnTransactionRoute.getSelection());
+	}
+
+	public Object getName() {		
+		return generalInformationPage.nameField.getText();
+	}
+
+	public Object getApplicationPlugin() {
+		if (projectsPage.btnApplication.getSelection()) {
+			return getApplicationArtifactId();
+		}
+		if (projectsPage.btnTests.getSelection()) {
+			return getTestsArtifactId();
+		}
+		return null;
+	}
+
+	public String getRoutingServletAlias() {
+		return applicationConfigurationPage.btnRoutingServlet.getSelection() ? applicationConfigurationPage.routingServletAlias.getText() : null;
+	}
+
+	public String getWebContentAlias() {
+		return applicationConfigurationPage.btnWebContent.getSelection() ? applicationConfigurationPage.webContentAlias.getText() : null;
+	}
+
+	public String getWebContentBaseName() {
+		return applicationConfigurationPage.btnWebContent.getSelection() ? applicationConfigurationPage.webContentBaseName.getText() : null;
 	}
 	
 }

@@ -1,0 +1,27 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="CDOTransactionContextProviderRenderer" skeleton="../Renderer.skeleton" %>
+package <%=wizard.getApplicationArtifactId()%>;
+
+import org.eclipse.emf.cdo.eresource.CDOResource;
+import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.cdo.CDOTransactionContextProviderComponent;
+import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.LoginPasswordCredentials;
+
+public class <%=wizard.getJavaName()%>CDOTransactionContextProviderComponent extends CDOTransactionContextProviderComponent<LoginPasswordCredentials> {
+
+	@SuppressWarnings("unchecked")
+	@Override
+	protected ProtectionDomain<LoginPasswordCredentials> getProtectionDomain(CDOTransaction view) {
+		CDOResource res = view.getResource("<%=wizard.getJavaName()%>");
+		if (res!=null) {
+			for (EObject e: res.getContents()) {
+				if (e instanceof ProtectionDomain) {
+					return (ProtectionDomain<LoginPasswordCredentials>) e;
+				}
+			}
+		}
+		return null;
+	}
+
+}

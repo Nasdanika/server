@@ -1,0 +1,12 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="CategoryRenderer" skeleton="Renderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+   <feature url="features/<%=wizard.getGroupId()%>.feature_<%=wizard.getVersion()%>.qualifier.jar" id="<%=wizard.getGroupId()%>.feature" version="<%=wizard.getVersion()%>.qualifier">
+      <category name="<%=wizard.getGroupId()%>.category"/>
+   </feature>
+   <category-def name="<%=wizard.getGroupId()%>.category" label="<%=wizard.getName()%>">
+      <description>
+         <%=wizard.getGroupId()%>.
+      </description>
+   </category-def>
+</site>

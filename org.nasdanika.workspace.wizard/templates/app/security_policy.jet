@@ -1,0 +1,11 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="SecurityPolicyRenderer" skeleton="../Renderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<org.nasdanika.cdo.security:SecurityPolicyContainer xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:org.nasdanika.cdo.security="urn:org.nasdanika.cdo.security">
+  <actions name="*" targetNamespaceURI="urn:org.nasdanika.cdo.security" targetClass="User" grantable="true">
+    <pathPatterns>.+</pathPatterns>
+  </actions>
+  <actions name="read" targetNamespaceURI="urn:<%=wizard.getModelArtifactId()%>" targetClass="<%=wizard.getJavaName()%>"/>
+  <actions name="invoke" targetNamespaceURI="java://<%=wizard.getApplicationArtifactId()%>" targetClass="<%=wizard.getJavaName()%>Service">
+    <pathPatterns>.+</pathPatterns>
+  </actions>
+</org.nasdanika.cdo.security:SecurityPolicyContainer>

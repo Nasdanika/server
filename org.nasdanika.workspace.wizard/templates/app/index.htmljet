@@ -1,0 +1,10 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="IndexRenderer" skeleton="../Renderer.skeleton" %>
+<html>
+	<head>
+		<title><%=wizard.getName()%></title>
+		<META http-equiv="refresh" content="0;URL=<%=wizard.getRoutingServletAlias()%>/transaction/elements/<%=wizard.getJavaName()%>/0.html">
+	</head>
+	<body>
+		Redirecting to the home page.
+	</body>
+</html>

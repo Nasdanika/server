@@ -25,7 +25,7 @@ public class ParentPomRenderer {
   protected final String TEXT_10 = NL + "\t</modules>" + NL + "</project>";
   protected final String TEXT_11 = NL;
 
-public String generate(WorkspaceWizard wizard) throws Exception
+public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);

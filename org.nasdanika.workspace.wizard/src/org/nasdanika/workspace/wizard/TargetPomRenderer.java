@@ -20,7 +20,7 @@ public class TargetPomRenderer {
   protected final String TEXT_5 = "-SNAPSHOT</version>" + NL + "  \t<relativePath>../";
   protected final String TEXT_6 = ".parent</relativePath>" + NL + "  </parent>" + NL + "</project>";
 
-public String generate(WorkspaceWizard wizard) throws Exception
+public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);

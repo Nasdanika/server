@@ -4,11 +4,11 @@
 <target includeMode="feature" name="<%=wizard.getGroupId()%>.target" sequenceNumber="3">
 	<locations>
 		<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="planner" includeSource="true" type="InstallableUnit">
-			<% if (wizard.isIncludeJetty()) { %><unit id="org.nasdanika.server.jetty.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
-			<% if (wizard.isIncludeNasdanika()) { %><unit id="org.nasdanika.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
-			<% if (wizard.isIncludeEquinox()) { %><unit id="org.nasdanika.equinox.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
-			<% if (wizard.isIncludeWebTest()) { %><unit id="org.nasdanika.webtest.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
-			<% if (wizard.isIncludeCdo()) { %><unit id="org.nasdanika.cdo.feature.feature.group" version="<%=wizard.getTargetVersion()%>"/><% } %>
+			<% if (wizard.isIncludeJetty()) { %><unit id="org.nasdanika.server.jetty.feature.feature.group"/><% } %>
+			<% if (wizard.isIncludeNasdanika()) { %><unit id="org.nasdanika.feature.feature.group"/><% } %>
+			<% if (wizard.isIncludeEquinox()) { %><unit id="org.nasdanika.equinox.feature.feature.group"/><% } %>
+			<% if (wizard.isIncludeWebTest()) { %><unit id="org.nasdanika.webtest.feature.feature.group"/><% } %>
+			<% if (wizard.isIncludeCdo()) { %><unit id="org.nasdanika.cdo.feature.feature.group"/><% } %>
 			<repository location="http://www.nasdanika.org/server/repository"/>
 		</location>
 	</locations>

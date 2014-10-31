@@ -1,7 +1,7 @@
 public class CLASS {
 
 
-public String generate(WorkspaceWizard wizard) throws Exception {
+public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception {
      return "";
    }
  }

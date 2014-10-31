@@ -1,0 +1,66 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="ApplicationPluginRenderer" skeleton="../Renderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <% if (wizard.getRoutingServletAlias()!=null) { %>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="<%=wizard.getRoutingServletAlias()%>"
+            class="org.nasdanika.web.RoutingServlet">
+         <init-param
+               name="json-pretty-print"
+               value="true">
+         </init-param>
+         <init-param
+               name="default-access-decision"
+               value="deny">
+         </init-param>
+      </servlet>
+   </extension>
+   <% } %>
+   <% if (wizard.getWebContentAlias()!=null) { %>
+   <extension
+         point="org.eclipse.equinox.http.registry.resources">
+      <resource
+            alias="<%=wizard.getWebContentAlias()%>"
+            base-name="<%=wizard.getWebContentBaseName()%>">
+      </resource>
+   </extension>
+   <% } %>
+   <extension point="org.nasdanika.web.route">
+      <object_route
+            class="org.nasdanika.web.routes.ServiceRoute"
+            method="*"
+            pattern="[^/]+/services/.+"
+            target="org.eclipse.emf.cdo.view.CDOView">
+         <property
+               name="offset"
+               value="2">
+         </property>
+      </object_route>
+   </extension>
+   <% if (wizard.getWebContentAlias()!=null) { %>
+   <extension point="org.nasdanika.web.html_factory">
+      <default_html_factory
+            bootstrapCssContainer="/bootstrap/css">
+            <script>
+               /js/jquery-1.11.1.min.js
+            </script>
+            <script>
+               /js/underscore-min.js
+            </script>
+            <script>/js/backbone-min.js</script>
+            <script>/bootstrap/js/bootstrap.min.js</script>
+            <script>
+               /js/require.js
+            </script>
+      </default_html_factory>
+   </extension>
+   <% } %>
+   <extension point="org.nasdanika.cdo.security.security_policy">
+      <policy_resource
+            resource="<%=wizard.getJavaName()%>.nasdanika_cdo_security">
+      </policy_resource>
+   </extension>
+</plugin>

@@ -1,0 +1,41 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="SessionInitializerRenderer" skeleton="../Renderer.skeleton" %>
+package <%=wizard.getApplicationArtifactId()%>;
+
+import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
+import org.eclipse.emf.cdo.eresource.CDOResource;
+import org.eclipse.emf.cdo.session.CDOSession;
+import org.eclipse.emf.cdo.transaction.CDOCommitContext;
+import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.eclipse.emf.cdo.util.CommitException;
+import org.nasdanika.cdo.CDOSessionInitializer;
+
+import <%=wizard.getModelArtifactId()%>.<%=wizard.getJavaName()%>Factory;
+import <%=wizard.getModelArtifactId()%>.<%=wizard.getJavaName()%>Package;
+import <%=wizard.getModelArtifactId()%>.<%=wizard.getJavaName()%>;
+
+public class <%=wizard.getJavaName()%>SessionInitializerComponent implements CDOSessionInitializer {
+	
+	@Override
+	public void init(CDOSession session) {
+		// Register packages
+		CDOPackageRegistry packageRegistry = session.getPackageRegistry();
+		packageRegistry.putEPackage(<%=wizard.getJavaName()%>Package.eINSTANCE);
+		
+		// Populate with initial data if empty.
+		CDOTransaction transaction = session.openTransaction();				
+		try {
+			CDOResource cRes = transaction.getOrCreateResource("/<%=wizard.getJavaName()%>");
+			if (cRes.getContents().isEmpty()) {
+				// Create initial content
+				<%=wizard.getJavaName()%> rootElement = <%=wizard.getJavaName()%>Factory.eINSTANCE.create<%=wizard.getJavaName()%>();
+				// TODO - configure root and add sub-elements
+				cRes.getContents().add(rootElement);
+			}
+			
+			transaction.commit();
+		} catch (CommitException e) {
+			e.printStackTrace();
+		}
+	}
+
+}

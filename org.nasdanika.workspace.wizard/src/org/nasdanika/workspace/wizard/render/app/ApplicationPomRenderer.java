@@ -1,20 +1,20 @@
-package org.nasdanika.workspace.wizard;
+package org.nasdanika.workspace.wizard.render.app;
 
-public class FeaturePomRenderer {
+public class ApplicationPomRenderer {
 
 
   protected static String nl;
-  public static synchronized FeaturePomRenderer create(String lineSeparator)
+  public static synchronized ApplicationPomRenderer create(String lineSeparator)
   {
     nl = lineSeparator;
-    FeaturePomRenderer result = new FeaturePomRenderer();
+    ApplicationPomRenderer result = new ApplicationPomRenderer();
     nl = null;
     return result;
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">" + NL + "  <modelVersion>4.0.0</modelVersion>" + NL + "  <artifactId>";
-  protected final String TEXT_2 = ".feature</artifactId>" + NL + "  <packaging>eclipse-feature</packaging>" + NL + "  <parent>" + NL + "  \t<groupId>";
+  protected final String TEXT_1 = "<project xmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\">" + NL + "  <modelVersion>4.0.0</modelVersion>" + NL + "  <artifactId>";
+  protected final String TEXT_2 = "</artifactId>" + NL + "  <packaging>eclipse-plugin</packaging>" + NL + "  <parent>" + NL + "  \t<groupId>";
   protected final String TEXT_3 = "</groupId>" + NL + "  \t<artifactId>";
   protected final String TEXT_4 = ".parent</artifactId>" + NL + "  \t<version>";
   protected final String TEXT_5 = "-SNAPSHOT</version>" + NL + "  \t<relativePath>../";
@@ -24,7 +24,7 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);
-    stringBuffer.append(wizard.getGroupId());
+    stringBuffer.append(wizard.getApplicationArtifactId());
     stringBuffer.append(TEXT_2);
     stringBuffer.append(wizard.getGroupId());
     stringBuffer.append(TEXT_3);
