@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -165,51 +166,75 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	private void generateActorSpecProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO Condition
-		IJavaProject project = createPluginProject(
-				getActorSpecArtifactId(), 
-				Collections.singletonList("mybundle"), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.singletonList("my.package"), 
-				progressMonitor);
-		// TODO - factory, Actor
+		if (projectsPage.btnActorSpec.getSelection()) {
+			IJavaProject project = createPluginProject(
+					getActorSpecArtifactId(), 
+					Collections.singletonList((projectsPage.btnPageSpec.getSelection() ? getPageSpecArtifactId() : "org.nasdanika.webtest")+";visibility:=reexport"), 
+					Collections.<String>emptyList(), 
+					Collections.singletonList(getActorSpecArtifactId()), 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					progressMonitor);
+			
+			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
+			
+			IFolder sourceFolder = project.getProject().getFolder("src");
+			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getActorSpecArtifactId(), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"ActorFactory.java", new ActorFactorySpecRenderer().generate(this), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"Actor.java", new ActorSpecRenderer().generate(this), false, progressMonitor);			
+		}
 	}
 
 	private void generatePageSpecProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO Condition
-		IJavaProject project = createPluginProject(
-				getPageSpecArtifactId(), 
-				Collections.singletonList("mybundle"), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.singletonList("my.package"), 
-				progressMonitor);
-		// TODO - factory, Actor
+		if (projectsPage.btnPageSpec.getSelection()) {
+			IJavaProject project = createPluginProject(
+					getPageSpecArtifactId(), 
+					Collections.singletonList("org.nasdanika.webtest;visibility:=reexport"), 
+					Collections.<String>emptyList(), 
+					Collections.singletonList(getPageSpecArtifactId()), 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					progressMonitor);
+			
+			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new PageSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
+			
+			IFolder sourceFolder = project.getProject().getFolder("src");
+			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getPageSpecArtifactId(), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"PageFactory.java", new PageFactorySpecRenderer().generate(this), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"Page.java", new PageSpecRenderer().generate(this), false, progressMonitor);			
+		}
 	}
 
 	private void generateActorImplProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO Condition
-		IJavaProject project = createPluginProject(
-				getActorImplArtifactId(), 
-				Collections.singletonList("mybundle"), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.singletonList("my.package"), 
-				progressMonitor);
-		// TODO - factory, Actor
 	}
 
 	private void generatePageImplProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO Condition
-		IJavaProject project = createPluginProject(
-				getPageImplArtifactId(), 
-				Collections.singletonList("mybundle"), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.singletonList("my.package"), 
-				progressMonitor);
-		// TODO - factory, Actor
+		if (projectsPage.btnPageImpl.getSelection()) {
+			Set<String> requiredBundles = new HashSet<>();
+			requiredBundles.add("org.eclipse.osgi.services");
+			requiredBundles.add((projectsPage.btnPageSpec.getSelection() ? getPageSpecArtifactId() : "org.nasdanika.webtest")+";visibility:=reexport");
+			IJavaProject project = createPluginProject(
+					getPageImplArtifactId(), 
+					requiredBundles, 
+					Collections.<String>emptyList(), 
+					Collections.singleton(getPageImplArtifactId()), 
+					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
+					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
+					progressMonitor);
+			
+			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new PageImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
+			
+			IFolder sourceFolder = project.getProject().getFolder("src");
+			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getPageImplArtifactId(), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"PageFactoryImpl.java", new PageFactoryImplRenderer().generate(this), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"PageImpl.java", new PageImplRenderer().generate(this), false, progressMonitor);			
+				
+			IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+			if (!osgiInfFolder.exists()) {
+				osgiInfFolder.create(false, true, progressMonitor);
+			}
+			osgiInfFolder.getFile(getDashedName()+"-page-factory.xml").create(new ByteArrayInputStream(new PageFactoryComponentRenderer().generate(this).getBytes()), false, progressMonitor);										
+		}
 	}
 
 	private void generateApplicationProject(IProgressMonitor progressMonitor) throws Exception {
@@ -250,28 +275,42 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 //					 org.eclipse.jetty.util;bundle-version="8.1.14",
 //					 org.json;bundle-version="1.0.0",
 
+			Collection<String> binIncludes = new HashSet<String>();
 			Collection<String> components = new ArrayList<>();
 			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
 				components.add("OSGI-INF/"+getDashedName()+"-session-initializer.xml");
+				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnRepository.getSelection()) {
 				components.add("OSGI-INF/"+getDashedName()+"-repository.xml");
+				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnServer.getSelection()) {				
 				components.add("OSGI-INF/"+getDashedName()+(applicationConfigurationPage.btnRepository.getSelection() ? "-server.xml" : "-session-provider.xml"));
+				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {
 				components.add("OSGI-INF/"+getDashedName()+"-transaction-context-provider.xml");
+				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
 				components.add("OSGI-INF/"+getDashedName()+"-transaction-route.xml");
+				binIncludes.add("OSGI-INF/");
 			}
+			if (applicationConfigurationPage.btnWebContent.getSelection()) {
+				String webContentBaseName = applicationConfigurationPage.webContentBaseName.getText().trim();
+				binIncludes.add(webContentBaseName+"/");
+			}
+			binIncludes.add("plugin.xml");
+			binIncludes.add(getDashedName()+".nasdanika_cdo_security");
+			
 			IJavaProject project = createPluginProject(
 					getGroupId()+"."+projectsPage.applicationSuffix.getText(), 
 					requiredBundles, 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
 					components, 
+					binIncludes,
 					progressMonitor);
 			
 			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
@@ -361,7 +400,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				}
 				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-route.xml").create(new ByteArrayInputStream(new CDOTransactionContextRouteRenderer().generate(this).getBytes()), false, progressMonitor);														
 			}
-			// TODO - components, META-INF entries
 		}
 	}
 	
@@ -407,6 +445,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				Collections.<String>emptyList(), 
 				Collections.<String>emptyList(), 
 				Collections.singletonList("my.package"), 
+				Collections.<String>emptyList(), 
 				progressMonitor);
 		// TODO - plugin.xml or fragment.xml
 	}
@@ -749,6 +788,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	public String getActorSpecArtifactId() {
+		if (!projectsPage.btnActorSpec.getSelection()) {
+			return null;
+		}
 		String ret = getGroupId();
 		if (projectsPage.uiDriverSuffix.getText().trim().length()>0) {
 			ret+="."+projectsPage.uiDriverSuffix.getText();
@@ -760,6 +802,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	public String getPageSpecArtifactId() {		
+		if (!projectsPage.btnPageSpec.getSelection()) {
+			return null;
+		}
 		String ret = getGroupId();
 		if (projectsPage.uiDriverSuffix.getText().trim().length()>0) {
 			ret+="."+projectsPage.uiDriverSuffix.getText();
@@ -853,6 +898,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			Collection<String> importedPackages, 
 			Collection<String> exportedPackages, 
 			Collection<String> serviceComponents,
+			Collection<String> binIncludes,
 			IProgressMonitor progressMonitor) throws Exception {
 		
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -925,7 +971,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				serviceComponents,
 				progressMonitor, 
 				project);
-		createBuildProps(progressMonitor, project);
+		createBuildProps(progressMonitor, binIncludes, project);
 		return javaProject;
 	}
 
@@ -946,11 +992,21 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		progressMonitor.worked(1);
 	}
 
-	private static void createBuildProps(IProgressMonitor progressMonitor, IProject project) throws Exception {
+	private static void createBuildProps(
+			IProgressMonitor progressMonitor, 
+			Collection<String> binIncludes, 
+			IProject project) throws Exception {
 		StringBuilder bpContent = new StringBuilder("source.. = src")
 			.append(System.lineSeparator())
-			.append("bin.includes = META-INF/,.")
-			.append(System.lineSeparator());
+			.append("bin.includes = ");
+		
+		if (binIncludes != null) {
+			for (String bi: binIncludes) {
+				bpContent.append(bi).append(",");
+			}
+		}
+
+		bpContent.append("META-INF/,.").append(System.lineSeparator());
 		createFile("build.properties", project, bpContent.toString(), progressMonitor);
 	}
 

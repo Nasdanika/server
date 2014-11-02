@@ -1,0 +1,15 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="PageSpecRenderer" skeleton="Renderer.skeleton" %>
+package <%=wizard.getPageSpecArtifactId()%>;
+
+import org.nasdanika.webtest.Description;
+import org.nasdanika.webtest.Page;
+import org.nasdanika.webtest.Title;
+import org.openqa.selenium.WebDriver;
+
+@Title("<%=wizard.getName()%> Page")
+@Description("Page class for testing <%=wizard.getName()%>")
+public interface <%=wizard.getJavaName()%>Page extends Page<WebDriver> {
+	
+
+	
+}

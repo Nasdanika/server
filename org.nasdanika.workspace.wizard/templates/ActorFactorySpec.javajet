@@ -1,0 +1,15 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="ActorFactorySpecRenderer" skeleton="Renderer.skeleton" %>
+package <%=wizard.getActorSpecArtifactId()%>;
+
+<% if (wizard.getPageSpecArtifactId()!=null) { %>
+import <%=wizard.getPageSpecArtifactId()%>.<%=wizard.getJavaName()%>PageFactory;
+<% } %>
+import org.openqa.selenium.WebDriver;
+
+public interface <%=wizard.getJavaName()%>ActorFactory {
+	
+	<%=wizard.getJavaName()%>PageFactory getPageFactory();
+	
+	<%=wizard.getJavaName()%>Actor create<%=wizard.getJavaName()%>Actor(WebDriver webDriver);
+
+}

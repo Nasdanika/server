@@ -1,0 +1,10 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="PageFactorySpecRenderer" skeleton="Renderer.skeleton" %>
+package <%=wizard.getPageSpecArtifactId()%>;
+
+import org.openqa.selenium.WebDriver;
+
+public interface <%=wizard.getJavaName()%>PageFactory {
+	
+	<%=wizard.getJavaName()%>Page create<%=wizard.getJavaName()%>Page(WebDriver webDriver);
+	
+}

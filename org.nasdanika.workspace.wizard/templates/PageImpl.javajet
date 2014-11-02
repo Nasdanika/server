@@ -1,0 +1,25 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="PageImplRenderer" skeleton="Renderer.skeleton" %>
+package <%=wizard.getPageImplArtifactId()%>;
+
+import <%=wizard.getPageSpecArtifactId()%>.<%=wizard.getJavaName()%>Page;
+import org.openqa.selenium.WebDriver;
+
+public class <%=wizard.getJavaName()%>PageImpl implements <%=wizard.getJavaName()%>Page {
+		
+	private <%=wizard.getJavaName()%>PageFactoryImpl factory;
+	private WebDriver webDriver;	
+
+	public <%=wizard.getJavaName()%>PageImpl(WebDriver webDriver) {
+		this.webDriver = webDriver;
+	}
+	
+	public void setFactory(<%=wizard.getJavaName()%>PageFactoryImpl factory) {
+		this.factory = factory;
+	}
+	
+	@Override
+	public WebDriver getWebDriver() {
+		return webDriver;
+	}
+
+}
