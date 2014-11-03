@@ -1,0 +1,67 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="TestRenderer" skeleton="Renderer.skeleton" %>
+package <%=wizard.getTestsArtifactId()%>;
+
+import java.util.concurrent.TimeUnit;
+
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
+import <%=wizard.getActorSpecArtifactId()%>.<%=wizard.getJavaName()%>ActorFactory;
+import <%=wizard.getActorSpecArtifactId()%>.<%=wizard.getJavaName()%>Actor;
+import <%=wizard.getPageSpecArtifactId()%>.<%=wizard.getJavaName()%>Page;
+import org.nasdanika.webtest.Actor;
+import org.nasdanika.webtest.ActorFactory;
+import org.nasdanika.webtest.Description;
+import org.nasdanika.webtest.NasdanikaWebTestRunner;
+import org.nasdanika.webtest.Screenshot;
+import org.nasdanika.webtest.WebTest;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+@RunWith(NasdanikaWebTestRunner.class)
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@Description("Tests of <%=wizard.getName()%>")
+public class <%=wizard.getJavaName()%>Test implements WebTest<WebDriver> {
+	private WebDriver driver;
+	
+	@Override
+	public WebDriver getWebDriver() {
+		return driver;
+	}
+		
+	@ActorFactory
+	public <%=wizard.getJavaName()%>ActorFactory actorFactory;
+
+	@Before
+	public void setUp() throws Exception {
+        driver = new FirefoxDriver(); // new ChromeDriver();
+        driver.manage().timeouts().pageLoadTimeout(3, TimeUnit.SECONDS);
+	}
+	
+	@Test
+	@Description("Test 1")
+	@Screenshot({Screenshot.When.AFTER, Screenshot.When.EXCEPTION})
+	public void testOne() throws Exception {
+		<%=wizard.getJavaName()%>Actor actor = actorFactory.create<%=wizard.getJavaName()%>Actor(getWebDriver());
+		<%=wizard.getJavaName()%>Page page = actor.navigateTo<%=wizard.getJavaName()%>Page();
+		Assert.assertNotNull(page); // TODO - implement assertions
+	}
+	
+	@After
+	public void quitDriver() throws Exception {
+		if (driver!=null) {
+	        driver.quit();
+	        driver = null;
+		}
+	}
+
+	@Override
+	public long getScreenshotDelay() {
+		return 0;
+	}
+	
+}

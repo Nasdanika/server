@@ -1,0 +1,14 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="TestSuiteRenderer" skeleton="Renderer.skeleton" %>
+package <%=wizard.getTestsArtifactId()%>;
+
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite.SuiteClasses;
+import org.nasdanika.webtest.NasdanikaWebTestSuite;
+import org.nasdanika.webtest.Title;
+
+@RunWith(NasdanikaWebTestSuite.class)
+@Title("<%=wizard.getName()%> test report")
+@SuiteClasses({<%=wizard.getJavaName()%>Test.class})
+public class <%=wizard.getJavaName()%>Tests {
+	
+}

@@ -174,6 +174,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singletonList(getActorSpecArtifactId()), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
+					false,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -194,6 +195,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singletonList(getPageSpecArtifactId()), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
+					false,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new PageSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -217,6 +219,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singleton(getActorImplArtifactId()), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
+					false,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -246,6 +249,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singleton(getPageImplArtifactId()), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
+					false,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new PageImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -269,11 +273,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			
 			if (projectsPage.btnModel.getSelection()) {
 				requiredBundles.add(getModelArtifactId());
-			}
-			if (projectsPage.btnActorSpec.getSelection()) {
-				requiredBundles.add(getActorSpecArtifactId());
-			} else if (projectsPage.btnPageSpec.getSelection()) {
-				requiredBundles.add(getPageSpecArtifactId());
 			}
 			if (applicationConfigurationPage.btnRepository.getSelection()) {
 				requiredBundles.add("org.nasdanika.cdo.h2");
@@ -337,6 +336,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.<String>emptyList(), 
 					components, 
 					binIncludes,
+					false,
 					progressMonitor);
 			
 			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
@@ -464,16 +464,43 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	private void generateTestsProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO Condition
-		createPluginProject(
-				getTestsArtifactId(), 
-				Collections.singletonList("mybundle"), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.singletonList("my.package"), 
-				Collections.<String>emptyList(), 
-				progressMonitor);
-		// TODO - plugin.xml or fragment.xml
+		if (projectsPage.btnTests.getSelection()) {
+			Collection<String> requiredBundles = new HashSet<>();
+			
+			if (projectsPage.btnActorSpec.getSelection()) {
+				requiredBundles.add(getActorSpecArtifactId());
+			} else if (projectsPage.btnPageSpec.getSelection()) {
+				requiredBundles.add(getPageSpecArtifactId());
+			}
+
+			Collection<String> binIncludes = new HashSet<String>();
+			if (!projectsPage.btnApplication.getSelection()) {
+				binIncludes.add("plugin.xml");
+			}
+			
+			IJavaProject project = createPluginProject(
+					getTestsArtifactId(), 
+					requiredBundles, 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					binIncludes,
+					projectsPage.btnApplication.getSelection(),
+					progressMonitor);
+			
+			IFolder sourceFolder = project.getProject().getFolder("src");
+			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getTestsArtifactId(), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"TestRunner.java", new TestRunnerRenderer().generate(this), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"Test.java", new TestRenderer().generate(this), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"Tests.java", new TestSuiteRenderer().generate(this), false, progressMonitor);
+			
+			if (projectsPage.btnApplication.getSelection()) {
+				project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new TestFragmentPomRenderer().generate(this).getBytes()), false, progressMonitor);
+			} else {
+				project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new TestAppPomRenderer().generate(this).getBytes()), false, progressMonitor);
+				project.getProject().getFile("plugin.xml").create(new ByteArrayInputStream(new TestPluginRenderer().generate(this).getBytes()), false, progressMonitor);
+			}
+		}
 	}
 
 	private void generateFeatureProject(IProgressMonitor progressMonitor) throws Exception {
@@ -925,6 +952,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			Collection<String> exportedPackages, 
 			Collection<String> serviceComponents,
 			Collection<String> binIncludes,
+			boolean fragment,
 			IProgressMonitor progressMonitor) throws Exception {
 		
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -995,6 +1023,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				importedPackages, 
 				exportedPackages, 
 				serviceComponents,
+				fragment,
 				progressMonitor, 
 				project);
 		createBuildProps(progressMonitor, binIncludes, project);
@@ -1042,6 +1071,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			Collection<String> importedPackages,
 			Collection<String> exportedPackages, 
 			Collection<String> serviceComponents,
+			boolean fragment,
 			IProgressMonitor progressMonitor, 
 			IProject project) throws Exception {
 		StringBuilder manifestBuilder = new StringBuilder("Manifest-Version: 1.0").append(System.lineSeparator());
@@ -1049,6 +1079,14 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		manifestBuilder.append("Bundle-Name: " + projectName).append(System.lineSeparator());
 		manifestBuilder.append("Bundle-SymbolicName: " + projectName + "; singleton:=true").append(System.lineSeparator()); // TODO - Singleton?
 		manifestBuilder.append("Bundle-Version: ").append(getVersion()).append(System.lineSeparator());
+		if (fragment) {
+			manifestBuilder.append("Fragment-Host: ")
+				.append(getApplicationArtifactId())
+				.append(";bundle-version=\"")
+				.append(getVersion())
+				.append("\"")
+				.append(System.lineSeparator());
+		}
 		manifestBuilder.append("Bundle-RequiredExecutionEnvironment: JavaSE-1.7").append(System.lineSeparator());
 		manifestBuilder.append("Require-Bundle:");
 		Iterator<String> rit = requiredBundles.iterator();
