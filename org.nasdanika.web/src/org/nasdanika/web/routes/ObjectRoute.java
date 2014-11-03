@@ -17,6 +17,8 @@ import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.WebContext;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Routes to object's methods, fields, and resources.
@@ -121,13 +123,19 @@ public class ObjectRoute implements Route {
 				if (RequestMethod.GET.equals(context.getMethod())) {
 					if (context.authorize(target, "resource", resourceName, null)) {
 						// TODO - MIME types.
-						InputStream resourceStream = findResource(target.getClass(), resourceName);
-						if (resourceStream==null) {
+						ResourceInfo resourceInfo = findResource(target.getClass(), resourceName);
+						if (resourceInfo==null) {
 							return Action.NOT_FOUND;
 						}						
-						resourceStream = new BufferedInputStream(resourceStream);
 						
-						try (OutputStream out = new BufferedOutputStream(((HttpContext) context).getResponse().getOutputStream())) {
+						HttpContext httpContext = (HttpContext) context;
+						if (resourceInfo.lastModified!=-1) {
+							httpContext.getResponse().setDateHeader("Last-Modified", resourceInfo.lastModified);
+						}
+						
+						InputStream resourceStream = new BufferedInputStream(resourceInfo.inputStream);
+						
+						try (OutputStream out = new BufferedOutputStream(httpContext.getResponse().getOutputStream())) {
 							for (int b = resourceStream.read(); b!=-1; b = resourceStream.read()) {
 								out.write(b);
 							}
@@ -139,7 +147,7 @@ public class ObjectRoute implements Route {
 					} 
 					return Action.FORBIDDEN;
 				}				
-				return Action.NOT_FOUND;
+				return Action.BAD_REQUEST;
 			case "code":				
 				String codeName = StringUtils.join(context.getPath(), "/", 2, context.getPath().length); 
 				if (RequestMethod.GET.equals(context.getMethod())) {
@@ -160,23 +168,37 @@ public class ObjectRoute implements Route {
 						
 						return null; 
 					} 
-					return Action.FORBIDDEN;
 				}				
+				return Action.NOT_FOUND;
 			}			
 		}
 		return Action.NOT_FOUND;
 	}
+	
+	private class ResourceInfo {
+		ResourceInfo(InputStream is) {
+			this.inputStream = is;
+		}
+		InputStream inputStream;
+		long lastModified = -1;
+		
+	}
 
-	private InputStream findResource(Class<?> clazz, String resourceName) {
+	private ResourceInfo findResource(Class<?> clazz, String resourceName) {
 		if (clazz==null || Object.class.equals(clazz)) {
 			return null;
 		}
 		
-		InputStream ret = clazz.getClassLoader().getResourceAsStream(clazz.getName().replace('.',  '/')+"$"+resourceName);
-		if (ret!=null) {
+		InputStream is = clazz.getClassLoader().getResourceAsStream(clazz.getName().replace('.',  '/')+"$"+resourceName);
+		if (is!=null) {
+			ResourceInfo ret = new ResourceInfo(is);
+			Bundle bundle = FrameworkUtil.getBundle(clazz);
+			if (bundle!=null) {
+				ret.lastModified = bundle.getLastModified();
+			}
 			return ret;
 		}
-		ret = findResource(clazz.getSuperclass(), resourceName);
+		ResourceInfo ret = findResource(clazz.getSuperclass(), resourceName);
 		if (ret!=null) {
 			return ret;
 		}

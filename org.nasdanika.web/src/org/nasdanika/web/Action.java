@@ -21,6 +21,20 @@ public interface Action extends AutoCloseable {
 		
 	};
 	
+	Action BAD_REQUEST = new Action() {
+
+		@Override
+		public Object execute() throws Exception {
+			return ProcessingError.BAD_REQUEST;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP			
+		}
+		
+	};
+	
 	Action FORBIDDEN = new Action() {
 
 		@Override
