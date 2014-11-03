@@ -1,0 +1,15 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="ActorFactoryComponentRenderer" skeleton="Renderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" immediate="true" name="<%=wizard.getName()%> factory">
+   <implementation class="<%=wizard.getActorImplArtifactId()%>.<%=wizard.getJavaName()%>ActorFactoryImpl"/>
+   <reference 
+   		bind="setPageFactory" 
+   		cardinality="1..1" 
+   		interface="<%=wizard.getPageSpecArtifactId()%>.<%=wizard.getJavaName()%>PageFactory" 
+   		name="<%=wizard.getJavaName()%>PageFactory" 
+   		policy="static"/>
+   		
+   <service>
+      <provide interface="<%=wizard.getActorSpecArtifactId()%>.<%=wizard.getJavaName()%>ActorFactory"/>
+   </service>
+</scr:component>

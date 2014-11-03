@@ -206,6 +206,32 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	private void generateActorImplProject(IProgressMonitor progressMonitor) throws Exception {
+		if (projectsPage.btnActorImpl.getSelection()) {
+			Set<String> requiredBundles = new HashSet<>();
+			requiredBundles.add("org.eclipse.osgi.services");
+			requiredBundles.add((projectsPage.btnActorSpec.getSelection() ? getActorSpecArtifactId() : "org.nasdanika.webtest")+";visibility:=reexport");
+			IJavaProject project = createPluginProject(
+					getActorImplArtifactId(), 
+					requiredBundles, 
+					Collections.<String>emptyList(), 
+					Collections.singleton(getActorImplArtifactId()), 
+					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
+					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
+					progressMonitor);
+			
+			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
+			
+			IFolder sourceFolder = project.getProject().getFolder("src");
+			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getActorImplArtifactId(), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"ActorFactoryImpl.java", new ActorFactoryImplRenderer().generate(this), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"ActorImpl.java", new ActorImplRenderer().generate(this), false, progressMonitor);			
+				
+			IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+			if (!osgiInfFolder.exists()) {
+				osgiInfFolder.create(false, true, progressMonitor);
+			}
+			osgiInfFolder.getFile(getDashedName()+"-actor-factory.xml").create(new ByteArrayInputStream(new ActorFactoryComponentRenderer().generate(this).getBytes()), false, progressMonitor);										
+		}
 	}
 
 	private void generatePageImplProject(IProgressMonitor progressMonitor) throws Exception {
