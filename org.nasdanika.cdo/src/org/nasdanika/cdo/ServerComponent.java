@@ -19,6 +19,11 @@ import org.eclipse.net4j.util.container.IManagedContainer;
 import org.eclipse.net4j.util.lifecycle.LifecycleUtil;
 import org.osgi.service.component.ComponentContext;
 
+/**
+ * CDO Server component.
+ * @author Pavel Vlasov
+ *
+ */
 public class ServerComponent {
 	
 	protected static final String TCP_PREFIX = "tcp:";
