@@ -132,7 +132,7 @@ public class ApplicationConfigurationPage extends WizardPage {
 		lblPattern.setText("Pattern:");
 		
 		transactionContextRoutePattern = new Text(grpOsgiComponents, SWT.BORDER);
-		transactionContextRoutePattern.setText("transaction(\\..+)?(/.+)?");
+		transactionContextRoutePattern.setText("transaction(\\.[^/]+)?(/.+)?");
 		transactionContextRoutePattern.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		btnSessionInitializer = new Button(grpOsgiComponents, SWT.CHECK);

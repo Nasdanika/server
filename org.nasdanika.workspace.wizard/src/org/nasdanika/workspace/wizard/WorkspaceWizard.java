@@ -31,6 +31,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -47,11 +48,16 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.pde.core.target.ITargetDefinition;
+import org.eclipse.pde.core.target.ITargetLocation;
+import org.eclipse.pde.core.target.ITargetPlatformService;
+import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
+import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation;
 import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
 import org.eclipse.ui.INewWizard;
@@ -121,6 +127,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				try {
 					modifyWorkspace(progressMonitor);
 				} catch (Exception exception) {
+					MessageDialog.openError(getShell(), "Error generating workspace", exception.toString());
 					GenModelEditPlugin.INSTANCE.log(exception);
 				} finally {
 					progressMonitor.done();
@@ -131,6 +138,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		try {
 			getContainer().run(false, false, operation);
 		} catch (Exception exception) {
+			MessageDialog.openError(getShell(), "Error generating workspace", exception.toString());
 			GenModelEditPlugin.INSTANCE.log(exception);
 			return false;
 		}
@@ -157,12 +165,12 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		generateFeatureProject(progressMonitor);
 		generateParentProject(progressMonitor);
 		generateRepositoryProject(progressMonitor);
-		generateTargetProject(progressMonitor);
 		generateAggregatorProject(progressMonitor);
 		generateActorSpecProject(progressMonitor);
 		generateActorImplProject(progressMonitor);
 		generatePageSpecProject(progressMonitor);
 		generatePageImplProject(progressMonitor);
+		generateTargetProject(progressMonitor);
 	}
 
 	private void generateActorSpecProject(IProgressMonitor progressMonitor) throws Exception {
@@ -728,8 +736,51 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		IFile pom = project.getFile("pom.xml");	
 		pom.create(new ByteArrayInputStream(new TargetPomRenderer().generate(this).getBytes()), false, progressMonitor);
 		
-		IFile target = project.getFile(getGroupId()+".target.target");	
-		target.create(new ByteArrayInputStream(new TargetRenderer().generate(this).getBytes()), false, progressMonitor);		
+		IFile targetFile = project.getFile(getGroupId()+".target.target");	
+//		target.create(new ByteArrayInputStream(new TargetRenderer().generate(this).getBytes()), false, progressMonitor);
+		
+		org.eclipse.pde.core.target.ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
+		
+		List<String> versions = new ArrayList<>();
+		List<String> unitIds = new ArrayList<>();
+		String version = FrameworkUtil.getBundle(this.getClass()).getVersion().toString();
+		if (isIncludeJetty()) { 
+			unitIds.add("org.nasdanika.server.jetty.feature.feature.group");
+			versions.add(version);
+		}
+		if (isIncludeNasdanika()) { 
+			unitIds.add("org.nasdanika.feature.feature.group");
+			versions.add(version);
+		}
+		if (isIncludeEquinox()) { 
+			unitIds.add("org.nasdanika.equinox.feature.feature.group");
+			versions.add(version);
+		}
+		if (isIncludeWebTest()) { 
+			unitIds.add("org.nasdanika.webtest.feature.feature.group");
+			versions.add(version);
+		}
+		if (isIncludeCdo()) { 
+			unitIds.add("org.nasdanika.cdo.feature.feature.group");
+			versions.add(version);
+		}
+		
+		java.net.URI[] repositories = { new java.net.URI("http://www.nasdanika.org/server/repository") };
+		int resolutionFlags = IUBundleContainer.INCLUDE_SOURCE; // | IUBundleContainer.INCLUDE_REQUIRED;		
+		
+		ITargetLocation targetLocation = service.newIULocation(unitIds.toArray(new String[unitIds.size()]), versions.toArray(new String[versions.size()]), repositories, resolutionFlags);			
+
+		ITargetDefinition targetDefinition = service.getTarget(targetFile).getTargetDefinition();
+		targetDefinition.setTargetLocations(new ITargetLocation[] { targetLocation });
+		targetDefinition.setName(getGroupId()+".target");
+		
+		service.saveTargetDefinition(targetDefinition);
+		//org.eclipse.pde.core.target.ITargetDefinition targetDefinition = service.getTarget(target).getTargetDefinition();
+//		for (ITargetLocation tl: targetDefinition.getTargetLocations()) {
+//			tl.resolve(targetDefinition, progressMonitor);
+//		}
+		IStatus rs = targetDefinition.resolve(progressMonitor);
+		System.out.println(rs);
 	}
 
 	private void generateModelProject(IProgressMonitor progressMonitor) throws Exception {
