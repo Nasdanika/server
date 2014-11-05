@@ -45,6 +45,7 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.Wizard;
@@ -126,6 +127,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			protected void execute(IProgressMonitor progressMonitor) {
 				try {
 					modifyWorkspace(progressMonitor);
+				} catch (CoreException exception) {
+					ErrorDialog.openError(getShell(), "Error generating workspace", exception.toString(), exception.getStatus());
+					GenModelEditPlugin.INSTANCE.log(exception);
 				} catch (Exception exception) {
 					MessageDialog.openError(getShell(), "Error generating workspace", exception.toString());
 					GenModelEditPlugin.INSTANCE.log(exception);
