@@ -28,8 +28,12 @@ public class ActorImplRenderer {
   protected final String TEXT_13 = "ActorFactory factory, WebDriver webDriver) {" + NL + "\t\tthis.factory = factory;" + NL + "\t\tthis.webDriver = webDriver;" + NL + "\t}" + NL + "" + NL + "\t@Override" + NL + "\tpublic Page<WebDriver> getCurrentPage() {" + NL + "\t\treturn currentPage;" + NL + "\t}" + NL + "\t" + NL + "\t@Override\t\t" + NL + "\t@Description(\"Navigates to ";
   protected final String TEXT_14 = "Page\")" + NL + "\t@Screenshot({Screenshot.When.AFTER, Screenshot.When.EXCEPTION})" + NL + "\tpublic ";
   protected final String TEXT_15 = "Page navigateTo";
-  protected final String TEXT_16 = "Page() {" + NL + "\t\t// TODO" + NL + "\t\tthrow new UnsupportedOperationException();" + NL + "\t}" + NL + "" + NL + "}";
-  protected final String TEXT_17 = NL;
+  protected final String TEXT_16 = "Page() {" + NL + "\t\twebDriver.get(\"http://localhost:8080";
+  protected final String TEXT_17 = "/";
+  protected final String TEXT_18 = ".html\");" + NL + "\t\t";
+  protected final String TEXT_19 = "Page ret = factory.getPageFactory().create";
+  protected final String TEXT_20 = "Page(webDriver);" + NL + "\t\t" + NL + "\t\treturn ret;" + NL + "\t}" + NL + "" + NL + "}";
+  protected final String TEXT_21 = NL;
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
@@ -65,7 +69,15 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_15);
     stringBuffer.append(wizard.getJavaName());
     stringBuffer.append(TEXT_16);
+    stringBuffer.append(wizard.getRoutingServletAlias());
     stringBuffer.append(TEXT_17);
+    stringBuffer.append(wizard.getDashedName());
+    stringBuffer.append(TEXT_18);
+    stringBuffer.append(wizard.getJavaName());
+    stringBuffer.append(TEXT_19);
+    stringBuffer.append(wizard.getJavaName());
+    stringBuffer.append(TEXT_20);
+    stringBuffer.append(TEXT_21);
     return stringBuffer.toString();
   }
 }

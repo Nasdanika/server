@@ -40,7 +40,7 @@
 				<configuration>
 					<products>
 						<product>
-							<id><%=wizard.getGroupId()%></id>
+							<id><%=wizard.getGroupId()%>.product</id>
 						</product>
 					</products>
 					<!-- global optional parameters (with default values) -->

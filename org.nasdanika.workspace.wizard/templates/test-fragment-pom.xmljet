@@ -17,12 +17,60 @@
 				<artifactId>tycho-surefire-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
-					<dependencies>						
+					<dependencies>	
+					<% if (wizard.isIncludeCdo()) { %>
 						<dependency>
 							<type>eclipse-feature</type>
-							<artifactId><%=wizard.getGroupId()%>.feature</artifactId>
+							<artifactId>org.nasdanika.cdo.feature</artifactId>
 							<version>0.0.0</version>
 						</dependency>						
+					<% } %>
+					
+					<% if (wizard.isIncludeEquinox()) { %>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>org.nasdanika.equinox.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>						
+					<% } %>
+					
+					<% if (wizard.isIncludeNasdanika()) { %>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>org.nasdanika.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>						
+					<% } %>
+					
+					<% if (wizard.isIncludeJetty()) { %>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>org.nasdanika.server.jetty.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>						
+					<% } %>
+					
+					<% if (wizard.isIncludeWebTest()) { %>
+						<dependency>
+							<type>eclipse-feature</type>
+							<artifactId>org.nasdanika.webtest.feature</artifactId>
+							<version>0.0.0</version>
+						</dependency>						
+					<% } %>
+							
+					<% if (wizard.getPageImplArtifactId()!=null) { %>																				
+						<dependency>
+							<type>eclipse-plugin</type>
+							<artifactId><%=wizard.getPageImplArtifactId()%></artifactId>
+						</dependency>						
+					<% } %>					
+					
+					<% if (wizard.getActorImplArtifactId()!=null) { %>					
+						<dependency>
+							<type>eclipse-plugin</type>
+							<artifactId><%=wizard.getActorImplArtifactId()%></artifactId>
+						</dependency>						
+					<% } %>
 					</dependencies>
 					<bundleStartLevel>
 						<bundle>

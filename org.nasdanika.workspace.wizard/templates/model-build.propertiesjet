@@ -1,0 +1,6 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="ModelBuildPropertiesRenderer" skeleton="Renderer.skeleton" %>
+bin.includes = .,\
+               model/,\
+               META-INF/
+jars.compile.order = .
+source.. = src/

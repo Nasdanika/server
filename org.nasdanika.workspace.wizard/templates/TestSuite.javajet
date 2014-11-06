@@ -8,7 +8,7 @@ import org.nasdanika.webtest.Title;
 
 @RunWith(NasdanikaWebTestSuite.class)
 @Title("<%=wizard.getName()%> test report")
-@SuiteClasses({<%=wizard.getJavaName()%>Test.class})
+@SuiteClasses({<%=wizard.getJavaName()%>Test.class, <%=wizard.getJavaName()%>RouteTest.class})
 public class <%=wizard.getJavaName()%>Tests {
 	
 }

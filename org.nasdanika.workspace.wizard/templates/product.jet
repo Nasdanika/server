@@ -2,7 +2,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="<%=wizard.getName()%>" uid="<%=wizard.getGroupId()%>" version="<%=wizard.getVersion()%>.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="<%=wizard.getName()%>" uid="<%=wizard.getGroupId()%>.product" version="<%=wizard.getVersion()%>.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>

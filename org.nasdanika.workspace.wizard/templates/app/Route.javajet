@@ -1,0 +1,216 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="RouteRenderer" skeleton="../Renderer.skeleton" %>
+package <%=wizard.getApplicationArtifactId()%>;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.nasdanika.html.Accordion;
+import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.Breadcrumbs;
+import org.nasdanika.html.Button;
+import org.nasdanika.html.Carousel;
+import org.nasdanika.html.Form;
+import org.nasdanika.html.Theme;
+import org.nasdanika.html.FormGroup.Status;
+import org.nasdanika.html.FormInputGroup;
+import org.nasdanika.html.Fragment;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.HTMLFactory.Placement;
+import org.nasdanika.html.Modal;
+import org.nasdanika.html.Navbar;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.UIElement.DeviceSize;
+import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.html.UIElement.Size;
+import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.web.Action;
+import org.nasdanika.web.HttpContext;
+import org.nasdanika.web.Route;
+import org.nasdanika.web.WebContext;
+
+/**
+ * Route to demonstrate/test HTMLFactory capabilities
+ *
+ */
+public class <%=wizard.getJavaName()%>Route implements Route {
+
+	@Override
+	public Action execute(WebContext context) throws Exception {
+		final HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
+		
+		ApplicationPanel appPanel = htmlFactory.applicationPanel()
+				.header("<%=wizard.getName()%>")
+				.headerLink("#")
+				.footer(
+						htmlFactory.link("#", "Contact us"), 
+						"&nbsp;&middot;&nbsp;", 
+						htmlFactory.link("#", "Privacy Policy"))
+				.width(800);
+		
+		Navbar navBar = htmlFactory.navbar("Welcome back, Joe Doe", "#")
+				.item(htmlFactory.link("#", "Accounts"), true, false)
+				.item(htmlFactory.link("#", "Customer service"), false, true);
+						
+		navBar.dropdown("Transfer", false)
+				.item(htmlFactory.link("#", "Internal"))
+				.divider()
+				.header("External transfers")
+				.item(htmlFactory.link("#", "Wire"))
+				.item(htmlFactory.link("#", "Payment Gateway"));
+		
+		Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs()
+				.item("#", "Home")
+				.item("#", "My page")
+				.item(null, "Details");
+		
+		appPanel.navigation(navBar, breadcrumbs);
+		
+		appPanel.contentPanel(
+				htmlFactory.linkGroup()
+					.item("Item 1", "#", Style.DEFAULT, true)
+					.item("Item 2", "#", Style.DEFAULT, false)
+					.item("Item 3", "#", Style.SUCCESS, false))
+				.width(DeviceSize.LARGE, 2).id("side-panel");
+				
+		Accordion accordion = htmlFactory.accordion()
+				.item("Item 1", "Item 1 body")
+				.item("Item 2", Style.PRIMARY, "Item 2 body")
+				.item("Item 3", Style.WARNING, "Item 3 body")
+				.style(Style.SUCCESS);
+		
+		Fragment body = htmlFactory.fragment(accordion);
+		
+		// Button groups 
+		Fragment buttonGroups = htmlFactory.fragment();
+		buttonGroups.content(
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A").on(Event.click, "alert('Here we go!!!');"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A").style(Style.WARNING),
+						htmlFactory.button("B").style(Style.INFO),
+						htmlFactory.button("C")).size(Size.LARGE),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")).vertical().size(Size.EXTRA_SMALL),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")
+							.item(htmlFactory.link("#", "C1"))
+							.divider()
+							.header("C2")
+							.item(htmlFactory.link("#", "C2.1"))
+							.item(htmlFactory.link("#", "C2.2"))),
+				"&nbsp;",
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")
+							.item(htmlFactory.link("#", "C1"))
+							.divider()
+							.header("C2")
+							.item(htmlFactory.link("#", "C2.1"))
+							.item(htmlFactory.link("#", "C2.2"))).vertical(),
+				"<HR/>", 
+				htmlFactory.label(Style.SUCCESS, "This is a button toolbar ", htmlFactory.glyphicon(Glyphicon.arrow_down)),
+				"<P/>",
+				htmlFactory.buttonToolbar(
+						htmlFactory.buttonGroup(
+								htmlFactory.button("A"),
+								htmlFactory.button("B").style(Style.PRIMARY),
+								htmlFactory.button("C")),
+						htmlFactory.buttonGroup(
+								htmlFactory.button("X"),
+								htmlFactory.button("Y").style(Style.PRIMARY),
+								htmlFactory.button("Z")
+								.item(htmlFactory.link("#", "Z1"))
+								.divider()
+								.header("Z2")
+								.item(htmlFactory.link("#", "Z2.1"))
+								.item(htmlFactory.link("#", "Z2.2")))
+						),
+				"<HR/>", 
+				htmlFactory.buttonGroup(
+						htmlFactory.button("A"),
+						htmlFactory.button("B").style(Style.PRIMARY),
+						htmlFactory.button("C")
+							.item(htmlFactory.link("#", "C1"))
+							.divider()
+							.header("C2")
+							.item(htmlFactory.link("#", "C2.1"))
+							.item(htmlFactory.link("#", "C2.2"))).justified()				
+				);
+		
+		
+		body.content(htmlFactory.panel(Style.INFO, "Button Groups &amp; Toolbars", buttonGroups, null).id("button-groups"));
+		
+		appPanel.contentPanel(body).width(DeviceSize.LARGE, 10);
+		
+		body.content(
+				htmlFactory.panel(
+						Style.INFO, 
+						null,
+						new AutoCloseable() {
+							
+							@Override
+							public String toString() {
+								// Produce dynamic HTML
+								return htmlFactory
+										.label(Style.SUCCESS, new Date())
+										.toString();
+							}
+							
+							@Override
+							public void close() throws Exception {
+								// Close resources;								
+							}
+						}, 						 
+						null));
+		
+		String themeName = ((HttpContext) context).getRequest().getParameter("theme");
+		
+		final AutoCloseable app = 
+			htmlFactory.bootstrapRouterApplication(
+				themeName == null ? null : Theme.valueOf(themeName), 
+				"My Application", 
+				null, 
+				null, 
+				appPanel);
+		
+		// TODO Auto-generated method stub
+		return new Action() {
+			
+			@Override
+			public void close() throws Exception {
+				app.close();				
+			}
+			
+			@Override
+			public Object execute() throws Exception {
+				return app.toString();
+			}
+		};
+	}
+
+	@Override
+	public boolean canExecute() {
+		return true;
+	}
+
+	@Override
+	public void close() throws Exception {
+		// NOP
+	}
+
+}

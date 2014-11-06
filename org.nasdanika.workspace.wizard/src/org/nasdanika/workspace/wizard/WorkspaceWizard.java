@@ -73,6 +73,7 @@ import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderRe
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextRouteRenderer;
 import org.nasdanika.workspace.wizard.render.app.IndexRenderer;
 import org.nasdanika.workspace.wizard.render.app.RepositoryRenderer;
+import org.nasdanika.workspace.wizard.render.app.RouteRenderer;
 import org.nasdanika.workspace.wizard.render.app.SecurityPolicyRenderer;
 import org.nasdanika.workspace.wizard.render.app.ServerRenderer;
 import org.nasdanika.workspace.wizard.render.app.SessionInitializerComponentRenderer;
@@ -327,11 +328,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {
-				components.add("OSGI-INF/"+getDashedName()+"-transaction-context-provider.xml");
+				components.add("OSGI-INF/"+getDashedName()+"-cdo-transaction-context-provider.xml");
 				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
-				components.add("OSGI-INF/"+getDashedName()+"-transaction-route.xml");
+				components.add("OSGI-INF/"+getDashedName()+"-cdo-transaction-context-route.xml");
 				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnWebContent.getSelection()) {
@@ -420,6 +421,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				}
 				osgiInfFolder.getFile(getDashedName()+(applicationConfigurationPage.btnRepository.getSelection() ? "-server.xml" : "-session-provider.xml")).create(new ByteArrayInputStream(new ServerRenderer().generate(this).getBytes()), false, progressMonitor);						
 			}
+			if (applicationConfigurationPage.btnRoutingServlet.getSelection()) {
+				IFolder sourceFolder = project.getProject().getFolder("src");
+				IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getApplicationArtifactId(), false, progressMonitor);
+				pkg.createCompilationUnit(getJavaName()+"Route.java", new RouteRenderer().generate(this), false, progressMonitor);
+			}
 			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {
 				IFolder sourceFolder = project.getProject().getFolder("src");
 				IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getApplicationArtifactId(), false, progressMonitor);
@@ -484,6 +490,13 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			} else if (projectsPage.btnPageSpec.getSelection()) {
 				requiredBundles.add(getPageSpecArtifactId());
 			}
+			
+			if (projectsPage.btnActorImpl.getSelection()) {
+				requiredBundles.add(getActorImplArtifactId());
+			} 
+			if (projectsPage.btnPageImpl.getSelection()) {
+				requiredBundles.add(getPageImplArtifactId());
+			}
 
 			Collection<String> binIncludes = new HashSet<String>();
 			if (!projectsPage.btnApplication.getSelection()) {
@@ -504,6 +517,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getTestsArtifactId(), false, progressMonitor);
 			pkg.createCompilationUnit(getJavaName()+"TestRunner.java", new TestRunnerRenderer().generate(this), false, progressMonitor);
 			pkg.createCompilationUnit(getJavaName()+"Test.java", new TestRenderer().generate(this), false, progressMonitor);
+			pkg.createCompilationUnit(getJavaName()+"RouteTest.java", new RouteTestRenderer().generate(this), false, progressMonitor);
 			pkg.createCompilationUnit(getJavaName()+"Tests.java", new TestSuiteRenderer().generate(this), false, progressMonitor);
 			
 			if (projectsPage.btnApplication.getSelection()) {
@@ -847,6 +861,8 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			
 			pom.print(new ModelPomRenderer().generate(this));
 			pom.close();
+			
+			project.getFile("build.properties").create(new ByteArrayInputStream(new ModelBuildPropertiesRenderer().generate(this).getBytes()), false, progressMonitor);
 		}		
 	}
 
@@ -965,19 +981,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	public List<String> getModules() {
-		List<String> ret = new ArrayList<>();
-		if (projectsPage.btnModel.getSelection()) {
-			ret.add(getModelArtifactId());
-		}
-				
-		if (projectsPage.btnApplication.getSelection()) {
-			ret.add(getApplicationArtifactId());
-		}
-		
-		if (projectsPage.btnTests.getSelection()) {
-			ret.add(getTestsArtifactId());
-		}
-		
+		List<String> ret = new ArrayList<>();		
 		if (projectsPage.btnActorSpec.getSelection()) {
 			ret.add(getActorSpecArtifactId());
 		}
@@ -992,6 +996,18 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		
 		if (projectsPage.btnPageImpl.getSelection()) {
 			ret.add(getPageImplArtifactId());
+		}
+
+		if (projectsPage.btnModel.getSelection()) {
+			ret.add(getModelArtifactId());
+		}
+				
+		if (projectsPage.btnApplication.getSelection()) {
+			ret.add(getApplicationArtifactId());
+		}
+		
+		if (projectsPage.btnTests.getSelection()) {
+			ret.add(getTestsArtifactId());
 		}
 		
 		ret.add(getGroupId()+".target");
@@ -1133,7 +1149,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		manifestBuilder.append("Bundle-ManifestVersion: 2").append(System.lineSeparator());
 		manifestBuilder.append("Bundle-Name: " + projectName).append(System.lineSeparator());
 		manifestBuilder.append("Bundle-SymbolicName: " + projectName + "; singleton:=true").append(System.lineSeparator()); // TODO - Singleton?
-		manifestBuilder.append("Bundle-Version: ").append(getVersion()).append(System.lineSeparator());
+		manifestBuilder.append("Bundle-Version: ").append(getVersion()).append(".qualifier").append(System.lineSeparator());
 		if (fragment) {
 			manifestBuilder.append("Fragment-Host: ")
 				.append(getApplicationArtifactId())
