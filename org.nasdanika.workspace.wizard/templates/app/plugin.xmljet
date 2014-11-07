@@ -65,7 +65,7 @@
    <% } %>
    <extension point="org.nasdanika.cdo.security.security_policy">
       <policy_resource
-            resource="<%=wizard.getJavaName()%>.nasdanika_cdo_security">
+            resource="<%=wizard.getDashedName()%>.nasdanika_cdo_security">
       </policy_resource>
    </extension>
 </plugin>

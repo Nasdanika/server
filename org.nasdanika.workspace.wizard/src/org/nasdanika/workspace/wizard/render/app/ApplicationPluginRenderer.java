@@ -55,7 +55,7 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_11);
      } 
     stringBuffer.append(TEXT_12);
-    stringBuffer.append(wizard.getJavaName());
+    stringBuffer.append(wizard.getDashedName());
     stringBuffer.append(TEXT_13);
     stringBuffer.append(TEXT_14);
     return stringBuffer.toString();
