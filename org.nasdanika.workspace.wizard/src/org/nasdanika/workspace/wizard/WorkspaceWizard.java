@@ -501,6 +501,8 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			Collection<String> binIncludes = new HashSet<String>();
 			if (!projectsPage.btnApplication.getSelection()) {
 				binIncludes.add("plugin.xml");
+				requiredBundles.add("org.eclipse.equinox.app");
+				requiredBundles.add("org.nasdanika.html");
 			}
 			
 			IJavaProject project = createPluginProject(

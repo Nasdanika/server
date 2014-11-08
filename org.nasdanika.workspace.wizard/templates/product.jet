@@ -2,16 +2,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?pde version="3.5"?>
 
-<product name="<%=wizard.getName()%>" uid="<%=wizard.getGroupId()%>.product" version="<%=wizard.getVersion()%>.qualifier" useFeatures="true" includeLaunchers="true">
+<product name="<%=wizard.getName()%>" uid="<%=wizard.getGroupId()%>.product"<% if (wizard.getApplicationArtifactId()==null && wizard.getTestsArtifactId()!=null) { %> application="<%=wizard.getTestsArtifactId()%>.<%=wizard.getJavaName()%>TestRunner"<% } %> version="<%=wizard.getVersion()%>.qualifier" useFeatures="true" includeLaunchers="true">
 
    <configIni use="default">
    </configIni>
 
    <launcherArgs>
-      <programArgs>-consoleLog -console
+      <programArgs>-consoleLog<% if (wizard.getApplicationArtifactId()!=null) { %> -console<% } %>
       </programArgs>
-      <vmArgs>-Declipse.ignoreApp=true -Dosgi.noShutdown=true -Dorg.osgi.service.http.port=8080
-      </vmArgs>
+      <% if (wizard.getApplicationArtifactId()!=null) { %><vmArgs>-Declipse.ignoreApp=true -Dosgi.noShutdown=true -Dorg.osgi.service.http.port=8080
+      </vmArgs><% } %>
       <vmArgsMac>-XstartOnFirstThread -Dorg.eclipse.swt.internal.carbon.smallFonts
       </vmArgsMac>
    </launcherArgs>
