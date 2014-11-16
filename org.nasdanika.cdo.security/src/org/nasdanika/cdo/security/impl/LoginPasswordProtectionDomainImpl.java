@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Iterator;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -190,18 +191,23 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 		for (User user: getAllUsers()) {
 			if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled()) {
 				LoginPasswordHashUser lphUser = (LoginPasswordHashUser) user;
-				if (lphUser.getLogin()!=null && lphUser.getLogin().equalsIgnoreCase(credentials.getLogin())) {
-					try {
-						MessageDigest md = MessageDigest.getInstance("SHA");
-						md.update(lphUser.getLogin().getBytes(UTF_8));
-						md.update((byte) 0); // Separator
-						md.update(credentials.getPassword().getBytes(UTF_8));
-						if (Arrays.equals(md.digest(), lphUser.getPasswordHash())) {
-							return lphUser;
+				try {
+					if (lphUser.getLogin()!=null && lphUser.getLogin().equalsIgnoreCase(credentials.getLogin())) {
+						try {
+							MessageDigest md = MessageDigest.getInstance("SHA");
+							md.update(lphUser.getLogin().getBytes(UTF_8));
+							md.update((byte) 0); // Separator
+							md.update(credentials.getPassword().getBytes(UTF_8));
+							if (Arrays.equals(md.digest(), lphUser.getPasswordHash())) {
+								return lphUser;
+							}
+						} catch (Exception e) {
+							throw new NasdanikaException(e);
 						}
-					} catch (Exception e) {
-						throw new NasdanikaException(e);
 					}
+				} catch (Exception e) {
+					// TODO Proper logging
+					e.printStackTrace();
 				}
 			}
 		}

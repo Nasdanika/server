@@ -344,7 +344,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map() {
+	public EOperation getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map() {
 		return principalEClass.getEOperations().get(0);
 	}
 
@@ -853,7 +853,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEReference(principalEClass, PRINCIPAL__MEMBER_OF);
 		createEReference(principalEClass, PRINCIPAL__PERMISSIONS);
 		createEReference(principalEClass, PRINCIPAL__PROTECTION_DOMAIN);
-		createEOperation(principalEClass, PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP);
+		createEOperation(principalEClass, PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP);
 		createEOperation(principalEClass, PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT);
 		createEOperation(principalEClass, PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_MAP);
 		createEOperation(principalEClass, PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING);
@@ -994,7 +994,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g1.getETypeArguments().add(g2);
 		initEReference(getPrincipal_ProtectionDomain(), g1, null, "protectionDomain", null, 0, 1, Principal.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
 
-		op = initEOperation(getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getSecurityPolicy(), "securityPolicy", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEJavaObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);

@@ -225,8 +225,8 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 		switch (operationID) {
 			case SecurityPackage.GROUP___IS_MEMBER__PRINCIPAL:
 				return isMember((Principal)arguments.get(0));
-			case SecurityPackage.GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP:
-				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), (EObject)arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
+			case SecurityPackage.GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP:
+				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
 			case SecurityPackage.GROUP___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT:
 				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), arguments.get(3));
 				return null;

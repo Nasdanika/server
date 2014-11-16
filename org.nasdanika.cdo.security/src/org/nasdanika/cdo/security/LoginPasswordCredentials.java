@@ -2,8 +2,8 @@ package org.nasdanika.cdo.security;
 
 public interface LoginPasswordCredentials {
 	
-	String getLogin();
+	String getLogin() throws Exception;
 	
-	String getPassword();
+	String getPassword() throws Exception;
 
 }

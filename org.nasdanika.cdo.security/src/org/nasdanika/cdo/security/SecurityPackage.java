@@ -381,7 +381,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = 0;
+	int PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = 0;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -489,7 +489,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP;
+	int GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -579,7 +579,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP;
+	int USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -687,7 +687,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_HASH_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP;
+	int LOGIN_PASSWORD_HASH_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP;
 
 	/**
 	 * The operation id for the '<em>Send Message</em>' operation.
@@ -1409,7 +1409,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.Principal#authorize(org.nasdanika.cdo.security.SecurityPolicy, org.nasdanika.core.Context, java.lang.Object, java.lang.String, java.lang.String, java.util.Map)
 	 * @generated
 	 */
-	EOperation getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
+	EOperation getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map();
 
 	/**
 	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String, java.lang.Object) <em>Send Message</em>}' operation.
@@ -2104,7 +2104,7 @@ public interface SecurityPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getPrincipal__Authorize__SecurityPolicy_Context_EObject_String_String_Map();
+		EOperation PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = eINSTANCE.getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map();
 
 		/**
 		 * The meta object literal for the '<em><b>Send Message</b></em>' operation.
