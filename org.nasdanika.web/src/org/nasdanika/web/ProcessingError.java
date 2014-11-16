@@ -8,6 +8,7 @@ public class ProcessingError {
 	public static final ProcessingError FORBIDDEN = new ProcessingError(HttpServletResponse.SC_FORBIDDEN);
 	public static final ProcessingError INTERNAL_SERVER_ERROR = new ProcessingError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 	public static final ProcessingError BAD_REQUEST = new ProcessingError(HttpServletResponse.SC_BAD_REQUEST);
+	public static final ProcessingError UNAUTHORIZED = new ProcessingError(HttpServletResponse.SC_UNAUTHORIZED);
 	
 	private int code;
 	private String message;

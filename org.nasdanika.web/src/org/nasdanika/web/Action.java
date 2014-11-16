@@ -7,6 +7,20 @@ package org.nasdanika.web;
  */
 public interface Action extends AutoCloseable {
 	
+	Action NOP = new Action() {
+
+		@Override
+		public Object execute() throws Exception {
+			return null;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP			
+		}
+		
+	};
+	
 	Action NOT_FOUND = new Action() {
 
 		@Override
@@ -63,6 +77,20 @@ public interface Action extends AutoCloseable {
 		
 	};	
 	
+	Action UNAUTHORIZED = new Action() {
+
+		@Override
+		public Object execute() throws Exception {
+			return ProcessingError.UNAUTHORIZED;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP			
+		}
+		
+	};	
+		
 	Object execute() throws Exception;
 
 }
