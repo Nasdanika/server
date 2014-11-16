@@ -111,7 +111,7 @@ public class ObjectRoute implements Route {
 							}
 							final Object result = method.invoke(target, args);
 							if (result==null) {
-								return Action.NOT_FOUND;
+								return void.class.equals(method.getReturnType()) ? Action.NOP : Action.NOT_FOUND;
 							}
 							return context.getAction(result, parameterTypes.length+2);
 						}

@@ -392,8 +392,20 @@ public class ExtensionManager extends AdapterManager {
 	
 	protected class MethodRoute extends InstanceMethodCommand<WebContext, Action> implements Route {
 		
+		private boolean isVoid;
+
 		protected MethodRoute(Object target, Method routeMethod) throws Exception {
 			super(target, new MethodCommand<WebContext, Action>(routeMethod));
+			this.isVoid = void.class.equals(routeMethod.getReturnType());
+		}
+		
+		@Override
+		public Action execute(WebContext context) throws Exception {
+			Object result = super.execute(context);
+			if (result==null && isVoid) {
+				return Action.NOP;				
+			}
+			return ValueAction.wrap(result);
 		}
 		
 	}
