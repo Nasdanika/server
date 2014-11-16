@@ -197,6 +197,12 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public List<ContentPanel> getContentPanels() {
 				return contentPanels;
 			}
+
+			@Override
+			public String getAttributes() {
+				return attributes();
+			}
+			
 		})+genLoadRemoteContentScript();
 	}
 

@@ -165,5 +165,10 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	public Form target(String target) {
 		return attribute("target", target);
 	}
+	
+	@Override
+	public Form ngSubmit(Object handler) {
+		return attribute("ng-submit", handler);
+	}
 
 }

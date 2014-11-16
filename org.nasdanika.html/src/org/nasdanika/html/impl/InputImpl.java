@@ -187,4 +187,8 @@ class InputImpl extends UIElementImpl<Input> implements Input {
 		return attribute("step", step);
 	}
 
+	@Override
+	public Input ngModel(Object expr) {
+		return attribute("ng-model", expr);
+	}
 }

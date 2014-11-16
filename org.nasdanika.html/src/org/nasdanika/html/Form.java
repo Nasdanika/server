@@ -48,5 +48,13 @@ public interface Form extends UIElement<Form>, FieldContainer<Form> {
 	Form novalidate(boolean novalidate);
 	
 	Form target(String target);		
+	
+	/**
+	 * Adds AngularJS submit attribute.
+	 * @param handler
+	 * @return
+	 */
+	Form ngSubmit(Object handler);
+	
 }
 

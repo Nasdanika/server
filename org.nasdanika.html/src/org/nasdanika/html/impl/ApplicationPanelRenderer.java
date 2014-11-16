@@ -17,30 +17,31 @@ public class ApplicationPanelRenderer
   protected final String TEXT_3 = "\"";
   protected final String TEXT_4 = " style=\"width: ";
   protected final String TEXT_5 = "px; margin: 0 auto; margin-top: 10px\"";
-  protected final String TEXT_6 = ">" + NL + "\t";
-  protected final String TEXT_7 = NL + "\t\t<div class=\"panel-heading\">" + NL + "\t\t\t<h3 class=\"panel-title\">" + NL + "\t\t\t\t";
-  protected final String TEXT_8 = NL + "\t\t\t\t\t";
-  protected final String TEXT_9 = NL + "\t\t\t\t";
-  protected final String TEXT_10 = NL + "\t\t\t\t\t<a href=\"";
-  protected final String TEXT_11 = "\">";
-  protected final String TEXT_12 = "</a>" + NL + "\t\t\t\t";
-  protected final String TEXT_13 = NL + "\t\t\t</h3>" + NL + "\t\t</div>" + NL + "\t";
-  protected final String TEXT_14 = NL + NL + "\t<div class=\"panel-body\" ";
-  protected final String TEXT_15 = "style=\"min-height: ";
-  protected final String TEXT_16 = "px\"";
-  protected final String TEXT_17 = ">" + NL + "" + NL + "\t\t";
-  protected final String TEXT_18 = NL + NL + "\t\t";
-  protected final String TEXT_19 = NL + "\t\t\t";
-  protected final String TEXT_20 = NL + "\t\t";
-  protected final String TEXT_21 = "\t\t" + NL + "\t\t\t<div class=\"row\">" + NL + "\t\t\t\t";
-  protected final String TEXT_22 = NL + "\t\t\t\t\t";
-  protected final String TEXT_23 = NL + "\t\t\t\t";
-  protected final String TEXT_24 = "\t\t\t" + NL + "\t\t\t</div>" + NL + "\t\t";
-  protected final String TEXT_25 = "\t\t\t\t\t\t" + NL + "\t</div>" + NL + "\t" + NL + "\t";
-  protected final String TEXT_26 = NL + "\t\t<div class=\"panel-footer\">" + NL + "\t\t\t<div style=\"display: table; margin: 0 auto\">";
-  protected final String TEXT_27 = "</div>" + NL + "\t\t</div>" + NL + "\t";
-  protected final String TEXT_28 = NL + "</div>";
-  protected final String TEXT_29 = NL;
+  protected final String TEXT_6 = " ";
+  protected final String TEXT_7 = ">" + NL + "\t";
+  protected final String TEXT_8 = NL + "\t\t<div class=\"panel-heading\">" + NL + "\t\t\t<h3 class=\"panel-title\">" + NL + "\t\t\t\t";
+  protected final String TEXT_9 = NL + "\t\t\t\t\t";
+  protected final String TEXT_10 = NL + "\t\t\t\t";
+  protected final String TEXT_11 = NL + "\t\t\t\t\t<a href=\"";
+  protected final String TEXT_12 = "\">";
+  protected final String TEXT_13 = "</a>" + NL + "\t\t\t\t";
+  protected final String TEXT_14 = NL + "\t\t\t</h3>" + NL + "\t\t</div>" + NL + "\t";
+  protected final String TEXT_15 = NL + NL + "\t<div class=\"panel-body\" ";
+  protected final String TEXT_16 = "style=\"min-height: ";
+  protected final String TEXT_17 = "px\"";
+  protected final String TEXT_18 = ">" + NL + "" + NL + "\t\t";
+  protected final String TEXT_19 = NL + NL + "\t\t";
+  protected final String TEXT_20 = NL + "\t\t\t";
+  protected final String TEXT_21 = NL + "\t\t";
+  protected final String TEXT_22 = "\t\t" + NL + "\t\t\t<div class=\"row\">" + NL + "\t\t\t\t";
+  protected final String TEXT_23 = NL + "\t\t\t\t\t";
+  protected final String TEXT_24 = NL + "\t\t\t\t";
+  protected final String TEXT_25 = "\t\t\t" + NL + "\t\t\t</div>" + NL + "\t\t";
+  protected final String TEXT_26 = "\t\t\t\t\t\t" + NL + "\t</div>" + NL + "\t" + NL + "\t";
+  protected final String TEXT_27 = NL + "\t\t<div class=\"panel-footer\">" + NL + "\t\t\t<div style=\"display: table; margin: 0 auto\">";
+  protected final String TEXT_28 = "</div>" + NL + "\t\t</div>" + NL + "\t";
+  protected final String TEXT_29 = NL + "</div>";
+  protected final String TEXT_30 = NL;
 
   public String generate(Object argument)
   {
@@ -58,51 +59,53 @@ public class ApplicationPanelRenderer
     stringBuffer.append(TEXT_5);
      } 
     stringBuffer.append(TEXT_6);
-     if (config.getHeader()!=null) { 
+    stringBuffer.append(config.getAttributes());
     stringBuffer.append(TEXT_7);
-     if (config.getHeaderLink()==null) { 
+     if (config.getHeader()!=null) { 
     stringBuffer.append(TEXT_8);
-    stringBuffer.append(config.getHeader());
+     if (config.getHeaderLink()==null) { 
     stringBuffer.append(TEXT_9);
-     } else { 
-    stringBuffer.append(TEXT_10);
-    stringBuffer.append(config.getHeaderLink());
-    stringBuffer.append(TEXT_11);
     stringBuffer.append(config.getHeader());
+    stringBuffer.append(TEXT_10);
+     } else { 
+    stringBuffer.append(TEXT_11);
+    stringBuffer.append(config.getHeaderLink());
     stringBuffer.append(TEXT_12);
-     } 
+    stringBuffer.append(config.getHeader());
     stringBuffer.append(TEXT_13);
      } 
     stringBuffer.append(TEXT_14);
-     if (config.getMinHeight()>0) { 
+     } 
     stringBuffer.append(TEXT_15);
-    stringBuffer.append(config.getMinHeight());
+     if (config.getMinHeight()>0) { 
     stringBuffer.append(TEXT_16);
-     } 
+    stringBuffer.append(config.getMinHeight());
     stringBuffer.append(TEXT_17);
-    stringBuffer.append(config.getNavigation());
-    stringBuffer.append(TEXT_18);
-     if (config.getContentPanels().size()==1) { 
-    stringBuffer.append(TEXT_19);
-    stringBuffer.append(config.getContentPanels().get(0));
-    stringBuffer.append(TEXT_20);
-     } else { 
-    stringBuffer.append(TEXT_21);
-     for (Object contentPanel: config.getContentPanels()) { 
-    stringBuffer.append(TEXT_22);
-    stringBuffer.append(contentPanel);
-    stringBuffer.append(TEXT_23);
      } 
+    stringBuffer.append(TEXT_18);
+    stringBuffer.append(config.getNavigation());
+    stringBuffer.append(TEXT_19);
+     if (config.getContentPanels().size()==1) { 
+    stringBuffer.append(TEXT_20);
+    stringBuffer.append(config.getContentPanels().get(0));
+    stringBuffer.append(TEXT_21);
+     } else { 
+    stringBuffer.append(TEXT_22);
+     for (Object contentPanel: config.getContentPanels()) { 
+    stringBuffer.append(TEXT_23);
+    stringBuffer.append(contentPanel);
     stringBuffer.append(TEXT_24);
      } 
     stringBuffer.append(TEXT_25);
-     if (config.getFooter()!=null) { 
-    stringBuffer.append(TEXT_26);
-    stringBuffer.append(config.getFooter());
-    stringBuffer.append(TEXT_27);
      } 
+    stringBuffer.append(TEXT_26);
+     if (config.getFooter()!=null) { 
+    stringBuffer.append(TEXT_27);
+    stringBuffer.append(config.getFooter());
     stringBuffer.append(TEXT_28);
+     } 
     stringBuffer.append(TEXT_29);
+    stringBuffer.append(TEXT_30);
     return stringBuffer.toString();
   }
 }

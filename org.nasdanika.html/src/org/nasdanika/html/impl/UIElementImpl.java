@@ -282,4 +282,39 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		
 		return factory.tag("script", "nsdLoad(\"#"+getId()+"\", \""+remoteContent+"\");").toString();
 	}
+	
+	@Override
+	public T ngApp() {
+		return ngApp("");
+	}
+	
+	@Override
+	public T ngApp(Object appName) {
+		return attribute("ng-app", appName);
+	}
+	
+	@Override
+	public T ngController(Object controllerName) {
+		return attribute("ng-controller", controllerName);
+	}
+	
+	@Override
+	public T ngBind(Object expr) {
+		return attribute("ng-bind", expr);
+	}
+	
+	@Override
+	public T ngClass(Object expr) {
+		return attribute("ng-class", expr);
+	}
+	
+	@Override
+	public T ngHide(Object expr) {
+		return attribute("ng-hide", expr);
+	}
+	
+	@Override
+	public T ngShow(Object expr) {
+		return attribute("ng-show", expr);
+	}
 }

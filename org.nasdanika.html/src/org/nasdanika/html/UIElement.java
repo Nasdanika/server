@@ -260,4 +260,32 @@ public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	 * @return
 	 */
 	T remoteContent(Object href);
+	
+	/**
+	 * Adds AngularJS application attribute with blank name.
+	 * @return
+	 */
+	T ngApp();
+	
+	/**
+	 * Adds AngularJS application attribute.
+	 * @param appName
+	 * @return
+	 */
+	T ngApp(Object appName);
+	
+	/**
+	 * Adds AngularJS controller attribute.
+	 * @param controllerName
+	 * @return
+	 */
+	T ngController(Object controllerName);
+	
+	T ngHide(Object expr);
+	
+	T ngShow(Object expr);
+	
+	T ngClass(Object expr);
+	
+	T ngBind(Object expr);
 }

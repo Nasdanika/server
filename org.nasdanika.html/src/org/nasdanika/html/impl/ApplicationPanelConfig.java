@@ -6,6 +6,8 @@ import org.nasdanika.html.ApplicationPanel.ContentPanel;
 
 
 interface ApplicationPanelConfig {
+	
+	String getAttributes();
 
 	int getWidth();
 

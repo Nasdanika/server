@@ -48,5 +48,12 @@ public interface Input extends UIElement<Input>, Container<Input> {
 	Input required();
 	
 	Input step(Object step);	
+	
+	/**
+	 * Adds AngularJS model attribute.
+	 * @param expr
+	 * @return
+	 */
+	Input ngModel(Object expr);
 
 }
