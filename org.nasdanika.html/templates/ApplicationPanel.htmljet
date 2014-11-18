@@ -4,7 +4,7 @@
 	ApplicationPanelConfig config = (ApplicationPanelConfig) argument;
 %>
 
-<div class="panel panel-<%=config.getStyle()%>"<% if (config.getWidth()>0) { %> style="width: <%=config.getWidth()%>px; margin: 0 auto; margin-top: 10px"<% } %>>
+<div class="panel panel-<%=config.getStyle()%>"<% if (config.getWidth()>0) { %> style="width: <%=config.getWidth()%>px; margin: 0 auto; margin-top: 10px"<% } %> <%=config.getAttributes()%>>
 	<% if (config.getHeader()!=null) { %>
 		<div class="panel-heading">
 			<h3 class="panel-title">
