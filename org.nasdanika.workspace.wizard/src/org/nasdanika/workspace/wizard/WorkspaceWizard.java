@@ -649,7 +649,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					includedFeatures.add(fChild);
 				}
 				
-				if (shallGenerateTestsFeature() && isIncludeWebTest()) {
+				if (!shallGenerateTestsFeature() && isIncludeWebTest()) {
 					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
 					fChild.setVersion("0.0.0");
 					fChild.setId("org.nasdanika.webtest.feature");
