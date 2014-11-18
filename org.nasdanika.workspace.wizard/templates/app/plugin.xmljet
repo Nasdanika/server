@@ -60,6 +60,7 @@
             <script>
                /js/require.js
             </script>
+            <script>/js/angular.min.js</script>
       </default_html_factory>
    </extension>
    <% } %>

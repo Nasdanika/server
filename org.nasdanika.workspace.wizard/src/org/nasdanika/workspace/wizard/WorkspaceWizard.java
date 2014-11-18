@@ -6,6 +6,7 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.io.ObjectInputStream.GetField;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -168,6 +169,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		generateApplicationProject(progressMonitor);
 		generateTestsProject(progressMonitor);
 		generateFeatureProject(progressMonitor);
+		generateTestsFeatureProject(progressMonitor);
 		generateParentProject(progressMonitor);
 		generateRepositoryProject(progressMonitor);
 		generateAggregatorProject(progressMonitor);
@@ -524,6 +526,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			
 			if (projectsPage.btnApplication.getSelection()) {
 				project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new TestFragmentPomRenderer().generate(this).getBytes()), false, progressMonitor);
+				project.getProject().getFile("fragment.xml").create(new ByteArrayInputStream(new TestFragmentRenderer().generate(this).getBytes()), false, progressMonitor);
 			} else {
 				project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new TestAppPomRenderer().generate(this).getBytes()), false, progressMonitor);
 				project.getProject().getFile("plugin.xml").create(new ByteArrayInputStream(new TestPluginRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -577,39 +580,41 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					plugins.add(fplugin);
 				}
 				
-				if (projectsPage.btnTests.getSelection()) {
-					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-					fplugin.setId(getTestsArtifactId());
-					fplugin.setVersion("0.0.0");
-					plugins.add(fplugin);
-				}
-				
-				if (projectsPage.btnActorSpec.getSelection()) {
-					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-					fplugin.setId(getActorSpecArtifactId());
-					fplugin.setVersion("0.0.0");
-					plugins.add(fplugin);
-				}
-				
-				if (projectsPage.btnPageSpec.getSelection()) {
-					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-					fplugin.setId(getPageSpecArtifactId());
-					fplugin.setVersion("0.0.0");
-					plugins.add(fplugin);
-				}
-				
-				if (projectsPage.btnActorImpl.getSelection()) {
-					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-					fplugin.setId(getActorImplArtifactId());
-					fplugin.setVersion("0.0.0");
-					plugins.add(fplugin);
-				}
-				
-				if (projectsPage.btnPageImpl.getSelection()) {
-					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-					fplugin.setId(getPageImplArtifactId());
-					fplugin.setVersion("0.0.0");
-					plugins.add(fplugin);
+				if (!shallGenerateTestsFeature()) {
+					if (projectsPage.btnTests.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getTestsArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnActorSpec.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getActorSpecArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnPageSpec.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getPageSpecArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnActorImpl.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getActorImplArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnPageImpl.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getPageImplArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
 				}
 				
 				feature.addPlugins(plugins.toArray(new IFeaturePlugin[plugins.size()]));
@@ -644,7 +649,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					includedFeatures.add(fChild);
 				}
 				
-				if (isIncludeWebTest()) {
+				if (shallGenerateTestsFeature() && isIncludeWebTest()) {
 					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
 					fChild.setVersion("0.0.0");
 					fChild.setId("org.nasdanika.webtest.feature");
@@ -655,6 +660,99 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			};
 			
 		}.execute(progressMonitor);				
+	}
+
+	private void generateTestsFeatureProject(IProgressMonitor progressMonitor) throws Exception {
+		if (shallGenerateTestsFeature()) {
+			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+			IProject project = root.getProject(getTestsArtifactId()+".feature");
+			IPath location = generalInformationPage.getLocationPath();
+			if (!Platform.getLocation().equals(location)) {
+				location = location.append(getTestsArtifactId()+".feature");
+			}
+			FeatureData featureData = new FeatureData();
+			featureData.id = getTestsArtifactId()+".feature";
+			featureData.name = generalInformationPage.nameField.getText()+" tests feature";
+			featureData.version = getVersion()+".qualifier";
+			new CreateFeatureProjectOperation(project, location, featureData, null, getShell()) {
+				
+				@Override
+				protected void execute(IProgressMonitor monitor) throws CoreException ,InvocationTargetException ,InterruptedException {
+					super.execute(monitor);
+					addMaven2NatureAndBuilder(monitor, fProject);
+	
+					try {
+						fProject.getFile("pom.xml").create(new ByteArrayInputStream(new TestFeaturePomRenderer().generate(WorkspaceWizard.this).getBytes()), false, monitor);
+					} catch (CoreException | InvocationTargetException | InterruptedException e) {
+						throw e;					
+					} catch (Exception e) {
+						throw new InvocationTargetException(e);
+					}				
+				}
+				
+				@Override
+				protected void configureFeature(IFeature feature, WorkspaceFeatureModel model) throws CoreException {
+					super.configureFeature(feature, model);
+					List<IFeaturePlugin> plugins = new ArrayList<>();
+					
+					if (projectsPage.btnTests.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getTestsArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnActorSpec.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getActorSpecArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnPageSpec.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getPageSpecArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnActorImpl.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getActorImplArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnPageImpl.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getPageImplArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					feature.addPlugins(plugins.toArray(new IFeaturePlugin[plugins.size()]));
+					
+					List<FeatureChild> includedFeatures = new ArrayList<>();
+					
+					FeatureChild mainFeature = (FeatureChild) model.getFactory().createChild();
+					mainFeature.setVersion(getVersion());
+					mainFeature.setId(getGroupId()+".feature");
+					includedFeatures.add(mainFeature);
+					
+					FeatureChild webTestFeature = (FeatureChild) model.getFactory().createChild();
+					webTestFeature.setVersion("0.0.0");
+					webTestFeature.setId("org.nasdanika.webtest.feature");
+					includedFeatures.add(webTestFeature);
+					
+					feature.addIncludedFeatures(includedFeatures.toArray(new FeatureChild[includedFeatures.size()]));
+				};
+				
+			}.execute(progressMonitor);
+		}
+	}
+
+	private boolean shallGenerateTestsFeature() {
+		return projectsPage.btnTests.getSelection() && projectsPage.btnApplication.getSelection();
 	}
 
 	private void generateParentProject(IProgressMonitor progressMonitor) throws Exception {
@@ -730,6 +828,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		project.getFile("pom.xml").create(new ByteArrayInputStream(new RepositoryPomRenderer().generate(this).getBytes()), false, progressMonitor);
 		project.getFile("category.xml").create(new ByteArrayInputStream(new CategoryRenderer().generate(this).getBytes()), false, progressMonitor);
 		project.getFile(getGroupId()+".product").create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
+		if (shallGenerateTestsFeature()) {
+			project.getFile(getTestsArtifactId()+".product").create(new ByteArrayInputStream(new TestsProductRenderer().generate(this).getBytes()), false, progressMonitor);			
+		}
 	}
 	
 	private void generateTargetProject(IProgressMonitor progressMonitor) throws Exception {
@@ -1010,6 +1111,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		
 		if (projectsPage.btnTests.getSelection()) {
 			ret.add(getTestsArtifactId());
+			ret.add(getTestsArtifactId()+".feature");
 		}
 		
 		ret.add(getGroupId()+".target");
