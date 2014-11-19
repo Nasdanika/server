@@ -14,11 +14,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -49,31 +51,31 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				public void onPageProxying(Page<WebDriver> page) {}
 
 				@Override
-				public void beforePageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args) {}
+				public void beforePageMethod(Page<WebDriver> page, byte[] screenshot, JSONObject performanceData, Method method, Object[] args) {}
 
 				@Override
-				public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
+				public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, JSONObject performanceData, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
 				public void onActorProxying(Actor<WebDriver> actor) {}
 
 				@Override
-				public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args) {}
+				public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performanceData, Method method, Object[] args) {}
 
 				@Override
-				public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {}
+				public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performanceData, Method method, Object[] args, Object result, Throwable th) {}
 
 				@Override
 				public void beforeTestMethod(Method method, int index, Object[] parameters) {}
 
 				@Override
-				public void beforeTestMethodScreenshot(byte[] screenshot) {}
+				public void beforeTestMethodScreenshot(byte[] screenshot, JSONObject performanceData) {}
 
 				@Override
 				public void afterTestMethod(Method method, Throwable th) {}
 
 				@Override
-				public void afterTestMethodScreenshot(byte[] screenshot) {}
+				public void afterTestMethodScreenshot(byte[] screenshot, JSONObject performanceData) {}
 
 				@Override
 				public void close() throws Exception {}
@@ -84,13 +86,15 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				@Override
 				public void beforePageInitialization(
 						Class<? extends Page<WebDriver>> pageClass,
-						byte[] screenshot) {}
+						byte[] screenshot, 
+						JSONObject performanceData) {}
 
 				@Override
 				public void afterPageInitialization(
 						Class<? extends Page<WebDriver>> pageClass, 
 						Page<WebDriver> page, 
 						byte[] screenshot, 
+						JSONObject performanceData, 
 						Throwable th) {}
 				
 			};
@@ -105,6 +109,31 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 			return new ArrayList<ServiceTracker<?,?>>();
 		};
 	};
+	
+	private static JSONObject capturePerformance() {
+		Object test = testThreadLocal.get();
+		if (test instanceof WebTest) {
+			return capturePerformance(((WebTest<?>) test).getWebDriver());
+		}
+		return null;
+	}
+	
+	private static JSONObject capturePerformance(WebDriver webDriver) {
+		// For testing
+		if (webDriver instanceof JavascriptExecutor) {
+			try {
+				Object perfData = ((JavascriptExecutor) webDriver).executeScript("return JSON.stringify(window.performance ? {timestamp: Date.now(), href: window.location.href, timing: window.performance.timing, entries: typeof window.performance.getEntries === 'function' && window.performance.getEntries()} : {timestamp: Date.now(), href: window.location.href});");				
+				if (perfData instanceof String) {
+					return new JSONObject((String) perfData);
+				}
+			} catch (Exception e) {
+				System.err.println("Error reading performance data: "+e);
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
 	
 	private static byte[] takeScreenshot() {
 		Object test = testThreadLocal.get();
@@ -180,9 +209,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	    			if (delay>0) {
 	    				Thread.sleep(delay);
 	    			}
-					collectorThreadLocal.get().beforePageMethod(page, takeScreenshot(), method, args);
+					collectorThreadLocal.get().beforePageMethod(page, takeScreenshot(), capturePerformance(), method, args);
 	    		} else {
-					collectorThreadLocal.get().beforePageMethod(page, null, method, args);
+					collectorThreadLocal.get().beforePageMethod(page, null, capturePerformance(), method, args);
 	    		}
 				try {
 					Object res = method.invoke(page, args);
@@ -190,9 +219,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, res, null);
+		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), capturePerformance(), method, args, res, null);
 		    		} else {
-		    			collectorThreadLocal.get().afterPageMethod(page, null, method, args, res, null);
+		    			collectorThreadLocal.get().afterPageMethod(page, null, capturePerformance(), method, args, res, null);
 		    		}
 					if (res instanceof Page) {
 						Class<? extends Object> resClass = res.getClass();
@@ -211,9 +240,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), method, args, null, th);
+		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), capturePerformance(), method, args, null, th);
 		    		} else {
-		    			collectorThreadLocal.get().afterPageMethod(page, null, method, args, null, th);		    			
+		    			collectorThreadLocal.get().afterPageMethod(page, null, capturePerformance(), method, args, null, th);		    			
 		    		}
 					throw th;
 				}
@@ -285,9 +314,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	    			if (delay>0) {
 	    				Thread.sleep(delay);
 	    			}
-					collectorThreadLocal.get().beforeActorMethod(actor, takeScreenshot(), method, args);
+					collectorThreadLocal.get().beforeActorMethod(actor, takeScreenshot(), capturePerformance(), method, args);
 	    		} else {
-					collectorThreadLocal.get().beforeActorMethod(actor, null, method, args);	    			
+					collectorThreadLocal.get().beforeActorMethod(actor, null, capturePerformance(), method, args);	    			
 	    		}
 				
 				try {
@@ -296,9 +325,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, res, null);
+		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), capturePerformance(), method, args, res, null);
 		    		} else {
-		    			collectorThreadLocal.get().afterActorMethod(actor, null, method, args, res, null);		    			
+		    			collectorThreadLocal.get().afterActorMethod(actor, null, capturePerformance(), method, args, res, null);		    			
 		    		}
 					if (res instanceof Actor) {
 						Class<? extends Object> resClass = res.getClass();
@@ -317,9 +346,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), method, args, null, th);
+		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), capturePerformance(), method, args, null, th);
 		    		} else {
-		    			collectorThreadLocal.get().afterActorMethod(actor, null, method, args, null, th);		    			
+		    			collectorThreadLocal.get().afterActorMethod(actor, null, capturePerformance(), method, args, null, th);		    			
 		    		}
 					throw th;
 				}
@@ -537,27 +566,27 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot());
+		    			collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot(), capturePerformance());
 		    		} else {
-		    			collectorThreadLocal.get().beforeTestMethodScreenshot(null);		    			
+		    			collectorThreadLocal.get().beforeTestMethodScreenshot(null, capturePerformance());		    			
 		    		}
 			    	method.invokeExplosively(test);
 		    		if (shallTakeAfterScreenshot(screenshotAnnotation)) {
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot());
+		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot(), capturePerformance());
 		    		} else {
-		    			collectorThreadLocal.get().afterTestMethodScreenshot(null);
+		    			collectorThreadLocal.get().afterTestMethodScreenshot(null, capturePerformance());
 		    		}
 		    	} catch (Throwable th) {
 		    		if (shallTakeExceptionScreenshot(screenshotAnnotation)) {
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot());
+		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot(), capturePerformance());
 		    		} else {
-		    			collectorThreadLocal.get().afterTestMethodScreenshot(null);		    			
+		    			collectorThreadLocal.get().afterTestMethodScreenshot(null, capturePerformance());		    			
 		    		}
 		    		throw th;
 		    	} finally {
@@ -628,9 +657,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					e.printStackTrace();
 				}
 			}
-			collectorThreadLocal.get().beforePageInitialization(pageClass, takeScreenshot(driver));
+			collectorThreadLocal.get().beforePageInitialization(pageClass, takeScreenshot(driver), capturePerformance(driver));
 		} else {
-			collectorThreadLocal.get().beforePageInitialization(pageClass, null);
+			collectorThreadLocal.get().beforePageInitialization(pageClass, null, capturePerformance(driver));
 		}
 	}
 
@@ -654,9 +683,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), null);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), capturePerformance(driver), null);
 			} else {
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, null);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, capturePerformance(driver), null);
 			}
 		} else {
 			if (shallTakeExceptionScreenshot(screenshotAnnotation)) {
@@ -667,9 +696,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), th);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), capturePerformance(driver), th);
 			} else {
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, th);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, capturePerformance(driver), th);
 			}			
 		}
 	}

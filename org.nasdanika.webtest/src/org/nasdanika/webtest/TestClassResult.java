@@ -2,7 +2,6 @@ package org.nasdanika.webtest;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +11,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
 
+import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 
 public class TestClassResult implements Collector<WebDriver>, TestResult {
@@ -100,7 +100,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	private OperationResult<?> currentOperationResult;
 	
 	@Override
-	public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args) {
+	public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performance, Method method, Object[] args) {
 		ActorMethodResult amr = new ActorMethodResult(
 				idGenerator.genId(method.toString(), null),
 				method,
@@ -109,13 +109,15 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		actors.get(actor.getClass()).results.add(amr);
 		currentOperationResult = amr;
 		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot, Screenshot.When.BEFORE);
+		amr.beforePerformance = performance;
 	}
 	@Override
-	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, Method method, Object[] args,	Object result, Throwable th) {
+	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performance, Method method, Object[] args,	Object result, Throwable th) {
 		if (currentOperationResult instanceof ActorMethodResult && method.equals(currentOperationResult.operation)) {
 			currentOperationResult.failure = th;
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
@@ -123,7 +125,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 	
 	@Override
-	public void beforePageInitialization(Class<? extends Page<WebDriver>> pageClass, byte[] screenshot) {
+	public void beforePageInitialization(Class<? extends Page<WebDriver>> pageClass, byte[] screenshot, JSONObject performance) {
 		onPageClass(pageClass);
 		InitializationResult pir = new InitializationResult(
 				idGenerator.genId(pageClass.getName(), "_init"),
@@ -132,23 +134,27 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		pages.get(pageClass).results.add(pir);
 		currentOperationResult = pir;
 		pir.beforeScreenshot = createScreenshotEntry(pir, screenshot, Screenshot.When.BEFORE);
+		pir.beforePerformance = performance;
 	}
 	@Override
 	public void afterPageInitialization(
 			Class<? extends Page<WebDriver>> pageClass, 
 			Page<WebDriver> page,
-			byte[] screenshot, Throwable th) {
+			byte[] screenshot, 
+			JSONObject performance, 
+			Throwable th) {
 		if (currentOperationResult instanceof InitializationResult && pageClass.equals(currentOperationResult.operation)) {
 			currentOperationResult.failure = th;
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
 		}
 	}
 	@Override
-	public void beforePageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args) {
+	public void beforePageMethod(Page<WebDriver> page, byte[] screenshot, JSONObject performance, Method method, Object[] args) {
 		PageMethodResult pmr = new PageMethodResult(
 				idGenerator.genId(method.toString(), null),
 				method,
@@ -157,13 +163,15 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		pages.get(page.getClass()).results.add(pmr);
 		currentOperationResult = pmr;
 		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot, Screenshot.When.BEFORE);
+		pmr.beforePerformance = performance;
 	}
 	@Override
-	public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, Method method, Object[] args, Object result, Throwable th) {
+	public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, JSONObject performance, Method method, Object[] args, Object result, Throwable th) {
 		if (currentOperationResult instanceof PageMethodResult && method.equals(currentOperationResult.operation)) {
 			currentOperationResult.failure = th;
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
 			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
@@ -183,8 +191,9 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 	
 	@Override
-	public void beforeTestMethodScreenshot(byte[] screenshot) {
-		currentOperationResult.beforeScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.BEFORE);		
+	public void beforeTestMethodScreenshot(byte[] screenshot, JSONObject performance) {
+		currentOperationResult.beforeScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.BEFORE);	
+		currentOperationResult.beforePerformance = performance;
 	}
 	
 	@Override
@@ -199,8 +208,9 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 	
 	@Override
-	public void afterTestMethodScreenshot(byte[] screenshot) {
+	public void afterTestMethodScreenshot(byte[] screenshot, JSONObject performance) {
 		currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+		currentOperationResult.afterPerformance = performance;
 	}
 		
 	@Override

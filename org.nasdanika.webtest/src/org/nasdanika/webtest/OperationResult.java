@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.json.JSONObject;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.Table;
@@ -91,6 +92,8 @@ public class OperationResult<O extends AnnotatedElement> {
 	
 	ScreenshotEntry beforeScreenshot;
 	
+	JSONObject beforePerformance;
+	
 	public ScreenshotEntry getBeforeScreenshot() {
 		return beforeScreenshot;
 	}
@@ -102,6 +105,8 @@ public class OperationResult<O extends AnnotatedElement> {
 	}
 	
 	ScreenshotEntry afterScreenshot;
+	
+	JSONObject afterPerformance;
 
 	Throwable failure;
 	

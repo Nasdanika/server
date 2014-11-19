@@ -11,9 +11,9 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
@@ -225,9 +225,9 @@ public class WebTestUtil {
 			}
 
 			@Override
-			public void beforeTestMethodScreenshot(byte[] screenshot) {
+			public void beforeTestMethodScreenshot(byte[] screenshot, JSONObject performance) {
 				for (Collector<D> c : collectors) {
-					c.beforeTestMethodScreenshot(screenshot);
+					c.beforeTestMethodScreenshot(screenshot, performance);
 				}
 			}
 
@@ -240,25 +240,32 @@ public class WebTestUtil {
 			}
 
 			@Override
-			public void beforePageMethod(Page<D> page, byte[] screenshot,
+			public void beforePageMethod(
+					Page<D> page, 
+					byte[] screenshot, 
+					JSONObject performance,
 					Method method, Object[] args) {
 				for (Collector<D> c : collectors) {
-					c.beforePageMethod(page, screenshot, method, args);
+					c.beforePageMethod(page, screenshot, performance, method, args);
 				}
 			}
 
 			@Override
-			public void beforeActorMethod(Actor<D> actor, byte[] screenshot,
-					Method method, Object[] args) {
+			public void beforeActorMethod(
+					Actor<D> actor, 
+					byte[] screenshot, 
+					JSONObject performance,
+					Method method, 
+					Object[] args) {
 				for (Collector<D> c : collectors) {
-					c.beforeActorMethod(actor, screenshot, method, args);
+					c.beforeActorMethod(actor, screenshot, performance, method, args);
 				}
 			}
 
 			@Override
-			public void afterTestMethodScreenshot(byte[] screenshot) {
+			public void afterTestMethodScreenshot(byte[] screenshot, JSONObject performance) {
 				for (Collector<D> c : collectors) {
-					c.afterTestMethodScreenshot(screenshot);
+					c.afterTestMethodScreenshot(screenshot, performance);
 				}
 			}
 
@@ -270,18 +277,23 @@ public class WebTestUtil {
 			}
 
 			@Override
-			public void afterPageMethod(Page<D> page, byte[] screenshot,
-					Method method, Object[] args, Object result, Throwable th) {
+			public void afterPageMethod(
+					Page<D> page, 
+					byte[] screenshot, 
+					JSONObject performance,
+					Method method, 
+					Object[] args, 
+					Object result, 
+					Throwable th) {
 				for (Collector<D> c : collectors) {
-					c.afterPageMethod(page, screenshot, method, args, result,
-							th);
+					c.afterPageMethod(page, screenshot, performance, method, args, result, th);
 				}
 			}
 
 			@Override
-			public void afterActorMethod(Actor<D> actor, byte[] screenshot,	Method method, Object[] args, Object result, Throwable th) {
+			public void afterActorMethod(Actor<D> actor, byte[] screenshot, JSONObject performance,	Method method, Object[] args, Object result, Throwable th) {
 				for (Collector<D> c : collectors) {
-					c.afterActorMethod(actor, screenshot, method, args, result,	th);
+					c.afterActorMethod(actor, screenshot, performance, method, args, result, th);
 				}
 			}
 
@@ -293,16 +305,16 @@ public class WebTestUtil {
 			}
 
 			@Override
-			public void beforePageInitialization(Class<? extends Page<D>> pageClass, byte[] screenshot) {
+			public void beforePageInitialization(Class<? extends Page<D>> pageClass, byte[] screenshot, JSONObject performance) {
 				for (Collector<D> c : collectors) {
-					c.beforePageInitialization(pageClass, screenshot);
+					c.beforePageInitialization(pageClass, screenshot, performance);
 				}
 			}
 
 			@Override
-			public void afterPageInitialization(Class<? extends Page<D>> pageClass, Page<D> page, byte[] screenshot, Throwable th) {
+			public void afterPageInitialization(Class<? extends Page<D>> pageClass, Page<D> page, byte[] screenshot, JSONObject performance, Throwable th) {
 				for (Collector<D> c : collectors) {
-					c.afterPageInitialization(pageClass, page, screenshot, th);
+					c.afterPageInitialization(pageClass, page, screenshot, performance, th);
 				}
 			}
 		};
