@@ -11,6 +11,7 @@ import org.nasdanika.html.Button;
 import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.ButtonToolbar;
 import org.nasdanika.html.Carousel;
+import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
@@ -383,5 +384,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 			}
 			
 		};
+	}
+
+	@Override
+	public FontAwesome<Tag> fontAwesome() {
+		return span("").fontAwesome();
 	}
 }

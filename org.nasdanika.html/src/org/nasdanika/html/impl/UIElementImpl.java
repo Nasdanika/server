@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.UIElement;
 
@@ -316,5 +317,186 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	@Override
 	public T ngShow(Object expr) {
 		return attribute("ng-show", expr);
+	}
+	
+	@Override
+	public FontAwesome<T> fontAwesome() {
+		return new FontAwesome<T>() {
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T getTarget() {
+				return (T) UIElementImpl.this;
+			}
+
+			@Override
+			public FontAwesome<T> brand(Brand brand) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+brand.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> chart(Chart chart) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+chart.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> currency(Currency currency) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+currency.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> directional(Directional directional) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+directional.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> fileType(FileType fileType) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+fileType.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> formControl(FormControl formControl) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+formControl.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> medical(Medical medical) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+medical.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> payment(Payment payment) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+payment.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> spinner(Spinner spinner) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+spinner.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> videoPlayer(VideoPlayer videoPlayer) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+videoPlayer.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> webApplication(WebApplication webApplication) {
+				getTarget().addClass("fa");
+				getTarget().addClass("fa-"+webApplication.name().replace('_', '-'));
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> fixedWidth() {
+				getTarget().addClass("fa-fw");
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> li() {
+				getTarget().addClass("fa-li");
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> ul() {
+				getTarget().addClass("fa-ul");
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> spin() {
+				getTarget().addClass("fa-spin");
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> pullLeft() {
+				getTarget().addClass("pull-left", "fa-border");
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> pullRight() {
+				getTarget().addClass("pull-right", "fa-border");
+				return this;
+			}
+			
+			@Override
+			public FontAwesome<T> rotate(Rotate rotate) {
+				switch (rotate) {
+				case R180:
+					getTarget().addClass("fa-rotate-90");
+					break;
+				case R270:
+					getTarget().addClass("fa-rotate-180");
+					break;
+				case R90:
+					getTarget().addClass("fa-rotate-270");
+					break;
+				default:
+					break;
+				
+				}
+				return this;
+			}
+			
+			@Override
+			public FontAwesome<T> flip(Flip flip) {
+				getTarget().addClass("fa-flip-"+flip.name());
+				return this;
+			}
+
+			@Override
+			public FontAwesome<T> size(Size size) {
+				switch (size) {
+				case large:
+					addClass("fa-lg");
+					break;
+				case x2:
+					addClass("fa-2x");
+					break;
+				case x3:
+					addClass("fa-3x");
+					break;
+				case x4:
+					addClass("fa-4x");
+					break;
+				case x5:
+					addClass("fa-5x");
+					break;
+				default:
+					break;
+				
+				}
+				return this;
+			}
+			
+			@Override
+			public String toString() {
+				return getTarget().toString();
+			}
+			
+		};
 	}
 }

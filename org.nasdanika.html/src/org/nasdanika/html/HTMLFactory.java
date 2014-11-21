@@ -439,4 +439,10 @@ public interface HTMLFactory {
 
 	Carousel carousel();
 	
+	/**
+	 * Shortcut for <code>factory.span().fontAwesome();</code>
+	 * @return
+	 */
+	FontAwesome<Tag> fontAwesome();
+	
 }
