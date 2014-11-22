@@ -103,6 +103,7 @@
 		<module>../org.nasdanika.web</module>
 		
 		<module>../org.nasdanika.webtest</module>
+		<module>../org.nasdanika.webtest.performance</module>
 		<module>../org.nasdanika.webtest.feature</module>
 		
 		<module>../org.nasdanika.workspace.wizard</module>
