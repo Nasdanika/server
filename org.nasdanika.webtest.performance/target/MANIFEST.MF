@@ -1,0 +1,15 @@
+Manifest-Version: 1.0
+Require-Bundle: org.eclipse.core.runtime,org.eclipse.emf.ecore;visibil
+ ity:=reexport,org.eclipse.emf.cdo;visibility:=reexport
+Export-Package: org.nasdanika.webtest.performance,org.nasdanika.webtes
+ t.performance.impl,org.nasdanika.webtest.performance.util
+Bundle-Vendor: %providerName
+Bundle-ActivationPolicy: lazy
+Bundle-ClassPath: .
+Bundle-Version: 0.1.0.201411211535
+Bundle-Localization: plugin
+Bundle-Name: %pluginName
+Bundle-ManifestVersion: 2
+Bundle-SymbolicName: org.nasdanika.webtest.performance;singleton:=true
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+

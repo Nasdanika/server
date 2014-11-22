@@ -2,6 +2,7 @@ package org.nasdanika.webtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import java.util.concurrent.Executor;
 
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 public class TestClassResult implements Collector<WebDriver>, TestResult {
 
@@ -67,16 +69,16 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return pages.values();
 	}
 	
-	private void onPageClass(Class<? extends Page<WebDriver>> pageClass) {
+	private void onPageClass(Class<? extends Page<WebDriver>> pageClass, int size) {
 		if (!pages.containsKey(pageClass)) {
-			pages.put(pageClass, new PageResult(pageClass));
+			pages.put(pageClass, new PageResult(pageClass, size));
 		}		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onPageProxying(Page<WebDriver> page) {
-		onPageClass((Class<? extends Page<WebDriver>>) page.getClass());
+		onPageClass((Class<? extends Page<WebDriver>>) page.getClass(), page.size());
 	}
 	
 	private void onActorClass(Class<? extends Actor<WebDriver>> actorClass) {
@@ -126,7 +128,15 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	@Override
 	public void beforePageInitialization(Class<? extends Page<WebDriver>> pageClass, byte[] screenshot, JSONObject performance) {
-		onPageClass(pageClass);
+		int size = 0;
+		for (Class<?> cls = pageClass; cls!=null; cls = cls.getSuperclass()) {
+			for (Field field: cls.getDeclaredFields()) {
+				if (WebElement.class.isAssignableFrom(field.getType())) {
+					++size;
+				} 
+			}
+		}
+		onPageClass(pageClass, size);
 		InitializationResult pir = new InitializationResult(
 				idGenerator.genId(pageClass.getName(), "_init"),
 				pageClass, 

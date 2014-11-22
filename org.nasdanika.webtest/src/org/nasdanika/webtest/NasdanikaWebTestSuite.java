@@ -12,7 +12,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -197,7 +196,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 					for (PageResult cpr: tr.getPageResults()) {
 						PageResult apr = collector.get(cpr.getPageInterface());
 						if (apr==null) {
-							apr = new PageResult(cpr.getPageInterface());
+							apr = new PageResult(cpr.getPageInterface(), cpr.size());
 							collector.put(cpr.getPageInterface(), apr);
 						}
 						apr.merge(cpr);
@@ -213,8 +212,16 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 	public void close() throws Exception {
 		((ExecutorService) screenshotExecutor).shutdown();
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
-		new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
+		if (getTestClass().getJavaClass().getAnnotation(Report.class)!=null) {
+			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
+		}
+		if (getTestClass().getJavaClass().getAnnotation(Publish.class)!=null) {
+			new HttpPublisher(getTestClass().getJavaClass(), testResults).publish();
+		}
 		WebTestUtil.publishTestResults(testResults);
+		if (getTestClass().getJavaClass().getAnnotation(Report.class)==null) {
+			AbstractNasdanikaWebTestRunner.delete(outputDir);
+		}
 	}
 	
 }

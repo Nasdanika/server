@@ -54,13 +54,13 @@ public class ScreenshotEntry implements Runnable {
 
 	private ScreenshotEntry prev;
 
-	final OperationResult operationResult;
+	final OperationResult<?> operationResult;
 	
-	public OperationResult getMethodResult() {
+	public OperationResult<?> getMethodResult() {
 		return operationResult;
 	}
 
-	ScreenshotEntry(OperationResult operationResult, ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
+	ScreenshotEntry(OperationResult<?> operationResult, ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
 		this.operationResult = operationResult;
 		this.screenshotsDir = screenshotsDir;
 		this.id = id;

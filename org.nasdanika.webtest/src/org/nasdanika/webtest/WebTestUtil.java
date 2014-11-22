@@ -41,15 +41,10 @@ public class WebTestUtil {
 	 * 
 	 * @param testResults
 	 */
-	public static void publishTestResults(
-			Iterable<? extends TestResult> testResults) {
-		for (IConfigurationElement ce : Platform
-				.getExtensionRegistry()
-				.getConfigurationElementsFor("org.nasdanika.webtest.collectors")) {
+	public static void publishTestResults(Iterable<? extends TestResult> testResults) {
+		for (IConfigurationElement ce : Platform.getExtensionRegistry().getConfigurationElementsFor("org.nasdanika.webtest.collectors")) {
 			if ("test_result_listener".equals(ce.getName())) {
-				try (TestResultListener trl = injectProperties(ce,
-						(TestResultListener) ce
-								.createExecutableExtension("class"))) {
+				try (TestResultListener trl = injectProperties(ce, (TestResultListener) ce.createExecutableExtension("class"))) {
 					for (TestResult tr : testResults) {
 						trl.addResult(tr);
 					}

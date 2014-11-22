@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.webtest.performance/src" modelPluginID="org.nasdanika.webtest.performance"
+    modelName="Performance" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
+    reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
+    complianceLevel="7.0" copyrightFields="false" providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>performance.ecore</foreignModel>
+  <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
+  <genPackages prefix="Performance" basePackage="org.nasdanika.webtest" disposableProviderFactory="true"
+      ecorePackage="performance.ecore#/">
+    <genClasses ecoreClass="performance.ecore#//TimingBase">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/connectEnd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/connectStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/domainLookupEnd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/domainLookupStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/fetchStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/redirectEnd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/redirectStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/requestStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/responseEnd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/responseStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/secureConnectionStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/redirectCount"/>
+    </genClasses>
+    <genClasses ecoreClass="performance.ecore#//ResourceTiming">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//ResourceTiming/duration"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//ResourceTiming/startTime"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//ResourceTiming/entryType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//ResourceTiming/initiatorType"/>
+    </genClasses>
+    <genClasses ecoreClass="performance.ecore#//NavigationTiming">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/domComplete"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/domContentLoadedEventEnd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/domContentLoadedEventStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/domInteractive"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/domLoading"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/loadEventEnd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/loadEventStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/navigationStart"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/unloadEventEnd"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/unloadEventStart"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference performance.ecore#//NavigationTiming/entries"/>
+    </genClasses>
+    <genClasses ecoreClass="performance.ecore#//DocumentTiming"/>
+  </genPackages>
+</genmodel:GenModel>

@@ -356,7 +356,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 					for (PageResult cpr: tr.getPageResults()) {
 						PageResult apr = collector.get(cpr.getPageInterface());
 						if (apr==null) {
-							apr = new PageResult(cpr.getPageInterface());
+							apr = new PageResult(cpr.getPageInterface(), cpr.size());
 							collector.put(cpr.getPageInterface(), apr);
 						}
 						apr.merge(cpr);
@@ -400,8 +400,16 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 	public void close() throws Exception {
 		((ExecutorService) screenshotExecutor).shutdown();
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
-		new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
-		WebTestUtil.publishTestResults(testResults);		
+		if (getTestClass().getJavaClass().getAnnotation(Report.class)!=null) {
+			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
+		} 
+		if (getTestClass().getJavaClass().getAnnotation(Publish.class)!=null) {
+			new HttpPublisher(getTestClass().getJavaClass(), testResults).publish();
+		}
+		WebTestUtil.publishTestResults(testResults);	
+		if (getTestClass().getJavaClass().getAnnotation(Report.class)==null) {
+			AbstractNasdanikaWebTestRunner.delete(outputDir);
+		}
 	}    
     
 }

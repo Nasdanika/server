@@ -18,18 +18,25 @@ public class PageResult {
 	private final Class<? extends Page<WebDriver>> pageClass;
 	
 	private String id;
+
+	private int size;
 	
 	public String getId() {
 		return id;
 	}
 
-	PageResult(Class<? extends Page<WebDriver>> pageClass) {
+	PageResult(Class<? extends Page<WebDriver>> pageClass, int size) {
 		this.pageClass = pageClass;
+		this.size = size;
 	}
 
-	PageResult(Class<? extends Page<WebDriver>> pageClass, String id) {
-		this(pageClass);
+	PageResult(Class<? extends Page<WebDriver>> pageClass, String id, int size) {
+		this(pageClass, size);
 		this.id = id;
+	}
+	
+	public int size() {
+		return size;
 	}
 	
 	List<OperationResult<?>> results = new ArrayList<>();
@@ -57,6 +64,9 @@ public class PageResult {
 		
 	public void merge(PageResult anotherResult) {
 		results.addAll(anotherResult.getResults());
+		if (this.size<anotherResult.size()) {
+			this.size = anotherResult.size();
+		}
 	}
 	
 	public Map<Method, Integer> getCoverage() {

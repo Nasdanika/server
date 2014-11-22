@@ -88,7 +88,7 @@ class ReportGenerator {
 				if (Page.class.isAssignableFrom(cc)) {
 					PageResult apr = pageResultCollector.get(cc);
 					if (apr==null) {
-						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null));
+						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null), apr.size());
 						pageResultCollector.put(cc, apr);
 					}
 				}
@@ -118,7 +118,7 @@ class ReportGenerator {
 			for (PageResult cpr: tr.getPageResults()) {
 				PageResult apr = pageResultCollector.get(cpr.getPageInterface());
 				if (apr==null) {
-					apr = new PageResult(cpr.getPageInterface(), idGenerator.genId(cpr.getPageInterface().getName(), null));
+					apr = new PageResult(cpr.getPageInterface(), idGenerator.genId(cpr.getPageInterface().getName(), null), cpr.size());
 					pageResultCollector.put(cpr.getPageInterface(), apr);
 				}
 				apr.merge(cpr);
@@ -918,9 +918,10 @@ class ReportGenerator {
 	private Table genPageTable(HTMLFactory htmlFactory) {
 		Table pageTable = htmlFactory.table().bordered();
 		Row header = pageTable.row().style(Style.INFO);
-		int[] totals = {0, 0, 0};
+		int[] totals = {0, 0, 0, 0};
 		header.header(htmlFactory.glyphicon(Glyphicon.list_alt), "&nbsp;Page class");
 		header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
+		header.header("Elements");
 		header.header("Methods");
 		header.header("Invocations");
 		header.header("Coverage");
@@ -946,6 +947,8 @@ class ReportGenerator {
 				}
 				descriptionCell.content("</pre>");			
 			}
+			pageRow.cell(pr.size()).attribute("align", "center");
+			totals[0]+=pr.size();
 			Map<Method, Integer> coverage = pr.getCoverage();
 			int covered = 0;
 			int calls = 0;
@@ -958,18 +961,18 @@ class ReportGenerator {
 			pageRow.cell(coverage.size()).attribute("align", "center");
 			pageRow.cell(calls).attribute("align", "center");
 			pageRow.cell(covered+MessageFormat.format(" ({0,number,#.##}%)", 100.0*covered/coverage.size())).attribute("align", "center");
-			totals[0]+=coverage.size();
-			totals[1]+=calls;
-			totals[2]+=covered;
+			totals[1]+=coverage.size();
+			totals[2]+=calls;
+			totals[3]+=covered;
 		}
 		Row totalsRow = pageTable.row().style(Style.INFO);
 		totalsRow.cell("Total").colspan(2);
 		totalsRow.cell(totals[0]).attribute("align", "center");
 		totalsRow.cell(totals[1]).attribute("align", "center");
-		totalsRow.cell(totals[2]+MessageFormat.format(" ({0,number,#.##}%)", 100.0*totals[2]/totals[0])).attribute("align", "center");
+		totalsRow.cell(totals[2]).attribute("align", "center");
+		totalsRow.cell(totals[3]+MessageFormat.format(" ({0,number,#.##}%)", 100.0*totals[2]/totals[0])).attribute("align", "center");
 		return pageTable;
 	}
-
 
 	private Table genActorTable(HTMLFactory htmlFactory) {
 		Table actorTable = htmlFactory.table().bordered();

@@ -12,4 +12,9 @@ public interface Page<D extends WebDriver> {
 
 	D getWebDriver();
 	
+	/**
+	 * @return Number of web elements on the page and sub-pages.
+	 */
+	int size();
+	
 }
