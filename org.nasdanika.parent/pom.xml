@@ -37,7 +37,7 @@
 		</repository>
 		<repository>
 			<id>third-party</id>
-			<url>http://www.nasdanika.org/third_party_repository</url>
+			<url>http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository</url>
 			<!-- <url>http://www.nasdanika.org/third_party_repository</url> -->
 			<layout>p2</layout>
 		</repository>

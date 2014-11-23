@@ -36,7 +36,7 @@
 		<module>org.nasdanika.webtest.feature</module>
 		<module>org.nasdanika.feature</module>
 		<!-- <module>org.nasdanika.transaction</module> -->
-		<module>org.nasdanika.server.third_party.feature</module>
+		<!-- <module>org.nasdanika.server.third_party.feature</module> -->
 		<module>org.nasdanika.server.jetty.feature</module>
 		<module>org.nasdanika.repository</module>
 	</modules>
