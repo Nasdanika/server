@@ -1,5 +1,8 @@
 package org.nasdanika.webtest;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -36,7 +39,14 @@ class HttpPublisher {
 		pConnection.setRequestProperty("Size", String.valueOf(testResults.size()));
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
-			
+			try (InputStream is = pConnection.getInputStream()) {
+				try (Reader reader = new InputStreamReader(is)) {
+					int ch;
+					while ((ch=reader.read())!=-1) {
+						System.out.print((char) ch);
+					}
+				}
+			}
 		} else {
 			throw new PublishException("Server error: "+responseCode);
 		}
