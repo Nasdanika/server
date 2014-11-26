@@ -1,13 +1,18 @@
 package org.nasdanika.webtest;
 
 import java.io.File;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -17,6 +22,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.json.JSONObject;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.Parameterized;
@@ -365,6 +371,62 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				return collector.values();
 			}
 			
+			@Override
+			public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+				if (monitor!=null) {
+					monitor.onPublishing("Parameterized test "+getTestClass().getName(), url);
+				}
+				HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
+				pConnection.setRequestMethod("POST");
+				pConnection.setDoOutput(true);
+				pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+				JSONObject data = new JSONObject();
+				WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getTestClass(), data);
+				data.put("type", "parameterized");
+				try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
+					data.write(w);
+				}
+				int responseCode = pConnection.getResponseCode();
+				if (responseCode==HttpURLConnection.HTTP_OK) {
+					idMap.put(this, pConnection.getHeaderField("ID"));
+					String location = pConnection.getHeaderField("Location");
+
+					URL childrenURL= new URL(location+"/children");
+					for (TestResult tr: getChildren()) {
+						tr.publish(childrenURL, securityToken, idMap, monitor);				
+					}
+
+					URL pageResultsURL= new URL(location+"/pageResults");
+					for (PageResult pr: getPageResults()) {
+						pr.publish(pageResultsURL, securityToken, idMap, monitor);				
+					}
+
+					URL actorResultsURL= new URL(location+"/actorResults");
+					for (ActorResult ar: getActorResults()) {
+						ar.publish(actorResultsURL, securityToken, idMap, monitor);				
+					}
+				} else {
+					throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+				}
+			}						
+
+			@Override
+			public int publishSize() {
+				int ret = 1;
+				for (TestResult mr: getChildren()) {
+					ret+=mr.publishSize();	
+				}
+
+				for (PageResult pr: getPageResults()) {
+					ret+=pr.publishSize();	
+				}
+
+				for (ActorResult ar: getActorResults()) {
+					ret+=ar.publishSize();	
+				}
+				return ret;
+			}				
+			
 		});
 	}
 	
@@ -403,8 +465,9 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 		if (getTestClass().getJavaClass().getAnnotation(Report.class)!=null) {
 			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
 		} 
-		if (getTestClass().getJavaClass().getAnnotation(Publish.class)!=null) {
-			new HttpPublisher(getTestClass().getJavaClass(), testResults).publish();
+		Publish publish = getTestClass().getJavaClass().getAnnotation(Publish.class);
+		if (publish!=null) {
+			new TestSession(getTestClass().getJavaClass(), testResults).publish(new URL(publish.url()), publish.securityToken(), new IdentityHashMap<Object, String>(), null);
 		}
 		WebTestUtil.publishTestResults(testResults);	
 		if (getTestClass().getJavaClass().getAnnotation(Report.class)==null) {

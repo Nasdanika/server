@@ -2,8 +2,10 @@ package org.nasdanika.webtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.Collections;
+import java.util.IdentityHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -43,8 +45,9 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 					if (getTestClass().getAnnotation(Report.class)!=null) {
 						new ReportGenerator(getTestClass(), outputDir, idGenerator, Collections.singleton(this)).generate();
 					}
-					if (getTestClass().getAnnotation(Publish.class)!=null) {
-						new HttpPublisher(getTestClass(), Collections.singleton(this)).publish();
+					Publish publish = getTestClass().getAnnotation(Publish.class);
+					if (publish!=null) {
+						new TestSession(getTestClass(), Collections.singleton(this)).publish(new URL(publish.url()), publish.securityToken(), new IdentityHashMap<Object, String>(), null);
 					}
 					WebTestUtil.publishTestResults(Collections.singleton(this));		
 					if (getTestClass().getAnnotation(Report.class)==null) {

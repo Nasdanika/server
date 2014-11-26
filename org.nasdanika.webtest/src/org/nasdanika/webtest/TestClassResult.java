@@ -2,13 +2,18 @@ package org.nasdanika.webtest;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.concurrent.Executor;
 
@@ -283,5 +288,66 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	public void setTest(Object test) {
 		currentOperationResult.setTarget(test);
 	}
+		
+	@Override
+	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+		if (monitor!=null) {
+			monitor.onPublishing("Test Class Result "+getTestClass().getName(), url);
+		}
+		HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
+		pConnection.setRequestMethod("POST");
+		pConnection.setDoOutput(true);
+		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+		JSONObject data = new JSONObject();
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getTestClass(), data);
+		JSONObject stats = new JSONObject();
+		data.put("stats", stats);
+		for (Entry<TestStatus, Integer> ce: getStats().entrySet()) {
+			stats.put(ce.getKey().toString(), ce.getValue());
+		}
+		data.put("type", "class");
+		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
+			data.write(w);
+		}
+		int responseCode = pConnection.getResponseCode();
+		if (responseCode==HttpURLConnection.HTTP_OK) {
+			idMap.put(this, pConnection.getHeaderField("ID"));
+			String location = pConnection.getHeaderField("Location");
 
+			URL methodResultsURL= new URL(location+"/methodResults");
+			for (TestMethodResult mr: getTestMethodResults()) {
+				mr.publish(methodResultsURL, securityToken, idMap, monitor);				
+			}
+
+			URL pageResultsURL= new URL(location+"/pageResults");
+			for (PageResult pr: getPageResults()) {
+				pr.publish(pageResultsURL, securityToken, idMap, monitor);				
+			}
+
+			URL actorResultsURL= new URL(location+"/actorResults");
+			for (ActorResult ar: getActorResults()) {
+				ar.publish(actorResultsURL, securityToken, idMap, monitor);				
+			}
+		} else {
+			throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+		}
+	}			
+
+	@Override
+	public int publishSize() {
+		int ret = 1;
+		for (TestMethodResult mr: getTestMethodResults()) {
+			ret+=mr.publishSize();	
+		}
+
+		for (PageResult pr: getPageResults()) {
+			ret+=pr.publishSize();	
+		}
+
+		for (ActorResult ar: getActorResults()) {
+			ret+=ar.publishSize();	
+		}
+		return ret;
+	}				
+	
 }

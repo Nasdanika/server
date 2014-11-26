@@ -3,6 +3,8 @@ package org.nasdanika.webtest;
 import java.lang.reflect.Method;
 import java.text.MessageFormat;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 
 public class TestMethodResult extends MethodResult {
@@ -36,6 +38,18 @@ public class TestMethodResult extends MethodResult {
 			return pattern;
 		}
 		return MessageFormat.format(pattern, parameters);
+	}	
+		
+	@Override
+	protected void extraPublishInfo(JSONObject data) throws Exception {
+		if (parameters!=null) {
+			// Simplistic approach for now
+			JSONArray prms = new JSONArray();
+			data.put("parameters", prms);
+			for (Object prm: parameters) {
+				prms.put(prm==null ? null : prm.toString());
+			}
+		}
 	}	
 
 }

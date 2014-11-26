@@ -88,7 +88,7 @@ class ReportGenerator {
 				if (Page.class.isAssignableFrom(cc)) {
 					PageResult apr = pageResultCollector.get(cc);
 					if (apr==null) {
-						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null), apr.size());
+						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null), 0);
 						pageResultCollector.put(cc, apr);
 					}
 				}
@@ -646,7 +646,6 @@ class ReportGenerator {
 		}
 		int testIdx = 1;
 		for (TestResult tr: testSuiteResult.getChildren()) {
-			@SuppressWarnings("resource")
 			TestClassResult tcr = (TestClassResult) tr;
 			if (!tcr.getTestMethodResults().isEmpty()) {
 				Row classRow = classTable.row();

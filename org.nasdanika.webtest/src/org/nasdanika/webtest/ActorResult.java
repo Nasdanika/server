@@ -1,11 +1,18 @@
 package org.nasdanika.webtest;
 
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.lang.reflect.Method;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -13,7 +20,7 @@ import org.openqa.selenium.WebDriver;
  * @author Pavel Vlasov
  *
  */
-public class ActorResult {
+public class ActorResult implements HttpPublisher {
 
 	private final Class<? extends Actor<WebDriver>> actorClass;
 	
@@ -75,5 +82,47 @@ public class ActorResult {
 		}
 		return ret;
 	}	
+	
+	
+	@Override
+	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+		if (monitor!=null) {
+			monitor.onPublishing("Actor result "+getActorInterface().getName(), url);
+		}
+		HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
+		pConnection.setRequestMethod("POST");
+		pConnection.setDoOutput(true);
+		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+		JSONObject data = new JSONObject();
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getActorInterface(), data);
+		JSONArray resultIDs = new JSONArray();
+		data.put("results", resultIDs);
+		for (OperationResult<?> r: getResults()) {
+			String rId = idMap.get(r);
+			if (rId==null) {
+				throw new IllegalStateException("Operation result is not yet published");
+			}
+			resultIDs.put(rId);
+		}
+		JSONObject coverage = new JSONObject();
+		data.put("coverage", coverage);
+		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
+			coverage.put(ce.getKey().toString(), ce.getValue());
+		}
+		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
+			data.write(w);
+		}
+		int responseCode = pConnection.getResponseCode();
+		if (responseCode==HttpURLConnection.HTTP_OK) {
+			idMap.put(this, pConnection.getHeaderField("ID"));
+		} else {
+			throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+		}
+	}
+
+	@Override
+	public int publishSize() {
+		return 1;
+	}				
 
 }

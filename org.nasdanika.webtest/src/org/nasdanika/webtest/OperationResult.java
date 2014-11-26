@@ -1,17 +1,24 @@
 package org.nasdanika.webtest;
 
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Member;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
@@ -29,7 +36,7 @@ import org.openqa.selenium.WebDriverException;
  * @author Pavel Vlasov
  *
  */
-public class OperationResult<O extends AnnotatedElement> {
+public class OperationResult<O extends AnnotatedElement> implements HttpPublisher {
 
 	final O operation;
 	
@@ -386,5 +393,163 @@ public class OperationResult<O extends AnnotatedElement> {
 		}
 		return format(caption.toString());
 	}
+		
+	@Override
+	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+		if (monitor!=null) {
+			monitor.onPublishing("Operation Result "+getOperationName(), url);
+		}
+		HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
+		pConnection.setRequestMethod("POST");
+		pConnection.setDoOutput(true);
+		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+		JSONObject data = new JSONObject();
+		WebTestUtil.titleAndDescriptionToJSON(getOperation(), data);
+		data.put("operationName", getOperationName());
+		if (afterPerformance!=null) {
+			data.put("afterPerformance", afterPerformance);
+		}
+		if (arguments!=null) {
+			// Simplistic approach for now
+			JSONArray args = new JSONArray();
+			data.put("arguments", args);
+			for (Object arg: arguments) {
+				args.put(arg==null ? null : arg.toString());
+			}
+		}
+		if (beforePerformance!=null) {
+			data.put("beforePerformance", beforePerformance);
+		}
+		if (hasOwnFailure()) {
+			if (isFailure()) {
+				data.put("failure", toJSON(getRootCause()));
+			} else {
+				data.put("error", toJSON(getRootCause()));
+			}
+		}
+		data.put("finish", finish);
+		data.put("start", start);
+		if (isPending()) {
+			data.put("pending", true);
+		}
+		if (parent!=null) {
+			if (afterScreenshot!=null) {
+				String sid = idMap.get(afterScreenshot);
+				if (sid==null) {
+					throw new IllegalStateException("Screenshot ID not found in ID map");
+				}
+				data.put("afterScreenshot", sid);
+			}
+			if (beforeScreenshot!=null) {
+				String sid = idMap.get(beforeScreenshot);
+				if (sid==null) {
+					throw new IllegalStateException("Screenshot ID not found in ID map");
+				}
+				data.put("beforeScreenshot", sid);
+			}
+		}		
+		extraPublishInfo(data);
+		try (Writer w = new OutputStreamWriter(/*new GZIPOutputStream(*/pConnection.getOutputStream()/*)*/)) {
+			data.write(w);
+		}
+		int responseCode = pConnection.getResponseCode();
+		if (responseCode==HttpURLConnection.HTTP_OK) {
+			idMap.put(this, pConnection.getHeaderField("ID"));
+			String location = pConnection.getHeaderField("Location");
 	
+			if (parent==null) {
+				URL methodResultsURL= new URL(location+"/screenshots");
+				for (ScreenshotEntry se: allScreenshots()) {
+					se.publish(methodResultsURL, securityToken, idMap, monitor);				
+				}
+			}
+	
+			URL childrenURL= new URL(location+"/children");
+			for (OperationResult<?> child: getChildren()) {
+				child.publish(childrenURL, securityToken, idMap, monitor);				
+			}
+			
+			// --- Update non-containing references ---
+			if (parent!=null && (afterScreenshot!=null || beforeScreenshot!=null)) {
+				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
+				uConnection.setRequestMethod("PUT");
+				uConnection.setDoOutput(true);
+				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+				JSONObject uData = new JSONObject();
+				if (afterScreenshot!=null) {
+					String sid = idMap.get(afterScreenshot);
+					if (sid==null) {
+						throw new IllegalStateException("Screenshot ID not found in ID map");
+					}
+					uData.put("afterScreenshot", sid);
+				}
+				if (beforeScreenshot!=null) {
+					String sid = idMap.get(beforeScreenshot);
+					if (sid==null) {
+						throw new IllegalStateException("Screenshot ID not found in ID map");
+					}
+					uData.put("beforeScreenshot", sid);
+				}
+				try (Writer w = new OutputStreamWriter(new GZIPOutputStream(uConnection.getOutputStream()))) {
+					uData.write(w);
+				}
+				if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
+					throw new PublishException("Server error: "+responseCode+" "+uConnection.getResponseMessage());
+				}				
+			}					
+			// ---
+		} else {
+			throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+		}
+	}	
+	
+	private JSONObject toJSON(Throwable th) throws Exception {
+		JSONObject ret = new JSONObject();
+		ret.put("type", th.getClass().getName());
+		if (th.getMessage()!=null) {
+			ret.put("message", th.getMessage());
+		}
+		JSONArray stackTrace = new JSONArray();
+		ret.put("stackTrace", stackTrace);
+		for (StackTraceElement ste: th.getStackTrace()) {
+			JSONObject el = new JSONObject();
+			stackTrace.put(el);
+			el.put("className", ste.getClassName());
+			if (ste.getFileName()!=null) {
+				el.put("fileName", ste.getFileName());
+			}
+			if (ste.getLineNumber()>=0) {
+				el.put("lineNumber", ste.getLineNumber());
+			}
+			el.put("methodName", ste.getMethodName());
+			if (ste.isNativeMethod()) {
+				el.put("native", true);
+			}			
+		}
+		return ret;
+	}
+	
+	/**
+	 * A method for subclasses add 
+	 * @param data
+	 */
+	protected void extraPublishInfo(JSONObject data) throws Exception {
+		
+	}
+	
+	@Override
+	public int publishSize() {
+		int ret = 1;
+		for (OperationResult<?> or: getChildren()) {
+			ret+=or.publishSize();	
+		}
+	
+		if (parent==null) {
+			for (ScreenshotEntry ss: allScreenshots()) {
+				ret+=ss.publishSize();	
+			}
+		}
+		return ret;
+	}				
+		
 }

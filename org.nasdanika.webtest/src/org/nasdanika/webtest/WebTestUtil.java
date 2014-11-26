@@ -1,6 +1,7 @@
 package org.nasdanika.webtest;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -11,6 +12,8 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -564,6 +567,34 @@ public class WebTestUtil {
 	
 	static void doWait(WebDriver driver, Method pageMethod) {
 		new WaitAnnotations(pageMethod).doWait(driver);
+	}
+		
+	static void qualifiedNameAndTitleAndDescriptionToJSON(Class<?> klass, JSONObject target) throws JSONException {
+		target.put("qualifiedName", klass.getName());
+		titleAndDescriptionToJSON(klass, target);		
+	}
+
+	static void titleAndDescriptionToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
+		Title title = annotated.getAnnotation(Title.class);
+		if (title!=null) {
+			target.put("title", title.value());
+		}
+		Description description = annotated.getAnnotation(Description.class);
+		if (description!=null) {
+			JSONObject jd = new JSONObject();
+			target.put("description", jd);
+			if (description.url()!=null) {
+				jd.put("url", description.url());
+			}
+			if (description.html()) {
+				jd.put("html", true);
+			}
+			JSONArray jdv = new JSONArray();
+			jd.put("value", jdv);
+			for (String v: description.value()) {
+				jdv.put(v);
+			}
+		}
 	}
 	
 }

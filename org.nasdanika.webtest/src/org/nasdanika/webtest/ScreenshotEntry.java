@@ -1,12 +1,18 @@
 package org.nasdanika.webtest;
 
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Member;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Arrays;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -17,7 +23,7 @@ import org.nasdanika.html.impl.DefaultHTMLFactory;
  * @author Pavel Vlasov
  *
  */
-public class ScreenshotEntry implements Runnable {
+public class ScreenshotEntry implements Runnable, HttpPublisher {
 	
 	final String id;
 	
@@ -56,7 +62,7 @@ public class ScreenshotEntry implements Runnable {
 
 	final OperationResult<?> operationResult;
 	
-	public OperationResult<?> getMethodResult() {
+	public OperationResult<?> getOperationResult() {
 		return operationResult;
 	}
 
@@ -91,7 +97,9 @@ public class ScreenshotEntry implements Runnable {
 			screenshotFile = new File(screenshotsDir, "screenshot_"+id+".png");
 			try (FileOutputStream fos = new FileOutputStream(screenshotFile)) {
 				fos.write(bytes);
-			}			
+			} finally {
+				bytes = null;
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}		
@@ -126,5 +134,37 @@ public class ScreenshotEntry implements Runnable {
 		}
 		return caption.toString();
 	}
+	
+	@Override
+	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+		if (master==null && !idMap.containsKey(this)) {
+			if (monitor!=null) {
+				monitor.onPublishing("Screenshot"+getTextCaption(), url);
+			}
+			HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
+			pConnection.setRequestMethod("POST");
+			pConnection.setDoOutput(true);
+			pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+			pConnection.setRequestProperty("Content-Type", "image/png");
+			pConnection.setRequestProperty("Height", String.valueOf(getHeight()));
+			pConnection.setRequestProperty("Width", String.valueOf(getWidth()));
+			try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(getScreenshotFile())); BufferedOutputStream out = new BufferedOutputStream(pConnection.getOutputStream())) {
+				for (int data = fis.read(); data!=-1; data = fis.read()) {
+					out.write(data);
+				}					
+			}
+			int responseCode = pConnection.getResponseCode();
+			if (responseCode==HttpURLConnection.HTTP_OK) {
+				idMap.put(this, pConnection.getHeaderField("ID"));
+			} else {
+				throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+			}
+		}
+	}			
+	
+	@Override
+	public int publishSize() {
+		return master==null ? 1 : 0;
+	}				
 		
 }
