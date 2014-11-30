@@ -4,10 +4,12 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
+import java.lang.ref.Reference;
+import java.lang.ref.SoftReference;
 import java.lang.reflect.Member;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -38,6 +40,26 @@ public class ScreenshotEntry implements Runnable, HttpPublisher {
 	}
 	
 	private byte[] bytes;
+	
+	private Reference<byte[]> bytesRef;
+	
+	private byte[] getBytes() throws Exception {
+		if (bytes!=null) {
+			return bytes;
+		}
+		byte[] ret = bytesRef.get();
+		if (ret!=null) {
+			return ret;
+		}
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(screenshotFile)); BufferedOutputStream out = new BufferedOutputStream(baos)) {
+			for (int data = in.read(); data!=-1; data=in.read()) {
+				out.write(data);
+			}
+		}
+		bytesRef = new SoftReference<byte[]>(ret);
+		return ret;
+	}
 
 	private File screenshotsDir;
 	
@@ -71,29 +93,26 @@ public class ScreenshotEntry implements Runnable, HttpPublisher {
 		this.screenshotsDir = screenshotsDir;
 		this.id = id;
 		this.bytes = bytes;
+		this.bytesRef = new SoftReference<byte[]>(bytes);
 		this.prev = prev;
 	}
 
 	@Override
 	public void run() {
-		if (prev==null) {
-			try {
+		try {
+			if (prev==null) {
 				BufferedImage image = ImageIO.read(new ByteArrayInputStream(bytes));
 				if (image!=null) {
 					width = image.getWidth();
 					height = image.getHeight();
 				}
-			} catch (IOException e) {
-				e.printStackTrace();
+			} else {
+				if (Arrays.equals(prev.getMaster().getBytes(), bytes)) {
+					master = prev.getMaster();
+					bytes = null;
+					return;
+				}
 			}
-		} else {
-			if (Arrays.equals(prev.getMaster().bytes, bytes)) {
-				master = prev.getMaster();
-				bytes = null;
-				return;
-			}
-		}
-		try {
 			screenshotFile = new File(screenshotsDir, "screenshot_"+id+".png");
 			try (FileOutputStream fos = new FileOutputStream(screenshotFile)) {
 				fos.write(bytes);
@@ -157,7 +176,7 @@ public class ScreenshotEntry implements Runnable, HttpPublisher {
 			if (responseCode==HttpURLConnection.HTTP_OK) {
 				idMap.put(this, pConnection.getHeaderField("ID"));
 			} else {
-				throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+				throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 			}
 		}
 	}			

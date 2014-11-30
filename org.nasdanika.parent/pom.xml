@@ -41,6 +41,11 @@
 			<!-- <url>http://www.nasdanika.org/third_party_repository</url> -->
 			<layout>p2</layout>
 		</repository>
+		<repository>
+			<id>slf4j</id>
+			<url>http://www.nasdanika.org/slf4j</url>
+			<layout>p2</layout>
+		</repository>
 	</repositories>
 	<build>
 		<sourceDirectory>src</sourceDirectory>

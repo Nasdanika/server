@@ -406,6 +406,9 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		JSONObject data = new JSONObject();
 		WebTestUtil.titleAndDescriptionToJSON(getOperation(), data);
 		data.put("operationName", getOperationName());
+		data.put("qualifiedName", operation.toString());
+		String cName = getClass().getName();
+		data.put("type", cName.substring(cName.lastIndexOf('.')+1));
 		if (afterPerformance!=null) {
 			data.put("afterPerformance", afterPerformance);
 		}
@@ -434,14 +437,14 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		}
 		if (parent!=null) {
 			if (afterScreenshot!=null) {
-				String sid = idMap.get(afterScreenshot);
+				String sid = idMap.get(afterScreenshot.getMaster());
 				if (sid==null) {
 					throw new IllegalStateException("Screenshot ID not found in ID map");
 				}
 				data.put("afterScreenshot", sid);
 			}
 			if (beforeScreenshot!=null) {
-				String sid = idMap.get(beforeScreenshot);
+				String sid = idMap.get(beforeScreenshot.getMaster());
 				if (sid==null) {
 					throw new IllegalStateException("Screenshot ID not found in ID map");
 				}
@@ -449,7 +452,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			}
 		}		
 		extraPublishInfo(data);
-		try (Writer w = new OutputStreamWriter(/*new GZIPOutputStream(*/pConnection.getOutputStream()/*)*/)) {
+		try (Writer w = new OutputStreamWriter(new GZIPOutputStream(pConnection.getOutputStream()))) {
 			data.write(w);
 		}
 		int responseCode = pConnection.getResponseCode();
@@ -470,40 +473,40 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			}
 			
 			// --- Update non-containing references ---
-			if (parent!=null && (afterScreenshot!=null || beforeScreenshot!=null)) {
+			if (parent==null && (afterScreenshot!=null || beforeScreenshot!=null)) {
 				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
 				uConnection.setRequestMethod("PUT");
 				uConnection.setDoOutput(true);
 				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 				JSONObject uData = new JSONObject();
 				if (afterScreenshot!=null) {
-					String sid = idMap.get(afterScreenshot);
+					String sid = idMap.get(afterScreenshot.getMaster());
 					if (sid==null) {
 						throw new IllegalStateException("Screenshot ID not found in ID map");
 					}
 					uData.put("afterScreenshot", sid);
 				}
 				if (beforeScreenshot!=null) {
-					String sid = idMap.get(beforeScreenshot);
+					String sid = idMap.get(beforeScreenshot.getMaster());
 					if (sid==null) {
 						throw new IllegalStateException("Screenshot ID not found in ID map");
 					}
 					uData.put("beforeScreenshot", sid);
 				}
-				try (Writer w = new OutputStreamWriter(new GZIPOutputStream(uConnection.getOutputStream()))) {
+				try (Writer w = new OutputStreamWriter(uConnection.getOutputStream())) {
 					uData.write(w);
 				}
 				if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
-					throw new PublishException("Server error: "+responseCode+" "+uConnection.getResponseMessage());
+					throw new PublishException(uConnection.getURL()+" error: "+uConnection.getResponseCode()+" "+uConnection.getResponseMessage());
 				}				
 			}					
 			// ---
 		} else {
-			throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}
 	}	
 	
-	private JSONObject toJSON(Throwable th) throws Exception {
+	private static JSONObject toJSON(Throwable th) throws Exception {
 		JSONObject ret = new JSONObject();
 		ret.put("type", th.getClass().getName());
 		if (th.getMessage()!=null) {

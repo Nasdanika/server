@@ -143,7 +143,7 @@ public class ObjectRoute implements Route {
 							resourceStream.close();
 						}
 						
-						return null; 
+						return Action.NOP; 
 					} 
 					return Action.FORBIDDEN;
 				}				
@@ -166,7 +166,7 @@ public class ObjectRoute implements Route {
 							resourceStream.close();
 						}
 						
-						return null; 
+						return Action.NOP; 
 					} 
 				}				
 				return Action.NOT_FOUND;

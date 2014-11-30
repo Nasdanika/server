@@ -47,18 +47,28 @@ class TestSession implements HttpPublisher {
 			String location = pConnection.getHeaderField("Location");
 			URL sessionResultsURL = new URL(location+"/results");
 			idMap.put(this, pConnection.getHeaderField("ID"));
-			for (TestResult tr: testResults) {
-				tr.publish(sessionResultsURL, securityToken, idMap, monitor);				
+			try {
+				for (TestResult tr: testResults) {
+					tr.publish(sessionResultsURL, securityToken, idMap, monitor);				
+				}
+				// Informing test session that upload is complete by issuing PUT request.
+				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
+				uConnection.setRequestMethod("PUT");
+				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+				if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
+					throw new PublishException(uConnection.getURL()+" error: "+uConnection.getResponseCode()+" "+uConnection.getResponseMessage());
+				}
+			} catch (Exception e) {
+				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
+				uConnection.setRequestMethod("DELETE");
+				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+				if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
+					throw new PublishException(uConnection.getURL()+" error: "+uConnection.getResponseCode()+" "+uConnection.getResponseMessage(), e);
+				}				
+				throw e;
 			}
-			// Informing test session that upload is complete by issuing PUT request.
-			HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
-			uConnection.setRequestMethod("PUT");
-			uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
-			if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
-				throw new PublishException("Server error: "+responseCode+" "+uConnection.getResponseMessage());
-			}							
 		} else {
-			throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+			throw new PublishException(pURL+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}
 	}
 

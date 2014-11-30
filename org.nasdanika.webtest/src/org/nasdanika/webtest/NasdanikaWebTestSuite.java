@@ -246,7 +246,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 						ar.publish(actorResultsURL, securityToken, idMap, monitor);				
 					}
 				} else {
-					throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+					throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 				}
 			}			
 

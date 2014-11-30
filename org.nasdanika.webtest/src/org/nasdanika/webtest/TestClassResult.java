@@ -329,7 +329,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				ar.publish(actorResultsURL, securityToken, idMap, monitor);				
 			}
 		} else {
-			throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}
 	}			
 

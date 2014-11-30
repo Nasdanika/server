@@ -126,7 +126,7 @@ public class PageResult implements HttpPublisher {
 		if (responseCode==HttpURLConnection.HTTP_OK) {
 			idMap.put(this, pConnection.getHeaderField("ID"));
 		} else {
-			throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}
 	}			
 

@@ -583,7 +583,7 @@ public class WebTestUtil {
 		if (description!=null) {
 			JSONObject jd = new JSONObject();
 			target.put("description", jd);
-			if (description.url()!=null) {
+			if (description.url()!=null && description.url().trim().length()>0) {
 				jd.put("url", description.url());
 			}
 			if (description.html()) {

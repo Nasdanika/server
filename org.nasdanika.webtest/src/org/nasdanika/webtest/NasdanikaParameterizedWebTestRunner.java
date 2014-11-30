@@ -406,7 +406,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 						ar.publish(actorResultsURL, securityToken, idMap, monitor);				
 					}
 				} else {
-					throw new PublishException("Server error: "+responseCode+" "+pConnection.getResponseMessage());
+					throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 				}
 			}						
 
