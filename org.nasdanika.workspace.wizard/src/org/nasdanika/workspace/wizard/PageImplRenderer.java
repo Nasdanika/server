@@ -16,8 +16,8 @@ public class PageImplRenderer {
   protected final String TEXT_1 = "package ";
   protected final String TEXT_2 = ";" + NL + "" + NL + "import ";
   protected final String TEXT_3 = ".";
-  protected final String TEXT_4 = "Page;" + NL + "import org.nasdanika.webtest.Wait;" + NL + "import org.openqa.selenium.WebDriver;" + NL + "" + NL + "@Wait(id=\"button-groups\")" + NL + "public class ";
-  protected final String TEXT_5 = "PageImpl implements ";
+  protected final String TEXT_4 = "Page;" + NL + "import org.nasdanika.webtest.ReflectivePageBase;" + NL + "import org.nasdanika.webtest.Wait;" + NL + "import org.openqa.selenium.WebDriver;" + NL + "" + NL + "@Wait(id=\"button-groups\")" + NL + "public class ";
+  protected final String TEXT_5 = "PageImpl extends ReflectivePageBase<WebDriver> implements ";
   protected final String TEXT_6 = "Page {" + NL + "\t\t" + NL + "\tprivate ";
   protected final String TEXT_7 = "PageFactoryImpl factory;" + NL + "\tprivate WebDriver webDriver;\t" + NL + "" + NL + "\tpublic ";
   protected final String TEXT_8 = "PageImpl(WebDriver webDriver) {" + NL + "\t\tthis.webDriver = webDriver;" + NL + "\t}" + NL + "\t" + NL + "\tpublic void setFactory(";
