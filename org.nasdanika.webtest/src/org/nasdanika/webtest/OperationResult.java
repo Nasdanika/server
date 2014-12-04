@@ -409,6 +409,9 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		data.put("qualifiedName", operation.toString());
 		String cName = getClass().getName();
 		data.put("type", cName.substring(cName.lastIndexOf('.')+1));
+		if (beforePerformance!=null) {
+			data.put("beforePerformance", beforePerformance);
+		}
 		if (afterPerformance!=null) {
 			data.put("afterPerformance", afterPerformance);
 		}
@@ -419,9 +422,6 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			for (Object arg: arguments) {
 				args.put(arg==null ? null : arg.toString());
 			}
-		}
-		if (beforePerformance!=null) {
-			data.put("beforePerformance", beforePerformance);
 		}
 		if (hasOwnFailure()) {
 			if (isFailure()) {

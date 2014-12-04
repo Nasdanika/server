@@ -4,10 +4,13 @@ package org.nasdanika.webtest.performance.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.util.Switch;
-
-import org.nasdanika.webtest.performance.*;
+import org.nasdanika.core.JSONLoader;
+import org.nasdanika.webtest.performance.DocumentTiming;
+import org.nasdanika.webtest.performance.NavigationTiming;
+import org.nasdanika.webtest.performance.PerformancePackage;
+import org.nasdanika.webtest.performance.ResourceTiming;
+import org.nasdanika.webtest.performance.TimingBase;
 
 /**
  * <!-- begin-user-doc -->
@@ -66,9 +69,16 @@ public class PerformanceSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case PerformancePackage.JSON_LOADER: {
+				JSONLoader jsonLoader = (JSONLoader)theEObject;
+				T result = caseJSONLoader(jsonLoader);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case PerformancePackage.TIMING_BASE: {
 				TimingBase timingBase = (TimingBase)theEObject;
 				T result = caseTimingBase(timingBase);
+				if (result == null) result = caseJSONLoader(timingBase);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -76,6 +86,7 @@ public class PerformanceSwitch<T> extends Switch<T> {
 				ResourceTiming resourceTiming = (ResourceTiming)theEObject;
 				T result = caseResourceTiming(resourceTiming);
 				if (result == null) result = caseTimingBase(resourceTiming);
+				if (result == null) result = caseJSONLoader(resourceTiming);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -83,20 +94,37 @@ public class PerformanceSwitch<T> extends Switch<T> {
 				NavigationTiming navigationTiming = (NavigationTiming)theEObject;
 				T result = caseNavigationTiming(navigationTiming);
 				if (result == null) result = caseTimingBase(navigationTiming);
+				if (result == null) result = caseJSONLoader(navigationTiming);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case PerformancePackage.DOCUMENT_TIMING: {
 				DocumentTiming documentTiming = (DocumentTiming)theEObject;
 				T result = caseDocumentTiming(documentTiming);
-				if (result == null) result = caseNavigationTiming(documentTiming);
 				if (result == null) result = caseResourceTiming(documentTiming);
+				if (result == null) result = caseNavigationTiming(documentTiming);
 				if (result == null) result = caseTimingBase(documentTiming);
+				if (result == null) result = caseJSONLoader(documentTiming);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			default: return defaultCase(theEObject);
 		}
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>JSON Loader</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>JSON Loader</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseJSONLoader(JSONLoader object) {
+		return null;
 	}
 
 	/**

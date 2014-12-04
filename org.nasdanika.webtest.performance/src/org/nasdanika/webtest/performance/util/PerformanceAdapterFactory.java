@@ -4,12 +4,14 @@ package org.nasdanika.webtest.performance.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-
-import org.nasdanika.webtest.performance.*;
+import org.nasdanika.core.JSONLoader;
+import org.nasdanika.webtest.performance.DocumentTiming;
+import org.nasdanika.webtest.performance.NavigationTiming;
+import org.nasdanika.webtest.performance.PerformancePackage;
+import org.nasdanika.webtest.performance.ResourceTiming;
+import org.nasdanika.webtest.performance.TimingBase;
 
 /**
  * <!-- begin-user-doc -->
@@ -68,6 +70,10 @@ public class PerformanceAdapterFactory extends AdapterFactoryImpl {
 	protected PerformanceSwitch<Adapter> modelSwitch =
 		new PerformanceSwitch<Adapter>() {
 			@Override
+			public Adapter caseJSONLoader(JSONLoader object) {
+				return createJSONLoaderAdapter();
+			}
+			@Override
 			public Adapter caseTimingBase(TimingBase object) {
 				return createTimingBaseAdapter();
 			}
@@ -102,6 +108,20 @@ public class PerformanceAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.core.JSONLoader <em>JSON Loader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.core.JSONLoader
+	 * @generated
+	 */
+	public Adapter createJSONLoaderAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.webtest.performance.TimingBase <em>Timing Base</em>}'.

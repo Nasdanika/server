@@ -2,12 +2,18 @@
  */
 package org.nasdanika.webtest.performance.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.nasdanika.core.ConverterContext;
+import org.nasdanika.webtest.performance.DocumentTiming;
 import org.nasdanika.webtest.performance.NavigationTiming;
+import org.nasdanika.webtest.performance.PerformanceFactory;
 import org.nasdanika.webtest.performance.PerformancePackage;
+import org.nasdanika.webtest.performance.ResourceTiming;
 import org.nasdanika.webtest.performance.TimingBase;
 
 /**
@@ -241,6 +247,91 @@ public class NavigationTimingImpl extends TimingBaseImpl implements NavigationTi
 	@SuppressWarnings("unchecked")
 	public EList<TimingBase> getEntries() {
 		return (EList<TimingBase>)eGet(PerformancePackage.Literals.NAVIGATION_TIMING__ENTRIES, true);
+	}
+	
+	@Override
+	public boolean match(JSONObject json) throws Exception {
+		if (!getName().equals(json.getString("href"))) {
+			return false;
+		}
+		return super.match(json.getJSONObject("timing"));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public TimingBase merge(JSONObject navigationTiming) throws Exception {
+		if (match(navigationTiming)) {
+			TimingBase ret = this;
+			if (navigationTiming.has("entries")) {
+				JSONArray entries = navigationTiming.getJSONArray("entries");
+				if (entries.length()<getEntries().size()) {
+					throw new IllegalStateException("Navigation timing being merged matches, but has fewer entries");
+				}
+				for (int i=0; i<entries.length(); ++i) {
+					JSONObject entry = entries.getJSONObject(i);
+					if (i<getEntries().size()) {
+						// Validate that existing entries match
+						ret = getEntries().get(i);
+						if (!ret.match(entry)) {
+							throw new IllegalArgumentException("Partial match");
+						}
+					} else if (entry.has("navigationStart")) {
+						DocumentTiming timing = PerformanceFactory.eINSTANCE.createDocumentTiming();
+						getEntries().add(timing);
+						timing.loadJSON(entry, null);
+					} else {
+						ResourceTiming timing = PerformanceFactory.eINSTANCE.createResourceTiming();
+						getEntries().add(timing);
+						timing.loadJSON(entry, null);				
+					}
+				}
+			} else if (!getEntries().isEmpty()) {
+				throw new IllegalStateException("Navigation timing being merged matches, but has no entries");
+			}
+			
+			return ret;
+		}
+		return null;
+	}
+	
+	@Override
+	public void loadJSON(JSONObject json, ConverterContext context)	throws Exception {
+		super.loadJSON(json.getJSONObject("timing"), context);
+		setName(json.getString("href"));
+		JSONArray entries = json.getJSONArray("entries");
+		for (int i=0; i<entries.length(); ++i) {
+			JSONObject entry = entries.getJSONObject(i);
+			if (entry.has("navigationStart")) {
+				DocumentTiming timing = PerformanceFactory.eINSTANCE.createDocumentTiming();
+				getEntries().add(timing);
+				timing.loadJSON(entry, context);
+			} else {
+				ResourceTiming timing = PerformanceFactory.eINSTANCE.createResourceTiming();
+				getEntries().add(timing);
+				timing.loadJSON(entry, context);				
+			}
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case PerformancePackage.NAVIGATION_TIMING___MERGE__JSONOBJECT:
+			try {
+				return merge((JSONObject)arguments.get(0));
+			} catch (Exception e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 } //NavigationTimingImpl

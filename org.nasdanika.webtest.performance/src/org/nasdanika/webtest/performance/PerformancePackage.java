@@ -4,6 +4,8 @@ package org.nasdanika.webtest.performance;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -57,6 +59,34 @@ public interface PerformancePackage extends EPackage {
 	PerformancePackage eINSTANCE = org.nasdanika.webtest.performance.impl.PerformancePackageImpl.init();
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.core.JSONLoader <em>JSON Loader</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.core.JSONLoader
+	 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getJSONLoader()
+	 * @generated
+	 */
+	int JSON_LOADER = 0;
+
+	/**
+	 * The number of structural features of the '<em>JSON Loader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JSON_LOADER_FEATURE_COUNT = 0;
+
+	/**
+	 * The number of operations of the '<em>JSON Loader</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JSON_LOADER_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.performance.impl.TimingBaseImpl <em>Timing Base</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -64,7 +94,7 @@ public interface PerformancePackage extends EPackage {
 	 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getTimingBase()
 	 * @generated
 	 */
-	int TIMING_BASE = 0;
+	int TIMING_BASE = 1;
 
 	/**
 	 * The feature id for the '<em><b>Connect End</b></em>' attribute.
@@ -73,7 +103,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__CONNECT_END = 0;
+	int TIMING_BASE__CONNECT_END = JSON_LOADER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Connect Start</b></em>' attribute.
@@ -82,7 +112,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__CONNECT_START = 1;
+	int TIMING_BASE__CONNECT_START = JSON_LOADER_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Domain Lookup End</b></em>' attribute.
@@ -91,7 +121,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__DOMAIN_LOOKUP_END = 2;
+	int TIMING_BASE__DOMAIN_LOOKUP_END = JSON_LOADER_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Domain Lookup Start</b></em>' attribute.
@@ -100,7 +130,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__DOMAIN_LOOKUP_START = 3;
+	int TIMING_BASE__DOMAIN_LOOKUP_START = JSON_LOADER_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Fetch Start</b></em>' attribute.
@@ -109,7 +139,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__FETCH_START = 4;
+	int TIMING_BASE__FETCH_START = JSON_LOADER_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Redirect End</b></em>' attribute.
@@ -118,7 +148,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__REDIRECT_END = 5;
+	int TIMING_BASE__REDIRECT_END = JSON_LOADER_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Redirect Start</b></em>' attribute.
@@ -127,7 +157,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__REDIRECT_START = 6;
+	int TIMING_BASE__REDIRECT_START = JSON_LOADER_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Request Start</b></em>' attribute.
@@ -136,7 +166,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__REQUEST_START = 7;
+	int TIMING_BASE__REQUEST_START = JSON_LOADER_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Response End</b></em>' attribute.
@@ -145,7 +175,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__RESPONSE_END = 8;
+	int TIMING_BASE__RESPONSE_END = JSON_LOADER_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Response Start</b></em>' attribute.
@@ -154,7 +184,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__RESPONSE_START = 9;
+	int TIMING_BASE__RESPONSE_START = JSON_LOADER_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Secure Connection Start</b></em>' attribute.
@@ -163,7 +193,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__SECURE_CONNECTION_START = 10;
+	int TIMING_BASE__SECURE_CONNECTION_START = JSON_LOADER_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -172,7 +202,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__NAME = 11;
+	int TIMING_BASE__NAME = JSON_LOADER_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Redirect Count</b></em>' attribute.
@@ -181,7 +211,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE__REDIRECT_COUNT = 12;
+	int TIMING_BASE__REDIRECT_COUNT = JSON_LOADER_FEATURE_COUNT + 12;
 
 	/**
 	 * The number of structural features of the '<em>Timing Base</em>' class.
@@ -190,7 +220,25 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE_FEATURE_COUNT = 13;
+	int TIMING_BASE_FEATURE_COUNT = JSON_LOADER_FEATURE_COUNT + 13;
+
+	/**
+	 * The operation id for the '<em>Next</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TIMING_BASE___NEXT = JSON_LOADER_OPERATION_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Match</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TIMING_BASE___MATCH__JSONOBJECT = JSON_LOADER_OPERATION_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Timing Base</em>' class.
@@ -199,7 +247,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TIMING_BASE_OPERATION_COUNT = 0;
+	int TIMING_BASE_OPERATION_COUNT = JSON_LOADER_OPERATION_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.performance.impl.ResourceTimingImpl <em>Resource Timing</em>}' class.
@@ -209,7 +257,7 @@ public interface PerformancePackage extends EPackage {
 	 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getResourceTiming()
 	 * @generated
 	 */
-	int RESOURCE_TIMING = 1;
+	int RESOURCE_TIMING = 2;
 
 	/**
 	 * The feature id for the '<em><b>Connect End</b></em>' attribute.
@@ -374,6 +422,24 @@ public interface PerformancePackage extends EPackage {
 	int RESOURCE_TIMING_FEATURE_COUNT = TIMING_BASE_FEATURE_COUNT + 4;
 
 	/**
+	 * The operation id for the '<em>Next</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RESOURCE_TIMING___NEXT = TIMING_BASE___NEXT;
+
+	/**
+	 * The operation id for the '<em>Match</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int RESOURCE_TIMING___MATCH__JSONOBJECT = TIMING_BASE___MATCH__JSONOBJECT;
+
+	/**
 	 * The number of operations of the '<em>Resource Timing</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -383,6 +449,16 @@ public interface PerformancePackage extends EPackage {
 	int RESOURCE_TIMING_OPERATION_COUNT = TIMING_BASE_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '<em>Exception</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.Exception
+	 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getException()
+	 * @generated
+	 */
+	int EXCEPTION = 6;
+
+	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.performance.impl.NavigationTimingImpl <em>Navigation Timing</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -390,7 +466,7 @@ public interface PerformancePackage extends EPackage {
 	 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getNavigationTiming()
 	 * @generated
 	 */
-	int NAVIGATION_TIMING = 2;
+	int NAVIGATION_TIMING = 3;
 
 	/**
 	 * The feature id for the '<em><b>Connect End</b></em>' attribute.
@@ -618,13 +694,40 @@ public interface PerformancePackage extends EPackage {
 	int NAVIGATION_TIMING_FEATURE_COUNT = TIMING_BASE_FEATURE_COUNT + 11;
 
 	/**
+	 * The operation id for the '<em>Next</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int NAVIGATION_TIMING___NEXT = TIMING_BASE___NEXT;
+
+	/**
+	 * The operation id for the '<em>Match</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int NAVIGATION_TIMING___MATCH__JSONOBJECT = TIMING_BASE___MATCH__JSONOBJECT;
+
+	/**
+	 * The operation id for the '<em>Merge</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int NAVIGATION_TIMING___MERGE__JSONOBJECT = TIMING_BASE_OPERATION_COUNT + 0;
+
+	/**
 	 * The number of operations of the '<em>Navigation Timing</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int NAVIGATION_TIMING_OPERATION_COUNT = TIMING_BASE_OPERATION_COUNT + 0;
+	int NAVIGATION_TIMING_OPERATION_COUNT = TIMING_BASE_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.performance.impl.DocumentTimingImpl <em>Document Timing</em>}' class.
@@ -634,7 +737,7 @@ public interface PerformancePackage extends EPackage {
 	 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getDocumentTiming()
 	 * @generated
 	 */
-	int DOCUMENT_TIMING = 3;
+	int DOCUMENT_TIMING = 4;
 
 	/**
 	 * The feature id for the '<em><b>Connect End</b></em>' attribute.
@@ -643,7 +746,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__CONNECT_END = NAVIGATION_TIMING__CONNECT_END;
+	int DOCUMENT_TIMING__CONNECT_END = RESOURCE_TIMING__CONNECT_END;
 
 	/**
 	 * The feature id for the '<em><b>Connect Start</b></em>' attribute.
@@ -652,7 +755,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__CONNECT_START = NAVIGATION_TIMING__CONNECT_START;
+	int DOCUMENT_TIMING__CONNECT_START = RESOURCE_TIMING__CONNECT_START;
 
 	/**
 	 * The feature id for the '<em><b>Domain Lookup End</b></em>' attribute.
@@ -661,7 +764,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__DOMAIN_LOOKUP_END = NAVIGATION_TIMING__DOMAIN_LOOKUP_END;
+	int DOCUMENT_TIMING__DOMAIN_LOOKUP_END = RESOURCE_TIMING__DOMAIN_LOOKUP_END;
 
 	/**
 	 * The feature id for the '<em><b>Domain Lookup Start</b></em>' attribute.
@@ -670,7 +773,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__DOMAIN_LOOKUP_START = NAVIGATION_TIMING__DOMAIN_LOOKUP_START;
+	int DOCUMENT_TIMING__DOMAIN_LOOKUP_START = RESOURCE_TIMING__DOMAIN_LOOKUP_START;
 
 	/**
 	 * The feature id for the '<em><b>Fetch Start</b></em>' attribute.
@@ -679,7 +782,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__FETCH_START = NAVIGATION_TIMING__FETCH_START;
+	int DOCUMENT_TIMING__FETCH_START = RESOURCE_TIMING__FETCH_START;
 
 	/**
 	 * The feature id for the '<em><b>Redirect End</b></em>' attribute.
@@ -688,7 +791,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__REDIRECT_END = NAVIGATION_TIMING__REDIRECT_END;
+	int DOCUMENT_TIMING__REDIRECT_END = RESOURCE_TIMING__REDIRECT_END;
 
 	/**
 	 * The feature id for the '<em><b>Redirect Start</b></em>' attribute.
@@ -697,7 +800,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__REDIRECT_START = NAVIGATION_TIMING__REDIRECT_START;
+	int DOCUMENT_TIMING__REDIRECT_START = RESOURCE_TIMING__REDIRECT_START;
 
 	/**
 	 * The feature id for the '<em><b>Request Start</b></em>' attribute.
@@ -706,7 +809,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__REQUEST_START = NAVIGATION_TIMING__REQUEST_START;
+	int DOCUMENT_TIMING__REQUEST_START = RESOURCE_TIMING__REQUEST_START;
 
 	/**
 	 * The feature id for the '<em><b>Response End</b></em>' attribute.
@@ -715,7 +818,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__RESPONSE_END = NAVIGATION_TIMING__RESPONSE_END;
+	int DOCUMENT_TIMING__RESPONSE_END = RESOURCE_TIMING__RESPONSE_END;
 
 	/**
 	 * The feature id for the '<em><b>Response Start</b></em>' attribute.
@@ -724,7 +827,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__RESPONSE_START = NAVIGATION_TIMING__RESPONSE_START;
+	int DOCUMENT_TIMING__RESPONSE_START = RESOURCE_TIMING__RESPONSE_START;
 
 	/**
 	 * The feature id for the '<em><b>Secure Connection Start</b></em>' attribute.
@@ -733,7 +836,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__SECURE_CONNECTION_START = NAVIGATION_TIMING__SECURE_CONNECTION_START;
+	int DOCUMENT_TIMING__SECURE_CONNECTION_START = RESOURCE_TIMING__SECURE_CONNECTION_START;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -742,7 +845,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__NAME = NAVIGATION_TIMING__NAME;
+	int DOCUMENT_TIMING__NAME = RESOURCE_TIMING__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Redirect Count</b></em>' attribute.
@@ -751,106 +854,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__REDIRECT_COUNT = NAVIGATION_TIMING__REDIRECT_COUNT;
-
-	/**
-	 * The feature id for the '<em><b>Dom Complete</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__DOM_COMPLETE = NAVIGATION_TIMING__DOM_COMPLETE;
-
-	/**
-	 * The feature id for the '<em><b>Dom Content Loaded Event End</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__DOM_CONTENT_LOADED_EVENT_END = NAVIGATION_TIMING__DOM_CONTENT_LOADED_EVENT_END;
-
-	/**
-	 * The feature id for the '<em><b>Dom Content Loaded Event Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__DOM_CONTENT_LOADED_EVENT_START = NAVIGATION_TIMING__DOM_CONTENT_LOADED_EVENT_START;
-
-	/**
-	 * The feature id for the '<em><b>Dom Interactive</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__DOM_INTERACTIVE = NAVIGATION_TIMING__DOM_INTERACTIVE;
-
-	/**
-	 * The feature id for the '<em><b>Dom Loading</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__DOM_LOADING = NAVIGATION_TIMING__DOM_LOADING;
-
-	/**
-	 * The feature id for the '<em><b>Load Event End</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__LOAD_EVENT_END = NAVIGATION_TIMING__LOAD_EVENT_END;
-
-	/**
-	 * The feature id for the '<em><b>Load Event Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__LOAD_EVENT_START = NAVIGATION_TIMING__LOAD_EVENT_START;
-
-	/**
-	 * The feature id for the '<em><b>Navigation Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__NAVIGATION_START = NAVIGATION_TIMING__NAVIGATION_START;
-
-	/**
-	 * The feature id for the '<em><b>Unload Event End</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__UNLOAD_EVENT_END = NAVIGATION_TIMING__UNLOAD_EVENT_END;
-
-	/**
-	 * The feature id for the '<em><b>Unload Event Start</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__UNLOAD_EVENT_START = NAVIGATION_TIMING__UNLOAD_EVENT_START;
-
-	/**
-	 * The feature id for the '<em><b>Entries</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DOCUMENT_TIMING__ENTRIES = NAVIGATION_TIMING__ENTRIES;
+	int DOCUMENT_TIMING__REDIRECT_COUNT = RESOURCE_TIMING__REDIRECT_COUNT;
 
 	/**
 	 * The feature id for the '<em><b>Duration</b></em>' attribute.
@@ -859,7 +863,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__DURATION = NAVIGATION_TIMING_FEATURE_COUNT + 0;
+	int DOCUMENT_TIMING__DURATION = RESOURCE_TIMING__DURATION;
 
 	/**
 	 * The feature id for the '<em><b>Start Time</b></em>' attribute.
@@ -868,7 +872,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__START_TIME = NAVIGATION_TIMING_FEATURE_COUNT + 1;
+	int DOCUMENT_TIMING__START_TIME = RESOURCE_TIMING__START_TIME;
 
 	/**
 	 * The feature id for the '<em><b>Entry Type</b></em>' attribute.
@@ -877,7 +881,7 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__ENTRY_TYPE = NAVIGATION_TIMING_FEATURE_COUNT + 2;
+	int DOCUMENT_TIMING__ENTRY_TYPE = RESOURCE_TIMING__ENTRY_TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Initiator Type</b></em>' attribute.
@@ -886,7 +890,106 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING__INITIATOR_TYPE = NAVIGATION_TIMING_FEATURE_COUNT + 3;
+	int DOCUMENT_TIMING__INITIATOR_TYPE = RESOURCE_TIMING__INITIATOR_TYPE;
+
+	/**
+	 * The feature id for the '<em><b>Dom Complete</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__DOM_COMPLETE = RESOURCE_TIMING_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Dom Content Loaded Event End</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__DOM_CONTENT_LOADED_EVENT_END = RESOURCE_TIMING_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Dom Content Loaded Event Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__DOM_CONTENT_LOADED_EVENT_START = RESOURCE_TIMING_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Dom Interactive</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__DOM_INTERACTIVE = RESOURCE_TIMING_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Dom Loading</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__DOM_LOADING = RESOURCE_TIMING_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Load Event End</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__LOAD_EVENT_END = RESOURCE_TIMING_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Load Event Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__LOAD_EVENT_START = RESOURCE_TIMING_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Navigation Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__NAVIGATION_START = RESOURCE_TIMING_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Unload Event End</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__UNLOAD_EVENT_END = RESOURCE_TIMING_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Unload Event Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__UNLOAD_EVENT_START = RESOURCE_TIMING_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Entries</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING__ENTRIES = RESOURCE_TIMING_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Document Timing</em>' class.
@@ -895,7 +998,34 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING_FEATURE_COUNT = NAVIGATION_TIMING_FEATURE_COUNT + 4;
+	int DOCUMENT_TIMING_FEATURE_COUNT = RESOURCE_TIMING_FEATURE_COUNT + 11;
+
+	/**
+	 * The operation id for the '<em>Next</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING___NEXT = RESOURCE_TIMING___NEXT;
+
+	/**
+	 * The operation id for the '<em>Match</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING___MATCH__JSONOBJECT = RESOURCE_TIMING___MATCH__JSONOBJECT;
+
+	/**
+	 * The operation id for the '<em>Merge</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DOCUMENT_TIMING___MERGE__JSONOBJECT = RESOURCE_TIMING_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Document Timing</em>' class.
@@ -904,8 +1034,30 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DOCUMENT_TIMING_OPERATION_COUNT = NAVIGATION_TIMING_OPERATION_COUNT + 0;
+	int DOCUMENT_TIMING_OPERATION_COUNT = RESOURCE_TIMING_OPERATION_COUNT + 1;
 
+
+	/**
+	 * The meta object id for the '<em>JSON Object</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.json.JSONObject
+	 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getJSONObject()
+	 * @generated
+	 */
+	int JSON_OBJECT = 5;
+
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.core.JSONLoader <em>JSON Loader</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>JSON Loader</em>'.
+	 * @see org.nasdanika.core.JSONLoader
+	 * @model instanceClass="org.nasdanika.core.JSONLoader"
+	 * @generated
+	 */
+	EClass getJSONLoader();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.performance.TimingBase <em>Timing Base</em>}'.
@@ -1061,6 +1213,26 @@ public interface PerformancePackage extends EPackage {
 	EAttribute getTimingBase_RedirectCount();
 
 	/**
+	 * Returns the meta object for the '{@link org.nasdanika.webtest.performance.TimingBase#next() <em>Next</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Next</em>' operation.
+	 * @see org.nasdanika.webtest.performance.TimingBase#next()
+	 * @generated
+	 */
+	EOperation getTimingBase__Next();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.webtest.performance.TimingBase#match(org.json.JSONObject) <em>Match</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Match</em>' operation.
+	 * @see org.nasdanika.webtest.performance.TimingBase#match(org.json.JSONObject)
+	 * @generated
+	 */
+	EOperation getTimingBase__Match__JSONObject();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.performance.ResourceTiming <em>Resource Timing</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1113,6 +1285,17 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getResourceTiming_InitiatorType();
+
+	/**
+	 * Returns the meta object for data type '{@link java.lang.Exception <em>Exception</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Exception</em>'.
+	 * @see java.lang.Exception
+	 * @model instanceClass="java.lang.Exception"
+	 * @generated
+	 */
+	EDataType getException();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.performance.NavigationTiming <em>Navigation Timing</em>}'.
@@ -1246,6 +1429,16 @@ public interface PerformancePackage extends EPackage {
 	EReference getNavigationTiming_Entries();
 
 	/**
+	 * Returns the meta object for the '{@link org.nasdanika.webtest.performance.NavigationTiming#merge(org.json.JSONObject) <em>Merge</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Merge</em>' operation.
+	 * @see org.nasdanika.webtest.performance.NavigationTiming#merge(org.json.JSONObject)
+	 * @generated
+	 */
+	EOperation getNavigationTiming__Merge__JSONObject();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.performance.DocumentTiming <em>Document Timing</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1254,6 +1447,17 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 */
 	EClass getDocumentTiming();
+
+	/**
+	 * Returns the meta object for data type '{@link org.json.JSONObject <em>JSON Object</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>JSON Object</em>'.
+	 * @see org.json.JSONObject
+	 * @model instanceClass="org.json.JSONObject"
+	 * @generated
+	 */
+	EDataType getJSONObject();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -1278,6 +1482,16 @@ public interface PerformancePackage extends EPackage {
 	 * @generated
 	 */
 	interface Literals {
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.core.JSONLoader <em>JSON Loader</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.core.JSONLoader
+		 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getJSONLoader()
+		 * @generated
+		 */
+		EClass JSON_LOADER = eINSTANCE.getJSONLoader();
+
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.performance.impl.TimingBaseImpl <em>Timing Base</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -1393,6 +1607,22 @@ public interface PerformancePackage extends EPackage {
 		EAttribute TIMING_BASE__REDIRECT_COUNT = eINSTANCE.getTimingBase_RedirectCount();
 
 		/**
+		 * The meta object literal for the '<em><b>Next</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation TIMING_BASE___NEXT = eINSTANCE.getTimingBase__Next();
+
+		/**
+		 * The meta object literal for the '<em><b>Match</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation TIMING_BASE___MATCH__JSONOBJECT = eINSTANCE.getTimingBase__Match__JSONObject();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.performance.impl.ResourceTimingImpl <em>Resource Timing</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1433,6 +1663,16 @@ public interface PerformancePackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute RESOURCE_TIMING__INITIATOR_TYPE = eINSTANCE.getResourceTiming_InitiatorType();
+
+		/**
+		 * The meta object literal for the '<em>Exception</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.Exception
+		 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getException()
+		 * @generated
+		 */
+		EDataType EXCEPTION = eINSTANCE.getException();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.performance.impl.NavigationTimingImpl <em>Navigation Timing</em>}' class.
@@ -1533,6 +1773,14 @@ public interface PerformancePackage extends EPackage {
 		EReference NAVIGATION_TIMING__ENTRIES = eINSTANCE.getNavigationTiming_Entries();
 
 		/**
+		 * The meta object literal for the '<em><b>Merge</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation NAVIGATION_TIMING___MERGE__JSONOBJECT = eINSTANCE.getNavigationTiming__Merge__JSONObject();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.performance.impl.DocumentTimingImpl <em>Document Timing</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1541,6 +1789,16 @@ public interface PerformancePackage extends EPackage {
 		 * @generated
 		 */
 		EClass DOCUMENT_TIMING = eINSTANCE.getDocumentTiming();
+
+		/**
+		 * The meta object literal for the '<em>JSON Object</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.json.JSONObject
+		 * @see org.nasdanika.webtest.performance.impl.PerformancePackageImpl#getJSONObject()
+		 * @generated
+		 */
+		EDataType JSON_OBJECT = eINSTANCE.getJSONObject();
 
 	}
 

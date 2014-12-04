@@ -2,7 +2,9 @@
  */
 package org.nasdanika.webtest.performance;
 
+import java.lang.Exception;
 import org.eclipse.emf.common.util.EList;
+import org.json.JSONObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -306,5 +308,13 @@ public interface NavigationTiming extends TimingBase {
 	 * @generated
 	 */
 	EList<TimingBase> getEntries();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model navigationTimingDataType="org.nasdanika.webtest.performance.JSONObject"
+	 * @generated
+	 */
+	TimingBase merge(JSONObject navigationTiming) throws Exception;
 
 } // NavigationTiming

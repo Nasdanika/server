@@ -9,6 +9,9 @@
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Performance" basePackage="org.nasdanika.webtest" disposableProviderFactory="true"
       ecorePackage="performance.ecore#/">
+    <genDataTypes ecoreDataType="performance.ecore#//JSONObject"/>
+    <genDataTypes ecoreDataType="performance.ecore#//Exception"/>
+    <genClasses image="false" ecoreClass="performance.ecore#//JSONLoader"/>
     <genClasses ecoreClass="performance.ecore#//TimingBase">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/connectEnd"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/connectStart"/>
@@ -23,6 +26,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/secureConnectionStart"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//TimingBase/redirectCount"/>
+      <genOperations ecoreOperation="performance.ecore#//TimingBase/next"/>
+      <genOperations ecoreOperation="performance.ecore#//TimingBase/match">
+        <genParameters ecoreParameter="performance.ecore#//TimingBase/match/json"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="performance.ecore#//ResourceTiming">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//ResourceTiming/duration"/>
@@ -42,6 +49,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/unloadEventEnd"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute performance.ecore#//NavigationTiming/unloadEventStart"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference performance.ecore#//NavigationTiming/entries"/>
+      <genOperations ecoreOperation="performance.ecore#//NavigationTiming/merge">
+        <genParameters ecoreParameter="performance.ecore#//NavigationTiming/merge/navigationTiming"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="performance.ecore#//DocumentTiming"/>
   </genPackages>

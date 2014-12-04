@@ -3,6 +3,8 @@
 package org.nasdanika.webtest.performance;
 
 import org.eclipse.emf.cdo.CDOObject;
+import org.json.JSONObject;
+import org.nasdanika.core.JSONLoader;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,11 +31,11 @@ import org.eclipse.emf.cdo.CDOObject;
  * </p>
  *
  * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase()
- * @model
+ * @model superTypes="org.nasdanika.webtest.performance.JSONLoader"
  * @extends CDOObject
  * @generated
  */
-public interface TimingBase extends CDOObject {
+public interface TimingBase extends CDOObject, JSONLoader {
 	/**
 	 * Returns the value of the '<em><b>Connect End</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -43,12 +45,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Connect End</em>' attribute.
-	 * @see #setConnectEnd(long)
+	 * @see #setConnectEnd(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_ConnectEnd()
 	 * @model
 	 * @generated
 	 */
-	long getConnectEnd();
+	double getConnectEnd();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getConnectEnd <em>Connect End</em>}' attribute.
@@ -58,7 +60,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getConnectEnd()
 	 * @generated
 	 */
-	void setConnectEnd(long value);
+	void setConnectEnd(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Connect Start</b></em>' attribute.
@@ -69,12 +71,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Connect Start</em>' attribute.
-	 * @see #setConnectStart(long)
+	 * @see #setConnectStart(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_ConnectStart()
 	 * @model
 	 * @generated
 	 */
-	long getConnectStart();
+	double getConnectStart();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getConnectStart <em>Connect Start</em>}' attribute.
@@ -84,7 +86,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getConnectStart()
 	 * @generated
 	 */
-	void setConnectStart(long value);
+	void setConnectStart(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Domain Lookup End</b></em>' attribute.
@@ -95,12 +97,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Domain Lookup End</em>' attribute.
-	 * @see #setDomainLookupEnd(long)
+	 * @see #setDomainLookupEnd(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_DomainLookupEnd()
 	 * @model
 	 * @generated
 	 */
-	long getDomainLookupEnd();
+	double getDomainLookupEnd();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getDomainLookupEnd <em>Domain Lookup End</em>}' attribute.
@@ -110,7 +112,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getDomainLookupEnd()
 	 * @generated
 	 */
-	void setDomainLookupEnd(long value);
+	void setDomainLookupEnd(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Domain Lookup Start</b></em>' attribute.
@@ -121,12 +123,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Domain Lookup Start</em>' attribute.
-	 * @see #setDomainLookupStart(long)
+	 * @see #setDomainLookupStart(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_DomainLookupStart()
 	 * @model
 	 * @generated
 	 */
-	long getDomainLookupStart();
+	double getDomainLookupStart();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getDomainLookupStart <em>Domain Lookup Start</em>}' attribute.
@@ -136,7 +138,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getDomainLookupStart()
 	 * @generated
 	 */
-	void setDomainLookupStart(long value);
+	void setDomainLookupStart(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Fetch Start</b></em>' attribute.
@@ -147,12 +149,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Fetch Start</em>' attribute.
-	 * @see #setFetchStart(long)
+	 * @see #setFetchStart(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_FetchStart()
 	 * @model
 	 * @generated
 	 */
-	long getFetchStart();
+	double getFetchStart();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getFetchStart <em>Fetch Start</em>}' attribute.
@@ -162,7 +164,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getFetchStart()
 	 * @generated
 	 */
-	void setFetchStart(long value);
+	void setFetchStart(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Redirect End</b></em>' attribute.
@@ -173,12 +175,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Redirect End</em>' attribute.
-	 * @see #setRedirectEnd(long)
+	 * @see #setRedirectEnd(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_RedirectEnd()
 	 * @model
 	 * @generated
 	 */
-	long getRedirectEnd();
+	double getRedirectEnd();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getRedirectEnd <em>Redirect End</em>}' attribute.
@@ -188,7 +190,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getRedirectEnd()
 	 * @generated
 	 */
-	void setRedirectEnd(long value);
+	void setRedirectEnd(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Redirect Start</b></em>' attribute.
@@ -199,12 +201,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Redirect Start</em>' attribute.
-	 * @see #setRedirectStart(long)
+	 * @see #setRedirectStart(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_RedirectStart()
 	 * @model
 	 * @generated
 	 */
-	long getRedirectStart();
+	double getRedirectStart();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getRedirectStart <em>Redirect Start</em>}' attribute.
@@ -214,7 +216,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getRedirectStart()
 	 * @generated
 	 */
-	void setRedirectStart(long value);
+	void setRedirectStart(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Request Start</b></em>' attribute.
@@ -225,12 +227,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Request Start</em>' attribute.
-	 * @see #setRequestStart(long)
+	 * @see #setRequestStart(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_RequestStart()
 	 * @model
 	 * @generated
 	 */
-	long getRequestStart();
+	double getRequestStart();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getRequestStart <em>Request Start</em>}' attribute.
@@ -240,7 +242,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getRequestStart()
 	 * @generated
 	 */
-	void setRequestStart(long value);
+	void setRequestStart(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Response End</b></em>' attribute.
@@ -251,12 +253,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Response End</em>' attribute.
-	 * @see #setResponseEnd(long)
+	 * @see #setResponseEnd(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_ResponseEnd()
 	 * @model
 	 * @generated
 	 */
-	long getResponseEnd();
+	double getResponseEnd();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getResponseEnd <em>Response End</em>}' attribute.
@@ -266,7 +268,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getResponseEnd()
 	 * @generated
 	 */
-	void setResponseEnd(long value);
+	void setResponseEnd(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Response Start</b></em>' attribute.
@@ -277,12 +279,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Response Start</em>' attribute.
-	 * @see #setResponseStart(long)
+	 * @see #setResponseStart(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_ResponseStart()
 	 * @model
 	 * @generated
 	 */
-	long getResponseStart();
+	double getResponseStart();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getResponseStart <em>Response Start</em>}' attribute.
@@ -292,7 +294,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getResponseStart()
 	 * @generated
 	 */
-	void setResponseStart(long value);
+	void setResponseStart(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Secure Connection Start</b></em>' attribute.
@@ -303,12 +305,12 @@ public interface TimingBase extends CDOObject {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Secure Connection Start</em>' attribute.
-	 * @see #setSecureConnectionStart(long)
+	 * @see #setSecureConnectionStart(double)
 	 * @see org.nasdanika.webtest.performance.PerformancePackage#getTimingBase_SecureConnectionStart()
 	 * @model
 	 * @generated
 	 */
-	long getSecureConnectionStart();
+	double getSecureConnectionStart();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.webtest.performance.TimingBase#getSecureConnectionStart <em>Secure Connection Start</em>}' attribute.
@@ -318,7 +320,7 @@ public interface TimingBase extends CDOObject {
 	 * @see #getSecureConnectionStart()
 	 * @generated
 	 */
-	void setSecureConnectionStart(long value);
+	void setSecureConnectionStart(double value);
 
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
@@ -371,5 +373,21 @@ public interface TimingBase extends CDOObject {
 	 * @generated
 	 */
 	void setRedirectCount(int value);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	TimingBase next();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model jsonDataType="org.nasdanika.webtest.performance.JSONObject"
+	 * @generated
+	 */
+	boolean match(JSONObject json) throws Exception;
 
 } // TimingBase

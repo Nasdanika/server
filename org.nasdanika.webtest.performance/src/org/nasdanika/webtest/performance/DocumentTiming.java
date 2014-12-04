@@ -13,5 +13,5 @@ package org.nasdanika.webtest.performance;
  * @model
  * @generated
  */
-public interface DocumentTiming extends NavigationTiming, ResourceTiming {
+public interface DocumentTiming extends ResourceTiming, NavigationTiming {
 } // DocumentTiming

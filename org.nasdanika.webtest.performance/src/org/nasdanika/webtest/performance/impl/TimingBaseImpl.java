@@ -2,10 +2,17 @@
  */
 package org.nasdanika.webtest.performance.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
+import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.nasdanika.core.ConverterContext;
 import org.nasdanika.webtest.performance.PerformancePackage;
 import org.nasdanika.webtest.performance.TimingBase;
 
@@ -69,8 +76,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getConnectEnd() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__CONNECT_END, true);
+	public double getConnectEnd() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__CONNECT_END, true);
 	}
 
 	/**
@@ -78,7 +85,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setConnectEnd(long newConnectEnd) {
+	public void setConnectEnd(double newConnectEnd) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__CONNECT_END, newConnectEnd);
 	}
 
@@ -87,8 +94,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getConnectStart() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__CONNECT_START, true);
+	public double getConnectStart() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__CONNECT_START, true);
 	}
 
 	/**
@@ -96,7 +103,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setConnectStart(long newConnectStart) {
+	public void setConnectStart(double newConnectStart) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__CONNECT_START, newConnectStart);
 	}
 
@@ -105,8 +112,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getDomainLookupEnd() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__DOMAIN_LOOKUP_END, true);
+	public double getDomainLookupEnd() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__DOMAIN_LOOKUP_END, true);
 	}
 
 	/**
@@ -114,7 +121,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setDomainLookupEnd(long newDomainLookupEnd) {
+	public void setDomainLookupEnd(double newDomainLookupEnd) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__DOMAIN_LOOKUP_END, newDomainLookupEnd);
 	}
 
@@ -123,8 +130,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getDomainLookupStart() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__DOMAIN_LOOKUP_START, true);
+	public double getDomainLookupStart() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__DOMAIN_LOOKUP_START, true);
 	}
 
 	/**
@@ -132,7 +139,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setDomainLookupStart(long newDomainLookupStart) {
+	public void setDomainLookupStart(double newDomainLookupStart) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__DOMAIN_LOOKUP_START, newDomainLookupStart);
 	}
 
@@ -141,8 +148,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getFetchStart() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__FETCH_START, true);
+	public double getFetchStart() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__FETCH_START, true);
 	}
 
 	/**
@@ -150,7 +157,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setFetchStart(long newFetchStart) {
+	public void setFetchStart(double newFetchStart) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__FETCH_START, newFetchStart);
 	}
 
@@ -159,8 +166,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getRedirectEnd() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__REDIRECT_END, true);
+	public double getRedirectEnd() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__REDIRECT_END, true);
 	}
 
 	/**
@@ -168,7 +175,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setRedirectEnd(long newRedirectEnd) {
+	public void setRedirectEnd(double newRedirectEnd) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__REDIRECT_END, newRedirectEnd);
 	}
 
@@ -177,8 +184,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getRedirectStart() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__REDIRECT_START, true);
+	public double getRedirectStart() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__REDIRECT_START, true);
 	}
 
 	/**
@@ -186,7 +193,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setRedirectStart(long newRedirectStart) {
+	public void setRedirectStart(double newRedirectStart) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__REDIRECT_START, newRedirectStart);
 	}
 
@@ -195,8 +202,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getRequestStart() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__REQUEST_START, true);
+	public double getRequestStart() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__REQUEST_START, true);
 	}
 
 	/**
@@ -204,7 +211,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setRequestStart(long newRequestStart) {
+	public void setRequestStart(double newRequestStart) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__REQUEST_START, newRequestStart);
 	}
 
@@ -213,8 +220,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getResponseEnd() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__RESPONSE_END, true);
+	public double getResponseEnd() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__RESPONSE_END, true);
 	}
 
 	/**
@@ -222,7 +229,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setResponseEnd(long newResponseEnd) {
+	public void setResponseEnd(double newResponseEnd) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__RESPONSE_END, newResponseEnd);
 	}
 
@@ -231,8 +238,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getResponseStart() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__RESPONSE_START, true);
+	public double getResponseStart() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__RESPONSE_START, true);
 	}
 
 	/**
@@ -240,7 +247,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setResponseStart(long newResponseStart) {
+	public void setResponseStart(double newResponseStart) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__RESPONSE_START, newResponseStart);
 	}
 
@@ -249,8 +256,8 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getSecureConnectionStart() {
-		return (Long)eGet(PerformancePackage.Literals.TIMING_BASE__SECURE_CONNECTION_START, true);
+	public double getSecureConnectionStart() {
+		return (Double)eGet(PerformancePackage.Literals.TIMING_BASE__SECURE_CONNECTION_START, true);
 	}
 
 	/**
@@ -258,7 +265,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSecureConnectionStart(long newSecureConnectionStart) {
+	public void setSecureConnectionStart(double newSecureConnectionStart) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__SECURE_CONNECTION_START, newSecureConnectionStart);
 	}
 
@@ -297,5 +304,114 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	public void setRedirectCount(int newRedirectCount) {
 		eSet(PerformancePackage.Literals.TIMING_BASE__REDIRECT_COUNT, newRedirectCount);
 	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@SuppressWarnings("unchecked")
+	public TimingBase next() {
+		EStructuralFeature cf = eContainingFeature();
+		if (cf!=null && cf.isMany()) {
+			Object cfv = eContainer().eGet(cf);
+			if (cfv instanceof List) {
+				int idx = ((List<?>) cfv).indexOf(this);
+				if (idx==-1) {
+					throw new IllegalStateException("Should not happen");
+				}
+				if (idx==((List<?>) cfv).size()-1) {
+					// Last item
+					if (eContainer() instanceof TimingBase) {
+						return ((TimingBase) eContainer()).next();
+					}
+					return null;
+				}
+				
+				return ((List<TimingBase>) cfv).get(idx+1);
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public boolean match(JSONObject json) throws Exception {
+		// reflective implementation
+		for (EAttribute attr: eClass().getEAllAttributes()) {
+			if (json.has(attr.getName())) {
+				if (!match(attr.getName(), eGet(attr), json)) {
+					return false;
+				}
+			}
+		}
+		return true;
+	}
+	
+	protected boolean match(String attrName, Object attrValue, JSONObject json) throws Exception {
+		if (json.has(attrName) && attrValue!=null) {
+			Object jsonVal = json.get(attrName);
+			if (!jsonVal.equals(attrValue)) {
+				return false;
+			}
+		}
+		return attrValue==null;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case PerformancePackage.TIMING_BASE___NEXT:
+				return next();
+			case PerformancePackage.TIMING_BASE___MATCH__JSONOBJECT:
+			try {
+				return match((JSONObject)arguments.get(0));
+			} catch (Exception e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+		return super.eInvoke(operationID, arguments);
+	}
+
+	@Override
+	public void loadJSON(JSONObject json, ConverterContext context)	throws Exception {
+		// Reflective implementation
+		for (EAttribute attr: eClass().getEAllAttributes()) {
+			set(attr, json);
+		}		
+	}
+		
+	protected void set(EAttribute attr, JSONObject json) throws JSONException {
+		if (json.has(attr.getName())) {
+			switch (attr.getEType().getInstanceClassName()) {
+			case "boolean":
+				eSet(attr, json.getBoolean(attr.getName()));
+				break;
+			case "double":
+				eSet(attr, json.getDouble(attr.getName()));
+				break;
+			case "int":
+				eSet(attr, json.getInt(attr.getName()));
+				break;
+			case "long":
+				eSet(attr, json.getLong(attr.getName()));
+				break;
+			case "java.lang.String":
+				eSet(attr, json.getString(attr.getName()));
+				break;				
+			default:
+				eSet(attr, json.get(attr.getName()));				
+			}
+		}			
+	}
+	
 
 } //TimingBaseImpl
