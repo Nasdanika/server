@@ -194,6 +194,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
 			
+			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+			}
+			
 			IFolder sourceFolder = project.getProject().getFolder("src");
 			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getActorSpecArtifactId(), false, progressMonitor);
 			pkg.createCompilationUnit(getJavaName()+"ActorFactory.java", new ActorFactorySpecRenderer().generate(this), false, progressMonitor);
@@ -212,6 +217,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.<String>emptyList(), 
 					false,
 					progressMonitor);
+			
+			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+			}
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new PageSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
 			
@@ -238,6 +248,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
+			
+			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+			}
 			
 			IFolder sourceFolder = project.getProject().getFolder("src");
 			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getActorImplArtifactId(), false, progressMonitor);
@@ -266,6 +281,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
 					false,
 					progressMonitor);
+			
+			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+			}
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new PageImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
 			
@@ -353,6 +373,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					binIncludes,
 					false,
 					progressMonitor);
+			
+			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+			}
 			
 			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
 				IFolder sourceFolder = project.getProject().getFolder("src");
@@ -517,6 +542,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					projectsPage.btnApplication.getSelection(),
 					progressMonitor);
 			
+			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+			}
+			
 			IFolder sourceFolder = project.getProject().getFolder("src");
 			IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getTestsArtifactId(), false, progressMonitor);
 			pkg.createCompilationUnit(getJavaName()+"TestRunner.java", new TestRunnerRenderer().generate(this), false, progressMonitor);
@@ -537,6 +567,12 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	private void generateFeatureProject(IProgressMonitor progressMonitor) throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(getGroupId()+".feature");
+		
+		IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+		if (workingSets != null) {
+			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
+		}
+		
 		IPath location = generalInformationPage.getLocationPath();
 		if (!Platform.getLocation().equals(location)) {
 			location = location.append(getGroupId()+".feature");
@@ -670,6 +706,12 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			if (!Platform.getLocation().equals(location)) {
 				location = location.append(getTestsArtifactId()+".feature");
 			}
+			
+			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
+			}
+			
 			FeatureData featureData = new FeatureData();
 			featureData.id = getTestsArtifactId()+".feature";
 			featureData.name = generalInformationPage.nameField.getText()+" tests feature";
