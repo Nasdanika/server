@@ -301,17 +301,21 @@ public class NavigationTimingImpl extends TimingBaseImpl implements NavigationTi
 	public void loadJSON(JSONObject json, ConverterContext context)	throws Exception {
 		super.loadJSON(json.getJSONObject("timing"), context);
 		setName(json.getString("href"));
-		JSONArray entries = json.getJSONArray("entries");
-		for (int i=0; i<entries.length(); ++i) {
-			JSONObject entry = entries.getJSONObject(i);
-			if (entry.has("navigationStart")) {
-				DocumentTiming timing = PerformanceFactory.eINSTANCE.createDocumentTiming();
-				getEntries().add(timing);
-				timing.loadJSON(entry, context);
-			} else {
-				ResourceTiming timing = PerformanceFactory.eINSTANCE.createResourceTiming();
-				getEntries().add(timing);
-				timing.loadJSON(entry, context);				
+		if (json.has("entries")) {
+			Object entries = json.get("entries");
+			if (entries instanceof JSONArray) {
+				for (int i=0; i<((JSONArray) entries).length(); ++i) {
+					JSONObject entry = ((JSONArray) entries).getJSONObject(i);
+					if (entry.has("navigationStart")) {
+						DocumentTiming timing = PerformanceFactory.eINSTANCE.createDocumentTiming();
+						getEntries().add(timing);
+						timing.loadJSON(entry, context);
+					} else {
+						ResourceTiming timing = PerformanceFactory.eINSTANCE.createResourceTiming();
+						getEntries().add(timing);
+						timing.loadJSON(entry, context);				
+					}
+				}
 			}
 		}
 	}
