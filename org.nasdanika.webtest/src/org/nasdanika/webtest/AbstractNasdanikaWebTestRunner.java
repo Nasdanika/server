@@ -20,7 +20,6 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
@@ -113,25 +112,8 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	private static JSONObject capturePerformance() {
 		Object test = testThreadLocal.get();
 		if (test instanceof WebTest) {
-			return capturePerformance(((WebTest<?>) test).getWebDriver());
+			return WebTestUtil.capturePerformance(((WebTest<?>) test).getWebDriver());
 		}
-		return null;
-	}
-	
-	private static JSONObject capturePerformance(WebDriver webDriver) {
-		// For testing
-		if (webDriver instanceof JavascriptExecutor) {
-			try {
-				Object perfData = ((JavascriptExecutor) webDriver).executeScript("return JSON.stringify(window.performance ? {timestamp: Date.now(), href: window.location.href, timing: window.performance.timing, entries: typeof window.performance.getEntries === 'function' && window.performance.getEntries()} : {timestamp: Date.now(), href: window.location.href});");				
-				if (perfData instanceof String) {
-					return new JSONObject((String) perfData);
-				}
-			} catch (Exception e) {
-				System.err.println("Error reading performance data: "+e);
-				e.printStackTrace();
-			}
-		}
-		
 		return null;
 	}
 	
@@ -657,9 +639,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					e.printStackTrace();
 				}
 			}
-			collectorThreadLocal.get().beforePageInitialization(pageClass, takeScreenshot(driver), capturePerformance(driver));
+			collectorThreadLocal.get().beforePageInitialization(pageClass, takeScreenshot(driver), WebTestUtil.capturePerformance(driver));
 		} else {
-			collectorThreadLocal.get().beforePageInitialization(pageClass, null, capturePerformance(driver));
+			collectorThreadLocal.get().beforePageInitialization(pageClass, null, WebTestUtil.capturePerformance(driver));
 		}
 	}
 
@@ -683,9 +665,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), capturePerformance(driver), null);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), null);
 			} else {
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, capturePerformance(driver), null);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), null);
 			}
 		} else {
 			if (shallTakeExceptionScreenshot(screenshotAnnotation)) {
@@ -696,9 +678,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), capturePerformance(driver), th);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), th);
 			} else {
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, capturePerformance(driver), th);
+				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), th);
 			}			
 		}
 	}

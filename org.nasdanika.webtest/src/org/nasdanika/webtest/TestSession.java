@@ -3,6 +3,7 @@ package org.nasdanika.webtest;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
+import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -39,6 +40,7 @@ class TestSession implements HttpPublisher {
 		JSONObject data = new JSONObject();
 		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(klass, data);
 		data.put("size", publishSize());
+		data.put("node", InetAddress.getLocalHost().getHostName());
 		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
 			data.write(w);
 		}

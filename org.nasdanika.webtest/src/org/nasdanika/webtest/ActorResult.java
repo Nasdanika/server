@@ -68,7 +68,7 @@ public class ActorResult implements HttpPublisher {
 	
 	public Map<Method, Integer> getCoverage() {
 		Map<Method, Integer> ret = new HashMap<>();
-		for (Method m: actorClass.getMethods()) {
+		for (Method m: getActorInterface().getMethods()) {
 			if (!Actor.class.equals(m.getDeclaringClass())) {
 				int counter = 0;
 				for (ActorMethodResult r: results) {
