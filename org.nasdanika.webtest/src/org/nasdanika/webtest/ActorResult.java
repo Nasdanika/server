@@ -64,6 +64,9 @@ public class ActorResult implements HttpPublisher {
 	
 	public void merge(ActorResult anotherResult) {
 		results.addAll(anotherResult.getResults());
+		if (anotherResult.getId()!=null) {
+			id = anotherResult.getId();
+		}
 	}
 	
 	public Map<Method, Integer> getCoverage() {
@@ -114,7 +117,8 @@ public class ActorResult implements HttpPublisher {
 		}
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
-			idMap.put(this, pConnection.getHeaderField("ID"));
+			id = pConnection.getHeaderField("ID");
+			idMap.put(this, id);
 		} else {
 			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}

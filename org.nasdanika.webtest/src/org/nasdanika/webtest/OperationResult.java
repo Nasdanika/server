@@ -52,8 +52,8 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 
 	final OperationResult<?> parent;
 
-	final String id;
-
+	private String id;
+	
 	private Object[] arguments;
 	
 	public Object[] getArguments() {
@@ -460,7 +460,8 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		}
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
-			idMap.put(this, pConnection.getHeaderField("ID"));
+			id = pConnection.getHeaderField("ID");
+			idMap.put(this, id);
 			String location = pConnection.getHeaderField("Location");
 	
 			if (parent==null) {

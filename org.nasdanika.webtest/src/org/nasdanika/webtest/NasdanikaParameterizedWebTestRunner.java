@@ -388,7 +388,8 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				}
 				int responseCode = pConnection.getResponseCode();
 				if (responseCode==HttpURLConnection.HTTP_OK) {
-					idMap.put(this, pConnection.getHeaderField("ID"));
+					id = pConnection.getHeaderField("ID");
+					idMap.put(this, id);
 					String location = pConnection.getHeaderField("Location");
 
 					URL childrenURL= new URL(location+"/children");
@@ -462,13 +463,13 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 	public void close() throws Exception {
 		((ExecutorService) screenshotExecutor).shutdown();
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
-		if (getTestClass().getJavaClass().getAnnotation(Report.class)!=null) {
-			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
-		} 
 		Publish publish = getTestClass().getJavaClass().getAnnotation(Publish.class);
 		if (publish!=null) {
 			new TestSession(getTestClass().getJavaClass(), testResults).publish(new URL(publish.url()), publish.securityToken(), new IdentityHashMap<Object, String>(), null);
 		}
+		if (getTestClass().getJavaClass().getAnnotation(Report.class)!=null) {
+			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
+		} 
 		WebTestUtil.publishTestResults(testResults);	
 		if (getTestClass().getJavaClass().getAnnotation(Report.class)==null) {
 			AbstractNasdanikaWebTestRunner.delete(outputDir);

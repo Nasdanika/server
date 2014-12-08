@@ -74,6 +74,9 @@ public class PageResult implements HttpPublisher {
 		if (this.size<anotherResult.size()) {
 			this.size = anotherResult.size();
 		}
+		if (anotherResult.getId()!=null) {
+			id = anotherResult.getId();
+		}
 	}
 	
 	public Map<Method, Integer> getCoverage() {
@@ -124,7 +127,8 @@ public class PageResult implements HttpPublisher {
 		}
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
-			idMap.put(this, pConnection.getHeaderField("ID"));
+			id = pConnection.getHeaderField("ID");
+			idMap.put(this, id);
 		} else {
 			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}
