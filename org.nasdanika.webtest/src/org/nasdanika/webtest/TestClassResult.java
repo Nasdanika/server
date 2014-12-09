@@ -28,7 +28,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 
 	private IdGenerator idGenerator;
 	final Class<?> klass;	
-	final String id;
+	private String id;
 	
 	public Class<?> getTestClass() {
 		return klass;
@@ -311,7 +311,8 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		}
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
-			idMap.put(this, pConnection.getHeaderField("ID"));
+			id = pConnection.getHeaderField("ID");
+			idMap.put(this, id);
 			String location = pConnection.getHeaderField("Location");
 
 			URL methodResultsURL= new URL(location+"/methodResults");

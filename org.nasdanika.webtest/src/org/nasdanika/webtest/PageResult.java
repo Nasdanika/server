@@ -74,11 +74,14 @@ public class PageResult implements HttpPublisher {
 		if (this.size<anotherResult.size()) {
 			this.size = anotherResult.size();
 		}
+		if (anotherResult.getId()!=null) {
+			id = anotherResult.getId();
+		}
 	}
 	
 	public Map<Method, Integer> getCoverage() {
 		Map<Method, Integer> ret = new HashMap<>();
-		for (Method m: pageClass.getMethods()) {
+		for (Method m: getPageInterface().getMethods()) {
 			if (!Page.class.equals(m.getDeclaringClass())) {
 				int counter = 0;
 				for (OperationResult<?> r: results) {
@@ -115,16 +118,17 @@ public class PageResult implements HttpPublisher {
 		}
 		JSONObject coverage = new JSONObject();
 		data.put("coverage", coverage);
+		data.put("size", size());
 		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
 			coverage.put(ce.getKey().toString(), ce.getValue());
 		}
 		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
 			data.write(w);
 		}
-		data.put("size", size());
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
-			idMap.put(this, pConnection.getHeaderField("ID"));
+			id = pConnection.getHeaderField("ID");
+			idMap.put(this, id);
 		} else {
 			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}

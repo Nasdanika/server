@@ -27,7 +27,7 @@ import org.nasdanika.html.impl.DefaultHTMLFactory;
  */
 public class ScreenshotEntry implements Runnable, HttpPublisher {
 	
-	final String id;
+	private String id;
 	
 	public String getId() {
 		return id;
@@ -174,7 +174,8 @@ public class ScreenshotEntry implements Runnable, HttpPublisher {
 			}
 			int responseCode = pConnection.getResponseCode();
 			if (responseCode==HttpURLConnection.HTTP_OK) {
-				idMap.put(this, pConnection.getHeaderField("ID"));
+				id = pConnection.getHeaderField("ID");
+				idMap.put(this, id);
 			} else {
 				throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 			}

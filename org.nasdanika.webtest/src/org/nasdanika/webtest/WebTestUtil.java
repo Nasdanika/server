@@ -10,12 +10,14 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
@@ -560,6 +562,23 @@ public class WebTestUtil {
 		}
 
 	}
+	
+	public static JSONObject capturePerformance(WebDriver webDriver) {
+		// For testing
+		if (webDriver instanceof JavascriptExecutor) {
+			try {
+				Object perfData = ((JavascriptExecutor) webDriver).executeScript("return JSON.stringify(window.performance ? {timestamp: Date.now(), href: window.location.href, timing: window.performance.timing, entries: typeof window.performance.getEntries === 'function' && window.performance.getEntries()} : {timestamp: Date.now(), href: window.location.href});");				
+				if (perfData instanceof String) {
+					return new JSONObject((String) perfData);
+				}
+			} catch (Exception e) {
+				System.err.println("Error reading performance data: "+e);
+				e.printStackTrace();
+			}
+		}
+		
+		return null;
+	}
 
 	private static void doWait(WebDriver driver, Class<?> pageClass) {
 		new WaitAnnotations(pageClass).doWait(driver);
@@ -571,7 +590,25 @@ public class WebTestUtil {
 		
 	static void qualifiedNameAndTitleAndDescriptionToJSON(Class<?> klass, JSONObject target) throws JSONException {
 		target.put("qualifiedName", klass.getName());
-		titleAndDescriptionToJSON(klass, target);		
+		titleAndDescriptionToJSON(klass, target);
+		if (!target.has("title")) {
+			String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
+			StringBuilder titleBuilder = new StringBuilder();
+			String[] scna = StringUtils.splitByCharacterTypeCamelCase(className);
+			for (int i=0; i<scna.length; ++i) {
+				if (i==0) {
+					titleBuilder.append(StringUtils.capitalize(scna[i]));
+				} else {
+					titleBuilder.append(" ");
+					if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
+						titleBuilder.append(scna[i]);
+					} else {
+						titleBuilder.append(StringUtils.uncapitalize(scna[i]));
+					}
+				}
+			}
+			target.put("title", titleBuilder.toString());
+		}
 	}
 
 	static void titleAndDescriptionToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
