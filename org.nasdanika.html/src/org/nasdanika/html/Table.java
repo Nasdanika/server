@@ -18,6 +18,8 @@ public interface Table extends UIElement<Table> {
 		
 		Row style(Style style);
 		
+		int length();
+		
 	}
 	
 	Row row();
@@ -41,6 +43,8 @@ public interface Table extends UIElement<Table> {
 	Table condensed();
 	
 	Table responsive();
+	
+	int length();
 	
 	boolean isEmpty();
 

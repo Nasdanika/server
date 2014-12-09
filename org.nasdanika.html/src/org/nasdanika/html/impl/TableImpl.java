@@ -108,6 +108,11 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 				c.close();
 			}			
 		}
+
+		@Override
+		public int length() {
+			return cells.size();
+		}
 		
 	}
 	
@@ -229,6 +234,11 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 	@Override
 	public boolean isEmpty() {
 		return rows.isEmpty();
+	}
+
+	@Override
+	public int length() {		
+		return rows.size();
 	}
 
 }
