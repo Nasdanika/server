@@ -61,6 +61,9 @@
                /js/require.js
             </script>
             <script>/js/angular.min.js</script>
+            <stylesheet>
+               /font-awesome-4.2.0/css/font-awesome.min.css
+            </stylesheet>            
       </default_html_factory>
    </extension>
    <% } %>
