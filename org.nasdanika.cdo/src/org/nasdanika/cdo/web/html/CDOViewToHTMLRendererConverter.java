@@ -19,7 +19,7 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -76,7 +76,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 				});
 				
 				Table packageTable = htmlFactory.table().bordered();
-				Row headerRow = packageTable.row().background(Color.GRAY_LIGHTER);
+				Row headerRow = packageTable.row().background(BootstrapColor.GRAY_LIGHTER);
 				headerRow.header("Name");
 				headerRow.header("Namespace URI");
 				headerRow.header("Documentation");
