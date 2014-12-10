@@ -42,7 +42,7 @@ import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Table.Row.Cell;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.DeviceSize;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
@@ -356,7 +356,7 @@ class ReportGenerator {
 			StringBuilder initScript = new StringBuilder();
 			Carousel screenshotCarousel = htmlFactory.carousel()
 					.ride(false)
-					.indicatorsBackground(Color.GRAY)
+					.indicatorsBackground(BootstrapColor.GRAY)
 					.attribute("data-interval", "false")
 					.id(htmlFactory.nextId()+"_screenshotCarousel");
 			List<ScreenshotEntry> allScreenshots = testMethodResult.allScreenshots();
