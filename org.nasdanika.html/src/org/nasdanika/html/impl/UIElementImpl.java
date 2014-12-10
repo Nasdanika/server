@@ -176,8 +176,13 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	}
 	
 	@Override
-	public T background(org.nasdanika.html.UIElement.Color backgroundColor) {
+	public T background(BootstrapColor backgroundColor) {
 		return style("background-color", backgroundColor.code);
+	}
+	
+	@Override
+	public T background(HTMLColor backgroundColor) {
+		return style("background-color", backgroundColor.name());
 	}
 	
 	private List<Object> classes = new ArrayList<>();
