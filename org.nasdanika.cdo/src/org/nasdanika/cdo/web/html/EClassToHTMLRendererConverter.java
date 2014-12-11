@@ -20,7 +20,7 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.WebContext;
@@ -68,7 +68,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 				
 				if (!source.getESuperTypes().isEmpty()) {
 					Table scTable = htmlFactory.table().bordered();
-					Row hRow = scTable.row().background(Color.GRAY_LIGHTER);
+					Row hRow = scTable.row().background(BootstrapColor.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Description");
 					for (EClass st: source.getESuperTypes()) {
@@ -85,7 +85,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 				// attributes
 				if (!source.getEAttributes().isEmpty()) {
 					Table aTable = htmlFactory.table().bordered();
-					Row hRow = aTable.row().background(Color.GRAY_LIGHTER);
+					Row hRow = aTable.row().background(BootstrapColor.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Type");
 					hRow.header("Many");
@@ -107,7 +107,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 				// references
 				if (!source.getEReferences().isEmpty()) {
 					Table rTable = htmlFactory.table().bordered();
-					Row hRow = rTable.row().background(Color.GRAY_LIGHTER);
+					Row hRow = rTable.row().background(BootstrapColor.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Type");
 					hRow.header("Many");
@@ -142,7 +142,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 				// operations
 				if (!source.getEOperations().isEmpty()) {
 					Table oTable = htmlFactory.table().bordered();
-					Row hRow = oTable.row().background(Color.GRAY_LIGHTER);
+					Row hRow = oTable.row().background(BootstrapColor.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Return type");
 					hRow.header("Many");

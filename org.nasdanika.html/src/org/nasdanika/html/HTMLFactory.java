@@ -88,6 +88,14 @@ public interface HTMLFactory {
 	Tabs tabs();
 	
 	Tag panel(UIElement.Style style, Object header, Object body, Object footer);
+	
+	/**
+	 * Builds a router reference in a form <code>#router/&lt;targetElement&gt;/&lt;path&gt;</code>
+	 * @param targetElement
+	 * @param path
+	 * @return
+	 */
+	AutoCloseable routeRef(final Object targetElement, final Object path);	
 
 	/**
 	 * Build a link for the in-page router.

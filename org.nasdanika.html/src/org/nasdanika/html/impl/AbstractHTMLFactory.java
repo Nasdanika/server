@@ -71,9 +71,14 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	public Tag link(Object href, final Object... content) {
 		return new TagImpl(this, "a", content).attribute("href", href);
 	}
-	
+		
 	@Override
 	public Tag routeLink(final Object targetElement, final Object path, Object... content) {
+		return link(routeRef(targetElement, path), content);
+	}
+
+	@Override
+	public AutoCloseable routeRef(final Object targetElement, final Object path) {
 		AutoCloseable href = new AutoCloseable() {
 			
 			@Override
@@ -91,7 +96,7 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 				return "#router/"+(targetElement==null ? "main" : targetElement)+(String.valueOf(path).startsWith("/") ? path : "/"+path);
 			}
 		};
-		return link(href, content);
+		return href;
 	}
 	
 	@Override

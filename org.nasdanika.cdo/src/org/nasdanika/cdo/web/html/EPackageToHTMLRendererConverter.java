@@ -19,7 +19,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -66,7 +66,7 @@ public class EPackageToHTMLRendererConverter implements Converter<EPackage, HTML
 				});
 				
 				if (!classifiers.isEmpty()) {
-					Row headerRow = classifiersTable.row().background(Color.GRAY_LIGHTER);
+					Row headerRow = classifiersTable.row().background(BootstrapColor.GRAY_LIGHTER);
 					headerRow.header("Name");
 					headerRow.header("Type");
 					headerRow.header("Description");

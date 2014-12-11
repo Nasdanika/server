@@ -2,8 +2,18 @@
  */
 package org.nasdanika.webtest.performance.impl;
 
-import org.eclipse.emf.ecore.EClass;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.cdo.CDOLock;
+import org.eclipse.emf.ecore.EClass;
+import org.nasdanika.html.Fragment;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.web.HttpContext;
+import org.nasdanika.web.RouteMethod;
 import org.nasdanika.webtest.performance.PerformancePackage;
 import org.nasdanika.webtest.performance.ResourceTiming;
 
@@ -114,5 +124,45 @@ public class ResourceTimingImpl extends TimingBaseImpl implements ResourceTiming
 	public void setInitiatorType(String newInitiatorType) {
 		eSet(PerformancePackage.Literals.RESOURCE_TIMING__INITIATOR_TYPE, newInitiatorType);
 	}
+	
+	@RouteMethod(pattern="L?[\\d]+\\.html")
+	public String home(HttpContext context) throws Exception {
+		HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
+		if (!context.authorize(this, "read", null, null)) {
+			return htmlFactory.alert(Style.DANGER, false, "Access Denied!").toString(); 
+		}
+		
+		Fragment content = htmlFactory.fragment(htmlFactory.tag("h3", StringEscapeUtils.escapeHtml4(getName())));	
+		content.content("Initiator: "+getInitiatorType());
+				
+		CDOLock readLock = cdoReadLock();
+		if (readLock.tryLock(5, TimeUnit.SECONDS)) {
+			try {
+				Table timingsTable = htmlFactory.table().bordered();
+				content.content(timingsTable);
+				
+				Row hRow = timingsTable.row().style(Style.INFO);
+				hRow.header("Interval");
+				hRow.header("Time (ms)");
+				
+				NavigationTimingImpl.positiveRow("<B>Start</B>", getStartTime(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>Duration</B>", getDuration(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>Redirect</B> (redirectStart ~ redirectEnd)", getRedirectStart()<getStartTime() ? 0 : getRedirectEnd()-getRedirectStart(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>Cache</B> (fetchStart ~ domainLookupStart)", getFetchStart()<getStartTime() ? 0 : getDomainLookupStart()-getFetchStart(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>DNS</B> (domainLookupStart ~ domainLookupEnd)", getDomainLookupStart()<getStartTime() ? 0 : getDomainLookupEnd()-getDomainLookupStart(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>Connect</B> (connectStart ~ connectEnd)", getConnectStart()<getStartTime() ? 0 : getConnectEnd()-getConnectStart(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>SSL</B> (connectStart ~ secureConnectionStart)", getSecureConnectionStart()<getStartTime() ? 0 : getSecureConnectionStart()-getConnectStart(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>Request</B> (requestStart ~ responseStart)", getRequestStart()<getStartTime() ? 0 : getResponseStart() - getRequestStart(), timingsTable);
+				NavigationTimingImpl.positiveRow("<B>Response</B> (responseStart ~ responseEnd)", getResponseStart()<getStartTime() ? 0 : getResponseEnd() - getResponseStart(), timingsTable);
+			} finally {
+				readLock.unlock();
+			}
+		} else {
+			return htmlFactory.alert(Style.WARNING, false, "The system is overloaded, please try again later.").toString(); 			
+		}
+						
+		return content.toString();
+	}
+	
 
 } //ResourceTimingImpl
