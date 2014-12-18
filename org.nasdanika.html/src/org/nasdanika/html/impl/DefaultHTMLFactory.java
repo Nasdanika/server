@@ -347,6 +347,18 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	public Object collapsible(final Style style, final Object title, final boolean collapsed, final Object... content) {
 		return new AutoCloseable() {
 			
+			private void panelBody(int start, int end, StringBuilder sb) {
+				if (start<end) {
+					sb.append("<div class=\"panel-body\">");
+					for (int i=start; i<end; ++i) {
+						if (content[i]!=null) {
+							sb.append(content[i]);
+						}
+					}
+					sb.append("</div>");
+				}
+			}
+			
 			@Override
 			public String toString() {
 				String id = nextId()+"_collapsible";
@@ -359,20 +371,35 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 							ret.append("</a>");
 						ret.append("</h4>");
 					ret.append("</div>");
-				
-					ret.append("<div id=\""+id+"\" class=\"panel-collapse collapse");
-					if (!collapsed) {
-						ret.append(" in");
-					}
-					ret.append("\">");
-						ret.append("<div class=\"panel-body\">");
-							for (Object o: content) {
-								if (o!=null) {
-									ret.append(o);
+					
+					if (content.length==1 && (content[0] instanceof ListGroup || content[0] instanceof LinkGroup || content[0] instanceof Table)) {
+						UIElement<?> sContent = (UIElement<?>) content[0];
+						sContent.id(id);
+						sContent.addClass("panel-collapse");
+						sContent.addClass("collapse");
+						if (!collapsed) {
+							sContent.addClass("in");
+						}
+						ret.append(sContent);
+					} else {				
+						ret.append("<div id=\""+id+"\" class=\"panel-collapse collapse");
+						if (!collapsed) {
+							ret.append(" in");
+						}
+						ret.append("\">");
+							int start = 0; 
+							for (int i=0; i<content.length; ++i) {
+								if (content[i] instanceof ListGroup
+										|| content[i] instanceof LinkGroup
+										|| content[i] instanceof Table) {
+									panelBody(start, i, ret);
+									ret.append(content[i]);
+									start=i+1;
 								}
 							}
+							panelBody(start, content.length, ret);
 						ret.append("</div>");
-					ret.append("</div>");												
+					}
 				ret.append("</div>");				
 				return ret.toString();
 			}

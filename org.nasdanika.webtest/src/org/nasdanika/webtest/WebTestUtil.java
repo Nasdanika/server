@@ -610,6 +610,24 @@ public class WebTestUtil {
 			target.put("title", titleBuilder.toString());
 		}
 	}
+	
+	static String title(String name) {
+		StringBuilder titleBuilder = new StringBuilder();
+		String[] scna = StringUtils.splitByCharacterTypeCamelCase(name);
+		for (int i=0; i<scna.length; ++i) {
+			if (i==0) {
+				titleBuilder.append(StringUtils.capitalize(scna[i]));
+			} else {
+				titleBuilder.append(" ");
+				if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
+					titleBuilder.append(scna[i]);
+				} else {
+					titleBuilder.append(StringUtils.uncapitalize(scna[i]));
+				}
+			}
+		}
+		return titleBuilder.toString();
+	}
 
 	static void titleAndDescriptionToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
 		Title title = annotated.getAnnotation(Title.class);

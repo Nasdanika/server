@@ -6,6 +6,7 @@ import java.util.List;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 	
@@ -98,14 +99,14 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 			id(factory.nextId());
 		}
 		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
-		Tag ol = factory.tag("ol").addClass("carousel-indicators");
+		Tag ol = factory.tag(TagName.ol).addClass("carousel-indicators");
 		if (indicatorsBootstrapBackground!=null) {
 			ol.style("background", indicatorsBootstrapBackground.code);
 		} else if (indicatorsHTMLBackground!=null) {
 			ol.style("background", indicatorsHTMLBackground.name());
 		}
 		for (int i=0; i<slides.size(); ++i) {
-			Tag li = factory.tag("li")
+			Tag li = factory.tag(TagName.li)
 					.attribute("data-target", "#"+getId())
 					.attribute("data-slide-to", i);
 			
@@ -137,13 +138,13 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 		}
 		sb.append(innerDiv);
 		
-		sb.append(factory.tag("a", factory.span("").addClass("glyphicon", "glyphicon-chevron-left"))
+		sb.append(factory.tag(TagName.a, factory.span("").addClass("glyphicon", "glyphicon-chevron-left"))
 				.addClass("left", "carousel-control")
 				.attribute("href", "#"+getId())
 				.attribute("role", "button")
 				.attribute("data-slide", "prev"));
 		
-		sb.append(factory.tag("a", factory.span("").addClass("glyphicon", "glyphicon-chevron-right"))
+		sb.append(factory.tag(TagName.a, factory.span("").addClass("glyphicon", "glyphicon-chevron-right"))
 				.addClass("right", "carousel-control")
 				.attribute("href", "#"+getId())
 				.attribute("role", "button")

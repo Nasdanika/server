@@ -28,7 +28,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.runners.Parameterized.Parameter;
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.ApplicationPanel.ContentPanel;
@@ -42,6 +41,7 @@ import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Table.Row.Cell;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.DeviceSize;
 import org.nasdanika.html.UIElement.Style;
@@ -362,7 +362,7 @@ class ReportGenerator {
 			List<ScreenshotEntry> allScreenshots = testMethodResult.allScreenshots();
 			for (ScreenshotEntry se: allScreenshots) {
 				String imageLocation = "screenshots/screenshot_"+se.getId()+".png";
-				Tag imageTag = htmlFactory.tag("img").attribute("src", imageLocation).style("margin", "auto");
+				Tag imageTag = htmlFactory.tag(TagName.img).attribute("src", imageLocation).style("margin", "auto");
 				Tag link = htmlFactory.link(imageLocation, imageTag)
 						.attribute("data-lightbox", "test-"+testMethodResult.getId())
 						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getTextCaption()));
@@ -409,27 +409,9 @@ class ReportGenerator {
 		if (!klass.isInterface() && className.endsWith("Impl")) {
 			className = className.substring(0, className.length()-4);
 		}
-		return ta==null ? title(className) : ta.value();		
+		return ta==null ? WebTestUtil.title(className) : ta.value();		
 	}
 	
-	static String title(String name) {
-		StringBuilder titleBuilder = new StringBuilder();
-		String[] scna = StringUtils.splitByCharacterTypeCamelCase(name);
-		for (int i=0; i<scna.length; ++i) {
-			if (i==0) {
-				titleBuilder.append(StringUtils.capitalize(scna[i]));
-			} else {
-				titleBuilder.append(" ");
-				if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
-					titleBuilder.append(scna[i]);
-				} else {
-					titleBuilder.append(StringUtils.uncapitalize(scna[i]));
-				}
-			}
-		}
-		return titleBuilder.toString();
-	}
-
 	protected Tag generateTestsLeftPanel(HTMLFactory htmlFactory, File contentDir, boolean secondLevel) throws IOException {
 		Tag container = htmlFactory.tag("dl");		
 		for (TestResult testResult: testResults) {
@@ -689,7 +671,7 @@ class ReportGenerator {
 	private String[] createParamInfo(String name, Title title, Description description) {
 		String[] pi = { null, null };
 		if (title==null) {
-			pi[0] = title(name);
+			pi[0] = WebTestUtil.title(name);
 		} else {
 			pi[0] = title.value();
 		}

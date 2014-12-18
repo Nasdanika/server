@@ -6,6 +6,7 @@ import java.util.List;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class BreadcrumbsImpl extends UIElementImpl<Breadcrumbs> implements Breadcrumbs {
 
@@ -25,9 +26,9 @@ class BreadcrumbsImpl extends UIElementImpl<Breadcrumbs> implements Breadcrumbs 
 	@Override
 	public Breadcrumbs item(Object href, Object... content) {
 		if (href==null) {
-			items.add(factory.tag("li", content).addClass("active"));
+			items.add(factory.tag(TagName.li, content).addClass("active"));
 		} else {
-			items.add(factory.tag("li", factory.link(href, content)));
+			items.add(factory.tag(TagName.li, factory.link(href, content)));
 		}
 		return this;
 	}

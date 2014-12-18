@@ -6,6 +6,7 @@ import java.util.List;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 	
@@ -18,7 +19,7 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 
 	@Override
 	public ListGroup item(Object content, Style style) {
-		Tag li = factory.tag("li", content).addClass("list-group-item");
+		Tag li = factory.tag(TagName.li, content).addClass("list-group-item");
 		if (style!=null && Style.DEFAULT!=style) {
 			li.addClass("list-group-item-"+style.name().toLowerCase());
 		}

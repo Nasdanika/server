@@ -146,7 +146,7 @@ public class ScreenshotEntry implements Runnable, HttpPublisher {
 			caption.append(" :: ");
 			Title mTitle = operationResult.operation.getAnnotation(Title.class);
 			if (mTitle==null) {
-				caption.append(ReportGenerator.title(operationResult.getName()));
+				caption.append(WebTestUtil.title(operationResult.getName()));
 			} else {
 				caption.append(mTitle.value());
 			}

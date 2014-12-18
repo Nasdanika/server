@@ -30,6 +30,8 @@ public interface HTMLFactory {
 	 */
 	Tag tag(String tagName, Object... content);
 	
+	Tag tag(Tag.TagName tagName, Object... content);
+	
 	Tag div(Object... content);
 	
 	Tag span(Object... content);

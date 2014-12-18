@@ -43,5 +43,10 @@ class FragmentImpl implements Fragment {
 	public boolean isEmpty() {
 		return content.isEmpty();
 	}
+	
+	@Override
+	public List<Object> getContent() {
+		return content;
+	}
 
 }

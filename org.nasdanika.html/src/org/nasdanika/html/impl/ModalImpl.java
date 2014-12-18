@@ -19,10 +19,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 			if (title!=null) {
 				ret.add(factory.div("<button type=\"button\" class=\"close\" data-dismiss=\"modal\" aria-hidden=\"true\">&times;</button>")
 						.addClass("modal-header")
-						.content(
-								factory.tag("h4", title).addClass("modal-title")
-								)
-						);
+						.content(factory.tag(TagName.h4, title).addClass("modal-title")));
 			}
 			if (body!=null) {
 				ret.add(factory.div(body).addClass("modal-body"));

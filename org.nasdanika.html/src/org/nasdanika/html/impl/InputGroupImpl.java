@@ -8,6 +8,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.HTMLFactory.Placement;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.InputGroup;
 
 class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<InputGroup<?>> {
@@ -88,7 +89,7 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 		} 	
 		sb.append("</div>");
 		if (initScript.length()>0) {
-			sb.append(factory.tag("script", initScript));
+			sb.append(factory.tag(TagName.script, initScript));
 		}
 		return sb.append(genLoadRemoteContentScript()).toString();
 		

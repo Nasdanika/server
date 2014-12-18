@@ -217,7 +217,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		String name = "";
 		Title mTitle = operation.getAnnotation(Title.class);
 		if (mTitle == null) {
-			name = ReportGenerator.title(getOperationName());
+			name = WebTestUtil.title(getOperationName());
 		} else {
 			name = format(mTitle.value());
 		}
@@ -372,7 +372,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		caption.append("</b> <i>");
 		Title mTitle = operation.getAnnotation(Title.class);
 		if (mTitle==null) {
-			caption.append(ReportGenerator.title(getOperationName()));
+			caption.append(WebTestUtil.title(getOperationName()));
 		} else {
 			caption.append(format(mTitle.value()));
 		}
@@ -387,7 +387,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		caption.append(" : ");
 		Title mTitle = operation.getAnnotation(Title.class);
 		if (mTitle==null) {
-			caption.append(ReportGenerator.title(getOperationName()));
+			caption.append(WebTestUtil.title(getOperationName()));
 		} else {
 			caption.append(mTitle.value());
 		}
@@ -407,7 +407,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		WebTestUtil.titleAndDescriptionToJSON(getOperation(), data);
 		data.put("operationName", getOperationName());
 		if (!data.has("title")) {
-			data.put("title", getOperationName());
+			data.put("title", WebTestUtil.title(getOperationName()));
 		}
 		data.put("qualifiedName", operation.toString());
 		String cName = getClass().getName();
@@ -433,11 +433,19 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 				data.put("error", toJSON(getRootCause()));
 			}
 		}
+		
+		if (isFailure()) {
+			data.put("status", "FAIL");
+		} else if (failure!=null) {
+			data.put("status", "ERROR");
+		} else if (isPending()) {
+			data.put("status", "PENDING");
+		} else {
+			data.put("status", "PASS");
+		}
+		
 		data.put("finish", finish);
 		data.put("start", start);
-		if (isPending()) {
-			data.put("pending", true);
-		}
 		if (parent!=null) {
 			if (afterScreenshot!=null) {
 				String sid = idMap.get(afterScreenshot.getMaster());

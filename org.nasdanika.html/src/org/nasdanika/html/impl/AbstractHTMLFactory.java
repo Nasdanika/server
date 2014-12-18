@@ -13,6 +13,7 @@ import org.nasdanika.html.Input;
 import org.nasdanika.html.Require;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 /**
  * This factory contains method implementations which are not dependent
@@ -33,6 +34,11 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	@Override
 	public Tag tag(String tagName, final Object... content) {
 		return new TagImpl(this, tagName, content);
+	}
+	
+	@Override
+	public Tag tag(TagName tagName, Object... content) {
+		return tag(tagName.name(), content);
 	}
 
 	@Override
@@ -121,13 +127,13 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 
 	@Override
 	public Tag div(Object... content) {
-		return tag("div", content);
+		return tag(TagName.div, content);
 	}
 
 
 	@Override
 	public Tag span(Object... content) {
-		return tag("span", content);
+		return tag(TagName.span, content);
 	}
 
 

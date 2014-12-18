@@ -6,6 +6,7 @@ import java.util.List;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 	
@@ -24,7 +25,7 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 	
 	@Override
 	public Tag item(Object content, Style style, boolean active) {
-		Tag a = factory.tag("a", content).addClass("list-group-item");
+		Tag a = factory.tag(TagName.a, content).addClass("list-group-item");
 		if (style!=null && Style.DEFAULT!=style) {
 			a.addClass("list-group-item-"+style.name().toLowerCase());
 		}

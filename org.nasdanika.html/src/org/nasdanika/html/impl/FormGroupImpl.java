@@ -6,6 +6,7 @@ import org.nasdanika.html.Input;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.Tag.TagName;
 
 class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implements FormGroup<T> {
 	
@@ -59,7 +60,7 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 		}
 		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
 		if (label!=null) {
-			UIElement<?> labelTag = form.factory.tag("label", label).attribute("for", String.valueOf(controlId));
+			UIElement<?> labelTag = form.factory.tag(TagName.label, label).attribute("for", String.valueOf(controlId));
 			if (form.inline) {
 				labelTag.addClass("sr-only");
 			}
@@ -101,7 +102,7 @@ class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implemen
 			}
 		}
 		if (helpText!=null && !form.horizontal && !form.inline) {
-			sb.append(form.factory.tag("p", helpText).addClass("help-block"));			
+			sb.append(form.factory.tag(TagName.p, helpText).addClass("help-block"));			
 		}
 		sb.append("</div>");
 		return sb.append(genLoadRemoteContentScript()).toString();

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag.TagName;
 
 class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
@@ -65,7 +66,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 						} 
 					ret.append("</div>");
 					if (location!=null) {
-						ret.append(factory.tag("script", "nsdLoad(\"#"+bodyId+"\", \""+location+"\");"));
+						ret.append(factory.tag(TagName.script, "nsdLoad(\"#"+bodyId+"\", \""+location+"\");"));
 					}					
 				ret.append("</div>");												
 			ret.append("</div>");				
