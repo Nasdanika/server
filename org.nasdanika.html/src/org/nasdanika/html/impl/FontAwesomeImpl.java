@@ -2,6 +2,7 @@ package org.nasdanika.html.impl;
 
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.UIElement.Style;
 
 class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoCloseable {
 	/**
@@ -161,6 +162,11 @@ class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoClo
 
 	@Override
 	public FontAwesome<T> size(Size size) {
+		size(size, target);
+		return this;
+	}
+
+	static void size(Size size, UIElement<?> target) {
 		switch (size) {
 		case large:
 			target.addClass("fa-lg");
@@ -178,10 +184,8 @@ class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoClo
 			target.addClass("fa-5x");
 			break;
 		default:
-			break;
-		
+			throw new IllegalArgumentException("Unexpected size: "+size);	
 		}
-		return this;
 	}
 
 	@Override
@@ -192,6 +196,12 @@ class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoClo
 	@Override
 	public void close() throws Exception {
 		getTarget().close();		
+	}
+
+	@Override
+	public FontAwesome<T> style(Style style) {
+		target.addClass("text-"+style.name().toLowerCase());
+		return this;
 	}
 	
 }

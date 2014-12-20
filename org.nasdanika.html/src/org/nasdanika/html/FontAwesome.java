@@ -100,13 +100,18 @@ public interface FontAwesome<T extends UIElement<?>> {
 	FontAwesome<T> flip(Flip flip);
 	
 	
-	// Stack
+	interface Stack extends AutoCloseable {
+		
+		enum IconSize { x1, x2, x3, x4, x5 }
 	
-//	interface Stack {
-//		enum Size { x1, x2, x3, x4, x5 }
-//	
-//		Stack icon(UIElement icon, Size size, boolean inverse);
-//		
-//	}
+		Stack icon(UIElement<?> icon, IconSize size, boolean inverse);
+		
+		Stack icon(FontAwesome<?> icon, IconSize size, boolean inverse);
+		
+		Stack size(Size size);
+		
+	}
+	
+	FontAwesome<T> style(UIElement.Style style);
 
 }

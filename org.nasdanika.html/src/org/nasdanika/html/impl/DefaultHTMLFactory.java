@@ -12,6 +12,7 @@ import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.ButtonToolbar;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.FontAwesome;
+import org.nasdanika.html.FontAwesome.Size;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
@@ -23,6 +24,7 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.FontAwesome.Stack;
 import org.nasdanika.html.UIElement.Style;
 
 /**
@@ -416,5 +418,67 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public FontAwesome<Tag> fontAwesome() {
 		return span("").fontAwesome();
+	}
+	
+	@Override
+	public Stack fontAwesomeStack() {
+		return new Stack() {
+			
+			private Tag span = span().addClass("fa-stack");
+
+			@Override
+			public Stack icon(UIElement<?> icon, IconSize size, boolean inverse) {
+				if (size==null) {
+					icon.addClass("fa-stack-1x");
+				} else {
+					switch (size) {
+					case x1:
+						icon.addClass("fa-stack-1x");
+						break;
+					case x2:
+						icon.addClass("fa-stack-2x");
+						break;
+					case x3:
+						icon.addClass("fa-stack-3x");
+						break;
+					case x4:
+						icon.addClass("fa-stack-4x");
+						break;
+					case x5:
+						icon.addClass("fa-stack-5x");
+						break;
+					default:
+						throw new IllegalArgumentException("Unexpected icon size: "+size);					
+					}
+				}
+				if (inverse) {
+					icon.addClass("fa-inverse");
+				}
+				span.content(icon);
+				return this;
+			}
+
+			@Override
+			public Stack size(Size size) {
+				FontAwesomeImpl.size(size, span);
+				return this;
+			}
+
+			@Override
+			public void close() throws Exception {
+				span.close();				
+			}
+
+			@Override
+			public Stack icon(FontAwesome<?> icon, IconSize size, boolean inverse) {
+				return icon(icon.getTarget(), size, inverse);
+			}
+			
+			@Override
+			public String toString() {
+				return span.toString();
+			}
+			
+		};
 	}
 }
