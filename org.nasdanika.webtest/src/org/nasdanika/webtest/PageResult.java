@@ -136,8 +136,8 @@ public class PageResult implements HttpPublisher {
 				JSONObject webElement = new JSONObject(); 
 				webElements.put(webElement);
 				WebTestUtil.titleAndDescriptionToJSON(we, webElement);
-				if (!data.has("title")) {
-					data.put("title", WebTestUtil.title(we.getName()));
+				if (!webElement.has("title")) {
+					webElement.put("title", WebTestUtil.title(we.getName()));
 				}
 				webElement.put("name", we.getName());
 				webElement.put("declaringClass", we.getDeclaringClass().getName());
@@ -158,9 +158,11 @@ public class PageResult implements HttpPublisher {
 				if (findByList.isEmpty()) {
 					JSONObject locator = new JSONObject();
 					locator.put("id", we.getName());
+					locators.put(locator);
 				} else {
 					for (FindBy fb: findByList) {
 						JSONObject locator = new JSONObject();
+						locators.put(locator);
 						String className = fb.className();
 						if (!WebTestUtil.isBlank(className)) {
 							locator.put("className", className);
