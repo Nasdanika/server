@@ -107,10 +107,17 @@ public class ActorResult implements HttpPublisher {
 			}
 			resultIDs.put(rId);
 		}
-		JSONObject coverage = new JSONObject();
+		JSONArray coverage = new JSONArray();
 		data.put("coverage", coverage);
 		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
-			coverage.put(ce.getKey().toString(), ce.getValue());
+			JSONObject coverageEntry = new JSONObject();
+			coverage.put(coverageEntry);
+			WebTestUtil.titleAndDescriptionToJSON(ce.getKey(), coverageEntry);
+			if (!coverageEntry.has("title")) {
+				coverageEntry.put("title", WebTestUtil.title(ce.getKey().getName()));
+			}
+			coverageEntry.put("qualifiedName", ce.getKey().toString());
+			coverageEntry.put("invocations", ce.getValue());
 		}
 		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
 			data.write(w);

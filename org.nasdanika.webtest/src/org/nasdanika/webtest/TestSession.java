@@ -7,6 +7,7 @@ import java.net.InetAddress;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,12 +48,41 @@ class TestSession implements HttpPublisher {
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
 			String location = pConnection.getHeaderField("Location");
-			URL sessionResultsURL = new URL(location+"/results");
+			URL sessionTestResultsURL = new URL(location+"/testResults");
 			idMap.put(this, pConnection.getHeaderField("ID"));
 			try {
+				Map<Class<?>, ActorResult> actorResults = new HashMap<>();
+				Map<Class<?>, PageResult> pageResults = new HashMap<>();
 				for (TestResult tr: testResults) {
-					tr.publish(sessionResultsURL, securityToken, idMap, monitor);				
+					tr.publish(sessionTestResultsURL, securityToken, idMap, monitor);				
+					for (ActorResult car: tr.getActorResults()) {
+						ActorResult aar = actorResults.get(car.getActorInterface());
+						if (aar==null) {
+							aar = new ActorResult(car.getActorInterface());
+							actorResults.put(car.getActorInterface(), aar);
+						}
+						aar.merge(car);
+					}
+					for (PageResult cpr: tr.getPageResults()) {
+						PageResult apr = pageResults.get(cpr.getPageInterface());
+						if (apr==null) {
+							apr = new PageResult(cpr.getPageInterface(), cpr.webElements());
+							pageResults.put(cpr.getPageInterface(), apr);
+						}
+						apr.merge(cpr);
+					}
 				}
+				
+				URL sessionPageResultsURL = new URL(location+"/pageResults");
+				for (PageResult pr: pageResults.values()) {
+					pr.publish(sessionPageResultsURL, securityToken, idMap, monitor);
+				}
+				
+				URL sessionActorResultsURL = new URL(location+"/actorResults");
+				for (ActorResult ar: actorResults.values()) {
+					ar.publish(sessionActorResultsURL, securityToken, idMap, monitor);
+				}
+				
 				// Informing test session that upload is complete by issuing PUT request.
 				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
 				uConnection.setRequestMethod("PUT");
@@ -73,7 +103,7 @@ class TestSession implements HttpPublisher {
 			throw new PublishException(pURL+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}
 	}
-
+	
 	@Override
 	public int publishSize() {
 		int ret = 1;
