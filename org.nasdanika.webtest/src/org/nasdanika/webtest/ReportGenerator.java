@@ -88,7 +88,7 @@ class ReportGenerator {
 				if (Page.class.isAssignableFrom(cc)) {
 					PageResult apr = pageResultCollector.get(cc);
 					if (apr==null) {
-						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null), 0);
+						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null), null);
 						pageResultCollector.put(cc, apr);
 					}
 				}
@@ -118,7 +118,7 @@ class ReportGenerator {
 			for (PageResult cpr: tr.getPageResults()) {
 				PageResult apr = pageResultCollector.get(cpr.getPageInterface());
 				if (apr==null) {
-					apr = new PageResult(cpr.getPageInterface(), idGenerator.genId(cpr.getPageInterface().getName(), null), cpr.size());
+					apr = new PageResult(cpr.getPageInterface(), idGenerator.genId(cpr.getPageInterface().getName(), null), cpr.webElements());
 					pageResultCollector.put(cpr.getPageInterface(), apr);
 				}
 				apr.merge(cpr);
@@ -557,7 +557,7 @@ class ReportGenerator {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T extends Annotation> T getParameterAnnotation(Annotation[] panns, Class<T> annType) {
+	static <T extends Annotation> T getParameterAnnotation(Annotation[] panns, Class<T> annType) {
 		for (Annotation a: panns) {
 			if (annType.isInstance(a)) {
 				return (T) a;
@@ -928,8 +928,8 @@ class ReportGenerator {
 				}
 				descriptionCell.content("</pre>");			
 			}
-			pageRow.cell(pr.size()).attribute("align", "center");
-			totals[0]+=pr.size();
+			pageRow.cell(pr.webElements().size()).attribute("align", "center");
+			totals[0]+=pr.webElements().size();
 			Map<Method, Integer> coverage = pr.getCoverage();
 			int covered = 0;
 			int calls = 0;

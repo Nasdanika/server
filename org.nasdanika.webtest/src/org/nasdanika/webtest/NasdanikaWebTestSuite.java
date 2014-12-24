@@ -202,7 +202,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 					for (PageResult cpr: tr.getPageResults()) {
 						PageResult apr = collector.get(cpr.getPageInterface());
 						if (apr==null) {
-							apr = new PageResult(cpr.getPageInterface(), cpr.size());
+							apr = new PageResult(cpr.getPageInterface(), cpr.webElements());
 							collector.put(cpr.getPageInterface(), apr);
 						}
 						apr.merge(cpr);
@@ -216,6 +216,9 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 				if (monitor!=null) {
 					monitor.onPublishing("Test Suite "+getTestClass().getName(), url);
 				}
+				if (getChildren().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
+					return; // No reason to publish.
+				}				
 				HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
 				pConnection.setRequestMethod("POST");
 				pConnection.setDoOutput(true);

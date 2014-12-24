@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -11,6 +12,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
@@ -22,6 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.runner.Runner;
 import org.junit.runner.notification.RunNotifier;
@@ -362,7 +366,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 					for (PageResult cpr: tr.getPageResults()) {
 						PageResult apr = collector.get(cpr.getPageInterface());
 						if (apr==null) {
-							apr = new PageResult(cpr.getPageInterface(), cpr.size());
+							apr = new PageResult(cpr.getPageInterface(), cpr.webElements());
 							collector.put(cpr.getPageInterface(), apr);
 						}
 						apr.merge(cpr);
@@ -376,6 +380,9 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				if (monitor!=null) {
 					monitor.onPublishing("Parameterized test "+getTestClass().getName(), url);
 				}
+				if (getChildren().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
+					return; // No reason to publish.
+				}
 				HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
 				pConnection.setRequestMethod("POST");
 				pConnection.setDoOutput(true);
@@ -383,6 +390,68 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				JSONObject data = new JSONObject();
 				WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getTestClass(), data);
 				data.put("type", "parameterized");
+				
+				JSONArray pda = new JSONArray();
+				data.put("parameterDescriptors", pda);
+				
+				List<Field> paramFields = new ArrayList<>();
+				for (Field f: getTestClass().getFields()) {
+					if (f.getAnnotation(Parameter.class)!=null) {
+						paramFields.add(f);
+					}
+				}
+								
+				if (paramFields.isEmpty()) {
+					Constructor<?> constructor = getTestClass().getConstructors()[0];
+					Annotation[][] pann = constructor.getParameterAnnotations();
+					Class<?>[] pt = constructor.getParameterTypes();
+					for (int i=0; i<pt.length; ++i) {
+						JSONObject pd = new JSONObject();
+						pda.put(pd);
+						pd.put("qualifiedName", "constructor-arg-"+i+":"+pt[i]);
+						WebTestUtil.toJSON(ReportGenerator.getParameterAnnotation(pann[i], Title.class), pd);
+						WebTestUtil.toJSON(ReportGenerator.getParameterAnnotation(pann[i], Description.class), pd);
+						if (!pd.has("title")) {
+							pd.put("title", "Arg "+i);
+						}						
+					}
+				} else {
+					Collections.sort(paramFields, new Comparator<Field>() {
+
+						@Override
+						public int compare(Field o1, Field o2) {
+							return o1.getAnnotation(Parameter.class).value() - o2.getAnnotation(Parameter.class).value();
+						}
+						
+					});
+					
+					for (Field f: paramFields) {
+						JSONObject pd = new JSONObject();
+						pda.put(pd);
+						pd.put("qualifiedName", f.getName()+":"+f.getType());
+						WebTestUtil.toJSON(f.getAnnotation(Title.class), pd);
+						WebTestUtil.toJSON(f.getAnnotation(Description.class), pd);
+						if (!pd.has("title")) {
+							StringBuilder titleBuilder = new StringBuilder();
+							String[] scna = StringUtils.splitByCharacterTypeCamelCase(f.getName());
+							for (int i=0; i<scna.length; ++i) {
+								if (i==0) {
+									titleBuilder.append(StringUtils.capitalize(scna[i]));
+								} else {
+									titleBuilder.append(" ");
+									if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
+										titleBuilder.append(scna[i]);
+									} else {
+										titleBuilder.append(StringUtils.uncapitalize(scna[i]));
+									}
+								}
+							}
+							pd.put("title", titleBuilder.toString());
+						}
+
+					}
+				}
+				
 				try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
 					data.write(w);
 				}

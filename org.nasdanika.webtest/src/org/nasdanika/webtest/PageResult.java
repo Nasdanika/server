@@ -2,6 +2,7 @@ package org.nasdanika.webtest;
 
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -14,6 +15,9 @@ import java.util.Map.Entry;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.FindBys;
+import org.openqa.selenium.support.How;
 
 /**
  * Contains results of page use throughout tests.
@@ -26,24 +30,24 @@ public class PageResult implements HttpPublisher {
 	
 	private String id;
 
-	private int size;
+	private List<Field> webElements;
 	
 	public String getId() {
 		return id;
 	}
 
-	PageResult(Class<? extends Page<WebDriver>> pageClass, int size) {
+	PageResult(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements) {
 		this.pageClass = pageClass;
-		this.size = size;
+		this.webElements = webElements;
 	}
 
-	PageResult(Class<? extends Page<WebDriver>> pageClass, String id, int size) {
-		this(pageClass, size);
+	PageResult(Class<? extends Page<WebDriver>> pageClass, String id, List<Field> webElements) {
+		this(pageClass, webElements);
 		this.id = id;
 	}
 	
-	public int size() {
-		return size;
+	public List<Field> webElements() {
+		return webElements;
 	}
 	
 	List<OperationResult<?>> results = new ArrayList<>();
@@ -71,8 +75,14 @@ public class PageResult implements HttpPublisher {
 		
 	public void merge(PageResult anotherResult) {
 		results.addAll(anotherResult.getResults());
-		if (this.size<anotherResult.size()) {
-			this.size = anotherResult.size();
+		if (this.webElements == null) {
+			this.webElements = anotherResult.webElements;
+		} else if (anotherResult.webElements != null){
+			for (Field we: anotherResult.webElements) {
+				if (!this.webElements.contains(we)) {
+					this.webElements.add(we);
+				}
+			}
 		}
 		if (anotherResult.getId()!=null) {
 			id = anotherResult.getId();
@@ -118,7 +128,117 @@ public class PageResult implements HttpPublisher {
 		}
 		JSONObject coverage = new JSONObject();
 		data.put("coverage", coverage);
-		data.put("size", size());
+		
+		JSONArray webElements = new JSONArray();
+		data.put("webElements", webElements);
+		if (this.webElements!=null) {
+			for (Field we: this.webElements) {
+				JSONObject webElement = new JSONObject(); 
+				webElements.put(webElement);
+				WebTestUtil.titleAndDescriptionToJSON(we, webElement);
+				if (!data.has("title")) {
+					data.put("title", WebTestUtil.title(we.getName()));
+				}
+				webElement.put("name", we.getName());
+				webElement.put("declaringClass", we.getDeclaringClass().getName());
+				webElement.put("qualifiedName", we.getDeclaringClass().getName()+"."+we.getName());
+				List<FindBy> findByList = new ArrayList<>();
+				FindBy findBy = we.getAnnotation(FindBy.class);
+				if (findBy!=null) {
+					findByList.add(findBy);
+				}
+				FindBys findBys = we.getAnnotation(FindBys.class);
+				if (findBys!=null) {
+					for (FindBy fb: findBys.value()) {
+						findByList.add(fb);
+					}
+				}
+				JSONArray locators = new JSONArray();
+				webElement.put("locators", locators);
+				if (findByList.isEmpty()) {
+					JSONObject locator = new JSONObject();
+					locator.put("id", we.getName());
+				} else {
+					for (FindBy fb: findByList) {
+						JSONObject locator = new JSONObject();
+						String className = fb.className();
+						if (!WebTestUtil.isBlank(className)) {
+							locator.put("className", className);
+						} else {
+							String css = fb.css();
+							if (!WebTestUtil.isBlank(css)) {
+								locator.put("css", css);								
+							} else {
+								String id = fb.id();
+								if (!WebTestUtil.isBlank(id)) {
+									locator.put("id", id);								
+								} else {
+									String linkText = fb.linkText();
+									if (!WebTestUtil.isBlank(linkText)) {
+										locator.put("linkText", linkText);								
+									} else {
+										String name = fb.name();
+										if (!WebTestUtil.isBlank(name)) {
+											locator.put("name", name);								
+										} else {
+											String plt = fb.partialLinkText();
+											if (!WebTestUtil.isBlank(plt)) {
+												locator.put("partialLinkText", plt);								
+											} else {
+												String tagName = fb.tagName();
+												if (!WebTestUtil.isBlank(tagName)) {
+													locator.put("tagName", tagName);								
+												} else {
+													String xpath = fb.xpath();
+													if (!WebTestUtil.isBlank(xpath)) {
+														locator.put("xpath", xpath);								
+													} else {
+														How how = fb.how();
+														switch (how) {
+														case CLASS_NAME:
+															locator.put("className", fb.using());
+															break;
+														case CSS:
+															locator.put("css", fb.using());
+															break;
+														case ID:
+															locator.put("id", fb.using());
+															break;
+														case ID_OR_NAME:
+															locator.put("idOrName", fb.using());
+															break;
+														case LINK_TEXT:
+															locator.put("linkText", fb.using());
+															break;
+														case NAME:
+															locator.put("name", fb.using());
+															break;
+														case PARTIAL_LINK_TEXT:
+															locator.put("partialLinkText", fb.using());
+															break;
+														case TAG_NAME:
+															locator.put("tagName", fb.using());
+															break;
+														case XPATH:
+															locator.put("xpath", fb.using());
+															break;
+														default:
+															System.err.println("Unexpected How: "+how);
+															break;														
+														}														
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
 		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
 			coverage.put(ce.getKey().toString(), ce.getValue());
 		}

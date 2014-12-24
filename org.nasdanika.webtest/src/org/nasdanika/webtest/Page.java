@@ -1,5 +1,8 @@
 package org.nasdanika.webtest;
 
+import java.lang.reflect.Field;
+import java.util.List;
+
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -13,8 +16,8 @@ public interface Page<D extends WebDriver> {
 	D getWebDriver();
 	
 	/**
-	 * @return Number of web elements on the page and sub-pages.
+	 * @return Web elements on the page and sub-pages sorted by name.
 	 */
-	int size();
+	List<Field> webElements();	
 	
 }

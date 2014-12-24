@@ -19,7 +19,6 @@ import java.util.concurrent.Executor;
 
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 public class TestClassResult implements Collector<WebDriver>, TestResult {
 
@@ -74,16 +73,16 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return pages.values();
 	}
 	
-	private void onPageClass(Class<? extends Page<WebDriver>> pageClass, int size) {
+	private void onPageClass(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements) {
 		if (!pages.containsKey(pageClass)) {
-			pages.put(pageClass, new PageResult(pageClass, size));
+			pages.put(pageClass, new PageResult(pageClass, webElements));
 		}		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onPageProxying(Page<WebDriver> page) {
-		onPageClass((Class<? extends Page<WebDriver>>) page.getClass(), page.size());
+		onPageClass((Class<? extends Page<WebDriver>>) page.getClass(), page.webElements());
 	}
 	
 	private void onActorClass(Class<? extends Actor<WebDriver>> actorClass) {
@@ -133,15 +132,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	@Override
 	public void beforePageInitialization(Class<? extends Page<WebDriver>> pageClass, byte[] screenshot, JSONObject performance) {
-		int size = 0;
-		for (Class<?> cls = pageClass; cls!=null; cls = cls.getSuperclass()) {
-			for (Field field: cls.getDeclaredFields()) {
-				if (WebElement.class.isAssignableFrom(field.getType())) {
-					++size;
-				} 
-			}
-		}
-		onPageClass(pageClass, size);
+		onPageClass(pageClass, WebTestUtil.webElements(pageClass));
 		InitializationResult pir = new InitializationResult(
 				idGenerator.genId(pageClass.getName(), "_init"),
 				pageClass, 
@@ -290,9 +281,12 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 		
 	@Override
-	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {		
 		if (monitor!=null) {
 			monitor.onPublishing("Test Class Result "+getTestClass().getName(), url);
+		}
+		if (getTestMethodResults().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
+			return; // No reason to publish.
 		}
 		HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
 		pConnection.setRequestMethod("POST");

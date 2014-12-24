@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -19,6 +20,7 @@ import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
@@ -631,10 +633,18 @@ public class WebTestUtil {
 
 	static void titleAndDescriptionToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
 		Title title = annotated.getAnnotation(Title.class);
+		toJSON(title, target);
+		toJSON(annotated.getAnnotation(Description.class), target);
+	}
+
+	static void toJSON(Title title, JSONObject target) throws JSONException {
 		if (title!=null) {
 			target.put("title", title.value());
 		}
-		Description description = annotated.getAnnotation(Description.class);
+	}
+
+	static void toJSON(Description description, JSONObject target)
+			throws JSONException {
 		if (description!=null) {
 			JSONObject jd = new JSONObject();
 			target.put("description", jd);
@@ -650,6 +660,31 @@ public class WebTestUtil {
 				jdv.put(v);
 			}
 		}
+	}
+
+	public static List<Field> webElements(Class<?> clazz) {
+		List<Field> ret = new ArrayList<>();
+		for (Class<?> cls = clazz; cls!=null; cls = cls.getSuperclass()) {
+			for (Field field: cls.getDeclaredFields()) {
+				if (WebElement.class.isAssignableFrom(field.getType())) {
+					ret.add(field);
+				} 
+			}
+		}
+		Collections.sort(ret, new Comparator<Field>() {
+
+			@Override
+			public int compare(Field o1, Field o2) {
+				return o1.toString().compareTo(o2.toString());
+			}
+			
+		});
+		
+		return ret;		
+	}
+	
+	public static boolean isBlank(String str) {
+		return str==null || str.trim().length()==0;
 	}
 	
 }
