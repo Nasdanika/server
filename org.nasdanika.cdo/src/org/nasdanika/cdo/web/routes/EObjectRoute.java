@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.web.routes;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
@@ -9,6 +10,7 @@ import org.nasdanika.cdo.EAttributeClosure;
 import org.nasdanika.cdo.EOperationClosure;
 import org.nasdanika.cdo.EReferenceClosure;
 import org.nasdanika.web.Action;
+import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.WebContext;
 import org.nasdanika.web.routes.ObjectRoute;
 
@@ -20,7 +22,7 @@ public class EObjectRoute extends ObjectRoute {
 	@Override
 	public Action execute(final WebContext context) throws Exception {
 		final EObject eObject = (EObject) context.getTarget();
-
+										
 		if (context.getPath().length>=2 && ("container".equals(context.getPath()[1]) || context.getPath()[1].startsWith("container.")) ) {
 			return context.getAction(eObject.eContainer(), 1);
 		}

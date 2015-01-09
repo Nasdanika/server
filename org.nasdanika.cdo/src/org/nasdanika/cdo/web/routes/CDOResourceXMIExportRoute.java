@@ -1,26 +1,20 @@
 package org.nasdanika.cdo.web.routes;
 
-import java.io.File;
 import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.WebContext;
 
-public class EObjectXMIExportRoute implements Route {
+public class CDOResourceXMIExportRoute implements Route {
 
 	@Override
 	public Action execute(final WebContext context) throws Exception {
@@ -30,28 +24,19 @@ public class EObjectXMIExportRoute implements Route {
 				return Action.FORBIDDEN;
 			}
 			
-			ResourceSet resourceSet = new ResourceSetImpl();
-			resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
-			EObject target = (EObject) context.getTarget();
-			StringBuilder nameBuilder = new StringBuilder(target.eClass().getName());
-			if (target.eResource()!=null) {
-				String fragment = target.eResource().getURIFragment(target);
-				if (fragment!=null) {
-					nameBuilder.append("-").append(fragment);
-				}
-			}
+			CDOResource target = (CDOResource) context.getTarget();
+			StringBuilder nameBuilder = new StringBuilder(target.getName());
 			nameBuilder.append("-");
 			nameBuilder.append(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 			
 			String name = URLEncoder.encode(nameBuilder.toString().replace('/', '-'), context.getCharacterEncoding());
 			
-			URI sourceURI = URI.createFileURI(File.createTempFile(name+"-export-", ".xml").getAbsolutePath());
-			Resource resource = resourceSet.createResource(sourceURI);
-			resource.getContents().add(EcoreUtil.copy(target));	
 			HttpServletResponse response = ((HttpContext) context).getResponse();
 			response.setContentType("text/xml");
 			response.setHeader("Content-Disposition", "attachment; filename="+name+".xml");
-			resource.save(response.getOutputStream(), null);
+			try (ServletOutputStream out = response.getOutputStream()) {
+				target.save(out, null);
+			}
 
 			return Action.NOP;
 		}

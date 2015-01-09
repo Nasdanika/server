@@ -1,0 +1,6 @@
+<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOViewSessionRenderer" %>
+define({
+
+	a: <%=argument%>
+
+});

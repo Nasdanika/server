@@ -66,6 +66,18 @@
             method="*"
             target="org.nasdanika.cdo.EOperationClosure">
       </object_route>
+      <extension_route
+            class="org.nasdanika.cdo.web.routes.CDOResourceXMIExportRoute"
+            extension="xml"
+            method="GET"
+            target="org.eclipse.emf.cdo.eresource.CDOResource">
+      </extension_route>
+      <extension_route
+            class="org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute"
+            extension="js"
+            method="GET"
+            target="org.eclipse.emf.cdo.CDOObject">
+      </extension_route>
       
    </extension>
    <extension

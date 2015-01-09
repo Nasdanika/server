@@ -6,8 +6,10 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.web.Action;
+import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
+import org.nasdanika.web.ValueAction;
 import org.nasdanika.web.WebContext;
 
 public class CDOViewRoute implements Route {
@@ -61,6 +63,11 @@ public class CDOViewRoute implements Route {
 			
 			// TODO - create resources.
 		}		
+		
+		if (context.getPath().length==2 && "session.js".equals(context.getPath()[1])) {
+			((HttpContext) context).getResponse().setContentType("application/javascript");
+			return new ValueAction(new CDOViewSessionRenderer().generate(System.currentTimeMillis()));
+		}
 		
 		return Action.NOT_FOUND;
 	}
