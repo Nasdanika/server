@@ -4,31 +4,33 @@
 	org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig config = (org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig) argument;
 %>
 
-define("<%=config.getObjectPath()%>.js", ["<%=config.getSessionPath()%>/session.js", "/js/q.js"], function(session, Q) {
-	console.log("HERE: "+Q);
+define("<%=config.getObjectPath()%>.js", ["<%=config.getSessionPath()%>/session.js", "q"], function(session, Q) {
     var dirty = false;
     var data = {
-        someAttr: { oldValue: 33 }       
+    	<% 
+    		java.util.Iterator<String> dit = config.getDataDefinitions().iterator();
+    		while (dit.hasNext()) {
+    	%>
+	    	<%=dit.next()%><% if (dit.hasNext()) { %>,
+	    	<% } %>
+    	<% } %>
     };  
 
     session.<%=config.getId()%> = {
 
         get delta() {
-
-            //...
-
-        },
+        	<% for (String getDeltaEntry: config.getGetDeltaEntries()) { %>
+        		<%=getDeltaEntry%>
+        	<% } %>
+       },
        
         set delta(delta) {
-            if (delta.hasOwnProperty("someAttr")) {
-                data.someAttr.oldValue = delta.someAttr;
-            }        
-
-            delete data.someAttr.value;
+        	<% for (String setDeltaEntry: config.getSetDeltaEntries()) { %>
+        		<%=setDeltaEntry%>
+        	<% } %>
+        	
             dirty = false;
         },
-
-       
 
         reset: function() {
             delete data.someAttr.value;
@@ -37,26 +39,13 @@ define("<%=config.getObjectPath()%>.js", ["<%=config.getSessionPath()%>/session.
     };
 
     return {
-
-        get someAttr() {
-            if (data.someAttr.hasOwnProperty("value")) {
-                return data.someAttr.value;
-            }
-
-            if (data.someAttr.hasOwnProperty("oldValue")) {
-                return data.someAttr.oldValue;
-            }
-
-            return "defalut value";
-
-        },
-
-        set someAttr(newValue) {
-            // compare to value(?), oldValue if present and to default value.
-            // set and mark dirty
-        },
-
-        // Operations
+    
+    	<% 
+    		java.util.Iterator<String> fit = config.getFacadeDefinitions().iterator();
+    		while (fit.hasNext()) {
+    	%>
+	    	<%=fit.next()%>,
+    	<% } %>
 
 		get $session() {
 			return session; 
@@ -65,8 +54,6 @@ define("<%=config.getObjectPath()%>.js", ["<%=config.getSessionPath()%>/session.
         $store: function() {
             // return a promise of this.
         },
-
-       
 
         $load: function() {
             // return promise of this.
