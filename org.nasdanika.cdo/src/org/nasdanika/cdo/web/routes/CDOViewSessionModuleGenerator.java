@@ -1,12 +1,12 @@
 package org.nasdanika.cdo.web.routes;
 
-public class CDOViewSessionRenderer
+public class CDOViewSessionModuleGenerator
 {
   protected static String nl;
-  public static synchronized CDOViewSessionRenderer create(String lineSeparator)
+  public static synchronized CDOViewSessionModuleGenerator create(String lineSeparator)
   {
     nl = lineSeparator;
-    CDOViewSessionRenderer result = new CDOViewSessionRenderer();
+    CDOViewSessionModuleGenerator result = new CDOViewSessionModuleGenerator();
     nl = null;
     return result;
   }

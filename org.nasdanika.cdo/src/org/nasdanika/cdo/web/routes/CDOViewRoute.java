@@ -14,6 +14,8 @@ import org.nasdanika.web.WebContext;
 
 public class CDOViewRoute implements Route {
 
+	private static final CDOViewSessionModuleGenerator cdoViewSessionModuleGenerator = new CDOViewSessionModuleGenerator();
+
 	@Override
 	public Action execute(WebContext context) throws Exception {
 		CDOView view = (CDOView) context.getTarget();
@@ -66,7 +68,7 @@ public class CDOViewRoute implements Route {
 		
 		if (context.getPath().length==2 && "session.js".equals(context.getPath()[1])) {
 			((HttpContext) context).getResponse().setContentType("application/javascript");
-			return new ValueAction(new CDOViewSessionRenderer().generate(System.currentTimeMillis()));
+			return new ValueAction(cdoViewSessionModuleGenerator.generate(System.currentTimeMillis()));
 		}
 		
 		return Action.NOT_FOUND;

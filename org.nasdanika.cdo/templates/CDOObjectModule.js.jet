@@ -1,11 +1,11 @@
-<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOObjectModuleRenderer" skeleton="Generator.skeleton"%>
+<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOObjectModuleGenerator" skeleton="Generator.skeleton"%>
 
 <%
-	org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig config = (org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig) argument;
+	org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig config = (org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig) args[0];
 %>
 
-define("<%=config.getObjectPath()%>.js", ["<%=config.getSessionPath()%>/session.js", "q"], function(session, Q) {
-    var dirty = false;
+define(/* "<%=config.getObjectPath()%>.js", */ ["<%=config.getSessionPath()%>/session.js", "q"<% for (Object eager: config.getEager()) { %>, "<%=config.getContext().getObjectPath(eager)%>.js"<% } %>], function(session, Q) {
+	console.log("Defining <%=config.getObjectPath()%>.js");
     var data = {
     	<% 
     		java.util.Iterator<String> dit = config.getDataDefinitions().iterator();
@@ -38,7 +38,7 @@ define("<%=config.getObjectPath()%>.js", ["<%=config.getSessionPath()%>/session.
         }   
     };
 
-    return {
+    var facade = {
     
     	<% 
     		java.util.Iterator<String> fit = config.getFacadeDefinitions().iterator();
@@ -60,4 +60,10 @@ define("<%=config.getObjectPath()%>.js", ["<%=config.getSessionPath()%>/session.
         }
 
     };
+        
+	<% for (String preloadAction: config.getPreloadActions()) { %>
+		<%=preloadAction%>
+	<% } %>    
+    
+    return facade;
 });

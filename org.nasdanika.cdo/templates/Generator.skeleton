@@ -1,7 +1,7 @@
-public class CLASS {
+public class CLASS implements org.nasdanika.cdo.web.routes.Generator {
 
 
-public String generate(Object argument) throws Exception {
+public String generate(Object... args) throws Exception {
      return "";
    }
  }

@@ -29,25 +29,25 @@ public class CDOObjectJsExtensionRoute implements Route {
 	public Action execute(final WebContext context) throws Exception {
 		CDOObject cdoObject = (CDOObject) context.getTarget();
 		
-		Set<CDOObject> inSession = new HashSet<>();
-		HttpServletRequest httpRequest = ((HttpContext) context).getRequest();
-		if (httpRequest.getContentType()!=null && "application/json".equals(httpRequest.getContentType())) {
-			try (Reader reader = httpRequest.getReader()) {
-				JSONObject request = new JSONObject(new JSONTokener(reader));
-				if (request.has("sessionObjects")) {
-					JSONArray sessionObjects = request.getJSONArray("sessionObjects");
-					CDOView view = cdoObject.cdoView();
-					for (int i=0; i<sessionObjects.length(); ++i) {
-						CDOObject sessionObject = view.getObject(CDOIDUtil.read(sessionObjects.getString(i)));
-						if (sessionObject!=null) {
-							inSession.add(sessionObject);
-						}
-					}
-				}
-			}
-		}
+//		Set<CDOObject> inSession = new HashSet<>();
+//		HttpServletRequest httpRequest = ((HttpContext) context).getRequest();
+//		if (httpRequest.getContentType()!=null && "application/json".equals(httpRequest.getContentType())) {
+//			try (Reader reader = httpRequest.getReader()) {
+//				JSONObject request = new JSONObject(new JSONTokener(reader));
+//				if (request.has("sessionObjects")) {
+//					JSONArray sessionObjects = request.getJSONArray("sessionObjects");
+//					CDOView view = cdoObject.cdoView();
+//					for (int i=0; i<sessionObjects.length(); ++i) {
+//						CDOObject sessionObject = view.getObject(CDOIDUtil.read(sessionObjects.getString(i)));
+//						if (sessionObject!=null) {
+//							inSession.add(sessionObject);
+//						}
+//					}
+//				}
+//			}
+//		}
 
-		final String moduleStr = generateModule(context, inSession, cdoObject);
+		final String moduleStr = generateModule(context, cdoObject);
 		
 		return new Action() {
 
@@ -122,11 +122,9 @@ public class CDOObjectJsExtensionRoute implements Route {
 		
 		private CDOObject cdoObject;
 		private WebContext context;
-		private Set<CDOObject> inSession;
 
-		public ModuleGeneratorConfig(WebContext context, Set<CDOObject> inSession, CDOObject cdoObject) {
+		public ModuleGeneratorConfig(WebContext context,CDOObject cdoObject) {
 			this.context = context;
-			this.inSession = inSession;
 			this.cdoObject = cdoObject;
 		}
 
@@ -156,15 +154,10 @@ public class CDOObjectJsExtensionRoute implements Route {
 						@SuppressWarnings("unchecked")
 						Collection<CDOObject> cc = (Collection<CDOObject>) cdoObject.eGet(ref);
 						for (CDOObject candidate: cc) { 
-							if (inSession.add(candidate)) {
-								ret.add(candidate);
-							}
+							ret.add(candidate);
 						}						
 					} else {
-						CDOObject candidate = (CDOObject) cdoObject.eGet(ref);
-						if (inSession.add(candidate)) {
-							ret.add(candidate);
-						}
+						ret.add((CDOObject) cdoObject.eGet(ref));
 					}
 				}
 			}
@@ -200,15 +193,37 @@ public class CDOObjectJsExtensionRoute implements Route {
 			if (context.authorize(cdoObject, "read", attr.getName(), null)) {
 				JSONObject dd = new JSONObject();
 				if (cdoObject.eIsSet(attr)) {
-					dd.put("initialValue", cdoObject.eGet(attr));
+					if (attr.isMany()) {
+						JSONArray da = new JSONArray();
+						dd.put("initialValue", da);
+						for (Object e: (Collection<?>) cdoObject.eGet(attr)) {
+							da.put(e);
+						}
+					} else {
+						dd.put("initialValue", cdoObject.eGet(attr));
+					}
 				}
 				return attr.getName()+": "+dd;
 			}
 			return null;
 		}
 
-		private String generateDataDefinition(EReference ref) {
-			// TODO Auto-generated method stub
+		private String generateDataDefinition(EReference ref) throws Exception {
+			if (context.authorize(cdoObject, "read", ref.getName(), null) && 
+					(ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(ANNOTATION_EAGER_REF)!=null)) {
+				
+				JSONObject dd = new JSONObject();
+				if (ref.isMany()) {
+					JSONArray da = new JSONArray();
+					dd.put("initialValue", da);
+					for (Object e: (Collection<?>) cdoObject.eGet(ref)) {
+						da.put(context.getObjectPath(e)+".js");
+					}
+				} else {
+					dd.put("initialValue", context.getObjectPath(cdoObject.eGet(ref)+".js"));
+				}
+				return ref.getName()+": "+dd;
+			}
 			return null;
 		}
 		
@@ -272,7 +287,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 			}
 			return ret;
 		}
-	    
+			    
 		private String generateGetDeltaEntry(EReference ref) {
 			// TODO Auto-generated method stub
 			return null;
@@ -282,8 +297,25 @@ public class CDOObjectJsExtensionRoute implements Route {
 			// TODO Auto-generated method stub
 			return null;
 		}
+				
+		public Collection<String> getPreloadActions() {
+			Collection<String> ret = new ArrayList<>(); 
+			EClass eClass = cdoObject.eClass();
+			for (EReference ref: eClass.getEAllReferences()) {
+				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null 
+						&& context.authorize(cdoObject, "read", ref.getName(), null) 
+						&& (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null)) {
+					ret.add("facade."+ref.getName()+";");
+				}
+			}
+			return ret;
+		}	
+		
+		public WebContext getContext() {
+			return context;
+		}
 
-		public Collection<String> getFacadeDefinitions() {
+		public Collection<String> getFacadeDefinitions() throws Exception {
 //
 //      // Operations
 
@@ -315,43 +347,36 @@ public class CDOObjectJsExtensionRoute implements Route {
 			}
 			return ret;
 		}
+		
+		private static final CDOObjectModuleAttributeFacadeDefinitionGenerator CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleAttributeFacadeDefinitionGenerator();
 
-		private String generateFacadeDefinition(EAttribute attr) {
-			if (context.authorize(cdoObject, "read", attr.getName(), null)) {
-				StringBuilder ret = new StringBuilder();
-		        ret.append("get ").append(attr.getName()).append("() {").append(System.lineSeparator());
-		        ret.append("        if (data.").append(attr.getName()).append(".hasOwnProperty('value')) {").append(System.lineSeparator());
-		        ret.append("            return data.").append(attr.getName()).append(".value").append(System.lineSeparator());
-		        ret.append("        }").append(System.lineSeparator());
-		        ret.append("    if (data.").append(attr.getName()).append(".hasOwnProperty('initialValue')) {").append(System.lineSeparator());
-		        ret.append("        return data.").append(attr.getName()).append(".initialValue").append(System.lineSeparator());
-		        ret.append("    }").append(System.lineSeparator());
-		        ret.append("    return ").append(attr.getDefaultValue()==null ? "undefined" : attr.getDefaultValueLiteral()).append(";").append(System.lineSeparator());
-		        ret.append("}");
-		        
-		        if (attr.isChangeable() && context.authorize(cdoObject, "write", attr.getName(), null)) {
-			        ret.append(",").append(System.lineSeparator());
-			        ret.append("set ").append(attr.getName()).append("(newValue) {").append(System.lineSeparator());
-			        ret.append("    if (data.").append(attr.getName()).append(".hasOwnProperty('initialValue')) {").append(System.lineSeparator());
-			        ret.append("	    if (data.").append(attr.getName()).append(".initialValue!==newValue) {").append(System.lineSeparator());
-			        ret.append("		    data.").append(attr.getName()).append(".value = newValue;").append(System.lineSeparator());
-			        ret.append("		    dirty = true;").append(System.lineSeparator());
-			        ret.append("    	}").append(System.lineSeparator());
-			        ret.append("    } else if (newValue!==").append(attr.getDefaultValue()==null ? "undefined" : attr.getDefaultValueLiteral()).append(") {").append(System.lineSeparator());
-			        ret.append("		data.").append(attr.getName()).append(".value = newValue;").append(System.lineSeparator());
-			        ret.append("		dirty = true;").append(System.lineSeparator());
-			        ret.append("    }").append(System.lineSeparator());
-			        ret.append("}").append(System.lineSeparator());
-		        	
-		        }
-		        ret.append(System.lineSeparator());		        
-				return ret.toString();
+		private String generateFacadeDefinition(EAttribute attr) throws Exception {
+			if (context.authorize(cdoObject, "read", attr.getName(), null)) {	
+				return CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR.generate(context, cdoObject, attr);
 			}
 			return null;
 		}
+		
+		private static final CDOObjectModuleEagerObjectFacadeDefinitionGenerator CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleEagerObjectFacadeDefinitionGenerator();
+		private static final CDOObjectModuleEagerReferenceFacadeDefinitionGenerator CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleEagerReferenceFacadeDefinitionGenerator();
+		private static final CDOObjectModuleLazyObjectFacadeDefinitionGenerator CDO_OBJECT_MODULE_LAZY_OBJECT_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleLazyObjectFacadeDefinitionGenerator();
+		private static final CDOObjectModuleLazyReferenceFacadeDefinitionGenerator CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleLazyReferenceFacadeDefinitionGenerator();
 
-		private String generateFacadeDefinition(EReference ref) {
-			// TODO Auto-generated method stub
+		private String generateFacadeDefinition(EReference ref) throws Exception {
+			if (context.authorize(cdoObject, "read", ref.getName(), null)) {
+				Generator generator = ref.isMany() ? CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR : CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
+				if (ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null) {
+					generator = CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR;
+				} else if (ref.getEAnnotation(ANNOTATION_EAGER_REF)!=null) {
+					generator = CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
+				} else if (ref.getEAnnotation(ANNOTATION_LAZY_OBJ)!=null) {
+					generator = CDO_OBJECT_MODULE_LAZY_OBJECT_FACADE_DEFINITION_GENERATOR;
+				} else if (ref.getEAnnotation(ANNOTATION_LAZY_REF)!=null) {
+					generator = CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR;
+				}
+				String ret = generator.generate(context, cdoObject, ref);
+				return ret.trim().length()==0 ? null : ret;
+			}
 			return null;
 		}
 
@@ -362,6 +387,8 @@ public class CDOObjectJsExtensionRoute implements Route {
 		
 	}
 	
+	private static final CDOObjectModuleGenerator cdoObjectModuleGenerator = new CDOObjectModuleGenerator();
+	
 	/**
 	 * Generates RequreJS module for the target object.
 	 * @param context Web context.
@@ -369,15 +396,9 @@ public class CDOObjectJsExtensionRoute implements Route {
 	 * @param cdoObject Target object.
 	 * @return Generated JavaScript
 	 */
-	public static String generateModule(final WebContext context, Set<CDOObject> inSession, CDOObject cdoObject) throws Exception {
-		ModuleGeneratorConfig config = new ModuleGeneratorConfig(context, inSession, cdoObject);	
-		StringBuilder ret = new StringBuilder();
-		for (CDOObject eager: config.getEager()) {
-			ret.append(generateModule(context, inSession, eager));
-			ret.append(System.lineSeparator());
-		}
-		ret.append(new CDOObjectModuleRenderer().generate(config));
-		return ret.toString();
+	public static String generateModule(final WebContext context, CDOObject cdoObject) throws Exception {
+		ModuleGeneratorConfig config = new ModuleGeneratorConfig(context, cdoObject);	
+		return cdoObjectModuleGenerator.generate(config);
 	}
 
 }

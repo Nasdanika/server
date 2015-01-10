@@ -1,4 +1,4 @@
-<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOViewSessionRenderer" %>
+<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOViewSessionModuleGenerator" %>
 define({
 
 	a: <%=argument%>

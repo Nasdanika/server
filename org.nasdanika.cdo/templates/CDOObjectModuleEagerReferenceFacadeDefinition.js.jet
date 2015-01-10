@@ -1,0 +1,6 @@
+<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOObjectModuleEagerReferenceFacadeDefinitionGenerator" skeleton="Generator.skeleton"%>
+<%
+	org.nasdanika.web.WebContext context = (org.nasdanika.web.WebContext) args[0];
+	org.eclipse.emf.cdo.CDOObject cdoObject = (org.eclipse.emf.cdo.CDOObject) args[1]; 
+	org.eclipse.emf.ecore.EReference ref = (org.eclipse.emf.ecore.EReference) args[2]; 
+%>
