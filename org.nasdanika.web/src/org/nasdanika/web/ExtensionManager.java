@@ -1,6 +1,7 @@
 package org.nasdanika.web;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -457,6 +458,30 @@ public class ExtensionManager extends AdapterManager {
 			}
 			
 			if (target!=null) {
+				for (final Field routeField: target.getClass().getFields()) {
+					RouteField rfAnnotation = routeField.getAnnotation(RouteField.class);
+					if (rfAnnotation!=null) {
+						RouteEntry re = new RouteEntry(
+								RouteType.OBJECT, 
+								rfAnnotation.value(), 
+								rfAnnotation.pattern(), 
+								target.getClass(), 
+								rfAnnotation.priority(), 
+								(Route) routeField.get(target)) {
+							
+							protected boolean match(Object obj, String[] path) {
+								if (getPattern()==null) {
+									return path.length>1 && routeField.getName().equals(path[1]);
+								}
+								return super.match(obj, path);
+							};
+						};
+						if (re.match(target, path)) {
+							collector.add(re);
+						}
+					}
+				}
+				
 				for (final Method routeMethod: target.getClass().getMethods()) {
 					RouteMethod amAnnotation = routeMethod.getAnnotation(RouteMethod.class);
 					if (amAnnotation!=null) {

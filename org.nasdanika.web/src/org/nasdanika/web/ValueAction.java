@@ -8,14 +8,22 @@ package org.nasdanika.web;
 public class ValueAction implements Action {
 
 	private Object value;
+	private boolean closeValue;
 
 	public ValueAction(Object value) {
-		this.value = value;
+		this(value, false);
 	}
 
+	public ValueAction(Object value, boolean closeValue) {
+		this.value = value;
+		this.closeValue = closeValue;				
+	}
+	
 	@Override
 	public void close() throws Exception {
-		// NOP
+		if (closeValue && value instanceof AutoCloseable) {
+			((AutoCloseable) value).close();
+		}
 	}
 
 	@Override

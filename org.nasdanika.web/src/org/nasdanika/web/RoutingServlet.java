@@ -170,15 +170,12 @@ public class RoutingServlet extends HttpServlet {
 				((Reader) result).close();
 			}
 		} else if (result instanceof InputStream) {
-			try {
-				OutputStream out = resp.getOutputStream();
+			try (InputStream in = (InputStream) result; OutputStream out = resp.getOutputStream()) {
 				byte[] buf = new byte[4096];
 				int l;
 				while ((l=((InputStream) result).read(buf))!=-1) {
 					out.write(buf, 0, l);
 				}
-			} finally {
-				((InputStream) result).close();
 			}
 		} else if (result instanceof URL) {
 			resultToResponse(((URL) result).openStream(), resp, context);
