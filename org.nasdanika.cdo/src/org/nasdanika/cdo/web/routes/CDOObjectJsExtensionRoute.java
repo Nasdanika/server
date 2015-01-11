@@ -212,18 +212,23 @@ public class CDOObjectJsExtensionRoute implements Route {
 		}
 
 		private String generateDataDefinition(EReference ref) throws Exception {
-			if (context.authorize(cdoObject, "read", ref.getName(), null) && 
-					(ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(ANNOTATION_EAGER_REF)!=null)) {
+			if (context.authorize(cdoObject, "read", ref.getName(), null) 
+					&& (ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(ANNOTATION_EAGER_REF)!=null || !ref.isMany())
+					&& ref.getEAnnotation(ANNOTATION_LAZY_OBJ)==null
+					&& ref.getEAnnotation(ANNOTATION_LAZY_REF)==null) {
 				
 				JSONObject dd = new JSONObject();
-				if (ref.isMany()) {
-					JSONArray da = new JSONArray();
-					dd.put("initialValue", da);
-					for (Object e: (Collection<?>) cdoObject.eGet(ref)) {
-						da.put(context.getObjectPath(e)+".js");
+				Object value = cdoObject.eGet(ref);
+				if (value!=null) {
+					if (ref.isMany()) {
+						JSONArray da = new JSONArray();
+						dd.put("initialValue", da);
+						for (Object e: (Collection<?>) value) {
+							da.put(context.getObjectPath(e)+".js");
+						}
+					} else {
+						dd.put("initialValue", context.getObjectPath(value)+".js");
 					}
-				} else {
-					dd.put("initialValue", context.getObjectPath(cdoObject.eGet(ref)+".js"));
 				}
 				return ref.getName()+": "+dd;
 			}
