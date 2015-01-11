@@ -266,7 +266,17 @@ public class NavigationTimingImpl extends TimingBaseImpl implements NavigationTi
 	
 	@Override
 	public boolean match(JSONObject json) throws Exception {
-		if (!getName().equals(json.getString("href"))) {
+		String myName = getName();
+		int hashIdx = myName.indexOf("#");
+		if (hashIdx!=-1) {
+			myName = myName.substring(0, hashIdx);
+		}
+		String jName = json.getString("href");
+		hashIdx = jName.indexOf("#");
+		if (hashIdx!=-1) {
+			jName = jName.substring(0, hashIdx);
+		}
+		if (!myName.equals(jName)) {
 			return false;
 		}
 		return super.match(json.getJSONObject("timing"));
@@ -300,7 +310,7 @@ public class NavigationTimingImpl extends TimingBaseImpl implements NavigationTi
 					} else {
 						ResourceTiming timing = PerformanceFactory.eINSTANCE.createResourceTiming();
 						getEntries().add(timing);
-						timing.loadJSON(entry, null);				
+						timing.loadJSON(entry, null);
 					}
 				}
 			} else if (!getEntries().isEmpty()) {

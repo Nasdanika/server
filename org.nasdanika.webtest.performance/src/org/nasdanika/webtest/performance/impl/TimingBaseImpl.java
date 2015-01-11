@@ -343,7 +343,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 		// reflective implementation
 		for (EAttribute attr: eClass().getEAllAttributes()) {
 			if (json.has(attr.getName())) {
-				if (!match(attr.getName(), eGet(attr), json)) {
+				if (!match(attr, json)) {
 					return false;
 				}
 			}
@@ -351,11 +351,25 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 		return true;
 	}
 	
-	protected boolean match(String attrName, Object attrValue, JSONObject json) throws Exception {
-		if (json.has(attrName) && attrValue!=null) {
-			Object jsonVal = json.get(attrName);
-			if (!jsonVal.equals(attrValue)) {
+	protected boolean match(EAttribute attr, JSONObject json) throws Exception {
+		Object attrValue = eGet(attr);
+		if (json.has(attr.getName())) {
+			if (attrValue==null) {
 				return false;
+			}
+			switch (attr.getEType().getInstanceClassName()) {
+			case "boolean":
+				return attrValue.equals(json.getBoolean(attr.getName()));
+			case "double":
+				return attrValue.equals(json.getDouble(attr.getName()));
+			case "int":
+				return attrValue.equals(json.getInt(attr.getName()));
+			case "long":
+				return attrValue.equals(json.getLong(attr.getName()));
+			case "java.lang.String":
+				return attrValue.equals(json.getString(attr.getName()));
+			default:
+				return attrValue.equals(json.get(attr.getName()));
 			}
 		}
 		return attrValue==null;
