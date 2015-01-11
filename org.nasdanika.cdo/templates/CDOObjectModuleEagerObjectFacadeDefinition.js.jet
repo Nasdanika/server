@@ -4,26 +4,40 @@
 	org.eclipse.emf.cdo.CDOObject cdoObject = (org.eclipse.emf.cdo.CDOObject) args[1]; 
 	org.eclipse.emf.ecore.EReference ref = (org.eclipse.emf.ecore.EReference) args[2]; 
 %>
-// Eager object load strategy - returns an array of objects
+// Eager object load strategy - returns an array of functions returning objects
 get <%=ref.getName()%>() {
 	var dataEntry = data.<%=ref.getName()%>;
 	if (!dataEntry.hasOwnProperty('value')) {
-		dataEntry.value = [];
-		for (ref in dataEntry.initialValue) {
-			var modName = dataEntry.initialValue[ref];
+		<% if (ref.isMany()) { %>
+			dataEntry.value = [];
+			for (ref in dataEntry.initialValue) {
+				dataEntry.value.push(function(modName) {
+					if (require.defined(modName)) {
+						return require(modName);
+					}
+					
+					console.log("Eager dependency is not yet defined, probably a circular reference: "+modName);
+					return Q.Promise(function(resolve,reject,notify) {
+						require([modName], function(mod) {
+							resolve(mod);
+						});					
+					});				
+				}.bind(this, dataEntry.initialValue[ref]));				
+			}
+		<% } else { %>
+			var modName = dataEntry.initialValue;
 			if (require.defined(modName)) {
-				dataEntry.value.push(require(modName));
+				dataEntry.value = require(modName);
 			} else {
 				console.log("Eager dependency is not yet defined, probably a circular reference: "+modName);
-				var deferred = q.defer();
-				dataEntry.value.push(deferred.promise);
-				var idx = ref;
-				require(modName, function(mod) {
-					deferred.resolve(mod);
-					dataEntry.value[idx] = mod; 
-				});				
-			}
-		}
+				dataEntry.value = Q.Promise(function(resolve, reject, notify) {
+					require([modName], function(mod) {
+						deferred.resolve(mod);
+						dataEntry.value = mod; 
+					});								
+				});
+			}		
+		<% } %>
 	}
 	return dataEntry.value;
 }<% if (ref.isChangeable() && context.authorize(cdoObject, "write", ref.getName(), null)) { %>,

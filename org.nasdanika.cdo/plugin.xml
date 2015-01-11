@@ -78,6 +78,12 @@
             method="GET"
             target="org.eclipse.emf.cdo.CDOObject">
       </extension_route>
+      <extension_route
+            class="org.nasdanika.cdo.web.routes.EReferenceClosureJsonExtensionRoute"
+            extension="json"
+            method="GET"
+            target="org.nasdanika.cdo.EReferenceClosure">
+      </extension_route>
       
    </extension>
    <extension

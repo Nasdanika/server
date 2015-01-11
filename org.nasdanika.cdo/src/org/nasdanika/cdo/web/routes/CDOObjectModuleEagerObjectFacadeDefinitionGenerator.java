@@ -13,13 +13,16 @@ public class CDOObjectModuleEagerObjectFacadeDefinitionGenerator implements org.
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "// Eager object load strategy - returns an array of objects" + NL + "get ";
+  protected final String TEXT_1 = "// Eager object load strategy - returns an array of functions returning objects" + NL + "get ";
   protected final String TEXT_2 = "() {" + NL + "\tvar dataEntry = data.";
-  protected final String TEXT_3 = ";" + NL + "\tif (!dataEntry.hasOwnProperty('value')) {" + NL + "\t\tdataEntry.value = [];" + NL + "\t\tfor (ref in dataEntry.initialValue) {" + NL + "\t\t\tvar modName = dataEntry.initialValue[ref];" + NL + "\t\t\tif (require.defined(modName)) {" + NL + "\t\t\t\tdataEntry.value.push(require(modName));" + NL + "\t\t\t} else {" + NL + "\t\t\t\tconsole.log(\"Eager dependency is not yet defined, probably a circular reference: \"+modName);" + NL + "\t\t\t\tvar deferred = q.defer();" + NL + "\t\t\t\tdataEntry.value.push(deferred.promise);" + NL + "\t\t\t\tvar idx = ref;" + NL + "\t\t\t\trequire(modName, function(mod) {" + NL + "\t\t\t\t\tdeferred.resolve(mod);" + NL + "\t\t\t\t\tdataEntry.value[idx] = mod; " + NL + "\t\t\t\t});\t\t\t\t" + NL + "\t\t\t}" + NL + "\t\t}" + NL + "\t}" + NL + "\treturn dataEntry.value;" + NL + "}";
-  protected final String TEXT_4 = "," + NL + "set ";
-  protected final String TEXT_5 = "(newValue) {" + NL + "\tdata.";
-  protected final String TEXT_6 = ".value = newValue;" + NL + "}";
-  protected final String TEXT_7 = NL;
+  protected final String TEXT_3 = ";" + NL + "\tif (!dataEntry.hasOwnProperty('value')) {" + NL + "\t\t";
+  protected final String TEXT_4 = NL + "\t\t\tdataEntry.value = [];" + NL + "\t\t\tfor (ref in dataEntry.initialValue) {" + NL + "\t\t\t\tdataEntry.value.push(function(modName) {" + NL + "\t\t\t\t\tif (require.defined(modName)) {" + NL + "\t\t\t\t\t\treturn require(modName);" + NL + "\t\t\t\t\t}" + NL + "\t\t\t\t\t" + NL + "\t\t\t\t\tconsole.log(\"Eager dependency is not yet defined, probably a circular reference: \"+modName);" + NL + "\t\t\t\t\treturn Q.Promise(function(resolve,reject,notify) {" + NL + "\t\t\t\t\t\trequire([modName], function(mod) {" + NL + "\t\t\t\t\t\t\tresolve(mod);" + NL + "\t\t\t\t\t\t});\t\t\t\t\t" + NL + "\t\t\t\t\t});\t\t\t\t" + NL + "\t\t\t\t}.bind(this, dataEntry.initialValue[ref]));\t\t\t\t" + NL + "\t\t\t}" + NL + "\t\t";
+  protected final String TEXT_5 = NL + "\t\t\tvar modName = dataEntry.initialValue;" + NL + "\t\t\tif (require.defined(modName)) {" + NL + "\t\t\t\tdataEntry.value = require(modName);" + NL + "\t\t\t} else {" + NL + "\t\t\t\tconsole.log(\"Eager dependency is not yet defined, probably a circular reference: \"+modName);" + NL + "\t\t\t\tdataEntry.value = Q.Promise(function(resolve, reject, notify) {" + NL + "\t\t\t\t\trequire([modName], function(mod) {" + NL + "\t\t\t\t\t\tdeferred.resolve(mod);" + NL + "\t\t\t\t\t\tdataEntry.value = mod; " + NL + "\t\t\t\t\t});\t\t\t\t\t\t\t\t" + NL + "\t\t\t\t});" + NL + "\t\t\t}\t\t" + NL + "\t\t";
+  protected final String TEXT_6 = NL + "\t}" + NL + "\treturn dataEntry.value;" + NL + "}";
+  protected final String TEXT_7 = "," + NL + "set ";
+  protected final String TEXT_8 = "(newValue) {" + NL + "\tdata.";
+  protected final String TEXT_9 = ".value = newValue;" + NL + "}";
+  protected final String TEXT_10 = NL;
 
 public String generate(Object... args) throws Exception
   {
@@ -34,14 +37,20 @@ public String generate(Object... args) throws Exception
     stringBuffer.append(TEXT_2);
     stringBuffer.append(ref.getName());
     stringBuffer.append(TEXT_3);
-     if (ref.isChangeable() && context.authorize(cdoObject, "write", ref.getName(), null)) { 
+     if (ref.isMany()) { 
     stringBuffer.append(TEXT_4);
-    stringBuffer.append(ref.getName());
+     } else { 
     stringBuffer.append(TEXT_5);
-    stringBuffer.append(ref.getName());
-    stringBuffer.append(TEXT_6);
      } 
+    stringBuffer.append(TEXT_6);
+     if (ref.isChangeable() && context.authorize(cdoObject, "write", ref.getName(), null)) { 
     stringBuffer.append(TEXT_7);
+    stringBuffer.append(ref.getName());
+    stringBuffer.append(TEXT_8);
+    stringBuffer.append(ref.getName());
+    stringBuffer.append(TEXT_9);
+     } 
+    stringBuffer.append(TEXT_10);
     return stringBuffer.toString();
   }
 }

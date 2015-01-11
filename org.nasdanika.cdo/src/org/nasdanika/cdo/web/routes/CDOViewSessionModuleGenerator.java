@@ -13,7 +13,7 @@ public class CDOViewSessionModuleGenerator
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
   protected final String TEXT_1 = "define({" + NL + "" + NL + "\ta: ";
-  protected final String TEXT_2 = NL + NL + "});";
+  protected final String TEXT_2 = NL + "\t" + NL + "\t// TODO - resources and resource folders - promise of resource content (lazy-ref)" + NL + "" + NL + "});";
 
   public String generate(Object argument)
   {

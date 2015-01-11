@@ -4,3 +4,45 @@
 	org.eclipse.emf.cdo.CDOObject cdoObject = (org.eclipse.emf.cdo.CDOObject) args[1]; 
 	org.eclipse.emf.ecore.EReference ref = (org.eclipse.emf.ecore.EReference) args[2]; 
 %>
+// Lazy reference load strategy - returns an array of functions returning objects
+get <%=ref.getName()%>() {
+	if (!data.hasOwnProperty('<%=ref.getName()%>')) {
+		data.<%=ref.getName()%>=Q.Promise(function(vResolve, vReject, vNotify) {
+			jquery.ajax(
+				"<%=context.getObjectPath(cdoObject)%>/feature/<%=ref.getName()%>.json",
+			    {
+			        success: function(data) {
+						<% if (ref.isMany()) { %>
+							var result = [];
+							for (ref in data) { 
+								result.push(function(modName) {
+									return Q.Promise(function(resolve,reject,notify) {
+										require([modName], function(mod) {
+											resolve(mod);
+										});
+									});				
+								}.bind(this, data[ref]+".js"));				
+							}
+							vResolve(result);
+						<% } else { %>
+							vResolve(function() {
+								return Q.Promise(function(resolve,reject,notify) {
+									require([data+".js"], function(mod) {
+										resolve(mod);
+									});
+								});				
+							});					
+						<% } %>
+			        },
+			        error: function(jqXHR, textStatus, errorThrown) {
+			        	vReject({ status: textStatus, error: errorThrown });
+			        }
+			    });				
+		});
+	}
+	return data.<%=ref.getName()%>;
+}<% if (ref.isChangeable() && context.authorize(cdoObject, "write", ref.getName(), null)) { %>,
+set <%=ref.getName()%>(newValue) {
+	data.<%=ref.getName()%> = newValue;
+}<% } %>
+

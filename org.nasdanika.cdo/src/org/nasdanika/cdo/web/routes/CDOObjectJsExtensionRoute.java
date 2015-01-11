@@ -1,23 +1,18 @@
 package org.nasdanika.cdo.web.routes;
 
-import java.io.Reader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServletRequest;
-
+import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
-import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.Route;
@@ -46,23 +41,31 @@ public class CDOObjectJsExtensionRoute implements Route {
 //				}
 //			}
 //		}
+		CDOLock readLock = cdoObject.cdoReadLock();
+		if (readLock.tryLock(15, TimeUnit.SECONDS)) {
+			try {				
+				final String moduleStr = generateModule(context, cdoObject);
+				
+				return new Action() {
 
-		final String moduleStr = generateModule(context, cdoObject);
-		
-		return new Action() {
+					@Override
+					public Object execute() throws Exception {
+						((HttpContext) context).getResponse().setContentType("application/javascript");
+						return moduleStr;
+					}
 
-			@Override
-			public Object execute() throws Exception {
-				((HttpContext) context).getResponse().setContentType("application/javascript");
-				return moduleStr;
+					@Override
+					public void close() throws Exception {
+						// NOP.					
+					}
+					
+				};
+			} finally {
+				readLock.unlock();
 			}
-
-			@Override
-			public void close() throws Exception {
-				// NOP.					
-			}
-			
-		};
+		} else {			
+			return Action.INTERNAL_SERVER_ERROR; // Server overloaded
+		}			
 	}
 
 	@Override
@@ -305,7 +308,14 @@ public class CDOObjectJsExtensionRoute implements Route {
 				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null 
 						&& context.authorize(cdoObject, "read", ref.getName(), null) 
 						&& (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null)) {
-					ret.add("facade."+ref.getName()+";");
+					StringBuilder sb = new StringBuilder("facade."+ref.getName()+"()");
+					if (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
+						if (ref.isMany()) {
+							sb.append(".then(function(fa) { for (f in fa) { fa[f](); } }");
+						}
+					}
+					sb.append(";");
+					ret.add(sb.toString());
 				}
 			}
 			return ret;
@@ -369,9 +379,9 @@ public class CDOObjectJsExtensionRoute implements Route {
 					generator = CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR;
 				} else if (ref.getEAnnotation(ANNOTATION_EAGER_REF)!=null) {
 					generator = CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
-				} else if (ref.getEAnnotation(ANNOTATION_LAZY_OBJ)!=null) {
+				} else if (ref.getEAnnotation(ANNOTATION_LAZY_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
 					generator = CDO_OBJECT_MODULE_LAZY_OBJECT_FACADE_DEFINITION_GENERATOR;
-				} else if (ref.getEAnnotation(ANNOTATION_LAZY_REF)!=null) {
+				} else if (ref.getEAnnotation(ANNOTATION_LAZY_REF)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null) {
 					generator = CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR;
 				}
 				String ret = generator.generate(context, cdoObject, ref);

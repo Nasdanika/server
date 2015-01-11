@@ -2,5 +2,7 @@
 define({
 
 	a: <%=argument%>
+	
+	// TODO - resources and resource folders - promise of resource content (lazy-ref)
 
 });
