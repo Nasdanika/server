@@ -322,11 +322,11 @@ public class CDOObjectJsExtensionRoute implements Route {
 							&& context.authorize(cdoObject, "read", ref.getName(), null) 
 							&& (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null)) {
 						StringBuilder sb = new StringBuilder("facade."+ref.getName()+"()");
-						if (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
-							if (ref.isMany()) {
-								sb.append(".then(function(fa) { for (f in fa) { fa[f](); } }");
-							}
-						}
+//						if (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
+//							if (ref.isMany()) {
+//								sb.append(".then(function(fa) { for (f in fa) { fa[f](); } }");
+//							}
+//						}
 						sb.append(";");
 						ret.add(sb.toString());
 					}
