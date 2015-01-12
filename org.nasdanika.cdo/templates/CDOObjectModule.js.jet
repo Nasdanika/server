@@ -57,7 +57,9 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
 
         $load: function() {
             // return promise of this.
-        }
+        },
+        
+        $path: "<%=config.getObjectPath()%>"
 
     };
         

@@ -22,10 +22,10 @@ get <%=ref.getName()%>() {
 							resolve(mod);
 						});					
 					});				
-				}.bind(this, dataEntry.initialValue[ref]));				
+				}.bind(this, dataEntry.initialValue[ref]+'.js'));				
 			}
 		<% } else { %>
-			var modName = dataEntry.initialValue;
+			var modName = dataEntry.initialValue+'.js';
 			if (require.defined(modName)) {
 				dataEntry.value = require(modName);
 			} else {

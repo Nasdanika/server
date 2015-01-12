@@ -224,10 +224,10 @@ public class CDOObjectJsExtensionRoute implements Route {
 						JSONArray da = new JSONArray();
 						dd.put("initialValue", da);
 						for (Object e: (Collection<?>) value) {
-							da.put(context.getObjectPath(e)+".js");
+							da.put(context.getObjectPath(e));
 						}
 					} else {
-						dd.put("initialValue", context.getObjectPath(value)+".js");
+						dd.put("initialValue", context.getObjectPath(value));
 					}
 				}
 				return ref.getName()+": "+dd;
