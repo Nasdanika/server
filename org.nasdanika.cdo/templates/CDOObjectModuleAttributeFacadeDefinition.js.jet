@@ -9,8 +9,10 @@
 		if (String.class.getName().equals(attr.getEType().getInstanceClassName())) {
 			defaultValueLiteral = "\"" + org.apache.commons.lang3.StringEscapeUtils.escapeEcmaScript(defaultValueLiteral) + "\"";
 		}
-	}		
+	}	
+	boolean readable = context.authorize(cdoObject, "read", attr.getName(), null);	
 %>
+<% if (readable) { %>
 get <%=attr.getName()%>() {
 	var dataEntry = data.<%=attr.getName()%>;
 	if (dataEntry.hasOwnProperty('value')) {
@@ -20,7 +22,7 @@ get <%=attr.getName()%>() {
 		return dataEntry.initialValue;
 	}
 	return <%=defaultValueLiteral%>;
-}<% if (attr.isChangeable() && context.authorize(cdoObject, "write", attr.getName(), null)) { %>,
+}<% } if (attr.isChangeable() && context.authorize(cdoObject, "write", attr.getName(), null)) { %><% if (readable) { %>,<% } %>
 set <%=attr.getName()%>(newValue) {
 	var dataEntry = data.<%=attr.getName()%>;
 	if (dataEntry.hasOwnProperty('value')) {

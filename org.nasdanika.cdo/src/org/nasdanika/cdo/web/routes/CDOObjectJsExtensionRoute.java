@@ -151,21 +151,21 @@ public class CDOObjectJsExtensionRoute implements Route {
 		public Collection<CDOObject> getEager() {
 			EClass eClass = cdoObject.eClass();
 			Collection<CDOObject> ret = new ArrayList<>();
-			for (EReference ref: eClass.getEAllReferences()) {
-				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null && ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null) {
-					if (ref.isMany()) {
-						@SuppressWarnings("unchecked")
-						Collection<CDOObject> cc = (Collection<CDOObject>) cdoObject.eGet(ref);
-						for (CDOObject candidate: cc) { 
-							ret.add(candidate);
-						}						
-					} else {
-						ret.add((CDOObject) cdoObject.eGet(ref));
+			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				for (EReference ref: eClass.getEAllReferences()) {
+					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null && ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null) {
+						if (ref.isMany()) {
+							@SuppressWarnings("unchecked")
+							Collection<CDOObject> cc = (Collection<CDOObject>) cdoObject.eGet(ref);
+							for (CDOObject candidate: cc) { 
+								ret.add(candidate);
+							}						
+						} else {
+							ret.add((CDOObject) cdoObject.eGet(ref));
+						}
 					}
 				}
-			}
-			
-			// TODO Auto-generated method stub
+			}			
 			return ret;
 		}
 
@@ -173,19 +173,21 @@ public class CDOObjectJsExtensionRoute implements Route {
 			// someAttr: { initialValue: 33 }       
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			for (EAttribute attr: eClass.getEAllAttributes()) {
-				if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateDataDefinition(attr);
-					if (dd!=null) {
-						ret.add(dd);
+			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				for (EAttribute attr: eClass.getEAllAttributes()) {
+					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateDataDefinition(attr);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
-			}
-			for (EReference ref: eClass.getEAllReferences()) {
-				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateDataDefinition(ref);
-					if (dd!=null) {
-						ret.add(dd);
+				for (EReference ref: eClass.getEAllReferences()) {
+					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateDataDefinition(ref);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
 			}
@@ -207,6 +209,8 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				return attr.getName()+": "+dd;
+			} else if (context.authorize(cdoObject, "write", attr.getName(), null)) {
+				return attr.getName()+": {}";
 			}
 			return null;
 		}
@@ -244,19 +248,21 @@ public class CDOObjectJsExtensionRoute implements Route {
 
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			for (EAttribute attr: eClass.getEAllAttributes()) {
-				if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateSetDeltaEntry(attr);
-					if (dd!=null) {
-						ret.add(dd);
+			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				for (EAttribute attr: eClass.getEAllAttributes()) {
+					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateSetDeltaEntry(attr);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
-			}
-			for (EReference ref: eClass.getEAllReferences()) {
-				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateSetDeltaEntry(ref);
-					if (dd!=null) {
-						ret.add(dd);
+				for (EReference ref: eClass.getEAllReferences()) {
+					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateSetDeltaEntry(ref);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
 			}
@@ -274,22 +280,23 @@ public class CDOObjectJsExtensionRoute implements Route {
 		}
 
 		public Collection<String> getGetDeltaEntries() {
-
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			for (EAttribute attr: eClass.getEAllAttributes()) {
-				if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateGetDeltaEntry(attr);
-					if (dd!=null) {
-						ret.add(dd);
+			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				for (EAttribute attr: eClass.getEAllAttributes()) {
+					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateGetDeltaEntry(attr);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
-			}
-			for (EReference ref: eClass.getEAllReferences()) {
-				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateGetDeltaEntry(ref);
-					if (dd!=null) {
-						ret.add(dd);
+				for (EReference ref: eClass.getEAllReferences()) {
+					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateGetDeltaEntry(ref);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
 			}
@@ -309,18 +316,20 @@ public class CDOObjectJsExtensionRoute implements Route {
 		public Collection<String> getPreloadActions() {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			for (EReference ref: eClass.getEAllReferences()) {
-				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null 
-						&& context.authorize(cdoObject, "read", ref.getName(), null) 
-						&& (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null)) {
-					StringBuilder sb = new StringBuilder("facade."+ref.getName()+"()");
-					if (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
-						if (ref.isMany()) {
-							sb.append(".then(function(fa) { for (f in fa) { fa[f](); } }");
+			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				for (EReference ref: eClass.getEAllReferences()) {
+					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null 
+							&& context.authorize(cdoObject, "read", ref.getName(), null) 
+							&& (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null)) {
+						StringBuilder sb = new StringBuilder("facade."+ref.getName()+"()");
+						if (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
+							if (ref.isMany()) {
+								sb.append(".then(function(fa) { for (f in fa) { fa[f](); } }");
+							}
 						}
+						sb.append(";");
+						ret.add(sb.toString());
 					}
-					sb.append(";");
-					ret.add(sb.toString());
 				}
 			}
 			return ret;
@@ -331,32 +340,31 @@ public class CDOObjectJsExtensionRoute implements Route {
 		}
 
 		public Collection<String> getFacadeDefinitions() throws Exception {
-//
-//      // Operations
-
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			for (EAttribute attr: eClass.getEAllAttributes()) {
-				if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateFacadeDefinition(attr);
-					if (dd!=null) {
-						ret.add(dd);
+			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				for (EAttribute attr: eClass.getEAllAttributes()) {
+					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateFacadeDefinition(attr);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
-			}
-			for (EReference ref: eClass.getEAllReferences()) {
-				if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateFacadeDefinition(ref);
-					if (dd!=null) {
-						ret.add(dd);
+				for (EReference ref: eClass.getEAllReferences()) {
+					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateFacadeDefinition(ref);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
-			}
-			for (EOperation op: eClass.getEAllOperations()) {
-				if (op.getEAnnotation(ANNOTATION_NO_JS)==null) {
-					String dd = generateFacadeDefinition(op);
-					if (dd!=null) {
-						ret.add(dd);
+				for (EOperation op: eClass.getEAllOperations()) {
+					if (op.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateFacadeDefinition(op);
+						if (dd!=null) {
+							ret.add(dd);
+						}
 					}
 				}
 			}
@@ -366,10 +374,8 @@ public class CDOObjectJsExtensionRoute implements Route {
 		private static final CDOObjectModuleAttributeFacadeDefinitionGenerator CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleAttributeFacadeDefinitionGenerator();
 
 		private String generateFacadeDefinition(EAttribute attr) throws Exception {
-			if (context.authorize(cdoObject, "read", attr.getName(), null)) {	
-				return CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR.generate(context, cdoObject, attr);
-			}
-			return null;
+			String ret = CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR.generate(context, cdoObject, attr);
+			return ret.trim().length()==0 ? null : ret;
 		}
 		
 		private static final CDOObjectModuleEagerObjectFacadeDefinitionGenerator CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleEagerObjectFacadeDefinitionGenerator();
