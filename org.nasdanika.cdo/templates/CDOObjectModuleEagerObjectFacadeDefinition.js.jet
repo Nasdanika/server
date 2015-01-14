@@ -11,7 +11,7 @@ get <%=ref.getName()%>() {
 		<% if (ref.isMany()) { %>
 			dataEntry.value = [];
 			for (ref in dataEntry.initialValue) {
-				dataEntry.value.push(function(modName) {
+				var f = function(modName) {
 					if (require.defined(modName)) {
 						return require(modName);
 					}
@@ -22,7 +22,9 @@ get <%=ref.getName()%>() {
 							resolve(mod);
 						});					
 					});				
-				}.bind(this, dataEntry.initialValue[ref]+'.js'));				
+				}.bind(this, dataEntry.initialValue[ref]+'.js');
+				f.$path = dataEntry.initialValue[ref];
+				dataEntry.value.push(f);				
 			}
 		<% } else { %>
 			var modName = dataEntry.initialValue+'.js';

@@ -11,13 +11,15 @@ get <%=ref.getName()%>() {
 		<% if (ref.isMany()) { %>
 			dataEntry.value = [];
 			for (ref in dataEntry.initialValue) {
-				dataEntry.value.push(function(modName) {
+				var f = function(modName) {
 					return Q.Promise(function(resolve, reject, notify) {
 						require([modName], function(mod) {
 							resolve(mod);
 						});					
 					});
-				}.bind(this, dataEntry.initialValue[ref]+".js"));				
+				}.bind(this, dataEntry.initialValue[ref]+".js");
+				f.$path = dataEntry.initialValue[ref];
+				dataEntry.value.push(f);				
 			}
 		<% } else { %>
 			dataEntry.value = Q.Promise(function(resolve, reject, nofity) {
@@ -26,6 +28,7 @@ get <%=ref.getName()%>() {
 					//dataEntry.value = mod; 
 				});							
 			});
+			dataEntry.value.$path = dataEntry.initialValue;
 		<% } %>
 	}
 	return dataEntry.value;

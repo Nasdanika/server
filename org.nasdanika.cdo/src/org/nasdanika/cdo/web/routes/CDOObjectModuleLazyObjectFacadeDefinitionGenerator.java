@@ -13,7 +13,7 @@ public class CDOObjectModuleLazyObjectFacadeDefinitionGenerator implements org.n
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "// Lazy object load strategy - returns an array of functions returning objects" + NL + "get ";
+  protected final String TEXT_1 = "// Lazy object load strategy - returns a promise for an array of objects" + NL + "get ";
   protected final String TEXT_2 = "() {" + NL + "\tif (!data.hasOwnProperty('";
   protected final String TEXT_3 = "')) {" + NL + "\t\tdata.";
   protected final String TEXT_4 = " = {" + NL + "\t\t\tvalue: Q.Promise(function(vResolve, vReject, vNotify) {" + NL + "\t\t\t\tjquery.ajax(" + NL + "\t\t\t\t\t\"";

@@ -1,0 +1,61 @@
+<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOObjectEagerObjectGetDeltaGenerator" skeleton="Generator.skeleton"%>
+<%
+	org.nasdanika.web.WebContext context = (org.nasdanika.web.WebContext) args[0];
+	org.eclipse.emf.cdo.CDOObject cdoObject = (org.eclipse.emf.cdo.CDOObject) args[1]; 
+	org.eclipse.emf.ecore.EReference ref = (org.eclipse.emf.ecore.EReference) args[2]; 
+%>
+if (data.hasOwnProperty("<%=ref.getName()%>") && data.<%=ref.getName()%>.hasOwnProperty("value")) { // Was accessed and possibly changed
+	<% if (ref.isMany()) { %>
+		var dirty = false;
+		var deltaEntry = [];
+		for (i = 0; i < data.<%=ref.getName()%>.initialValue.length; ++i) {
+			if (data.<%=ref.getName()%>.value.length>i) {
+				if (data.<%=ref.getName()%>.value[i].hasOwnProperty("$path")) {
+					if (data.<%=ref.getName()%>.value[i].$path === data.<%=ref.getName()%>.initialValue[i]) {
+						deltaEntry.push(data.<%=ref.getName()%>.initialValue[i]);
+					} else {
+						dirty = true;
+						deltaEntry.push({ 
+							initialValue: data.<%=ref.getName()%>.initialValue[i],
+							value: data.<%=ref.getName()%>.value[i].$path					
+						});			
+					}
+				} else {
+					dirty = true;
+					deltaEntry.push({ 
+						initialValue: data.<%=ref.getName()%>.initialValue[i],
+						value: data.<%=ref.getName()%>.value[i]					
+					});					
+				}
+			} else {
+				dirty = true;
+				deltaEntry.push({ initialValue : data.<%=ref.getName()%>.initialValue[i] });
+			}			
+		}
+		for (i = data.<%=ref.getName()%>.initialValue.length; i < data.<%=ref.getName()%>.value.length; ++i) {
+			dirty = true;
+			if (data.<%=ref.getName()%>.value[i].hasOwnProperty("$path")) {
+				deltaEntry.push({ value : data.<%=ref.getName()%>.value[i].$path });					
+			} else {
+				deltaEntry.push({ value : data.<%=ref.getName()%>.value[i] });					
+			}			
+		}
+		if (dirty) {
+			delta.<%=ref.getName()%> = deltaEntry;
+		}
+	<% } else { %>
+		if (data.<%=ref.getName()%>.value.hasOwnProperty("$path")) {
+			if (data.<%=ref.getName()%>.value.$path !== data.<%=ref.getName()%>.initialValue) {
+				delta.<%=ref.getName()%> = { 
+					initialValue: data.<%=ref.getName()%>.initialValue,
+					value: data.<%=ref.getName()%>.value.$path					
+				};			
+			}
+		} else {
+			delta.<%=ref.getName()%> = { 
+				initialValue: data.<%=ref.getName()%>.initialValue,
+				value: data.<%=ref.getName()%>.value					
+			};					
+		}
+	<% } %>
+}

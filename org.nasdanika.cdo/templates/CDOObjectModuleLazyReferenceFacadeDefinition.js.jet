@@ -4,7 +4,7 @@
 	org.eclipse.emf.cdo.CDOObject cdoObject = (org.eclipse.emf.cdo.CDOObject) args[1]; 
 	org.eclipse.emf.ecore.EReference ref = (org.eclipse.emf.ecore.EReference) args[2]; 
 %>
-// Lazy reference load strategy - returns an array of functions returning objects
+// Lazy reference load strategy - returns a promise for an array of functions returning promises for objects
 get <%=ref.getName()%>() {
 	if (!data.hasOwnProperty('<%=ref.getName()%>')) {
 		data.<%=ref.getName()%>= {
@@ -17,13 +17,15 @@ get <%=ref.getName()%>() {
 							<% if (ref.isMany()) { %>
 								var result = [];
 								for (ref in refData) { 
-									result.push(function(modName) {
+									var f = function(modName) {
 										return Q.Promise(function(resolve,reject,notify) {
 											require([modName], function(mod) {
 												resolve(mod);
 											});
 										});				
-									}.bind(this, refData[ref]+".js"));				
+									}.bind(this, refData[ref]+".js");
+									f.$path = refData[ref];
+									result.push(f);				
 								}
 								vResolve(result);
 							<% } else { %>

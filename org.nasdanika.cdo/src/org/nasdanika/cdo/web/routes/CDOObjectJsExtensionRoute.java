@@ -7,6 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
@@ -139,10 +140,14 @@ public class CDOObjectJsExtensionRoute implements Route {
 			return context.getObjectPath(cdoObject.cdoView());
 		}
 
-		public String getId() {
+		public static String getId(CDOObject cdoObject) {
 			StringBuilder builder = new StringBuilder();
 			CDOIDUtil.write(builder, cdoObject.cdoID());
 			return builder.toString();
+		}
+		
+		public String getId() {
+			return getId(cdoObject);
 		}
 
 		/**
@@ -174,6 +179,10 @@ public class CDOObjectJsExtensionRoute implements Route {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
 			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				CDORevision rev = cdoObject.cdoRevision();
+				if (rev!=null) {
+					ret.add("$version:"+rev.getVersion());
+				}
 				for (EAttribute attr: eClass.getEAllAttributes()) {
 					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
 						String dd = generateDataDefinition(attr);
@@ -279,10 +288,11 @@ public class CDOObjectJsExtensionRoute implements Route {
 			return null;
 		}
 
-		public Collection<String> getGetDeltaEntries() {
+		public Collection<String> getGetDeltaEntries() throws Exception {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
 			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				ret.add("if (data.hasOwnProperty('$version')) { delta.$version = data.$version; }");
 				for (EAttribute attr: eClass.getEAllAttributes()) {
 					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
 						String dd = generateGetDeltaEntry(attr);
@@ -302,14 +312,22 @@ public class CDOObjectJsExtensionRoute implements Route {
 			}
 			return ret;
 		}
+		
+		private static final CDOObjectEagerObjectGetDeltaGenerator EAGER_OBJECT_GET_DELTA_GENERATOR = new CDOObjectEagerObjectGetDeltaGenerator();
 			    
-		private String generateGetDeltaEntry(EReference ref) {
+		private String generateGetDeltaEntry(EReference ref) throws Exception {
+			Generator generator = EAGER_OBJECT_GET_DELTA_GENERATOR;
+			
 			// TODO Auto-generated method stub
-			return null;
+			return generator.generate(context, cdoObject, ref);
 		}
+		
+		private static final CDOObjectAttributeGetDeltaGenerator ATTRIBUTE_GET_DELTA_GENERATOR = new CDOObjectAttributeGetDeltaGenerator(); 
 
-		private String generateGetDeltaEntry(EAttribute attr) {
-			// TODO Auto-generated method stub
+		private String generateGetDeltaEntry(EAttribute attr) throws Exception {
+			if (attr.isChangeable() && context.authorize(cdoObject, "write", attr.getName(), null)) {
+				return ATTRIBUTE_GET_DELTA_GENERATOR.generate(context, cdoObject, attr);
+			}
 			return null;
 		}
 				
@@ -402,6 +420,40 @@ public class CDOObjectJsExtensionRoute implements Route {
 		}
 
 		private String generateFacadeDefinition(EOperation op) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		public Collection<String> getResetEntries() {
+			Collection<String> ret = new ArrayList<>(); 
+			EClass eClass = cdoObject.eClass();
+			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				for (EAttribute attr: eClass.getEAllAttributes()) {
+					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateResetEntry(attr);
+						if (dd!=null) {
+							ret.add(dd);
+						}
+					}
+				}
+				for (EReference ref: eClass.getEAllReferences()) {
+					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+						String dd = generateResetEntry(ref);
+						if (dd!=null) {
+							ret.add(dd);
+						}
+					}
+				}
+			}
+			return ret;
+		}
+
+		private String generateResetEntry(EReference ref) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		private String generateResetEntry(EAttribute attr) {
 			// TODO Auto-generated method stub
 			return null;
 		}

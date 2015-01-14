@@ -19,22 +19,23 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
     session.<%=config.getId()%> = {
 
         get delta() {
+        	var delta = {};
         	<% for (String getDeltaEntry: config.getGetDeltaEntries()) { %>
         		<%=getDeltaEntry%>
         	<% } %>
+        	return delta;
        },
        
         set delta(delta) {
         	<% for (String setDeltaEntry: config.getSetDeltaEntries()) { %>
         		<%=setDeltaEntry%>
         	<% } %>
-        	
-            dirty = false;
         },
 
         reset: function() {
-            delete data.someAttr.value;
-            dirty = false;
+        	<% for (String resetEntry: config.getResetEntries()) { %>
+        		<%=resetEntry%>
+        	<% } %>
         }   
     };
 

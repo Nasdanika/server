@@ -4,7 +4,7 @@
 	org.eclipse.emf.cdo.CDOObject cdoObject = (org.eclipse.emf.cdo.CDOObject) args[1]; 
 	org.eclipse.emf.ecore.EReference ref = (org.eclipse.emf.ecore.EReference) args[2]; 
 %>
-// Lazy object load strategy - returns an array of functions returning objects
+// Lazy object load strategy - returns a promise for an array of objects
 get <%=ref.getName()%>() {
 	if (!data.hasOwnProperty('<%=ref.getName()%>')) {
 		data.<%=ref.getName()%> = {

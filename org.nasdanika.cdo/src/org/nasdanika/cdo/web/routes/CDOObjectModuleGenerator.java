@@ -24,20 +24,23 @@ public class CDOObjectModuleGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_9 = "," + NL + "\t    \t";
   protected final String TEXT_10 = NL + "    \t";
   protected final String TEXT_11 = NL + "    };  " + NL + "" + NL + "    session.";
-  protected final String TEXT_12 = " = {" + NL + "" + NL + "        get delta() {" + NL + "        \t";
+  protected final String TEXT_12 = " = {" + NL + "" + NL + "        get delta() {" + NL + "        \tvar delta = {};" + NL + "        \t";
   protected final String TEXT_13 = NL + "        \t\t";
   protected final String TEXT_14 = NL + "        \t";
-  protected final String TEXT_15 = NL + "       }," + NL + "       " + NL + "        set delta(delta) {" + NL + "        \t";
+  protected final String TEXT_15 = NL + "        \treturn delta;" + NL + "       }," + NL + "       " + NL + "        set delta(delta) {" + NL + "        \t";
   protected final String TEXT_16 = NL + "        \t\t";
   protected final String TEXT_17 = NL + "        \t";
-  protected final String TEXT_18 = NL + "        \t" + NL + "            dirty = false;" + NL + "        }," + NL + "" + NL + "        reset: function() {" + NL + "            delete data.someAttr.value;" + NL + "            dirty = false;" + NL + "        }   " + NL + "    };" + NL + "" + NL + "    var facade = {" + NL + "    " + NL + "    \t";
-  protected final String TEXT_19 = NL + "\t    \t";
-  protected final String TEXT_20 = "," + NL + "    \t";
-  protected final String TEXT_21 = NL + NL + "\t\tget $session() {" + NL + "\t\t\treturn session; " + NL + "\t\t}, " + NL + "       " + NL + "        $store: function() {" + NL + "            // return a promise of this." + NL + "        }," + NL + "" + NL + "        $load: function() {" + NL + "            // return promise of this." + NL + "        }," + NL + "        " + NL + "        $path: \"";
-  protected final String TEXT_22 = "\"" + NL + "" + NL + "    };" + NL + "        " + NL + "\t";
-  protected final String TEXT_23 = NL + "\t\t";
-  protected final String TEXT_24 = NL + "\t";
-  protected final String TEXT_25 = "    " + NL + "    " + NL + "    return facade;" + NL + "});";
+  protected final String TEXT_18 = NL + "        }," + NL + "" + NL + "        reset: function() {" + NL + "        \t";
+  protected final String TEXT_19 = NL + "        \t\t";
+  protected final String TEXT_20 = NL + "        \t";
+  protected final String TEXT_21 = NL + "        }   " + NL + "    };" + NL + "" + NL + "    var facade = {" + NL + "    " + NL + "    \t";
+  protected final String TEXT_22 = NL + "\t    \t";
+  protected final String TEXT_23 = "," + NL + "    \t";
+  protected final String TEXT_24 = NL + NL + "\t\tget $session() {" + NL + "\t\t\treturn session; " + NL + "\t\t}, " + NL + "       " + NL + "        $store: function() {" + NL + "            // return a promise of this." + NL + "        }," + NL + "" + NL + "        $load: function() {" + NL + "            // return promise of this." + NL + "        }," + NL + "        " + NL + "        $path: \"";
+  protected final String TEXT_25 = "\"" + NL + "" + NL + "    };" + NL + "        " + NL + "\t";
+  protected final String TEXT_26 = NL + "\t\t";
+  protected final String TEXT_27 = NL + "\t";
+  protected final String TEXT_28 = "    " + NL + "    " + NL + "    return facade;" + NL + "});";
 
 public String generate(Object... args) throws Exception
   {
@@ -83,23 +86,29 @@ public String generate(Object... args) throws Exception
     stringBuffer.append(TEXT_17);
      } 
     stringBuffer.append(TEXT_18);
+     for (String resetEntry: config.getResetEntries()) { 
+    stringBuffer.append(TEXT_19);
+    stringBuffer.append(resetEntry);
+    stringBuffer.append(TEXT_20);
+     } 
+    stringBuffer.append(TEXT_21);
      
     		java.util.Iterator<String> fit = config.getFacadeDefinitions().iterator();
     		while (fit.hasNext()) {
     	
-    stringBuffer.append(TEXT_19);
-    stringBuffer.append(fit.next());
-    stringBuffer.append(TEXT_20);
-     } 
-    stringBuffer.append(TEXT_21);
-    stringBuffer.append(config.getObjectPath());
     stringBuffer.append(TEXT_22);
-     for (String preloadAction: config.getPreloadActions()) { 
+    stringBuffer.append(fit.next());
     stringBuffer.append(TEXT_23);
-    stringBuffer.append(preloadAction);
-    stringBuffer.append(TEXT_24);
      } 
+    stringBuffer.append(TEXT_24);
+    stringBuffer.append(config.getObjectPath());
     stringBuffer.append(TEXT_25);
+     for (String preloadAction: config.getPreloadActions()) { 
+    stringBuffer.append(TEXT_26);
+    stringBuffer.append(preloadAction);
+    stringBuffer.append(TEXT_27);
+     } 
+    stringBuffer.append(TEXT_28);
     return stringBuffer.toString();
   }
 }
