@@ -313,13 +313,10 @@ public class CDOObjectJsExtensionRoute implements Route {
 			return ret;
 		}
 		
-		private static final CDOObjectEagerObjectGetDeltaGenerator EAGER_OBJECT_GET_DELTA_GENERATOR = new CDOObjectEagerObjectGetDeltaGenerator();
+		private static final CDOObjectReferenceGetDeltaGenerator REFERENCE_GET_DELTA_GENERATOR = new CDOObjectReferenceGetDeltaGenerator();
 			    
 		private String generateGetDeltaEntry(EReference ref) throws Exception {
-			Generator generator = EAGER_OBJECT_GET_DELTA_GENERATOR;
-			
-			// TODO Auto-generated method stub
-			return generator.generate(context, cdoObject, ref);
+			return REFERENCE_GET_DELTA_GENERATOR.generate(context, cdoObject, ref);
 		}
 		
 		private static final CDOObjectAttributeGetDeltaGenerator ATTRIBUTE_GET_DELTA_GENERATOR = new CDOObjectAttributeGetDeltaGenerator(); 

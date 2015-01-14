@@ -38,6 +38,7 @@ get <%=ref.getName()%>() {
 						dataEntry.value = mod; 
 					});								
 				});
+				dataEntry.value.$path = dataEntry.initialValue;
 			}		
 		<% } %>
 	}
