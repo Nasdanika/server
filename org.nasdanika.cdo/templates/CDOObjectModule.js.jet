@@ -16,7 +16,7 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
     	<% } %>
     };  
 
-    session.<%=config.getId()%> = {
+    session.sessionObjects["<%=config.getObjectPath()%>"] = {
 
         get delta() {
         	var delta = {};
@@ -51,15 +51,14 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
 		get $session() {
 			return session; 
 		}, 
-       
+		
+		// Stores changes to the server
+		// Returns a promise which is resolved with this facade once changes are posted to the server
+		// and server-side changes are retrieved to the model        
         $store: function() {
-            // return a promise of this.
+            return session.apply().thenResolve(this); 
         },
 
-        $load: function() {
-            // return promise of this.
-        },
-        
         $path: "<%=config.getObjectPath()%>"
 
     };

@@ -2,12 +2,18 @@ package org.nasdanika.cdo.web.routes;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
@@ -81,6 +87,11 @@ public class CDOObjectJsExtensionRoute implements Route {
 	
 	public static class ModuleGeneratorConfig {
 
+		/**
+		 * Details of this annotation are generated as facade declarations with keys as object keys and values are values.
+		 */
+		public static final String ANNOTATION_FACADE_ENTRIES = "org.nasdanika.cdo:facade-entries";
+		
 		/**
 		 * Marks a structural feature as server-side only, i.e. suppresses generation of JavaScript code for it.
 		 */
@@ -353,11 +364,33 @@ public class CDOObjectJsExtensionRoute implements Route {
 		public WebContext getContext() {
 			return context;
 		}
-
+		
+		// TODO - Lazy attributes (ref and obj) - e.g. byte arrays or large lists
+		// TODO - Facade function annotation on string attributes - renders value of the attribute as facade function, parameters key to specify param names
+		
 		public Collection<String> getFacadeDefinitions() throws Exception {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
 			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+				Map<String, String> feCollector = new HashMap<>();
+				for (EClass st: eClass.getEAllSuperTypes()) {
+					EAnnotation facadeEntries = st.getEAnnotation(ANNOTATION_FACADE_ENTRIES);
+					if (facadeEntries!=null) {
+						for (Entry<String, String> fe: facadeEntries.getDetails()) {
+							feCollector.put(fe.getKey(), fe.getValue());
+						}
+					}
+				}
+				EAnnotation facadeEntries = eClass.getEAnnotation(ANNOTATION_FACADE_ENTRIES);
+				if (facadeEntries!=null) {
+					for (Entry<String, String> fe: facadeEntries.getDetails()) {
+						feCollector.put(fe.getKey(), fe.getValue());
+					}
+				}
+				for (Entry<String, String> fe: feCollector.entrySet()) {
+					ret.add(fe.getKey()+" : "+fe.getValue());
+				}
+				
 				for (EAttribute attr: eClass.getEAllAttributes()) {
 					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
 						String dd = generateFacadeDefinition(attr);
@@ -374,13 +407,15 @@ public class CDOObjectJsExtensionRoute implements Route {
 						}
 					}
 				}
+				
+				Set<String> opNames = new HashSet<>();
 				for (EOperation op: eClass.getEAllOperations()) {
 					if (op.getEAnnotation(ANNOTATION_NO_JS)==null) {
-						String dd = generateFacadeDefinition(op);
-						if (dd!=null) {
-							ret.add(dd);
-						}
+						opNames.add(op.getName());
 					}
+				}
+				for (String opName: opNames) {
+					ret.add(opName+": function() { return session.apply('"+getObjectPath()+"', '"+opName+"', arguments); }");
 				}
 			}
 			return ret;
@@ -413,11 +448,6 @@ public class CDOObjectJsExtensionRoute implements Route {
 				String ret = generator.generate(context, cdoObject, ref);
 				return ret.trim().length()==0 ? null : ret;
 			}
-			return null;
-		}
-
-		private String generateFacadeDefinition(EOperation op) {
-			// TODO Auto-generated method stub
 			return null;
 		}
 

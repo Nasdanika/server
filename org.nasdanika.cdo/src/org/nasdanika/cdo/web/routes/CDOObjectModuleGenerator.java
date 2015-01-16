@@ -23,8 +23,8 @@ public class CDOObjectModuleGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_8 = NL + "\t    \t";
   protected final String TEXT_9 = "," + NL + "\t    \t";
   protected final String TEXT_10 = NL + "    \t";
-  protected final String TEXT_11 = NL + "    };  " + NL + "" + NL + "    session.";
-  protected final String TEXT_12 = " = {" + NL + "" + NL + "        get delta() {" + NL + "        \tvar delta = {};" + NL + "        \t";
+  protected final String TEXT_11 = NL + "    };  " + NL + "" + NL + "    session.sessionObjects[\"";
+  protected final String TEXT_12 = "\"] = {" + NL + "" + NL + "        get delta() {" + NL + "        \tvar delta = {};" + NL + "        \t";
   protected final String TEXT_13 = NL + "        \t\t";
   protected final String TEXT_14 = NL + "        \t";
   protected final String TEXT_15 = NL + "        \treturn delta;" + NL + "       }," + NL + "       " + NL + "        set delta(delta) {" + NL + "        \t";
@@ -36,7 +36,7 @@ public class CDOObjectModuleGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_21 = NL + "        }   " + NL + "    };" + NL + "" + NL + "    var facade = {" + NL + "    " + NL + "    \t";
   protected final String TEXT_22 = NL + "\t    \t";
   protected final String TEXT_23 = "," + NL + "    \t";
-  protected final String TEXT_24 = NL + NL + "\t\tget $session() {" + NL + "\t\t\treturn session; " + NL + "\t\t}, " + NL + "       " + NL + "        $store: function() {" + NL + "            // return a promise of this." + NL + "        }," + NL + "" + NL + "        $load: function() {" + NL + "            // return promise of this." + NL + "        }," + NL + "        " + NL + "        $path: \"";
+  protected final String TEXT_24 = NL + NL + "\t\tget $session() {" + NL + "\t\t\treturn session; " + NL + "\t\t}, " + NL + "\t\t" + NL + "\t\t// Stores changes to the server" + NL + "\t\t// Returns a promise which is resolved with this facade once changes are posted to the server" + NL + "\t\t// and server-side changes are retrieved to the model        " + NL + "        $store: function() {" + NL + "            return session.apply().thenResolve(this); " + NL + "        }," + NL + "" + NL + "        $path: \"";
   protected final String TEXT_25 = "\"" + NL + "" + NL + "    };" + NL + "        " + NL + "\t";
   protected final String TEXT_26 = NL + "\t\t";
   protected final String TEXT_27 = NL + "\t";
@@ -72,7 +72,7 @@ public String generate(Object... args) throws Exception
     stringBuffer.append(TEXT_10);
      } 
     stringBuffer.append(TEXT_11);
-    stringBuffer.append(config.getId());
+    stringBuffer.append(config.getObjectPath());
     stringBuffer.append(TEXT_12);
      for (String getDeltaEntry: config.getGetDeltaEntries()) { 
     stringBuffer.append(TEXT_13);

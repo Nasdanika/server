@@ -1,9 +1,13 @@
 package org.nasdanika.cdo.web.routes;
 
+import java.io.BufferedReader;
+
 import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EPackage;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContext;
@@ -66,9 +70,31 @@ public class CDOViewRoute implements Route {
 			// TODO - create resources.
 		}		
 		
-		if (context.getPath().length==2 && "session.js".equals(context.getPath()[1])) {
-			((HttpContext) context).getResponse().setContentType("application/javascript");
-			return new ValueAction(cdoViewSessionModuleGenerator.generate(System.currentTimeMillis()));
+		if (context.getPath().length==2) {
+			HttpContext httpContext = (HttpContext) context;
+			if ("session.js".equals(context.getPath()[1])) {
+				if (RequestMethod.GET.equals(context.getMethod())) {
+					if (context.authorize(view, "read", null, null)) {
+						httpContext.getResponse().setContentType("application/javascript");
+						return new ValueAction(cdoViewSessionModuleGenerator.generate(context, view));
+					} 
+					return Action.FORBIDDEN;
+				}
+			} else if ("session".equals(context.getPath()[1])) {
+				if (RequestMethod.PUT.equals(context.getMethod())) {
+					if (context.authorize(view, "write", null, null)) {
+						try (BufferedReader reader = httpContext.getRequest().getReader()) {
+							JSONObject jsonRequest = new JSONObject(new JSONTokener(reader));
+							System.out.println(jsonRequest.toString(4));
+						}
+						// TODO - parse JSON, do stuff
+						httpContext.getResponse().setContentType("text/json");
+						return new ValueAction("{ \"result\": [{ \"$path\":\"/router/transaction/elements/WebTestHub/L3\" }]}");
+					} 
+					return Action.FORBIDDEN;
+				}	
+			}
+			return Action.NOT_FOUND;
 		}
 		
 		return Action.NOT_FOUND;
