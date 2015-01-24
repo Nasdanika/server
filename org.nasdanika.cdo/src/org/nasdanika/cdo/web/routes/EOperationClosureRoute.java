@@ -31,6 +31,7 @@ public class EOperationClosureRoute implements Route {
 	public Action execute(final WebContext context) throws Exception {
 		final EOperationClosure<?> eOperationClosure = (EOperationClosure<?>) context.getTarget();		
 		EOperation op = eOperationClosure.getOperation();
+		// TODO - if path length is 1, method is POST and request content type is json -> unmarshal/invoke/marshal 
 		if (context.getPath().length-1<op.getEParameters().size()) {
 			return Action.NOT_FOUND; // Path is shorter than a number of parameters.
 		}

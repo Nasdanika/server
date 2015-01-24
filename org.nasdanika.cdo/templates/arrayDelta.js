@@ -9,7 +9,7 @@
  * @return array of commands to apply to the original array in order to produce
  *         the modified array. Commands are add, remove, set, and move
  */
-function arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
+function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	if (maxLength === undefined) {
 		maxLength = original.length < modified.length ? modified.length	: original.length;
 	}
@@ -129,5 +129,3 @@ function arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	}
 	return champion;
 }
-
-console.log(arrayDelta([ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ], [ 2, 3, 5, 6, 7, 8, 9, 10, 4, 1 ], 0, 0, 0));

@@ -16,6 +16,7 @@ import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 import org.json.JSONArray;
@@ -87,53 +88,6 @@ public class CDOObjectJsExtensionRoute implements Route {
 	
 	public static class ModuleGeneratorConfig {
 
-		/**
-		 * Details of this annotation are generated as facade declarations with keys as object keys and values are values.
-		 */
-		public static final String ANNOTATION_FACADE_ENTRIES = "org.nasdanika.cdo:facade-entries";
-		
-		/**
-		 * Marks a structural feature as server-side only, i.e. suppresses generation of JavaScript code for it.
-		 */
-		public static final String ANNOTATION_NO_JS = "org.nasdanika.cdo:no-js";
-		
-		/**
-		 * Instructs to load references and objects eagerly before this object. It results in
-		 * fewer larger requests and simple synchronous reference properties - an array of objects.
-		 */
-		public static final String ANNOTATION_EAGER_OBJ = "org.nasdanika.cdo:eager-obj";
-		
-		/**
-		 * Eagerly loads a list of object id's for a reference. Objects themselves are pre-loaded asynchronously.
-		 * Reference property is an array of promises for objects. 
-		 */
-		public static final String ANNOTATION_EAGER_REF = "org.nasdanika.cdo:eager-ref"; 
-		
-		/**
-		 * Lazily loads a list of object ID's. Objects are pre-loaded when reference is retrieved. 
-		 * Reference property is a promise for an array of promises for objects.
-		 * This is a default strategy for many references.
-		 */
-		public static final String ANNOTATION_LAZY_REF = "org.nasdanika.cdo:lazy-ref"; // Default for many
-				
-		/**
-		 * Lazily loads a list of object ID's. Objects are loaded when reference is retrieved. 
-		 * Reference property is a promise for an array of objects.
-		 * This is a default strategy for one references.
-		 */		
-		public static final String ANNOTATION_LAZY_OBJ = "org.nasdanika.cdo:lazy-obj"; // Default for one
-		
-		/**
-		 * Loads a list of object ID's and referenced objects asynchronously when the object is loaded. 
-		 * Reference property is a promise for an array of promises for objects.
-		 */				
-		public static final String ANNOTATION_PRELOAD_REF = "org.nasdanika.cdo:preload-ref";
-		
-		/**
-		 * Loads a list of object ID's asynchronously, referenced objects are loaded eagerly once the reference is loaded. 
-		 * Reference property is a promise for an array of objects.
-		 */				
-		public static final String ANNOTATION_PRELOAD_OBJ = "org.nasdanika.cdo:preload-obj";
 		
 		private CDOObject cdoObject;
 		private WebContext context;
@@ -167,9 +121,9 @@ public class CDOObjectJsExtensionRoute implements Route {
 		public Collection<CDOObject> getEager() {
 			EClass eClass = cdoObject.eClass();
 			Collection<CDOObject> ret = new ArrayList<>();
-			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null && ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null) {
+					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null && ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null) {
 						if (ref.isMany()) {
 							@SuppressWarnings("unchecked")
 							Collection<CDOObject> cc = (Collection<CDOObject>) cdoObject.eGet(ref);
@@ -189,13 +143,19 @@ public class CDOObjectJsExtensionRoute implements Route {
 			// someAttr: { initialValue: 33 }       
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				CDORevision rev = cdoObject.cdoRevision();
 				if (rev!=null) {
 					ret.add("$version:"+rev.getVersion());
 				}
+				if (context.authorize(cdoObject, "read", null, null)) {
+					EObject container = cdoObject.eContainer();
+					if (container!=null) {
+						ret.add("$container: { initialValue:\""+context.getObjectPath(container)+"\"}");
+					}
+				}
 				for (EAttribute attr: eClass.getEAllAttributes()) {
-					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateDataDefinition(attr);
 						if (dd!=null) {
 							ret.add(dd);
@@ -203,7 +163,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateDataDefinition(ref);
 						if (dd!=null) {
 							ret.add(dd);
@@ -237,9 +197,9 @@ public class CDOObjectJsExtensionRoute implements Route {
 
 		private String generateDataDefinition(EReference ref) throws Exception {
 			if (context.authorize(cdoObject, "read", ref.getName(), null) 
-					&& (ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(ANNOTATION_EAGER_REF)!=null || !ref.isMany())
-					&& ref.getEAnnotation(ANNOTATION_LAZY_OBJ)==null
-					&& ref.getEAnnotation(ANNOTATION_LAZY_REF)==null) {
+					&& (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_REF)!=null || !ref.isMany())
+					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_OBJ)==null
+					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_REF)==null) {
 				
 				JSONObject dd = new JSONObject();
 				Object value = cdoObject.eGet(ref);
@@ -268,9 +228,9 @@ public class CDOObjectJsExtensionRoute implements Route {
 
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				for (EAttribute attr: eClass.getEAllAttributes()) {
-					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateSetDeltaEntry(attr);
 						if (dd!=null) {
 							ret.add(dd);
@@ -278,7 +238,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateSetDeltaEntry(ref);
 						if (dd!=null) {
 							ret.add(dd);
@@ -302,10 +262,10 @@ public class CDOObjectJsExtensionRoute implements Route {
 		public Collection<String> getGetDeltaEntries() throws Exception {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				ret.add("if (data.hasOwnProperty('$version')) { delta.$version = data.$version; }");
 				for (EAttribute attr: eClass.getEAllAttributes()) {
-					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateGetDeltaEntry(attr);
 						if (dd!=null) {
 							ret.add(dd);
@@ -313,7 +273,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateGetDeltaEntry(ref);
 						if (dd!=null) {
 							ret.add(dd);
@@ -327,7 +287,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 		private static final CDOObjectReferenceGetDeltaGenerator REFERENCE_GET_DELTA_GENERATOR = new CDOObjectReferenceGetDeltaGenerator();
 			    
 		private String generateGetDeltaEntry(EReference ref) throws Exception {
-			return REFERENCE_GET_DELTA_GENERATOR.generate(context, cdoObject, ref);
+			return REFERENCE_GET_DELTA_GENERATOR.generate(context, cdoObject, ref, ref.getEAnnotation(CDOWebUtil.ANNOTATION_LENIENT)!=null);
 		}
 		
 		private static final CDOObjectAttributeGetDeltaGenerator ATTRIBUTE_GET_DELTA_GENERATOR = new CDOObjectAttributeGetDeltaGenerator(); 
@@ -342,13 +302,13 @@ public class CDOObjectJsExtensionRoute implements Route {
 		public Collection<String> getPreloadActions() {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null 
+					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
 							&& context.authorize(cdoObject, "read", ref.getName(), null) 
-							&& (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null)) {
+							&& (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_REF)!=null)) {
 						StringBuilder sb = new StringBuilder("facade."+ref.getName()+"()");
-//						if (ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
+//						if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_OBJ)!=null) {
 //							if (ref.isMany()) {
 //								sb.append(".then(function(fa) { for (f in fa) { fa[f](); } }");
 //							}
@@ -368,20 +328,31 @@ public class CDOObjectJsExtensionRoute implements Route {
 		// TODO - Lazy attributes (ref and obj) - e.g. byte arrays or large lists
 		// TODO - Facade function annotation on string attributes - renders value of the attribute as facade function, parameters key to specify param names
 		
+		private static final CDOObjectModuleGetContainerFacadeDefinitionGenerator CDO_OBJECT_MODULE_GET_CONTAINER_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleGetContainerFacadeDefinitionGenerator(); 
+		
 		public Collection<String> getFacadeDefinitions() throws Exception {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
+				EObject container = cdoObject.eContainer();
+				if (container!=null) {
+					if (context.authorize(cdoObject, "read", null, null)) {						
+						ret.add(CDO_OBJECT_MODULE_GET_CONTAINER_FACADE_DEFINITION_GENERATOR.generate());
+					}
+					if (context.authorize(cdoObject, "write", null, null)) {
+						ret.add("$delete: function() { return session.apply('"+getObjectPath()+"', '$delete', arguments); }");
+					}										
+				}
 				Map<String, String> feCollector = new HashMap<>();
 				for (EClass st: eClass.getEAllSuperTypes()) {
-					EAnnotation facadeEntries = st.getEAnnotation(ANNOTATION_FACADE_ENTRIES);
+					EAnnotation facadeEntries = st.getEAnnotation(CDOWebUtil.ANNOTATION_FACADE_ENTRIES);
 					if (facadeEntries!=null) {
 						for (Entry<String, String> fe: facadeEntries.getDetails()) {
 							feCollector.put(fe.getKey(), fe.getValue());
 						}
 					}
 				}
-				EAnnotation facadeEntries = eClass.getEAnnotation(ANNOTATION_FACADE_ENTRIES);
+				EAnnotation facadeEntries = eClass.getEAnnotation(CDOWebUtil.ANNOTATION_FACADE_ENTRIES);
 				if (facadeEntries!=null) {
 					for (Entry<String, String> fe: facadeEntries.getDetails()) {
 						feCollector.put(fe.getKey(), fe.getValue());
@@ -392,7 +363,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 				}
 				
 				for (EAttribute attr: eClass.getEAllAttributes()) {
-					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateFacadeDefinition(attr);
 						if (dd!=null) {
 							ret.add(dd);
@@ -400,7 +371,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateFacadeDefinition(ref);
 						if (dd!=null) {
 							ret.add(dd);
@@ -410,12 +381,14 @@ public class CDOObjectJsExtensionRoute implements Route {
 				
 				Set<String> opNames = new HashSet<>();
 				for (EOperation op: eClass.getEAllOperations()) {
-					if (op.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						opNames.add(op.getName());
 					}
 				}
 				for (String opName: opNames) {
-					ret.add(opName+": function() { return session.apply('"+getObjectPath()+"', '"+opName+"', arguments); }");
+					if (context.authorize(cdoObject, "invoke", opName, null)) {
+						ret.add(opName+": function() { return session.apply('"+getObjectPath()+"', '"+opName+"', arguments); }");
+					}
 				}
 			}
 			return ret;
@@ -436,13 +409,13 @@ public class CDOObjectJsExtensionRoute implements Route {
 		private String generateFacadeDefinition(EReference ref) throws Exception {
 			if (context.authorize(cdoObject, "read", ref.getName(), null)) {
 				Generator generator = ref.isMany() ? CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR : CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
-				if (ref.getEAnnotation(ANNOTATION_EAGER_OBJ)!=null) {
+				if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null) {
 					generator = CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR;
-				} else if (ref.getEAnnotation(ANNOTATION_EAGER_REF)!=null) {
+				} else if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_REF)!=null) {
 					generator = CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
-				} else if (ref.getEAnnotation(ANNOTATION_LAZY_OBJ)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_OBJ)!=null) {
+				} else if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_OBJ)!=null) {
 					generator = CDO_OBJECT_MODULE_LAZY_OBJECT_FACADE_DEFINITION_GENERATOR;
-				} else if (ref.getEAnnotation(ANNOTATION_LAZY_REF)!=null || ref.getEAnnotation(ANNOTATION_PRELOAD_REF)!=null) {
+				} else if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_REF)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_REF)!=null) {
 					generator = CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR;
 				}
 				String ret = generator.generate(context, cdoObject, ref);
@@ -454,9 +427,9 @@ public class CDOObjectJsExtensionRoute implements Route {
 		public Collection<String> getResetEntries() {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
-			if (eClass.getEAnnotation(ANNOTATION_NO_JS)==null) {
+			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				for (EAttribute attr: eClass.getEAllAttributes()) {
-					if (attr.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateResetEntry(attr);
 						if (dd!=null) {
 							ret.add(dd);
@@ -464,7 +437,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(ANNOTATION_NO_JS)==null) {
+					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 						String dd = generateResetEntry(ref);
 						if (dd!=null) {
 							ret.add(dd);

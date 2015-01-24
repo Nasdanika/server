@@ -5,9 +5,11 @@
 %>
 define(["q", "jquery"], function(Q, jquery) {
 
+	<%@ include file="arrayDelta.js" %> 
+
 	// prepares object for sending to the server side by replacing model objects with paths
 	function marshal(obj) {
-		if (obj instanceof Array) {
+		if (Array.isArray(obj)) {
 			var ret = [];
 			for (i in obj) {
 				ret.push(marshal(obj[i]));
@@ -31,7 +33,11 @@ define(["q", "jquery"], function(Q, jquery) {
 	
 	// unmarshals by resolving paths to promises
 	function unmarshal(obj, isValue) {
-		if (obj instanceof Array) {
+		if (obj === undefined) {
+			return obj;
+		}
+		
+		if (Array.isArray(obj)) {
 			var ret = [];
 			var hasPromises = false;
 			for (i in obj) {
@@ -76,6 +82,10 @@ define(["q", "jquery"], function(Q, jquery) {
 	var session = {
 		sessionObjects : {},
 		
+		arrayDelta : function(original, modified) {
+			return _arrayDelta(original, modified, 0, 0, 0);
+		},
+		
 		// TODO - resources and resource folders - promise of resource content (lazy-ref)
 	
 		// Posts local changes to the server, including operation target, name, and arguments, if specified.
@@ -100,14 +110,18 @@ define(["q", "jquery"], function(Q, jquery) {
 				    	data: JSON.stringify(applyData),
 				    	contentType: "text/json",
 				        success: function(response) {
-				        	if (response.hasOwnProperty('deltas')) {
-				        		for (k in response.deltas) {
-				        			if (session.sessionObjects.hasOwnProperty(k)) {
-				        				session.sessionObjects[k].delta = response.deltas[k];
-				        			}
-				        		}
+				        	if (response.hasOwnProperty('error')) {
+				        		reject(response.error);
+				        	} else { 
+				        	 	if (response.hasOwnProperty('deltas')) {
+					        		for (k in response.deltas) {
+					        			if (session.sessionObjects.hasOwnProperty(k)) {
+					        				session.sessionObjects[k].delta = response.deltas[k];
+					        			}
+					        		}
+					        	}
+				        		resolve(unmarshal(response.result, false));
 				        	}
-			        		resolve(unmarshal(response.result, false));
 				        },
 				        error: function(jqXHR, textStatus, errorThrown) {
 				        	reject(errorThrown);

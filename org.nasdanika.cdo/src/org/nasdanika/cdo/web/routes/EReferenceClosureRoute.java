@@ -27,7 +27,7 @@ public class EReferenceClosureRoute implements Route {
 				return Action.FORBIDDEN;
 			}
 			
-			// TODO - delete, update
+			// TODO - delete - clear, post - add(many)/set(one) - return path - authorize, use CDOWebUtil
 			
 			return Action.NOT_FOUND;
 		} 
@@ -41,8 +41,9 @@ public class EReferenceClosureRoute implements Route {
 			if (idx!=-1) {
 				index = index.substring(0, idx);
 			}
-			
+									
 			List<?> value = (List<?>) eReferenceClosure.getValue();
+			// TODO - DELETE - remove, PUT - set, return path, authorize
 			// EMap - try as a key first
 			if (value instanceof EMap) {				
 				Object element = ((EMap<?,?>) value).get(index);

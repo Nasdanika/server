@@ -112,6 +112,8 @@ public class RoutingServlet extends HttpServlet {
 				}
 			}
 			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+		} catch (ServerException e) {
+			resp.sendError(e.getStatusCode(), e.getMessage());
 		} catch (ServletException | IOException e) {
 			throw e;
 		} catch (Exception e) {
