@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.JSONLoader;
 import org.nasdanika.web.ServerException;
 import org.nasdanika.web.WebContext;
 
@@ -234,36 +235,38 @@ public class CDOWebUtil {
 			throw new ServerException("Abstract type: "+retType.getName(), HttpServletResponse.SC_BAD_REQUEST);
 		}
 		EObject ret = retType.getEPackage().getEFactoryInstance().create(retType);
-		
-		@SuppressWarnings("unchecked")
-		Iterator<String> kit = json.keys();
-		while (kit.hasNext()) {
-			String key = kit.next();
-			if (!TYPE_KEY.equals(key)) {
-				EStructuralFeature feature = retType.getEStructuralFeature(key);
-				if (feature==null) {
-					throw new ServerException("Invalid feature: "+key+" in "+retType.getName(), HttpServletResponse.SC_NOT_FOUND);							
-				}
-				if (!feature.isChangeable() || feature.getEAnnotation(ANNOTATION_PRIVATE)!=null) {
-					throw new ServerException(HttpServletResponse.SC_NOT_FOUND);
-				}
-				// TODO - check authorization somehow?
-//				if (!context.authorize(???, "write", feature.getName(), null)) {
-//					throw new ServerException(HttpServletResponse.SC_FORBIDDEN);
-//				}
-				if (feature.isMany()) {
-					@SuppressWarnings("unchecked")
-					Collection<Object> val = (Collection<Object>) ret.eGet(feature);
-					JSONArray jva = json.getJSONArray(key);
-					for (int i=0; i<jva.length(); ++i) {
-						val.add(feature instanceof EAttribute ? get(context, json, key, feature.getEType().getInstanceClass()) : resolveOrCreate(context, json.getJSONObject(key), (EClass) feature.getEType()));
+		if (ret instanceof JSONLoader) {
+			((JSONLoader) ret).loadJSON(json, context);
+		} else {
+			@SuppressWarnings("unchecked")
+			Iterator<String> kit = json.keys();
+			while (kit.hasNext()) {
+				String key = kit.next();
+				if (!TYPE_KEY.equals(key)) {
+					EStructuralFeature feature = retType.getEStructuralFeature(key);
+					if (feature==null) {
+						throw new ServerException("Invalid feature: "+key+" in "+retType.getName(), HttpServletResponse.SC_NOT_FOUND);							
 					}
-				} else {
-					ret.eSet(feature, feature instanceof EAttribute ? get(context, json, key, feature.getEType().getInstanceClass()) : resolveOrCreate(context, json.getJSONObject(key), (EClass) feature.getEType()));
+					if (!feature.isChangeable() || feature.getEAnnotation(ANNOTATION_PRIVATE)!=null) {
+						throw new ServerException(HttpServletResponse.SC_NOT_FOUND);
+					}
+					// TODO - check authorization somehow?
+	//				if (!context.authorize(???, "write", feature.getName(), null)) {
+	//					throw new ServerException(HttpServletResponse.SC_FORBIDDEN);
+	//				}
+					if (feature.isMany()) {
+						@SuppressWarnings("unchecked")
+						Collection<Object> val = (Collection<Object>) ret.eGet(feature);
+						JSONArray jva = json.getJSONArray(key);
+						for (int i=0; i<jva.length(); ++i) {
+							val.add(feature instanceof EAttribute ? get(context, json, key, feature.getEType().getInstanceClass()) : resolveOrCreate(context, json.getJSONObject(key), (EClass) feature.getEType()));
+						}
+					} else {
+						ret.eSet(feature, feature instanceof EAttribute ? get(context, json, key, feature.getEType().getInstanceClass()) : resolveOrCreate(context, json.getJSONObject(key), (EClass) feature.getEType()));
+					}
 				}
 			}
-		}
-		
+		}		
 		return (CDOObject) ret;
 	}
 	
