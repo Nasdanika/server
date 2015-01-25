@@ -6,6 +6,7 @@ import java.util.Iterator;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.eresource.CDOResourceFolder;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
@@ -14,6 +15,7 @@ import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -269,6 +271,109 @@ public class CDOWebUtil {
 		}		
 		return (CDOObject) ret;
 	}
+	
+	/**
+	 * Used to filter out definitions which did not change in the deltas scenario.
+	 * @author Pavel
+	 *
+	 */
+	public static interface DataDefinitionFilter {
+		
+		boolean accept(WebContext context, CDOObject cdoObject, EStructuralFeature feature, JSONObject definition) throws Exception;
+		
+	}
+	
+	public static JSONObject generateDataDefinitions(WebContext context, CDOObject cdoObject, DataDefinitionFilter filter) throws Exception {
+		// someAttr: { initialValue: 33 }       
+		JSONObject ret = new JSONObject(); 
+		EClass eClass = cdoObject.eClass();
+		if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
+			CDORevision rev = cdoObject.cdoRevision();
+			if (rev!=null) {
+				ret.put(VERSION_KEY, rev.getVersion());
+			}
+			if (context.authorize(cdoObject, "read", null, null)) {
+				EObject container = cdoObject.eContainer();
+				if (container!=null) {
+					JSONObject cv = new JSONObject();
+					cv.put(INITIAL_VALUE_KEY, context.getObjectPath(container));
+					ret.put("$container", cv);
+				}
+			}
+			for (EAttribute attr: eClass.getEAllAttributes()) {
+				if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
+					generateDataDefinition(context, cdoObject, ret, attr, filter);
+				}
+			}
+			for (EReference ref: eClass.getEAllReferences()) {
+				if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
+					generateDataDefinition(context, cdoObject, ret, ref, filter);
+				}
+			}
+		}
+		return ret;
+	}
+
+	private static void generateDataDefinition(
+			WebContext context, 
+			CDOObject cdoObject, 
+			JSONObject dataDefinitions,
+			EAttribute attr, 
+			DataDefinitionFilter filter) throws Exception {
+		
+		if (context.authorize(cdoObject, "read", attr.getName(), null)) {
+			JSONObject dd = new JSONObject();
+			if (cdoObject.eIsSet(attr)) {
+				if (attr.isMany()) {
+					JSONArray da = new JSONArray();
+					dd.put("initialValue", da);
+					for (Object e: (Collection<?>) cdoObject.eGet(attr)) {
+						da.put(e);
+					}
+				} else {
+					dd.put("initialValue", cdoObject.eGet(attr));
+				}
+			}
+			if (filter==null || filter.accept(context, cdoObject, attr, dd)) {
+				dataDefinitions.put(attr.getName(), dd);
+			}
+		} else if (context.authorize(cdoObject, "write", attr.getName(), null)) {
+			dataDefinitions.put(attr.getName(), new JSONObject());
+		}
+	}
+
+	private static void generateDataDefinition(
+			WebContext context, 
+			CDOObject cdoObject, 
+			JSONObject dataDefinitions,
+			EReference ref, 
+			DataDefinitionFilter filter) throws Exception {
+		
+		if (context.authorize(cdoObject, "read", ref.getName(), null)) {
+			
+			JSONObject dd = new JSONObject();
+			if ((ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_REF)!=null || !ref.isMany())
+					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_OBJ)==null
+					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_REF)==null) {
+				Object value = cdoObject.eGet(ref);
+				if (value!=null) {
+					if (ref.isMany()) {
+						JSONArray da = new JSONArray();
+						dd.put("initialValue", da);
+						for (Object e: (Collection<?>) value) {
+							da.put(context.getObjectPath(e));
+						}
+					} else {
+						dd.put("initialValue", context.getObjectPath(value));
+					}
+				}
+			}
+			if (filter==null || filter.accept(context, cdoObject, ref, dd)) {
+				dataDefinitions.put(ref.getName(), dd);
+			}
+		} 
+	}
+	
 	
 	
 	// TODO - marshal/unmarshal

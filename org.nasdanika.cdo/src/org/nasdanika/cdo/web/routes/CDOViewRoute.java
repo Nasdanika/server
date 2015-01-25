@@ -29,11 +29,13 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
+import org.nasdanika.cdo.web.routes.CDOWebUtil.DataDefinitionFilter;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.RequestMethod;
@@ -44,6 +46,7 @@ import org.nasdanika.web.WebContext;
 
 public class CDOViewRoute implements Route {
 
+	private static final String OPERATION_KEY = "operation";
 	private static final CDOViewSessionModuleGenerator cdoViewSessionModuleGenerator = new CDOViewSessionModuleGenerator();
 	
 	private class DeltaEntry {
@@ -63,7 +66,6 @@ public class CDOViewRoute implements Route {
 		String path;
 
 		public void applyInDelta() throws Exception {
-			System.out.println("In: "+inDelta);
 			EClass targetClass = target.eClass();
 			if (!isSameVersion && targetClass.getEAnnotation(CDOWebUtil.ANNOTATION_STRICT)!=null) {
 				throw new ServerException("Object was modified, versions don't match: "+path);
@@ -298,31 +300,33 @@ public class CDOViewRoute implements Route {
 		 * @param outDeltas
 		 * @throws Exception 
 		 */
-		public void outDelta(CDORevisionDelta cdoDelta, JSONObject outDeltas) throws Exception {
-			JSONObject jsonDelta = new JSONObject();
-			outDeltas.put(path, jsonDelta);
-			
-			jsonDelta.put(CDOWebUtil.VERSION_KEY, target.cdoRevision().getVersion());
-			System.out.println("Out: "+outDeltas);
-			System.out.println(cdoDelta);
-			if (cdoDelta == null || !isSameVersion) {
-				EClass targetClass = target.eClass();
-				for (EAttribute attr: targetClass.getEAllAttributes()) {
-					// TODO
-				}
-				for (EReference ref: targetClass.getEAllReferences()) {
-					// TODO
-				}
-			} else {
-				// Only deltas
-				for (CDOFeatureDelta fd: cdoDelta.getFeatureDeltas()) {
-					if (fd.getFeature() instanceof EAttribute) {
-						// TODO
-					} else {
-						// TODO
+		public void outDelta(final CDORevisionDelta cdoDelta, JSONObject outDeltas) throws Exception {		
+			DataDefinitionFilter filter = null;
+			if (cdoDelta!=null && isSameVersion) {
+				filter = new DataDefinitionFilter() {
+					
+					@Override
+					public boolean accept(
+							WebContext context, 
+							CDOObject cdoObject,
+							EStructuralFeature feature, 
+							JSONObject definition) throws Exception {
+						
+						CDOFeatureDelta featureDelta = cdoDelta.getFeatureDelta(feature);
+						if (featureDelta == null) {
+							return false;
+						}
+						if (feature instanceof EAttribute) {
+							JSONObject finDelta = inDelta.getJSONObject(feature.getName());
+							return !finDelta.has(CDOWebUtil.VALUE_KEY) || !definition.has(CDOWebUtil.INITIAL_VALUE_KEY) || !finDelta.get(CDOWebUtil.VALUE_KEY).equals(definition.get(CDOWebUtil.INITIAL_VALUE_KEY));
+						}
+						
+						return true; // Always pass modified references.
 					}
-				}
+				};
 			}
+			JSONObject jsonDelta = CDOWebUtil.generateDataDefinitions(context, target, filter);
+			outDeltas.put(path, jsonDelta);
 		}
 	}
 
@@ -423,17 +427,25 @@ public class CDOViewRoute implements Route {
 							}
 						}
 						final JSONObject response = new JSONObject();
-						if (jsonRequest.has("operation")) {
+						if (jsonRequest.has(OPERATION_KEY)) {
 							if (invocationTarget==null) {
 								throw new ServerException("Invocation target not in session: "+targetPath);
 							}
-							// TODO - operation invocation.
+							if ("$delete".equals(jsonRequest.getString(OPERATION_KEY))) {
+								if (context.authorize(invocationTarget, "write", null, null)) {
+									EcoreUtil.delete(invocationTarget);
+								} else {
+									throw new ServerException("Can't delete: "+targetPath, HttpServletResponse.SC_FORBIDDEN);
+								}
+//								JSONObject res = new JSONObject();
+//								res.put("value", "Microprocessor");
+//								response.put("result", true);
+							} else {
+								// TODO - operation invocation.
+								
+							}
 						}
-						
-						JSONObject res = new JSONObject();
-						res.put("value", "Microprocessor");
-						response.put("result", res);
-						
+												
 						if (view instanceof CDOTransaction) {
 							((CDOTransaction) view).addTransactionHandler(new CDOTransactionHandler2() {
 								

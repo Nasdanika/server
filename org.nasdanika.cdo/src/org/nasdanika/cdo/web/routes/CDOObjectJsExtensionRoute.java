@@ -12,15 +12,12 @@ import java.util.concurrent.TimeUnit;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
-import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.Route;
@@ -139,87 +136,11 @@ public class CDOObjectJsExtensionRoute implements Route {
 			return ret;
 		}
 
-		public Collection<String> getDataDefinitions() throws Exception {
-			// someAttr: { initialValue: 33 }       
-			Collection<String> ret = new ArrayList<>(); 
-			EClass eClass = cdoObject.eClass();
-			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
-				CDORevision rev = cdoObject.cdoRevision();
-				if (rev!=null) {
-					ret.add("$version:"+rev.getVersion());
-				}
-				if (context.authorize(cdoObject, "read", null, null)) {
-					EObject container = cdoObject.eContainer();
-					if (container!=null) {
-						ret.add("$container: { initialValue:\""+context.getObjectPath(container)+"\"}");
-					}
-				}
-				for (EAttribute attr: eClass.getEAllAttributes()) {
-					if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
-						String dd = generateDataDefinition(attr);
-						if (dd!=null) {
-							ret.add(dd);
-						}
-					}
-				}
-				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
-						String dd = generateDataDefinition(ref);
-						if (dd!=null) {
-							ret.add(dd);
-						}
-					}
-				}
-			}
-			return ret;
+		public String getDataDefinitions() throws Exception {
+			return CDOWebUtil.generateDataDefinitions(context, cdoObject, null).toString();
 		}
 		
-		private String generateDataDefinition(EAttribute attr) throws Exception {
-			if (context.authorize(cdoObject, "read", attr.getName(), null)) {
-				JSONObject dd = new JSONObject();
-				if (cdoObject.eIsSet(attr)) {
-					if (attr.isMany()) {
-						JSONArray da = new JSONArray();
-						dd.put("initialValue", da);
-						for (Object e: (Collection<?>) cdoObject.eGet(attr)) {
-							da.put(e);
-						}
-					} else {
-						dd.put("initialValue", cdoObject.eGet(attr));
-					}
-				}
-				return attr.getName()+": "+dd;
-			} else if (context.authorize(cdoObject, "write", attr.getName(), null)) {
-				return attr.getName()+": {}";
-			}
-			return null;
-		}
-
-		private String generateDataDefinition(EReference ref) throws Exception {
-			if (context.authorize(cdoObject, "read", ref.getName(), null) 
-					&& (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_REF)!=null || !ref.isMany())
-					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_OBJ)==null
-					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_REF)==null) {
-				
-				JSONObject dd = new JSONObject();
-				Object value = cdoObject.eGet(ref);
-				if (value!=null) {
-					if (ref.isMany()) {
-						JSONArray da = new JSONArray();
-						dd.put("initialValue", da);
-						for (Object e: (Collection<?>) value) {
-							da.put(context.getObjectPath(e));
-						}
-					} else {
-						dd.put("initialValue", context.getObjectPath(value));
-					}
-				}
-				return ref.getName()+": "+dd;
-			}
-			return null;
-		}
-		
-		public Collection<String> getSetDeltaEntries() {
+		public Collection<String> getSetDeltaEntries() throws Exception {
 //	        if (delta.hasOwnProperty("someAttr")) {
 //	            data.someAttr.oldValue = delta.someAttr;
 //	        }        
@@ -248,14 +169,23 @@ public class CDOObjectJsExtensionRoute implements Route {
 			}
 			return ret;
 		}
+		
+		private static final CDOObjectModuleEagerObjectSetDeltaGenerator CDO_OBJECT_MODULE_EAGER_OBJECT_SET_DELTA_GENERATOR = new CDOObjectModuleEagerObjectSetDeltaGenerator(); 
 
-		private String generateSetDeltaEntry(EReference ref) {
-			// TODO Auto-generated method stub
+		private String generateSetDeltaEntry(EReference ref) throws Exception {
+			if (context.authorize(cdoObject, "read", ref.getName(), null)) {
+				if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ) == null) {
+					return "if (delta.hasOwnProperty('"+ref.getName()+"')) { data."+ref.getName()+" = delta."+ref.getName()+"; }";
+				}
+				return CDO_OBJECT_MODULE_EAGER_OBJECT_SET_DELTA_GENERATOR.generate(context, cdoObject, ref);
+			}
 			return null;
 		}
 
 		private String generateSetDeltaEntry(EAttribute attr) {
-			// TODO Auto-generated method stub
+			if (context.authorize(cdoObject, "read", attr.getName(), null)) {
+				return "if (delta.hasOwnProperty('"+attr.getName()+"')) { data."+attr.getName()+" = delta."+attr.getName()+"; }";
+			}
 			return null;
 		}
 
@@ -335,14 +265,14 @@ public class CDOObjectJsExtensionRoute implements Route {
 			EClass eClass = cdoObject.eClass();
 			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				EObject container = cdoObject.eContainer();
-				if (container!=null) {
+				if (container!=null) { 
 					if (context.authorize(cdoObject, "read", null, null)) {						
 						ret.add(CDO_OBJECT_MODULE_GET_CONTAINER_FACADE_DEFINITION_GENERATOR.generate());
 					}
-					if (context.authorize(cdoObject, "write", null, null)) {
-						ret.add("$delete: function() { return session.apply('"+getObjectPath()+"', '$delete', arguments); }");
-					}										
 				}
+				if (context.authorize(cdoObject, "write", null, null)) {
+					ret.add("$delete: function() { return session.apply('"+getObjectPath()+"', '$delete', arguments); }");
+				}										
 				Map<String, String> feCollector = new HashMap<>();
 				for (EClass st: eClass.getEAllSuperTypes()) {
 					EAnnotation facadeEntries = st.getEAnnotation(CDOWebUtil.ANNOTATION_FACADE_ENTRIES);

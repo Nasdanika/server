@@ -14,23 +14,21 @@ public class CDOObjectModuleLazyReferenceFacadeDefinitionGenerator implements or
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
   protected final String TEXT_1 = "// Lazy reference load strategy - returns a promise for an array of functions returning promises for objects" + NL + "get ";
-  protected final String TEXT_2 = "() {" + NL + "\tif (!data.hasOwnProperty('";
-  protected final String TEXT_3 = "')) {" + NL + "\t\tdata.";
-  protected final String TEXT_4 = "= {" + NL + "\t\t\tvalue: Q.Promise(function(vResolve, vReject, vNotify) {" + NL + "\t\t\t\tjquery.ajax(" + NL + "\t\t\t\t\t\"";
+  protected final String TEXT_2 = "() {" + NL + "\tif (!data.";
+  protected final String TEXT_3 = ".hasOwnProperty('value')) {" + NL + "\t\tdata.";
+  protected final String TEXT_4 = ".value = Q.Promise(function(vResolve, vReject, vNotify) {" + NL + "\t\t\tjquery.ajax(" + NL + "\t\t\t\t\"";
   protected final String TEXT_5 = "/feature/";
-  protected final String TEXT_6 = ".json\"," + NL + "\t\t\t\t    {" + NL + "\t\t\t\t        success: function(refData) {" + NL + "\t\t\t\t        \tdata.";
-  protected final String TEXT_7 = ".initialValue = refData;" + NL + "\t\t\t\t\t\t\t";
-  protected final String TEXT_8 = NL + "\t\t\t\t\t\t\t\tvar result = [];" + NL + "\t\t\t\t\t\t\t\tfor (ref in refData) { " + NL + "\t\t\t\t\t\t\t\t\tvar f = function(modName) {" + NL + "\t\t\t\t\t\t\t\t\t\treturn Q.Promise(function(resolve,reject,notify) {" + NL + "\t\t\t\t\t\t\t\t\t\t\trequire([modName], function(mod) {" + NL + "\t\t\t\t\t\t\t\t\t\t\t\tresolve(mod);" + NL + "\t\t\t\t\t\t\t\t\t\t\t});" + NL + "\t\t\t\t\t\t\t\t\t\t});\t\t\t\t" + NL + "\t\t\t\t\t\t\t\t\t}.bind(this, refData[ref]+\".js\");" + NL + "\t\t\t\t\t\t\t\t\tf.$path = refData[ref];" + NL + "\t\t\t\t\t\t\t\t\tresult.push(f);\t\t\t\t" + NL + "\t\t\t\t\t\t\t\t}" + NL + "\t\t\t\t\t\t\t\tvResolve(result);" + NL + "\t\t\t\t\t\t\t";
-  protected final String TEXT_9 = NL + "\t\t\t\t\t\t\t\tvResolve(function() {" + NL + "\t\t\t\t\t\t\t\t\treturn Q.Promise(function(resolve,reject,notify) {" + NL + "\t\t\t\t\t\t\t\t\t\trequire([refData+\".js\"], function(mod) {" + NL + "\t\t\t\t\t\t\t\t\t\t\tresolve(mod);" + NL + "\t\t\t\t\t\t\t\t\t\t});" + NL + "\t\t\t\t\t\t\t\t\t});\t\t\t\t" + NL + "\t\t\t\t\t\t\t\t});\t\t\t\t\t" + NL + "\t\t\t\t\t\t\t";
-  protected final String TEXT_10 = NL + "\t\t\t\t        }," + NL + "\t\t\t\t        error: function(jqXHR, textStatus, errorThrown) {" + NL + "\t\t\t\t        \tvReject({ status: textStatus, error: errorThrown });" + NL + "\t\t\t\t        }" + NL + "\t\t\t\t    });\t\t\t\t" + NL + "\t\t\t})" + NL + "\t\t};" + NL + "\t}" + NL + "\treturn data.";
+  protected final String TEXT_6 = ".json\"," + NL + "\t\t\t    {" + NL + "\t\t\t        success: function(refData) {" + NL + "\t\t\t        \tdata.";
+  protected final String TEXT_7 = ".initialValue = refData;" + NL + "\t\t\t\t\t\t";
+  protected final String TEXT_8 = NL + "\t\t\t\t\t\t\tvar result = [];" + NL + "\t\t\t\t\t\t\tfor (ref in refData) { " + NL + "\t\t\t\t\t\t\t\tvar f = function(modName) {" + NL + "\t\t\t\t\t\t\t\t\treturn Q.Promise(function(resolve,reject,notify) {" + NL + "\t\t\t\t\t\t\t\t\t\trequire([modName], function(mod) {" + NL + "\t\t\t\t\t\t\t\t\t\t\tresolve(mod);" + NL + "\t\t\t\t\t\t\t\t\t\t});" + NL + "\t\t\t\t\t\t\t\t\t});\t\t\t\t" + NL + "\t\t\t\t\t\t\t\t}.bind(this, refData[ref]+\".js\");" + NL + "\t\t\t\t\t\t\t\tf.$path = refData[ref];" + NL + "\t\t\t\t\t\t\t\tresult.push(f);\t\t\t\t" + NL + "\t\t\t\t\t\t\t}" + NL + "\t\t\t\t\t\t\tvResolve(result);" + NL + "\t\t\t\t\t\t";
+  protected final String TEXT_9 = NL + "\t\t\t\t\t\t\tvResolve(function() {" + NL + "\t\t\t\t\t\t\t\treturn Q.Promise(function(resolve,reject,notify) {" + NL + "\t\t\t\t\t\t\t\t\trequire([refData+\".js\"], function(mod) {" + NL + "\t\t\t\t\t\t\t\t\t\tresolve(mod);" + NL + "\t\t\t\t\t\t\t\t\t});" + NL + "\t\t\t\t\t\t\t\t});\t\t\t\t" + NL + "\t\t\t\t\t\t\t});\t\t\t\t\t" + NL + "\t\t\t\t\t\t";
+  protected final String TEXT_10 = NL + "\t\t\t        }," + NL + "\t\t\t        error: function(jqXHR, textStatus, errorThrown) {" + NL + "\t\t\t        \tvReject({ status: textStatus, error: errorThrown });" + NL + "\t\t\t        }" + NL + "\t\t\t    });\t\t\t\t" + NL + "\t\t});" + NL + "\t}" + NL + "\treturn data.";
   protected final String TEXT_11 = ".value;" + NL + "}";
   protected final String TEXT_12 = "," + NL + "set ";
-  protected final String TEXT_13 = "(newValue) {" + NL + "\tif (!data.hasOwnProperty('";
-  protected final String TEXT_14 = "')) {" + NL + "\t\tdata.";
-  protected final String TEXT_15 = " = {};" + NL + "\t}" + NL + "\tdata.";
-  protected final String TEXT_16 = " = newValue;" + NL + "}";
-  protected final String TEXT_17 = NL;
-  protected final String TEXT_18 = NL;
+  protected final String TEXT_13 = "(newValue) {" + NL + "\tdata.";
+  protected final String TEXT_14 = ".value = newValue;" + NL + "}";
+  protected final String TEXT_15 = NL;
+  protected final String TEXT_16 = NL;
 
 public String generate(Object... args) throws Exception
   {
@@ -67,13 +65,9 @@ public String generate(Object... args) throws Exception
     stringBuffer.append(TEXT_13);
     stringBuffer.append(ref.getName());
     stringBuffer.append(TEXT_14);
-    stringBuffer.append(ref.getName());
-    stringBuffer.append(TEXT_15);
-    stringBuffer.append(ref.getName());
-    stringBuffer.append(TEXT_16);
      } 
-    stringBuffer.append(TEXT_17);
-    stringBuffer.append(TEXT_18);
+    stringBuffer.append(TEXT_15);
+    stringBuffer.append(TEXT_16);
     return stringBuffer.toString();
   }
 }

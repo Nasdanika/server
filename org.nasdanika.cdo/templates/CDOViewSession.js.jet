@@ -114,13 +114,21 @@ define(["q", "jquery"], function(Q, jquery) {
 				        		reject(response.error);
 				        	} else { 
 				        	 	if (response.hasOwnProperty('deltas')) {
+				        	 		var deltaPromises = [];
 					        		for (k in response.deltas) {
 					        			if (session.sessionObjects.hasOwnProperty(k)) {
-					        				session.sessionObjects[k].delta = response.deltas[k];
+					        				var deltaPromise = session.sessionObjects[k].applyDelta(response.deltas[k]);
+					        				if (Q.isPromise(deltaPromise)) {
+					        					deltaPromises.push(deltaPromise);
+					        				}
 					        			}
 					        		}
 					        	}
-				        		resolve(unmarshal(response.result, false));
+					        	if (deltaPromises.length===0) {
+					        		resolve(unmarshal(response.result, false));
+					        	} else {
+				        			Q.all(deltaPromises).then(function() { resolve(unmarshal(response.result, false)); });
+				        		}
 				        	}
 				        },
 				        error: function(jqXHR, textStatus, errorThrown) {

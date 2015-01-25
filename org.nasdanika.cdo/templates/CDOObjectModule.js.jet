@@ -5,16 +5,8 @@
 %>
 
 define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object eager: config.getEager()) { %>, "<%=config.getContext().getObjectPath(eager)%>.js"<% } %>], function(session, Q, jquery) {
-	console.log("Defining <%=config.getObjectPath()%>.js");
-    var data = {
-    	<% 
-    		java.util.Iterator<String> dit = config.getDataDefinitions().iterator();
-    		while (dit.hasNext()) {
-    	%>
-	    	<%=dit.next()%><% if (dit.hasNext()) { %>,
-	    	<% } %>
-    	<% } %>
-    };  
+	//console.log("Defining <%=config.getObjectPath()%>.js");
+    var data = <%=config.getDataDefinitions()%>;
 
     session.sessionObjects["<%=config.getObjectPath()%>"] = {
 
@@ -26,10 +18,14 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
         	return delta;
        },
        
-        set delta(delta) {
+       applyDelta: function(delta) {
+        	var deltaPromises = [];
         	<% for (String setDeltaEntry: config.getSetDeltaEntries()) { %>
         		<%=setDeltaEntry%>
         	<% } %>
+        	if (deltaPromises.length > 0) {
+        		return Q.all(deltaPromises);
+        	}
         },
 
         reset: function() {
