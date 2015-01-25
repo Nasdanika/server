@@ -465,7 +465,7 @@ public class CDOViewRoute implements Route {
 								for (int i=0; i<pTypes.length; ++i) {
 									pTypes[i] = params.get(i).getEType().getInstanceClass();
 								}
-								Object result = CDOWebUtil.marshal(context, invocationTarget.eInvoke(candidate, CDOWebUtil.unmarshal(context, opArgs, pTypes)));
+								Object result = CDOWebUtil.marshal(context, invocationTarget.eInvoke(candidate, CDOWebUtil.unmarshal(context, opArgs, pTypes, invocationTarget.eClass())));
 								if (result!=null) {
 									response.put("result", result);
 								}

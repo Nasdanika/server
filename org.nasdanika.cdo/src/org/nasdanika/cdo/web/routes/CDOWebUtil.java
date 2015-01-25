@@ -380,14 +380,14 @@ public class CDOWebUtil {
 		} 
 	}
 
-	public static EList<?> unmarshal(WebContext context, JSONArray input, Class<?>[] parameterTypes) throws Exception {
+	public static EList<?> unmarshal(WebContext context, JSONArray input, Class<?>[] parameterTypes, EClass contextType) throws Exception {
 		EList<Object> ret = new BasicEList<>();
 		for (int i=0; i<input.length(); ++i) {
 			Object el = input.get(i);
 			if (el instanceof JSONArray) {
-				ret.add(unmarshal(context, (JSONArray) el));
+				ret.add(unmarshal(context, (JSONArray) el, contextType));
 			} else if (el instanceof JSONObject) {
-				ret.add(unmarshal(context, (JSONObject) el, parameterTypes[i]));
+				ret.add(unmarshal(context, (JSONObject) el, parameterTypes[i], contextType));
 			} else {
 				ret.add(get(context,input, i, parameterTypes[i]));
 			}
@@ -395,14 +395,14 @@ public class CDOWebUtil {
 		return ret;		
 	}
 	
-	public static Object[] unmarshal(WebContext context, JSONArray input) throws Exception {
+	public static Object[] unmarshal(WebContext context, JSONArray input, EClass contextType) throws Exception {
 		Object[] ret = new Object[input.length()];
 		for (int i=0; i<input.length(); ++i) {
 			Object el = input.get(i);
 			if (el instanceof JSONArray) {
-				ret[i] = unmarshal(context, (JSONArray) el);
+				ret[i] = unmarshal(context, (JSONArray) el, contextType);
 			} else if (el instanceof JSONObject) {
-				ret[i] = unmarshal(context, (JSONObject) el, null);
+				ret[i] = unmarshal(context, (JSONObject) el, null, contextType);
 			} else {
 				ret[i] = el;
 			}
@@ -410,14 +410,14 @@ public class CDOWebUtil {
 		return ret;
 	}
 
-	public static Object unmarshal(WebContext context, JSONObject json, Class<?> valueType) throws Exception {
+	public static Object unmarshal(WebContext context, JSONObject json, Class<?> valueType, EClass contextType) throws Exception {
 		// $path -> resolve, value -> create or map
 		if (json.has(PATH_KEY)) {
 			return resolvePath(context, json.getString(PATH_KEY));
 		}
 		if (json.has(VALUE_KEY)) {
 			if (json.has(TYPE_KEY)) {
-				return create(context, json.getJSONObject(VALUE_KEY), null);
+				return create(context, json.getJSONObject(VALUE_KEY), contextType);
 			}
 			if (valueType!=null) {
 				return get(context, json, VALUE_KEY, valueType);				
@@ -433,9 +433,9 @@ public class CDOWebUtil {
 					String key = kit.next();
 					Object e = jsonVal.get(key);
 					if (e instanceof JSONArray) {
-						ret.put(key, unmarshal(context, (JSONArray) e));
+						ret.put(key, unmarshal(context, (JSONArray) e, contextType));
 					} else if (e instanceof JSONObject) {
-						ret.put(key, unmarshal(context, (JSONObject) e, null));
+						ret.put(key, unmarshal(context, (JSONObject) e, null, contextType));
 					} else {
 						ret.put(key, e);
 					}				
