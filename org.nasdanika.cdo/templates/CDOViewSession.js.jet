@@ -97,7 +97,10 @@ define(["q", "jquery"], function(Q, jquery) {
 				if (target) {
 					applyData.target = target;
 					applyData.operation = operation;
-					applyData.args = marshal(opArgs);
+					applyData.args = [];
+					for (ak in opArgs) {
+						applyData.args.push(marshal(opArgs[ak]));
+					}
 				}
 				applyData.deltas = {};
 				for (k in session.sessionObjects) {

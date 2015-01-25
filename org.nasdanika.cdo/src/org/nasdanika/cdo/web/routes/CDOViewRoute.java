@@ -26,7 +26,9 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -317,6 +319,9 @@ public class CDOViewRoute implements Route {
 							return false;
 						}
 						if (feature instanceof EAttribute) {
+							if (!inDelta.has(feature.getName())) {
+								return true;
+							}
 							JSONObject finDelta = inDelta.getJSONObject(feature.getName());
 							return !finDelta.has(CDOWebUtil.VALUE_KEY) || !definition.has(CDOWebUtil.INITIAL_VALUE_KEY) || !finDelta.get(CDOWebUtil.VALUE_KEY).equals(definition.get(CDOWebUtil.INITIAL_VALUE_KEY));
 						}
@@ -431,18 +436,39 @@ public class CDOViewRoute implements Route {
 							if (invocationTarget==null) {
 								throw new ServerException("Invocation target not in session: "+targetPath);
 							}
-							if ("$delete".equals(jsonRequest.getString(OPERATION_KEY))) {
+							String opName = jsonRequest.getString(OPERATION_KEY);
+							JSONArray opArgs = jsonRequest.getJSONArray("args");
+							if ("$delete".equals(opName)) {
 								if (context.authorize(invocationTarget, "write", null, null)) {
 									EcoreUtil.delete(invocationTarget);
 								} else {
 									throw new ServerException("Can't delete: "+targetPath, HttpServletResponse.SC_FORBIDDEN);
 								}
-//								JSONObject res = new JSONObject();
-//								res.put("value", "Microprocessor");
-//								response.put("result", true);
 							} else {
-								// TODO - operation invocation.
+								EOperation candidate = null;
+								for (EOperation op: invocationTarget.eClass().getEAllOperations()) {
+									if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
+											&& op.getName().equals(opName) 
+											&& op.getEParameters().size()==opArgs.length() // No type matching
+											&& context.authorize(invocationTarget, "invoke", opName, null)) { 
+										candidate = op; 
+										break;
+									}
+								}
 								
+								if (candidate == null) {
+									throw new ServerException("No such authorized operation "+opName+" of "+targetPath, HttpServletResponse.SC_NOT_FOUND);
+								}
+
+								EList<EParameter> params = candidate.getEParameters();
+								Class<?>[] pTypes = new Class[params.size()];
+								for (int i=0; i<pTypes.length; ++i) {
+									pTypes[i] = params.get(i).getEType().getInstanceClass();
+								}
+								Object result = CDOWebUtil.marshal(context, invocationTarget.eInvoke(candidate, CDOWebUtil.unmarshal(context, opArgs, pTypes)));
+								if (result!=null) {
+									response.put("result", result);
+								}
 							}
 						}
 												

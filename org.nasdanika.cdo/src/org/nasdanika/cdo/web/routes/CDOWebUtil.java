@@ -1,7 +1,11 @@
 package org.nasdanika.cdo.web.routes;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -11,6 +15,8 @@ import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.eresource.CDOResourceFolder;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -373,9 +379,106 @@ public class CDOWebUtil {
 			}
 		} 
 	}
+
+	public static EList<?> unmarshal(WebContext context, JSONArray input, Class<?>[] parameterTypes) throws Exception {
+		EList<Object> ret = new BasicEList<>();
+		for (int i=0; i<input.length(); ++i) {
+			Object el = input.get(i);
+			if (el instanceof JSONArray) {
+				ret.add(unmarshal(context, (JSONArray) el));
+			} else if (el instanceof JSONObject) {
+				ret.add(unmarshal(context, (JSONObject) el, parameterTypes[i]));
+			} else {
+				ret.add(get(context,input, i, parameterTypes[i]));
+			}
+		}
+		return ret;		
+	}
 	
-	
-	
-	// TODO - marshal/unmarshal
+	public static Object[] unmarshal(WebContext context, JSONArray input) throws Exception {
+		Object[] ret = new Object[input.length()];
+		for (int i=0; i<input.length(); ++i) {
+			Object el = input.get(i);
+			if (el instanceof JSONArray) {
+				ret[i] = unmarshal(context, (JSONArray) el);
+			} else if (el instanceof JSONObject) {
+				ret[i] = unmarshal(context, (JSONObject) el, null);
+			} else {
+				ret[i] = el;
+			}
+		}
+		return ret;
+	}
+
+	public static Object unmarshal(WebContext context, JSONObject json, Class<?> valueType) throws Exception {
+		// $path -> resolve, value -> create or map
+		if (json.has(PATH_KEY)) {
+			return resolvePath(context, json.getString(PATH_KEY));
+		}
+		if (json.has(VALUE_KEY)) {
+			if (json.has(TYPE_KEY)) {
+				return create(context, json.getJSONObject(VALUE_KEY), null);
+			}
+			if (valueType!=null) {
+				return get(context, json, VALUE_KEY, valueType);				
+			}
+			
+			Object val = json.get(VALUE_KEY);
+			if (val instanceof JSONObject) {			
+				Map<String, Object> ret = new HashMap<>();
+				JSONObject jsonVal = (JSONObject) val;
+				@SuppressWarnings("unchecked")
+				Iterator<String> kit = jsonVal.keys();
+				while (kit.hasNext()) {
+					String key = kit.next();
+					Object e = jsonVal.get(key);
+					if (e instanceof JSONArray) {
+						ret.put(key, unmarshal(context, (JSONArray) e));
+					} else if (e instanceof JSONObject) {
+						ret.put(key, unmarshal(context, (JSONObject) e, null));
+					} else {
+						ret.put(key, e);
+					}				
+				}
+				return ret;
+			}
+			return val;
+		}
+		throw new ServerException("Invalid input: "+json, HttpServletResponse.SC_BAD_REQUEST);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static Object marshal(WebContext context, Object result) throws Exception {
+		if (result==null) {
+			return null;
+		}
+		if (result.getClass().isArray()) {
+			JSONArray ret = new JSONArray();
+			for (int i=0, l=Array.getLength(result); i<l; ++i) {
+				ret.put(Array.get(ret, i));
+			}
+			return ret;
+		}
+		if (result instanceof Collection) {
+			JSONArray ret = new JSONArray();
+			for (Object el: (Collection<?>) result) {
+				ret.put(el);
+			}
+			return ret;			
+		}
+		if (result instanceof Map) {
+			JSONObject ret = new JSONObject();
+			for (Entry<String, Object> e: ((Map<String,Object>) result).entrySet()) {
+				ret.put(e.getKey(), marshal(context, e.getValue()));
+			}
+			return ret;
+		}
+		if (result instanceof CDOObject) {
+			JSONObject ret = new JSONObject();
+			ret.put(PATH_KEY, context.getObjectPath(result));
+			return ret;
+		}
+		return result;
+	}
 
 }
