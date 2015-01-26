@@ -526,7 +526,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	
 	@Override
 	protected Statement methodInvoker(final FrameworkMethod method, final Object test) {
-		injectFactories(test);
+		injectFactoriesAndServices(test);
 		
 		return new Statement() {
 
@@ -580,7 +580,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	}
 
 	@SuppressWarnings("unchecked")
-	private void injectFactories(final Object test) {
+	private void injectFactoriesAndServices(final Object test) {
 		try {
 			BundleContext bundleContext = FrameworkUtil.getBundle(test.getClass()).getBundleContext();
 			if (bundleContext==null) {
@@ -616,7 +616,23 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 							serviceTrackersThreadLocal.get().add(st);
 							field.set(test, proxyPageFactory(st.waitForService(2000)));
 						}
-					}		    				
+					} else {
+						Service sa = field.getAnnotation(Service.class);
+						if (sa!=null) {
+							if (sa.filter().trim().length()==0) {
+								ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
+								st.open();
+								serviceTrackersThreadLocal.get().add(st);
+								field.set(test, st.waitForService(2000));
+							} else {
+								String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+MessageFormat.format(sa.filter(), getParameters())+")";
+								ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
+								st.open();
+								serviceTrackersThreadLocal.get().add(st);
+								field.set(test, st.waitForService(2000));
+							}
+						}						
+					}
 				}
 			}
 		} catch (Exception e) {
