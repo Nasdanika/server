@@ -5,15 +5,10 @@ package org.nasdanika.html;
  * @author Pavel
  *
  */
-public interface Input extends UIElement<Input>, Container<Input> {
+public interface Input extends InputBase<Input>, Container<Input> {
 	
 	Input autocomplete(boolean autocomplete);
 	Input autocomplete();
-	
-	Input autofocus(boolean autofocus);
-	Input autofocus();
-	
-	Input form(Form... form);
 	
 	Input formaction(Object formaction);
 	
@@ -38,22 +33,10 @@ public interface Input extends UIElement<Input>, Container<Input> {
 	
 	Input pattern(Object pattern);
 	
-	Input name(Object name);
-	
 	Input value(Object value);
 	
 	Input placeholder(Object placeholder);
 	
-	Input required(boolean required);
-	Input required();
-	
 	Input step(Object step);	
-	
-	/**
-	 * Adds AngularJS model attribute.
-	 * @param expr
-	 * @return
-	 */
-	Input ngModel(Object expr);
 
 }

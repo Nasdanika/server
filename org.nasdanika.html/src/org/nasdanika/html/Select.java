@@ -1,6 +1,6 @@
 package org.nasdanika.html;
 
-public interface Select extends UIElement<Select> {
+public interface Select extends InputBase<Select> {
 	
 	interface OptionGroup {
 		
@@ -15,5 +15,10 @@ public interface Select extends UIElement<Select> {
 	OptionGroup optionGroup(String label);
 	
 	Select option(String value, String label, boolean selected, boolean disabled);
+	
+	Select multiple();
+	Select multiple(boolean multiple);
+	
+	Select size(int size);
 
 }

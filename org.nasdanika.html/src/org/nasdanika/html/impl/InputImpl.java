@@ -3,13 +3,12 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.nasdanika.html.Form;
 import org.nasdanika.html.Form.EncType;
 import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Input;
 
-class InputImpl extends UIElementImpl<Input> implements Input {
+class InputImpl extends InputBaseImpl<Input> implements Input {
 	
 	private List<Object> content = new ArrayList<>();
 	
@@ -61,35 +60,6 @@ class InputImpl extends UIElementImpl<Input> implements Input {
 	@Override
 	public Input autocomplete() {
 		return autocomplete(true);
-	}
-
-	@Override
-	public Input autofocus(boolean autofocus) {		
-		return attribute("autofocus", autofocus ? Boolean.TRUE : null);
-	}
-
-	@Override
-	public Input autofocus() {
-		return autofocus(true);
-	}
-
-	@Override
-	public Input form(Form... form) {
-		String existingForm = (String) attributes.get("form");
-		for (Form f: form) {
-			if (f.getId()==null) {
-				f.id(factory.nextId());
-			}
-			if (existingForm!=null && existingForm.trim().length()>0) {
-				existingForm+=" ";
-			}
-			if (existingForm==null) {
-				existingForm = f.getId().toString();
-			} else {
-				existingForm+= f.getId();
-			}			
-		}
-		return this;
 	}
 
 	@Override
@@ -158,11 +128,6 @@ class InputImpl extends UIElementImpl<Input> implements Input {
 	}
 
 	@Override
-	public Input name(Object name) {
-		return attribute("name", name);
-	}
-
-	@Override
 	public Input value(Object value) {
 		return attribute("value", value);
 	}
@@ -173,22 +138,7 @@ class InputImpl extends UIElementImpl<Input> implements Input {
 	}
 
 	@Override
-	public Input required(boolean required) {
-		return attribute("required", required ? Boolean.TRUE : null);
-	}
-
-	@Override
-	public Input required() {
-		return required(true);
-	}
-
-	@Override
 	public Input step(Object step) {
 		return attribute("step", step);
-	}
-
-	@Override
-	public Input ngModel(Object expr) {
-		return attribute("ng-model", expr);
 	}
 }

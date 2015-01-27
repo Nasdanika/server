@@ -7,7 +7,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.Tag;
 
-class SelectImpl extends UIElementImpl<Select> implements Select {
+class SelectImpl extends InputBaseImpl<Select> implements Select {
 	
 	public SelectImpl(HTMLFactory factory) {
 		super(factory);
@@ -87,6 +87,21 @@ class SelectImpl extends UIElementImpl<Select> implements Select {
 	public void close() throws Exception {
 		super.close();
 		close(items);	
+	}
+
+	@Override
+	public Select multiple() {
+		return multiple(true);
+	}
+
+	@Override
+	public Select multiple(boolean multiple) {
+		return attribute("multiple", multiple? Boolean.TRUE : null);
+	}
+
+	@Override
+	public Select size(int size) {
+		return attribute("size", size);
 	}
 	
 }

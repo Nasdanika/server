@@ -17,7 +17,7 @@ public class CDOResourcePathResolver implements ObjectPathResolver<CDOResource> 
 		if (viewPath==null) {
 			return null;
 		}
-		return viewPath+"/resources"+obj.getPath();
+		return viewPath+"/elements"+obj.getPath();
 	}
 
 }

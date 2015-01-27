@@ -28,7 +28,7 @@ public @interface Description {
 	
 	/**
 	 * Description format. HTML by default. If set to false, report generator HTML-escapes the description,
-	 * adds new line characters between description strings and put resulting text into PRE tag. 
+	 * adds new line characters between description strings and puts resulting text into PRE tag. 
 	 * @return
 	 */
 	boolean html() default true;

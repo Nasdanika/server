@@ -14,6 +14,7 @@ import org.nasdanika.html.Require;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TextArea;
 
 /**
  * This factory contains method implementations which are not dependent
@@ -106,11 +107,13 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	}
 	
 	@Override
-	public Select select(final String name, final String id, final String placeholder) {
-		return new SelectImpl(this)
-			.attribute("name", name)
-			.attribute("id", id)
-			.attribute("placeholder", placeholder);
+	public Select select() {
+		return new SelectImpl(this);
+	}
+	
+	@Override
+	public TextArea textArea() {
+		return new TextAreaImpl(this);
 	}
 	
 	@Override

@@ -79,7 +79,9 @@ public interface HTMLFactory {
 	 */
 	Input input(InputType type);
 	
-	Select select(String name, String id, String placeholder);
+	Select select();
+
+	TextArea textArea();
 
 	Tag link(Object href, Object... content);
 	
