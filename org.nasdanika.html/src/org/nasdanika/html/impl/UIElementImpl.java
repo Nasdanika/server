@@ -324,6 +324,16 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		return attribute("ng-show", expr);
 	}
 	
+	@Override
+	public T ngRepeat(Object expr) {
+		return attribute("ng-repeat", expr);
+	}
+	
+	@Override
+	public T ngClick(Object expr) {
+		return attribute("ng-click", expr);
+	}
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public FontAwesome<T> fontAwesome() {

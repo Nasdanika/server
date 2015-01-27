@@ -444,10 +444,14 @@ public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	T ngHide(Object expr);
 	
 	T ngShow(Object expr);
+
+	T ngRepeat(Object expr);
 	
 	T ngClass(Object expr);
 	
 	T ngBind(Object expr);
+	
+	T ngClick(Object expr);
 	
 	FontAwesome<T> fontAwesome();
 }

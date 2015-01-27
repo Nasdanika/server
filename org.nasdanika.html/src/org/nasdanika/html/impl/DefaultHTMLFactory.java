@@ -13,6 +13,7 @@ import org.nasdanika.html.ButtonToolbar;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.Size;
+import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
@@ -25,6 +26,7 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.FontAwesome.Stack;
+import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Style;
 
 /**
@@ -480,5 +482,29 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 			}
 			
 		};
+	}
+
+	@Override
+	public Tag overlay(Object... content) {		
+		Tag contentDiv = div(content).style("position", "relative").style("height", "100%");
+		return div(contentDiv)
+				.style("position", "absolute")
+				.style("width", "100%")
+				.style("height", "100%")
+				.background(BootstrapColor.GRAY_LIGHT)
+				.style("opacity", 0.7)
+				.style("z-index", 10)
+				.style("display", "block");
+	}
+
+	@Override
+	public Tag spinnerOverlay(Spinner spinner) {
+		Tag spinnerTag = fontAwesome().spinner(spinner).size(Size.x5).spin().getTarget()
+				.style("top", "50%")
+				.style("left", "50%")
+				.style("transform", "translate(-50%, -50%)")
+				.style("position", "absolute")				
+				.style("align", "center");
+		return overlay(spinnerTag);
 	}
 }

@@ -24,10 +24,10 @@ public class CDOObjectModuleGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_9 = "\"] = {" + NL + "" + NL + "        get delta() {" + NL + "        \tvar delta = {};" + NL + "        \t";
   protected final String TEXT_10 = NL + "        \t\t";
   protected final String TEXT_11 = NL + "        \t";
-  protected final String TEXT_12 = NL + "        \treturn delta;" + NL + "       }," + NL + "       " + NL + "       applyDelta: function(delta) {" + NL + "        \tvar deltaPromises = [];" + NL + "        \t";
-  protected final String TEXT_13 = NL + "        \t\t";
-  protected final String TEXT_14 = NL + "        \t";
-  protected final String TEXT_15 = NL + "        \tif (deltaPromises.length > 0) {" + NL + "        \t\treturn Q.all(deltaPromises);" + NL + "        \t}" + NL + "        }," + NL + "" + NL + "        reset: function() {" + NL + "        \t";
+  protected final String TEXT_12 = NL + "        \treturn delta;" + NL + "       }," + NL + "       " + NL + "       applyDelta: function(delta) {" + NL + "       \t\tif (delta === 'detached') {" + NL + "       \t\t\tdelete facade.$store;" + NL + "       \t\t\tdelete facade.$delete;" + NL + "       \t\t} else {" + NL + "\t        \tvar deltaPromises = [];" + NL + "\t        \t";
+  protected final String TEXT_13 = NL + "\t        \t\t";
+  protected final String TEXT_14 = NL + "\t        \t";
+  protected final String TEXT_15 = NL + "\t        \tif (deltaPromises.length > 0) {" + NL + "\t        \t\treturn Q.all(deltaPromises);" + NL + "\t        \t}" + NL + "\t        }" + NL + "        }," + NL + "" + NL + "        reset: function() {" + NL + "        \t";
   protected final String TEXT_16 = NL + "        \t\t";
   protected final String TEXT_17 = NL + "        \t";
   protected final String TEXT_18 = NL + "        }   " + NL + "    };" + NL + "" + NL + "    var facade = {" + NL + "    " + NL + "    \t";

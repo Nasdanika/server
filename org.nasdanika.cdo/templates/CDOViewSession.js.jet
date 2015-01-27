@@ -120,10 +120,14 @@ define(["q", "jquery"], function(Q, jquery) {
 				        	 		var deltaPromises = [];
 					        		for (k in response.deltas) {
 					        			if (session.sessionObjects.hasOwnProperty(k)) {
-					        				var deltaPromise = session.sessionObjects[k].applyDelta(response.deltas[k]);
-					        				if (Q.isPromise(deltaPromise)) {
-					        					deltaPromises.push(deltaPromise);
-					        				}
+					        				if (response.deltas[k] === 'detached') {
+					        					delete session.sessionObjects[k];
+					        				} else {
+						        				var deltaPromise = session.sessionObjects[k].applyDelta(response.deltas[k]);
+						        				if (Q.isPromise(deltaPromise)) {
+						        					deltaPromises.push(deltaPromise);
+						        				}
+						        			}
 					        			}
 					        		}
 					        	}

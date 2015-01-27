@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
+import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
@@ -72,8 +73,8 @@ public class CDOViewRoute implements Route {
 			if (!isSameVersion && targetClass.getEAnnotation(CDOWebUtil.ANNOTATION_STRICT)!=null) {
 				throw new ServerException("Object was modified, versions don't match: "+path);
 			}
-			CDOLock writeLock = target.cdoWriteLock();
-			if (writeLock.tryLock(5, TimeUnit.SECONDS)) {
+			CDOLock writeLock = target.cdoView()==null ? null : target.cdoWriteLock();
+			if (writeLock == null || writeLock.tryLock(15, TimeUnit.SECONDS)) {
 				try {	
 					@SuppressWarnings("unchecked")
 					Iterator<String> dit = inDelta.keys();
@@ -92,7 +93,9 @@ public class CDOViewRoute implements Route {
 						}
 					}
 				} finally {
-					writeLock.unlock();
+					if (writeLock!=null) {
+						writeLock.unlock();
+					}
 				}
 			} else {			
 				throw new ServerException("Unable to obtain write lock for "+path);
@@ -154,7 +157,8 @@ public class CDOViewRoute implements Route {
 				@SuppressWarnings("unchecked")
 				EList<CDOObject> refList = (EList<CDOObject>) refValue;
 				JSONArray jsonArray = (JSONArray) object;
-				if (targetClass.getEAnnotation(CDOWebUtil.ANNOTATION_LENIENT)==null) {
+				if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_LENIENT)==null) {
+					//EList<CDOObject> refListCopy = new BasicEList<>(refList); // have to operate on a copy to avoid violation of constraints.
 					for (int i=0, j=0; i<jsonArray.length(); ++i, ++j) {
 						Object el = jsonArray.get(i);
 						if (el instanceof String) {
@@ -200,6 +204,8 @@ public class CDOViewRoute implements Route {
 							}
 						}
 					}
+					//refList.clear();
+					//refList.addAll(refListCopy);
 				} else {
 					for (int i=0; i<jsonArray.length(); ++i) {
 						JSONObject command = jsonArray.getJSONObject(i);
@@ -336,15 +342,15 @@ public class CDOViewRoute implements Route {
 	}
 
 	@Override
-	public Action execute(WebContext context) throws Exception {
-		CDOView view = (CDOView) context.getTarget();
+	public Action execute(final WebContext webContext) throws Exception {
+		CDOView view = (CDOView) webContext.getTarget();
 		
-		if (context.getPath().length==1) { 
-			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(view, "read", null, null)) {
-					int dotIdx = context.getPath()[0].lastIndexOf(".");
-					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
-					Action extensionAction = context.getExtensionAction(view, extension);
+		if (webContext.getPath().length==1) { 
+			if (RequestMethod.GET.equals(webContext.getMethod())) {
+				if (webContext.authorize(view, "read", null, null)) {
+					int dotIdx = webContext.getPath()[0].lastIndexOf(".");
+					String extension = dotIdx==-1 ? "json" : webContext.getPath()[0].substring(dotIdx+1); // json is "default" extension
+					Action extensionAction = webContext.getExtensionAction(view, extension);
 					return extensionAction==null ? Action.NOT_FOUND : extensionAction;
 				} 
 				return Action.FORBIDDEN;
@@ -354,50 +360,54 @@ public class CDOViewRoute implements Route {
 		} 
 		
 		// Router path
-		context.addPathTraceEntry("#router/main"+context.getObjectPath(view)+".html", "CDO View");
+		webContext.addPathTraceEntry("#router/main"+webContext.getObjectPath(view)+".html", "CDO View");
 		
-		if ("packages".equals(context.getPath()[1])) {
-			String nsURI = (String) context.getSessionStore().get(NasdanikaCDOUtil.stripExtension(context.getPath()[2]));
+		if ("packages".equals(webContext.getPath()[1])) {
+			String nsURI = (String) webContext.getSessionStore().get(NasdanikaCDOUtil.stripExtension(webContext.getPath()[2]));
 			EPackage ePackage = view.getSession().getPackageRegistry().getEPackage(nsURI);
 			if (ePackage == null) {
 				// put packages to store
 				for (CDOPackageInfo pi: view.getSession().getPackageRegistry().getPackageInfos()) {
-					context.getSessionStore().put(pi.getEPackage().getNsURI());
+					webContext.getSessionStore().put(pi.getEPackage().getNsURI());
 				}
-				nsURI = (String) context.getSessionStore().get(NasdanikaCDOUtil.stripExtension(context.getPath()[2]));
+				nsURI = (String) webContext.getSessionStore().get(NasdanikaCDOUtil.stripExtension(webContext.getPath()[2]));
 				ePackage = view.getSession().getPackageRegistry().getEPackage(nsURI);
 				if (ePackage == null) {
 					return Action.NOT_FOUND;
 				}
 			}
-			Action prAction = context.getAction(ePackage, 2);
+			Action prAction = webContext.getAction(ePackage, 2);
 			return prAction==null ? Action.NOT_FOUND : prAction;
 		}
 		
-		if ("elements".equals(context.getPath()[1])) {
+		if ("elements".equals(webContext.getPath()[1])) {
 			for (CDOResourceNode e: view.getElements()) {
-				if (e.getName().equals(NasdanikaCDOUtil.stripExtension(context.getPath()[2]))) {
-					final Action eAction = context.getAction(e, 2);
+				if (e.getName().equals(NasdanikaCDOUtil.stripExtension(webContext.getPath()[2]))) {
+					final Action eAction = webContext.getAction(e, 2);
 					return eAction==null ? Action.NOT_FOUND : eAction;
 				}
 			}	
 			
 			// TODO - create resources.
-		}		
+		} else if ("objects".equals(webContext.getPath()[1])) {
+			CDOID id = CDOIDUtil.read(NasdanikaCDOUtil.stripExtension(webContext.getPath()[2]));
+			CDOObject obj = view.getObject(id);
+			return obj==null ? Action.NOT_FOUND : webContext.getAction(obj, 2);
+		}
 		
-		if (context.getPath().length==2) {
-			HttpContext httpContext = (HttpContext) context;
-			if ("session.js".equals(context.getPath()[1])) {
-				if (RequestMethod.GET.equals(context.getMethod())) {
-					if (context.authorize(view, "read", null, null)) {
+		if (webContext.getPath().length==2) {
+			HttpContext httpContext = (HttpContext) webContext;
+			if ("session.js".equals(webContext.getPath()[1])) {
+				if (RequestMethod.GET.equals(webContext.getMethod())) {
+					if (webContext.authorize(view, "read", null, null)) {
 						httpContext.getResponse().setContentType("application/javascript");
-						return new ValueAction(cdoViewSessionModuleGenerator.generate(context, view));
+						return new ValueAction(cdoViewSessionModuleGenerator.generate(webContext, view));
 					} 
 					return Action.FORBIDDEN;
 				}
-			} else if ("session".equals(context.getPath()[1])) {
-				if (RequestMethod.PUT.equals(context.getMethod())) {
-					if (context.authorize(view, "write", null, null)) {
+			} else if ("session".equals(webContext.getPath()[1])) {
+				if (RequestMethod.PUT.equals(webContext.getMethod())) {
+					if (webContext.authorize(view, "write", null, null)) {
 						JSONObject jsonRequest;
 						try (BufferedReader reader = httpContext.getRequest().getReader()) {
 							jsonRequest = new JSONObject(new JSONTokener(reader));
@@ -412,25 +422,29 @@ public class CDOViewRoute implements Route {
 							Iterator<String> kit = deltas.keys();
 							while (kit.hasNext()) {
 								String path = kit.next();
-								CDOObject cdoObject = CDOWebUtil.resolvePath(context, path);
-								if (targetPath!=null && targetPath.equals(path)) {
-									invocationTarget = cdoObject;
+								CDOObject cdoObject = CDOWebUtil.resolvePath(webContext, path);
+								if (cdoObject!=null) {
+									if (targetPath!=null && targetPath.equals(path)) {
+										invocationTarget = cdoObject;
+									}
+									DeltaEntry deltaEntry = new DeltaEntry();
+									deltaEntry.context = webContext;
+									deltaEntry.path = path;
+									deltaEntry.target = cdoObject;
+									deltaEntry.inDelta = deltas.getJSONObject(path);
+									
+									CDORevision cdoRevision = cdoObject.cdoRevision();
+									deltaEntry.isSameVersion = cdoRevision!=null 
+											&& deltaEntry.inDelta.has("$version") 
+											&& cdoRevision.getVersion() == deltaEntry.inDelta.getInt("$version");
+									
+									sessionObjects.put(cdoObject.cdoID(), deltaEntry);
+									deltaEntry.applyInDelta();
 								}
-								DeltaEntry deltaEntry = new DeltaEntry();
-								deltaEntry.context = context;
-								deltaEntry.path = path;
-								deltaEntry.target = cdoObject;
-								deltaEntry.inDelta = deltas.getJSONObject(path);
-								
-								CDORevision cdoRevision = cdoObject.cdoRevision();
-								deltaEntry.isSameVersion = cdoRevision!=null 
-										&& deltaEntry.inDelta.has("$version") 
-										&& cdoRevision.getVersion() == deltaEntry.inDelta.getInt("$version");
-								
-								sessionObjects.put(cdoObject.cdoID(), deltaEntry);
-								deltaEntry.applyInDelta();
 							}
 						}
+						
+						final Object[] opResult = { null };
 						final JSONObject response = new JSONObject();
 						if (jsonRequest.has(OPERATION_KEY)) {
 							if (invocationTarget==null) {
@@ -439,7 +453,7 @@ public class CDOViewRoute implements Route {
 							String opName = jsonRequest.getString(OPERATION_KEY);
 							JSONArray opArgs = jsonRequest.getJSONArray("args");
 							if ("$delete".equals(opName)) {
-								if (context.authorize(invocationTarget, "write", null, null)) {
+								if (webContext.authorize(invocationTarget, "write", null, null)) {
 									EcoreUtil.delete(invocationTarget);
 								} else {
 									throw new ServerException("Can't delete: "+targetPath, HttpServletResponse.SC_FORBIDDEN);
@@ -450,7 +464,7 @@ public class CDOViewRoute implements Route {
 									if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
 											&& op.getName().equals(opName) 
 											&& op.getEParameters().size()==opArgs.length() // No type matching
-											&& context.authorize(invocationTarget, "invoke", opName, null)) { 
+											&& webContext.authorize(invocationTarget, "invoke", opName, null)) { 
 										candidate = op; 
 										break;
 									}
@@ -465,10 +479,7 @@ public class CDOViewRoute implements Route {
 								for (int i=0; i<pTypes.length; ++i) {
 									pTypes[i] = params.get(i).getEType().getInstanceClass();
 								}
-								Object result = CDOWebUtil.marshal(context, invocationTarget.eInvoke(candidate, CDOWebUtil.unmarshal(context, opArgs, pTypes, invocationTarget.eClass())));
-								if (result!=null) {
-									response.put("result", result);
-								}
+								opResult[0] = invocationTarget.eInvoke(candidate, CDOWebUtil.unmarshal(webContext, opArgs, pTypes, invocationTarget.eClass()));
 							}
 						}
 												
@@ -488,25 +499,32 @@ public class CDOViewRoute implements Route {
 								}
 								
 								@Override
-								public void committedTransaction(CDOTransaction transaction, CDOCommitContext context) {
+								public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
 									try {
 										JSONObject rDeltas = new JSONObject();
 										response.put("deltas", rDeltas);
-										for (Entry<CDOID, CDORevisionDelta> rde: context.getRevisionDeltas().entrySet()) {
-											DeltaEntry sessionObjectDeltaEntry = sessionObjects.get(rde.getKey());
-											if (sessionObjectDeltaEntry!=null) {
-												sessionObjectDeltaEntry.outDelta(rde.getValue(), rDeltas);
+										for (Entry<CDOID, CDORevisionDelta> rde: commitContext.getRevisionDeltas().entrySet()) {
+											if (!commitContext.getDetachedObjects().containsKey(rde.getKey())) {
+												DeltaEntry sessionObjectDeltaEntry = sessionObjects.get(rde.getKey());
+												if (sessionObjectDeltaEntry!=null) {
+													sessionObjectDeltaEntry.outDelta(rde.getValue(), rDeltas);
+												}
 											}
 										}
 										for (Entry<CDOID, DeltaEntry> soe: sessionObjects.entrySet()) {
-											if (!context.getRevisionDeltas().containsKey(soe.getKey()) && !soe.getValue().isSameVersion) {
-												soe.getValue().outDelta(null, rDeltas);
+											if (commitContext.getDetachedObjects().containsKey(soe.getKey())) {
+												rDeltas.put(soe.getValue().path, "detached");
+											} else {
+												if (!commitContext.getRevisionDeltas().containsKey(soe.getKey()) && !soe.getValue().isSameVersion) {
+													soe.getValue().outDelta(null, rDeltas);
+												}
 											}
 										}
 										
-										// TODO - invocation result
-										
-										// TODO - detached objects - what to do?
+										if (opResult[0]!=null) {
+											response.put("result", CDOWebUtil.marshal(webContext, opResult[0])); //Marshaling here so CDOID's are not transient for new objects.
+										}
+
 									} catch (Exception e) {
 										e.printStackTrace();
 										try {

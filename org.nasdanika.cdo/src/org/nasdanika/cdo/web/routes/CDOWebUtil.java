@@ -10,10 +10,9 @@ import java.util.Map.Entry;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.id.CDOID;
+import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
-import org.eclipse.emf.cdo.eresource.CDOResource;
-import org.eclipse.emf.cdo.eresource.CDOResourceFolder;
-import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -109,23 +108,14 @@ public class CDOWebUtil {
 	}
 		
 	public static CDOObject resolvePath(WebContext context,  String path) throws Exception {		
-		String viewElementsPath = context.getObjectPath(context.adapt(CDOViewContext.class).getView())+"/elements/";
-		if (!path.startsWith(viewElementsPath)) {
+		CDOView view = context.adapt(CDOViewContext.class).getView();
+		String viewObjectsPath = context.getObjectPath(view)+"/objects/";
+		if (!path.startsWith(viewObjectsPath)) {
 			throw new ServerException("Foreign object: "+path, HttpServletResponse.SC_NOT_FOUND);
 		}
-		String[] rPath = path.substring(viewElementsPath.length()).split("/");
-		CDOResourceNode resNode = ((CDOView) context.getTarget()).getResourceNode(rPath[0]);
-		Z: for (int i=1; i<rPath.length-1; ++i) {
-			for (CDOResourceNode rn: ((CDOResourceFolder) resNode).getNodes()) {
-				if (rn.getName().equals(rPath[i])) {
-					resNode = rn;											
-					continue Z;
-				}
-			}
-			throw new ServerException("Invalid path: "+path, HttpServletResponse.SC_NOT_FOUND);
-		}
-		
-		return (CDOObject) ((CDOResource) resNode).getEObject(rPath[rPath.length-1]);		
+		String objPath = path.substring(viewObjectsPath.length());
+		CDOID cdoID = CDOIDUtil.read(objPath);
+		return view.getObject(cdoID);
 	}
 	
 	/**

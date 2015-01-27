@@ -19,13 +19,18 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
        },
        
        applyDelta: function(delta) {
-        	var deltaPromises = [];
-        	<% for (String setDeltaEntry: config.getSetDeltaEntries()) { %>
-        		<%=setDeltaEntry%>
-        	<% } %>
-        	if (deltaPromises.length > 0) {
-        		return Q.all(deltaPromises);
-        	}
+       		if (delta === 'detached') {
+       			delete facade.$store;
+       			delete facade.$delete;
+       		} else {
+	        	var deltaPromises = [];
+	        	<% for (String setDeltaEntry: config.getSetDeltaEntries()) { %>
+	        		<%=setDeltaEntry%>
+	        	<% } %>
+	        	if (deltaPromises.length > 0) {
+	        		return Q.all(deltaPromises);
+	        	}
+	        }
         },
 
         reset: function() {

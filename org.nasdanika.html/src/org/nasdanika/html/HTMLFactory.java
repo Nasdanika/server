@@ -457,4 +457,17 @@ public interface HTMLFactory {
 	
 	FontAwesome.Stack fontAwesomeStack();
 	
+	/**
+	 * Creates an overlay div with vertically and horizontally centered content.
+	 * @param content
+	 * @return
+	 */
+	Tag overlay(Object... content);
+	
+	/**
+	 * Creates an overlay div with a spinning spinner.
+	 * @param spinner
+	 * @return
+	 */
+	Tag spinnerOverlay(FontAwesome.Spinner spinner);
 }

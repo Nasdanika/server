@@ -40,13 +40,13 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 			ret.push({
 				type : "remove",
 				pos : cIdx,
-				value : original[i]
+				initialValue : original[i]
 			});
 		}
 		return ret.length > maxLength ? undefined : ret;
 	}
 	// set
-	var champion = arrayDelta(original, modified, oIdx + 1, mIdx + 1, cIdx + 1,	maxLength - 1);
+	var champion = _arrayDelta(original, modified, oIdx + 1, mIdx + 1, cIdx + 1,	maxLength - 1);
 	if (champion !== undefined) {
 		champion.splice(0, 0, {
 			type : "set",
@@ -61,7 +61,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	if (idx !== -1) {
 		var or = original.slice(oIdx);
 		or.splice(idx - oIdx, 1);
-		var candidate = arrayDelta(or, modified, 0, mIdx + 1, cIdx + 1,	(champion === undefined ? maxLength : champion.length) - 1);
+		var candidate = _arrayDelta(or, modified, 0, mIdx + 1, cIdx + 1,	(champion === undefined ? maxLength : champion.length) - 1);
 		if (candidate !== undefined) {
 			candidate.splice(0, 0, {
 				type : "move",
@@ -78,7 +78,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	if (idx !== -1) {
 		var or = original.slice(oIdx+1);
 		or.splice(idx - mIdx, 0, original[oIdx]);
-		var candidate = arrayDelta(or, modified, 0, mIdx, cIdx,	(champion === undefined ? maxLength : champion.length) - 1);
+		var candidate = _arrayDelta(or, modified, 0, mIdx, cIdx,	(champion === undefined ? maxLength : champion.length) - 1);
 		if (candidate !== undefined) {
 			candidate.splice(0, 0, {
 				type : "move",
@@ -94,7 +94,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	// element matches the modified
 	idx = modified.indexOf(original[oIdx], mIdx);
 	if (idx !== -1) {
-		var candidate = arrayDelta(original, modified, oIdx + 1, idx + 1, cIdx
+		var candidate = _arrayDelta(original, modified, oIdx + 1, idx + 1, cIdx
 				+ idx - mIdx + 1, (champion === undefined ? maxLength
 				: champion.length)
 				- idx + mIdx);
@@ -113,7 +113,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	// the remaining element matches the modified
 	idx = original.indexOf(modified[mIdx], oIdx);
 	if (idx !== -1) {
-		var candidate = arrayDelta(original, modified, idx + 1, mIdx + 1,
+		var candidate = _arrayDelta(original, modified, idx + 1, mIdx + 1,
 				cIdx + 1,
 				(champion === undefined ? maxLength : champion.length) - idx + oIdx);
 		if (candidate !== undefined) {
