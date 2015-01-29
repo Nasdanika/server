@@ -27,6 +27,9 @@
    <feature url="features/org.nasdanika.webtest.feature_0.1.0.qualifier.jar" id="org.nasdanika.webtest.feature" version="0.1.0.qualifier">
       <category name="org.nasdanika.category"/>
    </feature>
+   <feature url="features/org.nasdanika.webtest.performance.feature_0.1.0.qualifier.jar" id="org.nasdanika.webtest.performance.feature" version="0.1.0.qualifier">
+      <category name="org.nasdanika.category"/>
+   </feature>
    <category-def name="org.nasdanika.category" label="Nasdanika">
       <description>
          Nasdanika features.
