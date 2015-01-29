@@ -376,7 +376,13 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 			}
 			
 			@Override
-			public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+			public void publish(
+					URL url, 
+					String securityToken, 
+					boolean publishPerformance,
+					Map<Object, String> idMap, 
+					PublishMonitor monitor) throws Exception {
+				
 				if (monitor!=null) {
 					monitor.onPublishing("Parameterized test "+getTestClass().getName(), url);
 				}
@@ -463,17 +469,17 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 
 					URL childrenURL= new URL(location+"/children");
 					for (TestResult tr: getChildren()) {
-						tr.publish(childrenURL, securityToken, idMap, monitor);				
+						tr.publish(childrenURL, securityToken, publishPerformance, idMap, monitor);				
 					}
 
 					URL pageResultsURL= new URL(location+"/pageResults");
 					for (PageResult pr: getPageResults()) {
-						pr.publish(pageResultsURL, securityToken, idMap, monitor);				
+						pr.publish(pageResultsURL, securityToken, publishPerformance, idMap, monitor);				
 					}
 
 					URL actorResultsURL= new URL(location+"/actorResults");
 					for (ActorResult ar: getActorResults()) {
-						ar.publish(actorResultsURL, securityToken, idMap, monitor);				
+						ar.publish(actorResultsURL, securityToken, publishPerformance, idMap, monitor);				
 					}
 				} else {
 					throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
@@ -534,7 +540,7 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
 		Publish publish = getTestClass().getJavaClass().getAnnotation(Publish.class);
 		if (publish!=null) {
-			new TestSession(getTestClass().getJavaClass(), testResults).publish(new URL(publish.url()), publish.securityToken(), new IdentityHashMap<Object, String>(), null);
+			new TestSession(getTestClass().getJavaClass(), testResults).publish(new URL(publish.url()), publish.securityToken(), publish.publishPerformance(), new IdentityHashMap<Object, String>(), null);
 		}
 		if (getTestClass().getJavaClass().getAnnotation(Report.class)!=null) {
 			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();

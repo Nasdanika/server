@@ -16,7 +16,12 @@ interface HttpPublisher {
 		
 	}
 	
-	void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception;
+	void publish(
+			URL url, 
+			String securityToken, 
+			boolean publishPerformance,
+			Map<Object, String> idMap, 
+			PublishMonitor monitor) throws Exception;
 	
 	/**
 	 * @return Total number of times PublishMonitor.onPublishing() is going to be invoked by this publisher during publish().

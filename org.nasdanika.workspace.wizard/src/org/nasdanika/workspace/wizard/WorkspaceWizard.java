@@ -1049,11 +1049,19 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				generalInformationPage.groupIdField.getText() 
 				: generalInformationPage.groupIdField.getText()+"."+projectsPage.applicationSuffix.getText();
 	}
+	
+	public boolean isApplication() {
+		return projectsPage.btnApplication.getSelection();
+	}
 
 	public String getTestsArtifactId() {		
 		return projectsPage.testsSuffix.getText().trim().length()==0 ? 
 				generalInformationPage.groupIdField.getText() 
 				: generalInformationPage.groupIdField.getText()+"."+projectsPage.testsSuffix.getText();
+	}
+	
+	public boolean isTests() {
+		return projectsPage.btnTests.getSelection();
 	}
 
 	public String getActorSpecArtifactId() {

@@ -88,7 +88,13 @@ public class ActorResult implements HttpPublisher {
 	
 	
 	@Override
-	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+	public void publish(
+			URL url, 
+			String securityToken, 
+			boolean publishPerformance,
+			Map<Object, String> idMap, 
+			PublishMonitor monitor) throws Exception {
+		
 		if (monitor!=null) {
 			monitor.onPublishing("Actor result "+getActorInterface().getName(), url);
 		}

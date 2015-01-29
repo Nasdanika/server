@@ -29,7 +29,13 @@ class TestSession implements HttpPublisher {
 	}
 	
 	@Override
-	public void publish(URL pURL, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+	public void publish(
+			URL pURL, 
+			String securityToken, 
+			boolean publishPerformance,
+			Map<Object, String> idMap, 
+			PublishMonitor monitor) throws Exception {
+		
 		if (monitor!=null) {
 			monitor.onPublishing("Test Session "+klass.getName(), pURL);
 		}
@@ -54,7 +60,7 @@ class TestSession implements HttpPublisher {
 				Map<Class<?>, ActorResult> actorResults = new HashMap<>();
 				Map<Class<?>, PageResult> pageResults = new HashMap<>();
 				for (TestResult tr: testResults) {
-					tr.publish(sessionTestResultsURL, securityToken, idMap, monitor);				
+					tr.publish(sessionTestResultsURL, securityToken, publishPerformance, idMap, monitor);				
 					for (ActorResult car: tr.getActorResults()) {
 						ActorResult aar = actorResults.get(car.getActorInterface());
 						if (aar==null) {
@@ -75,12 +81,12 @@ class TestSession implements HttpPublisher {
 				
 				URL sessionPageResultsURL = new URL(location+"/pageResults");
 				for (PageResult pr: pageResults.values()) {
-					pr.publish(sessionPageResultsURL, securityToken, idMap, monitor);
+					pr.publish(sessionPageResultsURL, securityToken, publishPerformance, idMap, monitor);
 				}
 				
 				URL sessionActorResultsURL = new URL(location+"/actorResults");
 				for (ActorResult ar: actorResults.values()) {
-					ar.publish(sessionActorResultsURL, securityToken, idMap, monitor);
+					ar.publish(sessionActorResultsURL, securityToken, publishPerformance, idMap, monitor);
 				}
 				
 				// Informing test session that upload is complete by issuing PUT request.

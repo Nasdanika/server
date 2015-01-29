@@ -281,7 +281,13 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 		
 	@Override
-	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {		
+	public void publish(
+			URL url, 
+			String securityToken, 
+			boolean publishPerformance,
+			Map<Object, String> idMap, 
+			PublishMonitor monitor) throws Exception {
+		
 		if (monitor!=null) {
 			monitor.onPublishing("Test Class Result "+getTestClass().getName(), url);
 		}
@@ -311,17 +317,17 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 
 			URL methodResultsURL= new URL(location+"/methodResults");
 			for (TestMethodResult mr: getTestMethodResults()) {
-				mr.publish(methodResultsURL, securityToken, idMap, monitor);				
+				mr.publish(methodResultsURL, securityToken, publishPerformance, idMap, monitor);				
 			}
 
 			URL pageResultsURL= new URL(location+"/pageResults");
 			for (PageResult pr: getPageResults()) {
-				pr.publish(pageResultsURL, securityToken, idMap, monitor);				
+				pr.publish(pageResultsURL, securityToken, publishPerformance, idMap, monitor);				
 			}
 
 			URL actorResultsURL= new URL(location+"/actorResults");
 			for (ActorResult ar: getActorResults()) {
-				ar.publish(actorResultsURL, securityToken, idMap, monitor);				
+				ar.publish(actorResultsURL, securityToken, publishPerformance, idMap, monitor);				
 			}
 		} else {
 			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());

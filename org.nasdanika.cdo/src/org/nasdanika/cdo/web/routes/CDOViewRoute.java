@@ -23,6 +23,7 @@ import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.transaction.CDOCommitContext;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
+import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
@@ -52,7 +53,7 @@ public class CDOViewRoute implements Route {
 	private static final String OPERATION_KEY = "operation";
 	private static final CDOViewSessionModuleGenerator cdoViewSessionModuleGenerator = new CDOViewSessionModuleGenerator();
 	
-	private class DeltaEntry {
+	private static class DeltaEntry {
 				
 		private static final String NEW_POS_KEY = "newPos";
 
@@ -308,36 +309,40 @@ public class CDOViewRoute implements Route {
 		 * @param outDeltas
 		 * @throws Exception 
 		 */
-		public void outDelta(final CDORevisionDelta cdoDelta, JSONObject outDeltas) throws Exception {		
-			DataDefinitionFilter filter = null;
-			if (cdoDelta!=null && isSameVersion) {
-				filter = new DataDefinitionFilter() {
-					
-					@Override
-					public boolean accept(
-							WebContext context, 
-							CDOObject cdoObject,
-							EStructuralFeature feature, 
-							JSONObject definition) throws Exception {
+		public void outDelta(final CDORevisionDelta cdoDelta, JSONObject outDeltas) throws Exception {
+			if (target==null || target.cdoView()==null) {
+				outDeltas.put(path, "detached");				
+			} else if (isSameVersion) {
+				if (cdoDelta!=null) {
+					DataDefinitionFilter filter = new DataDefinitionFilter() {
 						
-						CDOFeatureDelta featureDelta = cdoDelta.getFeatureDelta(feature);
-						if (featureDelta == null) {
-							return false;
-						}
-						if (feature instanceof EAttribute) {
-							if (!inDelta.has(feature.getName())) {
-								return true;
+						@Override
+						public boolean accept(
+								WebContext context, 
+								CDOObject cdoObject,
+								EStructuralFeature feature, 
+								JSONObject definition) throws Exception {
+							
+							CDOFeatureDelta featureDelta = cdoDelta.getFeatureDelta(feature);
+							if (featureDelta == null) {
+								return false;
 							}
-							JSONObject finDelta = inDelta.getJSONObject(feature.getName());
-							return !finDelta.has(CDOWebUtil.VALUE_KEY) || !definition.has(CDOWebUtil.INITIAL_VALUE_KEY) || !finDelta.get(CDOWebUtil.VALUE_KEY).equals(definition.get(CDOWebUtil.INITIAL_VALUE_KEY));
+							if (feature instanceof EAttribute) {
+								if (!inDelta.has(feature.getName())) {
+									return true;
+								}
+								JSONObject finDelta = inDelta.getJSONObject(feature.getName());
+								return !finDelta.has(CDOWebUtil.VALUE_KEY) || !definition.has(CDOWebUtil.INITIAL_VALUE_KEY) || !finDelta.get(CDOWebUtil.VALUE_KEY).equals(definition.get(CDOWebUtil.INITIAL_VALUE_KEY));
+							}
+							
+							return true; // Always pass modified references.
 						}
-						
-						return true; // Always pass modified references.
-					}
-				};
+					};
+					outDeltas.put(path, CDOWebUtil.generateDataDefinitions(context, target, filter));				
+				}
+			} else {
+				outDeltas.put(path, CDOWebUtil.generateDataDefinitions(context, target, null));				
 			}
-			JSONObject jsonDelta = CDOWebUtil.generateDataDefinitions(context, target, filter);
-			outDeltas.put(path, jsonDelta);
 		}
 	}
 
@@ -422,16 +427,16 @@ public class CDOViewRoute implements Route {
 							Iterator<String> kit = deltas.keys();
 							while (kit.hasNext()) {
 								String path = kit.next();
-								CDOObject cdoObject = CDOWebUtil.resolvePath(webContext, path);
-								if (cdoObject!=null) {
+								DeltaEntry deltaEntry = new DeltaEntry();
+								deltaEntry.context = webContext;
+								deltaEntry.path = path;
+								deltaEntry.inDelta = deltas.getJSONObject(path);
+								try {
+									CDOObject cdoObject = CDOWebUtil.resolvePath(webContext, path);
 									if (targetPath!=null && targetPath.equals(path)) {
 										invocationTarget = cdoObject;
 									}
-									DeltaEntry deltaEntry = new DeltaEntry();
-									deltaEntry.context = webContext;
-									deltaEntry.path = path;
 									deltaEntry.target = cdoObject;
-									deltaEntry.inDelta = deltas.getJSONObject(path);
 									
 									CDORevision cdoRevision = cdoObject.cdoRevision();
 									deltaEntry.isSameVersion = cdoRevision!=null 
@@ -440,6 +445,9 @@ public class CDOViewRoute implements Route {
 									
 									sessionObjects.put(cdoObject.cdoID(), deltaEntry);
 									deltaEntry.applyInDelta();
+								} catch (ObjectNotFoundException onfe) {
+									// Not found - maybe was deleted by a different transaction
+									sessionObjects.put(onfe.getID(), deltaEntry);
 								}
 							}
 						}
@@ -503,22 +511,21 @@ public class CDOViewRoute implements Route {
 									try {
 										JSONObject rDeltas = new JSONObject();
 										response.put("deltas", rDeltas);
+										for (CDOID did: commitContext.getDetachedObjects().keySet()) {
+											DeltaEntry deltaEntry = sessionObjects.remove(did);
+											if (deltaEntry!=null) {												
+												rDeltas.put(deltaEntry.path, "detached");
+											}
+
+										}
 										for (Entry<CDOID, CDORevisionDelta> rde: commitContext.getRevisionDeltas().entrySet()) {
-											if (!commitContext.getDetachedObjects().containsKey(rde.getKey())) {
-												DeltaEntry sessionObjectDeltaEntry = sessionObjects.get(rde.getKey());
-												if (sessionObjectDeltaEntry!=null) {
-													sessionObjectDeltaEntry.outDelta(rde.getValue(), rDeltas);
-												}
+											DeltaEntry sessionObjectDeltaEntry = sessionObjects.remove(rde.getKey());
+											if (sessionObjectDeltaEntry!=null) {
+												sessionObjectDeltaEntry.outDelta(rde.getValue(), rDeltas);
 											}
 										}
-										for (Entry<CDOID, DeltaEntry> soe: sessionObjects.entrySet()) {
-											if (commitContext.getDetachedObjects().containsKey(soe.getKey())) {
-												rDeltas.put(soe.getValue().path, "detached");
-											} else {
-												if (!commitContext.getRevisionDeltas().containsKey(soe.getKey()) && !soe.getValue().isSameVersion) {
-													soe.getValue().outDelta(null, rDeltas);
-												}
-											}
+										for (DeltaEntry sde: sessionObjects.values()) {
+											sde.outDelta(null, rDeltas);
 										}
 										
 										if (opResult[0]!=null) {

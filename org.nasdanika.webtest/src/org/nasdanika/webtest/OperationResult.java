@@ -395,7 +395,13 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 	}
 		
 	@Override
-	public void publish(URL url, String securityToken, Map<Object, String> idMap, PublishMonitor monitor) throws Exception {
+	public void publish(
+			URL url, 
+			String securityToken, 
+			boolean publishPerformance,
+			Map<Object, String> idMap, 
+			PublishMonitor monitor) throws Exception {
+		
 		if (monitor!=null) {
 			monitor.onPublishing("Operation Result "+getOperationName(), url);
 		}
@@ -412,11 +418,13 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		data.put("qualifiedName", operation.toString());
 		String cName = getClass().getName();
 		data.put("type", cName.substring(cName.lastIndexOf('.')+1));
-		if (beforePerformance!=null) {
-			data.put("beforePerformance", beforePerformance);
-		}
-		if (afterPerformance!=null) {
-			data.put("afterPerformance", afterPerformance);
+		if (publishPerformance) {
+			if (beforePerformance!=null) {
+				data.put("beforePerformance", beforePerformance);
+			}
+			if (afterPerformance!=null) {
+				data.put("afterPerformance", afterPerformance);
+			}
 		}
 		if (arguments!=null) {
 			// Simplistic approach for now
@@ -475,13 +483,13 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			if (parent==null) {
 				URL methodResultsURL= new URL(location+"/screenshots");
 				for (ScreenshotEntry se: allScreenshots()) {
-					se.publish(methodResultsURL, securityToken, idMap, monitor);				
+					se.publish(methodResultsURL, securityToken, publishPerformance, idMap, monitor);				
 				}
 			}
 	
 			URL childrenURL= new URL(location+"/children");
 			for (OperationResult<?> child: getChildren()) {
-				child.publish(childrenURL, securityToken, idMap, monitor);				
+				child.publish(childrenURL, securityToken, publishPerformance, idMap, monitor);				
 			}
 			
 			// --- Update non-containing references ---

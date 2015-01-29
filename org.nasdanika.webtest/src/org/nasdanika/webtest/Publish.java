@@ -26,4 +26,10 @@ public @interface Publish {
 	 */
 	String securityToken();
 	
+	/**
+	 * If true navigation timings are published to the server.
+	 * @return
+	 */
+	boolean publishPerformance() default false;
+	
 }

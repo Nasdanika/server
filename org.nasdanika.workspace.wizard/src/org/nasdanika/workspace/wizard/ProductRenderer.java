@@ -46,7 +46,7 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_2);
     stringBuffer.append(wizard.getGroupId());
     stringBuffer.append(TEXT_3);
-     if (wizard.getApplicationArtifactId()==null && wizard.getTestsArtifactId()!=null) { 
+     if (!wizard.isApplication() && wizard.isTests()) { 
     stringBuffer.append(TEXT_4);
     stringBuffer.append(wizard.getTestsArtifactId());
     stringBuffer.append(TEXT_5);
@@ -60,7 +60,7 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_9);
      } 
     stringBuffer.append(TEXT_10);
-     if (wizard.getApplicationArtifactId()!=null) { 
+     if (wizard.isApplication()) { 
     stringBuffer.append(TEXT_11);
      } 
     stringBuffer.append(TEXT_12);
