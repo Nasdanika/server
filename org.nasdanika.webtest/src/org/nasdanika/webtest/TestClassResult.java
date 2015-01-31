@@ -6,6 +6,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -73,28 +74,38 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return pages.values();
 	}
 	
-	private void onPageClass(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements) {
+	private void onPageClass(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements, String title) {
 		if (!pages.containsKey(pageClass)) {
-			pages.put(pageClass, new PageResult(pageClass, webElements));
+			pages.put(pageClass, new PageResult(pageClass, webElements, title));
 		}		
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onPageProxying(Page<WebDriver> page) {
-		onPageClass((Class<? extends Page<WebDriver>>) page.getClass(), page.webElements());
+	public void onPageProxying(Page<WebDriver> page) {		
+		Class<? extends Page<WebDriver>> pageClass = (Class<? extends Page<WebDriver>>) page.getClass();
+		if (Proxy.isProxyClass(pageClass) && Proxy.getInvocationHandler(page) instanceof MixInInvocationHandler) {
+			onPageClass(pageClass, page.webElements(), ((MixInInvocationHandler<?, ?>) Proxy.getInvocationHandler(page)).getTitle());
+		} else {
+			onPageClass(pageClass, page.webElements(), pageClass.getAnnotation(Title.class)==null ? null : pageClass.getAnnotation(Title.class).value());
+		}				
 	}
 	
-	private void onActorClass(Class<? extends Actor<WebDriver>> actorClass) {
+	private void onActorClass(Class<? extends Actor<WebDriver>> actorClass, String title) {
 		if (!actors.containsKey(actorClass)) {
-			actors.put(actorClass, new ActorResult(actorClass));
+			actors.put(actorClass, new ActorResult(actorClass, title));
 		}		
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void onActorProxying(Actor<WebDriver> actor) {
-		onActorClass((Class<? extends Actor<WebDriver>>) actor.getClass());
+		Class<? extends Actor<WebDriver>> actorClass = (Class<? extends Actor<WebDriver>>) actor.getClass();
+		if (Proxy.isProxyClass(actorClass) && Proxy.getInvocationHandler(actor) instanceof MixInInvocationHandler) {
+			onActorClass(actorClass, ((MixInInvocationHandler<?, ?>) Proxy.getInvocationHandler(actor)).getTitle());
+		} else {
+			onActorClass(actorClass, actorClass.getAnnotation(Title.class)==null ? null : actorClass.getAnnotation(Title.class).value());
+		}										
 	}
 	
 	private final List<TestMethodResult> testMethodResults = new ArrayList<>();
@@ -132,7 +143,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	@Override
 	public void beforePageInitialization(Class<? extends Page<WebDriver>> pageClass, byte[] screenshot, JSONObject performance) {
-		onPageClass(pageClass, WebTestUtil.webElements(pageClass));
+		onPageClass(pageClass, WebTestUtil.webElements(pageClass), pageClass.getAnnotation(Title.class)==null ? null : pageClass.getAnnotation(Title.class).value());
 		InitializationResult pir = new InitializationResult(
 				idGenerator.genId(pageClass.getName(), "_init"),
 				pageClass, 

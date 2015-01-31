@@ -64,7 +64,7 @@ class TestSession implements HttpPublisher {
 					for (ActorResult car: tr.getActorResults()) {
 						ActorResult aar = actorResults.get(car.getActorInterface());
 						if (aar==null) {
-							aar = new ActorResult(car.getActorInterface());
+							aar = new ActorResult(car.getActorInterface(), car.getTitle());
 							actorResults.put(car.getActorInterface(), aar);
 						}
 						aar.merge(car);
@@ -72,7 +72,7 @@ class TestSession implements HttpPublisher {
 					for (PageResult cpr: tr.getPageResults()) {
 						PageResult apr = pageResults.get(cpr.getPageInterface());
 						if (apr==null) {
-							apr = new PageResult(cpr.getPageInterface(), cpr.webElements());
+							apr = new PageResult(cpr.getPageInterface(), cpr.webElements(), cpr.getTitle());
 							pageResults.put(cpr.getPageInterface(), apr);
 						}
 						apr.merge(cpr);

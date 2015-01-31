@@ -5,6 +5,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -643,8 +644,7 @@ public class WebTestUtil {
 		}
 	}
 
-	static void toJSON(Description description, JSONObject target)
-			throws JSONException {
+	static void toJSON(Description description, JSONObject target) throws JSONException {
 		if (description!=null) {
 			JSONObject jd = new JSONObject();
 			target.put("description", jd);
@@ -685,6 +685,75 @@ public class WebTestUtil {
 	
 	public static boolean isBlank(String str) {
 		return str==null || str.trim().length()==0;
+	}
+	
+	/**
+	 * Wraps target into a page and then proxies it so its method invocations
+	 * and screenshots are recorded.
+	 * @param target
+	 * @param webDriver
+	 * @param proxyClassLoader ClassLoader which can load both the target class and the Page class.
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T, D extends WebDriver> T proxy(
+			final T target, 
+			final D webDriver, 
+			ClassLoader proxyClassLoader,
+			String title) {
+		if (target == null) {
+			return null;
+		}
+		
+		// Already implements Page, no need to mix-in.
+		if (target instanceof Page<?>) {			
+			return (T) proxyPage((Page<D>) target);
+		}
+		
+		Class<? extends Object> targetClass = target.getClass();
+		List<Class<?>> mixInInterfaces = allInterfaces(targetClass);
+		mixInInterfaces.addAll(allInterfaces(Page.class));
+				
+		Page<D> toPageProxy = (Page<D>) Proxy.newProxyInstance(
+				proxyClassLoader, 
+				mixInInterfaces.toArray(new Class[0]),
+				new MixInInvocationHandler<D, T>(webDriver, target, title));
+		
+		return (T) proxyPage(toPageProxy);
+	}
+
+	public static List<Class<?>> allInterfaces(Class<?> klass) {
+		if (klass==null) {
+			return Collections.emptyList();
+		}
+		List<Class<?>> ret = new ArrayList<>();
+		if (klass.isInterface()) {
+			ret.add(klass);
+		}
+		ret.addAll(Arrays.asList(klass.getInterfaces()));
+		Z: for (Class<?> i: allInterfaces(klass.getSuperclass())) {
+			for (Class<?> ei: ret) {
+				if (i.isAssignableFrom(ei)) {
+					continue Z;
+				}
+			}
+			ret.add(i);
+		}
+		return ret;
+	}
+
+	/**
+	 * Proxies an object which implements {@link Page} interface. 
+	 * @param ret
+	 * @return Proxy wired into the WebTest method invocation and screenshot capturing.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <D extends WebDriver> Page<D> proxyPage(Page<D> ret) {
+		Class<? extends Object> retClass = ret.getClass();
+		return (Page<D>) Proxy.newProxyInstance(
+				retClass.getClassLoader(), 
+				allInterfaces(retClass).toArray(new Class[0]), 
+				new PageInvocationHandler((Page<WebDriver>) ret, AbstractNasdanikaWebTestRunner.collectorThreadLocal.get()));
 	}
 	
 }

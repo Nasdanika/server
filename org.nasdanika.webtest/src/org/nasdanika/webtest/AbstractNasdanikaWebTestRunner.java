@@ -3,7 +3,6 @@ package org.nasdanika.webtest;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
@@ -11,7 +10,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONObject;
@@ -40,7 +38,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 
 	private static final int SCREENSHOT_RETAKE_WAIT_INTERVAL = 2000;
 
-	private static ThreadLocal<Collector<WebDriver>> collectorThreadLocal = new ThreadLocal<Collector<WebDriver>>() {
+	static ThreadLocal<Collector<WebDriver>> collectorThreadLocal = new ThreadLocal<Collector<WebDriver>>() {
 		
 		protected Collector<WebDriver> initialValue() {
 			// NOP Collector to avoid exceptions.
@@ -101,7 +99,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		
 	};
 	
-	private static ThreadLocal<Object> testThreadLocal = new ThreadLocal<Object>();
+	static ThreadLocal<Object> testThreadLocal = new ThreadLocal<Object>();
 	private static ThreadLocal<List<ServiceTracker<?,?>>> serviceTrackersThreadLocal = new ThreadLocal<List<ServiceTracker<?,?>>>() {
 		
 		protected java.util.List<ServiceTracker<?,?>> initialValue() {
@@ -109,7 +107,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		};
 	};
 	
-	private static JSONObject capturePerformance() {
+	static JSONObject capturePerformance() {
 		Object test = testThreadLocal.get();
 		if (test instanceof WebTest) {
 			return WebTestUtil.capturePerformance(((WebTest<?>) test).getWebDriver());
@@ -117,7 +115,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		return null;
 	}
 	
-	private static byte[] takeScreenshot() {
+	static byte[] takeScreenshot() {
 		Object test = testThreadLocal.get();
 		if (test instanceof WebTest) {
 			return takeScreenshot(((WebTest<?>) test).getWebDriver());
@@ -164,76 +162,6 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		return screenshotAnnotation==null || Arrays.asList(screenshotAnnotation.value()).contains(Screenshot.When.EXCEPTION); 
 	}
 	
-	private static class PageInvocationHandler implements InvocationHandler {
-		
-		private Page<WebDriver> page;
-
-		PageInvocationHandler(Page<WebDriver> page) {
-			this.page = page;
-			collectorThreadLocal.get().onPageProxying(page);
-		}
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			if (Page.class.isAssignableFrom(method.getDeclaringClass()) && !Page.class.equals(method.getDeclaringClass())) {
-				Method pageImplMethod = page.getClass().getMethod(method.getName(), method.getParameterTypes());
-				Object test = testThreadLocal.get();
-	    		if (test instanceof WebTest) {
-	    			WebTestUtil.doWait(((WebTest<?>) test).getWebDriver(), pageImplMethod);
-	    		}
-				Screenshot screenshotAnnotation = pageImplMethod.getAnnotation(Screenshot.class);
-	    		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
-	    		if (test instanceof WebTest) {
-	    			delay += ((WebTest<?>) test).getScreenshotDelay();
-	    		}
-	    		if (shallTakeBeforeScreenshot(screenshotAnnotation)) {
-	    			if (delay>0) {
-	    				Thread.sleep(delay);
-	    			}
-					collectorThreadLocal.get().beforePageMethod(page, takeScreenshot(), capturePerformance(), method, args);
-	    		} else {
-					collectorThreadLocal.get().beforePageMethod(page, null, capturePerformance(), method, args);
-	    		}
-				try {
-					Object res = method.invoke(page, args);
-		    		if (shallTakeAfterScreenshot(screenshotAnnotation)) {
-		    			if (delay>0) {
-		    				Thread.sleep(delay);
-		    			}
-		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), capturePerformance(), method, args, res, null);
-		    		} else {
-		    			collectorThreadLocal.get().afterPageMethod(page, null, capturePerformance(), method, args, res, null);
-		    		}
-					if (res instanceof Page) {
-						Class<? extends Object> resClass = res.getClass();
-						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
-							return res;
-						}
-						return Proxy.newProxyInstance(
-								resClass.getClassLoader(), 
-								allInterfaces(resClass).toArray(new Class[0]), 
-								new PageInvocationHandler((Page<WebDriver>) res));
-					}
-					
-					return res;
-				} catch (Throwable th) {
-		    		if (shallTakeExceptionScreenshot(screenshotAnnotation)) {
-		    			if (delay>0) {
-		    				Thread.sleep(delay);
-		    			}
-		    			collectorThreadLocal.get().afterPageMethod(page, takeScreenshot(), capturePerformance(), method, args, null, th);
-		    		} else {
-		    			collectorThreadLocal.get().afterPageMethod(page, null, capturePerformance(), method, args, null, th);		    			
-		    		}
-					throw th;
-				}
-			}
-			
-			return method.invoke(page, args); // No recording for non-page methods.
-		}
-	};
-	
 	/**
 	 * Creates a proxy for a page factory which in turn proxies pages created by the factory.
 	 * Page proxies associate test executions and actor methods calls with invocations of page methods (steps). 
@@ -241,104 +169,30 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T proxyPageFactory(final T pageFactory) {
+	public static <T> T proxyPageFactory(T pageFactory) {
 		if (pageFactory == null) {
 			return null;
 		}
 		Class<? extends Object> pageFactoryClass = pageFactory.getClass();
 		return (T) Proxy.newProxyInstance(
 				pageFactoryClass.getClassLoader(), 
-				allInterfaces(pageFactoryClass).toArray(new Class[0]), 
-				new InvocationHandler() {
+				WebTestUtil.allInterfaces(pageFactoryClass).toArray(new Class[0]), 
+				new FilteringInvocationHandler<Object>(pageFactory) {
 					
 					@Override
-					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-						Object ret = method.invoke(pageFactory, args);
-						if (ret instanceof Page) {
-							Class<? extends Object> retClass = ret.getClass();
-							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(ret))) {
-								return ret;
+					protected Object filter(Object obj) {
+						if (obj instanceof Page) {
+							Class<? extends Object> retClass = obj.getClass();
+							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(obj))) {
+								return obj;
 							}
-							return Proxy.newProxyInstance(
-									retClass.getClassLoader(), 
-									allInterfaces(retClass).toArray(new Class[0]), 
-									new PageInvocationHandler((Page<WebDriver>) ret));
+							return WebTestUtil.proxyPage((Page<WebDriver>) obj);
 						}
-						return ret;
-					}
-				});
-	}		
-	
-	private static class ActorInvocationHandler implements InvocationHandler {
-		
-		private Actor<WebDriver> actor;
-
-		ActorInvocationHandler(Actor<WebDriver> actor) {
-			this.actor = actor;
-			collectorThreadLocal.get().onActorProxying(actor);
-		}
-		
-		@SuppressWarnings("unchecked")
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-			if (Actor.class.isAssignableFrom(method.getDeclaringClass()) && !Actor.class.equals(method.getDeclaringClass())) {
-				Method actorImplMethod = actor.getClass().getMethod(method.getName(), method.getParameterTypes());
-				Object test = testThreadLocal.get();
-	    		if (test instanceof WebTest) {
-	    			WebTestUtil.doWait(((WebTest<?>) test).getWebDriver(), actorImplMethod);
-	    		}
-				Screenshot screenshotAnnotation = actorImplMethod.getAnnotation(Screenshot.class);
-	    		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
-	    		if (test instanceof WebTest) {
-	    			delay += ((WebTest<?>) test).getScreenshotDelay();
-	    		}
-	    		if (shallTakeBeforeScreenshot(screenshotAnnotation)) {
-	    			if (delay>0) {
-	    				Thread.sleep(delay);
-	    			}
-					collectorThreadLocal.get().beforeActorMethod(actor, takeScreenshot(), capturePerformance(), method, args);
-	    		} else {
-					collectorThreadLocal.get().beforeActorMethod(actor, null, capturePerformance(), method, args);	    			
-	    		}
-				
-				try {
-					Object res = method.invoke(actor, args);
-		    		if (shallTakeAfterScreenshot(screenshotAnnotation)) {
-		    			if (delay>0) {
-		    				Thread.sleep(delay);
-		    			}
-		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), capturePerformance(), method, args, res, null);
-		    		} else {
-		    			collectorThreadLocal.get().afterActorMethod(actor, null, capturePerformance(), method, args, res, null);		    			
-		    		}
-					if (res instanceof Actor) {
-						Class<? extends Object> resClass = res.getClass();
-						if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(res))) {
-							return res;
-						}
-						return Proxy.newProxyInstance(
-								resClass.getClassLoader(), 
-								allInterfaces(resClass).toArray(new Class[0]),  
-								new ActorInvocationHandler((Actor<WebDriver>) res));
+						return super.filter(obj);
 					}
 					
-					return res;
-				} catch (Throwable th) {
-		    		if (shallTakeExceptionScreenshot(screenshotAnnotation)) {
-		    			if (delay>0) {
-		    				Thread.sleep(delay);
-		    			}
-		    			collectorThreadLocal.get().afterActorMethod(actor, takeScreenshot(), capturePerformance(), method, args, null, th);
-		    		} else {
-		    			collectorThreadLocal.get().afterActorMethod(actor, null, capturePerformance(), method, args, null, th);		    			
-		    		}
-					throw th;
-				}
-			}
-			
-			return method.invoke(actor, args); // No recording for non-actor methods.
-		}
-	};
+				});
+	}		
 	
 	/**
 	 * Creates a proxy for an actor factory which in turn proxies actors created by the factory.
@@ -347,7 +201,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T proxyActorFactory(final T actorFactory) {
+	public static <T> T proxyActorFactory(T actorFactory) {
 		if (actorFactory==null) {
 			return null;
 		}
@@ -355,43 +209,27 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		Class<? extends Object> actorFactoryClass = actorFactory.getClass();
 		return (T) Proxy.newProxyInstance(
 				actorFactoryClass.getClassLoader(), 
-				allInterfaces(actorFactoryClass).toArray(new Class[0]),
-				new InvocationHandler() {
+				WebTestUtil.allInterfaces(actorFactoryClass).toArray(new Class[0]),
+				new FilteringInvocationHandler<Object>(actorFactory) {
 					
 					@Override
-					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-						Object ret = method.invoke(actorFactory, args);
-						if (ret instanceof Actor) {
-							Class<? extends Object> retClass = ret.getClass();
-							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(ret))) {
-								return ret;
+					protected Object filter(Object obj) {
+						if (obj instanceof Actor) {
+							Class<? extends Object> retClass = obj.getClass();
+							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(obj))) {
+								return obj;
 							}
 							return Proxy.newProxyInstance(
 									retClass.getClassLoader(), 
-									allInterfaces(retClass).toArray(new Class[0]),  
-									new ActorInvocationHandler((Actor<WebDriver>) ret));
+									WebTestUtil.allInterfaces(retClass).toArray(new Class[0]),  
+									new ActorInvocationHandler((Actor<WebDriver>) obj, collectorThreadLocal.get()));
 						}
-						return ret;
+						return super.filter(obj);
 					}
+					
 				});
 	}
 	
-	static List<Class<?>> allInterfaces(Class<?> klass) {
-		if (klass==null) {
-			return Collections.emptyList();
-		}
-		List<Class<?>> ret = new ArrayList<Class<?>>(Arrays.asList(klass.getInterfaces()));
-		Z: for (Class<?> i: allInterfaces(klass.getSuperclass())) {
-			for (Class<?> ei: ret) {
-				if (i.isAssignableFrom(ei)) {
-					continue Z;
-				}
-			}
-			ret.add(i);
-		}
-		return ret;
-	}
-		
 //	static Method getOverridenInterfaceMethod(Method m, Class<?> interf) {
 //		Class<?>[] pt = m.getParameterTypes();
 //		for (Class<?> i: AbstractNasdanikaWebTestRunner.allInterfaces(m.getDeclaringClass())) {
@@ -700,7 +538,5 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 			}			
 		}
 	}
-
-	
 	
 }

@@ -3,6 +3,7 @@ package org.nasdanika.webtest;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -25,17 +26,31 @@ public class ActorResult implements HttpPublisher {
 	private final Class<? extends Actor<WebDriver>> actorClass;
 	
 	private String id;
+	private String title;
 	
 	public String getId() {
 		return id;
 	}
-
-	ActorResult(Class<? extends Actor<WebDriver>> actorClass) {
-		this.actorClass = actorClass;		
+	
+	public String getTitle() {
+		return title;
 	}
 	
-	ActorResult(Class<? extends Actor<WebDriver>> actorClass, String id) {
-		this(actorClass);
+	boolean isProxy() {
+		return Proxy.isProxyClass(actorClass);				
+	}
+
+	ActorResult(Class<? extends Actor<WebDriver>> actorClass, String title) {
+		this.actorClass = actorClass;		
+		this.title = title;
+	}
+
+//	ActorResult(Class<? extends Actor<WebDriver>> actorClass) {
+//		this(actorClass, actorClass.getAnnotation(Title.class)==null ? null : actorClass.getAnnotation(Title.class).value());	
+//	}
+
+	ActorResult(Class<? extends Actor<WebDriver>> actorClass, String title, String id) {
+		this(actorClass, title);
 		this.id = id;		
 	}
 	
@@ -104,6 +119,10 @@ public class ActorResult implements HttpPublisher {
 		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 		JSONObject data = new JSONObject();
 		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getActorInterface(), data);
+		if (getTitle()!=null) {
+			data.put("title", getTitle());
+		}
+		data.put("isProxy", isProxy());
 		JSONArray resultIDs = new JSONArray();
 		data.put("results", resultIDs);
 		for (OperationResult<?> r: getResults()) {

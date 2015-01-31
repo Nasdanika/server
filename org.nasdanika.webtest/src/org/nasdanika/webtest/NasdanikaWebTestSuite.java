@@ -186,7 +186,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 					for (ActorResult car: tr.getActorResults()) {
 						ActorResult aar = collector.get(car.getActorInterface());
 						if (aar==null) {
-							aar = new ActorResult(car.getActorInterface());
+							aar = new ActorResult(car.getActorInterface(), car.getTitle());
 							collector.put(car.getActorInterface(), aar);
 						}
 						aar.merge(car);
@@ -202,7 +202,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 					for (PageResult cpr: tr.getPageResults()) {
 						PageResult apr = collector.get(cpr.getPageInterface());
 						if (apr==null) {
-							apr = new PageResult(cpr.getPageInterface(), cpr.webElements());
+							apr = new PageResult(cpr.getPageInterface(), cpr.webElements(), cpr.getTitle());
 							collector.put(cpr.getPageInterface(), apr);
 						}
 						apr.merge(cpr);

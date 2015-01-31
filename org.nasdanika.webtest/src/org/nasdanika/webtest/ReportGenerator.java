@@ -80,7 +80,11 @@ class ReportGenerator {
 				if (Actor.class.isAssignableFrom(cc)) {
 					ActorResult aar = actorResultCollector.get(cc);
 					if (aar==null) {
-						aar = new ActorResult((Class<? extends Actor<WebDriver>>) cc, idGenerator.genId(cc.getName(), null));
+						aar = new ActorResult(
+								(Class<? extends Actor<WebDriver>>) cc, 
+								cc.getAnnotation(Title.class)==null ? null : cc.getAnnotation(Title.class).value(), 
+								idGenerator.genId(cc.getName(), null));
+						
 						actorResultCollector.put(cc, aar);
 					}
 				}
@@ -88,7 +92,12 @@ class ReportGenerator {
 				if (Page.class.isAssignableFrom(cc)) {
 					PageResult apr = pageResultCollector.get(cc);
 					if (apr==null) {
-						apr = new PageResult((Class<? extends Page<WebDriver>>) cc, idGenerator.genId(cc.getName(), null), null);
+						apr = new PageResult(
+								(Class<? extends Page<WebDriver>>) cc, 
+								null,
+								cc.getAnnotation(Title.class)==null ? null : cc.getAnnotation(Title.class).value(), 
+								idGenerator.genId(cc.getName(), null));
+						
 						pageResultCollector.put(cc, apr);
 					}
 				}
@@ -97,12 +106,14 @@ class ReportGenerator {
 		
 		for (TestResult tr: testResults) {
 			for (ActorResult car: tr.getActorResults()) {
-				ActorResult aar = actorResultCollector.get(car.getActorInterface());
-				if (aar==null) {
-					aar = new ActorResult(car.getActorInterface(), idGenerator.genId(car.getActorInterface().getName(), null));
-					actorResultCollector.put(car.getActorInterface(), aar);
+				if (!car.isProxy()) {
+					ActorResult aar = actorResultCollector.get(car.getActorInterface());
+					if (aar==null) {
+						aar = new ActorResult(car.getActorInterface(), car.getTitle(), idGenerator.genId(car.getActorInterface().getName(), null));
+						actorResultCollector.put(car.getActorInterface(), aar);
+					}
+					aar.merge(car);
 				}
-				aar.merge(car);
 			}
 		}
 		actorResults = new ArrayList<>(actorResultCollector.values());
@@ -116,12 +127,18 @@ class ReportGenerator {
 
 		for (TestResult tr: testResults) {
 			for (PageResult cpr: tr.getPageResults()) {
-				PageResult apr = pageResultCollector.get(cpr.getPageInterface());
-				if (apr==null) {
-					apr = new PageResult(cpr.getPageInterface(), idGenerator.genId(cpr.getPageInterface().getName(), null), cpr.webElements());
-					pageResultCollector.put(cpr.getPageInterface(), apr);
+				if (!cpr.isProxy()) {
+					PageResult apr = pageResultCollector.get(cpr.getPageInterface());
+					if (apr==null) {
+						apr = new PageResult(
+								cpr.getPageInterface(), 
+								cpr.webElements(),
+								cpr.getTitle(),
+								idGenerator.genId(cpr.getPageInterface().getName(), null));
+						pageResultCollector.put(cpr.getPageInterface(), apr);
+					}
+					apr.merge(cpr);
 				}
-				apr.merge(cpr);
 			}
 		}
 		pageResults = new ArrayList<>(pageResultCollector.values());

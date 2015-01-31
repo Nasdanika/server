@@ -69,5 +69,5 @@ public @interface Wait {
 	 * Timeout in seconds.
 	 * @return
 	 */
-	long timeout() default 10;
+	long timeout() default 30;
 }

@@ -4,6 +4,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,20 +30,38 @@ public class PageResult implements HttpPublisher {
 	private final Class<? extends Page<WebDriver>> pageClass;
 	
 	private String id;
+	private String title;
 
 	private List<Field> webElements;
 	
 	public String getId() {
 		return id;
 	}
-
-	PageResult(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements) {
-		this.pageClass = pageClass;
-		this.webElements = webElements;
+	
+	boolean isProxy() {
+		return Proxy.isProxyClass(pageClass);				
+	}
+	
+	public String getTitle() {
+		return title;
 	}
 
-	PageResult(Class<? extends Page<WebDriver>> pageClass, String id, List<Field> webElements) {
-		this(pageClass, webElements);
+	PageResult(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements,	String title) {
+		this.pageClass = pageClass;
+		this.webElements = webElements;
+		this.title = title;
+	}
+
+//	PageResult(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements) {
+//		this(pageClass, webElements, pageClass.getAnnotation(Title.class)==null ? null : pageClass.getAnnotation(Title.class).value());
+//	}
+	
+	PageResult(
+			Class<? extends Page<WebDriver>> pageClass, 
+			List<Field> webElements, 
+			String title,
+			String id) {
+		this(pageClass, webElements, title);
 		this.id = id;
 	}
 	
@@ -66,7 +85,7 @@ public class PageResult implements HttpPublisher {
 			return pageClass;
 		}
 		for (Class<?> i: pageClass.getInterfaces()) {
-			if (Page.class.isAssignableFrom(i)) {
+			if (Page.class.isAssignableFrom(i) && !Page.class.equals(i)) {
 				return (Class<? extends Page<WebDriver>>) i;
 			}
 		}
@@ -123,6 +142,10 @@ public class PageResult implements HttpPublisher {
 		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 		JSONObject data = new JSONObject();
 		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getPageInterface(), data);
+		if (getTitle()!=null) {
+			data.put("title", getTitle());
+		}
+		data.put("isProxy", isProxy());		
 		JSONArray resultIDs = new JSONArray();
 		data.put("results", resultIDs);
 		for (OperationResult<?> r: getResults()) {
