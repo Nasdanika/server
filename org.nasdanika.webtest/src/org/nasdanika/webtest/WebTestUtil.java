@@ -744,16 +744,20 @@ public class WebTestUtil {
 
 	/**
 	 * Proxies an object which implements {@link Page} interface. 
-	 * @param ret
+	 * @param page
 	 * @return Proxy wired into the WebTest method invocation and screenshot capturing.
 	 */
 	@SuppressWarnings("unchecked")
-	public static <D extends WebDriver> Page<D> proxyPage(Page<D> ret) {
-		Class<? extends Object> retClass = ret.getClass();
-		return (Page<D>) Proxy.newProxyInstance(
+	public static <D extends WebDriver> Page<D> proxyPage(Page<D> page) {
+		Class<? extends Object> retClass = page.getClass();
+		Page<D> proxy = (Page<D>) Proxy.newProxyInstance(
 				retClass.getClassLoader(), 
 				allInterfaces(retClass).toArray(new Class[0]), 
-				new PageInvocationHandler((Page<WebDriver>) ret, AbstractNasdanikaWebTestRunner.collectorThreadLocal.get()));
+				new PageInvocationHandler((Page<WebDriver>) page, AbstractNasdanikaWebTestRunner.collectorThreadLocal.get()));
+		if (page instanceof ProxyAware) {
+			((ProxyAware<Object>) page).setProxy(proxy);
+		}		
+		return proxy;
 	}
 	
 }

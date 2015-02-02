@@ -219,10 +219,15 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(obj))) {
 								return obj;
 							}
-							return Proxy.newProxyInstance(
+							Object proxy = Proxy.newProxyInstance(
 									retClass.getClassLoader(), 
 									WebTestUtil.allInterfaces(retClass).toArray(new Class[0]),  
 									new ActorInvocationHandler((Actor<WebDriver>) obj, collectorThreadLocal.get()));
+							
+							if (obj instanceof ProxyAware) {
+								((ProxyAware<Object>) obj).setProxy(proxy);
+							}
+							return proxy;
 						}
 						return super.filter(obj);
 					}

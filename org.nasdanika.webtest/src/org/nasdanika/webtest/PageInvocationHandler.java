@@ -81,10 +81,14 @@ class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> 
 			if (Proxy.isProxyClass(resClass) && this.equals(Proxy.getInvocationHandler(obj))) {
 				return obj;
 			}
-			return Proxy.newProxyInstance(
+			Object proxy = Proxy.newProxyInstance(
 					resClass.getClassLoader(), 
 					WebTestUtil.allInterfaces(resClass).toArray(new Class[0]), 
 					new PageInvocationHandler((Page<WebDriver>) obj, collector));
+			if (obj instanceof ProxyAware) {
+				((ProxyAware<Object>) obj).setProxy(proxy);
+			}			
+			return proxy;
 		}
 		
 		return super.filter(obj);
