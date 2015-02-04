@@ -55,5 +55,10 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 			item.close();
 		}
 	}
+	
+	@Override
+	public int length() {
+		return items.size();
+	}
 
 }

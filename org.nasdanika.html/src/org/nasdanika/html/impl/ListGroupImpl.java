@@ -47,4 +47,9 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 		}
 	}
 
+	@Override
+	public int length() {
+		return items.size();
+	}
+
 }

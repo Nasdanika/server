@@ -12,5 +12,7 @@ public interface LinkGroup extends UIElement<LinkGroup> {
 	 * @return
 	 */
 	Tag item(Object content, Style style, boolean active);
+	
+	int length();
 
 }
