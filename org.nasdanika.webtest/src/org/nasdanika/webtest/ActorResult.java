@@ -64,6 +64,10 @@ public class ActorResult implements HttpPublisher {
 		return actorClass;
 	}
 	
+	public String getActorKey() {
+		return !isProxy() || title==null || title.trim().length()==0 ? getActorInterface().getName() : getActorInterface().getName()+":"+title;
+	}
+	
 	@SuppressWarnings("unchecked")
 	public Class<? extends Actor<WebDriver>> getActorInterface() {
 		if (actorClass.isInterface()) {
@@ -122,7 +126,10 @@ public class ActorResult implements HttpPublisher {
 		if (getTitle()!=null) {
 			data.put("title", getTitle());
 		}
-		data.put("isProxy", isProxy());
+		data.put("isProxy", isProxy());		
+		if (isProxy()) {
+			data.put("qualifiedName", getActorKey());
+		}
 		JSONArray resultIDs = new JSONArray();
 		data.put("results", resultIDs);
 		for (OperationResult<?> r: getResults()) {

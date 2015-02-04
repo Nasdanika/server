@@ -10,9 +10,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 /**
- * Base class which calculates number of page elements using reflection.
+ * Base class which calculates number of page fragment elements using reflection.
  */
-public abstract class ReflectivePageBase<D extends WebDriver> implements Page<D> {
+public abstract class ReflectivePageFragmentBase<D extends WebDriver> implements PageFragment<D> {
 	
 	@Override
 	public List<Field> webElements() {
@@ -21,12 +21,12 @@ public abstract class ReflectivePageBase<D extends WebDriver> implements Page<D>
 			for (Field field: cls.getDeclaredFields()) {
 				if (WebElement.class.isAssignableFrom(field.getType())) {
 					ret.add(field);
-				} else if (Page.class.isAssignableFrom(field.getType())) {
+				} else if (PageFragment.class.isAssignableFrom(field.getType())) {
 					field.setAccessible(true);					
 					try {
-						Page<?> page = (Page<?>) field.get(this);
-						if (page!=null) {
-							ret.addAll(page.webElements());
+						PageFragment<?> pageFragment = (PageFragment<?>) field.get(this);
+						if (pageFragment!=null) {
+							ret.addAll(pageFragment.webElements());
 						}
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						System.err.println("Cannot access "+field);

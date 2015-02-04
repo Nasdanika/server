@@ -78,6 +78,10 @@ public class PageResult implements HttpPublisher {
 //	public Class<? extends Page<WebDriver>> getPageClass() {
 //		return pageClass;
 //	}
+	
+	public String getPageKey() {
+		return !isProxy() || title==null || title.trim().length()==0 ? getPageInterface().getName() : getPageInterface().getName()+":"+title;
+	}
 		
 	@SuppressWarnings("unchecked")
 	public Class<? extends Page<WebDriver>> getPageInterface() {
@@ -144,6 +148,9 @@ public class PageResult implements HttpPublisher {
 		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getPageInterface(), data);
 		if (getTitle()!=null) {
 			data.put("title", getTitle());
+		}
+		if (isProxy()) {
+			data.put("qualifiedName", getPageKey());
 		}
 		data.put("isProxy", isProxy());		
 		JSONArray resultIDs = new JSONArray();

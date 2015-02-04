@@ -345,13 +345,13 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 
 			@Override
 			public Collection<ActorResult> getActorResults() {
-				Map<Class<?>, ActorResult> collector = new HashMap<>();
+				Map<String, ActorResult> collector = new HashMap<>();
 				for (TestResult tr: getChildren()) {
 					for (ActorResult car: tr.getActorResults()) {
-						ActorResult aar = collector.get(car.getActorInterface());
+						ActorResult aar = collector.get(car.getActorKey());
 						if (aar==null) {
 							aar = new ActorResult(car.getActorInterface(), car.getTitle());
-							collector.put(car.getActorInterface(), aar);
+							collector.put(car.getActorKey(), aar);
 						}
 						aar.merge(car);
 					}
@@ -361,13 +361,13 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 
 			@Override
 			public Collection<PageResult> getPageResults() {
-				Map<Class<?>, PageResult> collector = new HashMap<>();
+				Map<String, PageResult> collector = new HashMap<>();
 				for (TestResult tr: getChildren()) {
 					for (PageResult cpr: tr.getPageResults()) {
-						PageResult apr = collector.get(cpr.getPageInterface());
+						PageResult apr = collector.get(cpr.getPageKey());
 						if (apr==null) {
 							apr = new PageResult(cpr.getPageInterface(), cpr.webElements(), cpr.getTitle());
-							collector.put(cpr.getPageInterface(), apr);
+							collector.put(cpr.getPageKey(), apr);
 						}
 						apr.merge(cpr);
 					}

@@ -57,23 +57,23 @@ class TestSession implements HttpPublisher {
 			URL sessionTestResultsURL = new URL(location+"/testResults");
 			idMap.put(this, pConnection.getHeaderField("ID"));
 			try {
-				Map<Class<?>, ActorResult> actorResults = new HashMap<>();
-				Map<Class<?>, PageResult> pageResults = new HashMap<>();
+				Map<String, ActorResult> actorResults = new HashMap<>();
+				Map<String, PageResult> pageResults = new HashMap<>();
 				for (TestResult tr: testResults) {
 					tr.publish(sessionTestResultsURL, securityToken, publishPerformance, idMap, monitor);				
 					for (ActorResult car: tr.getActorResults()) {
-						ActorResult aar = actorResults.get(car.getActorInterface());
+						ActorResult aar = actorResults.get(car.getActorKey());
 						if (aar==null) {
 							aar = new ActorResult(car.getActorInterface(), car.getTitle());
-							actorResults.put(car.getActorInterface(), aar);
+							actorResults.put(car.getActorKey(), aar);
 						}
 						aar.merge(car);
 					}
 					for (PageResult cpr: tr.getPageResults()) {
-						PageResult apr = pageResults.get(cpr.getPageInterface());
+						PageResult apr = pageResults.get(cpr.getPageKey());
 						if (apr==null) {
 							apr = new PageResult(cpr.getPageInterface(), cpr.webElements(), cpr.getTitle());
-							pageResults.put(cpr.getPageInterface(), apr);
+							pageResults.put(cpr.getPageKey(), apr);
 						}
 						apr.merge(cpr);
 					}

@@ -583,11 +583,11 @@ public class WebTestUtil {
 		return null;
 	}
 
-	private static void doWait(WebDriver driver, Class<?> pageClass) {
+	public static void doWait(WebDriver driver, Class<?> pageClass) {
 		new WaitAnnotations(pageClass).doWait(driver);
 	}
 	
-	static void doWait(WebDriver driver, Method pageMethod) {
+	public static void doWait(WebDriver driver, Method pageMethod) {
 		new WaitAnnotations(pageMethod).doWait(driver);
 	}
 		
@@ -729,15 +729,16 @@ public class WebTestUtil {
 		List<Class<?>> ret = new ArrayList<>();
 		if (klass.isInterface()) {
 			ret.add(klass);
-		}
-		ret.addAll(Arrays.asList(klass.getInterfaces()));
-		Z: for (Class<?> i: allInterfaces(klass.getSuperclass())) {
-			for (Class<?> ei: ret) {
-				if (i.isAssignableFrom(ei)) {
-					continue Z;
+		} else {
+			ret.addAll(Arrays.asList(klass.getInterfaces()));
+			Z: for (Class<?> i: allInterfaces(klass.getSuperclass())) {
+				for (Class<?> ei: ret) {
+					if (i.isAssignableFrom(ei)) {
+						continue Z;
+					}
 				}
+				ret.add(i);
 			}
-			ret.add(i);
 		}
 		return ret;
 	}

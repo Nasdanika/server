@@ -63,8 +63,8 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return ret;
 	}
 	
-	Map<Class<? extends Actor<WebDriver>>, ActorResult> actors = new HashMap<>();
-	Map<Class<? extends Page<WebDriver>>, PageResult> pages = new HashMap<>();
+	Map<String, ActorResult> actors = new HashMap<>();
+	Map<String, PageResult> pages = new HashMap<>();
 	
 	public Collection<ActorResult> getActorResults() {
 		return actors.values();
@@ -75,8 +75,12 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 	
 	private void onPageClass(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements, String title) {
-		if (!pages.containsKey(pageClass)) {
-			pages.put(pageClass, new PageResult(pageClass, webElements, title));
+		String pageKey = pageClass.getName();
+		if (Proxy.isProxyClass(pageClass) && title!=null) {
+			pageKey+=":"+title;
+		}
+		if (!pages.containsKey(pageKey)) {
+			pages.put(pageKey, new PageResult(pageClass, webElements, title));
 		}		
 	}
 
@@ -92,8 +96,12 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 	
 	private void onActorClass(Class<? extends Actor<WebDriver>> actorClass, String title) {
-		if (!actors.containsKey(actorClass)) {
-			actors.put(actorClass, new ActorResult(actorClass, title));
+		String actorKey = actorClass.getName();
+		if (Proxy.isProxyClass(actorClass) && title!=null) {
+			actorKey+=":"+title;
+		}
+		if (!actors.containsKey(actorKey)) {
+			actors.put(actorKey, new ActorResult(actorClass, title));
 		}		
 	}
 	
@@ -106,6 +114,17 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		} else {
 			onActorClass(actorClass, actorClass.getAnnotation(Title.class)==null ? null : actorClass.getAnnotation(Title.class).value());
 		}										
+	}
+	
+	/**
+	 * @return Page or Actor object key
+	 */
+	private static String getObjectKey(Object obj) {
+		if (Proxy.isProxyClass(obj.getClass()) && Proxy.getInvocationHandler(obj) instanceof MixInInvocationHandler) {
+			String title = ((MixInInvocationHandler<?,?>) Proxy.getInvocationHandler(obj)).getTitle();
+			return title==null || title.trim().length()==0 ? obj.getClass().getName() : obj.getClass().getName()+":"+title;
+		}
+		return obj.getClass().getName();
 	}
 	
 	private final List<TestMethodResult> testMethodResults = new ArrayList<>();
@@ -123,7 +142,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				method,
 				args,
 				currentOperationResult);
-		actors.get(actor.getClass()).results.add(amr);
+		actors.get(getObjectKey(actor)).results.add(amr);
 		currentOperationResult = amr;
 		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot, Screenshot.When.BEFORE);
 		amr.beforePerformance = performance;
@@ -148,7 +167,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				idGenerator.genId(pageClass.getName(), "_init"),
 				pageClass, 
 				currentOperationResult);
-		pages.get(pageClass).results.add(pir);
+		pages.get(pageClass.getName()).results.add(pir);
 		currentOperationResult = pir;
 		pir.beforeScreenshot = createScreenshotEntry(pir, screenshot, Screenshot.When.BEFORE);
 		pir.beforePerformance = performance;
@@ -177,7 +196,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				method,
 				args,
 				currentOperationResult);
-		pages.get(page.getClass()).results.add(pmr);
+		pages.get(getObjectKey(page)).results.add(pmr);
 		currentOperationResult = pmr;
 		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot, Screenshot.When.BEFORE);
 		pmr.beforePerformance = performance;

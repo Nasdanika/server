@@ -3,7 +3,7 @@ package org.nasdanika.webtest;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 
 /**
- * Contains results of actor method execution.
+ * Contains results of page class initialization.
  * @author Pavel Vlasov
  *
  */
