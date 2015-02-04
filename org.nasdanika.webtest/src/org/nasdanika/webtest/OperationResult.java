@@ -5,8 +5,11 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
+import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -75,7 +78,25 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 	OperationResult(String id, O operation, Object[] arguments, OperationResult<?> parent) {
 		this.id = id;
 		this.operation = operation;
-		this.arguments = arguments;
+		if (arguments!=null) {
+			this.arguments = Arrays.copyOf(arguments, arguments.length);	
+			Annotation[][] pa = null;
+			if (operation instanceof Constructor) {
+				pa = ((Constructor<?>) operation).getParameterAnnotations();
+			} else if (operation instanceof Method) {
+				pa = ((Method) operation).getParameterAnnotations();				
+			}
+			if (pa!=null) {
+				for (int i=0; i<pa.length; ++i) {
+					for (int j=0; j<pa[i].length; ++j) {
+						if (pa[i][j] instanceof Mask) {
+							this.arguments[i] = "*****";
+							break;
+						}
+					}
+				}
+			}
+		}
 		this.parent = parent;
 		if (parent!=null) {
 			parent.childResults.add(this);
