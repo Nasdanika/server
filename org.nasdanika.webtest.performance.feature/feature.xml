@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.nasdanika.webtest.performance.feature"
-      label="Nasdanika WebTest"
+      label="Nasdanika Web Performance Model"
       version="0.1.0.qualifier">
 
    <description>
