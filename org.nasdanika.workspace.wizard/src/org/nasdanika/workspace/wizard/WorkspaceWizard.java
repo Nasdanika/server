@@ -1161,7 +1161,10 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		
 		if (projectsPage.btnTests.getSelection()) {
 			ret.add(getTestsArtifactId());
-			ret.add(getTestsArtifactId()+".feature");
+		}
+		
+		if (shallGenerateTestsFeature()) {
+			ret.add(getTestsArtifactId()+".feature");			
 		}
 		
 		ret.add(getGroupId()+".target");

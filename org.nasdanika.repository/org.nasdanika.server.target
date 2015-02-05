@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="36">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="40">
 <locations>
-<location path="${eclipse_home}" type="Profile"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="slf4j.simple" version="1.7.6"/>
-<unit id="slf4j.api" version="1.7.6"/>
-<repository location="http://www.nasdanika.org/slf4j"/>
+<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201412020354"/>
+<repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.json" version="1.0.0.v201011060100"/>
@@ -13,12 +11,14 @@
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20140525021250/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="slf4j.simple" version="1.7.6"/>
+<unit id="slf4j.api" version="1.7.6"/>
+<repository location="http://www.nasdanika.org/slf4j"/>
+</location>
+<location path="${eclipse_home}" type="Profile"/>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.jetty.bundles.f.feature.group" version="8.1.16.201409082153"/>
 <repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-8.x"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201412020354"/>
-<repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
 </location>
 </locations>
 </target>
