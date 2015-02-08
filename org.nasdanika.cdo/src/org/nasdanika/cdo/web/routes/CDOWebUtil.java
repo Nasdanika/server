@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.core.ConverterContext;
@@ -41,6 +42,22 @@ public class CDOWebUtil {
 	public static final String VALUE_KEY = "value";
 
 	public static final String INITIAL_VALUE_KEY = "initialValue";
+	
+	/**
+	 * Operation annotation instructs to render operation as a property getter. Shall be used for operations which take
+	 * a single argument through which invocation context is passed.
+	 * If operation name starts with <code>get</code> then the property name is computed by removing the <code>get</code>
+	 * prefix and uncapitalizing the rest of the operation name, otherwise the property name equals the operation name.
+	 */
+	public static final String ANNOTATION_GETTER = "org.nasdanika.cdo.web:getter";
+	
+	/**
+	 * Operation annotation instructs to render operation as a property setter. Shall be used for operations which take
+	 * two arguments - context and property value.
+	 * If operation name starts with <code>set</code> then the property name is computed by removing the <code>set</code>
+	 * prefix and uncapitalizing the rest of the operation name, otherwise the property name equals the operation name.
+	 */
+	public static final String ANNOTATION_SETTER = "org.nasdanika.cdo.web:setter";
 	
 	/**
 	 * Strict optimistic locking - for objects initial version shall match the version in the repository, for collections all initial
@@ -463,12 +480,26 @@ public class CDOWebUtil {
 			}
 			return ret;
 		}
+		JSONObject ret = new JSONObject();
 		if (result instanceof CDOObject) {
-			JSONObject ret = new JSONObject();
 			ret.put(PATH_KEY, context.getObjectPath(result));
-			return ret;
 		}
-		return result;
+		// Value
+		ret.put(VALUE_KEY, result);
+		return ret;
+	}
+	
+	public static JSONObject marshalValue(Object val) throws JSONException {
+		JSONObject ret = new JSONObject();
+		ret.put(VALUE_KEY, val);
+		return ret;
+		
+	}
+	
+	public static JSONObject marshalReference(WebContext context, CDOObject target) throws Exception {
+		JSONObject ret = new JSONObject();
+		ret.put(PATH_KEY, context.getObjectPath(target));
+		return ret;
 	}
 
 }

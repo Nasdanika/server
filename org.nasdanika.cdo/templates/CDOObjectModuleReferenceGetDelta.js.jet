@@ -31,7 +31,7 @@ if (data.hasOwnProperty("<%=ref.getName()%>") && data.<%=ref.getName()%>.hasOwnP
 			<% } else { %>
 				var dirty = false;
 				var deltaEntry = [];
-				for (i = 0; i < data.<%=ref.getName()%>.initialValue.length; ++i) {
+				for (var i = 0; i < data.<%=ref.getName()%>.initialValue.length; ++i) {
 					if (value.length>i) {
 						if (value[i].hasOwnProperty("$path")) {
 							if (value[i].$path === data.<%=ref.getName()%>.initialValue[i]) {
@@ -55,7 +55,7 @@ if (data.hasOwnProperty("<%=ref.getName()%>") && data.<%=ref.getName()%>.hasOwnP
 						deltaEntry.push({ initialValue : data.<%=ref.getName()%>.initialValue[i] });
 					}			
 				}
-				for (i = data.<%=ref.getName()%>.initialValue.length; i < value.length; ++i) {
+				for (var i = data.<%=ref.getName()%>.initialValue.length; i < value.length; ++i) {
 					dirty = true;
 					if (value[i].hasOwnProperty("$path")) {
 						deltaEntry.push({ value : value[i].$path });					

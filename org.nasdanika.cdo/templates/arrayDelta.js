@@ -25,7 +25,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	// If original has ended
 	if (oIdx == original.length) {
 		var ret = [];
-		for (i = mIdx; i < modified.length; ++i) {
+		for (var i = mIdx; i < modified.length; ++i) {
 			ret.push({
 				type : "add",
 				value : modified[i]
@@ -36,7 +36,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 	// If modified has ended
 	if (mIdx == modified.length) {
 		var ret = [];
-		for (i = oIdx; i < original.length; ++i) {
+		for (var i = oIdx; i < original.length; ++i) {
 			ret.push({
 				type : "remove",
 				pos : cIdx,
@@ -99,7 +99,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 				: champion.length)
 				- idx + mIdx);
 		if (candidate !== undefined) {
-			for (i = mIdx; i < idx; ++i) {
+			for (var i = mIdx; i < idx; ++i) {
 				candidate.splice(i - mIdx, 0, {
 					type : "add",
 					pos : cIdx + i - mIdx,
@@ -117,7 +117,7 @@ function _arrayDelta(original, modified, oIdx, mIdx, cIdx, maxLength) {
 				cIdx + 1,
 				(champion === undefined ? maxLength : champion.length) - idx + oIdx);
 		if (candidate !== undefined) {
-			for (i = oIdx; i < idx; ++i) {
+			for (var i = oIdx; i < idx; ++i) {
 				candidate.splice(i - oIdx, 0, {
 					type : "remove",
 					pos : cIdx + i - oIdx,

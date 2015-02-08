@@ -155,7 +155,7 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 		
 		context.buildUICategory("tabs", listsAndContainmentsTabs, null);
 		
-		if (scalarsTable.isEmpty()) {
+		if (scalarsTable.rows().isEmpty()) {
 			if (listsAndContainmentsTabs.isEmpty()) {
 				return null;
 			}

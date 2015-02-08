@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
@@ -309,15 +311,25 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				
-				Set<String> opNames = new HashSet<>();
+				Map<String, EOperation> ops = new HashMap<>();
 				for (EOperation op: eClass.getEAllOperations()) {
-					if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
-						opNames.add(op.getName());
+					if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null && !ops.containsKey(op.getName())) {
+						ops.put(op.getName(), op);
 					}
 				}
-				for (String opName: opNames) {
-					if (context.authorize(cdoObject, "invoke", opName, null)) {
-						ret.add(opName+": function() { return session.apply('"+getObjectPath()+"', '"+opName+"', arguments); }");
+				for (EOperation op: ops.values()) {
+					if (context.authorize(cdoObject, "invoke", op.getName(), null)) {
+						// Getters
+						String defHead;
+						if (op.getEAnnotation(CDOWebUtil.ANNOTATION_GETTER)!=null) {
+							defHead = "get "+(op.getName().startsWith("get") ? StringUtils.uncapitalize(op.getName().substring(3)) : op.getName());
+						} else if (op.getEAnnotation(CDOWebUtil.ANNOTATION_SETTER)!=null) {
+							defHead = "set "+(op.getName().startsWith("set") ? StringUtils.uncapitalize(op.getName().substring(3)) : op.getName());							
+						} else {
+							defHead = op.getName()+": function";
+						}
+						
+						ret.add(defHead+"() { return session.apply('"+getObjectPath()+"', '"+op.getName()+"', arguments); }");
 					}
 				}
 			}

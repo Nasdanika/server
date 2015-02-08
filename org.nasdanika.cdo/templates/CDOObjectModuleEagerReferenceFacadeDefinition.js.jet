@@ -10,7 +10,7 @@ get <%=ref.getName()%>() {
 	if (!dataEntry.hasOwnProperty('value')) {
 		<% if (ref.isMany()) { %>
 			dataEntry.value = [];
-			for (ref in dataEntry.initialValue) {
+			for (var ref in dataEntry.initialValue) {
 				var f = function(modName) {
 					return Q.Promise(function(resolve, reject, notify) {
 						require([modName], function(mod) {

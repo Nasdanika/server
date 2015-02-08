@@ -8,7 +8,7 @@
 if (delta.hasOwnProperty('<%=ref.getName()%>')) { 
 	data.<%=ref.getName()%> = delta.<%=ref.getName()%>;
 	<% if (ref.isMany()) { %>
-		for (ref in data.<%=ref.getName()%>.initialValue) {
+		for (var ref in data.<%=ref.getName()%>.initialValue) {
 			deltaPromises.push(Q.Promise(function(modName,resolve,reject,notify) {
 					require([modName], function(mod) {
 						resolve(mod);

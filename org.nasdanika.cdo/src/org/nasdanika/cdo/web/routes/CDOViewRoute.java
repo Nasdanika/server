@@ -25,6 +25,7 @@ import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
 import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -471,7 +472,7 @@ public class CDOViewRoute implements Route {
 								for (EOperation op: invocationTarget.eClass().getEAllOperations()) {
 									if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
 											&& op.getName().equals(opName) 
-											&& op.getEParameters().size()==opArgs.length() // No type matching
+											&& op.getEParameters().size()==opArgs.length()+1 // No type matching, first parameter is context
 											&& webContext.authorize(invocationTarget, "invoke", opName, null)) { 
 										candidate = op; 
 										break;
@@ -487,7 +488,10 @@ public class CDOViewRoute implements Route {
 								for (int i=0; i<pTypes.length; ++i) {
 									pTypes[i] = params.get(i).getEType().getInstanceClass();
 								}
-								opResult[0] = invocationTarget.eInvoke(candidate, CDOWebUtil.unmarshal(webContext, opArgs, pTypes, invocationTarget.eClass()));
+								EList<Object> args = new BasicEList<>();
+								args.add(webContext);
+								args.addAll(CDOWebUtil.unmarshal(webContext, opArgs, pTypes, invocationTarget.eClass()));
+								opResult[0] = invocationTarget.eInvoke(candidate, args);
 							}
 						}
 												

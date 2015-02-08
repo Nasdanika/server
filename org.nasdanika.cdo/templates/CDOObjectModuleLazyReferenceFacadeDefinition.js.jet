@@ -15,7 +15,7 @@ get <%=ref.getName()%>() {
 			        	data.<%=ref.getName()%>.initialValue = refData;
 						<% if (ref.isMany()) { %>
 							var result = [];
-							for (ref in refData) { 
+							for (var ref in refData) { 
 								var f = function(modName) {
 									return Q.Promise(function(resolve,reject,notify) {
 										require([modName], function(mod) {

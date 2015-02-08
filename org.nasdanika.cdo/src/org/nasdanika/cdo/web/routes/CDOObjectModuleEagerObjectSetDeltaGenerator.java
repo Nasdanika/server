@@ -17,7 +17,7 @@ public class CDOObjectModuleEagerObjectSetDeltaGenerator implements org.nasdanik
   protected final String TEXT_2 = "')) { " + NL + "\tdata.";
   protected final String TEXT_3 = " = delta.";
   protected final String TEXT_4 = ";" + NL + "\t";
-  protected final String TEXT_5 = NL + "\t\tfor (ref in data.";
+  protected final String TEXT_5 = NL + "\t\tfor (var ref in data.";
   protected final String TEXT_6 = ".initialValue) {" + NL + "\t\t\tdeltaPromises.push(Q.Promise(function(modName,resolve,reject,notify) {" + NL + "\t\t\t\t\trequire([modName], function(mod) {" + NL + "\t\t\t\t\t\tresolve(mod);" + NL + "\t\t\t\t\t});\t\t\t\t\t" + NL + "\t\t\t\t}.bind(this, data.";
   protected final String TEXT_7 = ".initialValue[ref]+'.js')));" + NL + "\t\t}" + NL + "\t";
   protected final String TEXT_8 = NL + "\t\tdeltaPromises.push(Q.Promise(function(modName,resolve,reject,notify) {" + NL + "\t\t\t\trequire([modName], function(mod) {" + NL + "\t\t\t\t\tresolve(mod);" + NL + "\t\t\t\t});\t\t\t\t\t" + NL + "\t\t\t}.bind(this, data.";

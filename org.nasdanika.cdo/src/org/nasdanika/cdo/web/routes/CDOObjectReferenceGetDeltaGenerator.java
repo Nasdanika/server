@@ -22,13 +22,13 @@ public class CDOObjectReferenceGetDeltaGenerator implements org.nasdanika.cdo.we
   protected final String TEXT_7 = ".initialValue, data.";
   protected final String TEXT_8 = ".value.map(function(v) {" + NL + "\t\t\t\t\tif (v.hasOwnProperty(\"$path\")) {" + NL + "\t\t\t\t\t\treturn v.$path;" + NL + "\t\t\t\t\t}" + NL + "\t\t\t\t\treturn typeof v === \"function\" ? v() : v;" + NL + "\t\t\t\t}));" + NL + "\t\t\t\tif (deltaEntry.length>0) {" + NL + "\t\t\t\t\tdelta.";
   protected final String TEXT_9 = " = deltaEntry;" + NL + "\t\t\t\t}\t\t\t" + NL + "\t\t\t";
-  protected final String TEXT_10 = NL + "\t\t\t\tvar dirty = false;" + NL + "\t\t\t\tvar deltaEntry = [];" + NL + "\t\t\t\tfor (i = 0; i < data.";
+  protected final String TEXT_10 = NL + "\t\t\t\tvar dirty = false;" + NL + "\t\t\t\tvar deltaEntry = [];" + NL + "\t\t\t\tfor (var i = 0; i < data.";
   protected final String TEXT_11 = ".initialValue.length; ++i) {" + NL + "\t\t\t\t\tif (value.length>i) {" + NL + "\t\t\t\t\t\tif (value[i].hasOwnProperty(\"$path\")) {" + NL + "\t\t\t\t\t\t\tif (value[i].$path === data.";
   protected final String TEXT_12 = ".initialValue[i]) {" + NL + "\t\t\t\t\t\t\t\tdeltaEntry.push(data.";
   protected final String TEXT_13 = ".initialValue[i]);" + NL + "\t\t\t\t\t\t\t} else {" + NL + "\t\t\t\t\t\t\t\tdirty = true;" + NL + "\t\t\t\t\t\t\t\tdeltaEntry.push({ " + NL + "\t\t\t\t\t\t\t\t\tinitialValue: data.";
   protected final String TEXT_14 = ".initialValue[i]," + NL + "\t\t\t\t\t\t\t\t\tvalue: value[i].$path\t\t\t\t\t" + NL + "\t\t\t\t\t\t\t\t});\t\t\t" + NL + "\t\t\t\t\t\t\t}" + NL + "\t\t\t\t\t\t} else {" + NL + "\t\t\t\t\t\t\tdirty = true;" + NL + "\t\t\t\t\t\t\tdeltaEntry.push({ " + NL + "\t\t\t\t\t\t\t\tinitialValue: data.";
   protected final String TEXT_15 = ".initialValue[i]," + NL + "\t\t\t\t\t\t\t\tvalue: typeof value[i] === \"function\" ? value[i]() : value[i]\t\t\t\t\t" + NL + "\t\t\t\t\t\t\t});\t\t\t\t\t" + NL + "\t\t\t\t\t\t}" + NL + "\t\t\t\t\t} else {" + NL + "\t\t\t\t\t\tdirty = true;" + NL + "\t\t\t\t\t\tdeltaEntry.push({ initialValue : data.";
-  protected final String TEXT_16 = ".initialValue[i] });" + NL + "\t\t\t\t\t}\t\t\t" + NL + "\t\t\t\t}" + NL + "\t\t\t\tfor (i = data.";
+  protected final String TEXT_16 = ".initialValue[i] });" + NL + "\t\t\t\t\t}\t\t\t" + NL + "\t\t\t\t}" + NL + "\t\t\t\tfor (var i = data.";
   protected final String TEXT_17 = ".initialValue.length; i < value.length; ++i) {" + NL + "\t\t\t\t\tdirty = true;" + NL + "\t\t\t\t\tif (value[i].hasOwnProperty(\"$path\")) {" + NL + "\t\t\t\t\t\tdeltaEntry.push({ value : value[i].$path });\t\t\t\t\t" + NL + "\t\t\t\t\t} else {" + NL + "\t\t\t\t\t\tdeltaEntry.push({ value : typeof value[i] === \"function\" ? value[i]() : value[i] });\t\t\t\t\t" + NL + "\t\t\t\t\t}\t\t\t" + NL + "\t\t\t\t}" + NL + "\t\t\t\tif (dirty) {" + NL + "\t\t\t\t\tdelta.";
   protected final String TEXT_18 = " = deltaEntry;" + NL + "\t\t\t\t}" + NL + "\t\t\t";
   protected final String TEXT_19 = NL + "\t\t";
