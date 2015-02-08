@@ -451,6 +451,8 @@ public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	
 	T ngBind(Object expr);
 	
+	T ngBindHtml(Object expr);
+	
 	T ngClick(Object expr);
 	
 	FontAwesome<T> fontAwesome();

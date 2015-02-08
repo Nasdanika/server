@@ -310,6 +310,11 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	}
 	
 	@Override
+	public T ngBindHtml(Object expr) {
+		return attribute("ng-bind-html", expr);
+	}
+	
+	@Override
 	public T ngClass(Object expr) {
 		return attribute("ng-class", expr);
 	}

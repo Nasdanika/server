@@ -1,8 +1,10 @@
 package org.nasdanika.html;
 
-public interface Table extends UIElement<Table> {
+import java.util.List;
+
+public interface Table extends UIElement<Table>, Container<Table> {
 	
-	interface Row extends UIElement<Row> {
+	interface Row extends UIElement<Row>, Container<Row> {
 		
 		interface Cell extends UIElement<Cell>, Container<Cell> {
 			
@@ -18,7 +20,7 @@ public interface Table extends UIElement<Table> {
 		
 		Row style(Style style);
 		
-		int length();
+		List<Cell> cells();
 		
 	}
 	
@@ -44,8 +46,6 @@ public interface Table extends UIElement<Table> {
 	
 	Table responsive();
 	
-	int length();
-	
-	boolean isEmpty();
+	List<Row> rows();
 
 }

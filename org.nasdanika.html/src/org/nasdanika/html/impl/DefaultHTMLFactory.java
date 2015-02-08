@@ -260,11 +260,13 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	public <T extends UIElement<?>> T popover(T element, Placement placement, String title, String text) {
 		element
 			.attribute("data-toggle", "popover")
-			.attribute("data-content", text)
 			.attribute("data-container", "body")
 			.attribute("data-placement", placement.name().toLowerCase());
 		if (title!=null) {
 			element.attribute("data-original-title", title);
+		}
+		if (text!=null) {
+			element.attribute("data-content", text);
 		}
 		
 		return element;

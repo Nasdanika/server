@@ -18,11 +18,10 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 			super(TableImpl.this.factory);
 		}
 		
-		private List<Cell> cells = new ArrayList<>();
+		private List<Object> content = new ArrayList<>();
 		
 		class CellImpl extends UIElementImpl<Cell> implements Cell {
 			
-			private List<Object> content = new ArrayList<>();
 			private boolean isHeader;
 
 			CellImpl(boolean isHeader, Object... content) {
@@ -53,6 +52,8 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 				}
 				return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 			}
+			
+			private List<Object> content = new ArrayList<>();
 
 			@Override
 			public void close() throws Exception {
@@ -75,14 +76,14 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 		@Override
 		public Cell cell(Object... content) {
 			CellImpl cell = new CellImpl(false, content);
-			cells.add(cell);
+			this.content.add(cell);
 			return cell;
 		}
 
 		@Override
 		public Cell header(Object... content) {
 			CellImpl cell = new CellImpl(true, content);
-			cells.add(cell);
+			this.content.add(cell);
 			return cell;
 		}
 
@@ -94,8 +95,10 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 		@Override
 		public String toString() {
 			StringBuilder ret = new StringBuilder("<tr"+attributes()+">");
-			for (Cell cell: cells) {
-				ret.append(cell.toString());
+			for (Object c: content) {
+				if (c!=null) {
+					ret.append(c);
+				}
 			}
 			ret.append("</tr>");
 			return ret.append(genLoadRemoteContentScript()).toString();
@@ -104,19 +107,33 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 		@Override
 		public void close() throws Exception {
 			super.close();
-			for (Cell c: cells) {
-				c.close();
+			for (Object c: content) {
+				close(c);
 			}			
 		}
 
 		@Override
-		public int length() {
-			return cells.size();
+		public List<Cell> cells() {
+			List<Cell> cells = new ArrayList<>();
+			for (Object c: content) {
+				if (c instanceof Cell) {
+					cells.add((Cell) c);
+				}
+			}
+			return cells;
+		}
+
+		@Override
+		public Row content(Object... content) {
+			for (Object c: content) {
+				this.content.add(c);
+			}
+			return this;
 		}
 		
 	}
 	
-	private List<Row> rows = new ArrayList<>();
+	private List<Object> content = new ArrayList<>();
 	private boolean bordered;
 	private boolean hover;
 	private boolean striped;
@@ -126,7 +143,7 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 	@Override
 	public Row row() {
 		Row row = new RowImpl();
-		rows.add(row);
+		content.add(row);
 		return row;
 	}
 
@@ -213,8 +230,10 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 		ret.append("\"");
 		ret.append(attributes("class"));
 		ret.append(">");
-		for (Row row: rows) {
-			ret.append(row.toString());
+		for (Object c: content) {
+			if (c!=null) {
+				ret.append(c);
+			}
 		}
 		ret.append("</table>");
 		if (responsive) {
@@ -226,19 +245,28 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 	@Override
 	public void close() throws Exception {
 		super.close();
-		for (Row r: rows) {
-			r.close();
+		for (Object c: content) {
+			close(c);
 		}		
 	}
 
 	@Override
-	public boolean isEmpty() {
-		return rows.isEmpty();
+	public List<Row> rows() {
+		List<Row> rows = new ArrayList<>();
+		for (Object c: content) {
+			if (c instanceof Row) {
+				rows.add((Row) c);
+			}
+		}
+		return rows;
 	}
 
 	@Override
-	public int length() {		
-		return rows.size();
+	public Table content(Object... content) {
+		for (Object c: content) {
+			this.content.add(c);
+		}
+		return this;
 	}
 
 }
