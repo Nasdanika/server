@@ -405,15 +405,15 @@ public class CDOViewRoute implements Route {
 			HttpContext httpContext = (HttpContext) webContext;
 			if ("session.js".equals(webContext.getPath()[1])) {
 				if (RequestMethod.GET.equals(webContext.getMethod())) {
-					if (webContext.authorize(view, "read", null, null)) {
+//					if (webContext.authorize(view, "read", null, null)) {
 						httpContext.getResponse().setContentType("application/javascript");
 						return new ValueAction(cdoViewSessionModuleGenerator.generate(webContext, view));
-					} 
-					return Action.FORBIDDEN;
+//					} 
+//					return Action.FORBIDDEN;
 				}
 			} else if ("session".equals(webContext.getPath()[1])) {
 				if (RequestMethod.PUT.equals(webContext.getMethod())) {
-					if (webContext.authorize(view, "write", null, null)) {
+//					if (webContext.authorize(view, "write", null, null)) {
 						JSONObject jsonRequest;
 						try (BufferedReader reader = httpContext.getRequest().getReader()) {
 							jsonRequest = new JSONObject(new JSONTokener(reader));
@@ -473,7 +473,7 @@ public class CDOViewRoute implements Route {
 									if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
 											&& op.getName().equals(opName) 
 											&& op.getEParameters().size()==opArgs.length()+1 // No type matching, first parameter is context
-											&& webContext.authorize(invocationTarget, "invoke", opName, null)) { 
+											&& webContext.authorize(invocationTarget, CDOWebUtil.getEOperationPermission(op), opName, null)) { 
 										candidate = op; 
 										break;
 									}
@@ -550,8 +550,8 @@ public class CDOViewRoute implements Route {
 						}
 						httpContext.getResponse().setContentType("text/json");
 						return new ValueAction(response);
-					} 
-					return Action.FORBIDDEN;
+//					} 
+//					return Action.FORBIDDEN;
 				}	
 			}
 			return Action.NOT_FOUND;

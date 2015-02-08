@@ -3,13 +3,10 @@ package org.nasdanika.cdo.web.routes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
@@ -318,7 +315,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				for (EOperation op: ops.values()) {
-					if (context.authorize(cdoObject, "invoke", op.getName(), null)) {
+					if (context.authorize(cdoObject, CDOWebUtil.getEOperationPermission(op), op.getName(), null)) {
 						// Getters
 						String defHead;
 						if (op.getEAnnotation(CDOWebUtil.ANNOTATION_GETTER)!=null) {
