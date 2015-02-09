@@ -449,6 +449,8 @@ public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	
 	T ngClass(Object expr);
 	
+	T ngCloak();
+	
 	T ngBind(Object expr);
 	
 	T ngBindHtml(Object expr);

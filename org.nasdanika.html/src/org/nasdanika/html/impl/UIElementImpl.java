@@ -320,6 +320,11 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	}
 	
 	@Override
+	public T ngCloak() {
+		return attribute("ng-cloak", true);
+	}
+	
+	@Override
 	public T ngHide(Object expr) {
 		return attribute("ng-hide", expr);
 	}
