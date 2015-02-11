@@ -35,7 +35,7 @@ public class EOperationClosureRoute implements Route {
 		if (context.getPath().length-1<op.getEParameters().size()) {
 			return Action.NOT_FOUND; // Path is shorter than a number of parameters.
 		}
-		if (!context.authorize(eOperationClosure, "invoke", null, null)) {
+		if (!context.authorize(eOperationClosure.getObject(), "invoke", "operation/"+eOperationClosure.getOperation().getName(), null)) {
 			return Action.FORBIDDEN;
 		}
 		EList<Object> args = ECollections.newBasicEList();

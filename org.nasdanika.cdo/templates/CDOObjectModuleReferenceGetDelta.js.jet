@@ -7,6 +7,7 @@
 %>
 if (data.hasOwnProperty("<%=ref.getName()%>") && data.<%=ref.getName()%>.hasOwnProperty("value")) { // Was accessed and possibly changed
 	var value = data.<%=ref.getName()%>.value;
+	
 	var maybeDirty = false;
 	if (Q.isPromise(value)) {
 		if (value.isFulfilled()) {
@@ -16,10 +17,11 @@ if (data.hasOwnProperty("<%=ref.getName()%>") && data.<%=ref.getName()%>.hasOwnP
 	} else {
 		maybeDirty = true;
 	}
+	
 	if (maybeDirty) {
 		<% if (ref.isMany()) { %>
 			<% if (isLenient) { %>
-				var deltaEntry = session.arrayDelta(data.<%=ref.getName()%>.initialValue, data.<%=ref.getName()%>.value.map(function(v) {
+				var deltaEntry = session.arrayDelta(data.<%=ref.getName()%>.initialValue, value.map(function(v) {
 					if (v.hasOwnProperty("$path")) {
 						return v.$path;
 					}

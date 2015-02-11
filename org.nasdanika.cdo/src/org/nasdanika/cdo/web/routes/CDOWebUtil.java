@@ -479,7 +479,7 @@ public class CDOWebUtil {
 			for (Entry<String, Object> e: ((Map<String,Object>) result).entrySet()) {
 				ret.put(e.getKey(), marshal(context, e.getValue()));
 			}
-			return ret;
+			return marshalValue(ret);
 		}
 		JSONObject ret = new JSONObject();
 		if (result instanceof CDOObject) {

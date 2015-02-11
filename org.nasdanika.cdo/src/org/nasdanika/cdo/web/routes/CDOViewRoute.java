@@ -41,6 +41,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.cdo.web.routes.CDOWebUtil.DataDefinitionFilter;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.Deletable;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContext;
 import org.nasdanika.web.RequestMethod;
@@ -347,6 +349,7 @@ public class CDOViewRoute implements Route {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Action execute(final WebContext webContext) throws Exception {
 		CDOView view = (CDOView) webContext.getTarget();
@@ -463,7 +466,11 @@ public class CDOViewRoute implements Route {
 							JSONArray opArgs = jsonRequest.getJSONArray("args");
 							if ("$delete".equals(opName)) {
 								if (webContext.authorize(invocationTarget, "write", null, null)) {
-									EcoreUtil.delete(invocationTarget);
+									if (invocationTarget instanceof Deletable) {
+										((Deletable<Context>) invocationTarget).delete(webContext);
+									} else {
+										EcoreUtil.delete(invocationTarget, true);
+									}
 								} else {
 									throw new ServerException("Can't delete: "+targetPath, HttpServletResponse.SC_FORBIDDEN);
 								}

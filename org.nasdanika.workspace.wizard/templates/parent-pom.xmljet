@@ -67,6 +67,7 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
+					<!--
 					<target>
 						<artifact>
 							<groupId><%=wizard.getGroupId()%></groupId>
@@ -74,6 +75,7 @@
 							<version><%=wizard.getVersion()%>-SNAPSHOT</version>
 						</artifact>
 					</target>
+					-->
 					<pomDependencies>consider</pomDependencies>
 					<!-- configure the p2 target environments for multi-platform build -->
 					<environments>

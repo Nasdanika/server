@@ -50,6 +50,8 @@ public class AuthorizationHelper {
 			Map<String, Object> environment, 
 			Set<Principal> traversed) {
 		
+//		System.out.println("Authorizing: "+target+" "+action+" "+qualifier+" "+path);
+		
 		// Superuser
 		ProtectionDomain<?> protectionDomain = principal.getProtectionDomain();
 		if (protectionDomain.getSuperUsersGroup()!=null && protectionDomain.getSuperUsersGroup().isMember(principal)) {
