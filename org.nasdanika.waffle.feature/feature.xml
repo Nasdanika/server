@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.nasdanika.workspace.wizard.feature"
+      id="org.nasdanika.waffle.feature"
       label="Nasdanika Windows Authentication with Waffle"
       version="0.1.0.qualifier"
       provider-name="Nasdanika LLC">
