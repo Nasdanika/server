@@ -42,6 +42,11 @@
 			<layout>p2</layout>
 		</repository>
 		<repository>
+			<id>maven-osgi</id>
+			<url>http://www.nasdanika.org/maven-osgi</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
 			<id>slf4j</id>
 			<url>http://www.nasdanika.org/slf4j</url>
 			<layout>p2</layout>
@@ -115,10 +120,12 @@
 
 		<module>../org.nasdanika.webtest.performance</module>
 		<module>../org.nasdanika.webtest.performance.feature</module>
-
 		
 		<module>../org.nasdanika.workspace.wizard</module>
 		<module>../org.nasdanika.workspace.wizard.feature</module>
+		
+		<module>../org.nasdanika.waffle</module>
+		<module>../org.nasdanika.waffle.feature</module>
 		
 		<module>../org.nasdanika.cdo.security</module>
 		<module>../org.nasdanika.cdo.security.edit</module>
