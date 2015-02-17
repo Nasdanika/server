@@ -181,7 +181,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 			return null;
 		}
 
-		private String generateSetDeltaEntry(EAttribute attr) {
+		private String generateSetDeltaEntry(EAttribute attr) throws Exception {
 			if (context.authorize(cdoObject, "read", attr.getName(), null)) {
 				return "if (delta.hasOwnProperty('"+attr.getName()+"')) { data."+attr.getName()+" = delta."+attr.getName()+"; }";
 			}
@@ -228,7 +228,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 			return null;
 		}
 				
-		public Collection<String> getPreloadActions() {
+		public Collection<String> getPreloadActions() throws Exception {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
 			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {

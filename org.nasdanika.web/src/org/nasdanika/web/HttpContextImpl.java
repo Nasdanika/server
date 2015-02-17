@@ -2,6 +2,7 @@ package org.nasdanika.web;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -258,6 +259,11 @@ public class HttpContextImpl extends ContextImpl implements HttpContext {
 			return exports.exportedRoutes.remove(path);
 		}
 		return exportingContext.unexport(path);
+	}
+
+	@Override
+	public Principal getSecurityPrincipal() {
+		return getRequest().getUserPrincipal();
 	}
 
 }

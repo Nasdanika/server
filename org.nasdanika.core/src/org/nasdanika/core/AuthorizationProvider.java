@@ -28,5 +28,5 @@ public interface AuthorizationProvider {
 			Object target, 
 			String action, 
 			String qualifier,
-			Map<String, Object> environment);	
+			Map<String, Object> environment) throws Exception;	
 }

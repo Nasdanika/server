@@ -2,13 +2,17 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
+import org.nasdanika.cdo.security.User;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.SecurityContext;
 import org.osgi.service.component.ComponentContext;
 
-public abstract class CDOViewContextProviderComponent<CR> implements CDOViewContextProvider<CR> {
+public abstract class CDOViewContextProviderComponent<CR, MC extends Context> implements CDOViewContextProvider<CR, MC> {
 	
 	private CDOSessionProvider sessionProvider;
 	private SecurityPolicyManager securityPolicyManager;
@@ -34,9 +38,9 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 	}	
 
 	@Override
-	public CDOViewContext<CDOView, CR> createContext() {
+	public CDOViewContext<CDOView, CR, MC> createContext() {
 		if (sessionProvider!=null) {			
-			return new CDOViewContext<CDOView, CR>() {
+			return new CDOViewContext<CDOView, CR, MC>() {
 				
 				private CDOView view = sessionProvider.getSession().openView();
 				
@@ -53,9 +57,28 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 				private Principal authenticatedPrincipal;
 
 				@Override
-				public Principal getPrincipal() {
+				public Principal getPrincipal(MC masterContext) throws Exception {
 					if (authenticatedPrincipal!=null) {
 						return authenticatedPrincipal;
+					}
+					
+					java.security.Principal securityPrincipal = null;
+					// Mapping Java security principal to protection domain principal. Principal name shall match user login.
+					if (masterContext instanceof SecurityContext) {
+						securityPrincipal = ((SecurityContext) masterContext).getSecurityPrincipal();
+					} else {
+						SecurityContext sc = masterContext.adapt(SecurityContext.class);
+						if (sc!=null) {
+							securityPrincipal = sc.getSecurityPrincipal();
+						}
+					}					
+					
+					if (securityPrincipal!=null) {
+						for (User pdu: getProtectionDomain().getAllUsers()) { // TODO - find(login) to optimize search in large user populations
+							if (pdu instanceof LoginUser && ((LoginUser) pdu).getLogin().equalsIgnoreCase(securityPrincipal.getName())) {  
+								return pdu;
+							}
+						}
 					}
 					ProtectionDomain<CR> pd = getProtectionDomain();
 					return pd==null ? null : pd.getUnauthenticatedPrincipal();

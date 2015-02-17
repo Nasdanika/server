@@ -11,7 +11,7 @@ public interface Promise {
 	 * @param handler
 	 * @return
 	 */
-	Promise then(ThenMode mode, Function handler);
+	Promise then(ThenMode mode, Invocable handler);
 	
 	/**
 	 * Three functions.
@@ -20,14 +20,14 @@ public interface Promise {
 	 * @param onProgress
 	 * @return
 	 */
-	Promise then(Function onFulfill, Function onReject, Function onProgress);
+	Promise then(Invocable onFulfill, Invocable onReject, Invocable onProgress);
 
 	/**
 	 * Similar to then(), but reports unhandled exceptions.
 	 * @param handler
 	 * @throws Exception
 	 */
-	void done(ThenMode mode, Function handler) throws Exception;
+	Promise done(ThenMode mode, Invocable handler) throws Exception;
 	
 	/**
 	 * Similar to then(), but reports unhandled exceptions.
@@ -36,7 +36,7 @@ public interface Promise {
 	 * @param onProgress
 	 * @return
 	 */
-	Promise done(Function onFulfill, Function onReject, Function onProgress);
+	Promise done(Invocable onFulfill, Invocable onReject, Invocable onProgress);
 	
 	/**
 	 * Cancels promise indicating that there is no interest in the results

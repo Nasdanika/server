@@ -72,10 +72,12 @@
       </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//User"/>
+    <genClasses ecoreClass="security.ecore#//LoginUser">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginUser/login"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginUser/disabled"/>
+    </genClasses>
     <genClasses ecoreClass="security.ecore#//LoginPasswordHashUser">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/login"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/passwordHash"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/disabled"/>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//ActionKey">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//ActionKey/name"/>

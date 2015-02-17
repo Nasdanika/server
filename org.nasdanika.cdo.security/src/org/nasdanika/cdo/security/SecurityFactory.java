@@ -31,6 +31,15 @@ public interface SecurityFactory extends EFactory {
 	Group createGroup();
 
 	/**
+	 * Returns a new object of class '<em>Login User</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Login User</em>'.
+	 * @generated
+	 */
+	LoginUser createLoginUser();
+
+	/**
 	 * Returns a new object of class '<em>Action Key</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

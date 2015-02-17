@@ -61,6 +61,7 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case SecurityPackage.GROUP: return (EObject)createGroup();
+			case SecurityPackage.LOGIN_USER: return (EObject)createLoginUser();
 			case SecurityPackage.ACTION_KEY: return (EObject)createActionKey();
 			case SecurityPackage.ACTION: return (EObject)createAction();
 			case SecurityPackage.PROPERTY: return (EObject)createProperty();
@@ -114,6 +115,16 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	public Group createGroup() {
 		GroupImpl group = new GroupImpl();
 		return group;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LoginUser createLoginUser() {
+		LoginUserImpl loginUser = new LoginUserImpl();
+		return loginUser;
 	}
 
 	/**

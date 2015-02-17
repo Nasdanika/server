@@ -13,7 +13,7 @@ public class EPackagePathResolver implements ObjectPathResolver<EPackage> {
 	public String resolve(EPackage obj, ObjectPathResolver<Object> master, Context context) throws Exception {
 		CDOView view;
 		if (context instanceof CDOViewContext) {
-			view = ((CDOViewContext<?,?>) context).getView();
+			view = ((CDOViewContext<?,?,?>) context).getView();
 		} else {
 			return null;
 		}

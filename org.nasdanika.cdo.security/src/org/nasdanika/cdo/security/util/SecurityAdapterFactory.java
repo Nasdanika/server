@@ -92,6 +92,10 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 				return createUserAdapter();
 			}
 			@Override
+			public Adapter caseLoginUser(LoginUser object) {
+				return createLoginUserAdapter();
+			}
+			@Override
 			public Adapter caseLoginPasswordHashUser(LoginPasswordHashUser object) {
 				return createLoginPasswordHashUserAdapter();
 			}
@@ -210,6 +214,20 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createUserAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.LoginUser <em>Login User</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.LoginUser
+	 * @generated
+	 */
+	public Adapter createLoginUserAdapter() {
 		return null;
 	}
 

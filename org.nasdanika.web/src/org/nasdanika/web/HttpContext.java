@@ -3,7 +3,9 @@ package org.nasdanika.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public interface HttpContext extends WebContext {
+import org.nasdanika.core.SecurityContext;
+
+public interface HttpContext extends WebContext, SecurityContext {
 	
 	HttpServletRequest getRequest();
 	

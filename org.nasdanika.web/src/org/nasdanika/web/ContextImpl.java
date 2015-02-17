@@ -61,7 +61,7 @@ public abstract class ContextImpl implements WebContext {
 	}
 
 	@Override
-	public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) {		
+	public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {		
 		return AccessDecision.ALLOW.equals(securityManager.authorize(this, target, action, qualifier, environment));
 	}
 

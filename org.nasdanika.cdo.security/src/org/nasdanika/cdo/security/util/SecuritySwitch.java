@@ -105,9 +105,18 @@ public class SecuritySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case SecurityPackage.LOGIN_USER: {
+				LoginUser loginUser = (LoginUser)theEObject;
+				T result = caseLoginUser(loginUser);
+				if (result == null) result = caseUser(loginUser);
+				if (result == null) result = casePrincipal(loginUser);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case SecurityPackage.LOGIN_PASSWORD_HASH_USER: {
 				LoginPasswordHashUser loginPasswordHashUser = (LoginPasswordHashUser)theEObject;
 				T result = caseLoginPasswordHashUser(loginPasswordHashUser);
+				if (result == null) result = caseLoginUser(loginPasswordHashUser);
 				if (result == null) result = caseUser(loginPasswordHashUser);
 				if (result == null) result = casePrincipal(loginPasswordHashUser);
 				if (result == null) result = defaultCase(theEObject);
@@ -236,6 +245,21 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseUser(User object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Login User</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Login User</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLoginUser(LoginUser object) {
 		return null;
 	}
 

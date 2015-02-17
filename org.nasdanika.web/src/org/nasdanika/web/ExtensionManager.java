@@ -373,7 +373,7 @@ public class ExtensionManager extends AdapterManager {
 			authorizationProvider = new AuthorizationProvider() {
 				
 				@Override
-				public AccessDecision authorize(Context context, Object target, String action, String qualifier, Map<String, Object> environment) {
+				public AccessDecision authorize(Context context, Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 					for (AuthorizationProviderEntry sme: smeList) {
 						AccessDecision result = sme.sm.authorize(context, target, action, qualifier, environment);
 						if (AccessDecision.ALLOW.equals(result) || AccessDecision.DENY.equals(result)) {

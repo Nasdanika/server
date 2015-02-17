@@ -5,7 +5,7 @@ package org.nasdanika.function;
  * @author Pavel Vlasov
  *
  */
-public interface Function {
+public interface Function extends Invocable {
 	
 //	/**
 //	 * Executes function.
@@ -32,16 +32,4 @@ public interface Function {
 	 */
 	void bind(Object... bindings);
 	
-	/**
-	 * Number of unbound parameters, including unbound parameters of functions bound to parameters.
-	 * @return
-	 */
-	int length();
-	
-	/**
-	 * Types of unbound parameters.
-	 * @return
-	 */
-	Class<?>[] parameterTypes();
-
 }

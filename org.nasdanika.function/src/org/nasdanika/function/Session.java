@@ -12,13 +12,18 @@ public interface Session {
 	
 	ServiceBinding createServiceBinding(String serviceType, String filter);
 	
-	Function createServiceMethodFunction(
+	/**
+	 * Wraps invocable into a function.
+	 */
+	Function createFunction(Invocable invocable);
+	
+	Invocable createServiceMethodInvocable(
 			Class<?> serviceClass, 
 			String filter, 
 			String methodName, 
 			Class<?>... parameterTypes);
 	
-	Function createMethodFunction(
+	Invocable createMethodInvocable(
 			Object target, 
 			String methodName, 
 			Class<?>... parameterTypes);
@@ -35,7 +40,7 @@ public interface Session {
 
 	enum EngineSelectorType { EXTENSION, MIME_TYPE, NAME }
 	
-	Function createScriptFunction(
+	Invocable createScriptInvocable(
 			EngineSelectorType engineSelectorType, 
 			String engineSelector, 
 			String code,
@@ -43,7 +48,7 @@ public interface Session {
 			String[] parameterNames,
 			Class<?>[] parameterTypes);
 	
-	Function createScriptFunction(
+	Invocable createScriptInvocable(
 			EngineSelectorType engineSelectorType, 
 			String engineSelector,
 			Reader codeReader,
@@ -51,7 +56,7 @@ public interface Session {
 			String[] parameterNames,
 			Class<?>[] parameterTypes);
 	
-	Function createScriptFunction(
+	Invocable createScriptInvocable(
 			EngineSelectorType engineSelectorType, 
 			String engineSelector,
 			InputStream codeInputStream,
@@ -81,22 +86,22 @@ public interface Session {
 	 * @param task
 	 * @return
 	 */
-	Promise submit(Function task);
+	Promise submit(Invocable task);
 	
-	Promise schedule(Function task, long delay, TimeUnit unit);
+	Promise schedule(Invocable task, long delay, TimeUnit unit);
 	
-	Promise scheduleAtFixedRate(Function task, long initialDelay, long period, TimeUnit unit);
+	Promise scheduleAtFixedRate(Invocable task, long initialDelay, long period, TimeUnit unit);
 	
-	Promise scheduleWithFixedDelay(Function task, long initialDelay, long delay, TimeUnit unit);
+	Promise scheduleWithFixedDelay(Invocable task, long initialDelay, long delay, TimeUnit unit);
 	
 	/**
 	 * Creates a new function from the function. The new function accepts either
 	 * values or promises as arguments and returns a promise which is fulfilled/rejected
-	 * by the original function's return value or thrown exception.
+	 * by the invocable's return value or thrown exception.
 	 * @param func
 	 * @return
 	 */
-	Function promised(Function func);
+	Function promised(Invocable invocable);
 			
 	/**
 	 * @param promises
@@ -113,12 +118,12 @@ public interface Session {
 	Promise when(Object valueOrPromise);
 	
 	/**
-	 * Asynchronously chains functions passing return
+	 * Asynchronously chains invocables passing return
 	 * value of each function as an argument to the next
 	 * function. 
-	 * @param functions, the first function shall have zero length, i.e. no parameters or all parameters bound.
+	 * @param invocables, the first function shall have zero length, i.e. no parameters or all parameters bound.
 	 * @return
 	 */
-	Promise reduce(Function...functions);
+	Promise reduce(Invocable...invocables);
 	
 }

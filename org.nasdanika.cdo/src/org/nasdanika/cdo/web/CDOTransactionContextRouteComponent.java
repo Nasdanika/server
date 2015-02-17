@@ -1,20 +1,21 @@
 package org.nasdanika.cdo.web;
 
 import org.nasdanika.cdo.CDOTransactionContextProvider;
+import org.nasdanika.core.Context;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContextImpl;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.WebContext;
 
-public class CDOTransactionContextRouteComponent<CR> implements Route {
+public class CDOTransactionContextRouteComponent<CR, MC extends Context> implements Route {
 	
-	private CDOTransactionContextProvider<CR> contextProvider;
+	private CDOTransactionContextProvider<CR, CDOTransactionHttpContext<?>> contextProvider;
 	
-	public void setContextProvider(CDOTransactionContextProvider<CR> contextProvider) {
+	public void setContextProvider(CDOTransactionContextProvider<CR,CDOTransactionHttpContext<?>> contextProvider) {
 		this.contextProvider = contextProvider;
 	}
 	
-	public void clearContextProvider(CDOTransactionContextProvider<CR> contextProvider) {
+	public void clearContextProvider(CDOTransactionContextProvider<CR,CDOTransactionHttpContext<?>> contextProvider) {
 		this.contextProvider = null;
 	}
 

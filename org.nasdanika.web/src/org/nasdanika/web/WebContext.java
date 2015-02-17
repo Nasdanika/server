@@ -17,7 +17,7 @@ public interface WebContext extends ConverterContext, ExportingContext, ClassLoa
 	 * @param action Action ID.
 	 * @return true if action is allowed, false if denied.
 	 */
-	boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment);	
+	boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception;	
 		
 	RequestMethod getMethod();
 	
