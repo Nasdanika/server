@@ -163,7 +163,11 @@ public class CDOWebUtil {
 			case "java.lang.Object":
 				return json.get(key);
 			default:
-				return context.convert(json.get(key), type);				
+				Object source = json.get(key);
+				Object converted = context.convert(source, type);
+				if (source != null && converted == null) {
+					throw new IllegalArgumentException("Cannot convert " +source + " to "+type);
+				}
 			}
 		}			
 		return null;
@@ -395,7 +399,7 @@ public class CDOWebUtil {
 			if (el instanceof JSONArray) {
 				ret.add(unmarshal(context, (JSONArray) el, contextType));
 			} else if (el instanceof JSONObject) {
-				ret.add(unmarshal(context, (JSONObject) el, parameterTypes[i], contextType));
+				ret.add(unmarshal(context, (JSONObject) el, parameterTypes[i+1], contextType));
 			} else {
 				ret.add(get(context,input, i, parameterTypes[i]));
 			}
