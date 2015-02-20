@@ -40,10 +40,6 @@
 						<product>
 							<id>org.nasdanika.server</id>
 						</product>
-						<product>
-							<id>org.nasdanika.server.win_auth</id>
-							<attachId>win_auth</attachId>
-						</product>
 					</products>
 					<!-- global optional parameters (with default values) -->
 					<installFeatures>true</installFeatures>

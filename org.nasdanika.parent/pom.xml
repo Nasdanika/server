@@ -124,9 +124,6 @@
 		<module>../org.nasdanika.workspace.wizard</module>
 		<module>../org.nasdanika.workspace.wizard.feature</module>
 		
-		<module>../org.nasdanika.waffle</module>
-		<module>../org.nasdanika.waffle.feature</module>
-		
 		<module>../org.nasdanika.cdo.security</module>
 		<module>../org.nasdanika.cdo.security.edit</module>
 		<module>../org.nasdanika.cdo.security.editor</module>
