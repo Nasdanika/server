@@ -4,11 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.json.JSONObject;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 
@@ -79,6 +81,29 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ESt
 			}
 		}
 		return ret;
+	}
+	
+	@Override
+	protected String generateDataEntry() throws Exception {
+		JSONObject ret = new JSONObject();
+		for (EAttribute attr: eClass.getEAllAttributes()) {
+			EAnnotation ann = attr.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
+			if (ann!=null) { 
+				EMap<String, String> details = ann.getDetails();
+				if (details.containsKey(PRIVATE_KEY) && TRUE_LITERAL.equalsIgnoreCase(details.get(PRIVATE_KEY))) {
+					continue;
+				}
+				if (details.containsKey(DEFAULT_VALUE_KEY)) {
+					ret.put(attr.getName(), details.get(DEFAULT_VALUE_KEY));
+					continue;
+				}
+			}
+			Object dv = attr.getDefaultValue();
+			if (dv!=null) {
+				ret.put(attr.getName(), dv);
+			}
+		}
+		return ret.toString();
 	}
 	
 }

@@ -79,8 +79,9 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 	/**
 	 * Generates model object with asynchronous validation function.
 	 * @return
+	 * @throws Exception 
 	 */
-	public String generateModel() {
+	public String generateModel() throws Exception {
 		StringBuilder sb = new StringBuilder();
 		Iterator<String> eit = generateModelEntries().iterator();
 		while (eit.hasNext()) {
@@ -93,9 +94,9 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 		return sb.toString();
 	}
 	
-	protected List<String> generateModelEntries() {
+	protected List<String> generateModelEntries() throws Exception {
 		List<String> ret = new ArrayList<String>();
-		ret.add("data: {}");
+		ret.add("data: "+generateDataEntry());
 		ret.add("validationResults: {}");
 		StringBuilder sb = new StringBuilder("validate: function() {");
 		sb.append("return Q.all([");
@@ -112,6 +113,8 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 		return ret;
 	}
 	
+	protected abstract String generateDataEntry() throws Exception;
+
 	protected abstract List<String> generateValidationEntries();
 	
 	protected String generateValidationEntry(String value, String validator, String target) {

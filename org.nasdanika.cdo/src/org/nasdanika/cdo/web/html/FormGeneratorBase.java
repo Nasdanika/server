@@ -28,6 +28,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 	public static final String ATTRIBUTE_PREFIX = "attribute:";
 	public static final String STYLE_PREFIX = "style:";
 	public static final String PRIVATE_KEY = "private";
+	public static final String DEFAULT_VALUE_KEY = "default";
 
 	public static final String FORM_CONTROL_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.html.form-control";
 	public static final String FORM_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.html.form";
@@ -175,7 +176,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 		}
 	}
 
-	protected InputType getInputType( T element) {
+	protected InputType getInputType(T element) {
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 		if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(INPUT_TYPE_KEY)) {
 			return InputType.valueOf(formControlAnnotation.getDetails().get(INPUT_TYPE_KEY).trim());

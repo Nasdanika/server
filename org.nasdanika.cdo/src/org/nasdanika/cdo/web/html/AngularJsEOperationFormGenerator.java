@@ -5,9 +5,11 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
+import org.json.JSONObject;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 
@@ -54,7 +56,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 			ret.add(generateValidationEntry("this.data", formAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResult"));
 		}
 		EList<EParameter> eParameters = eOperation.getEParameters();
-		for (EParameter prm: eParameters.subList(1, eParameters.size())) {			
+		for (EParameter prm: eParameters.subList(1, eParameters.size())) {
 			EAnnotation formControlAnnotation = prm.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 			if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
 				ret.add(generateValidationEntry("this.data."+prm.getName(), formControlAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResults."+prm.getName()));
@@ -64,7 +66,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 	}
 	
 	@Override
-	protected List<String> generateModelEntries() {
+	protected List<String> generateModelEntries() throws Exception {
 		List<String> ret = super.generateModelEntries();
 		StringBuilder applyBuilder = new StringBuilder("apply: function(target) {");
 		applyBuilder.append("if (typeof target === 'object' && typeof target.opName === 'function') { target = target.opName; } ");
@@ -85,7 +87,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 				"    return this.validate().then(function(isValid) { " + 
 				"        if (isValid) { " + 
 				"            return this.apply(target).then(undefined, function(reason) { " + 
-				"                return { applyError: reason }; " + 
+				"                return { targetInvocationError: reason }; " + 
 				"            }); " + 
 				"        } " + 
 				"        throw { validationFailed: true }; " + 
@@ -93,4 +95,25 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 				"}"); 
 		return ret;
 	}
+		
+	@Override
+	protected String generateDataEntry() throws Exception {
+		JSONObject ret = new JSONObject();
+		EList<EParameter> eParameters = eOperation.getEParameters();
+		for (EParameter prm: eParameters.subList(1, eParameters.size())) {
+			EAnnotation ann = prm.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
+			if (ann!=null) { 
+				EMap<String, String> details = ann.getDetails();
+				if (details.containsKey(PRIVATE_KEY) && TRUE_LITERAL.equalsIgnoreCase(details.get(PRIVATE_KEY))) {
+					continue;
+				}
+				if (details.containsKey(DEFAULT_VALUE_KEY)) {
+					ret.put(prm.getName(), details.get(DEFAULT_VALUE_KEY));
+					continue;
+				}
+			}
+		}
+		return ret.toString();
+	}
+	
 }
