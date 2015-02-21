@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.web.html;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.ETypedElement;
@@ -79,7 +81,23 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 	 * @return
 	 */
 	public String generateModel() {
-		StringBuilder sb = new StringBuilder("{ data: {}, validationResults: {}, validate: function() {");
+		StringBuilder sb = new StringBuilder();
+		Iterator<String> eit = generateModelEntries().iterator();
+		while (eit.hasNext()) {
+			sb.append(eit.next());
+			if (eit.hasNext()) {
+				sb.append(", ");
+			}
+		}		
+		sb.append("}");
+		return sb.toString();
+	}
+	
+	protected List<String> generateModelEntries() {
+		List<String> ret = new ArrayList<String>();
+		ret.add("data: {}");
+		ret.add("validationResults: {}");
+		StringBuilder sb = new StringBuilder("validate: function() {");
 		sb.append("return Q.all([");
 		List<String> vr = generateValidationEntries();
 		for (int i=0, l=vr.size(); i<l; ++i) {
@@ -88,9 +106,10 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 			}
 			sb.append(vr.get(i));
 		}
-		sb.append("]).then(function(vResults) { return vResults.reduce(function(r1, r2) { return r1 && r2; }, true); });");
-		sb.append("}}");
-		return sb.toString();
+		sb.append("]).then(function(vResults) { return vResults.reduce(function(r1, r2) { return r1 && r2; }, true); });");		
+		sb.append("}");
+		ret.add(sb.toString());
+		return ret;
 	}
 	
 	protected abstract List<String> generateValidationEntries();

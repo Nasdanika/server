@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.web.html;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
@@ -59,6 +60,37 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 				ret.add(generateValidationEntry("this.data."+prm.getName(), formControlAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResults."+prm.getName()));
 			}				
 		}
+		return ret;
+	}
+	
+	@Override
+	protected List<String> generateModelEntries() {
+		List<String> ret = super.generateModelEntries();
+		StringBuilder applyBuilder = new StringBuilder("apply: function(target) {");
+		applyBuilder.append("if (typeof target === 'object' && typeof target.opName === 'function') { target = target.opName; } ");
+		applyBuilder.append("return target(");
+		Iterator<EParameter> pit = eOperation.getEParameters().subList(1, eOperation.getEParameters().size()).iterator();
+		while (pit.hasNext()) {
+			applyBuilder.append("this.data."+pit.next().getName());
+			if (pit.hasNext()) {
+				applyBuilder.append(",");
+			}
+		}		
+		
+		applyBuilder.append(");");
+		applyBuilder.append("}");
+		ret.add(applyBuilder.toString());
+		
+		ret.add("validateAndApply: function(target) { " + 
+				"    return this.validate().then(function(isValid) { " + 
+				"        if (isValid) { " + 
+				"            return this.apply(target).then(undefined, function(reason) { " + 
+				"                return { applyError: reason }; " + 
+				"            }); " + 
+				"        } " + 
+				"        throw { validationFailed: true }; " + 
+				"    }.bind(this)); " + 
+				"}"); 
 		return ret;
 	}
 }
