@@ -2,6 +2,7 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
@@ -75,8 +76,12 @@ public abstract class CDOViewContextProviderComponent<CR, MC extends Context> im
 					
 					if (securityPrincipal!=null) {
 						for (User pdu: getProtectionDomain().getAllUsers()) { // TODO - find(login) to optimize search in large user populations
-							if (pdu instanceof LoginUser && ((LoginUser) pdu).getLogin().equalsIgnoreCase(securityPrincipal.getName())) {  
-								return pdu;
+							if (pdu instanceof LoginUser && ((LoginUser) pdu).getLogin().equalsIgnoreCase(securityPrincipal.getName())) {								
+								if (((LoginUser) pdu).isDisabled() || (pdu instanceof LoginPasswordHashUser && ((LoginPasswordHashUser) pdu).getPasswordHash()!=null)) {
+									break;
+								} else {
+									return pdu;
+								}
 							}
 						}
 					}

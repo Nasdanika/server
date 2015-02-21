@@ -540,7 +540,17 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 		((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
 		Publish publish = getTestClass().getJavaClass().getAnnotation(Publish.class);
 		if (publish!=null) {
-			new TestSession(getTestClass().getJavaClass(), testResults).publish(new URL(publish.url()), publish.securityToken(), publish.publishPerformance(), new IdentityHashMap<Object, String>(), null);
+			String publishURL = publish.url();
+			if (publishURL.trim().length()==0) {
+				publishURL = System.getenv("NASDANIKA_WEBTEST_PUBLISH_URL");
+			}
+			if (publishURL!=null) {
+				String securityToken = publish.securityToken();
+				if (securityToken.trim().length()==0) {
+					securityToken = System.getenv("NASDANIKA_WEBTEST_PUBLISH_SECURITY_TOKEN");
+				}				
+				new TestSession(getTestClass().getJavaClass(), testResults).publish(new URL(publishURL), securityToken, publish.publishPerformance(), new IdentityHashMap<Object, String>(), null);
+			}
 		}
 		if (getTestClass().getJavaClass().getAnnotation(Report.class)!=null) {
 			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();

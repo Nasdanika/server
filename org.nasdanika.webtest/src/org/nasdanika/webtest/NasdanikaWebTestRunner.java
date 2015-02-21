@@ -44,7 +44,17 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 					((ExecutorService) screenshotExecutor).awaitTermination(1, TimeUnit.MINUTES);
 					Publish publish = getTestClass().getAnnotation(Publish.class);
 					if (publish!=null) {
-						new TestSession(getTestClass(), Collections.singleton(this)).publish(new URL(publish.url()), publish.securityToken(), publish.publishPerformance(), new IdentityHashMap<Object, String>(), null);
+						String publishURL = publish.url();
+						if (publishURL.trim().length()==0) {
+							publishURL = System.getenv("NASDANIKA_WEBTEST_PUBLISH_URL");
+						}
+						if (publishURL!=null) {
+							String securityToken = publish.securityToken();
+							if (securityToken.trim().length()==0) {
+								securityToken = System.getenv("NASDANIKA_WEBTEST_PUBLISH_SECURITY_TOKEN");
+							}				
+							new TestSession(getTestClass(), Collections.singleton(this)).publish(new URL(publishURL), securityToken, publish.publishPerformance(), new IdentityHashMap<Object, String>(), null);
+						}						
 					}
 					if (getTestClass().getAnnotation(Report.class)!=null) {
 						new ReportGenerator(getTestClass(), outputDir, idGenerator, Collections.singleton(this)).generate();
