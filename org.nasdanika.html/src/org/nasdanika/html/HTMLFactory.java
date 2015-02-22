@@ -472,4 +472,11 @@ public interface HTMLFactory {
 	 * @return
 	 */
 	Tag spinnerOverlay(FontAwesome.Spinner spinner);
+	
+	/**
+	 * Generates JavaScript code (without script tag) to size the overlay and then display it.
+	 * @param overlaySelector
+	 * @param overlayedSelector
+	 */
+	String showOverlay(String overlaySelector, String overlayedSelector);
 }

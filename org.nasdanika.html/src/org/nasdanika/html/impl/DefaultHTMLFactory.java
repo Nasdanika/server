@@ -26,6 +26,7 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.FontAwesome.Stack;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Style;
 
@@ -508,5 +509,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 				.style("position", "absolute")				
 				.style("align", "center");
 		return overlay(spinnerTag);
+	}
+
+	@Override
+	public String showOverlay(String overlaySelector, String overlaidSelector) {
+		return "(function(overlay, overlaid) { overlay.width(overlaid.width()+2); overlay.height(overlaid.height()+2); overlay.show(); })(jQuery('"+overlaySelector+"'),jQuery('"+overlaidSelector+"'));";		
 	}
 }

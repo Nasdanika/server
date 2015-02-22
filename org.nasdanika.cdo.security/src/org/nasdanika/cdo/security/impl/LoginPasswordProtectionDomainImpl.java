@@ -189,7 +189,7 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 */
 	public LoginPasswordHashUser authenticate(LoginPasswordCredentials credentials) {
 		for (User user: getAllUsers()) {
-			if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled()) {
+			if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled() && ((LoginPasswordHashUser) user).getPasswordHash()!=null) {
 				LoginPasswordHashUser lphUser = (LoginPasswordHashUser) user;
 				try {
 					if (lphUser.getLogin()!=null && lphUser.getLogin().equalsIgnoreCase(credentials.getLogin())) {
