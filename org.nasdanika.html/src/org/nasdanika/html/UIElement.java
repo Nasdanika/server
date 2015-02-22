@@ -398,6 +398,8 @@ public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	 */
 	T attribute(String name, Object value);
 	
+	String getAttribute(String name);
+	
 	/**
 	 * Sets style attribute
 	 * @param name

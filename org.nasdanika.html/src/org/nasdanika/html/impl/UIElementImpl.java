@@ -45,6 +45,12 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		this.factory = factory;
 	}
 	
+	@Override
+	public String getAttribute(String name) {
+		Object av = attributes.get(name);
+		return av==null ? null : av.toString();
+	}
+	
 	/**
 	 * Renders attributes
 	 * @param excluded Attributes to exclude (already rendered by subclass).

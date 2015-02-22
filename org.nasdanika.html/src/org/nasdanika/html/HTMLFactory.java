@@ -478,5 +478,5 @@ public interface HTMLFactory {
 	 * @param overlaySelector
 	 * @param overlayedSelector
 	 */
-	String showOverlay(String overlaySelector, String overlayedSelector);
+	String showOverlay(String overlaySelector, String overlayedSelector, int widthAdjustment, int heightAdjustment);
 }

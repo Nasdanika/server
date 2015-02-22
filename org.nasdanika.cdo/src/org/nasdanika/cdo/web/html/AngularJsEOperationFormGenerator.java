@@ -18,13 +18,10 @@ import org.nasdanika.html.HTMLFactory;
  * @author Pavel
  *
  */
-public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase<EParameter> {
-
-	private EOperation eOperation;
+public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase<EOperation, EParameter> {
 
 	public AngularJsEOperationFormGenerator(EOperation eOperation, String model, String handler) {
-		super(model, handler);
-		this.eOperation = eOperation;
+		super(eOperation, model, handler);
 	}
 
 	/**
@@ -34,7 +31,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 	 * @throws Exception
 	 */
 	protected void populateForm(HTMLFactory htmlFactory, Form form) throws Exception {
-		for (EParameter param: sortParameters(eOperation.getEParameters().subList(1, eOperation.getEParameters().size()))) {
+		for (EParameter param: sortParameters(getSource().getEParameters().subList(1, getSource().getEParameters().size()))) {
 			generateGroup(htmlFactory, form, param);
 		}		
 	}
@@ -51,11 +48,11 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 	@Override
 	protected List<String> generateValidationEntries() {
 		List<String> ret = new ArrayList<>();
-		EAnnotation formAnnotation = eOperation.getEAnnotation(FORM_ANNOTATION_SOURCE);
+		EAnnotation formAnnotation = getSource().getEAnnotation(FORM_ANNOTATION_SOURCE);
 		if (formAnnotation!=null && formAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
 			ret.add(generateValidationEntry("this.data", formAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResult"));
 		}
-		EList<EParameter> eParameters = eOperation.getEParameters();
+		EList<EParameter> eParameters = getSource().getEParameters();
 		for (EParameter prm: eParameters.subList(1, eParameters.size())) {
 			EAnnotation formControlAnnotation = prm.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 			if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
@@ -71,7 +68,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 		StringBuilder applyBuilder = new StringBuilder("apply: function(target) {");
 		applyBuilder.append("if (typeof target === 'object' && typeof target.opName === 'function') { target = target.opName; } ");
 		applyBuilder.append("return target(");
-		Iterator<EParameter> pit = eOperation.getEParameters().subList(1, eOperation.getEParameters().size()).iterator();
+		Iterator<EParameter> pit = getSource().getEParameters().subList(1, getSource().getEParameters().size()).iterator();
 		while (pit.hasNext()) {
 			applyBuilder.append("this.data."+pit.next().getName());
 			if (pit.hasNext()) {
@@ -99,7 +96,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 	@Override
 	protected String generateDataEntry() throws Exception {
 		JSONObject ret = new JSONObject();
-		EList<EParameter> eParameters = eOperation.getEParameters();
+		EList<EParameter> eParameters = getSource().getEParameters();
 		for (EParameter prm: eParameters.subList(1, eParameters.size())) {
 			EAnnotation ann = prm.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 			if (ann!=null) { 

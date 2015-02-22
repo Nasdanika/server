@@ -19,13 +19,10 @@ import org.nasdanika.html.HTMLFactory;
  * @author Pavel
  *
  */
-public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<EStructuralFeature> {
-
-	private EClass eClass;
+public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<EClass, EStructuralFeature> {
 
 	public AngularJsEClassFormGenerator(EClass eClass, String model, String handler) {
-		super(model, handler);
-		this.eClass = eClass;
+		super(eClass, model, handler);
 	}
 	
 	/**
@@ -35,7 +32,7 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ESt
 	 * @throws Exception
 	 */
 	protected void populateForm(HTMLFactory htmlFactory, Form form) throws Exception {
-		for (EStructuralFeature sf: sortFeatures(eClass.getEAllStructuralFeatures())) {
+		for (EStructuralFeature sf: sortFeatures(getSource().getEAllStructuralFeatures())) {
 			generateGroup(htmlFactory, form, sf);
 		}		
 	}
@@ -68,11 +65,11 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ESt
 	@Override
 	protected List<String> generateValidationEntries() {
 		List<String> ret = new ArrayList<>();
-		EAnnotation formAnnotation = eClass.getEAnnotation(FORM_ANNOTATION_SOURCE);
+		EAnnotation formAnnotation = getSource().getEAnnotation(FORM_ANNOTATION_SOURCE);
 		if (formAnnotation!=null && formAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
 			ret.add(generateValidationEntry("this.data", formAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResult"));
 		}
-		for (EStructuralFeature sf: eClass.getEAllStructuralFeatures()) {			
+		for (EStructuralFeature sf: getSource().getEAllStructuralFeatures()) {			
 			if (sf instanceof EAttribute) {
 				EAnnotation formControlAnnotation = sf.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 				if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
@@ -86,7 +83,7 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ESt
 	@Override
 	protected String generateDataEntry() throws Exception {
 		JSONObject ret = new JSONObject();
-		for (EAttribute attr: eClass.getEAllAttributes()) {
+		for (EAttribute attr: getSource().getEAllAttributes()) {
 			EAnnotation ann = attr.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 			if (ann!=null) { 
 				EMap<String, String> details = ann.getDetails();

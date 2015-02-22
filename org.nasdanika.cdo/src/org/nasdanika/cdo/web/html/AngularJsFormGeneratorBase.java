@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
@@ -18,10 +20,19 @@ import org.nasdanika.html.UIElement;
  *
  * @param <T>
  */
-public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extends FormGeneratorBase<T> {
+public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T extends ETypedElement> extends FormGeneratorBase<T> {
 
 	private String model;
 	private String handler;
+	private S source;
+	
+	/**
+	 * Source of generation metadata
+	 * @return
+	 */
+	public S getSource() {
+		return source;
+	}
 
 	/**
 	 * 
@@ -29,7 +40,8 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 	 * which holds validation messages for controls, and validationResult string with form validation result.
 	 * @param handler
 	 */
-	protected AngularJsFormGeneratorBase(String model, String handler) {
+	protected AngularJsFormGeneratorBase(S source, String model, String handler) {
+		this.source = source;
 		this.model = model;
 		this.handler = handler;
 	}
@@ -82,7 +94,7 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 	 * @throws Exception 
 	 */
 	public String generateModel() throws Exception {
-		StringBuilder sb = new StringBuilder();
+		StringBuilder sb = new StringBuilder("{ ");
 		Iterator<String> eit = generateModelEntries().iterator();
 		while (eit.hasNext()) {
 			sb.append(eit.next());
@@ -90,6 +102,12 @@ public abstract class AngularJsFormGeneratorBase<T extends ETypedElement> extend
 				sb.append(", ");
 			}
 		}		
+		
+		EAnnotation formAnnotation = source.getEAnnotation(FORM_ANNOTATION_SOURCE);
+		if (formAnnotation!=null && formAnnotation.getDetails().containsKey(MODEL_KEY)) {
+			sb.append(formAnnotation.getDetails().get(MODEL_KEY));
+		}
+		
 		sb.append("}");
 		return sb.toString();
 	}

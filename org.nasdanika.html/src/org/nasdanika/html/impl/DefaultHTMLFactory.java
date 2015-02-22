@@ -14,6 +14,7 @@ import org.nasdanika.html.Carousel;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.Size;
 import org.nasdanika.html.FontAwesome.Spinner;
+import org.nasdanika.html.FontAwesome.Stack;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
@@ -25,8 +26,6 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.FontAwesome.Stack;
-import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Style;
 
@@ -512,7 +511,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public String showOverlay(String overlaySelector, String overlaidSelector) {
-		return "(function(overlay, overlaid) { overlay.width(overlaid.width()+2); overlay.height(overlaid.height()+2); overlay.show(); })(jQuery('"+overlaySelector+"'),jQuery('"+overlaidSelector+"'));";		
+	public String showOverlay(String overlaySelector, String overlaidSelector, int widthAdjustment, int heightAdjustment) {
+		return "(function(overlay, overlaid) { overlay.width(overlaid.width()+"+widthAdjustment+"); overlay.height(overlaid.height()+"+heightAdjustment+"); overlay.show(); })(jQuery('"+overlaySelector+"'),jQuery('"+overlaidSelector+"'));";		
 	}
 }
