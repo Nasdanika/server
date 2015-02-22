@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: Interfaces for functional programming
-Bundle-SymbolicName: org.nasdanika.function;singleton:=true
-Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: Nasdanika LLC
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.nasdanika.core;bundle-version="0.1.0"
-Export-Package: org.nasdanika.function
