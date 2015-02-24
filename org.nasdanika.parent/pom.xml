@@ -111,7 +111,6 @@
 		<module>../org.nasdanika.thirdparty</module>
 		<module>../org.nasdanika.html</module>
 		<module>../org.nasdanika.core</module>
-		<module>../org.nasdanika.function</module>
 		<module>../org.nasdanika.core.tests</module>
 		<module>../org.nasdanika.web</module>
 		
@@ -133,6 +132,7 @@
 		<module>../org.nasdanika.cdo.h2</module>
 		<module>../org.nasdanika.cdo</module>
 		<!-- <module>../org.nasdanika.cdo.boxing</module>  -->
+		<!-- <module>../org.nasdanika.function</module> -->
 		<!-- <module>../org.nasdanika.cdo.flow</module>  -->
 		<module>../org.nasdanika.equinox.feature</module>
 		<module>../org.nasdanika.cdo.feature</module>
