@@ -501,13 +501,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 
 	@Override
 	public Tag spinnerOverlay(Spinner spinner) {
-		Tag spinnerTag = fontAwesome().spinner(spinner).size(Size.x5).spin().getTarget()
-				.style("top", "50%")
-				.style("left", "50%")
-				.style("transform", "translate(-50%, -50%)")
-				.style("position", "absolute")				
-				.style("align", "center");
-		return overlay(spinnerTag);
+		Tag spinnerTag = fontAwesome().spinner(spinner).size(Size.x5).spin().getTarget();
+		Table table = table().style("height", "100%");
+		table.row().cell(spinnerTag).style("text-align", "center").style("vertical-align", "middle");
+		return overlay(table);
 	}
 
 	@Override

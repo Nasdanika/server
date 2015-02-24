@@ -427,7 +427,6 @@ public class CDOViewRoute implements Route {
 						CDOObject invocationTarget = null;
 						if (jsonRequest.has("deltas")) {
 							JSONObject deltas = jsonRequest.getJSONObject("deltas");
-							@SuppressWarnings("unchecked")
 							Iterator<String> kit = deltas.keys();
 							while (kit.hasNext()) {
 								String path = kit.next();

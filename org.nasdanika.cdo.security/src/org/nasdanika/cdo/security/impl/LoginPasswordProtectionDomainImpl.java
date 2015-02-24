@@ -125,7 +125,7 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOR
+	 * @generated NOT
 	 */
 	public void setPasswordHash(LoginPasswordHashUser lphUser, String password) {
 		try {

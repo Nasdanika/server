@@ -2,10 +2,9 @@ package org.nasdanika.html.impl;
 
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Input;
 import org.nasdanika.html.InputBase;
 
-class InputBaseImpl<T extends InputBase<?>> extends UIElementImpl<T> implements InputBase<T> {
+abstract class InputBaseImpl<T extends InputBase<?>> extends UIElementImpl<T> implements InputBase<T> {
 	
 	InputBaseImpl(HTMLFactory factory) {
 		super(factory);
@@ -68,5 +67,10 @@ class InputBaseImpl<T extends InputBase<?>> extends UIElementImpl<T> implements 
 	@Override
 	public T ngModel(Object expr) {
 		return attribute("ng-model", expr);
+	}
+
+	@Override
+	public T ngRequired(Object expr) {
+		return attribute("ng-required", expr);
 	}
 }

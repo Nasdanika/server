@@ -161,17 +161,21 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 		return "form_control_"+element.getName();
 	}
 
-	protected Object generateLabel(HTMLFactory htmlFactory, T element) {
+	protected Object generateLabel(HTMLFactory htmlFactory, T element) {		
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
+		boolean isRequired = formControlAnnotation!=null 
+				&& formControlAnnotation.getDetails().containsKey(REQUIRED_KEY) 
+				&& TRUE_LITERAL.equals(formControlAnnotation.getDetails().get(REQUIRED_KEY).trim());
+		
 		if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(LABEL_KEY)) {
-			return formControlAnnotation.getDetails().get(LABEL_KEY);
+			return formControlAnnotation.getDetails().get(LABEL_KEY) + (isRequired ? " <span style='color:red'>*</span>" : "");
 		}
 		String[] splitStr = StringUtils.splitByCharacterTypeCamelCase(element.getName());
 		splitStr[0] = StringUtils.capitalize(splitStr[0]);
 		for (int i=1; i<splitStr.length; ++i) {
 			splitStr[i] = splitStr[i].toLowerCase();
 		}
-		return StringUtils.join(splitStr, " ");
+		return StringUtils.join(splitStr, " ") + (isRequired ? " <span style='color:red'>*</span>" : "");
 	}
 
 	protected Object generatePlaceholder(HTMLFactory htmlFactory, T element) {

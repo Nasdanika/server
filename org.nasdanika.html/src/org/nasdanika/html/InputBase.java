@@ -28,4 +28,6 @@ public interface InputBase<T extends InputBase<?>> extends UIElement<T> {
 	 */
 	T ngModel(Object expr);
 	
+	T ngRequired(Object expr);
+	
 }

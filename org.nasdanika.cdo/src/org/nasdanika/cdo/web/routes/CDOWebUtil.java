@@ -151,9 +151,15 @@ public class CDOWebUtil {
 				return json.getBoolean(key);
 			case "double":
 			case "java.lang.Double":
+			case "float":
+			case "java.lang.Float":
 				return json.getDouble(key);
+			case "byte":
+			case "java.lang.Byte":
 			case "int":
 			case "java.lang.Integer":
+			case "short":
+			case "java.lang.Short":
 				return json.getInt(key);
 			case "long":
 			case "java.lang.Long":
@@ -456,7 +462,22 @@ public class CDOWebUtil {
 			}
 			return val;
 		}
-		throw new ServerException("Invalid input: "+json, HttpServletResponse.SC_BAD_REQUEST);
+		return nullValue(valueType); //throw new ServerException("Invalid input: "+json, HttpServletResponse.SC_BAD_REQUEST);
+	}
+
+	public static Object nullValue(Class<?> type) {
+		switch (type.getName()) {
+		case "boolean":
+			return false;
+		case "byte":
+		case "double":
+		case "int":
+		case "float":
+		case "long":
+		case "short":
+			return 0;
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -467,14 +488,14 @@ public class CDOWebUtil {
 		if (result.getClass().isArray()) {
 			JSONArray ret = new JSONArray();
 			for (int i=0, l=Array.getLength(result); i<l; ++i) {
-				ret.put(Array.get(ret, i));
+				ret.put(marshal(context, Array.get(ret, i)));
 			}
 			return ret;
 		}
 		if (result instanceof Collection) {
 			JSONArray ret = new JSONArray();
 			for (Object el: (Collection<?>) result) {
-				ret.put(el);
+				ret.put(marshal(context, el));
 			}
 			return ret;			
 		}

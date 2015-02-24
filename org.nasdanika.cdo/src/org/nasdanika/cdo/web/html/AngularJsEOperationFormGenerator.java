@@ -65,7 +65,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 	@Override
 	protected List<String> generateModelEntries() throws Exception {
 		List<String> ret = super.generateModelEntries();
-		StringBuilder applyBuilder = new StringBuilder("apply: function(target) {");
+		StringBuilder applyBuilder = new StringBuilder("apply: function(target) { ");
 		applyBuilder.append("if (typeof target === 'object' && typeof target.opName === 'function') { target = target.opName; } ");
 		applyBuilder.append("return target(");
 		Iterator<EParameter> pit = getSource().getEParameters().subList(1, getSource().getEParameters().size()).iterator();
@@ -84,7 +84,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 				"    return this.validate().then(function(isValid) { " + 
 				"        if (isValid) { " + 
 				"            return this.apply(target).then(undefined, function(reason) { " + 
-				"                return { targetInvocationError: reason }; " + 
+				"                throw { targetInvocationError: reason }; " + 
 				"            }); " + 
 				"        } " + 
 				"        throw { validationFailed: true }; " + 

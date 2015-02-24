@@ -295,6 +295,7 @@ public class ExtensionManager extends AdapterManager {
 						
 			converter = new Converter<Object, Object, WebContext>() {
 				
+				@SuppressWarnings({ "unchecked", "rawtypes" })
 				@Override
 				public Object convert(Object source, Class<Object> target, WebContext context) throws Exception {
 					if (source == null) {
@@ -311,6 +312,11 @@ public class ExtensionManager extends AdapterManager {
 							}
 						}
 					}
+					
+					if (target.isEnum() && source instanceof String) {						
+						return Enum.valueOf((Class) target, (String) source);
+					}
+
 					// Constructor conversion - last resort
 					for (Constructor<?> c: target.getConstructors()) {
 						if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(source)) {

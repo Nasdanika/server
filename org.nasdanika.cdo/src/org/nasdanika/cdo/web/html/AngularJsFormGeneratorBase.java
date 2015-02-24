@@ -115,6 +115,8 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 	protected List<String> generateModelEntries() throws Exception {
 		List<String> ret = new ArrayList<String>();
 		ret.add("data: "+generateDataEntry());
+		ret.add("createData: function() { return "+generateDataEntry()+"; }");
+		ret.add("clear: function() { this.data = this.createData(); this.validationResults = {}; delete this.validationResult; }");
 		ret.add("validationResults: {}");
 		StringBuilder sb = new StringBuilder("validate: function() {");
 		sb.append("return Q.all([");
@@ -136,6 +138,6 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 	protected abstract List<String> generateValidationEntries();
 	
 	protected String generateValidationEntry(String value, String validator, String target) {
-		return "Q.when("+value+").then(function(value) { "+validator+"}).then(function(validationResult) { "+target+"=validationResult; return !validationResult; }.bind(this))";
+		return "Q.when("+value+").then(function(value) { "+validator+"}.bind(this)).then(function(validationResult) { "+target+"=validationResult; return !validationResult; }.bind(this))";
 	}
 }
