@@ -114,7 +114,7 @@ define(["q", "jquery"], function(Q, jquery) {
 				    	contentType: "text/json",
 				        success: function(response) {
 				        	if (response.hasOwnProperty('error')) {
-				        		reject(response.error);
+				        		reject(unmarshal(response.error, false));
 				        	} else { 
 				        	 	if (response.hasOwnProperty('deltas')) {
 				        	 		var deltaPromises = [];

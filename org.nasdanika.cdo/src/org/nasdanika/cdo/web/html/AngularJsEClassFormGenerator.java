@@ -32,6 +32,7 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ECl
 	 * @throws Exception
 	 */
 	protected void populateForm(HTMLFactory htmlFactory, Form form) throws Exception {
+		super.populateForm(htmlFactory, form);
 		for (EStructuralFeature sf: sortFeatures(getSource().getEAllStructuralFeatures())) {
 			generateGroup(htmlFactory, form, sf);
 		}		

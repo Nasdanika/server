@@ -16,8 +16,10 @@ import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
@@ -42,7 +44,15 @@ public class CDOWebUtil {
 
 	public static final String VALUE_KEY = "value";
 
+	public static final String SERVER_KEY = "server";
+
 	public static final String INITIAL_VALUE_KEY = "initialValue";
+	
+	/**
+	 * Contains details entries with validation code. <code>server</code> details entry contains validation
+	 * code executed on the server side.
+	 */
+	public static final String ANNOTATION_VALIDATOR = "org.nasdanika.cdo.validator";
 	
 	/**
 	 * Operation annotation instructs to render operation as a property getter. Shall be used for operations which take
@@ -174,6 +184,7 @@ public class CDOWebUtil {
 				if (source != null && converted == null) {
 					throw new IllegalArgumentException("Cannot convert " +source + " to "+type);
 				}
+				return converted;
 			}
 		}			
 		return null;
@@ -541,6 +552,11 @@ public class CDOWebUtil {
 			return "write";
 		}
 		return "invoke";
+	}
+	
+	public static String getServerValidator(EModelElement modelElement) {
+		EAnnotation va = modelElement.getEAnnotation(ANNOTATION_VALIDATOR);
+		return va==null ? null : va.getDetails().get(SERVER_KEY);
 	}
 
 }

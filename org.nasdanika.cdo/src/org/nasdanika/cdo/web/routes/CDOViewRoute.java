@@ -39,6 +39,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.cdo.web.routes.CDOWebUtil.DataDefinitionFilter;
 import org.nasdanika.core.Context;
@@ -456,6 +458,7 @@ public class CDOViewRoute implements Route {
 						}
 						
 						final Object[] opResult = { null };
+						final Object[] validationResult = { null };
 						final JSONObject response = new JSONObject();
 						if (jsonRequest.has(OPERATION_KEY)) {
 							if (invocationTarget==null) {
@@ -488,16 +491,51 @@ public class CDOViewRoute implements Route {
 								if (candidate == null) {
 									throw new ServerException("No such authorized operation "+opName+" of "+targetPath, HttpServletResponse.SC_NOT_FOUND);
 								}
-
+								
+								StringBuilder validatorCode = new StringBuilder();
+								
 								EList<EParameter> params = candidate.getEParameters();
 								Class<?>[] pTypes = new Class[params.size()];
 								for (int i=0; i<pTypes.length; ++i) {
-									pTypes[i] = params.get(i).getEType().getInstanceClass();
+									EParameter param = params.get(i);
+									pTypes[i] = param.getEType().getInstanceClass();
+									String pValidator = CDOWebUtil.getServerValidator(param);
+									if (pValidator!=null) {
+										validatorCode.append("var vr_"+param.getName()+" = (function(value) { "+pValidator+" })(data."+param.getName()+"); if (vr_"+param.getName()+") { validationResults."+param.getName()+" = vr_"+param.getName()+"; }"+System.lineSeparator());
+									}
 								}
 								EList<Object> args = new BasicEList<>();
 								args.add(webContext);
 								args.addAll(CDOWebUtil.unmarshal(webContext, opArgs, pTypes, invocationTarget.eClass()));
-								opResult[0] = invocationTarget.eInvoke(candidate, args);
+								String oValidator = CDOWebUtil.getServerValidator(candidate);
+								if (oValidator!=null) {
+									validatorCode.append("validationResult = (function() { "+oValidator+" })();");
+								}
+								if (validatorCode.length()>0) {
+									org.mozilla.javascript.Context scriptContext = org.mozilla.javascript.Context.enter();
+									Scriptable scope = scriptContext.initStandardObjects();
+									ScriptableObject.putProperty(scope, "context", org.mozilla.javascript.Context.javaToJS(webContext, scope));
+									ScriptableObject.putProperty(scope, "invocationTarget", org.mozilla.javascript.Context.javaToJS(invocationTarget, scope));
+									scriptContext.evaluateString(scope, "var data = {}; var validationResults = {}; var validationResult=null;", "defineDataAndValidationResults", 1, null);
+									ScriptableObject data = (ScriptableObject) ScriptableObject.getProperty(scope, "data");
+									for (int i=0; i<params.size(); ++i) {
+										Object pValue = org.mozilla.javascript.Context.javaToJS(args.get(i), scope);
+										ScriptableObject.putProperty(data, params.get(i).getName(), pValue);
+									}
+									scriptContext.evaluateString(scope, validatorCode.toString(), "validator", 1, null);
+									Object vResult = ScriptableObject.getProperty(scope, "validationResult");
+									ScriptableObject validationResults = (ScriptableObject) ScriptableObject.getProperty(scope, "validationResults");
+									if (vResult!=null || !validationResults.isEmpty()) {
+										Map<String, Object> vr = new HashMap<>();
+										vr.put("validationResults", validationResults);
+										vr.put("validationResult", vResult);
+										validationResult[0] = vr;
+									}
+								}
+								
+								if (validationResult[0] == null) {
+									opResult[0] = invocationTarget.eInvoke(candidate, args);
+								}
 							}
 						}
 												
@@ -538,7 +576,9 @@ public class CDOViewRoute implements Route {
 											sde.outDelta(null, rDeltas);
 										}
 										
-										if (opResult[0]!=null) {
+										if (validationResult[0]!=null) {
+											response.put("error", CDOWebUtil.marshal(webContext, validationResult[0])); //Marshaling here so CDOID's are not transient for new object											
+										} else if (opResult[0]!=null) {
 											response.put("result", CDOWebUtil.marshal(webContext, opResult[0])); //Marshaling here so CDOID's are not transient for new objects.
 										}
 

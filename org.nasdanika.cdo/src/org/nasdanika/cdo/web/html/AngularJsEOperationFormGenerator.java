@@ -31,6 +31,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 	 * @throws Exception
 	 */
 	protected void populateForm(HTMLFactory htmlFactory, Form form) throws Exception {
+		super.populateForm(htmlFactory, form);
 		for (EParameter param: sortParameters(getSource().getEParameters().subList(1, getSource().getEParameters().size()))) {
 			generateGroup(htmlFactory, form, param);
 		}		
@@ -66,7 +67,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 	protected List<String> generateModelEntries() throws Exception {
 		List<String> ret = super.generateModelEntries();
 		StringBuilder applyBuilder = new StringBuilder("apply: function(target) { ");
-		applyBuilder.append("if (typeof target === 'object' && typeof target.opName === 'function') { target = target.opName; } ");
+		applyBuilder.append("if (typeof target === 'object' && typeof target."+getSource().getName()+" === 'function') { target = target."+getSource().getName()+"; } ");
 		applyBuilder.append("return target(");
 		Iterator<EParameter> pit = getSource().getEParameters().subList(1, getSource().getEParameters().size()).iterator();
 		while (pit.hasNext()) {
