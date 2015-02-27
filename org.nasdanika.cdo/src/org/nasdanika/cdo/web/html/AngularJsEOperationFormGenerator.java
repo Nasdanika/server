@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.json.JSONObject;
+import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 
@@ -51,7 +52,7 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 		List<String> ret = new ArrayList<>();
 		EAnnotation formAnnotation = getSource().getEAnnotation(FORM_ANNOTATION_SOURCE);
 		if (formAnnotation!=null && formAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
-			ret.add(generateValidationEntry("this.data", formAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResult"));
+			ret.add(generateValidationEntry("this.data", formAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));
 		}
 		EList<EParameter> eParameters = getSource().getEParameters();
 		for (EParameter prm: eParameters.subList(1, eParameters.size())) {
@@ -82,11 +83,15 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 		ret.add(applyBuilder.toString());
 		
 		ret.add("validateAndApply: function(target) { " + 
-				"    return this.validate().then(function(isValid) { " + 
+				"  return this.validate().then(function(isValid) { " + 
 				"        if (isValid) { " + 
-				"            return this.apply(target).then(undefined, function(reason) { " + 
+				"            return this.apply(target).then(undefined, function(reason) { " +
+				"                if (reason.validationFailed) { " +
+				"                    if (reason.validationResults && reason.validationResults.operation) { this.validationResults = reason.validationResults.operation; } " +
+				"                    throw reason; " +
+				"                } " +
 				"                throw { targetInvocationError: reason }; " + 
-				"            }); " + 
+				"            }.bind(this)); " + 
 				"        } " + 
 				"        throw { validationFailed: true }; " + 
 				"    }.bind(this)); " + 

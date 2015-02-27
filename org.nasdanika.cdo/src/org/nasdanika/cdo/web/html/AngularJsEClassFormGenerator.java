@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.json.JSONObject;
+import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 
@@ -68,7 +69,7 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ECl
 		List<String> ret = new ArrayList<>();
 		EAnnotation formAnnotation = getSource().getEAnnotation(FORM_ANNOTATION_SOURCE);
 		if (formAnnotation!=null && formAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
-			ret.add(generateValidationEntry("this.data", formAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResult"));
+			ret.add(generateValidationEntry("this.data", formAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));
 		}
 		for (EStructuralFeature sf: getSource().getEAllStructuralFeatures()) {			
 			if (sf instanceof EAttribute) {

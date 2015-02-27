@@ -115,6 +115,8 @@ define(["q", "jquery"], function(Q, jquery) {
 				        success: function(response) {
 				        	if (response.hasOwnProperty('error')) {
 				        		reject(unmarshal(response.error, false));
+				        	} else if (response.hasOwnProperty('validationResults')) { // TODO - change
+				        		reject({ validationFailed:true, validationResults: unmarshal(response.validationResults, false) });
 				        	} else { 
 				        	 	if (response.hasOwnProperty('deltas')) {
 				        	 		var deltaPromises = [];

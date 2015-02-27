@@ -40,7 +40,7 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 	
 	@Override
 	protected WebContext createSubContext(String[] subPath, Object target) throws Exception {
-		return new CDOTransactionHttpContextImpl<CR>(
+		CDOTransactionHttpContextImpl<CR> subContext = new CDOTransactionHttpContextImpl<CR>(
 				subPath, 
 				target, 
 				getExtensionManager(),
@@ -51,6 +51,8 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 				subContextURL(subPath, true),
 				this, 
 				transactionContext);
+		subContext.getRootObjectsPaths().putAll(getRootObjectsPaths());
+		return subContext;
 	}
 
 	@Override

@@ -1,9 +1,11 @@
 package org.nasdanika.cdo.web.routes;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -23,11 +25,15 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.mozilla.javascript.Context;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.core.ConverterContext;
 import org.nasdanika.core.JSONLoader;
@@ -37,7 +43,11 @@ import org.nasdanika.web.WebContext;
 public class CDOWebUtil {
 	
 	public static final String TYPE_KEY = "$type";
+	
+	public static final String THIS_KEY = "$this";
 
+	public static final String THIS_KEY_KEY = "thisKey";
+	
 	public static final String PATH_KEY = "$path";
 
 	public static final String VERSION_KEY = "$version";
@@ -557,6 +567,95 @@ public class CDOWebUtil {
 	public static String getServerValidator(EModelElement modelElement) {
 		EAnnotation va = modelElement.getEAnnotation(ANNOTATION_VALIDATOR);
 		return va==null ? null : va.getDetails().get(SERVER_KEY);
+	}
+	
+	public static String getThisKey(EModelElement modelElement) {
+		EAnnotation va = modelElement.getEAnnotation(ANNOTATION_VALIDATOR);
+		if (va!=null && va.getDetails().containsKey(THIS_KEY_KEY)) {
+			return va.getDetails().get(THIS_KEY_KEY);
+		}
+		return THIS_KEY;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Map<?,?> validateEOperation(Object context, EOperation operation, EObject invocationTarget, EList<Object> args) {		
+		StringBuilder validatorCode = new StringBuilder();		
+		EList<EParameter> params = operation.getEParameters();
+		for (EParameter param: params) {
+			String pValidator = CDOWebUtil.getServerValidator(param);
+			if (pValidator!=null) {
+				validatorCode.append("var vr_"+param.getName()+" = (function(value) { "+pValidator+" })(data."+param.getName()+"); if (vr_"+param.getName()+") { validationResults."+param.getName()+" = vr_"+param.getName()+"; }"+System.lineSeparator());
+			}
+		}
+		String oValidator = CDOWebUtil.getServerValidator(operation);
+		if (oValidator!=null) {
+			validatorCode.append("var vr_this = (function(value) { "+oValidator+" })(data); if (vr_this) { validationResults['"+getThisKey(operation)+"'] = vr_this; }"+System.lineSeparator());
+		}
+		if (validatorCode.length()>0) {
+			org.mozilla.javascript.Context scriptContext = org.mozilla.javascript.Context.enter();
+			try {
+				Scriptable scope = scriptContext.initStandardObjects();
+				ScriptableObject.putProperty(scope, "context", org.mozilla.javascript.Context.javaToJS(context, scope));
+				ScriptableObject.putProperty(scope, "invocationTarget", org.mozilla.javascript.Context.javaToJS(invocationTarget, scope));
+				scriptContext.evaluateString(scope, "var data = {}; var validationResults = {}; ", "defineDataAndValidationResults", 1, null);
+				ScriptableObject data = (ScriptableObject) ScriptableObject.getProperty(scope, "data");				
+				for (int i=0; i<params.size(); ++i) {
+					Object pValue = org.mozilla.javascript.Context.javaToJS(args.get(i), scope);
+					ScriptableObject.putProperty(data, params.get(i).getName(), pValue);
+				}
+				scriptContext.evaluateString(scope, validatorCode.toString(), "validator", 1, null);
+				Object validationResults = ScriptableObject.getProperty(scope, "validationResults");
+				if (validationResults instanceof Map && !((Map<?,?>) validationResults).isEmpty()) {
+					return new HashMap<>((Map<Object,Object>) validationResults);
+				}
+			} finally {
+				Context.exit();
+			}
+		}
+
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static Map<?,?> validateEObject(Object context, EObject target) {		
+		StringBuilder validatorCode = new StringBuilder();
+		EClass targetClass = target.eClass();
+		EList<EStructuralFeature> features = targetClass.getEAllStructuralFeatures();
+		List<EStructuralFeature> featuresToValidate = new ArrayList<>();
+		for (EStructuralFeature feature: features) {
+			String fValidator = CDOWebUtil.getServerValidator(feature);
+			if (fValidator!=null) {
+				featuresToValidate.add(feature);
+				validatorCode.append("var vr_"+feature.getName()+" = (function(value) { "+fValidator+" })(data."+feature.getName()+"); if (vr_"+feature.getName()+") { validationResults."+feature.getName()+" = vr_"+feature.getName()+"; }"+System.lineSeparator());
+			}
+		}
+		String oValidator = CDOWebUtil.getServerValidator(targetClass);
+		if (oValidator!=null) {
+			validatorCode.append("var vr_this = (function(value) { "+oValidator+" })(target); if (vr_this) { validationResults['"+getThisKey(targetClass)+"'] = vr_this; }"+System.lineSeparator());
+		}
+		if (validatorCode.length()>0) {
+			org.mozilla.javascript.Context scriptContext = org.mozilla.javascript.Context.enter();
+			try {
+				Scriptable scope = scriptContext.initStandardObjects();
+				ScriptableObject.putProperty(scope, "context", org.mozilla.javascript.Context.javaToJS(context, scope));
+				ScriptableObject.putProperty(scope, "target", org.mozilla.javascript.Context.javaToJS(target, scope));
+				scriptContext.evaluateString(scope, "var data = {}; var validationResults = {}; ", "defineDataAndValidationResults", 1, null);
+				ScriptableObject data = (ScriptableObject) ScriptableObject.getProperty(scope, "data");
+				for (EStructuralFeature feature: featuresToValidate) {
+					Object fValue = org.mozilla.javascript.Context.javaToJS(target.eGet(feature), scope);
+					ScriptableObject.putProperty(data, feature.getName(), fValue);
+				}
+				scriptContext.evaluateString(scope, validatorCode.toString(), "validator", 1, null);
+				Object validationResults = ScriptableObject.getProperty(scope, "validationResults");
+				if (validationResults instanceof Map && !((Map<?,?>) validationResults).isEmpty()) {
+					return new HashMap<>((Map<Object,Object>) validationResults);
+				}
+			} finally {
+				Context.exit();
+			}
+		}
+
+		return null;
 	}
 
 }

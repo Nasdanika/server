@@ -7,6 +7,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
@@ -58,7 +59,7 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 	 */
 	@Override
 	protected void populateForm(HTMLFactory htmlFactory, Form form)	throws Exception {
-		form.content(htmlFactory.div().style("color", "red").ngBind(model+".validationResult"));		
+		form.content(htmlFactory.div().style("color", "red").ngBind(model+".validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));		
 	}
 	
 	@Override
@@ -116,7 +117,7 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 		List<String> ret = new ArrayList<String>();
 		ret.add("data: "+generateDataEntry());
 		ret.add("createData: function() { return "+generateDataEntry()+"; }");
-		ret.add("clear: function() { this.data = this.createData(); this.validationResults = {}; delete this.validationResult; }");
+		ret.add("clear: function() { this.data = this.createData(); this.validationResults = {}; }");
 		ret.add("validationResults: {}");
 		StringBuilder sb = new StringBuilder("validate: function() {");
 		sb.append("return Q.all([");
