@@ -1,7 +1,7 @@
 <%@ jet package="org.nasdanika.workspace.wizard.render.app" class="CDOTransactionContextRouteRenderer" skeleton="../Renderer.skeleton" %>
 <?xml version="1.0" encoding="UTF-8"?>
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="<%=wizard.getName()%> Transaction Context Route">
-   <implementation class="org.nasdanika.cdo.web.CDOViewContextAutocloseRouteComponent"/>
+   <implementation class="org.nasdanika.cdo.web.CDOTransactionContextAutocloseRouteComponent"/>
    <property name="pattern" type="String" value="transaction(\..+)?(/.+)?"/>
    <property name="method" type="String" value="*"/>
    <service>
