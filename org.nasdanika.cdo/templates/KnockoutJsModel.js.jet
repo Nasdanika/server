@@ -3,7 +3,7 @@
 	// { name, defaultValueLiteral, validator }
 	java.util.List<String[]> dataMap = (java.util.List<String[]>) args[0];
 %>
-function(applyTarget) {
+function() {
     
     this.observableData = {
     	<% for (int i=1; i<dataMap.size(); ++i) { %>
@@ -74,7 +74,11 @@ function(applyTarget) {
         }
     });
     
-    <%=args[2]%>    
+    <% if (args[1]!=null) { %>
+    	this.loadModel = function(source) {
+    		<%=args[1]%>
+    	};
+    <% } %>    
     
     this.validate = function() {    
 		return Q.all([
@@ -104,14 +108,14 @@ function(applyTarget) {
         });
     };
     
-    this.apply = function() {
-        <%=args[3]%>
+    this.apply = function(applyTarget) {
+        <%=args[2]%>
     }
     
-    this.validateAndApply = function() {
+    this.validateAndApply = function(applyTarget) {
 	    return this.validate().then(function(isValid) {
 	        if (isValid) {
-                return this.apply().then(undefined, function(reason) {
+                return this.apply(applyTarget).then(undefined, function(reason) {
                     if (reason.validationFailed) {
 				        if (reason.validationResults && reason.validationResults.operation) {
                             this.validationResults = reason.validationResults.operation;
@@ -130,5 +134,5 @@ function(applyTarget) {
     }
     
     // Custom declarations
-    <%=args[4]%>
+    <%=args[3]%>
 }

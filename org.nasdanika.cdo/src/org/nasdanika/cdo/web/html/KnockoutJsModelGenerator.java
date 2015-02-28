@@ -13,7 +13,7 @@ public class KnockoutJsModelGenerator implements org.nasdanika.cdo.web.routes.Ge
   }
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
-  protected final String TEXT_1 = "function(applyTarget) {" + NL + "    " + NL + "    this.observableData = {" + NL + "    \t";
+  protected final String TEXT_1 = "function() {" + NL + "    " + NL + "    this.observableData = {" + NL + "    \t";
   protected final String TEXT_2 = NL + "        \t";
   protected final String TEXT_3 = ": ko.observable()";
   protected final String TEXT_4 = ",";
@@ -39,18 +39,19 @@ public class KnockoutJsModelGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_24 = "," + NL + "    \t\tset: this.observableValidationResults.";
   protected final String TEXT_25 = NL + "\t    });";
   protected final String TEXT_26 = NL + "    " + NL + "    Object.defineProperty(this, \"data\", {" + NL + "        get: function() { " + NL + "            return data; " + NL + "        }," + NL + "        set: function(newData) {" + NL + "            for (k in newData) {" + NL + "                if (ko.isObservable(this.observableData[k])) {" + NL + "                    this.observableData[k](newData[k]);" + NL + "                } else {" + NL + "                    this.observableData[k] = newData[k];" + NL + "                }" + NL + "            }" + NL + "        }" + NL + "    });" + NL + "    " + NL + "    Object.defineProperty(this, \"validationResults\", {" + NL + "        get: function() { " + NL + "            return validationResults; " + NL + "        }," + NL + "        set: function(newValidationResults) {" + NL + "            for (k in newValidationResults) {" + NL + "                if (ko.isObservable(this.observableValidationResults[k])) {" + NL + "                    this.observableValidationResults[k](newValidationResults[k]);" + NL + "                } else {" + NL + "                    this.observableValidationResults[k] = newValidationResults[k];" + NL + "                }" + NL + "            }" + NL + "        }" + NL + "    });" + NL + "    ";
-  protected final String TEXT_27 = NL + "    ";
-  protected final String TEXT_28 = "    " + NL + "    " + NL + "    this.validate = function() {    " + NL + "\t\treturn Q.all([" + NL + "\t\t   \t";
-  protected final String TEXT_29 = NL + "\t\t            Q.when(this.observableData.";
-  protected final String TEXT_30 = "()).then(function(value) {" + NL + "\t\t                ";
-  protected final String TEXT_31 = " " + NL + "\t\t            }.bind(this)).then(function(validationResult) {" + NL + "\t\t                this.observableValidationResults.";
-  protected final String TEXT_32 = "(validationResult); " + NL + "\t\t                return !validationResult; " + NL + "\t\t            }.bind(this))\t\t   \t\t\t   \t" + NL + "\t\t   \t";
-  protected final String TEXT_33 = NL + "        ]).then(function(vResults) { " + NL + "            return vResults.reduce(function(r1, r2) { " + NL + "                return r1 && r2; " + NL + "            }, true); " + NL + "        });" + NL + "    };" + NL + "    " + NL + "    this.apply = function() {";
-  protected final String TEXT_34 = NL + "        ";
-  protected final String TEXT_35 = NL + "    }" + NL + "    " + NL + "    this.validateAndApply = function() {" + NL + "\t    return this.validate().then(function(isValid) {" + NL + "\t        if (isValid) {" + NL + "                return this.apply().then(undefined, function(reason) {" + NL + "                    if (reason.validationFailed) {" + NL + "\t\t\t\t        if (reason.validationResults && reason.validationResults.operation) {" + NL + "                            this.validationResults = reason.validationResults.operation;" + NL + "                        } " + NL + "\t\t\t\t        throw reason;" + NL + "\t\t\t\t    }" + NL + "\t\t\t\t    throw { " + NL + "                        targetInvocationError: reason " + NL + "                    };" + NL + "                }.bind(this));" + NL + "            }" + NL + "            throw { " + NL + "                validationFailed: true " + NL + "            };" + NL + "        }.bind(this));        " + NL + "    }" + NL + "    " + NL + "    // Custom declarations";
-  protected final String TEXT_36 = NL + "    ";
-  protected final String TEXT_37 = NL + "}";
-  protected final String TEXT_38 = NL;
+  protected final String TEXT_27 = NL + "    \tthis.loadModel = function(source) {" + NL + "    \t\t";
+  protected final String TEXT_28 = NL + "    \t};";
+  protected final String TEXT_29 = "    " + NL + "    " + NL + "    this.validate = function() {    " + NL + "\t\treturn Q.all([" + NL + "\t\t   \t";
+  protected final String TEXT_30 = NL + "\t\t            Q.when(this.observableData.";
+  protected final String TEXT_31 = "()).then(function(value) {" + NL + "\t\t                ";
+  protected final String TEXT_32 = " " + NL + "\t\t            }.bind(this)).then(function(validationResult) {" + NL + "\t\t                this.observableValidationResults.";
+  protected final String TEXT_33 = "(validationResult); " + NL + "\t\t                return !validationResult; " + NL + "\t\t            }.bind(this))\t\t   \t\t\t   \t" + NL + "\t\t   \t";
+  protected final String TEXT_34 = NL + "        ]).then(function(vResults) { " + NL + "            return vResults.reduce(function(r1, r2) { " + NL + "                return r1 && r2; " + NL + "            }, true); " + NL + "        });" + NL + "    };" + NL + "    " + NL + "    this.apply = function(applyTarget) {";
+  protected final String TEXT_35 = NL + "        ";
+  protected final String TEXT_36 = NL + "    }" + NL + "    " + NL + "    this.validateAndApply = function(applyTarget) {" + NL + "\t    return this.validate().then(function(isValid) {" + NL + "\t        if (isValid) {" + NL + "                return this.apply(applyTarget).then(undefined, function(reason) {" + NL + "                    if (reason.validationFailed) {" + NL + "\t\t\t\t        if (reason.validationResults && reason.validationResults.operation) {" + NL + "                            this.validationResults = reason.validationResults.operation;" + NL + "                        } " + NL + "\t\t\t\t        throw reason;" + NL + "\t\t\t\t    }" + NL + "\t\t\t\t    throw { " + NL + "                        targetInvocationError: reason " + NL + "                    };" + NL + "                }.bind(this));" + NL + "            }" + NL + "            throw { " + NL + "                validationFailed: true " + NL + "            };" + NL + "        }.bind(this));        " + NL + "    }" + NL + "    " + NL + "    // Custom declarations";
+  protected final String TEXT_37 = NL + "    ";
+  protected final String TEXT_38 = NL + "}";
+  protected final String TEXT_39 = NL;
 
 public String generate(Object... args) throws Exception
   {
@@ -112,9 +113,12 @@ public String generate(Object... args) throws Exception
     stringBuffer.append(TEXT_25);
      } 
     stringBuffer.append(TEXT_26);
+     if (args[1]!=null) { 
     stringBuffer.append(TEXT_27);
-    stringBuffer.append(args[2]);
+    stringBuffer.append(args[1]);
     stringBuffer.append(TEXT_28);
+     } 
+    stringBuffer.append(TEXT_29);
      
 		   		boolean hasValidatorEntries = false;
 		   		for (int i=0; i<dataMap.size(); ++i) {
@@ -124,25 +128,25 @@ public String generate(Object... args) throws Exception
 		   				}		   				
 		   				hasValidatorEntries = true;
 		   	
-    stringBuffer.append(TEXT_29);
-    stringBuffer.append(dataMap.get(i)[0]);
     stringBuffer.append(TEXT_30);
-    stringBuffer.append(dataMap.get(i)[2]);
-    stringBuffer.append(TEXT_31);
     stringBuffer.append(dataMap.get(i)[0]);
+    stringBuffer.append(TEXT_31);
+    stringBuffer.append(dataMap.get(i)[2]);
     stringBuffer.append(TEXT_32);
+    stringBuffer.append(dataMap.get(i)[0]);
+    stringBuffer.append(TEXT_33);
      
 		   			}
 		   		} 
 		   	
-    stringBuffer.append(TEXT_33);
     stringBuffer.append(TEXT_34);
-    stringBuffer.append(args[3]);
     stringBuffer.append(TEXT_35);
+    stringBuffer.append(args[2]);
     stringBuffer.append(TEXT_36);
-    stringBuffer.append(args[4]);
     stringBuffer.append(TEXT_37);
+    stringBuffer.append(args[3]);
     stringBuffer.append(TEXT_38);
+    stringBuffer.append(TEXT_39);
     return stringBuffer.toString();
   }
 }

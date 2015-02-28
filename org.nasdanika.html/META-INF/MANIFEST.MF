@@ -8,5 +8,5 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.nasdanika.html,
  org.nasdanika.html.impl
 Bundle-ClassPath: .
-Require-Bundle: org.apache.commons.lang;bundle-version="3.3.2",
- org.json;bundle-version="1.0.0"
+Require-Bundle: org.json;bundle-version="1.0.0",
+ org.apache.commons.lang3;bundle-version="3.3.2"

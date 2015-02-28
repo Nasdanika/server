@@ -53,17 +53,21 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 		return form;
 	}
 	
+	protected String getModelPrefix() {
+		return model==null ? "" : model+".";
+	}
+	
 	/**
 	 * Adds DIV for form validation message.
 	 */
 	@Override
 	protected void populateForm(HTMLFactory htmlFactory, Form form)	throws Exception {
-		form.content(htmlFactory.div("").style("color", "red").koDataBind("text", model+".validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));		
+		form.content(htmlFactory.div("").style("color", "red").koDataBind("text", getModelPrefix()+"validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));		
 	}
 	
 	@Override
 	protected Object generateHelpText(HTMLFactory htmlFactory, T element) {
-		return htmlFactory.span().style("color", "red").koDataBind("text", model+".validationResults."+element.getName());
+		return htmlFactory.span().style("color", "red").koDataBind("text", getModelPrefix()+"validationResults."+element.getName());
 	}
 
 	@Override
@@ -74,7 +78,7 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 			if (!(group instanceof FormInputGroup)) {
 				formGroup.feedback();
 			}
-			formGroup.koDataBind("css", "{ 'has-error' : "+model+".validationResults."+element.getName()+" }");
+			formGroup.koDataBind("css", "{ 'has-error' : "+getModelPrefix()+"validationResults."+element.getName()+" }");
 		}
 	}
 	
@@ -82,9 +86,9 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	protected void configureControl(HTMLFactory htmlFactory, T element,	Object control) {		
 		super.configureControl(htmlFactory, element, control);
 		if (control instanceof InputBase) {
-			((InputBase<?>) control).koDataBind(isCheckbox(element, control) ? "checked" : "value", model+".data."+element.getName());
+			((InputBase<?>) control).koDataBind(isCheckbox(element, control) ? "checked" : "value", getModelPrefix()+"data."+element.getName());
 		} else if (control instanceof UIElement) {
-			((UIElement<?>) control).koDataBind("text", model+".data."+element.getName());
+			((UIElement<?>) control).koDataBind("text", getModelPrefix()+"data."+element.getName());
 		}
 	}
 	
@@ -102,13 +106,13 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 			customDeclarations = formAnnotation.getDetails().get(MODEL_KEY);
 		}
 
-		return MODEL_GENERATOR.generate(generateModelEntries(), model, generateLoadModel(), generateApply(), customDeclarations);
+		return MODEL_GENERATOR.generate(generateModelEntries(), generateLoadModel(), generateApply(), customDeclarations);
 	}
 	
 	protected abstract String generateApply() throws Exception;
 	
 	protected String generateLoadModel() throws Exception {
-		return "";
+		return null;
 	}
 	
 	/**
