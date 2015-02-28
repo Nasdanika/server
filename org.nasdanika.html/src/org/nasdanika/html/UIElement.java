@@ -460,4 +460,14 @@ public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
 	T ngClick(Object expr);
 	
 	FontAwesome<T> fontAwesome();
+	
+	
+	/**
+	 * Adds Knockout JS entry to 'data-bind' attribute.
+	 * @param name
+	 * @param value
+	 * @return
+	 */
+	T koDataBind(String name, Object value);
+	
 }

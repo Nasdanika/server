@@ -7,7 +7,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -27,6 +27,8 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 
 	private static final String STYLE = "style";
 
+	private static final String DATA_BIND = "data-bind";
+	
 	private static final String CLASS = "class";
 	
 	private static final String ID = "id";
@@ -35,9 +37,11 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		return attributes.get(ID);
 	}
 	
-	protected Map<String, Object> attributes = new HashMap<>();
+	protected Map<String, Object> attributes = new LinkedHashMap<>();
 	
-	private Map<String, Object> styles = new HashMap<>();
+	private Map<String, Object> styles = new LinkedHashMap<>();
+	
+	private Map<String, Object> koDataBindEntries = new LinkedHashMap<>();
 
 	protected HTMLFactory factory;
 	
@@ -59,7 +63,10 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 		StringBuilder attributeBuilder = new StringBuilder();
 		
 		for (Entry<String, Object> a: attributes.entrySet()) {
-			if (!STYLE.equals(a.getKey()) && !CLASS.equals(a.getKey()) && !Arrays.asList(excluded).contains(a.getKey())) {
+			if (!DATA_BIND.equals(a.getKey()) 
+					&& !STYLE.equals(a.getKey()) 
+					&& !CLASS.equals(a.getKey()) 
+					&& !Arrays.asList(excluded).contains(a.getKey())) {
 				if (attributeBuilder.length()>0) {
 					attributeBuilder.append(" ");
 				}				
@@ -79,7 +86,7 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 				styleBuilder.append(attributes.get(STYLE));
 			}
 			for (Entry<String, Object> se: styles.entrySet()) {
-				if (styleBuilder.length()>0 && !styleBuilder.toString().endsWith(";")) {
+				if (styleBuilder.length()>0 && !styleBuilder.toString().trim().endsWith(";")) {
 					styleBuilder.append(";");
 				}
 				styleBuilder.append(se.getKey()+":"+se.getValue());
@@ -89,6 +96,25 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 					attributeBuilder.append(" ");
 				}
 				attributeBuilder.append(STYLE+"=\""+styleBuilder+"\"");				
+			}
+		}
+		
+		if (!Arrays.asList(excluded).contains(DATA_BIND)) {
+			StringBuilder dataBindBuilder = new StringBuilder();
+			if (attributes.containsKey(DATA_BIND)) {
+				dataBindBuilder.append(attributes.get(DATA_BIND));
+			}
+			for (Entry<String, Object> se: koDataBindEntries.entrySet()) {
+				if (dataBindBuilder.length()>0 && !dataBindBuilder.toString().trim().endsWith(",")) {
+					dataBindBuilder.append(",");
+				}
+				dataBindBuilder.append(se.getKey()+":"+se.getValue());
+			}
+			if (dataBindBuilder.length()>0) {
+				if (attributeBuilder.length()>0) {
+					attributeBuilder.append(" ");
+				}
+				attributeBuilder.append(DATA_BIND+"=\""+dataBindBuilder+"\"");				
 			}
 		}
 		
@@ -355,4 +381,16 @@ public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement
 	public FontAwesome<T> fontAwesome() {
 		return new FontAwesomeImpl<T>((T) this);
 	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public T koDataBind(String name, Object value) {
+		if (value==null) {
+			koDataBindEntries.remove(name);
+		} else {
+			koDataBindEntries.put(name, value);
+		}
+		return (T) this;
+	}
+	
 }
