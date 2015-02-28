@@ -101,7 +101,7 @@ public class KnockoutJsEClassFormGenerator extends KnockoutJsFormGeneratorBase<E
 						continue;
 					}
 				}
-				applyBuilder.append("Q.when(applyTarget."+sf.getName()+").then(this.observableData."+sf.getName()+");"+System.lineSeparator());
+				applyBuilder.append("if (applyTarget.hasOwnProperty('"+sf.getName()+"') && ko.isObservable(this.observableData."+sf.getName()+")) { Q.when(applyTarget."+sf.getName()+").then(this.observableData."+sf.getName()+"); }"+System.lineSeparator());
 			}
 		}
 		return applyBuilder.toString();
