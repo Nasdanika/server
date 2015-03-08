@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.cdo.boxing/src" modelPluginID="org.nasdanika.cdo.boxing"
+    modelName="Boxing" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
+    reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
+    complianceLevel="7.0" copyrightFields="false" operationReflection="true" importOrganizing="true">
+  <foreignModel>boxing.ecore</foreignModel>
+  <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
+  <genPackages prefix="Boxing" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
+      ecorePackage="boxing.ecore#/">
+    <genDataTypes ecoreDataType="boxing.ecore#//Context"/>
+    <genDataTypes ecoreDataType="boxing.ecore#//Collection">
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//Collection/T"/>
+    </genDataTypes>
+    <genDataTypes ecoreDataType="boxing.ecore#//ConverterContext"/>
+    <genDataTypes ecoreDataType="boxing.ecore#//InputStream"/>
+    <genDataTypes ecoreDataType="boxing.ecore#//Reader"/>
+    <genDataTypes ecoreDataType="boxing.ecore#//Serializable"/>
+    <genDataTypes ecoreDataType="boxing.ecore#//JSONArray"/>
+    <genDataTypes ecoreDataType="boxing.ecore#//JSONObject"/>
+    <genClasses image="false" ecoreClass="boxing.ecore#//Box">
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//Box/T"/>
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//Box/C"/>
+      <genOperations ecoreOperation="boxing.ecore#//Box/get">
+        <genParameters ecoreParameter="boxing.ecore#//Box/get/context"/>
+      </genOperations>
+      <genOperations ecoreOperation="boxing.ecore#//Box/set">
+        <genParameters ecoreParameter="boxing.ecore#//Box/set/value"/>
+        <genParameters ecoreParameter="boxing.ecore#//Box/set/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//BigDecimalBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//BigDecimalBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//BigIntegerBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//BigIntegerBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//BooleanBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//BooleanBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ByteBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ByteBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ByteArrayBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ByteArrayBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//CharacterBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//CharacterBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//DateBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//DateBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//DoubleBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//DoubleBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//FloatBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//FloatBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//IntegerBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//IntegerBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//LongBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//LongBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ShortBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ShortBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//StringBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//StringBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//CollectionBox">
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//CollectionBox/T"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference boxing.ecore#//CollectionBox/elements"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//CollectionBox/type"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//MapBox">
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//MapBox/K"/>
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//MapBox/V"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference boxing.ecore#//MapBox/entries"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//MapBox/type"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//MapEntry">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//MapEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//MapEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//StreamBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//StreamBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ReaderBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ReaderBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//SerializableBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//SerializableBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ReferenceBox">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference boxing.ecore#//ReferenceBox/target"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//NullBox"/>
+    <genClasses ecoreClass="boxing.ecore#//EClassifierBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//EClassifierBox/nsURI"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//EClassifierBox/name"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ClassBox">
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//ClassBox/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ClassBox/bundleName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ClassBox/bundleVersion"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ClassBox/className"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ObjectBox">
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//ObjectBox/T"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//ObjectBox/fields"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//ObjectBox/type"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//FieldEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//FieldEntry/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//FieldEntry/declaringClass"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//FieldEntry/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//CharArrayBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//CharArrayBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//DoubleArrayBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//DoubleArrayBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//FloatArrayBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//FloatArrayBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//IntArrayBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//IntArrayBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//LongArrayBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//LongArrayBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ObjectArrayBox">
+      <genTypeParameters ecoreTypeParameter="boxing.ecore#//ObjectArrayBox/T"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//ObjectArrayBox/elementType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//ObjectArrayBox/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//ShortArrayBox">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//ShortArrayBox/value"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//JsonArrayBox">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference boxing.ecore#//JsonArrayBox/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//JsonObjectBox">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//JsonObjectBox/elements"/>
+    </genClasses>
+    <genClasses ecoreClass="boxing.ecore#//StringObjectMapEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute boxing.ecore#//StringObjectMapEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference boxing.ecore#//StringObjectMapEntry/value"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>
