@@ -27,7 +27,7 @@ public class ServiceRoute implements Route {
 	}
 
 	@Override
-	public Action execute(WebContext context) throws Exception {
+	public Action execute(WebContext context, Object... args) throws Exception {
 		if (context.getPath().length>offset+1) {
 			final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 			String filter = "null".equals(context.getPath()[offset+1]) ? null : context.getPath()[offset+1];

@@ -14,7 +14,7 @@ import org.nasdanika.web.WebContext;
 public class MapRoute implements Route {
 
 	@Override
-	public Action execute(WebContext context) throws Exception {
+	public Action execute(WebContext context, Object... args) throws Exception {
 		// TODO - POST and DELETE support
 		if (context.getPath().length>1) {
 			Object val = ((Map<?,?>) context.getTarget()).get(context.getPath()[1]);

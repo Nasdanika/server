@@ -1,4 +1,4 @@
-package org.nasdanika.function;
+package org.nasdanika.promise;
 
 /**
  * A wrapper exception to pass exception reason, if it is not an exception, from handler functions.
@@ -6,7 +6,7 @@ package org.nasdanika.function;
  *
  */
 @SuppressWarnings("serial")
-public class RejectionReasonException extends FunctionException {
+public class RejectionReasonException extends RuntimeException {
 	
 	private Object rejectionReason;
 	

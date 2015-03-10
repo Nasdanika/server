@@ -5,41 +5,43 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.Map;
 
+import org.nasdanika.core.Context;
+
 /**
- * A session for functional programming. A session object shall typically be obtained by adapting a context.
+ * A factory for functional programming. 
  */
-public interface FunctionFactory<C, F extends Function<C>, P extends Promise<C,F,P>> { 
+public interface FunctionFactory<C extends Context> { 
 	
 	ServiceBinding createServiceBinding(String serviceType, String filter);
 		
-	F createServiceMethodFunction(
+	Function<C,Object,Object> createServiceMethodFunction(
 			Class<?> serviceClass, 
 			String filter, 
 			String methodName, 
 			Class<?>... parameterTypes);
 
-	F createServiceMethodFunction(
+	Function<C,Object,Object> createServiceMethodFunction(
 			String serviceClassName, 
 			String filter, 
 			String methodName, 
 			String... parameterTypeNames);
 	
-	F createMethodFunction(
+	Function<C,Object,Object> createMethodFunction(
 			Object target, 
 			String methodName, 
 			Class<?>... parameterTypes);
 	
-	F createJavaScriptFunction(
+	Function<C,Object,Object> createJavaScriptFunction(
 			String code,
 			Map<String, Object> bindings,
 			String[] parameterNames);
 	
-	F createJavaScriptFunction(
+	Function<C,Object,Object> createJavaScriptFunction(
 			Reader code,
 			Map<String, Object> bindings,
 			String[] parameterNames);
 	
-	F createJavaScriptFunction(
+	Function<C,Object,Object> createJavaScriptFunction(
 			InputStream code,
 			Map<String, Object> bindings,
 			String[] parameterNames);
@@ -52,31 +54,31 @@ public interface FunctionFactory<C, F extends Function<C>, P extends Promise<C,F
 	 * @param parameterNames
 	 * @return
 	 */
-	F createJavaScriptFunction(
+	Function<C,Object,Object> createJavaScriptFunction(
 			URL codeURL,
 			boolean preLoad,
 			Map<String, Object> bindings,
 			String[] parameterNames);
 	
-	F createJavaFunction(
+	<R> Function<C,R,Object> createJavaFunction(
 			String code,
 			Class<?>[] parameterTypes,
 			String[] parameterNames,
-			Class<?> returnType,
+			Class<R> returnType,
 			Class<?>[] thrownExceptions);
 	
-	F createJavaFunction(
+	<R> Function<C,R,Object>  createJavaFunction(
 			Reader code,
 			Class<?>[] parameterTypes,
 			String[] parameterNames,
-			Class<?> returnType,
+			Class<R> returnType,
 			Class<?>[] thrownExceptions);
 	
-	F createJavaFunction(
+	<R> Function<C,R,Object>  createJavaFunction(
 			InputStream code,
 			Class<?>[] parameterTypes,
 			String[] parameterNames,
-			Class<?> returnType,
+			Class<R> returnType,
 			Class<?>[] thrownExceptions);
 	
 	/**
@@ -89,15 +91,13 @@ public interface FunctionFactory<C, F extends Function<C>, P extends Promise<C,F
 	 * @param thrownExceptions
 	 * @return
 	 */
-	F createJavaFunction(
+	<R> Function<C,R,Object>  createJavaFunction(
 			URL codeURL,
 			boolean preLoad,
 			Class<?>[] parameterTypes,
 			String[] parameterNames,
-			Class<?> returnType,
+			Class<R> returnType,
 			Class<?>[] thrownExceptions);
-		
-	Deferred<C,F,P> defer();
 		
 	/**
 	 * Creates a special value indicating that argument shall be 
@@ -105,28 +105,5 @@ public interface FunctionFactory<C, F extends Function<C>, P extends Promise<C,F
 	 * @return
 	 */
 	Object createContextArgument();
-		
-//	/**
-//	 * Creates a new function from the function. The new function accepts either
-//	 * values or promises as arguments and returns a promise which is fulfilled/rejected
-//	 * by the invocable's return value or thrown exception.
-//	 * @param func
-//	 * @return
-//	 */
-//	Function<C> promised(Function<C> func);
-			
-	/**
-	 * @param promises
-	 * @return A promise fulfilled with an array of fulfillment values of argument promises or rejected with a reason
-	 * of the first rejected argument promise.
-	 */
-	P all(Object... valuesOrPromises);
-	
-	/**
-	 * If valueOrPromise is a value, returns a promise fulfilled with that value, if valueOrPromise is a promise, returns the promise.
-	 * @param valueOrPromise
-	 * @return
-	 */
-	P when(Object valueOrPromise);
 	
 }

@@ -9,7 +9,7 @@ import org.nasdanika.web.WebContext;
 public class HtmlExtensionGetRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 	
 		if (RequestMethod.GET.equals(context.getMethod())) {
 			final String html = context.toHTML(context.getTarget(), null, null);

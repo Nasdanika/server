@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.nasdanika.cdo.scheduler
+Bundle-SymbolicName: org.nasdanika.cdo.scheduler; singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Require-Bundle: org.eclipse.emf.ecore,
+ org.nasdanika.cdo;bundle-version="0.1.0"

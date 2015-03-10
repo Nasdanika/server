@@ -11,7 +11,7 @@ import org.nasdanika.web.WebContext;
 public class CDOViewJsonExtensionRoute implements Route {
 
 	@Override
-	public Action execute(WebContext context) throws Exception {
+	public Action execute(WebContext context, Object... args) throws Exception {
 		CDOView view = (CDOView) context.getTarget();
 		
 		

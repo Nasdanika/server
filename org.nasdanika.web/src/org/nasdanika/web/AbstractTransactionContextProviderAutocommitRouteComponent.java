@@ -11,7 +11,7 @@ import org.nasdanika.core.TransactionContext;
 public abstract class AbstractTransactionContextProviderAutocommitRouteComponent<C extends TransactionContext, MC extends WebContext> extends AbstractContextProviderAutocloseRouteComponent<C, MC> {
 
 	@Override
-	public Action execute(WebContext webContext) throws Exception {
+	public Action execute(WebContext webContext, Object... args) throws Exception {
 		try (MC mergedContext = mergeContexts(webContext, getContextProvider().createContext())) {	
 			try {
 				return route(mergedContext);

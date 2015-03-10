@@ -1,7 +1,11 @@
 package org.nasdanika.cdo;
 
+import java.util.Collection;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.eclipse.emf.cdo.transaction.CDOTransactionHandlerBase;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Principal;
@@ -38,7 +42,15 @@ public abstract class CDOTransactionContextProviderComponent<CR, MC extends Cont
 		this.sessionProvider = null;
 	}	
 	
-	// TODO - transaction handlers and content adapters references & extensions.
+	private Collection<CDOTransactionHandlerBase> transactionHandlers = new CopyOnWriteArrayList<CDOTransactionHandlerBase>();
+	
+	public void addTransactionHandler(CDOTransactionHandlerBase transactionHandler) {
+		transactionHandlers.add(transactionHandler);
+	}
+	
+	public void removeTransactionHandler(CDOTransactionHandlerBase transactionHandler) {
+		transactionHandlers.remove(transactionHandler);
+	}
 
 	@Override
 	public CDOTransactionContext<CR, MC> createContext() {
@@ -48,7 +60,9 @@ public abstract class CDOTransactionContextProviderComponent<CR, MC extends Cont
 				private CDOTransaction transaction = sessionProvider.getSession().openTransaction();
 				
 				{
-					// TODO - transaction.addTransactionHandler(handler);
+					for (CDOTransactionHandlerBase handler: transactionHandlers) {
+						transaction.addTransactionHandler(handler);
+					}
 					// TODO - content adapters
 				}
 				

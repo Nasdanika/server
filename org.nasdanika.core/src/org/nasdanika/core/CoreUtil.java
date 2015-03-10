@@ -3,12 +3,22 @@ package org.nasdanika.core;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.Platform;
+import org.nasdanika.core.ConverterProvider.ConverterDescriptor;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class CoreUtil {
 
@@ -136,6 +146,161 @@ public class CoreUtil {
 			sb.append(pe);
 		}
 		return sb.toString();
+	}
+	
+	public static final String CONVERT_ID = "org.nasdanika.core.convert";			
+	
+	protected static class ConverterServiceEntry<S,T,C extends ConverterContext> implements Converter<S,T,C> {
+	
+		private ServiceTracker<Converter<S,T,C>, Converter<S,T,C>> serviceTracker;		
+		
+		public ConverterServiceEntry(String filter) throws Exception {
+			BundleContext context = FrameworkUtil.getBundle(CoreUtil.class).getBundleContext();
+			if (filter==null || filter.trim().length()==0) {
+				this.serviceTracker = new ServiceTracker<Converter<S,T,C>, Converter<S,T,C>>(context, Converter.class.getName(), null);				
+			} else {
+				filter = "(&(" + Constants.OBJECTCLASS + "=" + Converter.class.getName() + ")"+filter+")";
+				this.serviceTracker = new ServiceTracker<Converter<S,T,C>, Converter<S,T,C>>(context, context.createFilter(filter), null);
+			}
+			this.serviceTracker.open();
+		}
+	
+		@Override
+		public void close() throws Exception {
+			serviceTracker.close();			
+		}
+	
+		@Override
+		public T convert(S source, Class<T> target, C context) throws Exception {
+			// TODO - iterate over the getTracked(), match profiles.
+			for (Object c: serviceTracker.getServices()) {
+				@SuppressWarnings("unchecked")
+				T ret = ((Converter<S,T,C>) c).convert(source, target, context);
+				if (ret!=null) {
+					return ret;
+				}
+			}
+			return null;
+		}
+		
+	}
+		
+	public static <S,T,C extends ConverterContext> Converter<S,T,C> createConverter() throws Exception {
+		class ConverterEntry implements Comparable<ConverterEntry> {
+			
+			public ConverterEntry(Converter<S,T,C> converter) {
+				this.converter = converter;
+			}
+			
+			int priority;
+			
+			Class<?> source;
+			Class<?> target;
+			
+			Converter<S,T,C> converter;
+
+			@Override
+			public int compareTo(ConverterEntry o) {
+				if (source.isAssignableFrom(o.source) && !o.source.isAssignableFrom(source)) {
+					return 1; // o is more specific.
+				}
+				
+				if (o.source.isAssignableFrom(source) && !source.isAssignableFrom(o.source)) {
+					return -1; // this is more specific.
+				}
+				
+				if (o.priority != priority) {
+					return o.priority - priority;
+				}
+				
+				if (target.isAssignableFrom(o.target) && !o.target.isAssignableFrom(target)) {
+					return -1; // o is more specific
+				}
+				
+				if (o.target.isAssignableFrom(target) && !target.isAssignableFrom(o.target)) {
+					return 1; // this is more specific
+				}
+				
+				return 0;
+			}
+			
+		}
+		final List<ConverterEntry> ceList = new ArrayList<>();
+		for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(CONVERT_ID)) {
+			if ("converter".equals(ce.getName())) {					
+				@SuppressWarnings("unchecked")
+				ConverterEntry cEntry = new ConverterEntry((Converter<S,T,C>) injectProperties(ce, ce.createExecutableExtension("class")));
+				
+				String priorityStr = ce.getAttribute("priority");
+				if (!CoreUtil.isBlank(priorityStr)) {
+					cEntry.priority = Integer.parseInt(priorityStr);
+				}
+				
+				IContributor contributor = ce.getContributor();		
+				Bundle bundle = Platform.getBundle(contributor.getName());
+				cEntry.source = (Class<?>) bundle.loadClass(ce.getAttribute("source").trim());
+				cEntry.target = (Class<?>) bundle.loadClass(ce.getAttribute("target").trim());
+				
+				// TODO - match profile, navigate target class hierarchy
+				
+				ceList.add(cEntry);
+			} else if ("converter_provider".equals(ce.getName())) {
+				ConverterProvider cp = (ConverterProvider) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class"));
+				for (ConverterDescriptor<?, ?, ?> cd: cp.getConverterDescriptors()) {
+					@SuppressWarnings("unchecked")
+					ConverterEntry cEntry = new ConverterEntry((Converter<S,T,C>) cd.getConverter());
+					cEntry.priority = cd.getPriority();
+					cEntry.source = cd.getSourceType();
+					cEntry.target = cd.getTargetType();
+					// TODO - match profile.
+					ceList.add(cEntry);
+				}
+			}
+		}
+		
+		Collections.sort(ceList);
+					
+		return new Converter<S,T,C>() {
+			
+			@SuppressWarnings({ "unchecked", "rawtypes" })
+			@Override
+			public T convert(S source, Class<T> target, C context) throws Exception {
+				if (source == null) {
+					return null;
+				}
+				if (target.isInstance(source)) {
+					return (T) source;
+				}
+				for (ConverterEntry ce: ceList) {
+					if (ce.source.isInstance(source) && target.isAssignableFrom(ce.target)) {
+						T ret = ce.converter.convert(source, target, context);
+						if (ret!=null) {
+							return ret;
+						}
+					}
+				}
+				
+				if (target.isEnum() && source instanceof String) {						
+					return (T) Enum.valueOf((Class) target, (String) source);
+				}
+
+				// Constructor conversion - last resort
+				for (Constructor<?> c: target.getConstructors()) {
+					if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(source)) {
+						return (T) c.newInstance(source);
+					}
+				}
+				return null;
+			}
+
+			@Override
+			public void close() throws Exception {
+				for (ConverterEntry ce: ceList) {
+					ce.converter.close();
+				}
+			}
+		};
+		
 	}
 
 }

@@ -12,7 +12,7 @@ import org.osgi.framework.FrameworkUtil;
  * @param <C>
  * @param <R>
  */
-public class InstanceMethodCommand<C extends Context, R> implements Command<C, R> {
+public class InstanceMethodCommand<C extends Context, R> implements Command<C, Object, R> {
 	
 	private Object target;
 	private MethodCommand<C,R> methodCommand;
@@ -45,8 +45,8 @@ public class InstanceMethodCommand<C extends Context, R> implements Command<C, R
 	 * Injects service references, if any. Then invokes method and returns result. 
 	 */
 	@Override
-	public R execute(C context) throws Exception {
-		return methodCommand.execute(context, target);
+	public R execute(C context, Object... args) throws Exception {
+		return methodCommand.execute(context, target, args);
 	}
 	
 	@Override

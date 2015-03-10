@@ -10,7 +10,7 @@ import org.nasdanika.core.Context;
 public abstract class AbstractContextProviderAutocloseRouteComponent<C extends Context, MC extends WebContext> extends AbstractContextProviderRouteComponent<C, MC> {
 
 	@Override
-	public Action execute(WebContext webContext) throws Exception {
+	public Action execute(WebContext webContext, Object... args) throws Exception {
 		try (MC mergedContext = mergeContexts(webContext, getContextProvider().createContext())) {			
 			return route(mergedContext);
 		}			

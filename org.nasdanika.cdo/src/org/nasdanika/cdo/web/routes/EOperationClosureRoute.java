@@ -28,7 +28,7 @@ public class EOperationClosureRoute implements Route {
 	}	
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... arguments) throws Exception {
 		final EOperationClosure<?> eOperationClosure = (EOperationClosure<?>) context.getTarget();		
 		EOperation op = eOperationClosure.getOperation();
 		// TODO - if path length is 1, method is POST and request content type is json -> unmarshal/invoke/marshal 

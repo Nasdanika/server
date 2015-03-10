@@ -1,21 +1,38 @@
-package org.nasdanika.function;
+package org.nasdanika.promise;
 
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.nasdanika.core.Command;
+import org.nasdanika.core.Context;
 
-public interface Promise<C, F extends Function<C>, P extends Promise<C,F,P>> {		
+/**
+ * 
+ * @author Pavel
+ *
+ * @param <C> Context type.
+ * @param <F> Fulfillment type.
+ * @param <R> Rejection type.
+ * @param <N> Notification type.
+ */
+public interface Promise<C extends Context, F, R, N> {		
 	
 	enum State { PENDING, FULFILLED, REJECTED, CANCELLED }
 		
 	/**
-	 * Three functions.
+	 * 
+	 * @param <TF> Fulfillment type of returned promise.
+	 * @param <TR> Rejection type of returned promise.
+	 * @param <TN> Notification type of returned promise.
 	 * @param onFulfill
 	 * @param onReject
 	 * @param onProgress
 	 * @return
 	 */
-	P then(F onFulfill, F onReject, F onProgress);
+	<TF, TR, TN> Promise<C, TF, TR, TN> then(
+			Command<C, ? super F, TF> onFulfill, 
+			Command<C, ? super R, TF> onReject, 
+			Command<C, ? super N, TN> onProgress);
 	
 //	/**
 //	 * Similar to then(), but reports unhandled exceptions.
@@ -34,9 +51,9 @@ public interface Promise<C, F extends Function<C>, P extends Promise<C,F,P>> {
 	
 	State getState();
 	
-	Object getFulfillmentValue();
+	F getFulfillmentValue();
 	
-	Object getRejectionReason();
+	R getRejectionReason();
 	
 	/**
 	 * Returns a promise which is resolved with the same values as this promise, but is rejected
@@ -45,7 +62,7 @@ public interface Promise<C, F extends Function<C>, P extends Promise<C,F,P>> {
 	 * @param timeout
 	 * @param reason
 	 */
-	P timeout(long timeout, TimeUnit timeUnit, Object reason);
+	<TR> Promise<C, F, TR, N> timeout(long timeout, TimeUnit timeUnit, TR reason);
 	
 	/**
 	 * Returns a promise which is resolved with the same values as this promise, but after at least <code>delay</code> time units
@@ -53,6 +70,6 @@ public interface Promise<C, F extends Function<C>, P extends Promise<C,F,P>> {
 	 * @param timeout
 	 * @param reason
 	 */
-	P delay(long timeout, TimeUnit timeUnit);
+	Promise<C, F, R, N> delay(long timeout, TimeUnit timeUnit);
 	
 }

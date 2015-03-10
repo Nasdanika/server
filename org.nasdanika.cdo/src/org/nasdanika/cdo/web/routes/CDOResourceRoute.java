@@ -11,7 +11,7 @@ import org.nasdanika.web.WebContext;
 public class CDOResourceRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 		final CDOResource cdoResource = (CDOResource) context.getTarget();
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {

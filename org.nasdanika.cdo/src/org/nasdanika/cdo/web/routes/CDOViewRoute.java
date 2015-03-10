@@ -357,7 +357,7 @@ public class CDOViewRoute implements Route {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Action execute(final WebContext webContext) throws Exception {
+	public Action execute(final WebContext webContext, Object... arguments) throws Exception {
 		CDOView view = (CDOView) webContext.getTarget();
 		
 		if (webContext.getPath().length==1) { 

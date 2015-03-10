@@ -12,7 +12,7 @@ import org.nasdanika.web.WebContext;
 public class EReferenceClosureRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 		final EReferenceClosure<?> eReferenceClosure = (EReferenceClosure<?>) context.getTarget();
 		
 		// Handle many

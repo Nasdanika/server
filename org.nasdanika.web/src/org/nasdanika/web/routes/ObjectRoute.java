@@ -31,7 +31,7 @@ public class ObjectRoute implements Route {
 	 * EObject route. Has feature, operation, resource, and code sub-routes.
 	 */
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... arguments) throws Exception {
 		final Object target = context.getTarget();
 
 		if (target.getClass().isArray() && context.getPath().length>1) {

@@ -10,7 +10,7 @@ import org.nasdanika.web.WebContext;
 public class CDOResourceFolderHtmlExtensionRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 		CDOView view;
 		if (context instanceof CDOViewContext) {
 			view = ((CDOViewContext<?,?,?>) context).getView();

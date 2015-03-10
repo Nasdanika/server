@@ -10,7 +10,7 @@ import org.nasdanika.web.WebContext;
 public class EPackageRoute implements Route {
 
 	@Override
-	public Action execute(WebContext context) throws Exception {
+	public Action execute(WebContext context, Object... args) throws Exception {
 		final EPackage ePackage = (EPackage) context.getTarget();
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {

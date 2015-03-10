@@ -2,7 +2,7 @@ package org.nasdanika.core;
 
 import java.util.concurrent.Future;
 
-public interface CommandExecutor<R, CMD extends Command<?,R>> {
+public interface CommandExecutor<C extends Context, T, R, CMD extends Command<C,T,R>> {
 
 	Future<R> execute(CMD command);
 	

@@ -33,7 +33,7 @@ public class MethodCommand<C extends Context, R> extends ParameterReferenceManag
 	 * Injects service references, if any. Then invokes method and returns result.
 	 */
 	@SuppressWarnings("unchecked")
-	public R execute(C context, Object target) throws Exception {
+	public R execute(C context, Object target, Object[] arguments) throws Exception {
 		if (target!=null && !method.getDeclaringClass().isInstance(target)) {
 			throw new IllegalArgumentException("Invalid target: "+method.getDeclaringClass().getName() +" is not assignable from "+target.getClass().getName());
 		}
@@ -47,6 +47,11 @@ public class MethodCommand<C extends Context, R> extends ParameterReferenceManag
 			}
 		}
 		injectServiceReferences(args);
+		for (int i=0,j=0; i<args.length; ++i) {
+			if (args[i]==null && j<arguments.length) {
+				args[i] = arguments[j++];
+			}
+		}
 		return (R) method.invoke(target, args);
 	}
 

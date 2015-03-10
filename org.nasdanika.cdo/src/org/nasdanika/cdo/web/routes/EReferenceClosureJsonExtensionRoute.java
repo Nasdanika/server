@@ -15,7 +15,7 @@ import org.nasdanika.web.WebContext;
 public class EReferenceClosureJsonExtensionRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 		@SuppressWarnings("unchecked")
 		EReferenceClosure<CDOObject> refClosure = (EReferenceClosure<CDOObject>) context.getTarget();
 		

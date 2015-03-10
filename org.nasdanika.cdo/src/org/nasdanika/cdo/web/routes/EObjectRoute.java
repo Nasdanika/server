@@ -18,7 +18,7 @@ public class EObjectRoute extends ObjectRoute {
 	 * EObject route. Has feature, operation, resource, and code sub-routes.
 	 */
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 		final EObject eObject = (EObject) context.getTarget();
 										
 		if (context.getPath().length>=2 && ("container".equals(context.getPath()[1]) || context.getPath()[1].startsWith("container.")) ) {

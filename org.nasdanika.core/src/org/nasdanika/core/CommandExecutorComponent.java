@@ -7,7 +7,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class CommandExecutorComponent<CX extends Context, R, CMD extends Command<CX,R>> implements CommandExecutor<R, CMD> {
+public class CommandExecutorComponent<CX extends Context, T, R, CMD extends Command<CX,T,R>> implements CommandExecutor<CX, T, R, CMD> {
 
 	private ExecutorService executorService;
 	private ContextProvider<CX> contextProvider;
@@ -16,6 +16,7 @@ public class CommandExecutorComponent<CX extends Context, R, CMD extends Command
 	public Future<R> execute(final CMD command) {
 		if (executorService == null) {
 			try (CX ctx = contextProvider.createContext()) {
+				@SuppressWarnings("unchecked")
 				final R result = command.execute(ctx);
 				return new Future<R>() {
 
@@ -77,6 +78,7 @@ public class CommandExecutorComponent<CX extends Context, R, CMD extends Command
 		}
 		executorService.submit(new Callable<R>() {
 
+			@SuppressWarnings("unchecked")
 			@Override
 			public R call() throws Exception {
 				try (CX ctx = contextProvider.createContext()) {

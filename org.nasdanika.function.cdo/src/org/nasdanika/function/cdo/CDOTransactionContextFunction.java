@@ -9,6 +9,6 @@ import org.nasdanika.function.Function;
 /**
  * Binds Function to CDOTransactionContext
  */
-public interface CDOTransactionContextFunction<CR, MC extends Context> extends Function<CDOTransactionContext<CR, MC>> {
+public interface CDOTransactionContextFunction<CR, MC extends Context, T, R> extends Function<CDOTransactionContext<CR, MC>, T, R> {
 	
 } 

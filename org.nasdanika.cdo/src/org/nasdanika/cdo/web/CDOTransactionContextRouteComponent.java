@@ -20,7 +20,7 @@ public class CDOTransactionContextRouteComponent<CR, MC extends Context> impleme
 	}
 
 	@Override
-	public Action execute(WebContext context) throws Exception {
+	public Action execute(WebContext context, Object... args) throws Exception {
 		if (context instanceof HttpContextImpl) {
 			HttpContextImpl httpContext = (HttpContextImpl) context;
 			try (CDOTransactionHttpContextImpl<CR> cdoTransactionContext = new CDOTransactionHttpContextImpl<CR>(

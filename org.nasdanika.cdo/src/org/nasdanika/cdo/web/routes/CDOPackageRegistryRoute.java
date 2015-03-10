@@ -11,7 +11,7 @@ import org.nasdanika.web.Route;
 public class CDOPackageRegistryRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 		final CDOPackageRegistry registry = (CDOPackageRegistry) context.getTarget();
 		if (context.getPath().length==1) {
 			return new Action() {

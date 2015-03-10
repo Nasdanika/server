@@ -17,7 +17,7 @@ import org.nasdanika.web.WebContext;
 public class CDOResourceXMIExportRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 	
 		if (RequestMethod.GET.equals(context.getMethod())) {
 			if (!context.authorize(context.getTarget(), "read", null, null)) {

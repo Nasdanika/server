@@ -11,7 +11,7 @@ import org.nasdanika.web.WebContext;
 public class EAttributeClosureRoute implements Route {
 
 	@Override
-	public Action execute(final WebContext context) throws Exception {
+	public Action execute(final WebContext context, Object... args) throws Exception {
 		final EAttributeClosure<?> eAttributeClosure = (EAttributeClosure<?>) context.getTarget();
 		
 		// Handle many

@@ -1,6 +1,5 @@
 package org.nasdanika.web;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -23,8 +22,6 @@ import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.Converter;
-import org.nasdanika.core.ConverterProvider;
-import org.nasdanika.core.ConverterProvider.ConverterDescriptor;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.InstanceMethodCommand;
 import org.nasdanika.core.MethodCommand;
@@ -159,7 +156,6 @@ public class ExtensionManager extends AdapterManager {
 	public static final String HTML_FACTORY_ID = "org.nasdanika.web.html_factory";			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
 	public static final String OBJECT_PATH_RESOLVER_ID = "org.nasdanika.web.object_path_resolver";			
-	public static final String CONVERT_ID = "org.nasdanika.core.convert";				
 	private static final String SECURITY_ID = "org.nasdanika.core.security";
 	
 	private Converter<Object, Object, WebContext> converter;
@@ -181,158 +177,10 @@ public class ExtensionManager extends AdapterManager {
 		}
 		return ret.toString();
 	}
-	
-	protected static class ConverterServiceEntry implements Converter<Object,Object, WebContext> {
 		
-		private ServiceTracker<Converter<Object, Object, WebContext>, Converter<Object, Object, WebContext>> serviceTracker;		
-		
-		public ConverterServiceEntry(String filter) throws Exception {
-			BundleContext context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
-			if (filter==null || filter.trim().length()==0) {
-				this.serviceTracker = new ServiceTracker<Converter<Object, Object, WebContext>, Converter<Object, Object, WebContext>>(context, Converter.class.getName(), null);				
-			} else {
-				filter = "(&(" + Constants.OBJECTCLASS + "=" + Converter.class.getName() + ")"+filter+")";
-				this.serviceTracker = new ServiceTracker<Converter<Object, Object, WebContext>, Converter<Object, Object, WebContext>>(context, context.createFilter(filter), null);
-			}
-			this.serviceTracker.open();
-		}
-
-		@Override
-		public void close() throws Exception {
-			serviceTracker.close();			
-		}
-
-		@Override
-		public Object convert(Object source, Class<Object> target, WebContext context) throws Exception {
-			// TODO - iterate over the getTracked(), match profiles.
-			for (Object c: serviceTracker.getServices()) {
-				@SuppressWarnings("unchecked")
-				Object ret = ((Converter<Object,Object, WebContext>) c).convert(source, target, context);
-				if (ret!=null) {
-					return ret;
-				}
-			}
-			return null;
-		}
-		
-	}
-	
 	public synchronized Converter<Object, Object, WebContext> getConverter() throws Exception {
 		if (converter==null) {
-			class ConverterEntry implements Comparable<ConverterEntry> {
-				
-				public ConverterEntry(Converter<Object,Object,WebContext> converter) {
-					this.converter = converter;
-				}
-				
-				int priority;
-				
-				Class<?> source;
-				Class<?> target;
-				
-				Converter<Object, Object, WebContext> converter;
-
-				@Override
-				public int compareTo(ConverterEntry o) {
-					if (source.isAssignableFrom(o.source) && !o.source.isAssignableFrom(source)) {
-						return 1; // o is more specific.
-					}
-					
-					if (o.source.isAssignableFrom(source) && !source.isAssignableFrom(o.source)) {
-						return -1; // this is more specific.
-					}
-					
-					if (o.priority != priority) {
-						return o.priority - priority;
-					}
-					
-					if (target.isAssignableFrom(o.target) && !o.target.isAssignableFrom(target)) {
-						return -1; // o is more specific
-					}
-					
-					if (o.target.isAssignableFrom(target) && !target.isAssignableFrom(o.target)) {
-						return 1; // this is more specific
-					}
-					
-					return 0;
-				}
-				
-			}
-			final List<ConverterEntry> ceList = new ArrayList<>();
-			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(CONVERT_ID)) {
-				if ("converter".equals(ce.getName())) {					
-					@SuppressWarnings("unchecked")
-					ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
-					
-					String priorityStr = ce.getAttribute("priority");
-					if (!CoreUtil.isBlank(priorityStr)) {
-						cEntry.priority = Integer.parseInt(priorityStr);
-					}
-					
-					IContributor contributor = ce.getContributor();		
-					Bundle bundle = Platform.getBundle(contributor.getName());
-					cEntry.source = (Class<?>) bundle.loadClass(ce.getAttribute("source").trim());
-					cEntry.target = (Class<?>) bundle.loadClass(ce.getAttribute("target").trim());
-					
-					// TODO - match profile, navigate target class hierarchy
-					
-					ceList.add(cEntry);
-				} else if ("converter_provider".equals(ce.getName())) {
-					ConverterProvider cp = (ConverterProvider) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class"));
-					for (ConverterDescriptor<?, ?, ?> cd: cp.getConverterDescriptors()) {
-						@SuppressWarnings("unchecked")
-						ConverterEntry cEntry = new ConverterEntry((Converter<Object, Object, WebContext>) cd.getConverter());
-						cEntry.priority = cd.getPriority();
-						cEntry.source = cd.getSourceType();
-						cEntry.target = cd.getTargetType();
-						// TODO - match profile.
-						ceList.add(cEntry);
-					}
-				}
-			}
-			
-			Collections.sort(ceList);
-						
-			converter = new Converter<Object, Object, WebContext>() {
-				
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				@Override
-				public Object convert(Object source, Class<Object> target, WebContext context) throws Exception {
-					if (source == null) {
-						return null;
-					}
-					if (target.isInstance(source)) {
-						return source;
-					}
-					for (ConverterEntry ce: ceList) {
-						if (ce.source.isInstance(source) && target.isAssignableFrom(ce.target)) {
-							Object ret = ce.converter.convert(source, target, context);
-							if (ret!=null) {
-								return ret;
-							}
-						}
-					}
-					
-					if (target.isEnum() && source instanceof String) {						
-						return Enum.valueOf((Class) target, (String) source);
-					}
-
-					// Constructor conversion - last resort
-					for (Constructor<?> c: target.getConstructors()) {
-						if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(source)) {
-							return c.newInstance(source);
-						}
-					}
-					return null;
-				}
-
-				@Override
-				public void close() throws Exception {
-					for (ConverterEntry ce: ceList) {
-						ce.converter.close();
-					}
-				}
-			};
+			converter = CoreUtil.createConverter();
 		}
 		
 		return converter;
@@ -407,7 +255,7 @@ public class ExtensionManager extends AdapterManager {
 		}
 		
 		@Override
-		public Action execute(WebContext context) throws Exception {
+		public Action execute(WebContext context, Object... args) throws Exception {
 			Object result = super.execute(context);
 			if (result==null && isVoid) {
 				return Action.NOP;				
@@ -802,7 +650,7 @@ public class ExtensionManager extends AdapterManager {
 					Route route = new Route() {
 						
 						@Override
-						public Action execute(final WebContext context) throws Exception {
+						public Action execute(final WebContext context, Object... args) throws Exception {
 							if (context.getPath().length==1) { // 0?
 								return new Action() {
 									
@@ -902,7 +750,7 @@ public class ExtensionManager extends AdapterManager {
 					final Route route = new Route() {
 						
 						@Override
-						public Action execute(final WebContext context) throws Exception {
+						public Action execute(final WebContext context, Object... args) throws Exception {
 							if (context.getPath().length==1) { // 0?
 								return new Action() {
 									
