@@ -36,8 +36,8 @@
 			<layout>p2</layout>
 		</repository>
 		<repository>
-			<id>third-party</id>
-			<url>http://www.nasdanika.org/third_party_repository</url>
+			<id>maven-osgi</id>
+			<url>http://www.nasdanika.org/maven-osgi</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

@@ -3,7 +3,7 @@
 <?eclipse version="3.4"?>
 <plugin>
    <extension
-         id="<%=wizard.getJavaName()%>TestRunner"
+         id="TestRunner"
          point="org.eclipse.core.runtime.applications">
       <application
             cardinality="singleton-global"
