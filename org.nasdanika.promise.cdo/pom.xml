@@ -8,6 +8,6 @@
   </parent>
   <artifactId>org.nasdanika.promise.cdo</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <name>Function</name>  
+  <name>CDOTransactionContext Promise</name>  
   <description>Bindings of generic promise interfaces to CDOTransactionContext.</description>
 </project>

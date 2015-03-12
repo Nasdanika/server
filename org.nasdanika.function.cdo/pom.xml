@@ -8,6 +8,6 @@
   </parent>
   <artifactId>org.nasdanika.function.cdo</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <name>Function</name>  
+  <name>CDOTransactionContext Function</name>  
   <description>Bindings of generic functional interfaces to CDOTransactionContext.</description>
 </project>

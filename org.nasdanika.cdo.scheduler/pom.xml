@@ -8,6 +8,6 @@
   </parent>
   <artifactId>org.nasdanika.cdo.scheduler</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <name>Function</name>  
+  <name>Scheduler</name>  
   <description>Scheduler which executes tasks in the context of CDOTransaction.</description>
 </project>

@@ -8,6 +8,6 @@
   </parent>
   <artifactId>org.nasdanika.promise</artifactId>
   <packaging>eclipse-plugin</packaging>
-  <name>Function</name>
+  <name>Promise</name>
   <description>Interfaces for asynchronous promise programming.</description>  
 </project>
