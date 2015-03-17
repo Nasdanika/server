@@ -1050,7 +1050,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 	
 	public boolean isApplication() {
-		return projectsPage.btnApplication.getSelection();
+		return projectsPage.btnApplication.getSelection() || projectsPage.btnModel.getSelection();
 	}
 
 	public String getTestsArtifactId() {		
@@ -1378,7 +1378,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	public boolean isIncludeNasdanika() {
-		return true;
+		return isApplication();
 	}
 
 	public boolean isIncludeEquinox() {
