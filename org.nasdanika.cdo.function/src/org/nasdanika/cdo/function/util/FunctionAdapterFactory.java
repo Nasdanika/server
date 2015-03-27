@@ -15,6 +15,7 @@ import org.nasdanika.cdo.function.*;
 
 import org.nasdanika.core.Context;
 
+import org.nasdanika.function.ServiceBinding;
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 
 /**
@@ -90,8 +91,44 @@ public class FunctionAdapterFactory extends AdapterFactoryImpl {
 				return createBoundFunctionAdapter();
 			}
 			@Override
-			public Adapter caseBinding(Map.Entry<Integer, EObject> object) {
-				return createBindingAdapter();
+			public Adapter caseArgumentBinding(Map.Entry<Integer, EObject> object) {
+				return createArgumentBindingAdapter();
+			}
+			@Override
+			public Adapter caseServiceBinding(ServiceBinding object) {
+				return createServiceBindingAdapter();
+			}
+			@Override
+			public Adapter caseCDOServiceBinding(CDOServiceBinding object) {
+				return createCDOServiceBindingAdapter();
+			}
+			@Override
+			public Adapter caseContextArgument(ContextArgument object) {
+				return createContextArgumentAdapter();
+			}
+			@Override
+			public <CR, MC extends Context, T, R> Adapter caseCommandFunction(CommandFunction<CR, MC, T, R> object) {
+				return createCommandFunctionAdapter();
+			}
+			@Override
+			public <CR, MC extends Context, T, R> Adapter caseJavaFunction(JavaFunction<CR, MC, T, R> object) {
+				return createJavaFunctionAdapter();
+			}
+			@Override
+			public Adapter caseScriptBinding(Map.Entry<String, EObject> object) {
+				return createScriptBindingAdapter();
+			}
+			@Override
+			public <CR, MC extends Context, T, R> Adapter caseJavaScriptFunction(JavaScriptFunction<CR, MC, T, R> object) {
+				return createJavaScriptFunctionAdapter();
+			}
+			@Override
+			public <CR, MC extends Context, T, R> Adapter caseObjectMethodFunction(ObjectMethodFunction<CR, MC, T, R> object) {
+				return createObjectMethodFunctionAdapter();
+			}
+			@Override
+			public <CR, MC extends Context, T, R> Adapter caseServiceMethodFunction(ServiceMethodFunction<CR, MC, T, R> object) {
+				return createServiceMethodFunctionAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -170,7 +207,7 @@ public class FunctionAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>Binding</em>}'.
+	 * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>Argument Binding</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -179,7 +216,133 @@ public class FunctionAdapterFactory extends AdapterFactoryImpl {
 	 * @see java.util.Map.Entry
 	 * @generated
 	 */
-	public Adapter createBindingAdapter() {
+	public Adapter createArgumentBindingAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.function.ServiceBinding <em>Service Binding</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.function.ServiceBinding
+	 * @generated
+	 */
+	public Adapter createServiceBindingAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.function.CDOServiceBinding <em>CDO Service Binding</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.function.CDOServiceBinding
+	 * @generated
+	 */
+	public Adapter createCDOServiceBindingAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.function.ContextArgument <em>Context Argument</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.function.ContextArgument
+	 * @generated
+	 */
+	public Adapter createContextArgumentAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.function.CommandFunction <em>Command Function</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.function.CommandFunction
+	 * @generated
+	 */
+	public Adapter createCommandFunctionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.function.JavaFunction <em>Java Function</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.function.JavaFunction
+	 * @generated
+	 */
+	public Adapter createJavaFunctionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link java.util.Map.Entry <em>Script Binding</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see java.util.Map.Entry
+	 * @generated
+	 */
+	public Adapter createScriptBindingAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.function.JavaScriptFunction <em>Java Script Function</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.function.JavaScriptFunction
+	 * @generated
+	 */
+	public Adapter createJavaScriptFunctionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.function.ObjectMethodFunction <em>Object Method Function</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.function.ObjectMethodFunction
+	 * @generated
+	 */
+	public Adapter createObjectMethodFunctionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.function.ServiceMethodFunction <em>Service Method Function</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.function.ServiceMethodFunction
+	 * @generated
+	 */
+	public Adapter createServiceMethodFunctionAdapter() {
 		return null;
 	}
 

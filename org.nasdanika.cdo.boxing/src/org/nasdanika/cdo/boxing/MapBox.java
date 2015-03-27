@@ -3,8 +3,9 @@
 package org.nasdanika.cdo.boxing;
 
 import java.util.Map;
+
 import org.eclipse.emf.common.util.EList;
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,10 +21,10 @@ import org.nasdanika.core.ConverterContext;
  * </p>
  *
  * @see org.nasdanika.cdo.boxing.BoxingPackage#getMapBox()
- * @model superTypes="org.nasdanika.cdo.boxing.Box<org.eclipse.emf.ecore.EMap<K, V>, org.nasdanika.cdo.boxing.ConverterContext>"
+ * @model superTypes="org.nasdanika.cdo.boxing.Box<org.eclipse.emf.ecore.EMap<K, V>, org.nasdanika.cdo.boxing.Context>"
  * @generated
  */
-public interface MapBox<K, V> extends Box<Map<K, V>, ConverterContext> {
+public interface MapBox<K, V> extends Box<Map<K, V>, Context> {
 	/**
 	 * Returns the value of the '<em><b>Entries</b></em>' containment reference list.
 	 * The list contents are of type {@link org.nasdanika.cdo.boxing.MapEntry}.

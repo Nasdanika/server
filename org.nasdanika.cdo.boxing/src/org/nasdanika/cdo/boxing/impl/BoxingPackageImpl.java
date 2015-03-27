@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -56,7 +57,6 @@ import org.nasdanika.cdo.boxing.ShortBox;
 import org.nasdanika.cdo.boxing.StreamBox;
 import org.nasdanika.cdo.boxing.StringBox;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -336,13 +336,6 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType converterContextEDataType = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EDataType inputStreamEDataType = null;
 
 	/**
@@ -477,15 +470,6 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 	 */
 	public EDataType getCollection() {
 		return collectionEDataType;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EDataType getConverterContext() {
-		return converterContextEDataType;
 	}
 
 	/**
@@ -1403,7 +1387,6 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
 		collectionEDataType = createEDataType(COLLECTION);
-		converterContextEDataType = createEDataType(CONVERTER_CONTEXT);
 		inputStreamEDataType = createEDataType(INPUT_STREAM);
 		readerEDataType = createEDataType(READER);
 		serializableEDataType = createEDataType(SERIALIZABLE);
@@ -1533,7 +1516,7 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		g1.getETypeArguments().add(g2);
 		EGenericType g3 = createEGenericType(collectionBoxEClass_T);
 		g2.getETypeArguments().add(g3);
-		g2 = createEGenericType(this.getConverterContext());
+		g2 = createEGenericType(this.getContext());
 		g1.getETypeArguments().add(g2);
 		collectionBoxEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBox());
@@ -1543,7 +1526,7 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		g2.getETypeArguments().add(g3);
 		g3 = createEGenericType(mapBoxEClass_V);
 		g2.getETypeArguments().add(g3);
-		g2 = createEGenericType(this.getConverterContext());
+		g2 = createEGenericType(this.getContext());
 		g1.getETypeArguments().add(g2);
 		mapBoxEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBox());
@@ -1593,7 +1576,7 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		g1 = createEGenericType(this.getBox());
 		g2 = createEGenericType(objectBoxEClass_T);
 		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(this.getConverterContext());
+		g2 = createEGenericType(this.getContext());
 		g1.getETypeArguments().add(g2);
 		objectBoxEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBox());
@@ -1800,7 +1783,6 @@ public class BoxingPackageImpl extends EPackageImpl implements BoxingPackage {
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(collectionEDataType, Collection.class, "Collection", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(converterContextEDataType, ConverterContext.class, "ConverterContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(inputStreamEDataType, InputStream.class, "InputStream", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(readerEDataType, Reader.class, "Reader", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(serializableEDataType, Serializable.class, "Serializable", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

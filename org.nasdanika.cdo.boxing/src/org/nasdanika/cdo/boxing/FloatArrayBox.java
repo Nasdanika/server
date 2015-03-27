@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.boxing;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.nasdanika.core.Context;
 
 /**

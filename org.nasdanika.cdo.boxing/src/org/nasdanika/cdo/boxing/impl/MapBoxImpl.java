@@ -6,20 +6,18 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.boxing.Box;
+import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.BoxingException;
 import org.nasdanika.cdo.boxing.BoxingFactory;
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.boxing.MapBox;
 import org.nasdanika.cdo.boxing.MapEntry;
-import org.nasdanika.cdo.boxing.ReferenceBox;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -99,7 +97,7 @@ public class MapBoxImpl<K, V> extends CDOObjectImpl implements MapBox<K, V> {
 	 * @generated NOT
 	 */
 	@SuppressWarnings("unchecked")
-	public Map<K, V> get(ConverterContext context) {
+	public Map<K, V> get(Context context) {
 		try {
 			Map<K, V> ret = getType().get(context).newInstance();
 			for (MapEntry e: getEntries()) {
@@ -119,50 +117,21 @@ public class MapBoxImpl<K, V> extends CDOObjectImpl implements MapBox<K, V> {
 		}
 	}
 	
-	static <T> CDOObject box(T obj, ConverterContext context) {
-		if (obj instanceof CDOObject) {
-			CDOObject cdoObj = (CDOObject) obj;
-			if (cdoObj.eContainer()==null) {
-				return cdoObj;
-			}
-			
-			ReferenceBox rBox = BoxingFactory.eINSTANCE.createReferenceBox();
-			rBox.setTarget(cdoObj);
-			return rBox;		
-		} 
-		
-		if (obj==null) {
-			return BoxingFactory.eINSTANCE.createNullBox();
-		}
-		
-		try {
-			CDOObject cdoObj = context.convert(obj, CDOObject.class);
-			if (cdoObj==null) {
-				throw new BoxingException("Cannot convert "+obj+" to CDOObject");
-			}
-			return cdoObj;
-		} catch (BoxingException ex) {
-			throw ex;
-		} catch (Exception ex) {
-			throw new BoxingException(ex);
-		}
-	}
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	@SuppressWarnings("unchecked")
-	public void set(Map<K, V> value, ConverterContext context) {
+	public void set(Map<K, V> value, Context context) {
 		getEntries().clear();
 		ClassBox<Map<K,V>> classBox = BoxingFactory.eINSTANCE.createClassBox();
 		classBox.set((Class<Map<K, V>>) value.getClass(), context);
 		setType(classBox);
 		for (Entry<K, V> e: value.entrySet()) {
 			MapEntry me = BoxingFactory.eINSTANCE.createMapEntry();
-			me.setKey(box(e.getKey(), context));
-			me.setValue(box(e.getValue(), context));
+			me.setKey(BoxUtil.box(e.getKey(), context));
+			me.setValue(BoxUtil.box(e.getValue(), context));
 		}		
 	}
 
@@ -176,9 +145,9 @@ public class MapBoxImpl<K, V> extends CDOObjectImpl implements MapBox<K, V> {
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case BoxingPackage.MAP_BOX___GET__CONTEXT:
-				return get((ConverterContext)arguments.get(0));
+				return get((Context)arguments.get(0));
 			case BoxingPackage.MAP_BOX___SET__OBJECT_CONTEXT:
-				set((Map<K, V>)arguments.get(0), (ConverterContext)arguments.get(1));
+				set((Map<K, V>)arguments.get(0), (Context)arguments.get(1));
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.boxing;
 
 import org.eclipse.emf.ecore.EObject;
-
 import org.nasdanika.core.Context;
 
 /**

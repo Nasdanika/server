@@ -3,10 +3,46 @@
 package org.nasdanika.cdo.boxing.util;
 
 import java.util.Map;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
-import org.nasdanika.cdo.boxing.*;
+import org.nasdanika.cdo.boxing.BigDecimalBox;
+import org.nasdanika.cdo.boxing.BigIntegerBox;
+import org.nasdanika.cdo.boxing.BooleanBox;
+import org.nasdanika.cdo.boxing.Box;
+import org.nasdanika.cdo.boxing.BoxingPackage;
+import org.nasdanika.cdo.boxing.ByteArrayBox;
+import org.nasdanika.cdo.boxing.ByteBox;
+import org.nasdanika.cdo.boxing.CharArrayBox;
+import org.nasdanika.cdo.boxing.CharacterBox;
+import org.nasdanika.cdo.boxing.ClassBox;
+import org.nasdanika.cdo.boxing.CollectionBox;
+import org.nasdanika.cdo.boxing.DateBox;
+import org.nasdanika.cdo.boxing.DoubleArrayBox;
+import org.nasdanika.cdo.boxing.DoubleBox;
+import org.nasdanika.cdo.boxing.EClassifierBox;
+import org.nasdanika.cdo.boxing.FieldEntry;
+import org.nasdanika.cdo.boxing.FloatArrayBox;
+import org.nasdanika.cdo.boxing.FloatBox;
+import org.nasdanika.cdo.boxing.IntArrayBox;
+import org.nasdanika.cdo.boxing.IntegerBox;
+import org.nasdanika.cdo.boxing.JsonArrayBox;
+import org.nasdanika.cdo.boxing.JsonObjectBox;
+import org.nasdanika.cdo.boxing.LongArrayBox;
+import org.nasdanika.cdo.boxing.LongBox;
+import org.nasdanika.cdo.boxing.MapBox;
+import org.nasdanika.cdo.boxing.MapEntry;
+import org.nasdanika.cdo.boxing.NullBox;
+import org.nasdanika.cdo.boxing.ObjectArrayBox;
+import org.nasdanika.cdo.boxing.ObjectBox;
+import org.nasdanika.cdo.boxing.ReaderBox;
+import org.nasdanika.cdo.boxing.ReferenceBox;
+import org.nasdanika.cdo.boxing.SerializableBox;
+import org.nasdanika.cdo.boxing.ShortArrayBox;
+import org.nasdanika.cdo.boxing.ShortBox;
+import org.nasdanika.cdo.boxing.StreamBox;
+import org.nasdanika.cdo.boxing.StringBox;
 import org.nasdanika.core.Context;
 
 /**

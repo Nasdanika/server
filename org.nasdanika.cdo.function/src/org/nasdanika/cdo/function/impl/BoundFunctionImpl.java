@@ -126,16 +126,6 @@ public class BoundFunctionImpl<CR, MC extends Context, T, R> extends AbstractFun
 			return targetFunction.execute(context, targetArguments);
 		}
 	}
-
-	@Override
-	public boolean canExecute() {
-		return true;
-	}
-
-	@Override
-	public void close() throws Exception {
-		// NOP		
-	}
 	
 	@Override
 	protected R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception {

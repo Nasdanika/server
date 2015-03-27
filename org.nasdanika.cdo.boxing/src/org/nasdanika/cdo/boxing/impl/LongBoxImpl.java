@@ -5,14 +5,10 @@ package org.nasdanika.cdo.boxing.impl;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.boxing.LongBox;
-
 import org.nasdanika.core.Context;
 
 /**

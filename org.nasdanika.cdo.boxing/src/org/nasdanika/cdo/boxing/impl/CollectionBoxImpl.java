@@ -10,13 +10,13 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.boxing.Box;
+import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.BoxingException;
 import org.nasdanika.cdo.boxing.BoxingFactory;
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.boxing.CollectionBox;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -96,7 +96,7 @@ public class CollectionBoxImpl<T> extends CDOObjectImpl implements CollectionBox
 	 * @generated NOT
 	 */
 	@SuppressWarnings("unchecked")
-	public Collection<T> get(ConverterContext context) {
+	public Collection<T> get(Context context) {
 		try {
 			Collection<T> ret = (Collection<T>) getType().get(context).newInstance();
 			for (Object el: getElements()) {
@@ -117,13 +117,13 @@ public class CollectionBoxImpl<T> extends CDOObjectImpl implements CollectionBox
 	 * @generated NOT
 	 */
 	@SuppressWarnings("unchecked")
-	public void set(Collection<T> value, ConverterContext context) {
+	public void set(Collection<T> value, Context context) {
 		getElements().clear();
 		ClassBox<Object> classBox = BoxingFactory.eINSTANCE.createClassBox();
 		classBox.set((Class<Object>) value.getClass(), context);
 		setType(classBox);
 		for (Object el: value) {
-			getElements().add(MapBoxImpl.box(el, context));
+			getElements().add(BoxUtil.box(el, context));
 		}		
 	}	
 
@@ -137,9 +137,9 @@ public class CollectionBoxImpl<T> extends CDOObjectImpl implements CollectionBox
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case BoxingPackage.COLLECTION_BOX___GET__CONTEXT:
-				return get((ConverterContext)arguments.get(0));
+				return get((Context)arguments.get(0));
 			case BoxingPackage.COLLECTION_BOX___SET__OBJECT_CONTEXT:
-				set((Collection<T>)arguments.get(0), (ConverterContext)arguments.get(1));
+				set((Collection<T>)arguments.get(0), (Context)arguments.get(1));
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

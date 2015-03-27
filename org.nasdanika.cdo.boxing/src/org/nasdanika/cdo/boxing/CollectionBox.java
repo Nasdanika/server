@@ -5,10 +5,8 @@ package org.nasdanika.cdo.boxing;
 import java.util.Collection;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
-
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,10 +22,10 @@ import org.nasdanika.core.ConverterContext;
  * </p>
  *
  * @see org.nasdanika.cdo.boxing.BoxingPackage#getCollectionBox()
- * @model superTypes="org.nasdanika.cdo.boxing.Box<org.nasdanika.cdo.boxing.Collection<T>, org.nasdanika.cdo.boxing.ConverterContext>"
+ * @model superTypes="org.nasdanika.cdo.boxing.Box<org.nasdanika.cdo.boxing.Collection<T>, org.nasdanika.cdo.boxing.Context>"
  * @generated
  */
-public interface CollectionBox<T> extends Box<Collection<T>, ConverterContext> {
+public interface CollectionBox<T> extends Box<Collection<T>, Context> {
 	/**
 	 * Returns the value of the '<em><b>Elements</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.emf.ecore.EObject}.

@@ -4,6 +4,7 @@ package org.nasdanika.cdo.boxing.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;

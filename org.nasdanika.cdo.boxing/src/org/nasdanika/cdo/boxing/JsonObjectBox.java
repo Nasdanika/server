@@ -5,7 +5,7 @@ package org.nasdanika.cdo.boxing;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
 import org.json.JSONObject;
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,7 +23,7 @@ import org.nasdanika.core.ConverterContext;
  * @model superTypes="org.nasdanika.cdo.boxing.Box<org.nasdanika.cdo.boxing.JSONObject, org.nasdanika.cdo.boxing.Context>"
  * @generated
  */
-public interface JsonObjectBox extends Box<JSONObject, ConverterContext> {
+public interface JsonObjectBox extends Box<JSONObject, Context> {
 	/**
 	 * Returns the value of the '<em><b>Elements</b></em>' map.
 	 * The key is of type {@link java.lang.String},

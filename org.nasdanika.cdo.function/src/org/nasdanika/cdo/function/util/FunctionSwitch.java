@@ -13,6 +13,7 @@ import org.nasdanika.cdo.function.*;
 
 import org.nasdanika.core.Context;
 
+import org.nasdanika.function.ServiceBinding;
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 
 /**
@@ -99,9 +100,74 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case FunctionPackage.BINDING: {
-				@SuppressWarnings("unchecked") Map.Entry<Integer, EObject> binding = (Map.Entry<Integer, EObject>)theEObject;
-				T1 result = caseBinding(binding);
+			case FunctionPackage.ARGUMENT_BINDING: {
+				@SuppressWarnings("unchecked") Map.Entry<Integer, EObject> argumentBinding = (Map.Entry<Integer, EObject>)theEObject;
+				T1 result = caseArgumentBinding(argumentBinding);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.SERVICE_BINDING: {
+				ServiceBinding serviceBinding = (ServiceBinding)theEObject;
+				T1 result = caseServiceBinding(serviceBinding);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.CDO_SERVICE_BINDING: {
+				CDOServiceBinding cdoServiceBinding = (CDOServiceBinding)theEObject;
+				T1 result = caseCDOServiceBinding(cdoServiceBinding);
+				if (result == null) result = caseServiceBinding(cdoServiceBinding);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.CONTEXT_ARGUMENT: {
+				ContextArgument contextArgument = (ContextArgument)theEObject;
+				T1 result = caseContextArgument(contextArgument);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.COMMAND_FUNCTION: {
+				CommandFunction<?, ?, ?, ?> commandFunction = (CommandFunction<?, ?, ?, ?>)theEObject;
+				T1 result = caseCommandFunction(commandFunction);
+				if (result == null) result = caseAbstractFunction(commandFunction);
+				if (result == null) result = caseCDOTransactionContextFunction(commandFunction);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.JAVA_FUNCTION: {
+				JavaFunction<?, ?, ?, ?> javaFunction = (JavaFunction<?, ?, ?, ?>)theEObject;
+				T1 result = caseJavaFunction(javaFunction);
+				if (result == null) result = caseAbstractFunction(javaFunction);
+				if (result == null) result = caseCDOTransactionContextFunction(javaFunction);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.SCRIPT_BINDING: {
+				@SuppressWarnings("unchecked") Map.Entry<String, EObject> scriptBinding = (Map.Entry<String, EObject>)theEObject;
+				T1 result = caseScriptBinding(scriptBinding);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.JAVA_SCRIPT_FUNCTION: {
+				JavaScriptFunction<?, ?, ?, ?> javaScriptFunction = (JavaScriptFunction<?, ?, ?, ?>)theEObject;
+				T1 result = caseJavaScriptFunction(javaScriptFunction);
+				if (result == null) result = caseAbstractFunction(javaScriptFunction);
+				if (result == null) result = caseCDOTransactionContextFunction(javaScriptFunction);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.OBJECT_METHOD_FUNCTION: {
+				ObjectMethodFunction<?, ?, ?, ?> objectMethodFunction = (ObjectMethodFunction<?, ?, ?, ?>)theEObject;
+				T1 result = caseObjectMethodFunction(objectMethodFunction);
+				if (result == null) result = caseAbstractFunction(objectMethodFunction);
+				if (result == null) result = caseCDOTransactionContextFunction(objectMethodFunction);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case FunctionPackage.SERVICE_METHOD_FUNCTION: {
+				ServiceMethodFunction<?, ?, ?, ?> serviceMethodFunction = (ServiceMethodFunction<?, ?, ?, ?>)theEObject;
+				T1 result = caseServiceMethodFunction(serviceMethodFunction);
+				if (result == null) result = caseAbstractFunction(serviceMethodFunction);
+				if (result == null) result = caseCDOTransactionContextFunction(serviceMethodFunction);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -170,17 +236,152 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Binding</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Argument Binding</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Binding</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Argument Binding</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseBinding(Map.Entry<Integer, EObject> object) {
+	public T1 caseArgumentBinding(Map.Entry<Integer, EObject> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Service Binding</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Service Binding</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseServiceBinding(ServiceBinding object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>CDO Service Binding</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>CDO Service Binding</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseCDOServiceBinding(CDOServiceBinding object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Context Argument</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Context Argument</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseContextArgument(ContextArgument object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Command Function</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Command Function</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR, MC extends Context, T, R> T1 caseCommandFunction(CommandFunction<CR, MC, T, R> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Java Function</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Java Function</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR, MC extends Context, T, R> T1 caseJavaFunction(JavaFunction<CR, MC, T, R> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Script Binding</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Script Binding</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseScriptBinding(Map.Entry<String, EObject> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Java Script Function</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Java Script Function</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR, MC extends Context, T, R> T1 caseJavaScriptFunction(JavaScriptFunction<CR, MC, T, R> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Object Method Function</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Object Method Function</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR, MC extends Context, T, R> T1 caseObjectMethodFunction(ObjectMethodFunction<CR, MC, T, R> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Service Method Function</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Service Method Function</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR, MC extends Context, T, R> T1 caseServiceMethodFunction(ServiceMethodFunction<CR, MC, T, R> object) {
 		return null;
 	}
 

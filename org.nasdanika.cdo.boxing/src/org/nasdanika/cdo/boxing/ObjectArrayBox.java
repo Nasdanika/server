@@ -4,7 +4,7 @@ package org.nasdanika.cdo.boxing;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,7 +23,7 @@ import org.nasdanika.core.ConverterContext;
  * @model superTypes="org.nasdanika.cdo.boxing.Box<org.eclipse.emf.ecore.EJavaObject, org.nasdanika.cdo.boxing.Context>"
  * @generated
  */
-public interface ObjectArrayBox<T> extends Box<Object, ConverterContext> {
+public interface ObjectArrayBox<T> extends Box<Object, Context> {
 	/**
 	 * Returns the value of the '<em><b>Element Type</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

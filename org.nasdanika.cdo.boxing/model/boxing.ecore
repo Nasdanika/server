@@ -116,7 +116,6 @@
   <eClassifiers xsi:type="ecore:EDataType" name="Collection" instanceClassName="java.util.Collection">
     <eTypeParameters name="T"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="ConverterContext" instanceClassName="org.nasdanika.core.ConverterContext"/>
   <eClassifiers xsi:type="ecore:EClass" name="CollectionBox">
     <eTypeParameters name="T"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="elements" upperBound="-1"
@@ -130,7 +129,7 @@
       <eTypeArguments eClassifier="#//Collection">
         <eTypeArguments eTypeParameter="#//CollectionBox/T"/>
       </eTypeArguments>
-      <eTypeArguments eClassifier="#//ConverterContext"/>
+      <eTypeArguments eClassifier="#//Context"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MapBox">
@@ -151,7 +150,7 @@
         <eTypeArguments eTypeParameter="#//MapBox/K"/>
         <eTypeArguments eTypeParameter="#//MapBox/V"/>
       </eTypeArguments>
-      <eTypeArguments eClassifier="#//ConverterContext"/>
+      <eTypeArguments eClassifier="#//Context"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MapEntry">
@@ -228,7 +227,7 @@
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//Box">
       <eTypeArguments eTypeParameter="#//ObjectBox/T"/>
-      <eTypeArguments eClassifier="#//ConverterContext"/>
+      <eTypeArguments eClassifier="#//Context"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="FieldEntry">
@@ -288,7 +287,7 @@
         eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject" containment="true"/>
     <eGenericSuperTypes eClassifier="#//Box">
       <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-      <eTypeArguments eClassifier="#//ConverterContext"/>
+      <eTypeArguments eClassifier="#//Context"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ShortArrayBox">
@@ -304,7 +303,7 @@
         eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
     <eGenericSuperTypes eClassifier="#//Box">
       <eTypeArguments eClassifier="#//JSONArray"/>
-      <eTypeArguments eClassifier="#//ConverterContext"/>
+      <eTypeArguments eClassifier="#//Context"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="JsonObjectBox">
@@ -312,7 +311,7 @@
         eType="#//StringObjectMapEntry" containment="true"/>
     <eGenericSuperTypes eClassifier="#//Box">
       <eTypeArguments eClassifier="#//JSONObject"/>
-      <eTypeArguments eClassifier="#//ConverterContext"/>
+      <eTypeArguments eClassifier="#//Context"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StringObjectMapEntry" instanceClassName="java.util.Map$Entry">

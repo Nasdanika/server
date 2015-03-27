@@ -4,12 +4,9 @@ package org.nasdanika.cdo.boxing.impl;
 
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EMap;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.boxing.BoxingPackage;
 
 /**

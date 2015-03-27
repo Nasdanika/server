@@ -3,6 +3,7 @@
 package org.nasdanika.cdo.boxing;
 
 import java.io.Serializable;
+
 import org.nasdanika.core.Context;
 
 /**

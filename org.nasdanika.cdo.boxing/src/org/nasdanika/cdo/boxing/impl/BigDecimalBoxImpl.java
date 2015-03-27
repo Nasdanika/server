@@ -7,11 +7,9 @@ import java.math.BigDecimal;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.boxing.BigDecimalBox;
 import org.nasdanika.cdo.boxing.BoxingPackage;
-
 import org.nasdanika.core.Context;
 
 /**

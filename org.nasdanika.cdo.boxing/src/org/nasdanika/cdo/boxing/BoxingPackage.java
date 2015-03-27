@@ -125,16 +125,6 @@ public interface BoxingPackage extends EPackage {
 	int COLLECTION = 37;
 
 	/**
-	 * The meta object id for the '<em>Converter Context</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.core.ConverterContext
-	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getConverterContext()
-	 * @generated
-	 */
-	int CONVERTER_CONTEXT = 38;
-
-	/**
 	 * The meta object id for the '<em>Input Stream</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -142,7 +132,7 @@ public interface BoxingPackage extends EPackage {
 	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getInputStream()
 	 * @generated
 	 */
-	int INPUT_STREAM = 39;
+	int INPUT_STREAM = 38;
 
 	/**
 	 * The meta object id for the '<em>Reader</em>' data type.
@@ -152,7 +142,7 @@ public interface BoxingPackage extends EPackage {
 	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getReader()
 	 * @generated
 	 */
-	int READER = 40;
+	int READER = 39;
 
 	/**
 	 * The meta object id for the '<em>Serializable</em>' data type.
@@ -162,7 +152,7 @@ public interface BoxingPackage extends EPackage {
 	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getSerializable()
 	 * @generated
 	 */
-	int SERIALIZABLE = 41;
+	int SERIALIZABLE = 40;
 
 	/**
 	 * The meta object id for the '<em>JSON Array</em>' data type.
@@ -172,7 +162,7 @@ public interface BoxingPackage extends EPackage {
 	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getJSONArray()
 	 * @generated
 	 */
-	int JSON_ARRAY = 42;
+	int JSON_ARRAY = 41;
 
 	/**
 	 * The meta object id for the '<em>JSON Object</em>' data type.
@@ -182,7 +172,7 @@ public interface BoxingPackage extends EPackage {
 	 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getJSONObject()
 	 * @generated
 	 */
-	int JSON_OBJECT = 43;
+	int JSON_OBJECT = 42;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.boxing.impl.BigDecimalBoxImpl <em>Big Decimal Box</em>}' class.
@@ -2203,17 +2193,6 @@ public interface BoxingPackage extends EPackage {
 	EDataType getCollection();
 
 	/**
-	 * Returns the meta object for data type '{@link org.nasdanika.core.ConverterContext <em>Converter Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Converter Context</em>'.
-	 * @see org.nasdanika.core.ConverterContext
-	 * @model instanceClass="org.nasdanika.core.ConverterContext"
-	 * @generated
-	 */
-	EDataType getConverterContext();
-
-	/**
 	 * Returns the meta object for data type '{@link java.io.InputStream <em>Input Stream</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3183,16 +3162,6 @@ public interface BoxingPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType COLLECTION = eINSTANCE.getCollection();
-
-		/**
-		 * The meta object literal for the '<em>Converter Context</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.core.ConverterContext
-		 * @see org.nasdanika.cdo.boxing.impl.BoxingPackageImpl#getConverterContext()
-		 * @generated
-		 */
-		EDataType CONVERTER_CONTEXT = eINSTANCE.getConverterContext();
 
 		/**
 		 * The meta object literal for the '<em>Input Stream</em>' data type.

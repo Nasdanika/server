@@ -11,11 +11,11 @@ import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.nasdanika.cdo.boxing.Box;
+import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.BoxingException;
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.boxing.JsonArrayBox;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -76,7 +76,7 @@ public class JsonArrayBoxImpl extends CDOObjectImpl implements JsonArrayBox {
 	 * @generated NOT
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONArray get(ConverterContext context) {
+	public JSONArray get(Context context) {
 		JSONArray ret = new JSONArray();
 		for (Object el: getElements()) {
 			if (el instanceof Box) {
@@ -92,11 +92,11 @@ public class JsonArrayBoxImpl extends CDOObjectImpl implements JsonArrayBox {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public void set(JSONArray value, ConverterContext context) {
+	public void set(JSONArray value, Context context) {
 		getElements().clear();
 		for (int i=0; i<value.length(); ++i) {
 			try {
-				getElements().add(MapBoxImpl.box(value.get(i), context));
+				getElements().add(BoxUtil.box(value.get(i), context));
 			} catch (JSONException e) {
 				throw new BoxingException(e);
 			}
@@ -113,9 +113,9 @@ public class JsonArrayBoxImpl extends CDOObjectImpl implements JsonArrayBox {
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case BoxingPackage.JSON_ARRAY_BOX___GET__CONTEXT:
-				return get((ConverterContext)arguments.get(0));
+				return get((Context)arguments.get(0));
 			case BoxingPackage.JSON_ARRAY_BOX___SET__OBJECT_CONTEXT:
-				set((JSONArray)arguments.get(0), (ConverterContext)arguments.get(1));
+				set((JSONArray)arguments.get(0), (Context)arguments.get(1));
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

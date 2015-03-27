@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -15,9 +16,43 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nasdanika.cdo.boxing.*;
+import org.nasdanika.cdo.boxing.BigDecimalBox;
+import org.nasdanika.cdo.boxing.BigIntegerBox;
+import org.nasdanika.cdo.boxing.BooleanBox;
+import org.nasdanika.cdo.boxing.BoxingFactory;
+import org.nasdanika.cdo.boxing.BoxingPackage;
+import org.nasdanika.cdo.boxing.ByteArrayBox;
+import org.nasdanika.cdo.boxing.ByteBox;
+import org.nasdanika.cdo.boxing.CharArrayBox;
+import org.nasdanika.cdo.boxing.CharacterBox;
+import org.nasdanika.cdo.boxing.ClassBox;
+import org.nasdanika.cdo.boxing.CollectionBox;
+import org.nasdanika.cdo.boxing.DateBox;
+import org.nasdanika.cdo.boxing.DoubleArrayBox;
+import org.nasdanika.cdo.boxing.DoubleBox;
+import org.nasdanika.cdo.boxing.EClassifierBox;
+import org.nasdanika.cdo.boxing.FieldEntry;
+import org.nasdanika.cdo.boxing.FloatArrayBox;
+import org.nasdanika.cdo.boxing.FloatBox;
+import org.nasdanika.cdo.boxing.IntArrayBox;
+import org.nasdanika.cdo.boxing.IntegerBox;
+import org.nasdanika.cdo.boxing.JsonArrayBox;
+import org.nasdanika.cdo.boxing.JsonObjectBox;
+import org.nasdanika.cdo.boxing.LongArrayBox;
+import org.nasdanika.cdo.boxing.LongBox;
+import org.nasdanika.cdo.boxing.MapBox;
+import org.nasdanika.cdo.boxing.MapEntry;
+import org.nasdanika.cdo.boxing.NullBox;
+import org.nasdanika.cdo.boxing.ObjectArrayBox;
+import org.nasdanika.cdo.boxing.ObjectBox;
+import org.nasdanika.cdo.boxing.ReaderBox;
+import org.nasdanika.cdo.boxing.ReferenceBox;
+import org.nasdanika.cdo.boxing.SerializableBox;
+import org.nasdanika.cdo.boxing.ShortArrayBox;
+import org.nasdanika.cdo.boxing.ShortBox;
+import org.nasdanika.cdo.boxing.StreamBox;
+import org.nasdanika.cdo.boxing.StringBox;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -115,8 +150,6 @@ public class BoxingFactoryImpl extends EFactoryImpl implements BoxingFactory {
 				return createContextFromString(eDataType, initialValue);
 			case BoxingPackage.COLLECTION:
 				return createCollectionFromString(eDataType, initialValue);
-			case BoxingPackage.CONVERTER_CONTEXT:
-				return createConverterContextFromString(eDataType, initialValue);
 			case BoxingPackage.INPUT_STREAM:
 				return createInputStreamFromString(eDataType, initialValue);
 			case BoxingPackage.READER:
@@ -144,8 +177,6 @@ public class BoxingFactoryImpl extends EFactoryImpl implements BoxingFactory {
 				return convertContextToString(eDataType, instanceValue);
 			case BoxingPackage.COLLECTION:
 				return convertCollectionToString(eDataType, instanceValue);
-			case BoxingPackage.CONVERTER_CONTEXT:
-				return convertConverterContextToString(eDataType, instanceValue);
 			case BoxingPackage.INPUT_STREAM:
 				return convertInputStreamToString(eDataType, instanceValue);
 			case BoxingPackage.READER:
@@ -545,24 +576,6 @@ public class BoxingFactoryImpl extends EFactoryImpl implements BoxingFactory {
 	 */
 	public String convertCollectionToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(instanceValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ConverterContext createConverterContextFromString(EDataType eDataType, String initialValue) {
-		return (ConverterContext)super.createFromString(eDataType, initialValue);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertConverterContextToString(EDataType eDataType, Object instanceValue) {
-		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

@@ -5,6 +5,7 @@
     rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl" reflectiveDelegation="true"
     importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective" complianceLevel="7.0"
     copyrightFields="false" providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter"
+    usedGenPackages="../../org.nasdanika.cdo.boxing/model/boxing.genmodel#//boxing"
     operationReflection="true" importOrganizing="true">
   <foreignModel>cdo-function.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
@@ -31,9 +32,69 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//BoundFunction/target"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//BoundFunction/bindings"/>
     </genClasses>
-    <genClasses ecoreClass="cdo-function.ecore#//Binding">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//Binding/key"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//Binding/value"/>
+    <genClasses ecoreClass="cdo-function.ecore#//ArgumentBinding">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//ArgumentBinding/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//ArgumentBinding/value"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="cdo-function.ecore#//ServiceBinding"/>
+    <genClasses ecoreClass="cdo-function.ecore#//CDOServiceBinding">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//CDOServiceBinding/filter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//CDOServiceBinding/serviceType"/>
+    </genClasses>
+    <genClasses ecoreClass="cdo-function.ecore#//ContextArgument"/>
+    <genClasses ecoreClass="cdo-function.ecore#//CommandFunction">
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/CR"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/MC"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/T"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/R"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//CommandFunction/target"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//CommandFunction/parameterTypes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//CommandFunction/returnType"/>
+    </genClasses>
+    <genClasses ecoreClass="cdo-function.ecore#//JavaFunction">
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/CR"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/MC"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/T"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/R"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//JavaFunction/parameterTypes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//JavaFunction/returnType"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//JavaFunction/thrownExceptions"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//JavaFunction/parameterNames"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//JavaFunction/code"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//JavaFunction/codeURL"/>
+    </genClasses>
+    <genClasses ecoreClass="cdo-function.ecore#//ScriptBinding">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//ScriptBinding/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//ScriptBinding/value"/>
+    </genClasses>
+    <genClasses ecoreClass="cdo-function.ecore#//JavaScriptFunction">
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/CR"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/MC"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/T"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/R"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//JavaScriptFunction/code"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//JavaScriptFunction/codeURL"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//JavaScriptFunction/parameterNames"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//JavaScriptFunction/bindings"/>
+    </genClasses>
+    <genClasses ecoreClass="cdo-function.ecore#//ObjectMethodFunction">
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/CR"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/MC"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/T"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/R"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//ObjectMethodFunction/target"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//ObjectMethodFunction/methodName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//ObjectMethodFunction/parameterTypes"/>
+    </genClasses>
+    <genClasses ecoreClass="cdo-function.ecore#//ServiceMethodFunction">
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/CR"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/MC"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/T"/>
+      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/R"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//ServiceMethodFunction/serviceType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//ServiceMethodFunction/filter"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//ServiceMethodFunction/methodName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//ServiceMethodFunction/parameterTypes"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

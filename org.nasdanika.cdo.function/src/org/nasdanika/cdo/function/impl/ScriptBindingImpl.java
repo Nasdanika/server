@@ -14,25 +14,25 @@ import org.nasdanika.cdo.function.FunctionPackage;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Binding</b></em>'.
+ * An implementation of the model object '<em><b>Script Binding</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.nasdanika.cdo.function.impl.BindingImpl#getTypedKey <em>Key</em>}</li>
- *   <li>{@link org.nasdanika.cdo.function.impl.BindingImpl#getTypedValue <em>Value</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.function.impl.ScriptBindingImpl#getTypedKey <em>Key</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.function.impl.ScriptBindingImpl#getTypedValue <em>Value</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Integer,EObject> {
+public class ScriptBindingImpl extends CDOObjectImpl implements BasicEMap.Entry<String,EObject> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected BindingImpl() {
+	protected ScriptBindingImpl() {
 		super();
 	}
 
@@ -43,7 +43,7 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return FunctionPackage.Literals.BINDING;
+		return FunctionPackage.Literals.SCRIPT_BINDING;
 	}
 
 	/**
@@ -61,8 +61,8 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Integer getTypedKey() {
-		return (Integer)eGet(FunctionPackage.Literals.BINDING__KEY, true);
+	public String getTypedKey() {
+		return (String)eGet(FunctionPackage.Literals.SCRIPT_BINDING__KEY, true);
 	}
 
 	/**
@@ -70,8 +70,8 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTypedKey(Integer newKey) {
-		eSet(FunctionPackage.Literals.BINDING__KEY, newKey);
+	public void setTypedKey(String newKey) {
+		eSet(FunctionPackage.Literals.SCRIPT_BINDING__KEY, newKey);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 * @generated
 	 */
 	public EObject getTypedValue() {
-		return (EObject)eGet(FunctionPackage.Literals.BINDING__VALUE, true);
+		return (EObject)eGet(FunctionPackage.Literals.SCRIPT_BINDING__VALUE, true);
 	}
 
 	/**
@@ -89,7 +89,7 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 * @generated
 	 */
 	public void setTypedValue(EObject newValue) {
-		eSet(FunctionPackage.Literals.BINDING__VALUE, newValue);
+		eSet(FunctionPackage.Literals.SCRIPT_BINDING__VALUE, newValue);
 	}
 
 	/**
@@ -126,7 +126,7 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Integer getKey() {
+	public String getKey() {
 		return getTypedKey();
 	}
 
@@ -135,7 +135,7 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setKey(Integer key) {
+	public void setKey(String key) {
 		setTypedKey(key);
 	}
 
@@ -165,9 +165,9 @@ public class BindingImpl extends CDOObjectImpl implements BasicEMap.Entry<Intege
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EMap<Integer, EObject> getEMap() {
+	public EMap<String, EObject> getEMap() {
 		EObject container = eContainer();
-		return container == null ? null : (EMap<Integer, EObject>)container.eGet(eContainmentFeature());
+		return container == null ? null : (EMap<String, EObject>)container.eGet(eContainmentFeature());
 	}
 
-} //BindingImpl
+} //ScriptBindingImpl

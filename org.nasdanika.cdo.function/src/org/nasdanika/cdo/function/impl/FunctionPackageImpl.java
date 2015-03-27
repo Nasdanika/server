@@ -13,13 +13,22 @@ import org.eclipse.emf.ecore.ETypeParameter;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
+import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.function.AbstractFunction;
 import org.nasdanika.cdo.function.BoundFunction;
+import org.nasdanika.cdo.function.CDOServiceBinding;
+import org.nasdanika.cdo.function.CommandFunction;
+import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionFactory;
 import org.nasdanika.cdo.function.FunctionPackage;
 
+import org.nasdanika.cdo.function.JavaFunction;
+import org.nasdanika.cdo.function.JavaScriptFunction;
+import org.nasdanika.cdo.function.ObjectMethodFunction;
+import org.nasdanika.cdo.function.ServiceMethodFunction;
 import org.nasdanika.core.Context;
 
+import org.nasdanika.function.ServiceBinding;
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 
 /**
@@ -62,7 +71,70 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass bindingEClass = null;
+	private EClass argumentBindingEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass serviceBindingEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass cdoServiceBindingEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass contextArgumentEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass commandFunctionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass javaFunctionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass scriptBindingEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass javaScriptFunctionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass objectMethodFunctionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass serviceMethodFunctionEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -109,6 +181,9 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		FunctionPackageImpl theFunctionPackage = (FunctionPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof FunctionPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new FunctionPackageImpl());
 
 		isInited = true;
+
+		// Initialize simple dependencies
+		BoxingPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
 		theFunctionPackage.createPackageContents();
@@ -184,8 +259,8 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getBinding() {
-		return bindingEClass;
+	public EClass getArgumentBinding() {
+		return argumentBindingEClass;
 	}
 
 	/**
@@ -193,8 +268,8 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getBinding_Key() {
-		return (EAttribute)bindingEClass.getEStructuralFeatures().get(0);
+	public EAttribute getArgumentBinding_Key() {
+		return (EAttribute)argumentBindingEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -202,8 +277,305 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getBinding_Value() {
-		return (EReference)bindingEClass.getEStructuralFeatures().get(1);
+	public EReference getArgumentBinding_Value() {
+		return (EReference)argumentBindingEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getServiceBinding() {
+		return serviceBindingEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getCDOServiceBinding() {
+		return cdoServiceBindingEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCDOServiceBinding_Filter() {
+		return (EAttribute)cdoServiceBindingEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getCDOServiceBinding_ServiceType() {
+		return (EAttribute)cdoServiceBindingEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getContextArgument() {
+		return contextArgumentEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getCommandFunction() {
+		return commandFunctionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getCommandFunction_Target() {
+		return (EReference)commandFunctionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getCommandFunction_ParameterTypes() {
+		return (EReference)commandFunctionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getCommandFunction_ReturnType() {
+		return (EReference)commandFunctionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getJavaFunction() {
+		return javaFunctionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJavaFunction_ParameterTypes() {
+		return (EReference)javaFunctionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJavaFunction_ReturnType() {
+		return (EReference)javaFunctionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJavaFunction_ThrownExceptions() {
+		return (EReference)javaFunctionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJavaFunction_ParameterNames() {
+		return (EAttribute)javaFunctionEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJavaFunction_Code() {
+		return (EAttribute)javaFunctionEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJavaFunction_CodeURL() {
+		return (EAttribute)javaFunctionEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getScriptBinding() {
+		return scriptBindingEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getScriptBinding_Key() {
+		return (EAttribute)scriptBindingEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getScriptBinding_Value() {
+		return (EReference)scriptBindingEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getJavaScriptFunction() {
+		return javaScriptFunctionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJavaScriptFunction_Code() {
+		return (EAttribute)javaScriptFunctionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJavaScriptFunction_CodeURL() {
+		return (EAttribute)javaScriptFunctionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJavaScriptFunction_ParameterNames() {
+		return (EAttribute)javaScriptFunctionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getJavaScriptFunction_Bindings() {
+		return (EReference)javaScriptFunctionEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getObjectMethodFunction() {
+		return objectMethodFunctionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getObjectMethodFunction_Target() {
+		return (EReference)objectMethodFunctionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getObjectMethodFunction_MethodName() {
+		return (EAttribute)objectMethodFunctionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getObjectMethodFunction_ParameterTypes() {
+		return (EReference)objectMethodFunctionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getServiceMethodFunction() {
+		return serviceMethodFunctionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getServiceMethodFunction_ServiceType() {
+		return (EAttribute)serviceMethodFunctionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getServiceMethodFunction_Filter() {
+		return (EAttribute)serviceMethodFunctionEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getServiceMethodFunction_MethodName() {
+		return (EAttribute)serviceMethodFunctionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getServiceMethodFunction_ParameterTypes() {
+		return (EReference)serviceMethodFunctionEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -244,9 +616,51 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		createEReference(boundFunctionEClass, BOUND_FUNCTION__TARGET);
 		createEReference(boundFunctionEClass, BOUND_FUNCTION__BINDINGS);
 
-		bindingEClass = createEClass(BINDING);
-		createEAttribute(bindingEClass, BINDING__KEY);
-		createEReference(bindingEClass, BINDING__VALUE);
+		argumentBindingEClass = createEClass(ARGUMENT_BINDING);
+		createEAttribute(argumentBindingEClass, ARGUMENT_BINDING__KEY);
+		createEReference(argumentBindingEClass, ARGUMENT_BINDING__VALUE);
+
+		serviceBindingEClass = createEClass(SERVICE_BINDING);
+
+		cdoServiceBindingEClass = createEClass(CDO_SERVICE_BINDING);
+		createEAttribute(cdoServiceBindingEClass, CDO_SERVICE_BINDING__FILTER);
+		createEAttribute(cdoServiceBindingEClass, CDO_SERVICE_BINDING__SERVICE_TYPE);
+
+		contextArgumentEClass = createEClass(CONTEXT_ARGUMENT);
+
+		commandFunctionEClass = createEClass(COMMAND_FUNCTION);
+		createEReference(commandFunctionEClass, COMMAND_FUNCTION__TARGET);
+		createEReference(commandFunctionEClass, COMMAND_FUNCTION__PARAMETER_TYPES);
+		createEReference(commandFunctionEClass, COMMAND_FUNCTION__RETURN_TYPE);
+
+		javaFunctionEClass = createEClass(JAVA_FUNCTION);
+		createEReference(javaFunctionEClass, JAVA_FUNCTION__PARAMETER_TYPES);
+		createEReference(javaFunctionEClass, JAVA_FUNCTION__RETURN_TYPE);
+		createEReference(javaFunctionEClass, JAVA_FUNCTION__THROWN_EXCEPTIONS);
+		createEAttribute(javaFunctionEClass, JAVA_FUNCTION__PARAMETER_NAMES);
+		createEAttribute(javaFunctionEClass, JAVA_FUNCTION__CODE);
+		createEAttribute(javaFunctionEClass, JAVA_FUNCTION__CODE_URL);
+
+		scriptBindingEClass = createEClass(SCRIPT_BINDING);
+		createEAttribute(scriptBindingEClass, SCRIPT_BINDING__KEY);
+		createEReference(scriptBindingEClass, SCRIPT_BINDING__VALUE);
+
+		javaScriptFunctionEClass = createEClass(JAVA_SCRIPT_FUNCTION);
+		createEAttribute(javaScriptFunctionEClass, JAVA_SCRIPT_FUNCTION__CODE);
+		createEAttribute(javaScriptFunctionEClass, JAVA_SCRIPT_FUNCTION__CODE_URL);
+		createEAttribute(javaScriptFunctionEClass, JAVA_SCRIPT_FUNCTION__PARAMETER_NAMES);
+		createEReference(javaScriptFunctionEClass, JAVA_SCRIPT_FUNCTION__BINDINGS);
+
+		objectMethodFunctionEClass = createEClass(OBJECT_METHOD_FUNCTION);
+		createEReference(objectMethodFunctionEClass, OBJECT_METHOD_FUNCTION__TARGET);
+		createEAttribute(objectMethodFunctionEClass, OBJECT_METHOD_FUNCTION__METHOD_NAME);
+		createEReference(objectMethodFunctionEClass, OBJECT_METHOD_FUNCTION__PARAMETER_TYPES);
+
+		serviceMethodFunctionEClass = createEClass(SERVICE_METHOD_FUNCTION);
+		createEAttribute(serviceMethodFunctionEClass, SERVICE_METHOD_FUNCTION__SERVICE_TYPE);
+		createEAttribute(serviceMethodFunctionEClass, SERVICE_METHOD_FUNCTION__FILTER);
+		createEAttribute(serviceMethodFunctionEClass, SERVICE_METHOD_FUNCTION__METHOD_NAME);
+		createEReference(serviceMethodFunctionEClass, SERVICE_METHOD_FUNCTION__PARAMETER_TYPES);
 	}
 
 	/**
@@ -272,6 +686,9 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		setNsPrefix(eNS_PREFIX);
 		setNsURI(eNS_URI);
 
+		// Obtain other dependent packages
+		BoxingPackage theBoxingPackage = (BoxingPackage)EPackage.Registry.INSTANCE.getEPackage(BoxingPackage.eNS_URI);
+
 		// Create type parameters
 		addETypeParameter(cdoTransactionContextFunctionEClass, "CR");
 		ETypeParameter cdoTransactionContextFunctionEClass_MC = addETypeParameter(cdoTransactionContextFunctionEClass, "MC");
@@ -285,6 +702,26 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		ETypeParameter boundFunctionEClass_MC = addETypeParameter(boundFunctionEClass, "MC");
 		ETypeParameter boundFunctionEClass_T = addETypeParameter(boundFunctionEClass, "T");
 		ETypeParameter boundFunctionEClass_R = addETypeParameter(boundFunctionEClass, "R");
+		ETypeParameter commandFunctionEClass_CR = addETypeParameter(commandFunctionEClass, "CR");
+		ETypeParameter commandFunctionEClass_MC = addETypeParameter(commandFunctionEClass, "MC");
+		ETypeParameter commandFunctionEClass_T = addETypeParameter(commandFunctionEClass, "T");
+		ETypeParameter commandFunctionEClass_R = addETypeParameter(commandFunctionEClass, "R");
+		ETypeParameter javaFunctionEClass_CR = addETypeParameter(javaFunctionEClass, "CR");
+		ETypeParameter javaFunctionEClass_MC = addETypeParameter(javaFunctionEClass, "MC");
+		ETypeParameter javaFunctionEClass_T = addETypeParameter(javaFunctionEClass, "T");
+		ETypeParameter javaFunctionEClass_R = addETypeParameter(javaFunctionEClass, "R");
+		ETypeParameter javaScriptFunctionEClass_CR = addETypeParameter(javaScriptFunctionEClass, "CR");
+		ETypeParameter javaScriptFunctionEClass_MC = addETypeParameter(javaScriptFunctionEClass, "MC");
+		ETypeParameter javaScriptFunctionEClass_T = addETypeParameter(javaScriptFunctionEClass, "T");
+		ETypeParameter javaScriptFunctionEClass_R = addETypeParameter(javaScriptFunctionEClass, "R");
+		ETypeParameter objectMethodFunctionEClass_CR = addETypeParameter(objectMethodFunctionEClass, "CR");
+		ETypeParameter objectMethodFunctionEClass_MC = addETypeParameter(objectMethodFunctionEClass, "MC");
+		ETypeParameter objectMethodFunctionEClass_T = addETypeParameter(objectMethodFunctionEClass, "T");
+		ETypeParameter objectMethodFunctionEClass_R = addETypeParameter(objectMethodFunctionEClass, "R");
+		ETypeParameter serviceMethodFunctionEClass_CR = addETypeParameter(serviceMethodFunctionEClass, "CR");
+		ETypeParameter serviceMethodFunctionEClass_MC = addETypeParameter(serviceMethodFunctionEClass, "MC");
+		ETypeParameter serviceMethodFunctionEClass_T = addETypeParameter(serviceMethodFunctionEClass, "T");
+		ETypeParameter serviceMethodFunctionEClass_R = addETypeParameter(serviceMethodFunctionEClass, "R");
 
 		// Set bounds for type parameters
 		EGenericType g1 = createEGenericType(this.getContext());
@@ -293,6 +730,16 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		abstractFunctionEClass_MC.getEBounds().add(g1);
 		g1 = createEGenericType(this.getContext());
 		boundFunctionEClass_MC.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		commandFunctionEClass_MC.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		javaFunctionEClass_MC.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		javaScriptFunctionEClass_MC.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		objectMethodFunctionEClass_MC.getEBounds().add(g1);
+		g1 = createEGenericType(this.getContext());
+		serviceMethodFunctionEClass_MC.getEBounds().add(g1);
 
 		// Add supertypes to classes
 		g1 = createEGenericType(this.getCDOTransactionContextFunction());
@@ -315,6 +762,57 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		g2 = createEGenericType(boundFunctionEClass_R);
 		g1.getETypeArguments().add(g2);
 		boundFunctionEClass.getEGenericSuperTypes().add(g1);
+		cdoServiceBindingEClass.getESuperTypes().add(this.getServiceBinding());
+		g1 = createEGenericType(this.getAbstractFunction());
+		g2 = createEGenericType(commandFunctionEClass_CR);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(commandFunctionEClass_MC);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(commandFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(commandFunctionEClass_R);
+		g1.getETypeArguments().add(g2);
+		commandFunctionEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getAbstractFunction());
+		g2 = createEGenericType(javaFunctionEClass_CR);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(javaFunctionEClass_MC);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(javaFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(javaFunctionEClass_R);
+		g1.getETypeArguments().add(g2);
+		javaFunctionEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getAbstractFunction());
+		g2 = createEGenericType(javaScriptFunctionEClass_CR);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(javaScriptFunctionEClass_MC);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(javaScriptFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(javaScriptFunctionEClass_R);
+		g1.getETypeArguments().add(g2);
+		javaScriptFunctionEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getAbstractFunction());
+		g2 = createEGenericType(objectMethodFunctionEClass_CR);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(objectMethodFunctionEClass_MC);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(objectMethodFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(objectMethodFunctionEClass_R);
+		g1.getETypeArguments().add(g2);
+		objectMethodFunctionEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getAbstractFunction());
+		g2 = createEGenericType(serviceMethodFunctionEClass_CR);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(serviceMethodFunctionEClass_MC);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(serviceMethodFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(serviceMethodFunctionEClass_R);
+		g1.getETypeArguments().add(g2);
+		serviceMethodFunctionEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(contextEClass, Context.class, "Context", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
@@ -325,11 +823,74 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 
 		initEClass(boundFunctionEClass, BoundFunction.class, "BoundFunction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getBoundFunction_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, BoundFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getBoundFunction_Bindings(), this.getBinding(), null, "bindings", null, 0, -1, BoundFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getBoundFunction_Bindings(), this.getArgumentBinding(), null, "bindings", null, 0, -1, BoundFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(bindingEClass, Map.Entry.class, "Binding", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getBinding_Key(), ecorePackage.getEIntegerObject(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getBinding_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(argumentBindingEClass, Map.Entry.class, "ArgumentBinding", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getArgumentBinding_Key(), ecorePackage.getEIntegerObject(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getArgumentBinding_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(serviceBindingEClass, ServiceBinding.class, "ServiceBinding", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(cdoServiceBindingEClass, CDOServiceBinding.class, "CDOServiceBinding", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getCDOServiceBinding_Filter(), ecorePackage.getEString(), "filter", null, 0, 1, CDOServiceBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCDOServiceBinding_ServiceType(), ecorePackage.getEString(), "serviceType", null, 0, 1, CDOServiceBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(contextArgumentEClass, ContextArgument.class, "ContextArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(commandFunctionEClass, CommandFunction.class, "CommandFunction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getCommandFunction_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, CommandFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(theBoxingPackage.getClassBox());
+		g2 = createEGenericType(commandFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		initEReference(getCommandFunction_ParameterTypes(), g1, null, "parameterTypes", null, 0, -1, CommandFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(theBoxingPackage.getClassBox());
+		g2 = createEGenericType(commandFunctionEClass_R);
+		g1.getETypeArguments().add(g2);
+		initEReference(getCommandFunction_ReturnType(), g1, null, "returnType", null, 0, 1, CommandFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(javaFunctionEClass, JavaFunction.class, "JavaFunction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(theBoxingPackage.getClassBox());
+		g2 = createEGenericType(javaFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		initEReference(getJavaFunction_ParameterTypes(), g1, null, "parameterTypes", null, 0, -1, JavaFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(theBoxingPackage.getClassBox());
+		g2 = createEGenericType(javaFunctionEClass_R);
+		g1.getETypeArguments().add(g2);
+		initEReference(getJavaFunction_ReturnType(), g1, null, "returnType", null, 0, 1, JavaFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(theBoxingPackage.getClassBox());
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		initEReference(getJavaFunction_ThrownExceptions(), g1, null, "thrownExceptions", null, 0, -1, JavaFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getJavaFunction_ParameterNames(), ecorePackage.getEString(), "parameterNames", null, 0, -1, JavaFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getJavaFunction_Code(), ecorePackage.getEString(), "code", null, 0, 1, JavaFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getJavaFunction_CodeURL(), ecorePackage.getEString(), "codeURL", null, 0, 1, JavaFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(scriptBindingEClass, Map.Entry.class, "ScriptBinding", !IS_ABSTRACT, !IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getScriptBinding_Key(), ecorePackage.getEString(), "key", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getScriptBinding_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(javaScriptFunctionEClass, JavaScriptFunction.class, "JavaScriptFunction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getJavaScriptFunction_Code(), ecorePackage.getEString(), "code", null, 0, 1, JavaScriptFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getJavaScriptFunction_CodeURL(), ecorePackage.getEString(), "codeURL", null, 0, 1, JavaScriptFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getJavaScriptFunction_ParameterNames(), ecorePackage.getEString(), "parameterNames", null, 0, -1, JavaScriptFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getJavaScriptFunction_Bindings(), this.getScriptBinding(), null, "bindings", null, 0, -1, JavaScriptFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(objectMethodFunctionEClass, ObjectMethodFunction.class, "ObjectMethodFunction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getObjectMethodFunction_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, ObjectMethodFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getObjectMethodFunction_MethodName(), ecorePackage.getEString(), "methodName", null, 0, 1, ObjectMethodFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(theBoxingPackage.getClassBox());
+		g2 = createEGenericType(objectMethodFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		initEReference(getObjectMethodFunction_ParameterTypes(), g1, null, "parameterTypes", null, 0, -1, ObjectMethodFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(serviceMethodFunctionEClass, ServiceMethodFunction.class, "ServiceMethodFunction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getServiceMethodFunction_ServiceType(), ecorePackage.getEString(), "serviceType", null, 0, 1, ServiceMethodFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getServiceMethodFunction_Filter(), ecorePackage.getEString(), "filter", null, 0, 1, ServiceMethodFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getServiceMethodFunction_MethodName(), ecorePackage.getEString(), "methodName", null, 0, 1, ServiceMethodFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(theBoxingPackage.getClassBox());
+		g2 = createEGenericType(serviceMethodFunctionEClass_T);
+		g1.getETypeArguments().add(g2);
+		initEReference(getServiceMethodFunction_ParameterTypes(), g1, null, "parameterTypes", null, 0, -1, ServiceMethodFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create resource
 		createResource(eNS_URI);

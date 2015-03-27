@@ -64,7 +64,7 @@ public interface BoundFunction<CR, MC extends Context, T, R> extends AbstractFun
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Bindings</em>' map.
 	 * @see org.nasdanika.cdo.function.FunctionPackage#getBoundFunction_Bindings()
-	 * @model mapType="org.nasdanika.cdo.function.Binding<org.eclipse.emf.ecore.EIntegerObject, org.eclipse.emf.ecore.EObject>"
+	 * @model mapType="org.nasdanika.cdo.function.ArgumentBinding<org.eclipse.emf.ecore.EIntegerObject, org.eclipse.emf.ecore.EObject>"
 	 * @generated
 	 */
 	EMap<Integer, EObject> getBindings();

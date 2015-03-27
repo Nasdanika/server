@@ -37,7 +37,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, Object, Object> createMethodFunction(
+	public Function<CDOTransactionContext<CR, MC>, Object, Object> createObjectMethodFunction(
 			Object target, String methodName, Class<?>... parameterTypes) {
 		// TODO Auto-generated method stub
 		return null;
@@ -73,39 +73,39 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 		return null;
 	}
 
-	@Override
-	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
-			String code, Class<?>[] parameterTypes, String[] parameterNames,
-			Class<R> returnType, Class<?>[] thrownExceptions) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
-			Reader code, Class<?>[] parameterTypes, String[] parameterNames,
-			Class<R> returnType, Class<?>[] thrownExceptions) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
-			InputStream code, Class<?>[] parameterTypes,
-			String[] parameterNames, Class<R> returnType,
-			Class<?>[] thrownExceptions) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
-			URL codeURL, boolean preLoad, Class<?>[] parameterTypes,
-			String[] parameterNames, Class<R> returnType,
-			Class<?>[] thrownExceptions) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+//	@Override
+//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//			String code, Class<?>[] parameterTypes, String[] parameterNames,
+//			Class<R> returnType, Class<?>[] thrownExceptions) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//			Reader code, Class<?>[] parameterTypes, String[] parameterNames,
+//			Class<R> returnType, Class<?>[] thrownExceptions) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//			InputStream code, Class<?>[] parameterTypes,
+//			String[] parameterNames, Class<R> returnType,
+//			Class<?>[] thrownExceptions) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
+//
+//	@Override
+//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//			URL codeURL, boolean preLoad, Class<?>[] parameterTypes,
+//			String[] parameterNames, Class<R> returnType,
+//			Class<?>[] thrownExceptions) {
+//		// TODO Auto-generated method stub
+//		return null;
+//	}
 
 	@Override
 	public <T, R> Function<CDOTransactionContext<CR, MC>, T, R> createCommandFunction(

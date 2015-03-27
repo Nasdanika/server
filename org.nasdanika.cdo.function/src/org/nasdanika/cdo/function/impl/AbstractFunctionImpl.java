@@ -2,7 +2,9 @@
  */
 package org.nasdanika.cdo.function.impl;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -12,11 +14,16 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.function.AbstractFunction;
 import org.nasdanika.cdo.function.BoundFunction;
+import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionFactory;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.core.Context;
 import org.nasdanika.function.Function;
 import org.nasdanika.function.FunctionException;
+import org.nasdanika.function.ServiceBinding;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * <!-- begin-user-doc -->
@@ -84,9 +91,38 @@ public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends
 	}
 	
 	@Override
-	public R execute(CDOTransactionContext<CR, MC> context, T... args) throws Exception {
-		// TODO Auto-generated method stub
-		return null;
+	public R execute(CDOTransactionContext<CR, MC> context, @SuppressWarnings("unchecked") T... args) throws Exception {
+		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+		Class<?>[] parameterTypes = getParameterTypes(context);
+		List<ServiceReference<?>> toUnget = new ArrayList<>();
+		Object[] arguments = new Object[args.length];
+		for (int i=0; i<args.length; ++i) {
+			if (args[i] instanceof ContextArgument) {
+				arguments[i] = context.adapt(parameterTypes[i]);
+			} else if (args[i] instanceof ServiceBinding) {
+				ServiceBinding sb = (ServiceBinding) args[i];
+				ServiceReference<?>[] refs = bundleContext.getServiceReferences(sb.getServiceType(), sb.getFilter());
+				if (refs!=null) {
+					for (ServiceReference<?> ref: refs) {
+						Object service = bundleContext.getService(ref);
+						if (service!=null) {
+							arguments[i] = service;
+							toUnget.add(ref);
+							break;
+						}
+					}
+				}				
+			} else {
+				arguments[i] = args[i];
+			}
+		}
+		try {
+			return invoke(context, arguments);
+		} finally {
+			for (ServiceReference<?> sr: toUnget) {
+				bundleContext.ungetService(sr);
+			}
+		}
 	}
 	
 	/**
@@ -97,5 +133,15 @@ public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends
 	 * @throws Exception
 	 */
 	protected abstract R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception;
+	
+	@Override
+	public void close() throws Exception {
+		// NOP		
+	}
+	
+	@Override
+	public boolean canExecute() {
+		return true;
+	}
 
 } //AbstractFunctionImpl

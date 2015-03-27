@@ -14,11 +14,11 @@ import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.boxing.Box;
+import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.BoxingException;
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.boxing.JsonObjectBox;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -79,7 +79,7 @@ public class JsonObjectBoxImpl extends CDOObjectImpl implements JsonObjectBox {
 	 * @generated NOT
 	 */
 	@SuppressWarnings("unchecked")
-	public JSONObject get(ConverterContext context) {
+	public JSONObject get(Context context) {
 		JSONObject ret = new JSONObject();
 		for (Entry<String, EObject> e: getElements()) {
 			Object value = e.getValue();
@@ -94,25 +94,25 @@ public class JsonObjectBoxImpl extends CDOObjectImpl implements JsonObjectBox {
 		}
 		return ret;
 	}
-
+	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
-	public void set(JSONObject value, ConverterContext context) {
+	public void set(JSONObject value, Context context) {
 		getElements().clear();
 		@SuppressWarnings("unchecked")
 		Iterator<String> kit = value.keys();
 		while (kit.hasNext()) {
 			String key = kit.next();
 			try {
-				getElements().put(key, MapBoxImpl.box(value.get(key), context));
+				getElements().put(key, BoxUtil.box(value.get(key), context));
 			} catch (JSONException e) {
 				throw new BoxingException(e);
 			}
 		}		
-	}
+	}	
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -124,9 +124,9 @@ public class JsonObjectBoxImpl extends CDOObjectImpl implements JsonObjectBox {
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case BoxingPackage.JSON_OBJECT_BOX___GET__CONTEXT:
-				return get((ConverterContext)arguments.get(0));
+				return get((Context)arguments.get(0));
 			case BoxingPackage.JSON_OBJECT_BOX___SET__OBJECT_CONTEXT:
-				set((JSONObject)arguments.get(0), (ConverterContext)arguments.get(1));
+				set((JSONObject)arguments.get(0), (Context)arguments.get(1));
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

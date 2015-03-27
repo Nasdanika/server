@@ -36,7 +36,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
-        eType="#//Binding" containment="true"/>
+        eType="#//ArgumentBinding" containment="true"/>
     <eGenericSuperTypes eClassifier="#//AbstractFunction">
       <eTypeArguments eTypeParameter="#//BoundFunction/CR"/>
       <eTypeArguments eTypeParameter="#//BoundFunction/MC"/>
@@ -44,9 +44,149 @@
       <eTypeArguments eTypeParameter="#//BoundFunction/R"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Binding" instanceClassName="java.util.Map$Entry">
+  <eClassifiers xsi:type="ecore:EClass" name="ArgumentBinding" instanceClassName="java.util.Map$Entry">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
         containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceBinding" instanceClassName="org.nasdanika.function.ServiceBinding"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CDOServiceBinding" eSuperTypes="#//ServiceBinding">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="filter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="serviceType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContextArgument"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CommandFunction">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterTypes" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.nasdanika.cdo.boxing/model/boxing.ecore#//ClassBox">
+        <eTypeArguments eTypeParameter="#//CommandFunction/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="returnType" containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.nasdanika.cdo.boxing/model/boxing.ecore#//ClassBox">
+        <eTypeArguments eTypeParameter="#//CommandFunction/R"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//AbstractFunction">
+      <eTypeArguments eTypeParameter="#//CommandFunction/CR"/>
+      <eTypeArguments eTypeParameter="#//CommandFunction/MC"/>
+      <eTypeArguments eTypeParameter="#//CommandFunction/T"/>
+      <eTypeArguments eTypeParameter="#//CommandFunction/R"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaFunction">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterTypes" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.nasdanika.cdo.boxing/model/boxing.ecore#//ClassBox">
+        <eTypeArguments eTypeParameter="#//JavaFunction/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="returnType" containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.nasdanika.cdo.boxing/model/boxing.ecore#//ClassBox">
+        <eTypeArguments eTypeParameter="#//JavaFunction/R"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thrownExceptions" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.nasdanika.cdo.boxing/model/boxing.ecore#//ClassBox">
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterNames" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="codeURL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eGenericSuperTypes eClassifier="#//AbstractFunction">
+      <eTypeArguments eTypeParameter="#//JavaFunction/CR"/>
+      <eTypeArguments eTypeParameter="#//JavaFunction/MC"/>
+      <eTypeArguments eTypeParameter="#//JavaFunction/T"/>
+      <eTypeArguments eTypeParameter="#//JavaFunction/R"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ScriptBinding" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaScriptFunction">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="codeURL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterNames" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
+        eType="#//ScriptBinding" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//AbstractFunction">
+      <eTypeArguments eTypeParameter="#//JavaScriptFunction/CR"/>
+      <eTypeArguments eTypeParameter="#//JavaScriptFunction/MC"/>
+      <eTypeArguments eTypeParameter="#//JavaScriptFunction/T"/>
+      <eTypeArguments eTypeParameter="#//JavaScriptFunction/R"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ObjectMethodFunction">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="methodName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterTypes" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.nasdanika.cdo.boxing/model/boxing.ecore#//ClassBox">
+        <eTypeArguments eTypeParameter="#//ObjectMethodFunction/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//AbstractFunction">
+      <eTypeArguments eTypeParameter="#//ObjectMethodFunction/CR"/>
+      <eTypeArguments eTypeParameter="#//ObjectMethodFunction/MC"/>
+      <eTypeArguments eTypeParameter="#//ObjectMethodFunction/T"/>
+      <eTypeArguments eTypeParameter="#//ObjectMethodFunction/R"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceMethodFunction">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="serviceType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="filter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="methodName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameterTypes" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="ecore:EClass ../../org.nasdanika.cdo.boxing/model/boxing.ecore#//ClassBox">
+        <eTypeArguments eTypeParameter="#//ServiceMethodFunction/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//AbstractFunction">
+      <eTypeArguments eTypeParameter="#//ServiceMethodFunction/CR"/>
+      <eTypeArguments eTypeParameter="#//ServiceMethodFunction/MC"/>
+      <eTypeArguments eTypeParameter="#//ServiceMethodFunction/T"/>
+      <eTypeArguments eTypeParameter="#//ServiceMethodFunction/R"/>
+    </eGenericSuperTypes>
   </eClassifiers>
 </ecore:EPackage>

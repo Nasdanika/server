@@ -12,7 +12,6 @@
     <genDataTypes ecoreDataType="boxing.ecore#//Collection">
       <genTypeParameters ecoreTypeParameter="boxing.ecore#//Collection/T"/>
     </genDataTypes>
-    <genDataTypes ecoreDataType="boxing.ecore#//ConverterContext"/>
     <genDataTypes ecoreDataType="boxing.ecore#//InputStream"/>
     <genDataTypes ecoreDataType="boxing.ecore#//Reader"/>
     <genDataTypes ecoreDataType="boxing.ecore#//Serializable"/>

@@ -5,6 +5,7 @@ import java.io.Reader;
 import java.net.URL;
 import java.util.Map;
 
+import org.nasdanika.core.Command;
 import org.nasdanika.core.Context;
 
 /**
@@ -26,7 +27,7 @@ public interface FunctionFactory<C extends Context> {
 			String methodName, 
 			String... parameterTypeNames);
 	
-	Function<C,Object,Object> createMethodFunction(
+	Function<C,Object,Object> createObjectMethodFunction(
 			Object target, 
 			String methodName, 
 			Class<?>... parameterTypes);
@@ -60,44 +61,53 @@ public interface FunctionFactory<C extends Context> {
 			Map<String, Object> bindings,
 			String[] parameterNames);
 	
-	<R> Function<C,R,Object> createJavaFunction(
-			String code,
-			Class<?>[] parameterTypes,
-			String[] parameterNames,
-			Class<R> returnType,
-			Class<?>[] thrownExceptions);
-	
-	<R> Function<C,R,Object>  createJavaFunction(
-			Reader code,
-			Class<?>[] parameterTypes,
-			String[] parameterNames,
-			Class<R> returnType,
-			Class<?>[] thrownExceptions);
-	
-	<R> Function<C,R,Object>  createJavaFunction(
-			InputStream code,
-			Class<?>[] parameterTypes,
-			String[] parameterNames,
-			Class<R> returnType,
-			Class<?>[] thrownExceptions);
+//	<R> Function<C,Object,R> createJavaFunction(
+//			String code,
+//			Class<?>[] parameterTypes,
+//			String[] parameterNames,
+//			Class<R> returnType,
+//			Class<?>[] thrownExceptions);
+//	
+//	<R> Function<C,Object,R>  createJavaFunction(
+//			Reader code,
+//			Class<?>[] parameterTypes,
+//			String[] parameterNames,
+//			Class<R> returnType,
+//			Class<?>[] thrownExceptions);
+//	
+//	<R> Function<C,Object,R>  createJavaFunction(
+//			InputStream code,
+//			Class<?>[] parameterTypes,
+//			String[] parameterNames,
+//			Class<R> returnType,
+//			Class<?>[] thrownExceptions);
+//	
+//	/**
+//	 * 
+//	 * @param codeURL
+//	 * @param preLoad If true URL content is loaded at function creation time, otherwise at function execution time.
+//	 * @param parameterTypes
+//	 * @param parameterNames
+//	 * @param returnType
+//	 * @param thrownExceptions
+//	 * @return
+//	 */
+//	<R> Function<C,Object,R>  createJavaFunction(
+//			URL codeURL,
+//			boolean preLoad,
+//			Class<?>[] parameterTypes,
+//			String[] parameterNames,
+//			Class<R> returnType,
+//			Class<?>[] thrownExceptions);
 	
 	/**
-	 * 
-	 * @param codeURL
-	 * @param preLoad If true URL content is loaded at function creation time, otherwise at function execution time.
+	 * Wraps command into a function.
+	 * @param command
 	 * @param parameterTypes
-	 * @param parameterNames
 	 * @param returnType
-	 * @param thrownExceptions
 	 * @return
 	 */
-	<R> Function<C,R,Object>  createJavaFunction(
-			URL codeURL,
-			boolean preLoad,
-			Class<?>[] parameterTypes,
-			String[] parameterNames,
-			Class<R> returnType,
-			Class<?>[] thrownExceptions);
+	<T,R> Function<C,T,R>  createCommandFunction(Command<C,T,R> command, Class<?>[] parameterTypes,	Class<R> returnType);
 		
 	/**
 	 * Creates a special value indicating that argument shall be 

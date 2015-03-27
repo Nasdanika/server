@@ -11,13 +11,14 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.boxing.Box;
+import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.BoxingException;
 import org.nasdanika.cdo.boxing.BoxingFactory;
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.boxing.FieldEntry;
 import org.nasdanika.cdo.boxing.ObjectBox;
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -97,7 +98,7 @@ public class ObjectBoxImpl<T> extends CDOObjectImpl implements ObjectBox<T> {
 	 * @generated NOT
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public T get(ConverterContext context) {
+	public T get(Context context) {
 		try {
 			Class<T> clazz = getType().get(context);
 			T ret = clazz.newInstance();
@@ -126,7 +127,7 @@ public class ObjectBoxImpl<T> extends CDOObjectImpl implements ObjectBox<T> {
 	 * @generated NOT
 	 */
 	@SuppressWarnings("unchecked")
-	public void set(T value, ConverterContext context) {
+	public void set(T value, Context context) {
 		getFields().clear();
 		ClassBox<T> type = BoxingFactory.eINSTANCE.createClassBox();
 		type.set((Class<T>) value.getClass(), context);
@@ -134,7 +135,7 @@ public class ObjectBoxImpl<T> extends CDOObjectImpl implements ObjectBox<T> {
 		storeFields(value, value.getClass(), context);
 	}
 	
-	private void storeFields(T value, Class<?> clazz, ConverterContext context) {
+	private void storeFields(T value, Class<?> clazz, Context context) {
 		if (!Object.class.equals(clazz)) {
 			for (Field field: clazz.getDeclaredFields()) {
 				if (!Modifier.isStatic(field.getModifiers())) {
@@ -149,7 +150,7 @@ public class ObjectBoxImpl<T> extends CDOObjectImpl implements ObjectBox<T> {
 						if (fieldVal==null) {
 							fe.setValue(BoxingFactory.eINSTANCE.createNullBox());
 						} else {
-							fe.setValue(MapBoxImpl.box(fieldVal, context));
+							fe.setValue(BoxUtil.box(fieldVal, context));
 						}
 					} catch (IllegalArgumentException | IllegalAccessException e) {
 						throw new BoxingException(e);
@@ -170,9 +171,9 @@ public class ObjectBoxImpl<T> extends CDOObjectImpl implements ObjectBox<T> {
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case BoxingPackage.OBJECT_BOX___GET__CONTEXT:
-				return get((ConverterContext)arguments.get(0));
+				return get((Context)arguments.get(0));
 			case BoxingPackage.OBJECT_BOX___SET__OBJECT_CONTEXT:
-				set((T)arguments.get(0), (ConverterContext)arguments.get(1));
+				set((T)arguments.get(0), (Context)arguments.get(1));
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

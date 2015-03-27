@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.boxing;
 
 import org.eclipse.emf.cdo.CDOObject;
-
 import org.nasdanika.core.Context;
 
 /**

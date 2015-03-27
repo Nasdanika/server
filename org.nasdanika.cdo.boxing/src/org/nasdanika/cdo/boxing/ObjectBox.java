@@ -3,8 +3,7 @@
 package org.nasdanika.cdo.boxing;
 
 import org.eclipse.emf.common.util.EList;
-
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,10 +19,10 @@ import org.nasdanika.core.ConverterContext;
  * </p>
  *
  * @see org.nasdanika.cdo.boxing.BoxingPackage#getObjectBox()
- * @model superTypes="org.nasdanika.cdo.boxing.Box<T, org.nasdanika.cdo.boxing.ConverterContext>"
+ * @model superTypes="org.nasdanika.cdo.boxing.Box<T, org.nasdanika.cdo.boxing.Context>"
  * @generated
  */
-public interface ObjectBox<T> extends Box<T, ConverterContext> {
+public interface ObjectBox<T> extends Box<T, Context> {
 	/**
 	 * Returns the value of the '<em><b>Fields</b></em>' containment reference list.
 	 * The list contents are of type {@link org.nasdanika.cdo.boxing.FieldEntry}.
