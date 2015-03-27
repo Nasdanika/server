@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="function" nsURI="urn:org.nasdanika.cdo.function" nsPrefix="org.nasdanika.cdo.function">
+  <eClassifiers xsi:type="ecore:EClass" name="Context" instanceClassName="org.nasdanika.core.Context"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="CDOTransactionContextFunction" instanceClassName="org.nasdanika.function.cdo.CDOTransactionContextFunction"
+      abstract="true" interface="true">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractFunction" abstract="true">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+    <eGenericSuperTypes eClassifier="#//CDOTransactionContextFunction">
+      <eTypeArguments eTypeParameter="#//AbstractFunction/CR"/>
+      <eTypeArguments eTypeParameter="#//AbstractFunction/MC"/>
+      <eTypeArguments eTypeParameter="#//AbstractFunction/T"/>
+      <eTypeArguments eTypeParameter="#//AbstractFunction/R"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BoundFunction">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="MC">
+      <eBounds eClassifier="#//Context"/>
+    </eTypeParameters>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
+        eType="#//Binding" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//AbstractFunction">
+      <eTypeArguments eTypeParameter="#//BoundFunction/CR"/>
+      <eTypeArguments eTypeParameter="#//BoundFunction/MC"/>
+      <eTypeArguments eTypeParameter="#//BoundFunction/T"/>
+      <eTypeArguments eTypeParameter="#//BoundFunction/R"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Binding" instanceClassName="java.util.Map$Entry">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="key" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EIntegerObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+  </eClassifiers>
+</ecore:EPackage>
