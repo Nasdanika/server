@@ -6,7 +6,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.EList;
@@ -18,9 +20,14 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.BoxUtil;
+import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.function.JavaScriptFunction;
 import org.nasdanika.core.Context;
+import org.nasdanika.function.ServiceBinding;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * <!-- begin-user-doc -->
@@ -155,16 +162,36 @@ public class JavaScriptFunctionImpl<CR, MC extends Context, T, R> extends Abstra
 		}
 		scriptBuilder.append("){").append(resolveCode()).append("});");
 		org.mozilla.javascript.Context scriptContext = org.mozilla.javascript.Context.enter();
+		List<ServiceReference<?>> toUnget = new ArrayList<>();
+		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		try {
 			Scriptable scope = scriptContext.initStandardObjects();
 			for (Entry<String, EObject> b: getBindings()) {
-				ScriptableObject.putProperty(scope, b.getKey(), org.mozilla.javascript.Context.javaToJS(BoxUtil.unbox(b.getValue(), context), scope));				
+				Object value = BoxUtil.unbox(b.getValue(), context);
+				if (value instanceof ServiceBinding) {
+					ServiceBinding sb = (ServiceBinding) value;
+					ServiceReference<?>[] refs = bundleContext.getServiceReferences(sb.getServiceType(), sb.getFilter());
+					if (refs!=null) {
+						for (ServiceReference<?> ref: refs) {
+							Object service = bundleContext.getService(ref);
+							if (service!=null) {
+								value = service;
+								toUnget.add(ref);
+								break;
+							}
+						}
+					}				
+				}				
+				ScriptableObject.putProperty(scope, b.getKey(), org.mozilla.javascript.Context.javaToJS(value, scope));				
 			}
 			ScriptableObject.putProperty(scope, "context", org.mozilla.javascript.Context.javaToJS(context, scope));
 			Function function = (Function) scriptContext.evaluateString(scope, scriptBuilder.toString(), "JavaScriptFunction", 1, null);
 			return (R) function.call(scriptContext, scope, scope, args);
 		} finally {
 			org.mozilla.javascript.Context.exit();
+			for (ServiceReference<?> sr: toUnget) {
+				bundleContext.ungetService(sr);
+			}
 		}
 	}
 
