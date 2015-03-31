@@ -7,12 +7,6 @@ import org.nasdanika.core.Context;
 
 public interface SchedulerProvider<CR, MC extends Context> {
 	
-	/**
-	 * @param principal Scheduled tasks are executed in the context of the principal.
-	 * @return
-	 */
-	Scheduler<CR, MC, String> getScheduler(Principal principal);
-
 	Scheduler<CR, MC, String> getScheduler(CR credentials);
 
 	/**
