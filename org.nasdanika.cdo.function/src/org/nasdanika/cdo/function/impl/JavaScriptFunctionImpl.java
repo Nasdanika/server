@@ -20,7 +20,6 @@ import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.BoxUtil;
-import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.function.JavaScriptFunction;
 import org.nasdanika.core.Context;
