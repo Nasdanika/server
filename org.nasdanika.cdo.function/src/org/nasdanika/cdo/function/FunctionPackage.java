@@ -123,13 +123,22 @@ public interface FunctionPackage extends EPackage {
 	int ABSTRACT_FUNCTION = 2;
 
 	/**
+	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_FUNCTION__RUN_AS = CDO_TRANSACTION_CONTEXT_FUNCTION_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Abstract Function</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_FUNCTION_FEATURE_COUNT = CDO_TRANSACTION_CONTEXT_FUNCTION_FEATURE_COUNT + 0;
+	int ABSTRACT_FUNCTION_FEATURE_COUNT = CDO_TRANSACTION_CONTEXT_FUNCTION_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Abstract Function</em>' class.
@@ -149,6 +158,15 @@ public interface FunctionPackage extends EPackage {
 	 * @generated
 	 */
 	int BOUND_FUNCTION = 3;
+
+	/**
+	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BOUND_FUNCTION__RUN_AS = ABSTRACT_FUNCTION__RUN_AS;
 
 	/**
 	 * The feature id for the '<em><b>Target</b></em>' containment reference.
@@ -345,6 +363,15 @@ public interface FunctionPackage extends EPackage {
 	int COMMAND_FUNCTION = 8;
 
 	/**
+	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_FUNCTION__RUN_AS = ABSTRACT_FUNCTION__RUN_AS;
+
+	/**
 	 * The feature id for the '<em><b>Target</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -398,6 +425,15 @@ public interface FunctionPackage extends EPackage {
 	 * @generated
 	 */
 	int JAVA_FUNCTION = 9;
+
+	/**
+	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_FUNCTION__RUN_AS = ABSTRACT_FUNCTION__RUN_AS;
 
 	/**
 	 * The feature id for the '<em><b>Parameter Types</b></em>' containment reference list.
@@ -528,6 +564,15 @@ public interface FunctionPackage extends EPackage {
 	int JAVA_SCRIPT_FUNCTION = 11;
 
 	/**
+	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_SCRIPT_FUNCTION__RUN_AS = ABSTRACT_FUNCTION__RUN_AS;
+
+	/**
 	 * The feature id for the '<em><b>Code</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -592,6 +637,15 @@ public interface FunctionPackage extends EPackage {
 	int OBJECT_METHOD_FUNCTION = 12;
 
 	/**
+	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OBJECT_METHOD_FUNCTION__RUN_AS = ABSTRACT_FUNCTION__RUN_AS;
+
+	/**
 	 * The feature id for the '<em><b>Target</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -645,6 +699,15 @@ public interface FunctionPackage extends EPackage {
 	 * @generated
 	 */
 	int SERVICE_METHOD_FUNCTION = 13;
+
+	/**
+	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_METHOD_FUNCTION__RUN_AS = ABSTRACT_FUNCTION__RUN_AS;
 
 	/**
 	 * The feature id for the '<em><b>Service Type</b></em>' attribute.
@@ -731,6 +794,17 @@ public interface FunctionPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getAbstractFunction();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.function.AbstractFunction#getRunAs <em>Run As</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Run As</em>'.
+	 * @see org.nasdanika.cdo.function.AbstractFunction#getRunAs()
+	 * @see #getAbstractFunction()
+	 * @generated
+	 */
+	EReference getAbstractFunction_RunAs();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.function.BoundFunction <em>Bound Function</em>}'.
@@ -1207,6 +1281,14 @@ public interface FunctionPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ABSTRACT_FUNCTION = eINSTANCE.getAbstractFunction();
+
+		/**
+		 * The meta object literal for the '<em><b>Run As</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ABSTRACT_FUNCTION__RUN_AS = eINSTANCE.getAbstractFunction_RunAs();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.function.impl.BoundFunctionImpl <em>Bound Function</em>}' class.

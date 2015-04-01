@@ -17,6 +17,7 @@ import org.nasdanika.cdo.function.BoundFunction;
 import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionFactory;
 import org.nasdanika.cdo.function.FunctionPackage;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.Context;
 import org.nasdanika.function.Function;
 import org.nasdanika.function.FunctionException;
@@ -30,6 +31,10 @@ import org.osgi.framework.ServiceReference;
  * An implementation of the model object '<em><b>Abstract Function</b></em>'.
  * <!-- end-user-doc -->
  * <p>
+ * The following features are implemented:
+ * <ul>
+ *   <li>{@link org.nasdanika.cdo.function.impl.AbstractFunctionImpl#getRunAs <em>Run As</em>}</li>
+ * </ul>
  * </p>
  *
  * @generated
@@ -64,6 +69,24 @@ public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends
 		return 0;
 	}
 	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Principal getRunAs() {
+		return (Principal)eGet(FunctionPackage.Literals.ABSTRACT_FUNCTION__RUN_AS, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setRunAs(Principal newRunAs) {
+		eSet(FunctionPackage.Literals.ABSTRACT_FUNCTION__RUN_AS, newRunAs);
+	}
+
 	@Override
 	public Function<CDOTransactionContext<CR, MC>, T, R> bind(CDOTransactionContext<CR, MC> context, Map<Integer, Object> bindings) {
 		if (bindings.isEmpty()) {

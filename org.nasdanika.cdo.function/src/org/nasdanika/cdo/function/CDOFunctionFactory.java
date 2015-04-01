@@ -13,6 +13,7 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.BoxingFactory;
 import org.nasdanika.cdo.boxing.ClassBox;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.Command;
 import org.nasdanika.core.Context;
 import org.nasdanika.function.Function;
@@ -23,9 +24,11 @@ import org.nasdanika.function.cdo.CDOTransactionContextFunctionFactory;
 public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactionContextFunctionFactory<CR, MC> {
 	
 	private CDOTransactionContext<CR, MC> context;
+	private Principal runAsPrincipal;
 
-	public CDOFunctionFactory(CDOTransactionContext<CR, MC> context) {
+	public CDOFunctionFactory(CDOTransactionContext<CR, MC> context, Principal runAsPrincipal) {
 		this.context = context;
+		this.runAsPrincipal = runAsPrincipal;
 	}
 
 	@Override
@@ -44,6 +47,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 			String methodName,
 			Class<?>... parameterTypes) {
 		ServiceMethodFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createServiceMethodFunction();
+		ret.setRunAs(runAsPrincipal);
 		ret.setServiceType(serviceClass.getName());
 		ret.setFilter(filter);
 		ret.setMethodName(methodName);
@@ -72,6 +76,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 			String methodName, 
 			Class<?>... parameterTypes) {		
 		ObjectMethodFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createObjectMethodFunction();
+		ret.setRunAs(runAsPrincipal);
 		ret.setTarget(BoxUtil.box(target, context));
 		ret.setMethodName(methodName);
 		for (Class<?> pt: parameterTypes) {			
@@ -88,6 +93,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 			Map<String, Object> bindings, 
 			String... parameterNames) {
 		JavaScriptFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createJavaScriptFunction();
+		ret.setRunAs(runAsPrincipal);
 		ret.setCode(code);
 		if (bindings!=null) {
 			for (Entry<String, Object> b: bindings.entrySet()) {				
@@ -141,6 +147,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 		}
 		
 		JavaScriptFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createJavaScriptFunction();
+		ret.setRunAs(runAsPrincipal);
 		ret.setCodeURL(codeURL.toString());
 		if (bindings!=null) {
 			for (Entry<String, Object> b: bindings.entrySet()) {				
@@ -193,6 +200,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 			Class<T>[] parameterTypes, 
 			Class<R> returnType) {
 		CommandFunction<CR, MC, T, R> ret = FunctionFactory.eINSTANCE.createCommandFunction();
+		ret.setRunAs(runAsPrincipal);
 		ret.setTarget(BoxUtil.box(command, context));
 		for (Class<T> pt: parameterTypes) {			
 			ClassBox<T> classBox = BoxingFactory.eINSTANCE.createClassBox();

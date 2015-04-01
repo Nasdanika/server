@@ -16,5 +16,6 @@ Require-Bundle: org.eclipse.core.runtime,
  org.nasdanika.function;bundle-version="0.1.0",
  org.nasdanika.function.cdo;bundle-version="0.1.0",
  org.nasdanika.cdo.boxing;bundle-version="0.1.0";visibility:=reexport,
+ org.nasdanika.cdo.security;visibility:=reexport,
  org.mozilla.rhino;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy

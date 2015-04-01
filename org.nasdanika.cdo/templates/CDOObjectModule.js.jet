@@ -60,6 +60,10 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
             return session.apply().thenResolve(this); 
         },
 
+        $refresh: function() {
+            return session.refresh().thenResolve(this); 
+        },
+
         $path: "<%=config.getObjectPath()%>"
 
     };

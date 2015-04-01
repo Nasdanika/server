@@ -50,18 +50,24 @@ public class ServerComponent {
 				
 		Object ap = context.getProperties().get(ACCEPTORS_PROPERTY);
 		if (ap instanceof String) {
-			for (String as: ((String) ap).split(",")) {
-				String nas = as.trim();
-				if (nas.startsWith(TCP_PREFIX)) {
-					ITCPAcceptor acceptor = TCPUtil.getAcceptor(container, nas.substring(TCP_PREFIX.length()));
-					LifecycleUtil.activate(acceptor);
-					acceptors.add(acceptor);
-				} else if (nas.startsWith(JVM_PREFIX)) {
-					IJVMAcceptor acceptor = JVMUtil.getAcceptor(container, nas.substring(JVM_PREFIX.length()));
-					LifecycleUtil.activate(acceptor);
-					acceptors.add(acceptor);					
-				}
-			}			
+			addAcceptor((String) ap);
+		} else if (ap instanceof String[]) {
+			for (String as: (String[]) ap) {
+				addAcceptor(as);
+			}
+		}
+	}
+
+	void addAcceptor(String acceptorString) {
+		String nas = acceptorString.trim();
+		if (nas.startsWith(TCP_PREFIX)) {
+			ITCPAcceptor acceptor = TCPUtil.getAcceptor(container, nas.substring(TCP_PREFIX.length()));
+			LifecycleUtil.activate(acceptor);
+			acceptors.add(acceptor);
+		} else if (nas.startsWith(JVM_PREFIX)) {
+			IJVMAcceptor acceptor = JVMUtil.getAcceptor(container, nas.substring(JVM_PREFIX.length()));
+			LifecycleUtil.activate(acceptor);
+			acceptors.add(acceptor);					
 		}
 	}
 	

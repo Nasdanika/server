@@ -19,6 +19,7 @@
     </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="runAs" eType="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//Principal"/>
     <eGenericSuperTypes eClassifier="#//CDOTransactionContextFunction">
       <eTypeArguments eTypeParameter="#//AbstractFunction/CR"/>
       <eTypeArguments eTypeParameter="#//AbstractFunction/MC"/>

@@ -21,11 +21,11 @@ public interface FunctionFactory<C extends Context> {
 			String methodName, 
 			Class<?>... parameterTypes);
 
-	Function<C,Object,Object> createServiceMethodFunction(
-			String serviceClassName, 
-			String filter, 
-			String methodName, 
-			String... parameterTypeNames);
+//	Function<C,Object,Object> createServiceMethodFunction(
+//			String serviceClassName, 
+//			String filter, 
+//			String methodName, 
+//			String... parameterTypeNames);
 	
 	Function<C,Object,Object> createObjectMethodFunction(
 			Object target, 
@@ -35,17 +35,17 @@ public interface FunctionFactory<C extends Context> {
 	Function<C,Object,Object> createJavaScriptFunction(
 			String code,
 			Map<String, Object> bindings,
-			String[] parameterNames);
+			String... parameterNames);
 	
 	Function<C,Object,Object> createJavaScriptFunction(
-			Reader code,
+			Reader codeReader,
 			Map<String, Object> bindings,
-			String[] parameterNames);
+			String... parameterNames);
 	
 	Function<C,Object,Object> createJavaScriptFunction(
-			InputStream code,
+			InputStream codeInputStream,
 			Map<String, Object> bindings,
-			String[] parameterNames);
+			String... parameterNames);
 	
 	/**
 	 * 
@@ -59,7 +59,7 @@ public interface FunctionFactory<C extends Context> {
 			URL codeURL,
 			boolean preLoad,
 			Map<String, Object> bindings,
-			String[] parameterNames);
+			String... parameterNames);
 	
 //	<R> Function<C,Object,R> createJavaFunction(
 //			String code,
@@ -107,7 +107,7 @@ public interface FunctionFactory<C extends Context> {
 	 * @param returnType
 	 * @return
 	 */
-	<T,R> Function<C,T,R>  createCommandFunction(Command<C,T,R> command, Class<?>[] parameterTypes,	Class<R> returnType);
+	<T,R> Function<C,T,R>  createCommandFunction(Command<C,T,R> command, Class<T>[] parameterTypes,	Class<R> returnType);
 		
 	/**
 	 * Creates a special value indicating that argument shall be 

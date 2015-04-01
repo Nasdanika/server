@@ -26,6 +26,7 @@ import org.nasdanika.cdo.function.JavaFunction;
 import org.nasdanika.cdo.function.JavaScriptFunction;
 import org.nasdanika.cdo.function.ObjectMethodFunction;
 import org.nasdanika.cdo.function.ServiceMethodFunction;
+import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.Context;
 
 import org.nasdanika.function.ServiceBinding;
@@ -184,6 +185,7 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 
 		// Initialize simple dependencies
 		BoxingPackage.eINSTANCE.eClass();
+		SecurityPackage.eINSTANCE.eClass();
 
 		// Create package meta-data objects
 		theFunctionPackage.createPackageContents();
@@ -225,6 +227,15 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 	 */
 	public EClass getAbstractFunction() {
 		return abstractFunctionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAbstractFunction_RunAs() {
+		return (EReference)abstractFunctionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -611,6 +622,7 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		cdoTransactionContextFunctionEClass = createEClass(CDO_TRANSACTION_CONTEXT_FUNCTION);
 
 		abstractFunctionEClass = createEClass(ABSTRACT_FUNCTION);
+		createEReference(abstractFunctionEClass, ABSTRACT_FUNCTION__RUN_AS);
 
 		boundFunctionEClass = createEClass(BOUND_FUNCTION);
 		createEReference(boundFunctionEClass, BOUND_FUNCTION__TARGET);
@@ -687,6 +699,7 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		setNsURI(eNS_URI);
 
 		// Obtain other dependent packages
+		SecurityPackage theSecurityPackage = (SecurityPackage)EPackage.Registry.INSTANCE.getEPackage(SecurityPackage.eNS_URI);
 		BoxingPackage theBoxingPackage = (BoxingPackage)EPackage.Registry.INSTANCE.getEPackage(BoxingPackage.eNS_URI);
 
 		// Create type parameters
@@ -820,6 +833,7 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		initEClass(cdoTransactionContextFunctionEClass, CDOTransactionContextFunction.class, "CDOTransactionContextFunction", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(abstractFunctionEClass, AbstractFunction.class, "AbstractFunction", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getAbstractFunction_RunAs(), theSecurityPackage.getPrincipal(), null, "runAs", null, 0, 1, AbstractFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(boundFunctionEClass, BoundFunction.class, "BoundFunction", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getBoundFunction_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, BoundFunction.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

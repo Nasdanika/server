@@ -5,7 +5,7 @@
     rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl" reflectiveDelegation="true"
     importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective" complianceLevel="7.0"
     copyrightFields="false" providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter"
-    usedGenPackages="../../org.nasdanika.cdo.boxing/model/boxing.genmodel#//boxing"
+    usedGenPackages="../../org.nasdanika.cdo.boxing/model/boxing.genmodel#//boxing ../../org.nasdanika.cdo.security/model/security.genmodel#//security"
     operationReflection="true" importOrganizing="true">
   <foreignModel>cdo-function.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
@@ -23,6 +23,7 @@
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//AbstractFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//AbstractFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//AbstractFunction/R"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference cdo-function.ecore#//AbstractFunction/runAs"/>
     </genClasses>
     <genClasses ecoreClass="cdo-function.ecore#//BoundFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//BoundFunction/CR"/>

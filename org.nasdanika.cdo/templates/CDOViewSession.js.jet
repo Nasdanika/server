@@ -145,7 +145,60 @@ define(["q", "jquery"], function(Q, jquery) {
 				        }
 				    });				
 			})			
+		},
+			
+		// Updates model from the server if there are no local changes.
+		// Applies returned server-side changes to the model
+		// Returns a boolean promise which is fulfilled with true if data was loaded from the server, and false if there were local changes and the model was not updated.
+		refresh : function() {
+			return Q.Promise(function(resolve, reject, notify) {
+				for (var k in session.sessionObjects) {
+					for (var l in session.sessionObjects[k].delta) {
+						resolve(false);
+						return;
+					}
+				}
+				jquery.ajax(
+					"<%=context.getObjectPath(cdoView)%>/session",
+				    {
+				    	type: "PUT",
+				    	data: {},
+				    	contentType: "text/json",
+				        success: function(response) {
+				        	if (response.hasOwnProperty('error')) {
+				        		reject(unmarshal(response.error, false));
+				        	} else if (response.hasOwnProperty('validationResults')) { // TODO - change
+				        		reject({ validationFailed:true, validationResults: unmarshal(response.validationResults, false) });
+				        	} else { 
+				        	 	if (response.hasOwnProperty('deltas')) {
+				        	 		var deltaPromises = [];
+					        		for (var k in response.deltas) {
+					        			if (session.sessionObjects.hasOwnProperty(k)) {
+					        				if (response.deltas[k] === 'detached') {
+					        					delete session.sessionObjects[k];
+					        				} else {
+						        				var deltaPromise = session.sessionObjects[k].applyDelta(response.deltas[k]);
+						        				if (Q.isPromise(deltaPromise)) {
+						        					deltaPromises.push(deltaPromise);
+						        				}
+						        			}
+					        			}
+					        		}
+					        	}
+					        	if (deltaPromises.length===0) {
+					        		resolve(true);
+					        	} else {
+				        			Q.all(deltaPromises).then(function() { resolve(true); });
+				        		}
+				        	}
+				        },
+				        error: function(jqXHR, textStatus, errorThrown) {
+				        	reject(errorThrown);
+				        }
+				    });				
+			})			
 		}
+		
 	};	
 	
 	return session;
