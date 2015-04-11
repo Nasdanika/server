@@ -2,16 +2,13 @@
  */
 package org.nasdanika.webtest.performance.impl;
 
-import java.lang.Exception;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.json.JSONObject;
 import org.nasdanika.core.JSONLoader;
 import org.nasdanika.webtest.performance.DocumentTiming;

@@ -2,18 +2,18 @@ package org.nasdanika.core.convert.json;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.nasdanika.core.Context;
 import org.nasdanika.core.Converter;
-import org.nasdanika.core.ConverterContext;
 
 public class Array {
 	
-	public static class ToJSON implements Converter<Object, JSONArray, ConverterContext> {
+	public static class ToJSON implements Converter<Object, JSONArray, Context> {
 
 		@Override
 		public JSONArray convert(
 				Object source, 
 				Class<JSONArray> target,
-				ConverterContext context) throws Exception {
+				Context context) throws Exception {
 			if (source.getClass().isArray()) {
 				JSONArray ret = new JSONArray();
 				Object[] sa = (Object[]) source;
@@ -33,13 +33,13 @@ public class Array {
 		
 	}
 	
-	public static class FromJSON implements Converter<JSONArray, Object, ConverterContext> {
+	public static class FromJSON implements Converter<JSONArray, Object, Context> {
 
 		@Override
 		public Object convert(
 				JSONArray source, 
 				Class<Object> target,
-				ConverterContext context) throws Exception {
+				Context context) throws Exception {
 			Object[] ret = new Object[source.length()];
 			for (int i=0; i<ret.length; ++i) {
 				ret[i] = context.convert(source.get(i), Object.class);

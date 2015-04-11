@@ -1,8 +1,8 @@
 package org.nasdanika.html.impl;
 
 import org.nasdanika.html.Button;
-import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FieldContainer;
+import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormFragment;
 import org.nasdanika.html.FormGroup;

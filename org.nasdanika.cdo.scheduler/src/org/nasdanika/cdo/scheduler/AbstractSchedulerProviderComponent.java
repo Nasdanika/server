@@ -35,6 +35,10 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 		this.threadPoolSize = threadPoolSize;
 	}
 	
+	protected CDOTransactionContext<CR,MC> createContext() {
+		return transactionContextProvider.createContext();
+	}
+	
 	private class SchedulerTaskRunnable implements Runnable {
 		
 		private CDOID taskId;
@@ -45,15 +49,41 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 
 		@Override
 		public void run() {
-			// TODO Auto-generated method stub
-			
+			try (CDOTransactionContext<CR,MC> transactionContext = createContext()) {
+				CDOTransaction transaction = transactionContext.getView();
+				SchedulerTask task = (SchedulerTask) transaction.getObject(taskId);
+				@SuppressWarnings("unchecked")
+				CDOTransactionContextCommand<CR, MC, Object, Object> command = (CDOTransactionContextCommand<CR, MC, Object, Object>) BoxUtil.unbox(task.getTarget(), transactionContext); 
+				if (command.canExecute()) {
+					try {
+						Object result = command.execute(createCommandContext(transactionContext, task.getRunAs()), task.getRunAt(), task.isFixedRate(), task.getPeriod());
+						if (Boolean.FALSE.equals(result)) {
+							// TODO - cancel the task.
+						}
+					} catch (Exception e) {
+						// TODO - cancel the task on method exit in a different transaction.
+					}
+				}
+				// TODO - store exception to the task, copy Throwable and stack trace from WebTestHub, add cause (in WTH it is "peeled").
+			} catch (Exception e) {
+				handleException(e);
+			}			
 		}
 		
 	}
 	
+	protected void handleException(Exception e) {
+		e.printStackTrace(); 
+	}
+	
+	public CDOTransactionContext<CR, MC> createCommandContext(CDOTransactionContext<CR, MC> transactionContext, Principal runAs) {
+		// TODO
+//		return ;
+	}
+
 	public void activate(BundleContext bundleContext) throws Exception {
 		scheduledExecutorService = Executors.newScheduledThreadPool(threadPoolSize);
-		try (CDOTransactionContext<CR,MC> transactionContext = transactionContextProvider.createContext()) {
+		try (CDOTransactionContext<CR,MC> transactionContext = createContext()) {
 			CDOTransaction transaction = transactionContext.getView();
 			Lock readLock = tasksReadLock(transaction);
 			try {

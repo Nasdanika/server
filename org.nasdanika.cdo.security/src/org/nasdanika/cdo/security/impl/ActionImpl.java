@@ -19,7 +19,6 @@ import org.nasdanika.cdo.security.Property;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 
@@ -322,7 +321,7 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 						actionProperties.put(p.getName(), p.getValue());
 					} else {
 						Class<?> propertyType = ((ClassLoadingContext) context).loadClass(p.getType());
-						Object propertyValue = ((ConverterContext) context).convert(p.getValue(), propertyType);
+						Object propertyValue = ((Context) context).convert(p.getValue(), propertyType);
 						if (propertyValue==null) {
 							throw new NasdanikaException("Cannot convert '"+p.getValue()+"' to "+p.getType());
 						}

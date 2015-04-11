@@ -34,21 +34,21 @@ public abstract class ReflectiveConverterProvider implements AutoCloseable, Conv
 		for (final Method m: getClass().getMethods()) {
 			final ConverterMethod cma = m.getAnnotation(ConverterMethod.class);
 			if (cma!=null) {				
-				descriptors.add(new ConverterDescriptor<Object, Object, ConverterContext>() {
+				descriptors.add(new ConverterDescriptor<Object, Object, Context>() {
 					
 					@SuppressWarnings("unchecked")
 					Class<Object>[] parameterTypes = (Class<Object>[]) m.getParameterTypes();
 
 					@Override
-					public Converter<Object, Object, ConverterContext> getConverter() {
-						class MethodConverter extends ParameterReferenceManager implements Converter<Object, Object, ConverterContext> {
+					public Converter<Object, Object, Context> getConverter() {
+						class MethodConverter extends ParameterReferenceManager implements Converter<Object, Object, Context> {
 
 							protected MethodConverter() throws Exception {
 								super(theContext, m);
 							}
 
 							@Override
-							public Object convert(Object source, Class<Object> target, ConverterContext context) throws Exception {
+							public Object convert(Object source, Class<Object> target, Context context) throws Exception {
 								Object[] args = new Object[parameterTypes.length];
 								args[0] = source;
 								if (args.length>1) {
@@ -75,7 +75,7 @@ public abstract class ReflectiveConverterProvider implements AutoCloseable, Conv
 
 					@SuppressWarnings({ "unchecked", "rawtypes" })
 					@Override
-					public Class<ConverterContext> getContextType() {
+					public Class<Context> getContextType() {
 						return parameterTypes.length>1 ? (Class) parameterTypes[1] : null;
 					}
 

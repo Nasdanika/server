@@ -42,7 +42,6 @@ import org.nasdanika.cdo.boxing.ShortBox;
 import org.nasdanika.cdo.boxing.StreamBox;
 import org.nasdanika.cdo.boxing.StringBox;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 import org.nasdanika.core.ConverterMethod;
 import org.nasdanika.core.ReflectiveConverterProvider;
 
@@ -139,14 +138,14 @@ public class Converters extends ReflectiveConverterProvider {
 	}
 
 	@ConverterMethod
-	<T> CollectionBox<T> box(Collection<T> value, ConverterContext context) {
+	<T> CollectionBox<T> box(Collection<T> value, Context context) {
 		CollectionBox<T> ret = BoxingFactory.eINSTANCE.createCollectionBox();
 		ret.set(value, context);
 		return ret;
 	}
 	
 	@ConverterMethod
-	<T> Collection<T> unbox(CollectionBox<T> box, ConverterContext context) {
+	<T> Collection<T> unbox(CollectionBox<T> box, Context context) {
 		return box.get(context);
 	}
 
@@ -223,14 +222,14 @@ public class Converters extends ReflectiveConverterProvider {
 	}
 
 	@ConverterMethod
-	<K,V> MapBox<K,V> box(Map<K,V> value, ConverterContext context) {
+	<K,V> MapBox<K,V> box(Map<K,V> value, Context context) {
 		MapBox<K,V> ret = BoxingFactory.eINSTANCE.createMapBox();
 		ret.set(value, context);
 		return ret;
 	}
 	
 	@ConverterMethod
-	<K,V> Map<K,V> unbox(MapBox<K,V> box, ConverterContext context) {
+	<K,V> Map<K,V> unbox(MapBox<K,V> box, Context context) {
 		return box.get(context);
 	}
 
@@ -297,38 +296,38 @@ public class Converters extends ReflectiveConverterProvider {
 	}
 
 	@ConverterMethod
-	<T> ObjectBox<T> box(T value, ConverterContext context) {
+	<T> ObjectBox<T> box(T value, Context context) {
 		ObjectBox<T> ret = BoxingFactory.eINSTANCE.createObjectBox();
 		ret.set(value, context);
 		return ret;
 	}
 	
 	@ConverterMethod
-	<T> T unbox(ObjectBox<T> box, ConverterContext context) {
+	<T> T unbox(ObjectBox<T> box, Context context) {
 		return box.get(context);
 	}
 
 	@ConverterMethod
-	JsonArrayBox box(JSONArray value, ConverterContext context) {
+	JsonArrayBox box(JSONArray value, Context context) {
 		JsonArrayBox ret = BoxingFactory.eINSTANCE.createJsonArrayBox();
 		ret.set(value, context);
 		return ret;
 	}
 	
 	@ConverterMethod
-	JSONArray unbox(JsonArrayBox box, ConverterContext context) {
+	JSONArray unbox(JsonArrayBox box, Context context) {
 		return box.get(context);
 	}
 
 	@ConverterMethod
-	JsonObjectBox box(JSONObject value, ConverterContext context) {
+	JsonObjectBox box(JSONObject value, Context context) {
 		JsonObjectBox ret = BoxingFactory.eINSTANCE.createJsonObjectBox();
 		ret.set(value, context);
 		return ret;
 	}
 	
 	@ConverterMethod
-	JSONObject unbox(JsonObjectBox box, ConverterContext context) {
+	JSONObject unbox(JsonObjectBox box, Context context) {
 		return box.get(context);
 	}
 
@@ -393,7 +392,7 @@ public class Converters extends ReflectiveConverterProvider {
 	}
 
 	@ConverterMethod
-	<T> ObjectArrayBox<T> box(T[] value, ConverterContext context) {
+	<T> ObjectArrayBox<T> box(T[] value, Context context) {
 		ObjectArrayBox<T> ret = BoxingFactory.eINSTANCE.createObjectArrayBox();
 		ret.set(value, context);
 		return ret;
@@ -401,7 +400,7 @@ public class Converters extends ReflectiveConverterProvider {
 	
 	@SuppressWarnings("unchecked")
 	@ConverterMethod
-	<T> T[] unbox(ObjectArrayBox<T> box, ConverterContext context) {
+	<T> T[] unbox(ObjectArrayBox<T> box, Context context) {
 		return (T[]) box.get(context);
 	}
 

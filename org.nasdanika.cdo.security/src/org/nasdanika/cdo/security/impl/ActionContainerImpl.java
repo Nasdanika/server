@@ -3,11 +3,8 @@
 package org.nasdanika.cdo.security.impl;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.ActionContainer;
 import org.nasdanika.cdo.security.SecurityPackage;

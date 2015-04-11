@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Input;
-import org.nasdanika.html.Select;
-import org.nasdanika.html.Tag;
 import org.nasdanika.html.TextArea;
 
 class TextAreaImpl extends InputBaseImpl<TextArea> implements TextArea {

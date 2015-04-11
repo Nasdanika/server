@@ -11,7 +11,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.Breadcrumbs;

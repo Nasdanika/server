@@ -2,7 +2,7 @@ package org.nasdanika.core;
 
 public interface ConverterProvider {
 	
-	interface ConverterDescriptor<S,T,C extends ConverterContext> {
+	interface ConverterDescriptor<S,T,C extends Context> {
 		Converter<S,T,C> getConverter();
 		
 		Class<S> getSourceType();

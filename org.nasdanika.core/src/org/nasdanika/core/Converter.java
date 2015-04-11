@@ -8,7 +8,7 @@ package org.nasdanika.core;
  * @param <T> Target type
  * @param <C> Context type
  */
-public interface Converter<S,T,C extends ConverterContext> extends AutoCloseable {
+public interface Converter<S,T,C extends Context> extends AutoCloseable {
 	
 	T convert(S source, Class<T> target, C context) throws Exception;
 	

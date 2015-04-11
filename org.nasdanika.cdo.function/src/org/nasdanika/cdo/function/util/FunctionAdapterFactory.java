@@ -6,15 +6,19 @@ import java.util.Map;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-
-import org.nasdanika.cdo.function.*;
-
+import org.nasdanika.cdo.function.AbstractFunction;
+import org.nasdanika.cdo.function.BoundFunction;
+import org.nasdanika.cdo.function.CDOServiceBinding;
+import org.nasdanika.cdo.function.CommandFunction;
+import org.nasdanika.cdo.function.ContextArgument;
+import org.nasdanika.cdo.function.FunctionPackage;
+import org.nasdanika.cdo.function.JavaFunction;
+import org.nasdanika.cdo.function.JavaScriptFunction;
+import org.nasdanika.cdo.function.ObjectMethodFunction;
+import org.nasdanika.cdo.function.ServiceMethodFunction;
 import org.nasdanika.core.Context;
-
 import org.nasdanika.function.ServiceBinding;
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 

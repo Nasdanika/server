@@ -9,10 +9,8 @@ import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.ActionContainer;
 import org.nasdanika.cdo.security.ActionKey;
@@ -30,7 +28,6 @@ import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyContainer;
 import org.nasdanika.cdo.security.User;
-
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 

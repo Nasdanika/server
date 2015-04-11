@@ -3,11 +3,8 @@ package org.nasdanika.cdo.scheduler;
 import java.util.Collection;
 import java.util.concurrent.locks.Lock;
 
-import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
-import org.nasdanika.cdo.CDOTransactionContext;
-import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.Context;
 
 public class ResourceTaskContainerSchedulerProviderComponent<CR, MC extends Context> extends AbstractSchedulerProviderComponent<CR, MC> {

@@ -10,9 +10,7 @@ import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.function.AbstractFunction;
 import org.nasdanika.cdo.function.BoundFunction;
@@ -21,14 +19,12 @@ import org.nasdanika.cdo.function.CommandFunction;
 import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionFactory;
 import org.nasdanika.cdo.function.FunctionPackage;
-
 import org.nasdanika.cdo.function.JavaFunction;
 import org.nasdanika.cdo.function.JavaScriptFunction;
 import org.nasdanika.cdo.function.ObjectMethodFunction;
 import org.nasdanika.cdo.function.ServiceMethodFunction;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.Context;
-
 import org.nasdanika.function.ServiceBinding;
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 

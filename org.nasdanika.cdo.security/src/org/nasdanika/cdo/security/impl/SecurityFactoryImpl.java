@@ -6,13 +6,18 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
-import org.nasdanika.cdo.security.*;
-
+import org.nasdanika.cdo.security.Action;
+import org.nasdanika.cdo.security.ActionContainer;
+import org.nasdanika.cdo.security.ActionKey;
+import org.nasdanika.cdo.security.Group;
+import org.nasdanika.cdo.security.LoginUser;
+import org.nasdanika.cdo.security.Permission;
+import org.nasdanika.cdo.security.Property;
+import org.nasdanika.cdo.security.SecurityFactory;
+import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.SecurityPolicyContainer;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 

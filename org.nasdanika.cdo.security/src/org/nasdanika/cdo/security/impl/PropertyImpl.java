@@ -3,9 +3,7 @@
 package org.nasdanika.cdo.security.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.security.Property;
 import org.nasdanika.cdo.security.SecurityPackage;
 

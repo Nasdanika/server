@@ -5,19 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.nasdanika.core.ClassLoadingContext;
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 
 
-public interface WebContext extends ConverterContext, ExportingContext, ClassLoadingContext {
-	
-	/**
-	 * Checks whether given extensionManager has a permission to execute
-	 * an action on the ojbect
-	 * @param target Target object
-	 * @param action Action ID.
-	 * @return true if action is allowed, false if denied.
-	 */
-	boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception;	
+public interface WebContext extends Context, ExportingContext, ClassLoadingContext {
 		
 	RequestMethod getMethod();
 	

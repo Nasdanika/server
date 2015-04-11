@@ -31,11 +31,10 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.mozilla.javascript.Context;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.CDOViewContext;
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 import org.nasdanika.core.JSONLoader;
 import org.nasdanika.web.ServerException;
 import org.nasdanika.web.WebContext;
@@ -163,7 +162,7 @@ public class CDOWebUtil {
 	 * @param type
 	 * @return
 	 */
-	public static Object get(ConverterContext context, JSONObject json, String key, Class<?> type) throws Exception {
+	public static Object get(Context context, JSONObject json, String key, Class<?> type) throws Exception {
 		if (json.has(key)) {
 			switch (type.getName()) {
 			case "boolean":
@@ -207,7 +206,7 @@ public class CDOWebUtil {
 	 * @param type
 	 * @return
 	 */
-	public static Object get(ConverterContext context, JSONArray json, int idx, Class<?> type) throws Exception {
+	public static Object get(Context context, JSONArray json, int idx, Class<?> type) throws Exception {
 		switch (type.getName()) {
 		case "boolean":
 		case "java.lang.Boolean":
@@ -230,7 +229,7 @@ public class CDOWebUtil {
 		}
 	}
 	
-	public static Object[] get(ConverterContext context, JSONArray json, Class<?> type) throws Exception {
+	public static Object[] get(Context context, JSONArray json, Class<?> type) throws Exception {
 		Object[] ret = new Object[json.length()];
 		for (int i=0; i<json.length(); ++i) {
 			ret[i] = get(context, json, i, type);
@@ -609,7 +608,7 @@ public class CDOWebUtil {
 					return new HashMap<>((Map<Object,Object>) validationResults);
 				}
 			} finally {
-				Context.exit();
+				org.mozilla.javascript.Context.exit();
 			}
 		}
 
@@ -651,7 +650,7 @@ public class CDOWebUtil {
 					return new HashMap<>((Map<Object,Object>) validationResults);
 				}
 			} finally {
-				Context.exit();
+				org.mozilla.javascript.Context.exit();
 			}
 		}
 

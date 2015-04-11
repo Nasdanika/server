@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.ecore.EFactory;
-
 import org.nasdanika.core.Context;
 
 /**

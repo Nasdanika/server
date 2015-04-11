@@ -7,7 +7,6 @@ import javax.transaction.SystemException;
 import javax.transaction.TransactionManager;
 
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
-import org.nasdanika.cdo.xa.MapXACDOSession;
 import org.nasdanika.cdo.xa.MapXACDOSession.Views;
 
 public class ViewsProviderComponent implements ViewsProvider {

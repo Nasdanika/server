@@ -9,6 +9,6 @@ import org.json.JSONObject;
  */
 public interface JSONLoader {
 	
-	void loadJSON(JSONObject json, ConverterContext context) throws Exception;
+	void loadJSON(JSONObject json, Context context) throws Exception;
 
 }

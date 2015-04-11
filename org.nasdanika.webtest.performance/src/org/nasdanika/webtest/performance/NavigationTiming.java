@@ -2,7 +2,6 @@
  */
 package org.nasdanika.webtest.performance;
 
-import java.lang.Exception;
 import org.eclipse.emf.common.util.EList;
 import org.json.JSONObject;
 

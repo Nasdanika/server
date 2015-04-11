@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.scheduler;
 
 import org.eclipse.emf.cdo.CDOObject;
-
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.security.Principal;
 

@@ -3,15 +3,11 @@
 package org.nasdanika.cdo.security.impl;
 
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
@@ -19,9 +15,7 @@ import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
-
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
-
 import org.nasdanika.core.Context;
 
 /**

@@ -5,15 +5,15 @@ import java.util.Map.Entry;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.nasdanika.core.Context;
 import org.nasdanika.core.Converter;
-import org.nasdanika.core.ConverterContext;
 
 public class Map {
 	
-	public static class ToJSONObject implements Converter<java.util.Map<?,?>, JSONObject, ConverterContext> {
+	public static class ToJSONObject implements Converter<java.util.Map<?,?>, JSONObject, Context> {
 
 		@Override
-		public JSONObject convert(java.util.Map<?, ?> source, Class<JSONObject> target, ConverterContext context) throws Exception {
+		public JSONObject convert(java.util.Map<?, ?> source, Class<JSONObject> target, Context context) throws Exception {
 			for (Object key: source.keySet()) {
 				if (!(key instanceof String)) {
 					return null;
@@ -34,10 +34,10 @@ public class Map {
 		
 	}
 	
-	public static class ToJSONArray implements Converter<java.util.Map<?,?>, JSONArray, ConverterContext> {
+	public static class ToJSONArray implements Converter<java.util.Map<?,?>, JSONArray, Context> {
 
 		@Override
-		public JSONArray convert(java.util.Map<?, ?> source, Class<JSONArray> target, ConverterContext context) throws Exception {
+		public JSONArray convert(java.util.Map<?, ?> source, Class<JSONArray> target, Context context) throws Exception {
 			boolean stringKeys = true;
 			for (Object key: source.keySet()) {
 				if (!(key instanceof String)) {
@@ -66,13 +66,13 @@ public class Map {
 		
 	}
 	
-	public static class FromJSON implements Converter<JSONObject, HashMap<String, Object>, ConverterContext> {
+	public static class FromJSON implements Converter<JSONObject, HashMap<String, Object>, Context> {
 
 		@Override
 		public HashMap<String, Object> convert(
 				JSONObject source, 
 				Class<HashMap<String, Object>> target, 
-				ConverterContext context) throws Exception {
+				Context context) throws Exception {
 			
 			HashMap<String, Object> ret = new HashMap<>();
 			for (String key: JSONObject.getNames(source)) {

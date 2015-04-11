@@ -4,10 +4,9 @@ package org.nasdanika.cdo.scheduler.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.util.Switch;
-
-import org.nasdanika.cdo.scheduler.*;
+import org.nasdanika.cdo.scheduler.SchedulerPackage;
+import org.nasdanika.cdo.scheduler.SchedulerTask;
 
 /**
  * <!-- begin-user-doc -->

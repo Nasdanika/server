@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.nasdanika.core.ConverterContext;
+import org.nasdanika.core.Context;
 import org.nasdanika.webtest.performance.PerformancePackage;
 import org.nasdanika.webtest.performance.TimingBase;
 
@@ -396,7 +396,7 @@ public class TimingBaseImpl extends CDOObjectImpl implements TimingBase {
 	}
 
 	@Override
-	public void loadJSON(JSONObject json, ConverterContext context)	throws Exception {
+	public void loadJSON(JSONObject json, Context context)	throws Exception {
 		// Reflective implementation
 		for (EAttribute attr: eClass().getEAllAttributes()) {
 			set(attr, json);

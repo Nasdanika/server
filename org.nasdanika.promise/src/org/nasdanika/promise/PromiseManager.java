@@ -1,8 +1,5 @@
 package org.nasdanika.promise;
 
-import java.util.List;
-
-import org.nasdanika.core.Command;
 import org.nasdanika.core.Context;
 
 public interface PromiseManager<C extends Context> {

@@ -4,12 +4,10 @@ package org.nasdanika.cdo.scheduler.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-
-import org.nasdanika.cdo.scheduler.*;
+import org.nasdanika.cdo.scheduler.SchedulerPackage;
+import org.nasdanika.cdo.scheduler.SchedulerTask;
 
 /**
  * <!-- begin-user-doc -->

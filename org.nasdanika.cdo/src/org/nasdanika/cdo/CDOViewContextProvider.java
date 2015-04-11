@@ -2,8 +2,9 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ContextProvider;
 
-public interface CDOViewContextProvider<CR, MC extends Context> extends ContextProvider<CDOViewContext<CDOView, CR, MC>> {
+public interface CDOViewContextProvider<V extends CDOView, CR, MC extends Context, C extends CDOViewContext<V, CR, MC>> {
+
+	C createContext(MC masterContext);
 
 }

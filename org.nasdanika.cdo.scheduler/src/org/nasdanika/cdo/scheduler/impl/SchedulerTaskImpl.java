@@ -4,9 +4,7 @@ package org.nasdanika.cdo.scheduler.impl;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
 import org.nasdanika.cdo.security.Principal;

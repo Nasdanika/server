@@ -2,7 +2,6 @@ package org.nasdanika.cdo.boxing;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.ConverterContext;
 
 public class BoxUtil {
 
@@ -27,7 +26,7 @@ public class BoxUtil {
 		}
 		
 		try {
-			CDOObject cdoObj = context.adapt(ConverterContext.class).convert(obj, CDOObject.class);
+			CDOObject cdoObj = context.adapt(Context.class).convert(obj, CDOObject.class);
 			if (cdoObj==null) {
 				throw new BoxingException("Cannot convert "+obj+" to CDOObject");
 			}

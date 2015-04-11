@@ -150,7 +150,7 @@ public class CoreUtil {
 	
 	public static final String CONVERT_ID = "org.nasdanika.core.convert";			
 	
-	protected static class ConverterServiceEntry<S,T,C extends ConverterContext> implements Converter<S,T,C> {
+	protected static class ConverterServiceEntry<S,T,C extends Context> implements Converter<S,T,C> {
 	
 		private ServiceTracker<Converter<S,T,C>, Converter<S,T,C>> serviceTracker;		
 		
@@ -185,7 +185,12 @@ public class CoreUtil {
 		
 	}
 		
-	public static <S,T,C extends ConverterContext> Converter<S,T,C> createConverter() throws Exception {
+	/**
+	 * Creates composite converter from extensions. 
+	 * @return
+	 * @throws Exception
+	 */
+	public static <S,T,C extends Context> Converter<S,T,C> createConverter() throws Exception {
 		class ConverterEntry implements Comparable<ConverterEntry> {
 			
 			public ConverterEntry(Converter<S,T,C> converter) {
@@ -257,6 +262,8 @@ public class CoreUtil {
 				}
 			}
 		}
+		
+		// TODO - services.
 		
 		Collections.sort(ceList);
 					

@@ -5,12 +5,11 @@ package org.nasdanika.cdo.scheduler.impl;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
-import org.nasdanika.cdo.scheduler.*;
+import org.nasdanika.cdo.scheduler.SchedulerFactory;
+import org.nasdanika.cdo.scheduler.SchedulerPackage;
+import org.nasdanika.cdo.scheduler.SchedulerTask;
 
 /**
  * <!-- begin-user-doc -->

@@ -5,7 +5,7 @@ import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.core.Context;
 
-public interface CDOViewContext<V extends CDOView, CR, MC extends Context> extends Context {
+public interface CDOViewContext<V extends CDOView, CR> extends Context {
 
 	V getView();
 	
@@ -15,7 +15,7 @@ public interface CDOViewContext<V extends CDOView, CR, MC extends Context> exten
 	 * be used to map a principal from the merged context (e.g. HTTP request principal) to CDO principal.
 	 * @return
 	 */
-	Principal getPrincipal(MC masterContext) throws Exception;
+	Principal getPrincipal() throws Exception;
 	
 	ProtectionDomain<CR> getProtectionDomain();
 	

@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.cdo.CDOObject;
-
 import org.nasdanika.function.ServiceBinding;
 
 /**

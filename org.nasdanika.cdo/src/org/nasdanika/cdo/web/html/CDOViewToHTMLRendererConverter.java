@@ -11,7 +11,6 @@ import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.HTMLFactory;

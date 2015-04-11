@@ -4,12 +4,24 @@ package org.nasdanika.cdo.security.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-
-import org.nasdanika.cdo.security.*;
+import org.nasdanika.cdo.security.Action;
+import org.nasdanika.cdo.security.ActionContainer;
+import org.nasdanika.cdo.security.ActionKey;
+import org.nasdanika.cdo.security.Group;
+import org.nasdanika.cdo.security.LoginPasswordCredentials;
+import org.nasdanika.cdo.security.LoginPasswordHashUser;
+import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
+import org.nasdanika.cdo.security.LoginUser;
+import org.nasdanika.cdo.security.Permission;
+import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.Property;
+import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.SecurityPolicy;
+import org.nasdanika.cdo.security.SecurityPolicyContainer;
+import org.nasdanika.cdo.security.User;
 
 /**
  * <!-- begin-user-doc -->

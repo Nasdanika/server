@@ -3,6 +3,7 @@
 package org.nasdanika.cdo.security;
 
 import java.util.Map;
+
 import org.eclipse.emf.common.util.EList;
 import org.nasdanika.core.Context;
 

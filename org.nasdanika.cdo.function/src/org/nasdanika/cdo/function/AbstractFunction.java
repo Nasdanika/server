@@ -3,10 +3,8 @@
 package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.cdo.CDOObject;
-
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.Context;
-
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 
 /**

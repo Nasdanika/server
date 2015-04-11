@@ -3,9 +3,7 @@
 package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.common.util.EList;
-
 import org.nasdanika.cdo.boxing.ClassBox;
-
 import org.nasdanika.core.Context;
 
 /**
