@@ -7,7 +7,7 @@ import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.nasdanika.core.Context;
 
-public class ResourceTaskContainerSchedulerProviderComponent<CR, MC extends Context> extends AbstractSchedulerProviderComponent<CR, MC> {
+public class ResourceTaskContainerSchedulerProviderComponent<CR> extends AbstractSchedulerProviderComponent<CR> {
 
 	@Override
 	protected Collection<? super SchedulerTask> getTasks(CDOTransaction transaction) {

@@ -15,18 +15,17 @@ import org.nasdanika.cdo.boxing.BoxingFactory;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.Command;
-import org.nasdanika.core.Context;
 import org.nasdanika.function.Function;
 import org.nasdanika.function.FunctionException;
 import org.nasdanika.function.ServiceBinding;
 import org.nasdanika.function.cdo.CDOTransactionContextFunctionFactory;
 
-public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactionContextFunctionFactory<CR, MC> {
+public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFactory<CR> {
 	
-	private CDOTransactionContext<CR, MC> context;
+	private CDOTransactionContext<CR> context;
 	private Principal runAsPrincipal;
 
-	public CDOFunctionFactory(CDOTransactionContext<CR, MC> context, Principal runAsPrincipal) {
+	public CDOFunctionFactory(CDOTransactionContext<CR> context, Principal runAsPrincipal) {
 		this.context = context;
 		this.runAsPrincipal = runAsPrincipal;
 	}
@@ -41,12 +40,12 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, Object, Object> createServiceMethodFunction(
+	public Function<CDOTransactionContext<CR>, Object, Object> createServiceMethodFunction(
 			Class<?> serviceClass, 
 			String filter, 
 			String methodName,
 			Class<?>... parameterTypes) {
-		ServiceMethodFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createServiceMethodFunction();
+		ServiceMethodFunction<CR, Object, Object> ret = FunctionFactory.eINSTANCE.createServiceMethodFunction();
 		ret.setRunAs(runAsPrincipal);
 		ret.setServiceType(serviceClass.getName());
 		ret.setFilter(filter);
@@ -71,11 +70,11 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, Object, Object> createObjectMethodFunction(
+	public Function<CDOTransactionContext<CR>, Object, Object> createObjectMethodFunction(
 			Object target, 
 			String methodName, 
 			Class<?>... parameterTypes) {		
-		ObjectMethodFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createObjectMethodFunction();
+		ObjectMethodFunction<CR, Object, Object> ret = FunctionFactory.eINSTANCE.createObjectMethodFunction();
 		ret.setRunAs(runAsPrincipal);
 		ret.setTarget(BoxUtil.box(target, context));
 		ret.setMethodName(methodName);
@@ -88,11 +87,11 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, Object, Object> createJavaScriptFunction(
+	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
 			String code, 
 			Map<String, Object> bindings, 
 			String... parameterNames) {
-		JavaScriptFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createJavaScriptFunction();
+		JavaScriptFunction<CR, Object, Object> ret = FunctionFactory.eINSTANCE.createJavaScriptFunction();
 		ret.setRunAs(runAsPrincipal);
 		ret.setCode(code);
 		if (bindings!=null) {
@@ -107,7 +106,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, Object, Object> createJavaScriptFunction(
+	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
 			Reader codeReader, 
 			Map<String, Object> bindings, 
 			String... parameterNames) {
@@ -125,7 +124,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, Object, Object> createJavaScriptFunction(
+	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
 			InputStream codeInputStream, 
 			Map<String, Object> bindings,
 			String... parameterNames) {
@@ -133,7 +132,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, Object, Object> createJavaScriptFunction(
+	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
 			URL codeURL, 
 			boolean preLoad, 
 			Map<String, Object> bindings,
@@ -146,7 +145,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 			}
 		}
 		
-		JavaScriptFunction<CR, MC, Object, Object> ret = FunctionFactory.eINSTANCE.createJavaScriptFunction();
+		JavaScriptFunction<CR, Object, Object> ret = FunctionFactory.eINSTANCE.createJavaScriptFunction();
 		ret.setRunAs(runAsPrincipal);
 		ret.setCodeURL(codeURL.toString());
 		if (bindings!=null) {
@@ -161,7 +160,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 	}
 
 //	@Override
-//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//	public <R> Function<CDOTransactionContext<CR>, Object, R> createJavaFunction(
 //			String code, Class<?>[] parameterTypes, String[] parameterNames,
 //			Class<R> returnType, Class<?>[] thrownExceptions) {
 //		// TODO Auto-generated method stub
@@ -169,7 +168,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 //	}
 //
 //	@Override
-//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//	public <R> Function<CDOTransactionContext<CR>, Object, R> createJavaFunction(
 //			Reader code, Class<?>[] parameterTypes, String[] parameterNames,
 //			Class<R> returnType, Class<?>[] thrownExceptions) {
 //		// TODO Auto-generated method stub
@@ -177,7 +176,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 //	}
 //
 //	@Override
-//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//	public <R> Function<CDOTransactionContext<CR>, Object, R> createJavaFunction(
 //			InputStream code, Class<?>[] parameterTypes,
 //			String[] parameterNames, Class<R> returnType,
 //			Class<?>[] thrownExceptions) {
@@ -186,7 +185,7 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 //	}
 //
 //	@Override
-//	public <R> Function<CDOTransactionContext<CR, MC>, Object, R> createJavaFunction(
+//	public <R> Function<CDOTransactionContext<CR>, Object, R> createJavaFunction(
 //			URL codeURL, boolean preLoad, Class<?>[] parameterTypes,
 //			String[] parameterNames, Class<R> returnType,
 //			Class<?>[] thrownExceptions) {
@@ -195,11 +194,11 @@ public class CDOFunctionFactory<CR, MC extends Context> implements CDOTransactio
 //	}
 
 	@Override
-	public <T, R> Function<CDOTransactionContext<CR, MC>, T, R> createCommandFunction(
-			Command<CDOTransactionContext<CR, MC>, T, R> command,
+	public <T, R> Function<CDOTransactionContext<CR>, T, R> createCommandFunction(
+			Command<CDOTransactionContext<CR>, T, R> command,
 			Class<T>[] parameterTypes, 
 			Class<R> returnType) {
-		CommandFunction<CR, MC, T, R> ret = FunctionFactory.eINSTANCE.createCommandFunction();
+		CommandFunction<CR, T, R> ret = FunctionFactory.eINSTANCE.createCommandFunction();
 		ret.setRunAs(runAsPrincipal);
 		ret.setTarget(BoxUtil.box(command, context));
 		for (Class<T> pt: parameterTypes) {			

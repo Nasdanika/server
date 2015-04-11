@@ -780,7 +780,7 @@ public interface FunctionPackage extends EPackage {
 	 * <!-- end-user-doc -->
 	 * @return the meta object for class '<em>CDO Transaction Context Function</em>'.
 	 * @see org.nasdanika.function.cdo.CDOTransactionContextFunction
-	 * @model instanceClass="org.nasdanika.function.cdo.CDOTransactionContextFunction" typeParameters="CR MC T R" MCBounds="org.nasdanika.cdo.function.Context"
+	 * @model instanceClass="org.nasdanika.function.cdo.CDOTransactionContextFunction" typeParameters="CR T R"
 	 * @generated
 	 */
 	EClass getCDOTransactionContextFunction();

@@ -6,32 +6,22 @@
   <eClassifiers xsi:type="ecore:EClass" name="CDOTransactionContextFunction" instanceClassName="org.nasdanika.function.cdo.CDOTransactionContextFunction"
       abstract="true" interface="true">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AbstractFunction" abstract="true">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="runAs" eType="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//Principal"/>
     <eGenericSuperTypes eClassifier="#//CDOTransactionContextFunction">
       <eTypeArguments eTypeParameter="#//AbstractFunction/CR"/>
-      <eTypeArguments eTypeParameter="#//AbstractFunction/MC"/>
       <eTypeArguments eTypeParameter="#//AbstractFunction/T"/>
       <eTypeArguments eTypeParameter="#//AbstractFunction/R"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="BoundFunction">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
@@ -40,7 +30,6 @@
         eType="#//ArgumentBinding" containment="true"/>
     <eGenericSuperTypes eClassifier="#//AbstractFunction">
       <eTypeArguments eTypeParameter="#//BoundFunction/CR"/>
-      <eTypeArguments eTypeParameter="#//BoundFunction/MC"/>
       <eTypeArguments eTypeParameter="#//BoundFunction/T"/>
       <eTypeArguments eTypeParameter="#//BoundFunction/R"/>
     </eGenericSuperTypes>
@@ -59,9 +48,6 @@
   <eClassifiers xsi:type="ecore:EClass" name="ContextArgument"/>
   <eClassifiers xsi:type="ecore:EClass" name="CommandFunction">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
@@ -79,16 +65,12 @@
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//AbstractFunction">
       <eTypeArguments eTypeParameter="#//CommandFunction/CR"/>
-      <eTypeArguments eTypeParameter="#//CommandFunction/MC"/>
       <eTypeArguments eTypeParameter="#//CommandFunction/T"/>
       <eTypeArguments eTypeParameter="#//CommandFunction/R"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="JavaFunction">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameterTypes" upperBound="-1"
@@ -114,7 +96,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="codeURL" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eGenericSuperTypes eClassifier="#//AbstractFunction">
       <eTypeArguments eTypeParameter="#//JavaFunction/CR"/>
-      <eTypeArguments eTypeParameter="#//JavaFunction/MC"/>
       <eTypeArguments eTypeParameter="#//JavaFunction/T"/>
       <eTypeArguments eTypeParameter="#//JavaFunction/R"/>
     </eGenericSuperTypes>
@@ -126,9 +107,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="JavaScriptFunction">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="code" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -139,16 +117,12 @@
         eType="#//ScriptBinding" containment="true"/>
     <eGenericSuperTypes eClassifier="#//AbstractFunction">
       <eTypeArguments eTypeParameter="#//JavaScriptFunction/CR"/>
-      <eTypeArguments eTypeParameter="#//JavaScriptFunction/MC"/>
       <eTypeArguments eTypeParameter="#//JavaScriptFunction/T"/>
       <eTypeArguments eTypeParameter="#//JavaScriptFunction/R"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ObjectMethodFunction">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
@@ -162,16 +136,12 @@
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//AbstractFunction">
       <eTypeArguments eTypeParameter="#//ObjectMethodFunction/CR"/>
-      <eTypeArguments eTypeParameter="#//ObjectMethodFunction/MC"/>
       <eTypeArguments eTypeParameter="#//ObjectMethodFunction/T"/>
       <eTypeArguments eTypeParameter="#//ObjectMethodFunction/R"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ServiceMethodFunction">
     <eTypeParameters name="CR"/>
-    <eTypeParameters name="MC">
-      <eBounds eClassifier="#//Context"/>
-    </eTypeParameters>
     <eTypeParameters name="T"/>
     <eTypeParameters name="R"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="serviceType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -185,7 +155,6 @@
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//AbstractFunction">
       <eTypeArguments eTypeParameter="#//ServiceMethodFunction/CR"/>
-      <eTypeArguments eTypeParameter="#//ServiceMethodFunction/MC"/>
       <eTypeArguments eTypeParameter="#//ServiceMethodFunction/T"/>
       <eTypeArguments eTypeParameter="#//ServiceMethodFunction/R"/>
     </eGenericSuperTypes>

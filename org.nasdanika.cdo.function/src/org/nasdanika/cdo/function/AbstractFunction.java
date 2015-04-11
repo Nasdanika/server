@@ -4,7 +4,6 @@ package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.core.Context;
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 
 /**
@@ -20,11 +19,11 @@ import org.nasdanika.function.cdo.CDOTransactionContextFunction;
  * </p>
  *
  * @see org.nasdanika.cdo.function.FunctionPackage#getAbstractFunction()
- * @model abstract="true" superTypes="org.nasdanika.cdo.function.CDOTransactionContextFunction<CR, MC, T, R>" MCBounds="org.nasdanika.cdo.function.Context"
+ * @model abstract="true" superTypes="org.nasdanika.cdo.function.CDOTransactionContextFunction<CR, T, R>"
  * @extends CDOObject
  * @generated
  */
-public interface AbstractFunction<CR, MC extends Context, T, R> extends CDOObject, CDOTransactionContextFunction<CR, MC, T, R> {
+public interface AbstractFunction<CR, T, R> extends CDOObject, CDOTransactionContextFunction<CR, T, R> {
 
 	/**
 	 * Returns the value of the '<em><b>Run As</b></em>' reference.

@@ -25,7 +25,7 @@ import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.Context;
 import org.osgi.framework.BundleContext;
 
-public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context> implements SchedulerProvider<CR, MC> {
+public abstract class AbstractSchedulerProviderComponent<CR> implements SchedulerProvider<CR> {
 	
 	private int threadPoolSize = 1; 
 	private ScheduledExecutorService scheduledExecutorService;
@@ -35,7 +35,7 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 		this.threadPoolSize = threadPoolSize;
 	}
 	
-	protected CDOTransactionContext<CR,MC> createContext() {
+	protected CDOTransactionContext<CR> createContext() {
 		return transactionContextProvider.createContext();
 	}
 	
@@ -49,11 +49,11 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 
 		@Override
 		public void run() {
-			try (CDOTransactionContext<CR,MC> transactionContext = createContext()) {
+			try (CDOTransactionContext<CR> transactionContext = createContext()) {
 				CDOTransaction transaction = transactionContext.getView();
 				SchedulerTask task = (SchedulerTask) transaction.getObject(taskId);
 				@SuppressWarnings("unchecked")
-				CDOTransactionContextCommand<CR, MC, Object, Object> command = (CDOTransactionContextCommand<CR, MC, Object, Object>) BoxUtil.unbox(task.getTarget(), transactionContext); 
+				CDOTransactionContextCommand<CR, Object, Object> command = (CDOTransactionContextCommand<CR, Object, Object>) BoxUtil.unbox(task.getTarget(), transactionContext); 
 				if (command.canExecute()) {
 					try {
 						Object result = command.execute(createCommandContext(transactionContext, task.getRunAs()), task.getRunAt(), task.isFixedRate(), task.getPeriod());
@@ -76,14 +76,14 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 		e.printStackTrace(); 
 	}
 	
-	public CDOTransactionContext<CR, MC> createCommandContext(CDOTransactionContext<CR, MC> transactionContext, Principal runAs) {
+	public CDOTransactionContext<CR> createCommandContext(CDOTransactionContext<CR> transactionContext, Principal runAs) {
 		// TODO
 //		return ;
 	}
 
 	public void activate(BundleContext bundleContext) throws Exception {
 		scheduledExecutorService = Executors.newScheduledThreadPool(threadPoolSize);
-		try (CDOTransactionContext<CR,MC> transactionContext = createContext()) {
+		try (CDOTransactionContext<CR> transactionContext = createContext()) {
 			CDOTransaction transaction = transactionContext.getView();
 			Lock readLock = tasksReadLock(transaction);
 			try {
@@ -124,9 +124,9 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 		scheduledExecutorService.shutdown();
 	}
 	
-	private CDOTransactionContextProvider<CR, MC> transactionContextProvider;
+	private CDOTransactionContextProvider<CR> transactionContextProvider;
 	
-	public void setTransactionContextProvider(CDOTransactionContextProvider<CR, MC> transactionContextProvider) {
+	public void setTransactionContextProvider(CDOTransactionContextProvider<CR> transactionContextProvider) {
 		this.transactionContextProvider = transactionContextProvider;
 	}
 	
@@ -137,9 +137,9 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 	// Delegate methods for schedulers.
 	
 	protected void schedule(
-			CDOTransactionContext<CR, MC> transactionContext, 
+			CDOTransactionContext<CR> transactionContext, 
 			Principal principal, 
-			CDOTransactionContextCommand<CR, MC, Object, Object> command, 
+			CDOTransactionContextCommand<CR, Object, Object> command, 
 			final long delay, 
 			final TimeUnit timeUnit,
 			final AtomicReference<String> resultCollector) throws Exception {
@@ -181,9 +181,9 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 	}
 
 	protected void scheduleAtFixedRate(
-			CDOTransactionContext<CR, MC> transactionContext, 
+			CDOTransactionContext<CR> transactionContext, 
 			Principal principal, 
-			CDOTransactionContextCommand<CR, MC, Object, Object> command,
+			CDOTransactionContextCommand<CR, Object, Object> command,
 			final long initialDelay, 
 			final long period, 
 			final TimeUnit timeUnit,
@@ -228,9 +228,9 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 	}
 
 	protected void scheduleWithFixedDelay(
-			CDOTransactionContext<CR, MC> transactionContext, 
+			CDOTransactionContext<CR> transactionContext, 
 			Principal principal, 
-			CDOTransactionContextCommand<CR, MC, Object, Object> command,
+			CDOTransactionContextCommand<CR, Object, Object> command,
 			final long initialDelay, 
 			final long delay, 
 			final TimeUnit timeUnit,
@@ -292,9 +292,9 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 	}
 
 	protected void submit(
-			CDOTransactionContext<CR, MC> transactionContext, 
+			CDOTransactionContext<CR> transactionContext, 
 			Principal principal, 
-			CDOTransactionContextCommand<CR, MC, Object, Object> command,
+			CDOTransactionContextCommand<CR, Object, Object> command,
 			final AtomicReference<String> resultCollector) throws Exception {
 		
 		CDOTransaction transaction = transactionContext.getView();				
@@ -335,19 +335,19 @@ public abstract class AbstractSchedulerProviderComponent<CR, MC extends Context>
 	
 	// Provider methods
 	@Override
-	public Scheduler<CR, MC, String> getScheduler(CR credentials) {
+	public Scheduler<CR, String> getScheduler(CR credentials) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Scheduler<CR, MC, CDOObject> getScheduler(CDOTransactionContext<CR, MC> context, Principal principal) {
+	public Scheduler<CR, CDOObject> getScheduler(CDOTransactionContext<CR> context, Principal principal) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public Scheduler<CR, MC, CDOObject> getScheduler(CDOTransactionContext<CR, MC> context, CR credentials) {
+	public Scheduler<CR, CDOObject> getScheduler(CDOTransactionContext<CR> context, CR credentials) {
 		// TODO Auto-generated method stub
 		return null;
 	}

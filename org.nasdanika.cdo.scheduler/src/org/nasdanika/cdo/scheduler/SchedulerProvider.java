@@ -5,20 +5,20 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.Context;
 
-public interface SchedulerProvider<CR, MC extends Context> {
+public interface SchedulerProvider<CR> {
 	
-	Scheduler<CR, MC, String> getScheduler(CR credentials);
+	Scheduler<CR, String> getScheduler(CR credentials);
 
 	/**
 	 * @param context
 	 * @param principal
 	 * @return Scheduler operating in the provided transaction context.
 	 */
-	Scheduler<CR, MC, CDOObject> getScheduler(CDOTransactionContext<CR,MC> context, Principal principal);
+	Scheduler<CR, CDOObject> getScheduler(CDOTransactionContext<CR> context, Principal principal);
 
 	/**
 	 * @return Scheduler operating in the provided transaction context.
 	 */
-	Scheduler<CR, MC, CDOObject> getScheduler(CDOTransactionContext<CR,MC> context, CR credentials);
+	Scheduler<CR, CDOObject> getScheduler(CDOTransactionContext<CR> context, CR credentials);
 
 }

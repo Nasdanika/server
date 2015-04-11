@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
@@ -22,7 +21,6 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.function.JavaScriptFunction;
-import org.nasdanika.core.Context;
 import org.nasdanika.function.ServiceBinding;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -44,7 +42,7 @@ import org.osgi.framework.ServiceReference;
  *
  * @generated
  */
-public class JavaScriptFunctionImpl<CR, MC extends Context, T, R> extends AbstractFunctionImpl<CR, MC, T, R> implements JavaScriptFunction<CR, MC, T, R> {
+public class JavaScriptFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R> implements JavaScriptFunction<CR, T, R> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -121,14 +119,14 @@ public class JavaScriptFunctionImpl<CR, MC extends Context, T, R> extends Abstra
 	}
 	
 	@Override
-	public Class<?>[] getParameterTypes(CDOTransactionContext<CR, MC> context) {
+	public Class<?>[] getParameterTypes(CDOTransactionContext<CR> context) {
 		Class<?>[] ret = new Class<?>[getParameterNames().size()];
 		Arrays.fill(ret, Object.class);
 		return ret;
 	}
 	
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR, MC> context) {
+	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
 		return Object.class;
 	}
 	
@@ -149,7 +147,7 @@ public class JavaScriptFunctionImpl<CR, MC extends Context, T, R> extends Abstra
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception {
+	protected R invoke(CDOTransactionContext<CR> context, Object[] args) throws Exception {
 		StringBuilder scriptBuilder = new StringBuilder();
 		scriptBuilder.append("(function(");
 		int pIdx = 0;

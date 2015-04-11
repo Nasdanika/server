@@ -9,7 +9,6 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.function.BoundFunction;
 import org.nasdanika.cdo.function.FunctionPackage;
-import org.nasdanika.core.Context;
 import org.nasdanika.function.Function;
 import org.nasdanika.function.FunctionException;
 
@@ -27,7 +26,7 @@ import org.nasdanika.function.FunctionException;
  *
  * @generated
  */
-public class BoundFunctionImpl<CR, MC extends Context, T, R> extends AbstractFunctionImpl<CR, MC, T, R> implements BoundFunction<CR, MC, T, R> {
+public class BoundFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R> implements BoundFunction<CR, T, R> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -77,10 +76,10 @@ public class BoundFunctionImpl<CR, MC extends Context, T, R> extends AbstractFun
 
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public Class<?>[] getParameterTypes(CDOTransactionContext<CR, MC> context) {
+	public Class<?>[] getParameterTypes(CDOTransactionContext<CR> context) {
 		try {
 			EObject target = getTarget();		
-			try (Function<CDOTransactionContext<CR, MC>, ?, ?> targetFunction = (Function<CDOTransactionContext<CR, MC>, ?, ?>) BoxUtil.unbox(target, context)) { 
+			try (Function<CDOTransactionContext<CR>, ?, ?> targetFunction = (Function<CDOTransactionContext<CR>, ?, ?>) BoxUtil.unbox(target, context)) { 
 				Class<?>[] targetParameterTypes = targetFunction.getParameterTypes(context);
 				EMap<Integer, EObject> bindings = getBindings();
 				Class<?>[] ret = new Class<?>[targetParameterTypes.length - bindings.size()];
@@ -97,10 +96,10 @@ public class BoundFunctionImpl<CR, MC extends Context, T, R> extends AbstractFun
 	}
 
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR, MC> context) {
+	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
 		try {
 			EObject target = getTarget();		
-			try (@SuppressWarnings({ "unchecked" })	Function<CDOTransactionContext<CR, MC>, ?, ?> targetFunction = (Function<CDOTransactionContext<CR, MC>, ?, ?>) BoxUtil.unbox(target, context)) {
+			try (@SuppressWarnings({ "unchecked" })	Function<CDOTransactionContext<CR>, ?, ?> targetFunction = (Function<CDOTransactionContext<CR>, ?, ?>) BoxUtil.unbox(target, context)) {
 				return targetFunction.getReturnType(context);
 			}
 		} catch (Exception e) {
@@ -110,9 +109,9 @@ public class BoundFunctionImpl<CR, MC extends Context, T, R> extends AbstractFun
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public R execute(CDOTransactionContext<CR, MC> context, T... args) throws Exception {
+	public R execute(CDOTransactionContext<CR> context, T... args) throws Exception {
 		EObject target = getTarget();		
-		try (Function<CDOTransactionContext<CR, MC>, T, R> targetFunction = (Function<CDOTransactionContext<CR, MC>, T, R>) BoxUtil.unbox(target, context)) {				
+		try (Function<CDOTransactionContext<CR>, T, R> targetFunction = (Function<CDOTransactionContext<CR>, T, R>) BoxUtil.unbox(target, context)) {				
 			Class<?>[] targetParameterTypes = targetFunction.getParameterTypes(context);
 			T[] targetArguments = (T[]) new Object[targetParameterTypes.length]; // This line may force T always be Object.
 			EMap<Integer, EObject> bindings = getBindings();
@@ -128,7 +127,7 @@ public class BoundFunctionImpl<CR, MC extends Context, T, R> extends AbstractFun
 	}
 	
 	@Override
-	protected R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception {
+	protected R invoke(CDOTransactionContext<CR> context, Object[] args) throws Exception {
 		throw new UnsupportedOperationException("Shall never happen - execute() is overridden");
 	}
 

@@ -3,23 +3,12 @@
 package org.nasdanika.cdo.function.impl;
 
 import java.util.Map;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.nasdanika.cdo.function.BoundFunction;
-import org.nasdanika.cdo.function.CDOServiceBinding;
-import org.nasdanika.cdo.function.CommandFunction;
-import org.nasdanika.cdo.function.ContextArgument;
-import org.nasdanika.cdo.function.FunctionFactory;
-import org.nasdanika.cdo.function.FunctionPackage;
-import org.nasdanika.cdo.function.JavaFunction;
-import org.nasdanika.cdo.function.JavaScriptFunction;
-import org.nasdanika.cdo.function.ObjectMethodFunction;
-import org.nasdanika.cdo.function.ServiceMethodFunction;
-import org.nasdanika.core.Context;
+import org.nasdanika.cdo.function.*;
 
 /**
  * <!-- begin-user-doc -->
@@ -85,8 +74,8 @@ public class FunctionFactoryImpl extends EFactoryImpl implements FunctionFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> BoundFunction<CR, MC, T, R> createBoundFunction() {
-		BoundFunctionImpl<CR, MC, T, R> boundFunction = new BoundFunctionImpl<CR, MC, T, R>();
+	public <CR, T, R> BoundFunction<CR, T, R> createBoundFunction() {
+		BoundFunctionImpl<CR, T, R> boundFunction = new BoundFunctionImpl<CR, T, R>();
 		return boundFunction;
 	}
 
@@ -125,8 +114,8 @@ public class FunctionFactoryImpl extends EFactoryImpl implements FunctionFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> CommandFunction<CR, MC, T, R> createCommandFunction() {
-		CommandFunctionImpl<CR, MC, T, R> commandFunction = new CommandFunctionImpl<CR, MC, T, R>();
+	public <CR, T, R> CommandFunction<CR, T, R> createCommandFunction() {
+		CommandFunctionImpl<CR, T, R> commandFunction = new CommandFunctionImpl<CR, T, R>();
 		return commandFunction;
 	}
 
@@ -135,8 +124,8 @@ public class FunctionFactoryImpl extends EFactoryImpl implements FunctionFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> JavaFunction<CR, MC, T, R> createJavaFunction() {
-		JavaFunctionImpl<CR, MC, T, R> javaFunction = new JavaFunctionImpl<CR, MC, T, R>();
+	public <CR, T, R> JavaFunction<CR, T, R> createJavaFunction() {
+		JavaFunctionImpl<CR, T, R> javaFunction = new JavaFunctionImpl<CR, T, R>();
 		return javaFunction;
 	}
 
@@ -155,8 +144,8 @@ public class FunctionFactoryImpl extends EFactoryImpl implements FunctionFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> JavaScriptFunction<CR, MC, T, R> createJavaScriptFunction() {
-		JavaScriptFunctionImpl<CR, MC, T, R> javaScriptFunction = new JavaScriptFunctionImpl<CR, MC, T, R>();
+	public <CR, T, R> JavaScriptFunction<CR, T, R> createJavaScriptFunction() {
+		JavaScriptFunctionImpl<CR, T, R> javaScriptFunction = new JavaScriptFunctionImpl<CR, T, R>();
 		return javaScriptFunction;
 	}
 
@@ -165,8 +154,8 @@ public class FunctionFactoryImpl extends EFactoryImpl implements FunctionFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> ObjectMethodFunction<CR, MC, T, R> createObjectMethodFunction() {
-		ObjectMethodFunctionImpl<CR, MC, T, R> objectMethodFunction = new ObjectMethodFunctionImpl<CR, MC, T, R>();
+	public <CR, T, R> ObjectMethodFunction<CR, T, R> createObjectMethodFunction() {
+		ObjectMethodFunctionImpl<CR, T, R> objectMethodFunction = new ObjectMethodFunctionImpl<CR, T, R>();
 		return objectMethodFunction;
 	}
 
@@ -175,8 +164,8 @@ public class FunctionFactoryImpl extends EFactoryImpl implements FunctionFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> ServiceMethodFunction<CR, MC, T, R> createServiceMethodFunction() {
-		ServiceMethodFunctionImpl<CR, MC, T, R> serviceMethodFunction = new ServiceMethodFunctionImpl<CR, MC, T, R>();
+	public <CR, T, R> ServiceMethodFunction<CR, T, R> createServiceMethodFunction() {
+		ServiceMethodFunctionImpl<CR, T, R> serviceMethodFunction = new ServiceMethodFunctionImpl<CR, T, R>();
 		return serviceMethodFunction;
 	}
 

@@ -700,61 +700,35 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 
 		// Create type parameters
 		addETypeParameter(cdoTransactionContextFunctionEClass, "CR");
-		ETypeParameter cdoTransactionContextFunctionEClass_MC = addETypeParameter(cdoTransactionContextFunctionEClass, "MC");
 		addETypeParameter(cdoTransactionContextFunctionEClass, "T");
 		addETypeParameter(cdoTransactionContextFunctionEClass, "R");
 		ETypeParameter abstractFunctionEClass_CR = addETypeParameter(abstractFunctionEClass, "CR");
-		ETypeParameter abstractFunctionEClass_MC = addETypeParameter(abstractFunctionEClass, "MC");
 		ETypeParameter abstractFunctionEClass_T = addETypeParameter(abstractFunctionEClass, "T");
 		ETypeParameter abstractFunctionEClass_R = addETypeParameter(abstractFunctionEClass, "R");
 		ETypeParameter boundFunctionEClass_CR = addETypeParameter(boundFunctionEClass, "CR");
-		ETypeParameter boundFunctionEClass_MC = addETypeParameter(boundFunctionEClass, "MC");
 		ETypeParameter boundFunctionEClass_T = addETypeParameter(boundFunctionEClass, "T");
 		ETypeParameter boundFunctionEClass_R = addETypeParameter(boundFunctionEClass, "R");
 		ETypeParameter commandFunctionEClass_CR = addETypeParameter(commandFunctionEClass, "CR");
-		ETypeParameter commandFunctionEClass_MC = addETypeParameter(commandFunctionEClass, "MC");
 		ETypeParameter commandFunctionEClass_T = addETypeParameter(commandFunctionEClass, "T");
 		ETypeParameter commandFunctionEClass_R = addETypeParameter(commandFunctionEClass, "R");
 		ETypeParameter javaFunctionEClass_CR = addETypeParameter(javaFunctionEClass, "CR");
-		ETypeParameter javaFunctionEClass_MC = addETypeParameter(javaFunctionEClass, "MC");
 		ETypeParameter javaFunctionEClass_T = addETypeParameter(javaFunctionEClass, "T");
 		ETypeParameter javaFunctionEClass_R = addETypeParameter(javaFunctionEClass, "R");
 		ETypeParameter javaScriptFunctionEClass_CR = addETypeParameter(javaScriptFunctionEClass, "CR");
-		ETypeParameter javaScriptFunctionEClass_MC = addETypeParameter(javaScriptFunctionEClass, "MC");
 		ETypeParameter javaScriptFunctionEClass_T = addETypeParameter(javaScriptFunctionEClass, "T");
 		ETypeParameter javaScriptFunctionEClass_R = addETypeParameter(javaScriptFunctionEClass, "R");
 		ETypeParameter objectMethodFunctionEClass_CR = addETypeParameter(objectMethodFunctionEClass, "CR");
-		ETypeParameter objectMethodFunctionEClass_MC = addETypeParameter(objectMethodFunctionEClass, "MC");
 		ETypeParameter objectMethodFunctionEClass_T = addETypeParameter(objectMethodFunctionEClass, "T");
 		ETypeParameter objectMethodFunctionEClass_R = addETypeParameter(objectMethodFunctionEClass, "R");
 		ETypeParameter serviceMethodFunctionEClass_CR = addETypeParameter(serviceMethodFunctionEClass, "CR");
-		ETypeParameter serviceMethodFunctionEClass_MC = addETypeParameter(serviceMethodFunctionEClass, "MC");
 		ETypeParameter serviceMethodFunctionEClass_T = addETypeParameter(serviceMethodFunctionEClass, "T");
 		ETypeParameter serviceMethodFunctionEClass_R = addETypeParameter(serviceMethodFunctionEClass, "R");
 
 		// Set bounds for type parameters
-		EGenericType g1 = createEGenericType(this.getContext());
-		cdoTransactionContextFunctionEClass_MC.getEBounds().add(g1);
-		g1 = createEGenericType(this.getContext());
-		abstractFunctionEClass_MC.getEBounds().add(g1);
-		g1 = createEGenericType(this.getContext());
-		boundFunctionEClass_MC.getEBounds().add(g1);
-		g1 = createEGenericType(this.getContext());
-		commandFunctionEClass_MC.getEBounds().add(g1);
-		g1 = createEGenericType(this.getContext());
-		javaFunctionEClass_MC.getEBounds().add(g1);
-		g1 = createEGenericType(this.getContext());
-		javaScriptFunctionEClass_MC.getEBounds().add(g1);
-		g1 = createEGenericType(this.getContext());
-		objectMethodFunctionEClass_MC.getEBounds().add(g1);
-		g1 = createEGenericType(this.getContext());
-		serviceMethodFunctionEClass_MC.getEBounds().add(g1);
 
 		// Add supertypes to classes
-		g1 = createEGenericType(this.getCDOTransactionContextFunction());
+		EGenericType g1 = createEGenericType(this.getCDOTransactionContextFunction());
 		EGenericType g2 = createEGenericType(abstractFunctionEClass_CR);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(abstractFunctionEClass_MC);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(abstractFunctionEClass_T);
 		g1.getETypeArguments().add(g2);
@@ -763,8 +737,6 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		abstractFunctionEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getAbstractFunction());
 		g2 = createEGenericType(boundFunctionEClass_CR);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(boundFunctionEClass_MC);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(boundFunctionEClass_T);
 		g1.getETypeArguments().add(g2);
@@ -775,8 +747,6 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		g1 = createEGenericType(this.getAbstractFunction());
 		g2 = createEGenericType(commandFunctionEClass_CR);
 		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(commandFunctionEClass_MC);
-		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(commandFunctionEClass_T);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(commandFunctionEClass_R);
@@ -784,8 +754,6 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		commandFunctionEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getAbstractFunction());
 		g2 = createEGenericType(javaFunctionEClass_CR);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(javaFunctionEClass_MC);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(javaFunctionEClass_T);
 		g1.getETypeArguments().add(g2);
@@ -795,8 +763,6 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		g1 = createEGenericType(this.getAbstractFunction());
 		g2 = createEGenericType(javaScriptFunctionEClass_CR);
 		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(javaScriptFunctionEClass_MC);
-		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(javaScriptFunctionEClass_T);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(javaScriptFunctionEClass_R);
@@ -805,8 +771,6 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		g1 = createEGenericType(this.getAbstractFunction());
 		g2 = createEGenericType(objectMethodFunctionEClass_CR);
 		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(objectMethodFunctionEClass_MC);
-		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(objectMethodFunctionEClass_T);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(objectMethodFunctionEClass_R);
@@ -814,8 +778,6 @@ public class FunctionPackageImpl extends EPackageImpl implements FunctionPackage
 		objectMethodFunctionEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getAbstractFunction());
 		g2 = createEGenericType(serviceMethodFunctionEClass_CR);
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(serviceMethodFunctionEClass_MC);
 		g1.getETypeArguments().add(g2);
 		g2 = createEGenericType(serviceMethodFunctionEClass_T);
 		g1.getETypeArguments().add(g2);

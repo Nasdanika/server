@@ -8,7 +8,6 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.function.ServiceMethodFunction;
-import org.nasdanika.core.Context;
 import org.nasdanika.function.FunctionException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -30,7 +29,7 @@ import org.osgi.framework.ServiceReference;
  *
  * @generated
  */
-public class ServiceMethodFunctionImpl<CR, MC extends Context, T, R> extends AbstractFunctionImpl<CR, MC, T, R> implements ServiceMethodFunction<CR, MC, T, R> {
+public class ServiceMethodFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R> implements ServiceMethodFunction<CR, T, R> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -115,7 +114,7 @@ public class ServiceMethodFunctionImpl<CR, MC extends Context, T, R> extends Abs
 	}
 
 	@Override
-	public Class<?>[] getParameterTypes(CDOTransactionContext<CR, MC> context) {
+	public Class<?>[] getParameterTypes(CDOTransactionContext<CR> context) {
 		EList<ClassBox<T>> ptl = getParameterTypes();
 		Class<?>[] ret = new Class<?>[ptl.size()];
 		int idx = 0;
@@ -126,7 +125,7 @@ public class ServiceMethodFunctionImpl<CR, MC extends Context, T, R> extends Abs
 	}
 	
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR, MC> context) {
+	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		try {
 			ServiceReference<?>[] refs = bundleContext.getServiceReferences(getServiceType(), getFilter());
@@ -150,7 +149,7 @@ public class ServiceMethodFunctionImpl<CR, MC extends Context, T, R> extends Abs
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception {
+	protected R invoke(CDOTransactionContext<CR> context, Object[] args) throws Exception {
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		try {
 			ServiceReference<?>[] refs = bundleContext.getServiceReferences(getServiceType(), getFilter());

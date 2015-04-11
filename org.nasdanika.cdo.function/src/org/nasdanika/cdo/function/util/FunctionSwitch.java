@@ -7,6 +7,7 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
+import org.nasdanika.cdo.function.*;
 import org.nasdanika.cdo.function.AbstractFunction;
 import org.nasdanika.cdo.function.BoundFunction;
 import org.nasdanika.cdo.function.CDOServiceBinding;
@@ -85,20 +86,20 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case FunctionPackage.CDO_TRANSACTION_CONTEXT_FUNCTION: {
-				CDOTransactionContextFunction<?, ?, ?, ?> cdoTransactionContextFunction = (CDOTransactionContextFunction<?, ?, ?, ?>)theEObject;
+				CDOTransactionContextFunction<?, ?, ?> cdoTransactionContextFunction = (CDOTransactionContextFunction<?, ?, ?>)theEObject;
 				T1 result = caseCDOTransactionContextFunction(cdoTransactionContextFunction);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case FunctionPackage.ABSTRACT_FUNCTION: {
-				AbstractFunction<?, ?, ?, ?> abstractFunction = (AbstractFunction<?, ?, ?, ?>)theEObject;
+				AbstractFunction<?, ?, ?> abstractFunction = (AbstractFunction<?, ?, ?>)theEObject;
 				T1 result = caseAbstractFunction(abstractFunction);
 				if (result == null) result = caseCDOTransactionContextFunction(abstractFunction);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case FunctionPackage.BOUND_FUNCTION: {
-				BoundFunction<?, ?, ?, ?> boundFunction = (BoundFunction<?, ?, ?, ?>)theEObject;
+				BoundFunction<?, ?, ?> boundFunction = (BoundFunction<?, ?, ?>)theEObject;
 				T1 result = caseBoundFunction(boundFunction);
 				if (result == null) result = caseAbstractFunction(boundFunction);
 				if (result == null) result = caseCDOTransactionContextFunction(boundFunction);
@@ -131,7 +132,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case FunctionPackage.COMMAND_FUNCTION: {
-				CommandFunction<?, ?, ?, ?> commandFunction = (CommandFunction<?, ?, ?, ?>)theEObject;
+				CommandFunction<?, ?, ?> commandFunction = (CommandFunction<?, ?, ?>)theEObject;
 				T1 result = caseCommandFunction(commandFunction);
 				if (result == null) result = caseAbstractFunction(commandFunction);
 				if (result == null) result = caseCDOTransactionContextFunction(commandFunction);
@@ -139,7 +140,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case FunctionPackage.JAVA_FUNCTION: {
-				JavaFunction<?, ?, ?, ?> javaFunction = (JavaFunction<?, ?, ?, ?>)theEObject;
+				JavaFunction<?, ?, ?> javaFunction = (JavaFunction<?, ?, ?>)theEObject;
 				T1 result = caseJavaFunction(javaFunction);
 				if (result == null) result = caseAbstractFunction(javaFunction);
 				if (result == null) result = caseCDOTransactionContextFunction(javaFunction);
@@ -153,7 +154,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case FunctionPackage.JAVA_SCRIPT_FUNCTION: {
-				JavaScriptFunction<?, ?, ?, ?> javaScriptFunction = (JavaScriptFunction<?, ?, ?, ?>)theEObject;
+				JavaScriptFunction<?, ?, ?> javaScriptFunction = (JavaScriptFunction<?, ?, ?>)theEObject;
 				T1 result = caseJavaScriptFunction(javaScriptFunction);
 				if (result == null) result = caseAbstractFunction(javaScriptFunction);
 				if (result == null) result = caseCDOTransactionContextFunction(javaScriptFunction);
@@ -161,7 +162,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case FunctionPackage.OBJECT_METHOD_FUNCTION: {
-				ObjectMethodFunction<?, ?, ?, ?> objectMethodFunction = (ObjectMethodFunction<?, ?, ?, ?>)theEObject;
+				ObjectMethodFunction<?, ?, ?> objectMethodFunction = (ObjectMethodFunction<?, ?, ?>)theEObject;
 				T1 result = caseObjectMethodFunction(objectMethodFunction);
 				if (result == null) result = caseAbstractFunction(objectMethodFunction);
 				if (result == null) result = caseCDOTransactionContextFunction(objectMethodFunction);
@@ -169,7 +170,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case FunctionPackage.SERVICE_METHOD_FUNCTION: {
-				ServiceMethodFunction<?, ?, ?, ?> serviceMethodFunction = (ServiceMethodFunction<?, ?, ?, ?>)theEObject;
+				ServiceMethodFunction<?, ?, ?> serviceMethodFunction = (ServiceMethodFunction<?, ?, ?>)theEObject;
 				T1 result = caseServiceMethodFunction(serviceMethodFunction);
 				if (result == null) result = caseAbstractFunction(serviceMethodFunction);
 				if (result == null) result = caseCDOTransactionContextFunction(serviceMethodFunction);
@@ -206,7 +207,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseCDOTransactionContextFunction(CDOTransactionContextFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseCDOTransactionContextFunction(CDOTransactionContextFunction<CR, T, R> object) {
 		return null;
 	}
 
@@ -221,7 +222,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseAbstractFunction(AbstractFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseAbstractFunction(AbstractFunction<CR, T, R> object) {
 		return null;
 	}
 
@@ -236,7 +237,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseBoundFunction(BoundFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseBoundFunction(BoundFunction<CR, T, R> object) {
 		return null;
 	}
 
@@ -311,7 +312,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseCommandFunction(CommandFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseCommandFunction(CommandFunction<CR, T, R> object) {
 		return null;
 	}
 
@@ -326,7 +327,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseJavaFunction(JavaFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseJavaFunction(JavaFunction<CR, T, R> object) {
 		return null;
 	}
 
@@ -356,7 +357,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseJavaScriptFunction(JavaScriptFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseJavaScriptFunction(JavaScriptFunction<CR, T, R> object) {
 		return null;
 	}
 
@@ -371,7 +372,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseObjectMethodFunction(ObjectMethodFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseObjectMethodFunction(ObjectMethodFunction<CR, T, R> object) {
 		return null;
 	}
 
@@ -386,7 +387,7 @@ public class FunctionSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR, MC extends Context, T, R> T1 caseServiceMethodFunction(ServiceMethodFunction<CR, MC, T, R> object) {
+	public <CR, T, R> T1 caseServiceMethodFunction(ServiceMethodFunction<CR, T, R> object) {
 		return null;
 	}
 

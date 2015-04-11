@@ -14,20 +14,17 @@
     <genClasses image="false" ecoreClass="cdo-function.ecore#//Context"/>
     <genClasses image="false" ecoreClass="cdo-function.ecore#//CDOTransactionContextFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CDOTransactionContextFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CDOTransactionContextFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CDOTransactionContextFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CDOTransactionContextFunction/R"/>
     </genClasses>
     <genClasses image="false" ecoreClass="cdo-function.ecore#//AbstractFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//AbstractFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//AbstractFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//AbstractFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//AbstractFunction/R"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference cdo-function.ecore#//AbstractFunction/runAs"/>
     </genClasses>
     <genClasses ecoreClass="cdo-function.ecore#//BoundFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//BoundFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//BoundFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//BoundFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//BoundFunction/R"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//BoundFunction/target"/>
@@ -45,7 +42,6 @@
     <genClasses ecoreClass="cdo-function.ecore#//ContextArgument"/>
     <genClasses ecoreClass="cdo-function.ecore#//CommandFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//CommandFunction/R"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//CommandFunction/target"/>
@@ -54,7 +50,6 @@
     </genClasses>
     <genClasses ecoreClass="cdo-function.ecore#//JavaFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaFunction/R"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//JavaFunction/parameterTypes"/>
@@ -70,7 +65,6 @@
     </genClasses>
     <genClasses ecoreClass="cdo-function.ecore#//JavaScriptFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//JavaScriptFunction/R"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//JavaScriptFunction/code"/>
@@ -80,7 +74,6 @@
     </genClasses>
     <genClasses ecoreClass="cdo-function.ecore#//ObjectMethodFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ObjectMethodFunction/R"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference cdo-function.ecore#//ObjectMethodFunction/target"/>
@@ -89,7 +82,6 @@
     </genClasses>
     <genClasses ecoreClass="cdo-function.ecore#//ServiceMethodFunction">
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/CR"/>
-      <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/MC"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/T"/>
       <genTypeParameters ecoreTypeParameter="cdo-function.ecore#//ServiceMethodFunction/R"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute cdo-function.ecore#//ServiceMethodFunction/serviceType"/>

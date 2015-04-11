@@ -4,7 +4,6 @@ package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.common.util.EList;
 import org.nasdanika.cdo.boxing.ClassBox;
-import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -24,10 +23,10 @@ import org.nasdanika.core.Context;
  * </p>
  *
  * @see org.nasdanika.cdo.function.FunctionPackage#getJavaFunction()
- * @model MCBounds="org.nasdanika.cdo.function.Context"
+ * @model
  * @generated
  */
-public interface JavaFunction<CR, MC extends Context, T, R> extends AbstractFunction<CR, MC, T, R> {
+public interface JavaFunction<CR, T, R> extends AbstractFunction<CR, T, R> {
 	/**
 	 * Returns the value of the '<em><b>Parameter Types</b></em>' containment reference list.
 	 * The list contents are of type {@link org.nasdanika.cdo.boxing.ClassBox}&lt;T>.

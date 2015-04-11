@@ -11,7 +11,6 @@ import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.function.CommandFunction;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.core.Command;
-import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -28,7 +27,7 @@ import org.nasdanika.core.Context;
  *
  * @generated
  */
-public class CommandFunctionImpl<CR, MC extends Context, T, R> extends AbstractFunctionImpl<CR, MC, T, R> implements CommandFunction<CR, MC, T, R> {
+public class CommandFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R> implements CommandFunction<CR, T, R> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -97,7 +96,7 @@ public class CommandFunctionImpl<CR, MC extends Context, T, R> extends AbstractF
 	}
 
 	@Override
-	public Class<?>[] getParameterTypes(CDOTransactionContext<CR, MC> context) {
+	public Class<?>[] getParameterTypes(CDOTransactionContext<CR> context) {
 		EList<ClassBox<T>> ptl = getParameterTypes();
 		Class<?>[] ret = new Class<?>[ptl.size()];
 		int idx = 0;
@@ -108,14 +107,14 @@ public class CommandFunctionImpl<CR, MC extends Context, T, R> extends AbstractF
 	}
 	
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR, MC> context) {
+	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
 		return getReturnType().get(context);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception {
-		return ((Command<CDOTransactionContext<CR, MC>,T,R>) BoxUtil.unbox(getTarget(), context)).execute(context, (T[]) args);
+	protected R invoke(CDOTransactionContext<CR> context, Object[] args) throws Exception {
+		return ((Command<CDOTransactionContext<CR>,T,R>) BoxUtil.unbox(getTarget(), context)).execute(context, (T[]) args);
 	}	
 
 } //CommandFunctionImpl

@@ -10,7 +10,6 @@ import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.function.ObjectMethodFunction;
-import org.nasdanika.core.Context;
 import org.nasdanika.function.FunctionException;
 
 /**
@@ -28,7 +27,7 @@ import org.nasdanika.function.FunctionException;
  *
  * @generated
  */
-public class ObjectMethodFunctionImpl<CR, MC extends Context, T, R> extends AbstractFunctionImpl<CR, MC, T, R> implements ObjectMethodFunction<CR, MC, T, R> {
+public class ObjectMethodFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R> implements ObjectMethodFunction<CR, T, R> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -95,7 +94,7 @@ public class ObjectMethodFunctionImpl<CR, MC extends Context, T, R> extends Abst
 	}
 	
 	@Override
-	public Class<?>[] getParameterTypes(CDOTransactionContext<CR, MC> context) {
+	public Class<?>[] getParameterTypes(CDOTransactionContext<CR> context) {
 		EList<ClassBox<T>> ptl = getParameterTypes();
 		Class<?>[] ret = new Class<?>[ptl.size()];
 		int idx = 0;
@@ -106,7 +105,7 @@ public class ObjectMethodFunctionImpl<CR, MC extends Context, T, R> extends Abst
 	}
 	
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR, MC> context) {
+	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
 		Object target = BoxUtil.unbox(getTarget(), context);
 		try {
 			return target.getClass().getMethod(getMethodName(), getParameterTypes(context)).getReturnType();
@@ -117,7 +116,7 @@ public class ObjectMethodFunctionImpl<CR, MC extends Context, T, R> extends Abst
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception {
+	protected R invoke(CDOTransactionContext<CR> context, Object[] args) throws Exception {
 		Object target = BoxUtil.unbox(getTarget(), context);
 		return (R) target.getClass().getMethod(getMethodName(), getParameterTypes(context)).invoke(target, args);
 	}

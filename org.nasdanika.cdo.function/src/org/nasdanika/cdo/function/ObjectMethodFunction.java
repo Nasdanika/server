@@ -5,7 +5,6 @@ package org.nasdanika.cdo.function;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.boxing.ClassBox;
-import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,10 +21,10 @@ import org.nasdanika.core.Context;
  * </p>
  *
  * @see org.nasdanika.cdo.function.FunctionPackage#getObjectMethodFunction()
- * @model MCBounds="org.nasdanika.cdo.function.Context"
+ * @model
  * @generated
  */
-public interface ObjectMethodFunction<CR, MC extends Context, T, R> extends AbstractFunction<CR, MC, T, R> {
+public interface ObjectMethodFunction<CR, T, R> extends AbstractFunction<CR, T, R> {
 	/**
 	 * Returns the value of the '<em><b>Target</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

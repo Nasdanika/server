@@ -4,7 +4,6 @@ package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,10 +19,10 @@ import org.nasdanika.core.Context;
  * </p>
  *
  * @see org.nasdanika.cdo.function.FunctionPackage#getBoundFunction()
- * @model MCBounds="org.nasdanika.cdo.function.Context"
+ * @model
  * @generated
  */
-public interface BoundFunction<CR, MC extends Context, T, R> extends AbstractFunction<CR, MC, T, R> {
+public interface BoundFunction<CR, T, R> extends AbstractFunction<CR, T, R> {
 	/**
 	 * Returns the value of the '<em><b>Target</b></em>' containment reference.
 	 * <!-- begin-user-doc -->

@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.CDOTransactionContext;
@@ -18,7 +17,6 @@ import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionFactory;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.core.Context;
 import org.nasdanika.function.Function;
 import org.nasdanika.function.FunctionException;
 import org.nasdanika.function.ServiceBinding;
@@ -39,7 +37,7 @@ import org.osgi.framework.ServiceReference;
  *
  * @generated
  */
-public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends CDOObjectImpl implements AbstractFunction<CR, MC, T, R> {
+public abstract class AbstractFunctionImpl<CR, T, R> extends CDOObjectImpl implements AbstractFunction<CR, T, R> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -88,11 +86,11 @@ public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, T, R> bind(CDOTransactionContext<CR, MC> context, Map<Integer, Object> bindings) {
+	public Function<CDOTransactionContext<CR>, T, R> bind(CDOTransactionContext<CR> context, Map<Integer, Object> bindings) {
 		if (bindings.isEmpty()) {
 			return this;
 		}
-		BoundFunction<CR, MC, T, R> ret = FunctionFactory.eINSTANCE.createBoundFunction();		
+		BoundFunction<CR, T, R> ret = FunctionFactory.eINSTANCE.createBoundFunction();		
 		try {
 			ret.setTarget(BoxUtil.box(this, context));
 			for (Entry<Integer, Object> be: bindings.entrySet()) {
@@ -105,7 +103,7 @@ public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends
 	}
 	
 	@Override
-	public Function<CDOTransactionContext<CR, MC>, T, R> bind(CDOTransactionContext<CR, MC> context, Object... bindings) {
+	public Function<CDOTransactionContext<CR>, T, R> bind(CDOTransactionContext<CR> context, Object... bindings) {
 		Map<Integer, Object> mBindings = new HashMap<Integer, Object>();
 		for (int i=0; i<bindings.length; ++i) {
 			mBindings.put(i, bindings[i]);
@@ -114,7 +112,7 @@ public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends
 	}
 	
 	@Override
-	public R execute(CDOTransactionContext<CR, MC> context, @SuppressWarnings("unchecked") T... args) throws Exception {
+	public R execute(CDOTransactionContext<CR> context, @SuppressWarnings("unchecked") T... args) throws Exception {
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		Class<?>[] parameterTypes = getParameterTypes(context);
 		List<ServiceReference<?>> toUnget = new ArrayList<>();
@@ -155,7 +153,7 @@ public abstract class AbstractFunctionImpl<CR, MC extends Context, T, R> extends
 	 * @return
 	 * @throws Exception
 	 */
-	protected abstract R invoke(CDOTransactionContext<CR, MC> context, Object[] args) throws Exception;
+	protected abstract R invoke(CDOTransactionContext<CR> context, Object[] args) throws Exception;
 	
 	@Override
 	public void close() throws Exception {

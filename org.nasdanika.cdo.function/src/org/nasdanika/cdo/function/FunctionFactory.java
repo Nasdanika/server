@@ -3,7 +3,6 @@
 package org.nasdanika.cdo.function;
 
 import org.eclipse.emf.ecore.EFactory;
-import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,7 +28,7 @@ public interface FunctionFactory extends EFactory {
 	 * @return a new object of class '<em>Bound Function</em>'.
 	 * @generated
 	 */
-	<CR, MC extends Context, T, R> BoundFunction<CR, MC, T, R> createBoundFunction();
+	<CR, T, R> BoundFunction<CR, T, R> createBoundFunction();
 
 	/**
 	 * Returns a new object of class '<em>CDO Service Binding</em>'.
@@ -56,7 +55,7 @@ public interface FunctionFactory extends EFactory {
 	 * @return a new object of class '<em>Command Function</em>'.
 	 * @generated
 	 */
-	<CR, MC extends Context, T, R> CommandFunction<CR, MC, T, R> createCommandFunction();
+	<CR, T, R> CommandFunction<CR, T, R> createCommandFunction();
 
 	/**
 	 * Returns a new object of class '<em>Java Function</em>'.
@@ -65,7 +64,7 @@ public interface FunctionFactory extends EFactory {
 	 * @return a new object of class '<em>Java Function</em>'.
 	 * @generated
 	 */
-	<CR, MC extends Context, T, R> JavaFunction<CR, MC, T, R> createJavaFunction();
+	<CR, T, R> JavaFunction<CR, T, R> createJavaFunction();
 
 	/**
 	 * Returns a new object of class '<em>Java Script Function</em>'.
@@ -74,7 +73,7 @@ public interface FunctionFactory extends EFactory {
 	 * @return a new object of class '<em>Java Script Function</em>'.
 	 * @generated
 	 */
-	<CR, MC extends Context, T, R> JavaScriptFunction<CR, MC, T, R> createJavaScriptFunction();
+	<CR, T, R> JavaScriptFunction<CR, T, R> createJavaScriptFunction();
 
 	/**
 	 * Returns a new object of class '<em>Object Method Function</em>'.
@@ -83,7 +82,7 @@ public interface FunctionFactory extends EFactory {
 	 * @return a new object of class '<em>Object Method Function</em>'.
 	 * @generated
 	 */
-	<CR, MC extends Context, T, R> ObjectMethodFunction<CR, MC, T, R> createObjectMethodFunction();
+	<CR, T, R> ObjectMethodFunction<CR, T, R> createObjectMethodFunction();
 
 	/**
 	 * Returns a new object of class '<em>Service Method Function</em>'.
@@ -92,7 +91,7 @@ public interface FunctionFactory extends EFactory {
 	 * @return a new object of class '<em>Service Method Function</em>'.
 	 * @generated
 	 */
-	<CR, MC extends Context, T, R> ServiceMethodFunction<CR, MC, T, R> createServiceMethodFunction();
+	<CR, T, R> ServiceMethodFunction<CR, T, R> createServiceMethodFunction();
 
 	/**
 	 * Returns the package supported by this factory.

@@ -8,6 +8,7 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.cdo.function.*;
 import org.nasdanika.cdo.function.AbstractFunction;
 import org.nasdanika.cdo.function.BoundFunction;
 import org.nasdanika.cdo.function.CDOServiceBinding;
@@ -83,15 +84,15 @@ public class FunctionAdapterFactory extends AdapterFactoryImpl {
 				return createContextAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseCDOTransactionContextFunction(CDOTransactionContextFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseCDOTransactionContextFunction(CDOTransactionContextFunction<CR, T, R> object) {
 				return createCDOTransactionContextFunctionAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseAbstractFunction(AbstractFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseAbstractFunction(AbstractFunction<CR, T, R> object) {
 				return createAbstractFunctionAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseBoundFunction(BoundFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseBoundFunction(BoundFunction<CR, T, R> object) {
 				return createBoundFunctionAdapter();
 			}
 			@Override
@@ -111,11 +112,11 @@ public class FunctionAdapterFactory extends AdapterFactoryImpl {
 				return createContextArgumentAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseCommandFunction(CommandFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseCommandFunction(CommandFunction<CR, T, R> object) {
 				return createCommandFunctionAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseJavaFunction(JavaFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseJavaFunction(JavaFunction<CR, T, R> object) {
 				return createJavaFunctionAdapter();
 			}
 			@Override
@@ -123,15 +124,15 @@ public class FunctionAdapterFactory extends AdapterFactoryImpl {
 				return createScriptBindingAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseJavaScriptFunction(JavaScriptFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseJavaScriptFunction(JavaScriptFunction<CR, T, R> object) {
 				return createJavaScriptFunctionAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseObjectMethodFunction(ObjectMethodFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseObjectMethodFunction(ObjectMethodFunction<CR, T, R> object) {
 				return createObjectMethodFunctionAdapter();
 			}
 			@Override
-			public <CR, MC extends Context, T, R> Adapter caseServiceMethodFunction(ServiceMethodFunction<CR, MC, T, R> object) {
+			public <CR, T, R> Adapter caseServiceMethodFunction(ServiceMethodFunction<CR, T, R> object) {
 				return createServiceMethodFunctionAdapter();
 			}
 			@Override
