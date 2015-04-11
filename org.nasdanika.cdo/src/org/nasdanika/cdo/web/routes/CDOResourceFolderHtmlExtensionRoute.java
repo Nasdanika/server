@@ -13,7 +13,7 @@ public class CDOResourceFolderHtmlExtensionRoute implements Route {
 	public Action execute(final WebContext context, Object... args) throws Exception {
 		CDOView view;
 		if (context instanceof CDOViewContext) {
-			view = ((CDOViewContext<?,?,?>) context).getView();
+			view = ((CDOViewContext<?,?>) context).getView();
 		} else {
 			return Action.INTERNAL_SERVER_ERROR;
 		}

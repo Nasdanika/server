@@ -4,6 +4,6 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.web.HttpContext;
 
-public interface CDOViewHttpContext<CR> extends CDOViewContext<CDOView, CR, CDOViewHttpContext<?>>, HttpContext {
+public interface CDOViewHttpContext<CR> extends CDOViewContext<CDOView, CR>, HttpContext {
 
 }

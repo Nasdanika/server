@@ -20,7 +20,7 @@ import org.nasdanika.web.WebContext;
 public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOViewHttpContext<CR> {
 
 	private static final String PRINCIPAL_KEY = Principal.class.getName();
-	private CDOViewContext<CDOView, CR, CDOViewHttpContext<?>> viewContext;
+	private CDOViewContext<CDOView, CR> viewContext;
 
 	public CDOViewHttpContextImpl(
 			String[] path,
@@ -32,7 +32,7 @@ public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOVi
 			HttpServletResponse resp,
 			String contextURL,
 			ExportingContext exportingContext,
-			CDOViewContext<CDOView, CR, CDOViewHttpContext<?>> viewContext) throws Exception {
+			CDOViewContext<CDOView, CR> viewContext) throws Exception {
 		
 		super(path, target, extensionManager, classLoadingContext, pathTrace, req, resp, contextURL, exportingContext);
 		this.viewContext = viewContext;
@@ -82,7 +82,7 @@ public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOVi
 	}
 	
 	@Override
-	public Principal getPrincipal(CDOViewHttpContext<?> masterContext) throws Exception {
+	public Principal getPrincipal() throws Exception {
 		Principal oldPrincipal = (Principal) getRequest().getSession().getAttribute(PRINCIPAL_KEY);
 		if (oldPrincipal!=null) {
 			CDOObject principal = getView().getObject(oldPrincipal.cdoID());
@@ -90,7 +90,7 @@ public class CDOViewHttpContextImpl<CR> extends HttpContextImpl implements CDOVi
 				return (Principal) principal;
 			}
 		}
-		return viewContext.getPrincipal(masterContext);
+		return viewContext.getPrincipal();
 	}
 		
 	@Override

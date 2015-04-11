@@ -8,22 +8,23 @@ import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandlerBase;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
-import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
 
-public abstract class CDOTransactionContextProviderComponent<CR, MC extends Context> implements CDOTransactionContextProvider<CR, MC> {
+public abstract class CDOTransactionContextProviderComponent<CR> implements CDOTransactionContextProvider<CR> {
 
 	private CDOSessionProvider sessionProvider;
 	private SecurityPolicyManager securityPolicyManager;
 	private Bundle bundle;
+	private boolean deny;
 	
 	public void activate(ComponentContext componentContext) throws Exception {
 		securityPolicyManager = new SecurityPolicyManager(
 				componentContext.getBundleContext(), 
-				(String) componentContext.getProperties().get("security-policy-filter")); 
-		bundle = componentContext.getBundleContext().getBundle();
+				(String) componentContext.getProperties().get("security-policy-filter"));
+		this.bundle = componentContext.getBundleContext().getBundle();
+		deny = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision"));
 	}
 	
 	public void deactivate() throws Exception {
@@ -51,10 +52,14 @@ public abstract class CDOTransactionContextProviderComponent<CR, MC extends Cont
 	}
 
 	@Override
-	public CDOTransactionContext<CR, MC> createContext() {
+	public <MC> CDOTransactionContext<CR> createContext(MC masterContext) {
 		if (sessionProvider!=null) {			
 			try {
-				return new CDOTransactionContextImpl<CR, MC>(bundle, securityPolicyManager) {
+				return new CDOTransactionContextImpl<CR, MC>(
+						bundle, 
+						securityPolicyManager,
+						masterContext,
+						deny) {
 					
 					@Override
 					public ProtectionDomain<CR> getProtectionDomain() {

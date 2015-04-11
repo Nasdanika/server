@@ -20,7 +20,7 @@ import org.nasdanika.web.WebContext;
 public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implements CDOTransactionHttpContext<CR> {
 
 	private static final String PRINCIPAL_KEY = Principal.class.getName();
-	private CDOTransactionContext<CR, CDOTransactionHttpContext<?>> transactionContext;
+	private CDOTransactionContext<CR> transactionContext;
 
 	public CDOTransactionHttpContextImpl(
 			String[] path,
@@ -32,7 +32,7 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 			HttpServletResponse resp,
 			String contextURL,
 			ExportingContext exportingContext,
-			CDOTransactionContext<CR, CDOTransactionHttpContext<?>> transactionContext) throws Exception {
+			CDOTransactionContext<CR> transactionContext) throws Exception {
 		
 		super(path, target, extensionManager, classLoadingContext, pathTrace, req, resp, contextURL, exportingContext);
 		this.transactionContext = transactionContext;
@@ -87,7 +87,7 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 	}
 	
 	@Override
-	public Principal getPrincipal(CDOTransactionHttpContext<?> masterContext) throws Exception {
+	public Principal getPrincipal() throws Exception {
 		Principal oldPrincipal = (Principal) getRequest().getSession().getAttribute(PRINCIPAL_KEY);
 		if (oldPrincipal!=null) {
 			CDOObject principal = getView().getObject(oldPrincipal.cdoID());
@@ -95,7 +95,7 @@ public class CDOTransactionHttpContextImpl<CR> extends HttpContextImpl implement
 				return (Principal) principal;
 			}
 		}
-		return transactionContext.getPrincipal(masterContext);
+		return transactionContext.getPrincipal();
 	}
 
 	@Override

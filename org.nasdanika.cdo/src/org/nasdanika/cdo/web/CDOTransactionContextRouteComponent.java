@@ -9,13 +9,13 @@ import org.nasdanika.web.WebContext;
 
 public class CDOTransactionContextRouteComponent<CR, MC extends Context> implements Route {
 	
-	private CDOTransactionContextProvider<CR, CDOTransactionHttpContext<?>> contextProvider;
+	private CDOTransactionContextProvider<CR> contextProvider;
 	
-	public void setContextProvider(CDOTransactionContextProvider<CR,CDOTransactionHttpContext<?>> contextProvider) {
+	public void setContextProvider(CDOTransactionContextProvider<CR> contextProvider) {
 		this.contextProvider = contextProvider;
 	}
 	
-	public void clearContextProvider(CDOTransactionContextProvider<CR,CDOTransactionHttpContext<?>> contextProvider) {
+	public void clearContextProvider(CDOTransactionContextProvider<CR> contextProvider) {
 		this.contextProvider = null;
 	}
 
@@ -33,7 +33,7 @@ public class CDOTransactionContextRouteComponent<CR, MC extends Context> impleme
 					httpContext.getResponse(), 
 					httpContext.getContextURL(),
 					null,
-					contextProvider.createContext())) {
+					contextProvider.createContext(context))) {
 				
 				try (Action action = cdoTransactionContext.getAction(cdoTransactionContext.getView(), 0)) {
 					if (action == null) {

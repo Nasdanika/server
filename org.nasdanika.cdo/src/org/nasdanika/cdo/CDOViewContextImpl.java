@@ -5,7 +5,6 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Map;
 
-import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginUser;
@@ -14,16 +13,18 @@ import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.cdo.security.User;
+import org.nasdanika.core.Adaptable;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.ContextImpl;
 import org.nasdanika.core.Converter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.SecurityContext;
-import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-public abstract class CDOViewContextImpl<V extends CDOView, CR, MC extends Context> implements CDOViewContext<V, CR, MC>, ClassLoadingContext {
+public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends ContextImpl implements CDOViewContext<V, CR>, ClassLoadingContext {
 	
 	private V view;
 	
@@ -33,11 +34,29 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC extends Conte
 
 	private Bundle bundle;
 
-	public CDOViewContextImpl(Bundle bundle, SecurityPolicyManager securityPolicyManager) throws Exception {
+	private MC masterContext;
+
+	private boolean deny;
+
+	/**
+	 * 
+	 * @param bundle
+	 * @param securityPolicyManager
+	 * @param masterContext
+	 * @param deny If true then default authorization action is DENY (high security).
+	 * @throws Exception
+	 */
+	public CDOViewContextImpl(
+			Bundle bundle, 
+			SecurityPolicyManager securityPolicyManager,
+			MC masterContext,
+			boolean deny) throws Exception {
 		this.bundle = bundle;
 		this.securityPolicyManager = securityPolicyManager;
+		this.masterContext = masterContext;
 		this.converter = CoreUtil.createConverter();
 		view = openView();
+		this.deny = deny;
 	}
 
 	protected abstract V openView();
@@ -56,14 +75,23 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC extends Conte
 	}
 
 	@Override
-	public Principal getPrincipal(MC masterContext) throws Exception {
+	public Principal getPrincipal() throws Exception {
 		if (authenticatedPrincipal != null) {
 			return authenticatedPrincipal;
 		}
 
-		authenticatedPrincipal = masterContext.adapt(Principal.class);
-		if (authenticatedPrincipal != null) {
-			return authenticatedPrincipal;
+		if (masterContext instanceof Principal) {
+			authenticatedPrincipal = (Principal) masterContext;
+			if (authenticatedPrincipal != null) {
+				return authenticatedPrincipal;
+			}
+		}
+
+		if (masterContext instanceof Adaptable) {
+			authenticatedPrincipal = ((Adaptable) masterContext).adapt(Principal.class);
+			if (authenticatedPrincipal != null) {
+				return authenticatedPrincipal;
+			}
 		}
 
 		java.security.Principal securityPrincipal = null;
@@ -72,7 +100,12 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC extends Conte
 		if (masterContext instanceof SecurityContext) {
 			securityPrincipal = ((SecurityContext) masterContext).getSecurityPrincipal();
 		} else {
-			SecurityContext sc = masterContext.adapt(SecurityContext.class);
+			SecurityContext sc = null;
+			if (masterContext instanceof SecurityContext) {
+				sc = (SecurityContext) masterContext;
+			} else if (masterContext instanceof Adaptable) {				
+				sc = ((Adaptable) masterContext).adapt(SecurityContext.class);
+			}
 			if (sc != null) {
 				securityPrincipal = sc.getSecurityPrincipal();
 			}
@@ -106,7 +139,7 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC extends Conte
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T adapt(Class<T> targetType) {
+	public <T> T adapt(Class<T> targetType) throws Exception {
 		if (SecurityPolicy.class.equals(targetType)) {
 			return (T) securityPolicyManager;
 		}
@@ -117,25 +150,31 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC extends Conte
 		if (targetType.isInstance(bc)) {
 			return (T) bc;
 		}
-		return targetType.isInstance(this) ? (T) this : null;
+		
+		if (targetType.isInstance(masterContext)) {
+			return (T) masterContext;
+		}
+		
+		if (masterContext instanceof Adaptable) {
+			T ret = ((Adaptable) masterContext).adapt(targetType);
+			if (ret!=null) {
+				return ret;
+			}
+		}
+		
+		return super.adapt(targetType);
 	}
 
 	@Override
 	public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
-		@SuppressWarnings("unchecked")
-		Principal principal = getPrincipal(context);
+		Principal principal = getPrincipal();
 		if (principal!=null) {
-			// TODO - cache CDOID,action -> AccessDecision in session.
-			try {
-				SecurityPolicy sp = context.adapt(SecurityPolicy.class);
-				return sp==null ? AccessDecision.ABSTAIN : principal.authorize(sp, context, target, action, qualifier, environment);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return AccessDecision.DENY; // To be on the safe side.
+			SecurityPolicy sp = adapt(SecurityPolicy.class);
+			if (sp!=null) {
+				AccessDecision.ALLOW.equals(principal.authorize(sp, this, target, action, qualifier, environment));
 			}
 		}
-	}
-	return AccessDecision.ABSTAIN;
+		return !deny;
 	}
 
 	@SuppressWarnings("unchecked")

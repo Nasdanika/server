@@ -4,22 +4,23 @@ import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
-import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
 
-public abstract class CDOViewContextProviderComponent<CR, MC extends Context> implements CDOViewContextProvider<CR, MC> {
+public abstract class CDOViewContextProviderComponent<CR> implements CDOViewContextProvider<CR, CDOViewContext<CDOView, CR>> {
 	
 	private CDOSessionProvider sessionProvider;
 	private SecurityPolicyManager securityPolicyManager;
 	private Bundle bundle;
+	private boolean deny;
 	
 	public void activate(ComponentContext componentContext) throws Exception {
 		securityPolicyManager = new SecurityPolicyManager(
 				componentContext.getBundleContext(), 
 				(String) componentContext.getProperties().get("security-policy-filter"));
 		this.bundle = componentContext.getBundleContext().getBundle();
+		deny = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision"));
 	}
 	
 	public void deactivate() throws Exception {
@@ -37,10 +38,14 @@ public abstract class CDOViewContextProviderComponent<CR, MC extends Context> im
 	}	
 
 	@Override
-	public CDOViewContext<CDOView, CR, MC> createContext() {
+	public <MC> CDOViewContext<CDOView, CR> createContext(MC masterContext) {
 		if (sessionProvider!=null) {			
 			try {
-				return new CDOViewContextImpl<CDOView, CR, MC>(bundle, securityPolicyManager) {
+				return new CDOViewContextImpl<CDOView, CR, MC>(
+						bundle, 
+						securityPolicyManager,
+						masterContext,
+						deny) {
 					
 					@Override
 					public ProtectionDomain<CR> getProtectionDomain() {

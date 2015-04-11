@@ -6,7 +6,6 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
-import java.util.Collections;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -17,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.BundleClassLoadingContext;
 import org.nasdanika.core.ClassLoadingContext;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("serial")
@@ -47,37 +46,7 @@ public class RoutingServlet extends HttpServlet {
 			throw new ServletException(e);
 		}
 		
-		final Bundle bundle = FrameworkUtil.getBundle(getClass());
-		
-		classLoadingContext = new ClassLoadingContext() {
-			
-			@Override
-			public void close() throws Exception {
-				// NOP				
-			}
-			
-			@Override
-			public Class<?> loadClass(String name) throws ClassNotFoundException {
-				return bundle.loadClass(name);
-			}
-			
-			@Override
-			public Iterable<URL> getResources(String name) throws IOException {
-				return Collections.<URL>list(bundle.getResources(name));
-			}
-			
-			@Override
-			public URL getResource(String name) {
-				return bundle.getResource(name);
-			}
-
-			@SuppressWarnings("unchecked")
-			@Override
-			public <T> T adapt(Class<T> targetType) {					
-				return targetType.isInstance(this) ? (T) this : null;
-			}
-			
-		};
+		classLoadingContext = new BundleClassLoadingContext(FrameworkUtil.getBundle(getClass()));
 	}
 			
 	@Override

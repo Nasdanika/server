@@ -7,7 +7,7 @@ import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpContextImpl;
 import org.nasdanika.web.WebContext;
 
-public class CDOViewContextAutocloseRouteComponent<CR> extends AbstractContextProviderAutocloseRouteComponent<CDOViewContext<CDOView, CR, CDOViewHttpContext<?>>, CDOViewHttpContextImpl<CR>> {
+public class CDOViewContextAutocloseRouteComponent<CR> extends AbstractContextProviderAutocloseRouteComponent<CDOViewContext<CDOView, CR>, CDOViewHttpContextImpl<CR>> {
 
 	@Override
 	protected Action route(CDOViewHttpContextImpl<CR> mergedContext) throws Exception {
@@ -34,7 +34,7 @@ public class CDOViewContextAutocloseRouteComponent<CR> extends AbstractContextPr
 	}
 
 	@Override
-	protected CDOViewHttpContextImpl<CR> mergeContexts(WebContext webContext, CDOViewContext<CDOView, CR, CDOViewHttpContext<?>> context) throws Exception {
+	protected CDOViewHttpContextImpl<CR> mergeContexts(WebContext webContext, CDOViewContext<CDOView, CR> context) throws Exception {
 		if (webContext instanceof HttpContextImpl) {
 			HttpContextImpl httpContext = (HttpContextImpl) webContext;
 			CDOViewHttpContextImpl<CR> mergedContext = new CDOViewHttpContextImpl<CR>(
