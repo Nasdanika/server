@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.CDOTransactionContext;
@@ -17,9 +18,9 @@ import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionFactory;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.function.Function;
 import org.nasdanika.function.FunctionException;
 import org.nasdanika.function.ServiceBinding;
+import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -86,7 +87,7 @@ public abstract class AbstractFunctionImpl<CR, T, R> extends CDOObjectImpl imple
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR>, T, R> bind(CDOTransactionContext<CR> context, Map<Integer, Object> bindings) {
+	public CDOTransactionContextFunction<CR, T, R> bind(CDOTransactionContext<CR> context, Map<Integer, Object> bindings) {
 		if (bindings.isEmpty()) {
 			return this;
 		}
@@ -103,7 +104,7 @@ public abstract class AbstractFunctionImpl<CR, T, R> extends CDOObjectImpl imple
 	}
 	
 	@Override
-	public Function<CDOTransactionContext<CR>, T, R> bind(CDOTransactionContext<CR> context, Object... bindings) {
+	public CDOTransactionContextFunction<CR, T, R> bind(CDOTransactionContext<CR> context, Object... bindings) {
 		Map<Integer, Object> mBindings = new HashMap<Integer, Object>();
 		for (int i=0; i<bindings.length; ++i) {
 			mBindings.put(i, bindings[i]);

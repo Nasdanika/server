@@ -30,36 +30,39 @@ public abstract class ReflectiveConverterProvider implements AutoCloseable, Conv
 		if (context==null) {
 			context = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		}
-		final BundleContext theContext = context;
 		for (final Method m: getClass().getMethods()) {
 			final ConverterMethod cma = m.getAnnotation(ConverterMethod.class);
-			if (cma!=null) {				
-				descriptors.add(new ConverterDescriptor<Object, Object, Context>() {
-					
-					@SuppressWarnings("unchecked")
-					Class<Object>[] parameterTypes = (Class<Object>[]) m.getParameterTypes();
+			if (cma!=null) {
+				
+				@SuppressWarnings("unchecked")
+				final Class<Object>[] parameterTypes = (Class<Object>[]) m.getParameterTypes();
+				
+				class MethodConverter extends ParameterReferenceManager implements Converter<Object, Object, Context> {
+
+					protected MethodConverter(BundleContext context, Method method) throws Exception {
+						super(context, method);
+					}
 
 					@Override
-					public Converter<Object, Object, Context> getConverter() {
-						class MethodConverter extends ParameterReferenceManager implements Converter<Object, Object, Context> {
-
-							protected MethodConverter() throws Exception {
-								super(theContext, m);
-							}
-
-							@Override
-							public Object convert(Object source, Class<Object> target, Context context) throws Exception {
-								Object[] args = new Object[parameterTypes.length];
-								args[0] = source;
-								if (args.length>1) {
-									args[1] = context;
-								}
-								injectServiceReferences(args);
-								return m.invoke(ReflectiveConverterProvider.this, args);
-							}
-							
+					public Object convert(Object source, Class<Object> target, Context context) throws Exception {
+						Object[] args = new Object[parameterTypes.length];
+						args[0] = source;
+						if (args.length>1) {
+							args[1] = context;
 						}
-						return null;
+						injectServiceReferences(args);
+						return m.invoke(ReflectiveConverterProvider.this, args);
+					}
+					
+				}
+				
+				final Converter<Object, Object, Context> converter = new MethodConverter(context, m);
+
+				descriptors.add(new ConverterDescriptor<Object, Object, Context>() {
+					
+					@Override
+					public Converter<Object, Object, Context> getConverter() {
+						return converter;
 					}
 
 					@Override

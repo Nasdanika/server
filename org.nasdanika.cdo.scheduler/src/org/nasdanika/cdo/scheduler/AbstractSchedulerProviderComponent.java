@@ -13,27 +13,33 @@ import java.util.concurrent.locks.Lock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
+import org.eclipse.emf.cdo.session.CDOSession;
 import org.eclipse.emf.cdo.transaction.CDOCommitContext;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
 import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.nasdanika.cdo.CDOSessionInitializer;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOTransactionContextCommand;
 import org.nasdanika.cdo.CDOTransactionContextFilter;
 import org.nasdanika.cdo.CDOTransactionContextProvider;
 import org.nasdanika.cdo.boxing.BoxUtil;
+import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.AdapterProvider;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
-public abstract class AbstractSchedulerProviderComponent<CR> implements SchedulerProvider<CR>, AdapterProvider<CDOTransactionContext<CR>, Scheduler<CR, CDOObject>> {
+public abstract class AbstractSchedulerProviderComponent<CR> implements SchedulerProvider<CR>, AdapterProvider<CDOTransactionContext<CR>, Scheduler<CR, CDOObject>>, CDOSessionInitializer {
 	
 	private int threadPoolSize = 1; 
 	private ScheduledExecutorService scheduledExecutorService;
 	private Map<CDOID, Future<?>> scheduledTasks = new ConcurrentHashMap<>();
 	private AccessDecision defaultAccessDecision;
+	private BundleContext bundleContext;
 	
 	public void setThreadPoolSize(int threadPoolSize) {
 		this.threadPoolSize = threadPoolSize;
@@ -103,7 +109,7 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 	}
 	
 	public CDOTransactionContext<CR> createCommandContext(CDOTransactionContext<CR> transactionContext, final Principal runAs) {
-		return new CDOTransactionContextFilter<CR, Principal>(transactionContext) {
+		return new CDOTransactionContextFilter<CR, Principal>(bundleContext, transactionContext) {
 
 			@Override
 			protected Principal getMasterContext() {
@@ -119,6 +125,7 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 	}
 
 	public void activate(ComponentContext componentContext) throws Exception {
+		this.bundleContext = componentContext.getBundleContext();
 		scheduledExecutorService = Executors.newScheduledThreadPool(threadPoolSize);
 		defaultAccessDecision = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW;
 		try (CDOTransactionContext<CR> transactionContext = createContext()) {
@@ -569,6 +576,13 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 	@Override
 	public Class<CDOTransactionContext<CR>> getTargetType() {
 		return (Class) CDOTransactionContext.class;
+	}
+	
+	@Override
+	public void init(CDOSession session) {
+		CDOPackageRegistry packageRegistry = session.getPackageRegistry();
+		packageRegistry.putEPackage(SchedulerPackage.eINSTANCE);
+		packageRegistry.putEPackage(BoxingPackage.eINSTANCE);
 	}
 
 }

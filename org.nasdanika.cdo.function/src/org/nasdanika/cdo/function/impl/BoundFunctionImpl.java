@@ -2,6 +2,8 @@
  */
 package org.nasdanika.cdo.function.impl;
 
+import java.util.Map.Entry;
+
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -117,7 +119,8 @@ public class BoundFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R> 
 			EMap<Integer, EObject> bindings = getBindings();
 			for (int i=0, j=0; i<targetParameterTypes.length; ++i) {
 				if (bindings.containsKey(i)) {
-					targetArguments[i] = (T) BoxUtil.unbox(bindings.get(i), context);
+					EObject binding = bindings.get(new Integer(i));
+					targetArguments[i] = (T) BoxUtil.unbox(binding, context);
 				} else {
 					targetArguments[i] = args[j++];
 				}

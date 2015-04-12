@@ -26,7 +26,7 @@ public class BoxUtil {
 		}
 		
 		try {
-			CDOObject cdoObj = context.adapt(Context.class).convert(obj, CDOObject.class);
+			CDOObject cdoObj = context.convert(obj, CDOObject.class);
 			if (cdoObj==null) {
 				throw new BoxingException("Cannot convert "+obj+" to CDOObject");
 			}

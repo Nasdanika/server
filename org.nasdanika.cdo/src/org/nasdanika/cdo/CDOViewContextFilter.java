@@ -1,11 +1,8 @@
 package org.nasdanika.cdo;
 
-import java.io.IOException;
-import java.net.URL;
-
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.ProtectionDomain;
-import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.osgi.framework.BundleContext;
 
 /**
  * Filter which allows to replace master context and default access decision.
@@ -19,7 +16,8 @@ public abstract class CDOViewContextFilter<V extends CDOView, CR, MC, T extends 
 	
 	protected final T target;
 
-	public CDOViewContextFilter(T target) {
+	public CDOViewContextFilter(BundleContext bundleContext, T target) {
+		super(bundleContext);
 		this.target = target;
 	}
 

@@ -11,11 +11,11 @@ import org.nasdanika.core.Context;
 /**
  * A factory for functional programming. 
  */
-public interface FunctionFactory<C extends Context> { 
+public interface FunctionFactory<C extends Context, F extends Function<C, Object, Object>> { 
 	
 	ServiceBinding createServiceBinding(String serviceType, String filter);
 		
-	Function<C,Object,Object> createServiceMethodFunction(
+	F createServiceMethodFunction(
 			Class<?> serviceClass, 
 			String filter, 
 			String methodName, 
@@ -27,22 +27,22 @@ public interface FunctionFactory<C extends Context> {
 //			String methodName, 
 //			String... parameterTypeNames);
 	
-	Function<C,Object,Object> createObjectMethodFunction(
+	F createObjectMethodFunction(
 			Object target, 
 			String methodName, 
 			Class<?>... parameterTypes);
 	
-	Function<C,Object,Object> createJavaScriptFunction(
+	F createJavaScriptFunction(
 			String code,
 			Map<String, Object> bindings,
 			String... parameterNames);
 	
-	Function<C,Object,Object> createJavaScriptFunction(
+	F createJavaScriptFunction(
 			Reader codeReader,
 			Map<String, Object> bindings,
 			String... parameterNames);
 	
-	Function<C,Object,Object> createJavaScriptFunction(
+	F createJavaScriptFunction(
 			InputStream codeInputStream,
 			Map<String, Object> bindings,
 			String... parameterNames);
@@ -55,7 +55,7 @@ public interface FunctionFactory<C extends Context> {
 	 * @param parameterNames
 	 * @return
 	 */
-	Function<C,Object,Object> createJavaScriptFunction(
+	F createJavaScriptFunction(
 			URL codeURL,
 			boolean preLoad,
 			Map<String, Object> bindings,

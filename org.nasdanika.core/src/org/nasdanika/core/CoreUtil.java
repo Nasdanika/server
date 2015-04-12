@@ -303,7 +303,9 @@ public class CoreUtil {
 			@Override
 			public void close() throws Exception {
 				for (ConverterEntry ce: ceList) {
-					ce.converter.close();
+					if (ce.converter!=null) {
+						ce.converter.close();
+					}
 				}
 			}
 		};

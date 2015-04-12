@@ -11,6 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.AdapterManager;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.HTMLFactory;
@@ -192,18 +193,29 @@ public abstract class ContextImpl implements WebContext {
 	
 //	TODO - Explicitly add adapters, adapter map from parent.
 	
+	
+	private AdapterManager adapterManager;
+
 	@SuppressWarnings("unchecked")
 	@Override
-	public <T> T adapt(Class<T> targetType) throws Exception {					
+	public <T> T adapt(Class<T> targetType) throws Exception {
 		if (targetType.isInstance(this)) {
 			return (T) this;
 		}
-		
+				
 		if (targetType.isAssignableFrom(HTMLFactory.class)) {
 			return (T) extensionManager.getHTMLFactory();
 		}
 		
-		return extensionManager.adapt(targetType);
+		synchronized (this) {
+			if (adapterManager==null) {
+				adapterManager = new AdapterManager(this, null, null);
+			}
+		}
+		
+		T ret = adapterManager.adapt(targetType);
+		return ret==null ? extensionManager.adapt(targetType) : ret;
+
 	}
 	
 }

@@ -1,6 +1,7 @@
 package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.osgi.framework.BundleContext;
 
 /**
  * Filter which allows to replace master context and default access decision.
@@ -12,8 +13,8 @@ import org.eclipse.emf.cdo.transaction.CDOTransaction;
  */
 public abstract class CDOTransactionContextFilter<CR, MC> extends CDOViewContextFilter<CDOTransaction, CR, MC, CDOTransactionContext<CR>> implements CDOTransactionContext<CR> {
 	
-	public CDOTransactionContextFilter(CDOTransactionContext<CR> target) {
-		super(target);
+	public CDOTransactionContextFilter(BundleContext bundleContext, CDOTransactionContext<CR> target) {
+		super(bundleContext, target);
 	}
 
 	@Override

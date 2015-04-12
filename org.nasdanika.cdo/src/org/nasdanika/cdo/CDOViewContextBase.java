@@ -14,9 +14,14 @@ import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.ContextImpl;
 import org.nasdanika.core.SecurityContext;
+import org.osgi.framework.BundleContext;
 
 public abstract class CDOViewContextBase<V extends CDOView, CR, MC> extends ContextImpl implements CDOViewContext<V, CR> {
 	
+	public CDOViewContextBase(BundleContext bundleContext) {
+		super(bundleContext);
+	}
+
 	protected abstract MC getMasterContext();
 	
 	protected abstract AuthorizationProvider.AccessDecision getDefaultAccessDecision();

@@ -18,6 +18,7 @@ import org.nasdanika.core.Command;
 import org.nasdanika.function.Function;
 import org.nasdanika.function.FunctionException;
 import org.nasdanika.function.ServiceBinding;
+import org.nasdanika.function.cdo.CDOTransactionContextFunction;
 import org.nasdanika.function.cdo.CDOTransactionContextFunctionFactory;
 
 public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFactory<CR> {
@@ -40,7 +41,7 @@ public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFact
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Function<CDOTransactionContext<CR>, Object, Object> createServiceMethodFunction(
+	public CDOTransactionContextFunction<CR, Object, Object> createServiceMethodFunction(
 			Class<?> serviceClass, 
 			String filter, 
 			String methodName,
@@ -70,7 +71,7 @@ public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFact
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public Function<CDOTransactionContext<CR>, Object, Object> createObjectMethodFunction(
+	public CDOTransactionContextFunction<CR, Object, Object> createObjectMethodFunction(
 			Object target, 
 			String methodName, 
 			Class<?>... parameterTypes) {		
@@ -87,7 +88,7 @@ public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFact
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
+	public CDOTransactionContextFunction<CR, Object, Object> createJavaScriptFunction(
 			String code, 
 			Map<String, Object> bindings, 
 			String... parameterNames) {
@@ -106,7 +107,7 @@ public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFact
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
+	public CDOTransactionContextFunction<CR, Object, Object> createJavaScriptFunction(
 			Reader codeReader, 
 			Map<String, Object> bindings, 
 			String... parameterNames) {
@@ -124,7 +125,7 @@ public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFact
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
+	public CDOTransactionContextFunction<CR, Object, Object> createJavaScriptFunction(
 			InputStream codeInputStream, 
 			Map<String, Object> bindings,
 			String... parameterNames) {
@@ -132,7 +133,7 @@ public class CDOFunctionFactory<CR> implements CDOTransactionContextFunctionFact
 	}
 
 	@Override
-	public Function<CDOTransactionContext<CR>, Object, Object> createJavaScriptFunction(
+	public CDOTransactionContextFunction<CR, Object, Object> createJavaScriptFunction(
 			URL codeURL, 
 			boolean preLoad, 
 			Map<String, Object> bindings,

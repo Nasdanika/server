@@ -31,13 +31,15 @@ public class AdapterManager implements AutoCloseable, Adaptable {
 		if (context==null) {
 			context = FrameworkUtil.getBundle(target.getClass()).getBundleContext();
 		}
-		if (adapterProviderServiceFilter==null || adapterProviderServiceFilter.trim().length()==0) {
-			adapterProviderServiceTracker = new ServiceTracker<>(context, AdapterProvider.class.getName(), null);
-		} else {
-			String apServiceFilter = "(&(" + Constants.OBJECTCLASS + "=" + AdapterProvider.class.getName() + ")"+adapterProviderServiceFilter+")";
-			adapterProviderServiceTracker = new ServiceTracker<>(context, context.createFilter(apServiceFilter), null);
+		if (context!=null) {
+			if (adapterProviderServiceFilter==null || adapterProviderServiceFilter.trim().length()==0) {
+				adapterProviderServiceTracker = new ServiceTracker<>(context, AdapterProvider.class.getName(), null);
+			} else {
+				String apServiceFilter = "(&(" + Constants.OBJECTCLASS + "=" + AdapterProvider.class.getName() + ")"+adapterProviderServiceFilter+")";
+				adapterProviderServiceTracker = new ServiceTracker<>(context, context.createFilter(apServiceFilter), null);
+			}
+			adapterProviderServiceTracker.open();
 		}
-		adapterProviderServiceTracker.open();
 	}
 	
 	/**
@@ -97,19 +99,21 @@ public class AdapterManager implements AutoCloseable, Adaptable {
 					}
 				}
 			}
-							
+		}
+		
+		if (adapterProviderServiceTracker != null) {
 			// TODO - iterate over the getTracked(), match profiles.
-			for (Object c: adapterProviderServiceTracker.getServices()) {
-				AdapterProvider<Object,Object> provider = (AdapterProvider<Object,Object>) c;
-				if (targetType.isAssignableFrom(provider.getAdapterType()) 
-						&& provider.getTargetType()!=null 
+			for (Object c : adapterProviderServiceTracker.getServices()) {
+				AdapterProvider<Object, Object> provider = (AdapterProvider<Object, Object>) c;
+				if (targetType.isAssignableFrom(provider.getAdapterType())
+						&& provider.getTargetType() != null
 						&& provider.getTargetType().isInstance(target)) {
 					adapter = provider.createAdapter(target);
-					if (adapter!=null) {
+					if (adapter != null) {
 						adapterMap.put(targetType, adapter);
 						return (T) adapter;
 					}
-				}				
+				}
 			}
 		}
 		

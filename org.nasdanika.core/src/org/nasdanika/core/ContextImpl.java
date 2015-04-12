@@ -2,12 +2,20 @@ package org.nasdanika.core;
 
 import java.util.Map;
 
+import org.osgi.framework.BundleContext;
+
 /**
  * Simple implementation of context
  * @author Pavel
  *
  */
 public class ContextImpl implements Context {
+	
+	private BundleContext bundleContext;
+
+	public ContextImpl(BundleContext bundleContext) {
+		this.bundleContext = bundleContext;
+	}
 	
 	private AdapterManager adapterManager;
 
@@ -20,7 +28,7 @@ public class ContextImpl implements Context {
 		
 		synchronized (this) {
 			if (adapterManager==null) {
-				adapterManager = new AdapterManager(this, null, null);
+				adapterManager = new AdapterManager(this, bundleContext, null);
 			}
 		}
 		

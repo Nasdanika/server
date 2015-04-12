@@ -9,9 +9,6 @@ import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.ClassLoadingContext;
-import org.nasdanika.core.Context;
-import org.nasdanika.core.Converter;
-import org.nasdanika.core.CoreUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -20,8 +17,6 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOV
 	private V view;
 	
 	private SecurityPolicyManager securityPolicyManager;
-
-	private Converter<Object, Object, Context> converter;
 
 	private Bundle bundle;
 
@@ -42,10 +37,10 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOV
 			SecurityPolicyManager securityPolicyManager,
 			MC masterContext,
 			AccessDecision defaultAccessDecision) throws Exception {
+		super(bundle.getBundleContext());
 		this.bundle = bundle;
 		this.securityPolicyManager = securityPolicyManager;
 		this.masterContext = masterContext;
-		this.converter = CoreUtil.createConverter();
 		view = openView();
 		this.defaultAccessDecition = defaultAccessDecision;
 	}
@@ -64,8 +59,8 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOV
 
 	@Override
 	public void close() throws Exception {
-		converter.close();
 		view.close();
+		super.close();
 	}
 
 	@Override
@@ -88,12 +83,6 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOV
 		}
 		
 		return super.adapt(targetType);
-	}
-
-	@SuppressWarnings("unchecked")
-	@Override
-	public <T> T convert(Object source, Class<T> targetType) throws Exception {
-		return (T) converter.convert(source, (Class<Object>) targetType, this);
 	}
 	
 	@Override
