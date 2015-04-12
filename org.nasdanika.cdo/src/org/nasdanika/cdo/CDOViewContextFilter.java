@@ -15,16 +15,17 @@ import org.nasdanika.core.AuthorizationProvider.AccessDecision;
  * @param <CR>
  * @param <MC>
  */
-public class CDOViewContextFilter<V extends CDOView, CR, MC> extends CDOViewContextBase<V, CR, MC> {
+public abstract class CDOViewContextFilter<V extends CDOView, CR, MC, T extends CDOViewContext<V, CR>> extends CDOViewContextBase<V, CR, MC> {
 	
-	private CDOViewContextBase<V, CR, MC> target;
+	protected final T target;
 
-	public CDOViewContextFilter(CDOViewContextBase<V, CR, MC> target) {
+	public CDOViewContextFilter(T target) {
 		this.target = target;
 	}
 
 	public <T> T adapt(Class<T> targetType) throws Exception {
-		return target.adapt(targetType);
+		T ret = super.adapt(targetType);
+		return ret==null ? target.adapt(targetType) : ret;
 	}
 
 	public V getView() {
@@ -33,6 +34,7 @@ public class CDOViewContextFilter<V extends CDOView, CR, MC> extends CDOViewCont
 
 	public void close() throws Exception {
 		target.close();
+		super.close();
 	}
 
 	public <T> T convert(Object source, Class<T> targetType) throws Exception {
@@ -41,28 +43,6 @@ public class CDOViewContextFilter<V extends CDOView, CR, MC> extends CDOViewCont
 
 	public ProtectionDomain<CR> getProtectionDomain() {
 		return target.getProtectionDomain();
-	}
-
-	@Override
-	protected MC getMasterContext() {
-		return target.getMasterContext();
-	}
-
-	@Override
-	protected AccessDecision getDefaultAccessDecision() {
-		return target.getDefaultAccessDecision();
-	}
-
-	public Class<?> loadClass(String name) throws ClassNotFoundException {
-		return target.loadClass(name);
-	}
-
-	public URL getResource(String name) {
-		return target.getResource(name);
-	}
-
-	public Iterable<URL> getResources(String name) throws IOException {
-		return target.getResources(name);
 	}
 
 }

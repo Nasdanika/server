@@ -11,12 +11,11 @@ import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.User;
 import org.nasdanika.core.Adaptable;
 import org.nasdanika.core.AuthorizationProvider;
-import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.ContextImpl;
 import org.nasdanika.core.SecurityContext;
 
-public abstract class CDOViewContextBase<V extends CDOView, CR, MC> extends ContextImpl implements CDOViewContext<V, CR>, ClassLoadingContext {
+public abstract class CDOViewContextBase<V extends CDOView, CR, MC> extends ContextImpl implements CDOViewContext<V, CR> {
 	
 	protected abstract MC getMasterContext();
 	

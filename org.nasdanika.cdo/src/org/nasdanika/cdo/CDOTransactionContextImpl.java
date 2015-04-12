@@ -2,6 +2,7 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.osgi.framework.Bundle;
 
 
@@ -11,8 +12,8 @@ public abstract class CDOTransactionContextImpl<CR, MC> extends CDOViewContextIm
 			Bundle bundle, 
 			SecurityPolicyManager securityPolicyManager,
 			MC masterContext,
-			boolean deny) throws Exception {
-		super(bundle, securityPolicyManager, masterContext, deny);
+			AccessDecision defaultAccessDecision) throws Exception {
+		super(bundle, securityPolicyManager, masterContext, defaultAccessDecision);
 	}
 		
 	private boolean rollbackOnly;

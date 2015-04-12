@@ -8,13 +8,14 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.Converter;
 import org.nasdanika.core.CoreUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
-public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOViewContextBase<V, CR, MC> {
+public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOViewContextBase<V, CR, MC> implements ClassLoadingContext {
 	
 	private V view;
 	
@@ -24,7 +25,7 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOV
 
 	private Bundle bundle;
 
-	private boolean deny;
+	private AccessDecision defaultAccessDecition;
 
 	private MC masterContext;
 
@@ -40,13 +41,13 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOV
 			Bundle bundle, 
 			SecurityPolicyManager securityPolicyManager,
 			MC masterContext,
-			boolean deny) throws Exception {
+			AccessDecision defaultAccessDecision) throws Exception {
 		this.bundle = bundle;
 		this.securityPolicyManager = securityPolicyManager;
 		this.masterContext = masterContext;
 		this.converter = CoreUtil.createConverter();
 		view = openView();
-		this.deny = deny;
+		this.defaultAccessDecition = defaultAccessDecision;
 	}
 	
 	@Override
@@ -56,7 +57,7 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR, MC> extends CDOV
 	
 	@Override
 	protected AccessDecision getDefaultAccessDecision() {
-		return deny ? AccessDecision.DENY : AccessDecision.ALLOW;
+		return defaultAccessDecition;
 	}
 
 	protected abstract V openView();

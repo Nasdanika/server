@@ -1,5 +1,6 @@
 package org.nasdanika.cdo;
 
+import java.nio.file.AccessMode;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -11,20 +12,21 @@ import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.NasdanikaException;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 
 public abstract class CDOTransactionContextProviderComponent<CR> implements CDOTransactionContextProvider<CR> {
 
 	private CDOSessionProvider sessionProvider;
 	private SecurityPolicyManager securityPolicyManager;
 	private Bundle bundle;
-	private boolean deny;
+	private AccessDecision defaultAccessDecision;
 	
 	public void activate(ComponentContext componentContext) throws Exception {
 		securityPolicyManager = new SecurityPolicyManager(
 				componentContext.getBundleContext(), 
 				(String) componentContext.getProperties().get("security-policy-filter"));
 		this.bundle = componentContext.getBundleContext().getBundle();
-		deny = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision"));
+		defaultAccessDecision = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW;
 	}
 	
 	public void deactivate() throws Exception {
@@ -59,7 +61,7 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 						bundle, 
 						securityPolicyManager,
 						masterContext,
-						deny) {
+						defaultAccessDecision) {
 					
 					@Override
 					public ProtectionDomain<CR> getProtectionDomain() {

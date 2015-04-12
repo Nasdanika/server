@@ -2,6 +2,7 @@ package org.nasdanika.cdo.scheduler;
 
 import org.nasdanika.core.NasdanikaException;
 
+@SuppressWarnings("serial")
 public class SchedulerException extends NasdanikaException {
 
 	public SchedulerException(String message) {

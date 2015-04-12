@@ -16,4 +16,6 @@ public interface AdapterProvider<T, A> {
 	
 	Class<A> getAdapterType();
 	
+	Class<T> getTargetType();
+	
 }

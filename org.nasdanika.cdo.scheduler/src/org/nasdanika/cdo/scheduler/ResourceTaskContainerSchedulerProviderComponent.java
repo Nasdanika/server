@@ -5,7 +5,6 @@ import java.util.concurrent.locks.Lock;
 
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
-import org.nasdanika.core.Context;
 
 public class ResourceTaskContainerSchedulerProviderComponent<CR> extends AbstractSchedulerProviderComponent<CR> {
 

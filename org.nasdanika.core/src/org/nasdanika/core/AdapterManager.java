@@ -101,7 +101,9 @@ public class AdapterManager implements AutoCloseable, Adaptable {
 			// TODO - iterate over the getTracked(), match profiles.
 			for (Object c: adapterProviderServiceTracker.getServices()) {
 				AdapterProvider<Object,Object> provider = (AdapterProvider<Object,Object>) c;
-				if (targetType.isAssignableFrom(provider.getAdapterType())) {
+				if (targetType.isAssignableFrom(provider.getAdapterType()) 
+						&& provider.getTargetType()!=null 
+						&& provider.getTargetType().isInstance(target)) {
 					adapter = provider.createAdapter(target);
 					if (adapter!=null) {
 						adapterMap.put(targetType, adapter);

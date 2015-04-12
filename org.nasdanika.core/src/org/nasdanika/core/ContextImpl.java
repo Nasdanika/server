@@ -8,6 +8,8 @@ import java.util.Map;
  *
  */
 public class ContextImpl implements Context {
+	
+	private AdapterManager adapterManager;
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -16,7 +18,13 @@ public class ContextImpl implements Context {
 			return (T) this;
 		}
 		
-		return null;
+		synchronized (this) {
+			if (adapterManager==null) {
+				adapterManager = new AdapterManager(this, null, null);
+			}
+		}
+		
+		return adapterManager.adapt(targetType);
 	}
 
 	@Override
