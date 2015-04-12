@@ -11,7 +11,7 @@ public abstract class AbstractContextProviderAutocloseRouteComponent<C extends C
 
 	@Override
 	public Action execute(WebContext webContext, Object... args) throws Exception {
-		try (MC mergedContext = mergeContexts(webContext, getContextProvider().createContext())) {			
+		try (MC mergedContext = mergeContexts(webContext, getContextProvider(webContext).createContext())) {			
 			return route(mergedContext);
 		}			
 	}

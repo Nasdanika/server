@@ -12,7 +12,7 @@ public abstract class AbstractTransactionContextProviderAutocommitRouteComponent
 
 	@Override
 	public Action execute(WebContext webContext, Object... args) throws Exception {
-		try (MC mergedContext = mergeContexts(webContext, getContextProvider().createContext())) {	
+		try (MC mergedContext = mergeContexts(webContext, getContextProvider(webContext).createContext())) {	
 			try {
 				return route(mergedContext);
 			} catch (Exception e) {

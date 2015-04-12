@@ -1,9 +1,8 @@
 package org.nasdanika.cdo;
 
-import org.nasdanika.core.Context;
+import org.nasdanika.core.FacadeContextProvider;
 
-public interface CDOViewContextProvider<CR, C extends CDOViewContext<?, CR>> {
 
-	<MC> C createContext(MC masterContext);
+public interface CDOViewContextProvider<CR, C extends CDOViewContext<?, CR>> extends FacadeContextProvider<C> {
 
 }

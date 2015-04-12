@@ -6,6 +6,12 @@ import java.util.concurrent.locks.Lock;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 
+/**
+ * Scheduler which keeps tasks in a resource.
+ * @author Pavel
+ *
+ * @param <CR>
+ */
 public class ResourceTaskContainerSchedulerProviderComponent<CR> extends AbstractSchedulerProviderComponent<CR> {
 
 	@Override
@@ -14,7 +20,7 @@ public class ResourceTaskContainerSchedulerProviderComponent<CR> extends Abstrac
 	}
 
 	private CDOResource getTasksResource(CDOTransaction transaction) {
-		return transaction.getResource(tasksResource);
+		return transaction.getOrCreateResource(tasksResource);
 	}
 	
 	private String tasksResource = "schedulerTasks";
