@@ -40,6 +40,9 @@
             source="java.util.Map"
             target="org.json.JSONObject">
       </converter>
+      <converter_provider
+            class="org.nasdanika.core.Converters">
+      </converter_provider>
    </extension>
 
 </plugin>

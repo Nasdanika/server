@@ -14,7 +14,7 @@ public interface Function<C extends Context, T, R> extends Command<C, T, R> {
 	
 	Class<?>[] getParameterTypes(C context);
 	
-	Class<?> getReturnType(C context);
+	Class<R> getReturnType(C context);
 
 	/**
 	 * Binds values to parameters.

@@ -107,7 +107,7 @@ public class CommandFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R
 	}
 	
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
+	public Class<R> getReturnType(CDOTransactionContext<CR> context) {
 		return getReturnType().get(context);
 	}
 

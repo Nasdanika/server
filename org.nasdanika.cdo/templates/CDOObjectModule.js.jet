@@ -22,6 +22,7 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
        		if (delta === 'detached') {
        			delete facade.$store;
        			delete facade.$delete;
+       			delete facade.$refresh;
        		} else {
 	        	var deltaPromises = [];
 	        	<% for (String setDeltaEntry: config.getSetDeltaEntries()) { %>
@@ -53,13 +54,6 @@ define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object
 			return session; 
 		}, 
 		
-		// Stores changes to the server
-		// Returns a promise which is resolved with this facade once changes are posted to the server
-		// and server-side changes are retrieved to the model        
-        $store: function() {
-            return session.apply().thenResolve(this); 
-        },
-
         $refresh: function() {
             return session.refresh().thenResolve(this); 
         },

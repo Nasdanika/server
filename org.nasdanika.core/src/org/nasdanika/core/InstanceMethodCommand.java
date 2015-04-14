@@ -58,5 +58,14 @@ public class InstanceMethodCommand<C extends Context, R> implements Command<C, O
 	public boolean canExecute() {
 		return methodCommand.canExecute();
 	}
+	
+	public Class<?>[] getParameterTypes() {
+		return methodCommand.getParameterTypes();
+	}
+	
+	public Class<R> getReturnType() {
+		return methodCommand.getReturnType();
+	}
+	
 
 }

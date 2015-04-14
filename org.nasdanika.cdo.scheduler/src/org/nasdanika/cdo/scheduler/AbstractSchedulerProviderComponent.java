@@ -83,12 +83,12 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 					} catch (Exception e) {
 						delete = true;
 //						toLog = e;
-						handleException(e);
+						handle(e);
 					}
 				}
 				// If retention period - store exception to the task, copy Throwable and stack trace from WebTestHub, add cause (in WTH it is "peeled")???
-			} catch (Exception e) {
-				handleException(e);
+			} catch (Throwable e) {
+				handle(e);
 			}
 			if (delete) {
 				// Different context - that one could have been rolled back.
@@ -96,16 +96,16 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 					CDOTransaction transaction = transactionContext.getView();
 					SchedulerTask task = (SchedulerTask) transaction.getObject(taskId);
 					EcoreUtil.delete(task, true);
-				} catch (Exception e) {
-					handleException(e);
+				} catch (Throwable e) {
+					handle(e);
 				}				
 			}
 		}
 				
 	}
 	
-	protected void handleException(Exception e) {
-		e.printStackTrace(); 
+	protected void handle(Throwable th) {
+		th.printStackTrace(); 
 	}
 	
 	public CDOTransactionContext<CR> createCommandContext(CDOTransactionContext<CR> transactionContext, final Principal runAs) {

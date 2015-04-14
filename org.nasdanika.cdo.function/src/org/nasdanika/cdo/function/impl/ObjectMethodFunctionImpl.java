@@ -2,6 +2,8 @@
  */
 package org.nasdanika.cdo.function.impl;
 
+import java.lang.reflect.Method;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -10,7 +12,10 @@ import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.function.ObjectMethodFunction;
+import org.nasdanika.core.InstanceMethodCommand;
+import org.nasdanika.core.MethodCommand;
 import org.nasdanika.function.FunctionException;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -93,32 +98,48 @@ public class ObjectMethodFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR,
 		return (EList<ClassBox<T>>)eGet(FunctionPackage.Literals.OBJECT_METHOD_FUNCTION__PARAMETER_TYPES, true);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Class<?>[] getParameterTypes(CDOTransactionContext<CR> context) {
-		EList<ClassBox<T>> ptl = getParameterTypes();
-		Class<?>[] ret = new Class<?>[ptl.size()];
-		int idx = 0;
-		for (ClassBox<T> pt: ptl) {
-			ret[idx++] = pt.get(context);
-		}
-		return ret;
-	}
-	
-	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
+	public Class<R> getReturnType(CDOTransactionContext<CR> context) {
 		Object target = BoxUtil.unbox(getTarget(), context);
 		try {
-			return target.getClass().getMethod(getMethodName(), getParameterTypes(context)).getReturnType();
+			return (Class<R>) target.getClass().getMethod(getMethodName(), getParameterTypes(context)).getReturnType();
 		} catch (Exception e) {
 			throw new FunctionException(e);
 		}
 	}
-
-	@SuppressWarnings("unchecked")
+	
+	private InstanceMethodCommand<CDOTransactionContext<CR>, R> getInstanceMethodCommand(CDOTransactionContext<CR> context) {
+		EList<ClassBox<T>> ptl = getParameterTypes();
+		Class<?>[] parameterTypes = new Class<?>[ptl.size()];
+		int idx = 0;
+		for (ClassBox<T> pt: ptl) {
+			parameterTypes[idx++] = pt.get(context);
+		}
+		Object target = BoxUtil.unbox(getTarget(), context);
+		try {
+			Method targetMethod = target.getClass().getMethod(getMethodName(), parameterTypes);
+			MethodCommand<CDOTransactionContext<CR>, R> methodCommand = new MethodCommand<CDOTransactionContext<CR>, R>(FrameworkUtil.getBundle(getClass()).getBundleContext(), targetMethod);
+			return new InstanceMethodCommand<CDOTransactionContext<CR>, R>(target, methodCommand);
+		} catch (Exception e) {
+			throw new FunctionException(e);
+		}		
+	}
+	
+	@Override
+	public Class<?>[] getParameterTypes(CDOTransactionContext<CR> context) {
+		try (InstanceMethodCommand<CDOTransactionContext<CR>, R> cmd = getInstanceMethodCommand(context)) {
+			return cmd.getParameterTypes();
+		} catch (Exception e) {
+			throw new FunctionException(e);
+		}
+	}
+	
 	@Override
 	protected R invoke(CDOTransactionContext<CR> context, Object[] args) throws Exception {
-		Object target = BoxUtil.unbox(getTarget(), context);
-		return (R) target.getClass().getMethod(getMethodName(), getParameterTypes(context)).invoke(target, args);
+		try (InstanceMethodCommand<CDOTransactionContext<CR>, R> cmd = getInstanceMethodCommand(context)) {
+			return cmd.execute(context, args); 
+		}
 	}
 	
 } //ObjectMethodFunctionImpl

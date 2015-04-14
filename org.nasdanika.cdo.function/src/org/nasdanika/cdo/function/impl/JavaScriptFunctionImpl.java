@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map.Entry;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
@@ -125,9 +126,10 @@ public class JavaScriptFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T
 		return ret;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
-		return Object.class;
+	public Class<R> getReturnType(CDOTransactionContext<CR> context) {
+		return (Class<R>) Object.class;
 	}
 	
 	private String resolveCode() throws Exception {

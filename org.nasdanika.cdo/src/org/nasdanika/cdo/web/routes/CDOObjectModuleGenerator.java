@@ -24,7 +24,7 @@ public class CDOObjectModuleGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_9 = "\"] = {" + NL + "" + NL + "        get delta() {" + NL + "        \tvar delta = {};" + NL + "        \t";
   protected final String TEXT_10 = NL + "        \t\t";
   protected final String TEXT_11 = NL + "        \t";
-  protected final String TEXT_12 = NL + "        \treturn delta;" + NL + "       }," + NL + "       " + NL + "       applyDelta: function(delta) {" + NL + "       \t\tif (delta === 'detached') {" + NL + "       \t\t\tdelete facade.$store;" + NL + "       \t\t\tdelete facade.$delete;" + NL + "       \t\t} else {" + NL + "\t        \tvar deltaPromises = [];" + NL + "\t        \t";
+  protected final String TEXT_12 = NL + "        \treturn delta;" + NL + "       }," + NL + "       " + NL + "       applyDelta: function(delta) {" + NL + "       \t\tif (delta === 'detached') {" + NL + "       \t\t\tdelete facade.$store;" + NL + "       \t\t\tdelete facade.$delete;" + NL + "       \t\t\tdelete facade.$refresh;" + NL + "       \t\t} else {" + NL + "\t        \tvar deltaPromises = [];" + NL + "\t        \t";
   protected final String TEXT_13 = NL + "\t        \t\t";
   protected final String TEXT_14 = NL + "\t        \t";
   protected final String TEXT_15 = NL + "\t        \tif (deltaPromises.length > 0) {" + NL + "\t        \t\treturn Q.all(deltaPromises);" + NL + "\t        \t}" + NL + "\t        }" + NL + "        }," + NL + "" + NL + "        reset: function() {" + NL + "        \t";
@@ -33,7 +33,7 @@ public class CDOObjectModuleGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_18 = NL + "        }   " + NL + "    };" + NL + "" + NL + "    var facade = {" + NL + "    " + NL + "    \t";
   protected final String TEXT_19 = NL + "\t    \t";
   protected final String TEXT_20 = "," + NL + "    \t";
-  protected final String TEXT_21 = NL + NL + "\t\tget $session() {" + NL + "\t\t\treturn session; " + NL + "\t\t}, " + NL + "\t\t" + NL + "\t\t// Stores changes to the server" + NL + "\t\t// Returns a promise which is resolved with this facade once changes are posted to the server" + NL + "\t\t// and server-side changes are retrieved to the model        " + NL + "        $store: function() {" + NL + "            return session.apply().thenResolve(this); " + NL + "        }," + NL + "" + NL + "        $refresh: function() {" + NL + "            return session.refresh().thenResolve(this); " + NL + "        }," + NL + "" + NL + "        $path: \"";
+  protected final String TEXT_21 = NL + NL + "\t\tget $session() {" + NL + "\t\t\treturn session; " + NL + "\t\t}, " + NL + "\t\t" + NL + "        $refresh: function() {" + NL + "            return session.refresh().thenResolve(this); " + NL + "        }," + NL + "" + NL + "        $path: \"";
   protected final String TEXT_22 = "\"" + NL + "" + NL + "    };" + NL + "        " + NL + "\t";
   protected final String TEXT_23 = NL + "\t\t";
   protected final String TEXT_24 = NL + "\t";

@@ -271,6 +271,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 				}
 				if (context.authorize(cdoObject, "write", null, null)) {
 					ret.add("$delete: function() { return session.apply('"+getObjectPath()+"', '$delete', arguments); }");
+					ret.add("$store: function() { return session.apply().thenResolve(this); }");
 				}										
 				Map<String, String> feCollector = new HashMap<>();
 				for (EClass st: eClass.getEAllSuperTypes()) {

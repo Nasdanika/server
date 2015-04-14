@@ -2,8 +2,6 @@
  */
 package org.nasdanika.cdo.function.impl;
 
-import java.util.Map.Entry;
-
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -98,10 +96,10 @@ public class BoundFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR, T, R> 
 	}
 
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
+	public Class<R> getReturnType(CDOTransactionContext<CR> context) {
 		try {
 			EObject target = getTarget();		
-			try (@SuppressWarnings({ "unchecked" })	Function<CDOTransactionContext<CR>, ?, ?> targetFunction = (Function<CDOTransactionContext<CR>, ?, ?>) BoxUtil.unbox(target, context)) {
+			try (@SuppressWarnings({ "unchecked" })	Function<CDOTransactionContext<CR>, ?, R> targetFunction = (Function<CDOTransactionContext<CR>, ?, R>) BoxUtil.unbox(target, context)) {
 				return targetFunction.getReturnType(context);
 			}
 		} catch (Exception e) {

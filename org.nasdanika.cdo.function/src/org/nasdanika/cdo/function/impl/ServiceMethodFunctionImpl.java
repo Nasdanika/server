@@ -8,6 +8,7 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.boxing.ClassBox;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.function.ServiceMethodFunction;
+import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.function.FunctionException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -124,9 +125,10 @@ public class ServiceMethodFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR
 		return ret;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public Class<?> getReturnType(CDOTransactionContext<CR> context) {
-		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
+	public Class<R> getReturnType(CDOTransactionContext<CR> context) {
+		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		try {
 			ServiceReference<?>[] refs = bundleContext.getServiceReferences(getServiceType(), getFilter());
 			if (refs!=null) {
@@ -134,7 +136,7 @@ public class ServiceMethodFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR
 					Object service = bundleContext.getService(ref);
 					if (service!=null) {
 						try {
-							return service.getClass().getMethod(getMethodName(), getParameterTypes(context)).getReturnType();
+							return (Class<R>) service.getClass().getMethod(getMethodName(), getParameterTypes(context)).getReturnType();
 						} finally {
 							bundleContext.ungetService(ref);
 						}
@@ -158,7 +160,19 @@ public class ServiceMethodFunctionImpl<CR, T, R> extends AbstractFunctionImpl<CR
 					Object service = bundleContext.getService(ref);
 					if (service!=null) {
 						try {
-							return (R) service.getClass().getMethod(getMethodName(), getParameterTypes(context)).invoke(service, args);
+							Class<?>[] parameterTypes = getParameterTypes(context);
+							Object[] arguments = new Object[args.length];
+							for (int i=0; i<args.length; ++i) {
+								if (args==null || parameterTypes[i].isInstance(args[i])) {
+									arguments[i] = args[i];
+								} else {
+									arguments[i] = context.convert(args[i], parameterTypes[i]);
+									if (arguments[i]==null) {
+										throw new NasdanikaException("Cannot convert "+args[i]+" to "+parameterTypes[i]);
+									}
+								}
+							}							
+							return (R) service.getClass().getMethod(getMethodName(), parameterTypes).invoke(service, arguments);
 						} finally {
 							bundleContext.ungetService(ref);
 						}
