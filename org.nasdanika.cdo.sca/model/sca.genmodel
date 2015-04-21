@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.cdo.sca/src" modelPluginID="org.nasdanika.cdo.sca"
+    modelName="Sca" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
+    reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
+    complianceLevel="7.0" copyrightFields="false" providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>sca.ecore</foreignModel>
+  <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
+  <genPackages prefix="Sca" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
+      ecorePackage="sca.ecore#/">
+    <genDataTypes ecoreDataType="sca.ecore#//ComponentContext"/>
+    <genDataTypes ecoreDataType="sca.ecore#//ServiceReference">
+      <genTypeParameters ecoreTypeParameter="sca.ecore#//ServiceReference/T"/>
+    </genDataTypes>
+    <genClasses image="false" ecoreClass="sca.ecore#//Component">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Component/wires"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Component/properties"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Component/immediatelyActivated"/>
+      <genOperations ecoreOperation="sca.ecore#//Component/getServiceReference">
+        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference/serviceType"/>
+        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference/context"/>
+        <genTypeParameters ecoreTypeParameter="sca.ecore#//Component/getServiceReference/T"/>
+      </genOperations>
+      <genOperations ecoreOperation="sca.ecore#//Component/getServiceReference.1">
+        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference.1/serviceName"/>
+        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference.1/context"/>
+      </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sca.ecore#//Composite">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/components"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//Wire">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Wire/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Wire/typeName"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//Wire/target"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Wire/targetName"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Wire/properties"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//PropertySetting">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//PropertySetting/targetName"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//JSONLoader"/>
+    <genClasses ecoreClass="sca.ecore#//PropertyEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//PropertyEntry/key"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//PropertyEntry/value"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

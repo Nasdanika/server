@@ -57,5 +57,14 @@
 		<!-- <module>org.nasdanika.server.third_party.feature</module> -->
 		<module>org.nasdanika.server.jetty.feature</module>
 		<module>org.nasdanika.repository</module>
+
+		<module>org.nasdanika.sca</module>
+		<module>org.nasdanika.cdo.sca</module>
+		<module>org.nasdanika.cdo.sca.edit</module>
+		<module>org.nasdanika.sca.design</module>
+		<module>org.nasdanika.sca.edit</module>
+		<module>org.nasdanika.sca.editor</module>
+		<module>org.nasdanika.sca.feature</module>
+
 	</modules>
 </project>

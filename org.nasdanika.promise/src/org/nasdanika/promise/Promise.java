@@ -18,30 +18,6 @@ import org.nasdanika.core.Context;
 public interface Promise<C extends Context, F, R, N> {		
 	
 	enum State { PENDING, FULFILLED, REJECTED, CANCELLED }
-		
-	/**
-	 * 
-	 * @param <TF> Fulfillment type of returned promise.
-	 * @param <TR> Rejection type of returned promise.
-	 * @param <TN> Notification type of returned promise.
-	 * @param onFulfill
-	 * @param onReject
-	 * @param onProgress
-	 * @return
-	 */
-	<TF, TR, TN> Promise<C, TF, TR, TN> then(
-			Command<C, ? super F, TF> onFulfill, 
-			Command<C, ? super R, TF> onReject, 
-			Command<C, ? super N, TN> onProgress);
-	
-//	/**
-//	 * Similar to then(), but reports unhandled exceptions.
-//	 * @param onFulfill
-//	 * @param onReject
-//	 * @param onProgress
-//	 * @return
-//	 */
-//	Promise<C> done(Function<C> onFulfill, Function<C> onReject, Function<C> onProgress);
 	
 	/**
 	 * Cancels promise indicating that there is no interest in the results
@@ -72,4 +48,30 @@ public interface Promise<C extends Context, F, R, N> {
 	 */
 	Promise<C, F, R, N> delay(long timeout, TimeUnit timeUnit);
 	
+	/**
+	 * 
+	 * @param <TF> Fulfillment type of returned promise.
+	 * @param <TR> Rejection type of returned promise.
+	 * @param <TN> Notification type of returned promise.
+	 * @param onFulfill
+	 * @param onReject
+	 * @param onProgress
+	 * @return
+	 */
+	<TF, TR, TN> Promise<C, TF, TR, TN> then(
+			Command<C, ? super F, TF> onFulfill, 
+			Command<C, ? super R, TF> onReject, 
+			Command<C, ? super N, TN> onProgress);
+	
+	String getId();	
+	
+	///**
+	// * Similar to then(), but reports unhandled exceptions.
+	// * @param onFulfill
+	// * @param onReject
+	// * @param onProgress
+	// * @return
+	// */
+	//Promise<C> done(Function<C> onFulfill, Function<C> onReject, Function<C> onProgress);
+
 }

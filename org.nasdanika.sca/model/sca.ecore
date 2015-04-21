@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sca" nsURI="urn:org.nasdanika.sca" nsPrefix="org.nasdanika.sca">
+  <eClassifiers xsi:type="ecore:EClass" name="AbstractComponent" abstract="true">
+    <eOperations name="createRuntimeComponent" eType="ecore:EClass ../../org.nasdanika.cdo.sca/model/sca.ecore#//Component"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="configuration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
+        eType="#//Service" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="references" upperBound="-1"
+        eType="#//Reference" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+        eType="#//Property" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Component" eSuperTypes="#//AbstractComponent">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="implementation" eType="ecore:EClass ../../org.nasdanika.cdo.sca/model/sca.ecore#//Component"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="implementationClass" eType="ecore:EClass ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EClass"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="immediatelyActivated" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Composite" eSuperTypes="#//AbstractComponent">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
+        eType="#//AbstractComponent" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exportedServices" upperBound="-1"
+        eType="#//ServiceExport" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="importedReferences" upperBound="-1"
+        eType="#//ReferenceImport" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="importedProperties" upperBound="-1"
+        eType="#//PropertyImport" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="implementation" eType="ecore:EClass ../../org.nasdanika.cdo.sca/model/sca.ecore#//Composite"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="implementationClass" eType="ecore:EClass ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EClass"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="CompositeReference" eSuperTypes="#//AbstractComponent">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Composite"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Wireable" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="configuration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WireSource" abstract="true" interface="true"
+      eSuperTypes="#//Wireable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="wireTarget" eType="#//WireTarget"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WireTarget" abstract="true" interface="true"
+      eSuperTypes="#//Wireable">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="type" eType="ecore:EClass ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EClassifier"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Reference" eSuperTypes="#//WireSource"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//WireTarget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ReferenceImport" eSuperTypes="#//WireTarget"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceExport" eSuperTypes="#//WireSource"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Property">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="binding" eType="#//PropertyImport"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PropertyImport">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+</ecore:EPackage>

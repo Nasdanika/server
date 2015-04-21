@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.ui.newWizards">
+      <!-- @generated sca -->
+      <category
+            name="Nasdanika"
+            id="org.nasdanika.Wizard.category.ID">
+      </category>
+      <wizard
+            id="org.nasdanika.sca.presentation.ScaModelWizardID"
+            name="%_UI_ScaModelWizard_label"
+            class="org.nasdanika.sca.presentation.ScaModelWizard"
+            category="org.nasdanika.Wizard.category.ID"
+            icon="icons/full/obj16/ScaModelFile.gif">
+         <description>%_UI_ScaModelWizard_description</description>
+         <selection class="org.eclipse.core.resources.IResource"/>
+      </wizard>
+   </extension>
+
+   <extension point="org.eclipse.ui.editors">
+      <!-- @generated sca -->
+      <editor
+            id="org.nasdanika.sca.presentation.ScaEditorID"
+            name="%_UI_ScaEditor_label"
+            icon="icons/full/obj16/ScaModelFile.gif"
+            extensions="nasdanikasca"
+            class="org.nasdanika.sca.presentation.ScaEditor"
+            contributorClass="org.nasdanika.sca.presentation.ScaActionBarContributor">
+      </editor>
+   </extension>
+
+</plugin>

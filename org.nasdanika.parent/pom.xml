@@ -145,6 +145,15 @@
 		<module>../org.nasdanika.server.jetty.feature</module>
 		<module>../org.nasdanika.server.third_party.feature</module>
 		<module>../org.nasdanika.html.feature</module>
+
+		<module>../org.nasdanika.sca</module>
+		<module>../org.nasdanika.cdo.sca</module>
+		<module>../org.nasdanika.cdo.sca.edit</module>
+		<module>../org.nasdanika.sca.design</module>
+		<module>../org.nasdanika.sca.edit</module>
+		<module>../org.nasdanika.sca.editor</module>
+		<module>../org.nasdanika.sca.feature</module>
+
 	</modules>
 	<name>Nasdanika Foundation Server</name>
 	<url>http://www.nasdanika.org/wiki/doku.php?id=products:server:start</url>

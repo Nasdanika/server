@@ -17,7 +17,7 @@ public interface Context extends AutoCloseable, Adaptable {
 	 * @return true if action is allowed, false if denied.
 	 */
 	boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception;		
-		
+
 	/**
 	 * Converts source to target type.
 	 * @param source

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.sca/src" modelPluginID="org.nasdanika.sca"
+    modelName="Sca" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
+    reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
+    complianceLevel="7.0" copyrightFields="false" providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter"
+    usedGenPackages="../../org.eclipse.emf.ecore/model/Ecore.genmodel#//ecore ../../org.nasdanika.cdo.sca/model/sca.genmodel#//sca"
+    operationReflection="true" importOrganizing="true">
+  <foreignModel>sca.ecore</foreignModel>
+  <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
+  <genPackages prefix="Sca" basePackage="org.nasdanika" disposableProviderFactory="true"
+      fileExtensions="nasdanikasca" ecorePackage="sca.ecore#/">
+    <genClasses ecoreClass="sca.ecore#//AbstractComponent">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//AbstractComponent/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//AbstractComponent/description"/>
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute sca.ecore#//AbstractComponent/configuration"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//AbstractComponent/services"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//AbstractComponent/references"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//AbstractComponent/properties"/>
+      <genOperations ecoreOperation="sca.ecore#//AbstractComponent/createRuntimeComponent"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//Component">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//Component/implementation"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//Component/implementationClass"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Component/immediatelyActivated"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//Composite">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/components"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/exportedServices"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/importedReferences"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/importedProperties"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/implementation"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/implementationClass"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//CompositeReference">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//CompositeReference/target"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//Wireable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Wireable/name"/>
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute sca.ecore#//Wireable/configuration"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sca.ecore#//WireSource">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//WireSource/wireTarget"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="sca.ecore#//WireTarget">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//WireTarget/type"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//Reference"/>
+    <genClasses ecoreClass="sca.ecore#//Service"/>
+    <genClasses ecoreClass="sca.ecore#//ReferenceImport"/>
+    <genClasses ecoreClass="sca.ecore#//ServiceExport"/>
+    <genClasses ecoreClass="sca.ecore#//Property">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Property/name"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference sca.ecore#//Property/binding"/>
+    </genClasses>
+    <genClasses ecoreClass="sca.ecore#//PropertyImport">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//PropertyImport/name"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

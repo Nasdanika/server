@@ -2,16 +2,10 @@ package org.nasdanika.promise;
 
 import org.nasdanika.core.Context;
 
-public interface PromiseManager<C extends Context> {
+public interface PromiseManager<C extends Context,F,R,N,P extends Promise<C,F,R,N>> extends DeferredFactory<C,F,R,N,P> {
 	
-	// TODO - provider, two flavors - in context, out of context.
+	Deferred<C,F,R,N,P> getDeferred(String deferredId);
 	
-	<F,R,N> Deferred<C,F,R,N> defer(String owner);
-	
-	// TODO - cleanup methods.
-	
-	<F,R,N> Deferred<C,F,R,N> findDeferred(String deferredId);
-	
-	<F,R,N> Promise<C,F,R,N> findPromise(String promiseId);
-	
+	P getPromise(String promiseId);
+
 }

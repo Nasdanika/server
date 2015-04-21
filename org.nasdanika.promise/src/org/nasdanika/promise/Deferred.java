@@ -7,9 +7,11 @@ import org.nasdanika.core.Context;
  * @author Pavel Vlasov
  *
  */
-public interface Deferred<C extends Context, F, R, N> {
+public interface Deferred<C extends Context, F, R, N, P extends Promise<C,F,R,N>> {
 	
-	Promise<C,F,R,N> getPromise();
+	P getPromise();
+	
+	String getId();	
 	
 	void resolve(F value);
 	
