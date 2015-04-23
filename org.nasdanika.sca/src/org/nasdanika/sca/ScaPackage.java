@@ -4,6 +4,7 @@ package org.nasdanika.sca;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -137,7 +138,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT = 0;
+	int ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT = 0;
 
 	/**
 	 * The number of operations of the '<em>Abstract Component</em>' class.
@@ -240,13 +241,40 @@ public interface ScaPackage extends EPackage {
 	int COMPONENT__IMMEDIATELY_ACTIVATED = ABSTRACT_COMPONENT_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT__ID = ABSTRACT_COMPONENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Factory Filter</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT__FACTORY_FILTER = ABSTRACT_COMPONENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Optional</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT__OPTIONAL = ABSTRACT_COMPONENT_FEATURE_COUNT + 5;
+
+	/**
 	 * The number of structural features of the '<em>Component</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_FEATURE_COUNT = ABSTRACT_COMPONENT_FEATURE_COUNT + 3;
+	int COMPONENT_FEATURE_COUNT = ABSTRACT_COMPONENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The operation id for the '<em>Create Runtime Component</em>' operation.
@@ -255,7 +283,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT___CREATE_RUNTIME_COMPONENT = ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT;
+	int COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT = ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT;
 
 	/**
 	 * The number of operations of the '<em>Component</em>' class.
@@ -400,7 +428,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPOSITE___CREATE_RUNTIME_COMPONENT = ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT;
+	int COMPOSITE___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT = ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT;
 
 	/**
 	 * The number of operations of the '<em>Composite</em>' class.
@@ -500,7 +528,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPOSITE_REFERENCE___CREATE_RUNTIME_COMPONENT = ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT;
+	int COMPOSITE_REFERENCE___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT = ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT;
 
 	/**
 	 * The number of operations of the '<em>Composite Reference</em>' class.
@@ -973,6 +1001,39 @@ public interface ScaPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '<em>Context</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.core.Context
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getContext()
+	 * @generated
+	 */
+	int CONTEXT = 13;
+
+
+	/**
+	 * The meta object id for the '<em>Bundle Context</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.osgi.framework.BundleContext
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getBundleContext()
+	 * @generated
+	 */
+	int BUNDLE_CONTEXT = 14;
+
+
+	/**
+	 * The meta object id for the '<em>Exception</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.Exception
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getException()
+	 * @generated
+	 */
+	int EXCEPTION = 15;
+
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.AbstractComponent <em>Abstract Component</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1049,14 +1110,14 @@ public interface ScaPackage extends EPackage {
 	EReference getAbstractComponent_Properties();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.sca.AbstractComponent#createRuntimeComponent() <em>Create Runtime Component</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.sca.AbstractComponent#createRuntimeComponent(org.osgi.framework.BundleContext, org.nasdanika.core.Context) <em>Create Runtime Component</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Create Runtime Component</em>' operation.
-	 * @see org.nasdanika.sca.AbstractComponent#createRuntimeComponent()
+	 * @see org.nasdanika.sca.AbstractComponent#createRuntimeComponent(org.osgi.framework.BundleContext, org.nasdanika.core.Context)
 	 * @generated
 	 */
-	EOperation getAbstractComponent__CreateRuntimeComponent();
+	EOperation getAbstractComponent__CreateRuntimeComponent__BundleContext_Context();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.Component <em>Component</em>}'.
@@ -1100,6 +1161,39 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getComponent_ImmediatelyActivated();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Component#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.nasdanika.sca.Component#getId()
+	 * @see #getComponent()
+	 * @generated
+	 */
+	EAttribute getComponent_Id();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Component#getFactoryFilter <em>Factory Filter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Factory Filter</em>'.
+	 * @see org.nasdanika.sca.Component#getFactoryFilter()
+	 * @see #getComponent()
+	 * @generated
+	 */
+	EAttribute getComponent_FactoryFilter();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Component#isOptional <em>Optional</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Optional</em>'.
+	 * @see org.nasdanika.sca.Component#isOptional()
+	 * @see #getComponent()
+	 * @generated
+	 */
+	EAttribute getComponent_Optional();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.Composite <em>Composite</em>}'.
@@ -1324,6 +1418,39 @@ public interface ScaPackage extends EPackage {
 	EAttribute getPropertyImport_Name();
 
 	/**
+	 * Returns the meta object for data type '{@link org.nasdanika.core.Context <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Context</em>'.
+	 * @see org.nasdanika.core.Context
+	 * @model instanceClass="org.nasdanika.core.Context"
+	 * @generated
+	 */
+	EDataType getContext();
+
+	/**
+	 * Returns the meta object for data type '{@link org.osgi.framework.BundleContext <em>Bundle Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Bundle Context</em>'.
+	 * @see org.osgi.framework.BundleContext
+	 * @model instanceClass="org.osgi.framework.BundleContext"
+	 * @generated
+	 */
+	EDataType getBundleContext();
+
+	/**
+	 * Returns the meta object for data type '{@link java.lang.Exception <em>Exception</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Exception</em>'.
+	 * @see java.lang.Exception
+	 * @model instanceClass="java.lang.Exception"
+	 * @generated
+	 */
+	EDataType getException();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.WireTarget <em>Wire Target</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1452,7 +1579,7 @@ public interface ScaPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT = eINSTANCE.getAbstractComponent__CreateRuntimeComponent();
+		EOperation ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT = eINSTANCE.getAbstractComponent__CreateRuntimeComponent__BundleContext_Context();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.sca.impl.ComponentImpl <em>Component</em>}' class.
@@ -1487,6 +1614,30 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute COMPONENT__IMMEDIATELY_ACTIVATED = eINSTANCE.getComponent_ImmediatelyActivated();
+
+		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT__ID = eINSTANCE.getComponent_Id();
+
+		/**
+		 * The meta object literal for the '<em><b>Factory Filter</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT__FACTORY_FILTER = eINSTANCE.getComponent_FactoryFilter();
+
+		/**
+		 * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT__OPTIONAL = eINSTANCE.getComponent_Optional();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.sca.impl.CompositeImpl <em>Composite</em>}' class.
@@ -1673,6 +1824,36 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PROPERTY_IMPORT__NAME = eINSTANCE.getPropertyImport_Name();
+
+		/**
+		 * The meta object literal for the '<em>Context</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.core.Context
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getContext()
+		 * @generated
+		 */
+		EDataType CONTEXT = eINSTANCE.getContext();
+
+		/**
+		 * The meta object literal for the '<em>Bundle Context</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.osgi.framework.BundleContext
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getBundleContext()
+		 * @generated
+		 */
+		EDataType BUNDLE_CONTEXT = eINSTANCE.getBundleContext();
+
+		/**
+		 * The meta object literal for the '<em>Exception</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.Exception
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getException()
+		 * @generated
+		 */
+		EDataType EXCEPTION = eINSTANCE.getException();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.sca.WireTarget <em>Wire Target</em>}' class.

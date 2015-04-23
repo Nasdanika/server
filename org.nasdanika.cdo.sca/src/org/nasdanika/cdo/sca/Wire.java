@@ -16,7 +16,7 @@ import org.nasdanika.core.JSONLoader;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.sca.Wire#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.cdo.sca.Wire#isTypeName <em>Type Name</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.sca.Wire#getTypeName <em>Type Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.sca.Wire#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.sca.Wire#getTargetName <em>Target Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.sca.Wire#getProperties <em>Properties</em>}</li>
@@ -65,22 +65,22 @@ public interface Wire extends CDOObject, JSONLoader {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Type Name</em>' attribute.
-	 * @see #setTypeName(boolean)
+	 * @see #setTypeName(String)
 	 * @see org.nasdanika.cdo.sca.ScaPackage#getWire_TypeName()
 	 * @model
 	 * @generated
 	 */
-	boolean isTypeName();
+	String getTypeName();
 
 	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.sca.Wire#isTypeName <em>Type Name</em>}' attribute.
+	 * Sets the value of the '{@link org.nasdanika.cdo.sca.Wire#getTypeName <em>Type Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Type Name</em>' attribute.
-	 * @see #isTypeName()
+	 * @see #getTypeName()
 	 * @generated
 	 */
-	void setTypeName(boolean value);
+	void setTypeName(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Target</b></em>' reference.

@@ -29,6 +29,7 @@
     </genClasses>
     <genClasses image="false" ecoreClass="sca.ecore#//Composite">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/components"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Composite/exports"/>
     </genClasses>
     <genClasses ecoreClass="sca.ecore#//Wire">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Wire/name"/>

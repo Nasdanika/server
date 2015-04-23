@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.cdo.sca.Composite;
 import org.nasdanika.cdo.sca.ScaPackage;
+import org.nasdanika.cdo.sca.Wire;
 
 /**
  * <!-- begin-user-doc -->
@@ -17,12 +18,13 @@ import org.nasdanika.cdo.sca.ScaPackage;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.sca.impl.CompositeImpl#getComponents <em>Components</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.sca.impl.CompositeImpl#getExports <em>Exports</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public abstract class CompositeImpl extends ComponentImpl implements Composite {
+public class CompositeImpl extends ComponentImpl implements Composite {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -50,6 +52,16 @@ public abstract class CompositeImpl extends ComponentImpl implements Composite {
 	@SuppressWarnings("unchecked")
 	public EList<Component> getComponents() {
 		return (EList<Component>)eGet(ScaPackage.Literals.COMPOSITE__COMPONENTS, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<Wire> getExports() {
+		return (EList<Wire>)eGet(ScaPackage.Literals.COMPOSITE__EXPORTS, true);
 	}
 
 } //CompositeImpl

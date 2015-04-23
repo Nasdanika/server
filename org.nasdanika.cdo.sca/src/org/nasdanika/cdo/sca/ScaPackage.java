@@ -206,13 +206,22 @@ public interface ScaPackage extends EPackage {
 	int COMPOSITE__COMPONENTS = COMPONENT_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Exports</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE__EXPORTS = COMPONENT_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Composite</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPOSITE_FEATURE_COUNT = COMPONENT_FEATURE_COUNT + 1;
+	int COMPOSITE_FEATURE_COUNT = COMPONENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The operation id for the '<em>Get Service Reference</em>' operation.
@@ -504,6 +513,17 @@ public interface ScaPackage extends EPackage {
 	EReference getComposite_Components();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.cdo.sca.Composite#getExports <em>Exports</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Exports</em>'.
+	 * @see org.nasdanika.cdo.sca.Composite#getExports()
+	 * @see #getComposite()
+	 * @generated
+	 */
+	EReference getComposite_Exports();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.sca.Wire <em>Wire</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -525,11 +545,11 @@ public interface ScaPackage extends EPackage {
 	EAttribute getWire_Name();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.sca.Wire#isTypeName <em>Type Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.sca.Wire#getTypeName <em>Type Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Type Name</em>'.
-	 * @see org.nasdanika.cdo.sca.Wire#isTypeName()
+	 * @see org.nasdanika.cdo.sca.Wire#getTypeName()
 	 * @see #getWire()
 	 * @generated
 	 */
@@ -746,6 +766,14 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPOSITE__COMPONENTS = eINSTANCE.getComposite_Components();
+
+		/**
+		 * The meta object literal for the '<em><b>Exports</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPOSITE__EXPORTS = eINSTANCE.getComposite_Exports();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.sca.impl.WireImpl <em>Wire</em>}' class.

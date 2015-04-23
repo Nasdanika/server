@@ -2,14 +2,30 @@
  */
 package org.nasdanika.sca.impl;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.json.JSONObject;
+import org.nasdanika.cdo.sca.Component;
+import org.nasdanika.cdo.sca.PropertySetting;
+import org.nasdanika.cdo.sca.ScaFactory;
+import org.nasdanika.cdo.sca.Wire;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.sca.AbstractComponent;
 import org.nasdanika.sca.Composite;
+import org.nasdanika.sca.Property;
 import org.nasdanika.sca.PropertyImport;
+import org.nasdanika.sca.Reference;
 import org.nasdanika.sca.ReferenceImport;
 import org.nasdanika.sca.ScaPackage;
 import org.nasdanika.sca.ServiceExport;
+import org.nasdanika.sca.WireTarget;
+import org.osgi.framework.BundleContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -124,5 +140,104 @@ public class CompositeImpl extends AbstractComponentImpl implements Composite {
 	public void setImplementationClass(EClass newImplementationClass) {
 		eSet(ScaPackage.Literals.COMPOSITE__IMPLEMENTATION_CLASS, newImplementationClass);
 	}
+	
+	@Override
+	public org.nasdanika.cdo.sca.Component createRuntimeComponent(BundleContext bundleContext, Context context) throws Exception {
+		EClass implementationClass = getImplementationClass();
+		org.nasdanika.cdo.sca.Component implementation = getImplementation();
+		org.nasdanika.cdo.sca.Composite ret;
+		if (implementation!=null) {
+			if (implementationClass!=null) {
+				throw new IllegalStateException("Both implementation and implementation class are set");
+			}
+			ret = (org.nasdanika.cdo.sca.Composite) EcoreUtil.copy(implementation);
+		} else if (implementationClass!=null) {
+			ret = (org.nasdanika.cdo.sca.Composite) implementationClass.getEPackage().getEFactoryInstance().create(implementationClass);
+		} else {
+			ret = ScaFactory.eINSTANCE.createComposite();
+		}
+		JSONObject config = loadConfiguration(bundleContext);
+		if (config!=null) {
+			ret.loadJSON(config, context);
+		}
+		
+		// Create components
+		Map<AbstractComponent, org.nasdanika.cdo.sca.Component> runtimeComponentsMap = new HashMap<>();
+		for (AbstractComponent c: getComponents()) {
+			Component rc = c.createRuntimeComponent(bundleContext, context);
+			if (rc==null) {
+				if (!(c instanceof org.nasdanika.sca.Component) && ((org.nasdanika.sca.Component) c).isOptional()) {
+					throw new NasdanikaException("Could not create a required runtime component");
+				}
+			} else {
+				runtimeComponentsMap.put(c, rc);
+			}
+		}
+		// Create exports
+		for (ServiceExport s: getExportedServices()) {
+			Wire wire = ScaFactory.eINSTANCE.createWire();
+			WireTarget wt = s.getWireTarget();
+			wire.setTargetName(wt.getName());
+			wire.setTypeName(wt.getType().getInstanceClassName());
+			if (wt instanceof ReferenceImport) {
+				wire.setTarget(ret);
+			} else {
+				// Service
+				Component rc = runtimeComponentsMap.get(wt.eContainer());
+				if (rc==null) {
+					continue; // Optional component which is not present.
+				}
+				wire.setTarget(rc);
+			}
+			JSONObject targetConfig = loadConfiguration(bundleContext, wt.getConfiguration());
+			if (targetConfig!=null) {
+				wire.loadJSON(targetConfig, context);
+			}
+			JSONObject sourceConfig = loadConfiguration(bundleContext, s.getConfiguration());
+			if (sourceConfig!=null) {
+				wire.loadJSON(sourceConfig, context);
+			}
+			ret.getExports().add(wire);
+		}
+		
+		// Wire components
+		for (Entry<AbstractComponent, Component> ce: runtimeComponentsMap.entrySet()) {
+			AbstractComponent mc = ce.getKey();
+			Component rc = ce.getValue();
+			for (Property prop: mc.getProperties()) {
+				PropertySetting ps = ScaFactory.eINSTANCE.createPropertySetting();
+				ps.setTargetName(prop.getBinding().getName());
+				rc.getProperties().put(prop.getName(), ps);
+			}
+			for (Reference ref: mc.getReferences()) {
+				Wire wire = ScaFactory.eINSTANCE.createWire();
+				WireTarget wt = ref.getWireTarget();
+				wire.setTargetName(wt.getName());
+				wire.setTypeName(wt.getType().getInstanceClassName());
+				if (wt instanceof ReferenceImport) {
+					wire.setTarget(ret);
+				} else {
+					// Service
+					Component trc = runtimeComponentsMap.get(wt.eContainer());
+					if (trc==null) {
+						continue; // Optional component which is not present.
+					}
+					wire.setTarget(trc);
+				}				
+				JSONObject targetConfig = loadConfiguration(bundleContext, wt.getConfiguration());
+				if (targetConfig!=null) {
+					wire.loadJSON(targetConfig, context);
+				}
+				JSONObject sourceConfig = loadConfiguration(bundleContext, ref.getConfiguration());
+				if (sourceConfig!=null) {
+					wire.loadJSON(sourceConfig, context);
+				}
+				rc.getWires().add(wire);				
+			}
+		}		
+		
+		return ret;
+	}
+	
 
 } //CompositeImpl

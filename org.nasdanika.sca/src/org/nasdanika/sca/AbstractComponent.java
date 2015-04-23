@@ -6,6 +6,8 @@ import org.eclipse.emf.cdo.CDOObject;
 
 import org.eclipse.emf.common.util.EList;
 import org.nasdanika.cdo.sca.Component;
+import org.nasdanika.core.Context;
+import org.osgi.framework.BundleContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -159,9 +161,9 @@ public interface AbstractComponent extends CDOObject {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @model exceptions="org.nasdanika.sca.Exception" bundleContextDataType="org.nasdanika.sca.BundleContext" contextDataType="org.nasdanika.sca.Context"
 	 * @generated
 	 */
-	Component createRuntimeComponent();
+	Component createRuntimeComponent(BundleContext bundleContext, Context context) throws Exception;
 
 } // AbstractComponent

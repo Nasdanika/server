@@ -3,6 +3,7 @@
 package org.nasdanika.sca.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -10,7 +11,9 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 
+import org.nasdanika.core.Context;
 import org.nasdanika.sca.*;
+import org.osgi.framework.BundleContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -67,6 +70,44 @@ public class ScaFactoryImpl extends EFactoryImpl implements ScaFactory {
 			case ScaPackage.PROPERTY_IMPORT: return (EObject)createPropertyImport();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case ScaPackage.CONTEXT:
+				return createContextFromString(eDataType, initialValue);
+			case ScaPackage.BUNDLE_CONTEXT:
+				return createBundleContextFromString(eDataType, initialValue);
+			case ScaPackage.EXCEPTION:
+				return createExceptionFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case ScaPackage.CONTEXT:
+				return convertContextToString(eDataType, instanceValue);
+			case ScaPackage.BUNDLE_CONTEXT:
+				return convertBundleContextToString(eDataType, instanceValue);
+			case ScaPackage.EXCEPTION:
+				return convertExceptionToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
 	}
 
@@ -158,6 +199,60 @@ public class ScaFactoryImpl extends EFactoryImpl implements ScaFactory {
 	public PropertyImport createPropertyImport() {
 		PropertyImportImpl propertyImport = new PropertyImportImpl();
 		return propertyImport;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Context createContextFromString(EDataType eDataType, String initialValue) {
+		return (Context)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertContextToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public BundleContext createBundleContextFromString(EDataType eDataType, String initialValue) {
+		return (BundleContext)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertBundleContextToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Exception createExceptionFromString(EDataType eDataType, String initialValue) {
+		return (Exception)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertExceptionToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

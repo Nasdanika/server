@@ -2,7 +2,11 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sca" nsURI="urn:org.nasdanika.sca" nsPrefix="org.nasdanika.sca">
   <eClassifiers xsi:type="ecore:EClass" name="AbstractComponent" abstract="true">
-    <eOperations name="createRuntimeComponent" eType="ecore:EClass ../../org.nasdanika.cdo.sca/model/sca.ecore#//Component"/>
+    <eOperations name="createRuntimeComponent" eType="ecore:EClass ../../org.nasdanika.cdo.sca/model/sca.ecore#//Component"
+        eExceptions="#//Exception">
+      <eParameters name="bundleContext" eType="#//BundleContext"/>
+      <eParameters name="context" eType="#//Context"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="configuration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -17,6 +21,9 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="implementation" eType="ecore:EClass ../../org.nasdanika.cdo.sca/model/sca.ecore#//Component"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="implementationClass" eType="ecore:EClass ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EClass"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="immediatelyActivated" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="factoryFilter" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="optional" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Composite" eSuperTypes="#//AbstractComponent">
     <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
@@ -56,4 +63,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="PropertyImport">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Context" instanceClassName="org.nasdanika.core.Context"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="BundleContext" instanceClassName="org.osgi.framework.BundleContext"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Exception" instanceClassName="java.lang.Exception"/>
 </ecore:EPackage>

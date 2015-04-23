@@ -1,0 +1,1699 @@
+[INFO] Scanning for projects...
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.html:1.2.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\pom.xml
+[INFO] Fetching p2.index from http://download.eclipse.org/releases/luna/ (0B at 0B/s)
+[INFO] Adding repository http://download.eclipse.org/releases/luna
+[INFO] Fetching p2.index from http://download.eclipse.org/releases/luna/201406250900/ (0B at 0B/s)
+[INFO] Fetching p2.index from http://download.eclipse.org/releases/luna/201409261001/ (0B at 0B/s)
+[INFO] Fetching p2.index from http://download.eclipse.org/releases/luna/201501121000/ (0B at 0B/s)
+[INFO] Fetching p2.index from http://download.eclipse.org/releases/luna/201502271000/ (0B at 0B/s)
+[INFO] Adding repository http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository
+[INFO] Adding repository http://download.eclipse.org/jetty/updates/jetty-bundles-8.x
+[INFO] Adding repository http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository
+[INFO] Adding repository http://www.nasdanika.org/maven-osgi
+[INFO] Adding repository http://www.nasdanika.org/slf4j
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.html:1.2.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.html:1.2.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.html.feature:1.2.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.html.feature:1.2.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.html.feature:1.2.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.core:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.core:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.core:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.security:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.security:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.security:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.security.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.security.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.security.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.security.editor:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.security.editor:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.security.editor:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.security.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.security.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.security.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.core.tests:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.core.tests:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.core.tests:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.web:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.web:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.web:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.webtest:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.webtest:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\pom.xml
+[WARNING] The following locally built units have been used to resolve project dependencies:
+[WARNING]   org.openqa.selenium/2.45.0
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.webtest:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.webtest.performance:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.webtest.performance:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.webtest.performance:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.workspace.wizard:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.workspace.wizard:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.workspace.wizard:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.workspace.wizard.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.workspace.wizard.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.workspace.wizard.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.h2:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.h2:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.h2:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.boxing:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.boxing:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.boxing:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.function:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.function:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.function:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.promise:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.promise:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.promise:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.function.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.function.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.function.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.promise.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.promise.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.promise.cdo:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.scheduler:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.scheduler:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.scheduler:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.equinox.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.equinox.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.equinox.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.webtest.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.webtest.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\pom.xml
+[WARNING] The following locally built units have been used to resolve project dependencies:
+[WARNING]   org.openqa.selenium/2.45.0
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.webtest.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.webtest.performance.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.webtest.performance.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.webtest.performance.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\pom.xml
+[WARNING] The following locally built units have been used to resolve project dependencies:
+[WARNING]   org.nasdanika.third-party.feature.feature.group/0.1.0.201502281758
+[WARNING]   org.openqa.selenium/2.45.0
+[WARNING]   org.nasdanika.third-party.feature.feature.jar/0.1.0.201502281758
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.server.jetty.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.server.jetty.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.server.jetty.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.repository:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.repository:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\pom.xml
+[WARNING] The following locally built units have been used to resolve project dependencies:
+[WARNING]   org.nasdanika.third-party.feature.feature.group/0.1.0.201502281758
+[WARNING]   org.openqa.selenium/2.45.0
+[WARNING]   org.nasdanika.third-party.feature.feature.jar/0.1.0.201502281758
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.repository:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.sca:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.sca:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.sca:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.sca:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.sca:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.sca:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.cdo.sca.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.cdo.sca.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.cdo.sca.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.sca.design:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.sca.design:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.sca.design:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.sca.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.sca.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.sca.edit:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.sca.editor:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.sca.editor:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.sca.editor:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\pom.xml
+[INFO] Computing target platform for MavenProject: org.nasdanika:org.nasdanika.sca.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\pom.xml
+[INFO] Resolving dependencies of MavenProject: org.nasdanika:org.nasdanika.sca.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\pom.xml
+[INFO] Resolving class path of MavenProject: org.nasdanika:org.nasdanika.sca.feature:0.1.0-SNAPSHOT @ C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\pom.xml
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Build Order:
+[INFO] 
+[INFO] Nasdanika HTML
+[INFO] org.nasdanika.html.feature
+[INFO] Core
+[INFO] CDO Security
+[INFO] CDO Security Edit
+[INFO] CDO Security Editor
+[INFO] org.nasdanika.cdo.security.feature
+[INFO] org.nasdanika.core.tests
+[INFO] org.nasdanika.web
+[INFO] org.nasdanika.webtest
+[INFO] org.nasdanika.webtest.performance
+[INFO] org.nasdanika.workspace.wizard
+[INFO] org.nasdanika.workspace.wizard.feature
+[INFO] org.nasdanika.cdo
+[INFO] org.nasdanika.cdo.h2
+[INFO] Nasdanika CDO Boxing
+[INFO] Function
+[INFO] Promise
+[INFO] CDOTransactionContext Function
+[INFO] CDOTransactionContext Promise
+[INFO] Scheduler
+[INFO] org.nasdanika.equinox.feature
+[INFO] org.nasdanika.cdo.feature
+[INFO] org.nasdanika.webtest.feature
+[INFO] org.nasdanika.webtest.performance.feature
+[INFO] org.nasdanika.cdo.sca
+[INFO] org.nasdanika.sca
+[INFO] org.nasdanika.feature
+[INFO] org.nasdanika.server.jetty.feature
+[INFO] org.nasdanika.cdo.sca.edit
+[INFO] org.nasdanika.sca.design
+[INFO] org.nasdanika.sca.edit
+[INFO] org.nasdanika.sca.editor
+[INFO] org.nasdanika.sca.feature
+[INFO] Nasdanika Repository
+[INFO] Nasdanika Foundation Server
+[INFO] 
+[INFO] Using the builder org.apache.maven.lifecycle.internal.builder.singlethreaded.SingleThreadedBuilder with a thread count of 1
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Nasdanika HTML 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.html ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.html ---
+[INFO] The project's OSGi version is 1.2.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.html ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.html ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.html ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.html ---
+[INFO] Compiling 71 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.html ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.html ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target\org.nasdanika.html-1.2.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.html ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.html ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target\org.nasdanika.html-1.2.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.html ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.html ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target\org.nasdanika.html-1.2.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html\1.2.0-SNAPSHOT\org.nasdanika.html-1.2.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html\1.2.0-SNAPSHOT\org.nasdanika.html-1.2.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target\org.nasdanika.html-1.2.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html\1.2.0-SNAPSHOT\org.nasdanika.html-1.2.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html\1.2.0-SNAPSHOT\org.nasdanika.html-1.2.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html\1.2.0-SNAPSHOT\org.nasdanika.html-1.2.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.html ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.html.feature 1.2.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.html.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.html.feature ---
+[INFO] The project's OSGi version is 1.2.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.html.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.html.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.html.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.html.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.html.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\target\org.nasdanika.html.feature-1.2.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.html.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.html.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.html.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\target\org.nasdanika.html.feature-1.2.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html.feature\1.2.0-SNAPSHOT\org.nasdanika.html.feature-1.2.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html.feature\1.2.0-SNAPSHOT\org.nasdanika.html.feature-1.2.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html.feature\1.2.0-SNAPSHOT\org.nasdanika.html.feature-1.2.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.html.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.html.feature\1.2.0-SNAPSHOT\org.nasdanika.html.feature-1.2.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.html.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Core 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.core ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.core ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.core ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.core ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.core ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.core ---
+[INFO] Compiling 35 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.core ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.core ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target\org.nasdanika.core-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.core ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.core ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target\org.nasdanika.core-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.core ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.core ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target\org.nasdanika.core-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core\0.1.0-SNAPSHOT\org.nasdanika.core-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core\0.1.0-SNAPSHOT\org.nasdanika.core-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target\org.nasdanika.core-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core\0.1.0-SNAPSHOT\org.nasdanika.core-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core\0.1.0-SNAPSHOT\org.nasdanika.core-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core\0.1.0-SNAPSHOT\org.nasdanika.core-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.core ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building CDO Security 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.security ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.security ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.security ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.security ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.security ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.security ---
+[INFO] Compiling 32 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.security ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.security ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target\org.nasdanika.cdo.security-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.security ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.security ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target\org.nasdanika.cdo.security-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.security ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.security ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target\org.nasdanika.cdo.security-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security\0.1.0-SNAPSHOT\org.nasdanika.cdo.security-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security\0.1.0-SNAPSHOT\org.nasdanika.cdo.security-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target\org.nasdanika.cdo.security-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security\0.1.0-SNAPSHOT\org.nasdanika.cdo.security-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security\0.1.0-SNAPSHOT\org.nasdanika.cdo.security-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security\0.1.0-SNAPSHOT\org.nasdanika.cdo.security-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.security ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building CDO Security Edit 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.security.edit ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.security.edit ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.security.edit ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.security.edit ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.security.edit ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.security.edit ---
+[INFO] Compiling 10 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.security.edit ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.security.edit ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.security.edit ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.security.edit ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.security.edit ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.security.edit ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.edit\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.edit-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.security.edit ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building CDO Security Editor 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.security.editor ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.security.editor ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.security.editor ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.security.editor ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.security.editor ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.security.editor ---
+[INFO] Compiling 4 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.security.editor ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.security.editor ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.security.editor ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.security.editor ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.security.editor ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.security.editor ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.editor\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.editor\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.editor\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.editor\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.editor\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.editor\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.editor-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.security.editor ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.cdo.security.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.security.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.cdo.security.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.security.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.security.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.security.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.security.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.cdo.security.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\target\org.nasdanika.cdo.security.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.security.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.cdo.security.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.security.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\target\org.nasdanika.cdo.security.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.security.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.security.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.security.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.security.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.core.tests 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.core.tests ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.core.tests ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.core.tests ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.core.tests ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.core.tests ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.core.tests ---
+[INFO] Compiling 1 source file to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.core.tests ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.core.tests ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\plugin.properties not found
+[WARNING] Bundle-Vendor header not found in C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\META-INF\MANIFEST.MF, fallback to 'unknown' for source bundle
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\org.nasdanika.core.tests-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.core.tests ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.core.tests ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\org.nasdanika.core.tests-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.core.tests ---
+[INFO] 
+[INFO] --- tycho-surefire-plugin:0.22.0:test (default-test) @ org.nasdanika.core.tests ---
+[INFO] Expected eclipse log file: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\work\data\.metadata\.log
+[INFO] Command line:
+	[C:\Program Files\Java\jdk1.7.0_11\jre\bin\java.exe, -Dosgi.noShutdown=false, -Dosgi.os=win32, -Dosgi.ws=win32, -Dosgi.arch=x86_64, -Dosgi.clean=true, -jar, C:\Users\Pavel\.m2\repository\p2\osgi\bundle\org.eclipse.equinox.launcher\1.3.0.v20140415-2008\org.eclipse.equinox.launcher-1.3.0.v20140415-2008.jar, -data, C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\work\data, -install, C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\work, -configuration, C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\work\configuration, -application, org.eclipse.tycho.surefire.osgibooter.headlesstest, -testproperties, C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\surefire.properties]
+
+-------------------------------------------------------
+ T E S T S
+-------------------------------------------------------
+Running org.nasdanika.core.tests.ReflectiveCommandSourceTest
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 0.05 sec - in org.nasdanika.core.tests.ReflectiveCommandSourceTest
+testReflectiveCommandSource(org.nasdanika.core.tests.ReflectiveCommandSourceTest)  Time elapsed: 0.012 sec
+
+Results :
+
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0
+
+[INFO] All tests passed!
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.core.tests ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\org.nasdanika.core.tests-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core.tests\0.1.0-SNAPSHOT\org.nasdanika.core.tests-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core.tests\0.1.0-SNAPSHOT\org.nasdanika.core.tests-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\org.nasdanika.core.tests-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core.tests\0.1.0-SNAPSHOT\org.nasdanika.core.tests-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core.tests\0.1.0-SNAPSHOT\org.nasdanika.core.tests-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.core.tests\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.core.tests\0.1.0-SNAPSHOT\org.nasdanika.core.tests-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.core.tests ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.web 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.web ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.web ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.web ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.web ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.web ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.web ---
+[INFO] Compiling 38 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.web ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.web ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target\org.nasdanika.web-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.web ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.web ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target\org.nasdanika.web-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.web ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.web ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target\org.nasdanika.web-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.web\0.1.0-SNAPSHOT\org.nasdanika.web-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.web\0.1.0-SNAPSHOT\org.nasdanika.web-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target\org.nasdanika.web-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.web\0.1.0-SNAPSHOT\org.nasdanika.web-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.web\0.1.0-SNAPSHOT\org.nasdanika.web-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.web\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.web\0.1.0-SNAPSHOT\org.nasdanika.web-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.web ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.webtest 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.webtest ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.webtest ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.webtest ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.webtest ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.webtest ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.webtest ---
+[INFO] Compiling 54 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.webtest ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.webtest ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target\org.nasdanika.webtest-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.webtest ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.webtest ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target\org.nasdanika.webtest-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.webtest ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.webtest ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target\org.nasdanika.webtest-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest\0.1.0-SNAPSHOT\org.nasdanika.webtest-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest\0.1.0-SNAPSHOT\org.nasdanika.webtest-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target\org.nasdanika.webtest-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest\0.1.0-SNAPSHOT\org.nasdanika.webtest-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest\0.1.0-SNAPSHOT\org.nasdanika.webtest-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest\0.1.0-SNAPSHOT\org.nasdanika.webtest-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.webtest ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.webtest.performance 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.webtest.performance ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.webtest.performance ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.webtest.performance ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.webtest.performance ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.webtest.performance ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.webtest.performance ---
+[INFO] Compiling 14 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.webtest.performance ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.webtest.performance ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.webtest.performance ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.webtest.performance ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.webtest.performance ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.webtest.performance ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.webtest.performance ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.workspace.wizard 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.workspace.wizard ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.workspace.wizard ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.workspace.wizard ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.workspace.wizard ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.workspace.wizard ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.workspace.wizard ---
+[INFO] Compiling 49 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.workspace.wizard ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.workspace.wizard ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.workspace.wizard ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.workspace.wizard ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.workspace.wizard ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.workspace.wizard ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.workspace.wizard ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.workspace.wizard.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\target\org.nasdanika.workspace.wizard.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.workspace.wizard.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\target\org.nasdanika.workspace.wizard.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard.feature\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard.feature\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard.feature\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.workspace.wizard.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.workspace.wizard.feature\0.1.0-SNAPSHOT\org.nasdanika.workspace.wizard.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.workspace.wizard.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.cdo 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo ---
+[INFO] Compiling 88 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target\org.nasdanika.cdo-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target\org.nasdanika.cdo-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target\org.nasdanika.cdo-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo\0.1.0-SNAPSHOT\org.nasdanika.cdo-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo\0.1.0-SNAPSHOT\org.nasdanika.cdo-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target\org.nasdanika.cdo-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo\0.1.0-SNAPSHOT\org.nasdanika.cdo-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo\0.1.0-SNAPSHOT\org.nasdanika.cdo-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo\0.1.0-SNAPSHOT\org.nasdanika.cdo-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.cdo.h2 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.h2 ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.h2 ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.h2 ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.h2 ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.h2 ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.h2 ---
+[INFO] Compiling 1 source file to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.h2 ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.h2 ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.h2 ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.h2 ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.h2 ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.h2 ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.h2\0.1.0-SNAPSHOT\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.h2\0.1.0-SNAPSHOT\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.h2\0.1.0-SNAPSHOT\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.h2\0.1.0-SNAPSHOT\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.h2\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.h2\0.1.0-SNAPSHOT\org.nasdanika.cdo.h2-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.h2 ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Nasdanika CDO Boxing 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.boxing ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.boxing ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.boxing ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.boxing ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.boxing ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.boxing ---
+[INFO] Compiling 79 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.boxing ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.boxing ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.boxing ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.boxing ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.boxing ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.boxing ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.boxing\0.1.0-SNAPSHOT\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.boxing\0.1.0-SNAPSHOT\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.boxing\0.1.0-SNAPSHOT\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.boxing\0.1.0-SNAPSHOT\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.boxing\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.boxing\0.1.0-SNAPSHOT\org.nasdanika.cdo.boxing-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.boxing ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Function 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.function ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.function ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.function ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.function ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.function ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.function ---
+[INFO] Compiling 4 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.function ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.function ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target\org.nasdanika.function-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.function ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.function ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target\org.nasdanika.function-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.function ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.function ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target\org.nasdanika.function-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function\0.1.0-SNAPSHOT\org.nasdanika.function-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function\0.1.0-SNAPSHOT\org.nasdanika.function-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target\org.nasdanika.function-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function\0.1.0-SNAPSHOT\org.nasdanika.function-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function\0.1.0-SNAPSHOT\org.nasdanika.function-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function\0.1.0-SNAPSHOT\org.nasdanika.function-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.function ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Promise 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.promise ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.promise ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.promise ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.promise ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.promise ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.promise ---
+[INFO] Compiling 5 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.promise ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.promise ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target\org.nasdanika.promise-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.promise ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.promise ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target\org.nasdanika.promise-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.promise ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.promise ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target\org.nasdanika.promise-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise\0.1.0-SNAPSHOT\org.nasdanika.promise-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise\0.1.0-SNAPSHOT\org.nasdanika.promise-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target\org.nasdanika.promise-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise\0.1.0-SNAPSHOT\org.nasdanika.promise-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise\0.1.0-SNAPSHOT\org.nasdanika.promise-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise\0.1.0-SNAPSHOT\org.nasdanika.promise-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.promise ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building CDOTransactionContext Function 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.function.cdo ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.function.cdo ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.function.cdo ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.function.cdo ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.function.cdo ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.function.cdo ---
+[INFO] Compiling 2 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.function.cdo ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.function.cdo ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target\org.nasdanika.function.cdo-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.function.cdo ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.function.cdo ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target\org.nasdanika.function.cdo-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.function.cdo ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.function.cdo ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target\org.nasdanika.function.cdo-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function.cdo\0.1.0-SNAPSHOT\org.nasdanika.function.cdo-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function.cdo\0.1.0-SNAPSHOT\org.nasdanika.function.cdo-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target\org.nasdanika.function.cdo-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function.cdo\0.1.0-SNAPSHOT\org.nasdanika.function.cdo-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function.cdo\0.1.0-SNAPSHOT\org.nasdanika.function.cdo-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.function.cdo\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.function.cdo\0.1.0-SNAPSHOT\org.nasdanika.function.cdo-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.function.cdo ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building CDOTransactionContext Promise 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.promise.cdo ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.promise.cdo ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.promise.cdo ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.promise.cdo ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.promise.cdo ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.promise.cdo ---
+[INFO] Compiling 4 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.promise.cdo ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.promise.cdo ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\plugin.properties not found
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.promise.cdo ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.promise.cdo ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.promise.cdo ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.promise.cdo ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise.cdo\0.1.0-SNAPSHOT\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise.cdo\0.1.0-SNAPSHOT\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise.cdo\0.1.0-SNAPSHOT\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise.cdo\0.1.0-SNAPSHOT\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.promise.cdo\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.promise.cdo\0.1.0-SNAPSHOT\org.nasdanika.promise.cdo-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.promise.cdo ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Scheduler 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.scheduler ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.scheduler ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.scheduler ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.scheduler ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.scheduler ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.scheduler ---
+[INFO] Compiling 13 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.scheduler ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.scheduler ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.scheduler ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.scheduler ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.scheduler ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.scheduler ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.scheduler\0.1.0-SNAPSHOT\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.scheduler\0.1.0-SNAPSHOT\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.scheduler\0.1.0-SNAPSHOT\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.scheduler\0.1.0-SNAPSHOT\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.scheduler\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.scheduler\0.1.0-SNAPSHOT\org.nasdanika.cdo.scheduler-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.scheduler ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.equinox.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.equinox.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.equinox.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.equinox.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.equinox.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.equinox.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.equinox.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.equinox.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\target\org.nasdanika.equinox.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.equinox.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.equinox.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.equinox.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\target\org.nasdanika.equinox.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.equinox.feature\0.1.0-SNAPSHOT\org.nasdanika.equinox.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.equinox.feature\0.1.0-SNAPSHOT\org.nasdanika.equinox.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.equinox.feature\0.1.0-SNAPSHOT\org.nasdanika.equinox.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.equinox.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.equinox.feature\0.1.0-SNAPSHOT\org.nasdanika.equinox.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.equinox.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.cdo.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.cdo.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.cdo.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\target\org.nasdanika.cdo.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.cdo.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\target\org.nasdanika.cdo.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.feature\0.1.0-SNAPSHOT\org.nasdanika.cdo.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.webtest.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.webtest.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.webtest.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.webtest.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.webtest.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.webtest.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.webtest.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.webtest.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\target\org.nasdanika.webtest.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.webtest.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.webtest.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.webtest.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\target\org.nasdanika.webtest.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.webtest.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.webtest.performance.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.webtest.performance.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.webtest.performance.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.webtest.performance.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.webtest.performance.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.webtest.performance.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.webtest.performance.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.webtest.performance.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\target\org.nasdanika.webtest.performance.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.webtest.performance.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.webtest.performance.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.webtest.performance.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\target\org.nasdanika.webtest.performance.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.webtest.performance.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.webtest.performance.feature\0.1.0-SNAPSHOT\org.nasdanika.webtest.performance.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.webtest.performance.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.cdo.sca 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.sca ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.sca ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.sca ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.sca ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.sca ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.sca ---
+[INFO] Compiling 16 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.sca ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.sca ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.sca ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.sca ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.sca ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.sca ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.sca ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.sca 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.sca ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.sca ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.sca ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.sca ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.sca ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.sca ---
+[INFO] Compiling 31 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.sca ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.sca ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target\org.nasdanika.sca-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.sca ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.sca ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target\org.nasdanika.sca-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.sca ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.sca ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target\org.nasdanika.sca-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca\0.1.0-SNAPSHOT\org.nasdanika.sca-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca\0.1.0-SNAPSHOT\org.nasdanika.sca-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target\org.nasdanika.sca-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca\0.1.0-SNAPSHOT\org.nasdanika.sca-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca\0.1.0-SNAPSHOT\org.nasdanika.sca-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca\0.1.0-SNAPSHOT\org.nasdanika.sca-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.sca ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\target\org.nasdanika.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\target\org.nasdanika.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.feature\0.1.0-SNAPSHOT\org.nasdanika.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.feature\0.1.0-SNAPSHOT\org.nasdanika.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.feature\0.1.0-SNAPSHOT\org.nasdanika.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.feature\0.1.0-SNAPSHOT\org.nasdanika.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.server.jetty.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.server.jetty.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.server.jetty.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.server.jetty.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.server.jetty.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.server.jetty.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.server.jetty.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.server.jetty.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\target\org.nasdanika.server.jetty.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.server.jetty.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.server.jetty.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.server.jetty.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\target\org.nasdanika.server.jetty.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.server.jetty.feature\0.1.0-SNAPSHOT\org.nasdanika.server.jetty.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.server.jetty.feature\0.1.0-SNAPSHOT\org.nasdanika.server.jetty.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.server.jetty.feature\0.1.0-SNAPSHOT\org.nasdanika.server.jetty.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.server.jetty.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.server.jetty.feature\0.1.0-SNAPSHOT\org.nasdanika.server.jetty.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.server.jetty.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.cdo.sca.edit 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.cdo.sca.edit ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.cdo.sca.edit ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.cdo.sca.edit ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.cdo.sca.edit ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.cdo.sca.edit ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.cdo.sca.edit ---
+[INFO] Compiling 6 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.cdo.sca.edit ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.cdo.sca.edit ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.cdo.sca.edit ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.cdo.sca.edit ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.cdo.sca.edit ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.cdo.sca.edit ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.cdo.sca.edit\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.cdo.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.cdo.sca.edit-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.cdo.sca.edit ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.sca.design 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.sca.design ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.sca.design ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.sca.design ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.sca.design ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.sca.design ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.sca.design ---
+[INFO] Compiling 1 source file to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.sca.design ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.sca.design ---
+[WARNING] bundle localization file C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\plugin.properties not found
+[WARNING] Bundle-Vendor header not found in C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\META-INF\MANIFEST.MF, fallback to 'unknown' for source bundle
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target\org.nasdanika.sca.design-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.sca.design ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.sca.design ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target\org.nasdanika.sca.design-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.sca.design ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.sca.design ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target\org.nasdanika.sca.design-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.design\0.1.0-SNAPSHOT\org.nasdanika.sca.design-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.design\0.1.0-SNAPSHOT\org.nasdanika.sca.design-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target\org.nasdanika.sca.design-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.design\0.1.0-SNAPSHOT\org.nasdanika.sca.design-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.design\0.1.0-SNAPSHOT\org.nasdanika.sca.design-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.design\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.design\0.1.0-SNAPSHOT\org.nasdanika.sca.design-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.sca.design ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.sca.edit 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.sca.edit ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.sca.edit ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.sca.edit ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.sca.edit ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.sca.edit ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.sca.edit ---
+[INFO] Compiling 12 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.sca.edit ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.sca.edit ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target\org.nasdanika.sca.edit-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.sca.edit ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.sca.edit ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target\org.nasdanika.sca.edit-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.sca.edit ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.sca.edit ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target\org.nasdanika.sca.edit-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.sca.edit-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.sca.edit-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target\org.nasdanika.sca.edit-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.sca.edit-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.sca.edit-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.edit\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.edit\0.1.0-SNAPSHOT\org.nasdanika.sca.edit-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.sca.edit ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.sca.editor 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.sca.editor ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier (default-build-qualifier) @ org.nasdanika.sca.editor ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.sca.editor ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.sca.editor ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.sca.editor ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\src\main\resources
+[INFO] 
+[INFO] --- tycho-compiler-plugin:0.22.0:compile (default-compile) @ org.nasdanika.sca.editor ---
+[INFO] Compiling 4 source files to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target\classes
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:testResources (default-testResources) @ org.nasdanika.sca.editor ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\src\test\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.sca.editor ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target\org.nasdanika.sca.editor-0.1.0-SNAPSHOT-sources.jar
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.sca.editor ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-plugin (default-package-plugin) @ org.nasdanika.sca.editor ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target\org.nasdanika.sca.editor-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.sca.editor ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.sca.editor ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target\org.nasdanika.sca.editor-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.editor\0.1.0-SNAPSHOT\org.nasdanika.sca.editor-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.editor\0.1.0-SNAPSHOT\org.nasdanika.sca.editor-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target\org.nasdanika.sca.editor-0.1.0-SNAPSHOT-sources.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.editor\0.1.0-SNAPSHOT\org.nasdanika.sca.editor-0.1.0-SNAPSHOT-sources.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.editor\0.1.0-SNAPSHOT\org.nasdanika.sca.editor-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.editor\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.editor\0.1.0-SNAPSHOT\org.nasdanika.sca.editor-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.sca.editor ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building org.nasdanika.sca.feature 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.sca.feature ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.sca.feature ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-id (default-validate-id) @ org.nasdanika.sca.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:validate-version (default-validate-version) @ org.nasdanika.sca.feature ---
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.sca.feature ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.sca.feature ---
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:package-feature (default-package-feature) @ org.nasdanika.sca.feature ---
+[INFO] Building jar: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\target\org.nasdanika.sca.feature-0.1.0-SNAPSHOT.jar
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:p2-metadata-default (default-p2-metadata-default) @ org.nasdanika.sca.feature ---
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:feature-p2-metadata (default-feature-p2-metadata) @ org.nasdanika.sca.feature ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.sca.feature ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\target\org.nasdanika.sca.feature-0.1.0-SNAPSHOT.jar to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.feature\0.1.0-SNAPSHOT\org.nasdanika.sca.feature-0.1.0-SNAPSHOT.jar
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.feature\0.1.0-SNAPSHOT\org.nasdanika.sca.feature-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.feature\0.1.0-SNAPSHOT\org.nasdanika.sca.feature-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.sca.feature\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.sca.feature\0.1.0-SNAPSHOT\org.nasdanika.sca.feature-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.sca.feature ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Nasdanika Repository 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.repository ---
+[INFO] Deleting C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target
+[INFO] 
+[INFO] --- tycho-packaging-plugin:0.22.0:build-qualifier-aggregator (default-build-qualifier-aggregator) @ org.nasdanika.repository ---
+[INFO] The project's OSGi version is 0.1.0.201504211824
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean-1) @ org.nasdanika.repository ---
+[INFO] 
+[INFO] --- maven-resources-plugin:2.4.3:resources (default-resources) @ org.nasdanika.repository ---
+[WARNING] Using platform encoding (Cp1251 actually) to copy filtered resources, i.e. build is platform dependent!
+[INFO] skip non existing resourceDirectory C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\src\main\resources
+[INFO] 
+[INFO] --- tycho-source-plugin:0.22.0:plugin-source (plugin-source) @ org.nasdanika.repository ---
+[INFO] 
+[INFO] --- target-platform-configuration:0.22.0:target-platform (default-target-platform) @ org.nasdanika.repository ---
+[INFO] 
+[INFO] --- tycho-p2-publisher-plugin:0.22.0:publish-products (default-publish-products) @ org.nasdanika.repository ---
+[INFO] 
+[INFO] --- tycho-p2-publisher-plugin:0.22.0:publish-categories (default-publish-categories) @ org.nasdanika.repository ---
+[INFO] 
+[INFO] --- tycho-p2-publisher-plugin:0.22.0:attach-artifacts (default-attach-artifacts) @ org.nasdanika.repository ---
+[INFO] 
+[INFO] --- tycho-p2-repository-plugin:0.22.0:assemble-repository (default-assemble-repository) @ org.nasdanika.repository ---
+[INFO] 
+[INFO] --- tycho-p2-repository-plugin:0.22.0:archive-repository (default-archive-repository) @ org.nasdanika.repository ---
+[INFO] Building zip: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\org.nasdanika.repository-0.1.0-SNAPSHOT.zip
+[INFO] 
+[INFO] --- tycho-p2-director-plugin:0.22.0:materialize-products (build-distributions) @ org.nasdanika.repository ---
+[INFO] Installing product org.nasdanika.server for environment linux/gtk/x86_64 to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\products\org.nasdanika.server\linux\gtk\x86_64
+Installing org.nasdanika.server 0.1.0.201504211824.
+Operation completed in 6527 ms.
+[INFO] Installing product org.nasdanika.server for environment win32/win32/x86_64 to C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\products\org.nasdanika.server\win32\win32\x86_64
+Installing org.nasdanika.server 0.1.0.201504211824.
+Operation completed in 5209 ms.
+[INFO] 
+[INFO] --- tycho-p2-director-plugin:0.22.0:archive-products (build-distributions) @ org.nasdanika.repository ---
+[INFO] Building zip: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\products\org.nasdanika.server-linux.gtk.x86_64.zip
+[INFO] Building zip: C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\products\org.nasdanika.server-win32.win32.x86_64.zip
+[INFO] 
+[INFO] --- maven-install-plugin:2.3.1:install (default-install) @ org.nasdanika.repository ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\org.nasdanika.repository-0.1.0-SNAPSHOT.zip to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT.zip
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT.pom
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\extraArtifacts\org.nasdanika.server.executable.win32.win32.x86_64.zip to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT-org.nasdanika.server.executable.win32.win32.x86_64.zip
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\p2content.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT-p2metadata.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\extraArtifacts\org.nasdanika.server.executable.gtk.linux.x86_64.zip to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT-org.nasdanika.server.executable.gtk.linux.x86_64.zip
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\p2artifacts.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT-p2artifacts.xml
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\products\org.nasdanika.server-linux.gtk.x86_64.zip to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT-linux.gtk.x86_64.zip
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\org.nasdanika.repository\target\products\org.nasdanika.server-win32.win32.x86_64.zip to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.repository\0.1.0-SNAPSHOT\org.nasdanika.repository-0.1.0-SNAPSHOT-win32.win32.x86_64.zip
+[INFO] 
+[INFO] --- tycho-p2-plugin:0.22.0:update-local-index (default-update-local-index) @ org.nasdanika.repository ---
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building Nasdanika Foundation Server 0.1.0-SNAPSHOT
+[INFO] ------------------------------------------------------------------------
+[INFO] 
+[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ org.nasdanika.aggregator ---
+[INFO] 
+[INFO] --- maven-install-plugin:2.4:install (default-install) @ org.nasdanika.aggregator ---
+[INFO] Installing C:\Users\Pavel\git\Nasdanika\server\pom.xml to C:\Users\Pavel\.m2\repository\org\nasdanika\org.nasdanika.aggregator\0.1.0-SNAPSHOT\org.nasdanika.aggregator-0.1.0-SNAPSHOT.pom
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary:
+[INFO] 
+[INFO] Nasdanika HTML .................................... SUCCESS [  5.637 s]
+[INFO] org.nasdanika.html.feature ........................ SUCCESS [  0.344 s]
+[INFO] Core .............................................. SUCCESS [  1.570 s]
+[INFO] CDO Security ...................................... SUCCESS [  1.376 s]
+[INFO] CDO Security Edit ................................. SUCCESS [  1.014 s]
+[INFO] CDO Security Editor ............................... SUCCESS [  1.368 s]
+[INFO] org.nasdanika.cdo.security.feature ................ SUCCESS [  0.213 s]
+[INFO] org.nasdanika.core.tests .......................... SUCCESS [  6.871 s]
+[INFO] org.nasdanika.web ................................. SUCCESS [  1.616 s]
+[INFO] org.nasdanika.webtest ............................. SUCCESS [  1.990 s]
+[INFO] org.nasdanika.webtest.performance ................. SUCCESS [  1.211 s]
+[INFO] org.nasdanika.workspace.wizard .................... SUCCESS [  2.226 s]
+[INFO] org.nasdanika.workspace.wizard.feature ............ SUCCESS [  0.205 s]
+[INFO] org.nasdanika.cdo ................................. SUCCESS [  1.928 s]
+[INFO] org.nasdanika.cdo.h2 .............................. SUCCESS [  0.430 s]
+[INFO] Nasdanika CDO Boxing .............................. SUCCESS [  1.644 s]
+[INFO] Function .......................................... SUCCESS [  0.483 s]
+[INFO] Promise ........................................... SUCCESS [  0.388 s]
+[INFO] CDOTransactionContext Function .................... SUCCESS [  0.505 s]
+[INFO] CDOTransactionContext Promise ..................... SUCCESS [  0.474 s]
+[INFO] Scheduler ......................................... SUCCESS [  0.994 s]
+[INFO] org.nasdanika.equinox.feature ..................... SUCCESS [  0.227 s]
+[INFO] org.nasdanika.cdo.feature ......................... SUCCESS [  0.232 s]
+[INFO] org.nasdanika.webtest.feature ..................... SUCCESS [  0.305 s]
+[INFO] org.nasdanika.webtest.performance.feature ......... SUCCESS [  0.151 s]
+[INFO] org.nasdanika.cdo.sca ............................. SUCCESS [  0.719 s]
+[INFO] org.nasdanika.sca ................................. SUCCESS [  1.963 s]
+[INFO] org.nasdanika.feature ............................. SUCCESS [  0.593 s]
+[INFO] org.nasdanika.server.jetty.feature ................ SUCCESS [  0.422 s]
+[INFO] org.nasdanika.cdo.sca.edit ........................ SUCCESS [  0.790 s]
+[INFO] org.nasdanika.sca.design .......................... SUCCESS [  0.793 s]
+[INFO] org.nasdanika.sca.edit ............................ SUCCESS [  0.967 s]
+[INFO] org.nasdanika.sca.editor .......................... SUCCESS [  2.211 s]
+[INFO] org.nasdanika.sca.feature ......................... SUCCESS [  0.335 s]
+[INFO] Nasdanika Repository .............................. SUCCESS [01:03 min]
+[INFO] Nasdanika Foundation Server ....................... SUCCESS [  0.123 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 03:03 min
+[INFO] Finished at: 2015-04-21T14:26:01-05:00
+[INFO] Final Memory: 216M/858M
+[INFO] ------------------------------------------------------------------------

@@ -55,6 +55,7 @@ public class ScaFactoryImpl extends EFactoryImpl implements ScaFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
+			case ScaPackage.COMPOSITE: return (EObject)createComposite();
 			case ScaPackage.WIRE: return (EObject)createWire();
 			case ScaPackage.PROPERTY_SETTING: return (EObject)createPropertySetting();
 			case ScaPackage.PROPERTY_ENTRY: return (EObject)createPropertyEntry();
@@ -87,6 +88,16 @@ public class ScaFactoryImpl extends EFactoryImpl implements ScaFactory {
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Composite createComposite() {
+		CompositeImpl composite = new CompositeImpl();
+		return composite;
 	}
 
 	/**

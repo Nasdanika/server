@@ -4,11 +4,13 @@ package org.nasdanika.sca.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+import org.nasdanika.core.Context;
 import org.nasdanika.sca.AbstractComponent;
 import org.nasdanika.sca.Component;
 import org.nasdanika.sca.Composite;
@@ -24,6 +26,7 @@ import org.nasdanika.sca.ServiceExport;
 import org.nasdanika.sca.WireSource;
 import org.nasdanika.sca.WireTarget;
 import org.nasdanika.sca.Wireable;
+import org.osgi.framework.BundleContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -108,6 +111,27 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * @generated
 	 */
 	private EClass propertyImportEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType contextEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType bundleContextEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType exceptionEDataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -256,7 +280,7 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getAbstractComponent__CreateRuntimeComponent() {
+	public EOperation getAbstractComponent__CreateRuntimeComponent__BundleContext_Context() {
 		return abstractComponentEClass.getEOperations().get(0);
 	}
 
@@ -294,6 +318,33 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 */
 	public EAttribute getComponent_ImmediatelyActivated() {
 		return (EAttribute)componentEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponent_Id() {
+		return (EAttribute)componentEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponent_FactoryFilter() {
+		return (EAttribute)componentEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getComponent_Optional() {
+		return (EAttribute)componentEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -490,6 +541,33 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getContext() {
+		return contextEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getBundleContext() {
+		return bundleContextEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getException() {
+		return exceptionEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getWireTarget() {
 		return wireTargetEClass;
 	}
@@ -556,12 +634,15 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__SERVICES);
 		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__REFERENCES);
 		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__PROPERTIES);
-		createEOperation(abstractComponentEClass, ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT);
+		createEOperation(abstractComponentEClass, ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT);
 
 		componentEClass = createEClass(COMPONENT);
 		createEReference(componentEClass, COMPONENT__IMPLEMENTATION);
 		createEReference(componentEClass, COMPONENT__IMPLEMENTATION_CLASS);
 		createEAttribute(componentEClass, COMPONENT__IMMEDIATELY_ACTIVATED);
+		createEAttribute(componentEClass, COMPONENT__ID);
+		createEAttribute(componentEClass, COMPONENT__FACTORY_FILTER);
+		createEAttribute(componentEClass, COMPONENT__OPTIONAL);
 
 		compositeEClass = createEClass(COMPOSITE);
 		createEReference(compositeEClass, COMPOSITE__COMPONENTS);
@@ -598,6 +679,11 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 
 		propertyImportEClass = createEClass(PROPERTY_IMPORT);
 		createEAttribute(propertyImportEClass, PROPERTY_IMPORT__NAME);
+
+		// Create data types
+		contextEDataType = createEDataType(CONTEXT);
+		bundleContextEDataType = createEDataType(BUNDLE_CONTEXT);
+		exceptionEDataType = createEDataType(EXCEPTION);
 	}
 
 	/**
@@ -651,12 +737,18 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		initEReference(getAbstractComponent_References(), this.getReference(), null, "references", null, 0, -1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAbstractComponent_Properties(), this.getProperty(), null, "properties", null, 0, -1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEOperation(getAbstractComponent__CreateRuntimeComponent(), theScaPackage_1.getComponent(), "createRuntimeComponent", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EOperation op = initEOperation(getAbstractComponent__CreateRuntimeComponent__BundleContext_Context(), theScaPackage_1.getComponent(), "createRuntimeComponent", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getBundleContext(), "bundleContext", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
 		initEClass(componentEClass, Component.class, "Component", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getComponent_Implementation(), theScaPackage_1.getComponent(), null, "implementation", null, 0, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComponent_ImplementationClass(), theEcorePackage.getEClass(), null, "implementationClass", null, 0, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponent_ImmediatelyActivated(), ecorePackage.getEBoolean(), "immediatelyActivated", null, 0, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponent_Id(), ecorePackage.getEString(), "id", null, 0, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponent_FactoryFilter(), ecorePackage.getEString(), "factoryFilter", null, 0, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getComponent_Optional(), theEcorePackage.getEBoolean(), "optional", null, 0, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(compositeEClass, Composite.class, "Composite", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getComposite_Components(), this.getAbstractComponent(), null, "components", null, 0, -1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -693,6 +785,11 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 
 		initEClass(propertyImportEClass, PropertyImport.class, "PropertyImport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPropertyImport_Name(), ecorePackage.getEString(), "name", null, 0, 1, PropertyImport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		// Initialize data types
+		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(bundleContextEDataType, BundleContext.class, "BundleContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(exceptionEDataType, Exception.class, "Exception", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

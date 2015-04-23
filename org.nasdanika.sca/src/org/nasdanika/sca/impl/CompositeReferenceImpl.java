@@ -3,10 +3,14 @@
 package org.nasdanika.sca.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
+import org.json.JSONObject;
+import org.nasdanika.cdo.sca.Component;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.sca.Composite;
 import org.nasdanika.sca.CompositeReference;
 import org.nasdanika.sca.ScaPackage;
+import org.osgi.framework.BundleContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -57,6 +61,16 @@ public class CompositeReferenceImpl extends AbstractComponentImpl implements Com
 	 */
 	public void setTarget(Composite newTarget) {
 		eSet(ScaPackage.Literals.COMPOSITE_REFERENCE__TARGET, newTarget);
+	}
+	
+	@Override
+	public Component createRuntimeComponent(BundleContext bundleContext, Context context) throws Exception {
+		Component ret = getTarget().createRuntimeComponent(bundleContext, context);
+		JSONObject config = loadConfiguration(bundleContext);
+		if (config!=null) {
+			ret.loadJSON(config, context);
+		}
+		return ret;
 	}
 
 } //CompositeReferenceImpl

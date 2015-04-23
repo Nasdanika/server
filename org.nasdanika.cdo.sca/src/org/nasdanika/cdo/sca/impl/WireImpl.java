@@ -2,15 +2,18 @@
  */
 package org.nasdanika.cdo.sca.impl;
 
+import java.util.Map.Entry;
+
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
+import org.json.JSONObject;
+import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.cdo.sca.ScaPackage;
 import org.nasdanika.cdo.sca.Wire;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,7 +23,7 @@ import org.nasdanika.cdo.sca.Wire;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.cdo.sca.impl.WireImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.cdo.sca.impl.WireImpl#isTypeName <em>Type Name</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.sca.impl.WireImpl#getTypeName <em>Type Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.sca.impl.WireImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.sca.impl.WireImpl#getTargetName <em>Target Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.sca.impl.WireImpl#getProperties <em>Properties</em>}</li>
@@ -82,8 +85,8 @@ public class WireImpl extends CDOObjectImpl implements Wire {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isTypeName() {
-		return (Boolean)eGet(ScaPackage.Literals.WIRE__TYPE_NAME, true);
+	public String getTypeName() {
+		return (String)eGet(ScaPackage.Literals.WIRE__TYPE_NAME, true);
 	}
 
 	/**
@@ -91,7 +94,7 @@ public class WireImpl extends CDOObjectImpl implements Wire {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTypeName(boolean newTypeName) {
+	public void setTypeName(String newTypeName) {
 		eSet(ScaPackage.Literals.WIRE__TYPE_NAME, newTypeName);
 	}
 
@@ -140,5 +143,12 @@ public class WireImpl extends CDOObjectImpl implements Wire {
 	public EMap<String, EObject> getProperties() {
 		return (EMap<String, EObject>)eGet(ScaPackage.Literals.WIRE__PROPERTIES, true);
 	}
-
+	
+	@Override
+	public void loadJSON(JSONObject json, Context context) throws Exception {
+		for (Entry<String, Object> e: ComponentImpl.asMap(json).entrySet()) {
+			getProperties().put(e.getKey(), BoxUtil.box(e.getValue(), context));
+		}		
+	}
+	
 } //WireImpl

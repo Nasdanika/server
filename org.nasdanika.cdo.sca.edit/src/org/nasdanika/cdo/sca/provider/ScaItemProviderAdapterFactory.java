@@ -72,6 +72,29 @@ public class ScaItemProviderAdapterFactory extends ScaAdapterFactory implements 
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.sca.Composite} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected CompositeItemProvider compositeItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.cdo.sca.Composite}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createCompositeAdapter() {
+		if (compositeItemProvider == null) {
+			compositeItemProvider = new CompositeItemProvider(this);
+		}
+
+		return compositeItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.sca.Wire} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -239,6 +262,7 @@ public class ScaItemProviderAdapterFactory extends ScaAdapterFactory implements 
 	 * @generated
 	 */
 	public void dispose() {
+		if (compositeItemProvider != null) compositeItemProvider.dispose();
 		if (wireItemProvider != null) wireItemProvider.dispose();
 		if (propertySettingItemProvider != null) propertySettingItemProvider.dispose();
 		if (propertyEntryItemProvider != null) propertyEntryItemProvider.dispose();

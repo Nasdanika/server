@@ -17,6 +17,9 @@ import org.eclipse.emf.ecore.EClass;
  *   <li>{@link org.nasdanika.sca.Component#getImplementation <em>Implementation</em>}</li>
  *   <li>{@link org.nasdanika.sca.Component#getImplementationClass <em>Implementation Class</em>}</li>
  *   <li>{@link org.nasdanika.sca.Component#isImmediatelyActivated <em>Immediately Activated</em>}</li>
+ *   <li>{@link org.nasdanika.sca.Component#getId <em>Id</em>}</li>
+ *   <li>{@link org.nasdanika.sca.Component#getFactoryFilter <em>Factory Filter</em>}</li>
+ *   <li>{@link org.nasdanika.sca.Component#isOptional <em>Optional</em>}</li>
  * </ul>
  * </p>
  *
@@ -102,5 +105,83 @@ public interface Component extends AbstractComponent {
 	 * @generated
 	 */
 	void setImmediatelyActivated(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Id</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Id</em>' attribute.
+	 * @see #setId(String)
+	 * @see org.nasdanika.sca.ScaPackage#getComponent_Id()
+	 * @model
+	 * @generated
+	 */
+	String getId();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.sca.Component#getId <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Id</em>' attribute.
+	 * @see #getId()
+	 * @generated
+	 */
+	void setId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Factory Filter</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Factory Filter</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Factory Filter</em>' attribute.
+	 * @see #setFactoryFilter(String)
+	 * @see org.nasdanika.sca.ScaPackage#getComponent_FactoryFilter()
+	 * @model
+	 * @generated
+	 */
+	String getFactoryFilter();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.sca.Component#getFactoryFilter <em>Factory Filter</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Factory Filter</em>' attribute.
+	 * @see #getFactoryFilter()
+	 * @generated
+	 */
+	void setFactoryFilter(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Optional</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Optional</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Optional</em>' attribute.
+	 * @see #setOptional(boolean)
+	 * @see org.nasdanika.sca.ScaPackage#getComponent_Optional()
+	 * @model
+	 * @generated
+	 */
+	boolean isOptional();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.sca.Component#isOptional <em>Optional</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Optional</em>' attribute.
+	 * @see #isOptional()
+	 * @generated
+	 */
+	void setOptional(boolean value);
 
 } // Component

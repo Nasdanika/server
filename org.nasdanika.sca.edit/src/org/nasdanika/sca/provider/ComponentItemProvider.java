@@ -46,6 +46,9 @@ public class ComponentItemProvider
 			addImplementationPropertyDescriptor(object);
 			addImplementationClassPropertyDescriptor(object);
 			addImmediatelyActivatedPropertyDescriptor(object);
+			addIdPropertyDescriptor(object);
+			addFactoryFilterPropertyDescriptor(object);
+			addOptionalPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -117,6 +120,72 @@ public class ComponentItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Id feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIdPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Component_id_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Component_id_feature", "_UI_Component_type"),
+				 ScaPackage.Literals.COMPONENT__ID,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Factory Filter feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addFactoryFilterPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Component_factoryFilter_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Component_factoryFilter_feature", "_UI_Component_type"),
+				 ScaPackage.Literals.COMPONENT__FACTORY_FILTER,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Optional feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addOptionalPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Component_optional_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Component_optional_feature", "_UI_Component_type"),
+				 ScaPackage.Literals.COMPONENT__OPTIONAL,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns Component.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -155,6 +224,9 @@ public class ComponentItemProvider
 
 		switch (notification.getFeatureID(Component.class)) {
 			case ScaPackage.COMPONENT__IMMEDIATELY_ACTIVATED:
+			case ScaPackage.COMPONENT__ID:
+			case ScaPackage.COMPONENT__FACTORY_FILTER:
+			case ScaPackage.COMPONENT__OPTIONAL:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

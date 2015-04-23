@@ -22,6 +22,15 @@ public interface ScaFactory extends EFactory {
 	ScaFactory eINSTANCE = org.nasdanika.cdo.sca.impl.ScaFactoryImpl.init();
 
 	/**
+	 * Returns a new object of class '<em>Composite</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Composite</em>'.
+	 * @generated
+	 */
+	Composite createComposite();
+
+	/**
 	 * Returns a new object of class '<em>Wire</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

@@ -3,16 +3,28 @@
 package org.nasdanika.cdo.sca.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.cdo.sca.ComponentContext;
 import org.nasdanika.cdo.sca.ScaPackage;
 import org.nasdanika.cdo.sca.ServiceReference;
 import org.nasdanika.cdo.sca.Wire;
+import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -134,6 +146,46 @@ public abstract class ComponentImpl extends CDOObjectImpl implements Component {
 				return getServiceReference((String)arguments.get(0), (ComponentContext)arguments.get(1));
 		}
 		return super.eInvoke(operationID, arguments);
+	}
+	
+	@Override
+	public void loadJSON(JSONObject json, Context context) throws Exception {
+		for (Entry<String, Object> e: asMap(json).entrySet()) {
+			getProperties().put(e.getKey(), BoxUtil.box(e.getValue(), context));
+		}		
+	}
+	
+	static List<Object> asList(JSONArray jsonArray) throws JSONException {
+		List<Object> ret = new ArrayList<>();
+		for (int i=0; i<jsonArray.length(); ++i) {
+			Object e = jsonArray.get(i);
+			if (e instanceof JSONArray) {
+				ret.add(asList((JSONArray) e));
+			} else if (e instanceof JSONObject) {
+				ret.add(asMap((JSONObject) e));
+			} else {
+				ret.add(e);
+			}
+		}
+		return ret;
+	}
+	
+	static Map<String, Object> asMap(JSONObject jsonObject) throws JSONException {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		@SuppressWarnings("unchecked")
+		Iterator<String> kit = jsonObject.keys();
+		while (kit.hasNext()) {
+			String key = kit.next();
+			Object val = jsonObject.get(key);
+			if (val instanceof JSONArray) {
+				ret.put(key, asList((JSONArray) val));
+			} else if (val instanceof JSONObject) {
+				ret.put(key, asMap((JSONObject) val));
+			} else {
+				ret.put(key, val);
+			}
+		}
+		return ret;
 	}
 
 } //ComponentImpl
