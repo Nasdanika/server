@@ -9,7 +9,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
@@ -20,9 +19,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.sca.Component;
-import org.nasdanika.cdo.sca.ComponentContext;
 import org.nasdanika.cdo.sca.ScaPackage;
-import org.nasdanika.cdo.sca.ServiceReference;
+import org.nasdanika.cdo.sca.ServiceProvider;
+import org.nasdanika.cdo.sca.ServiceProviderContext;
 import org.nasdanika.cdo.sca.Wire;
 import org.nasdanika.core.Context;
 
@@ -112,24 +111,9 @@ public abstract class ComponentImpl extends CDOObjectImpl implements Component {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
-	public <T> ServiceReference<T> getServiceReference(Class<T> serviceType, ComponentContext context) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ServiceReference<?> getServiceReference(String serviceName, ComponentContext context) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
+	public abstract ServiceProvider createServiceProvider(ServiceProviderContext context);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -140,10 +124,8 @@ public abstract class ComponentImpl extends CDOObjectImpl implements Component {
 	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case ScaPackage.COMPONENT___GET_SERVICE_REFERENCE__CLASS_COMPONENTCONTEXT:
-				return getServiceReference((Class)arguments.get(0), (ComponentContext)arguments.get(1));
-			case ScaPackage.COMPONENT___GET_SERVICE_REFERENCE__STRING_COMPONENTCONTEXT:
-				return getServiceReference((String)arguments.get(0), (ComponentContext)arguments.get(1));
+			case ScaPackage.COMPONENT___CREATE_SERVICE_PROVIDER__SERVICEPROVIDERCONTEXT:
+				return createServiceProvider((ServiceProviderContext)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

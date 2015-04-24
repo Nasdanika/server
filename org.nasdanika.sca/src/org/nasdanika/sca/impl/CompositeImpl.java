@@ -161,6 +161,8 @@ public class CompositeImpl extends AbstractComponentImpl implements Composite {
 			ret.loadJSON(config, context);
 		}
 		
+		//ret.setImmediatelyActivated(getServices().isEmpty());
+		
 		// Create components
 		Map<AbstractComponent, org.nasdanika.cdo.sca.Component> runtimeComponentsMap = new HashMap<>();
 		for (AbstractComponent c: getComponents()) {
@@ -171,13 +173,17 @@ public class CompositeImpl extends AbstractComponentImpl implements Composite {
 				}
 			} else {
 				runtimeComponentsMap.put(c, rc);
+				if (rc.isImmediatelyActivated()) {
+					ret.setImmediatelyActivated(true);
+				}
 			}
 		}
 		// Create exports
 		for (ServiceExport s: getExportedServices()) {
 			Wire wire = ScaFactory.eINSTANCE.createWire();
 			WireTarget wt = s.getWireTarget();
-			wire.setTargetName(wt.getName());
+			wire.setName(blankToNull(s.getName()));
+			wire.setTargetName(blankToNull(wt.getName()));
 			wire.setTypeName(wt.getType().getInstanceClassName());
 			if (wt instanceof ReferenceImport) {
 				wire.setTarget(ret);
@@ -211,8 +217,9 @@ public class CompositeImpl extends AbstractComponentImpl implements Composite {
 			}
 			for (Reference ref: mc.getReferences()) {
 				Wire wire = ScaFactory.eINSTANCE.createWire();
+				wire.setName(blankToNull(ref.getName()));
 				WireTarget wt = ref.getWireTarget();
-				wire.setTargetName(wt.getName());
+				wire.setTargetName(blankToNull(wt.getName()));
 				wire.setTypeName(wt.getType().getInstanceClassName());
 				if (wt instanceof ReferenceImport) {
 					wire.setTarget(ret);

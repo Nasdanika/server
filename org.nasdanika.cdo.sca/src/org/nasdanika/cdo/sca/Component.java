@@ -91,16 +91,8 @@ public interface Component extends CDOObject, JSONLoader {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model dataType="org.nasdanika.cdo.sca.ServiceReference<T>" contextDataType="org.nasdanika.cdo.sca.ComponentContext"
+	 * @model dataType="org.nasdanika.cdo.sca.ServiceProvider" contextDataType="org.nasdanika.cdo.sca.ServiceProviderContext"
 	 * @generated
 	 */
-	<T> ServiceReference<T> getServiceReference(Class<T> serviceType, ComponentContext context);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @model dataType="org.nasdanika.cdo.sca.ServiceReference<?>" contextDataType="org.nasdanika.cdo.sca.ComponentContext"
-	 * @generated
-	 */
-	ServiceReference<?> getServiceReference(String serviceName, ComponentContext context);
+	ServiceProvider createServiceProvider(ServiceProviderContext context);
 } // Component

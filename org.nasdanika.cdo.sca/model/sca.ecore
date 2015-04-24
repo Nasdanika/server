@@ -2,24 +2,8 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="sca" nsURI="urn:org.nasdanika.cdo.sca" nsPrefix="org.nasdanika.cdo.sca">
   <eClassifiers xsi:type="ecore:EClass" name="Component" abstract="true" eSuperTypes="#//JSONLoader">
-    <eOperations name="getServiceReference">
-      <eGenericType eClassifier="#//ServiceReference">
-        <eTypeArguments eTypeParameter="#//Component/getServiceReference/T"/>
-      </eGenericType>
-      <eTypeParameters name="T"/>
-      <eParameters name="serviceType">
-        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaClass">
-          <eTypeArguments eTypeParameter="#//Component/getServiceReference/T"/>
-        </eGenericType>
-      </eParameters>
-      <eParameters name="context" eType="#//ComponentContext"/>
-    </eOperations>
-    <eOperations name="getServiceReference">
-      <eGenericType eClassifier="#//ServiceReference">
-        <eTypeArguments/>
-      </eGenericType>
-      <eParameters name="serviceName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="context" eType="#//ComponentContext"/>
+    <eOperations name="createServiceProvider" eType="#//ServiceProvider">
+      <eParameters name="context" eType="#//ServiceProviderContext"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="wires" upperBound="-1"
         eType="#//Wire" containment="true"/>
@@ -41,12 +25,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
         eType="#//PropertyEntry" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="ComponentContext" instanceClassName="org.nasdanika.cdo.sca.ComponentContext"
+  <eClassifiers xsi:type="ecore:EDataType" name="ServiceProviderContext" instanceClassName="org.nasdanika.cdo.sca.ServiceProviderContext"
       serializable="false"/>
-  <eClassifiers xsi:type="ecore:EDataType" name="ServiceReference" instanceClassName="org.nasdanika.cdo.sca.ServiceReference"
-      serializable="false">
-    <eTypeParameters name="T"/>
-  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ServiceProvider" instanceClassName="org.nasdanika.cdo.sca.ServiceProvider"
+      serializable="false"/>
   <eClassifiers xsi:type="ecore:EClass" name="PropertySetting">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>

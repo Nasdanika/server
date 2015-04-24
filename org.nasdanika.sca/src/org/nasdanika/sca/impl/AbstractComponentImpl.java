@@ -227,5 +227,8 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 		}
 	}
 	
+	static String blankToNull(String str) {
+		return str==null || str.trim().length()==0 ? null : str;
+	}
 
 } //AbstractComponentImpl

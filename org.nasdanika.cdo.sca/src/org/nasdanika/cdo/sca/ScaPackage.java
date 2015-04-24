@@ -133,22 +133,13 @@ public interface ScaPackage extends EPackage {
 	int COMPONENT_FEATURE_COUNT = JSON_LOADER_FEATURE_COUNT + 3;
 
 	/**
-	 * The operation id for the '<em>Get Service Reference</em>' operation.
+	 * The operation id for the '<em>Create Service Provider</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT___GET_SERVICE_REFERENCE__CLASS_COMPONENTCONTEXT = JSON_LOADER_OPERATION_COUNT + 0;
-
-	/**
-	 * The operation id for the '<em>Get Service Reference</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT___GET_SERVICE_REFERENCE__STRING_COMPONENTCONTEXT = JSON_LOADER_OPERATION_COUNT + 1;
+	int COMPONENT___CREATE_SERVICE_PROVIDER__SERVICEPROVIDERCONTEXT = JSON_LOADER_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Component</em>' class.
@@ -157,7 +148,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_OPERATION_COUNT = JSON_LOADER_OPERATION_COUNT + 2;
+	int COMPONENT_OPERATION_COUNT = JSON_LOADER_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.sca.impl.CompositeImpl <em>Composite</em>}' class.
@@ -224,22 +215,13 @@ public interface ScaPackage extends EPackage {
 	int COMPOSITE_FEATURE_COUNT = COMPONENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The operation id for the '<em>Get Service Reference</em>' operation.
+	 * The operation id for the '<em>Create Service Provider</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPOSITE___GET_SERVICE_REFERENCE__CLASS_COMPONENTCONTEXT = COMPONENT___GET_SERVICE_REFERENCE__CLASS_COMPONENTCONTEXT;
-
-	/**
-	 * The operation id for the '<em>Get Service Reference</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPOSITE___GET_SERVICE_REFERENCE__STRING_COMPONENTCONTEXT = COMPONENT___GET_SERVICE_REFERENCE__STRING_COMPONENTCONTEXT;
+	int COMPOSITE___CREATE_SERVICE_PROVIDER__SERVICEPROVIDERCONTEXT = COMPONENT___CREATE_SERVICE_PROVIDER__SERVICEPROVIDERCONTEXT;
 
 	/**
 	 * The number of operations of the '<em>Composite</em>' class.
@@ -408,25 +390,24 @@ public interface ScaPackage extends EPackage {
 	int PROPERTY_ENTRY_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '<em>Component Context</em>' data type.
+	 * The meta object id for the '<em>Service Provider Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.sca.ComponentContext
-	 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getComponentContext()
+	 * @see org.nasdanika.cdo.sca.ServiceProviderContext
+	 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getServiceProviderContext()
 	 * @generated
 	 */
-	int COMPONENT_CONTEXT = 6;
+	int SERVICE_PROVIDER_CONTEXT = 6;
 
 	/**
-	 * The meta object id for the '<em>Service Reference</em>' data type.
+	 * The meta object id for the '<em>Service Provider</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.sca.ServiceReference
-	 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getServiceReference()
+	 * @see org.nasdanika.cdo.sca.ServiceProvider
+	 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getServiceProvider()
 	 * @generated
 	 */
-	int SERVICE_REFERENCE = 7;
-
+	int SERVICE_PROVIDER = 7;
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.sca.Component <em>Component</em>}'.
@@ -472,24 +453,14 @@ public interface ScaPackage extends EPackage {
 	EAttribute getComponent_ImmediatelyActivated();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.sca.Component#getServiceReference(java.lang.Class, org.nasdanika.cdo.sca.ComponentContext) <em>Get Service Reference</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.sca.Component#createServiceProvider(org.nasdanika.cdo.sca.ServiceProviderContext) <em>Create Service Provider</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Service Reference</em>' operation.
-	 * @see org.nasdanika.cdo.sca.Component#getServiceReference(java.lang.Class, org.nasdanika.cdo.sca.ComponentContext)
+	 * @return the meta object for the '<em>Create Service Provider</em>' operation.
+	 * @see org.nasdanika.cdo.sca.Component#createServiceProvider(org.nasdanika.cdo.sca.ServiceProviderContext)
 	 * @generated
 	 */
-	EOperation getComponent__GetServiceReference__Class_ComponentContext();
-
-	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.sca.Component#getServiceReference(java.lang.String, org.nasdanika.cdo.sca.ComponentContext) <em>Get Service Reference</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Service Reference</em>' operation.
-	 * @see org.nasdanika.cdo.sca.Component#getServiceReference(java.lang.String, org.nasdanika.cdo.sca.ComponentContext)
-	 * @generated
-	 */
-	EOperation getComponent__GetServiceReference__String_ComponentContext();
+	EOperation getComponent__CreateServiceProvider__ServiceProviderContext();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.sca.Composite <em>Composite</em>}'.
@@ -655,26 +626,26 @@ public interface ScaPackage extends EPackage {
 	EReference getPropertyEntry_Value();
 
 	/**
-	 * Returns the meta object for data type '{@link org.nasdanika.cdo.sca.ComponentContext <em>Component Context</em>}'.
+	 * Returns the meta object for data type '{@link org.nasdanika.cdo.sca.ServiceProviderContext <em>Service Provider Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Component Context</em>'.
-	 * @see org.nasdanika.cdo.sca.ComponentContext
-	 * @model instanceClass="org.nasdanika.cdo.sca.ComponentContext" serializeable="false"
+	 * @return the meta object for data type '<em>Service Provider Context</em>'.
+	 * @see org.nasdanika.cdo.sca.ServiceProviderContext
+	 * @model instanceClass="org.nasdanika.cdo.sca.ServiceProviderContext" serializeable="false"
 	 * @generated
 	 */
-	EDataType getComponentContext();
+	EDataType getServiceProviderContext();
 
 	/**
-	 * Returns the meta object for data type '{@link org.nasdanika.cdo.sca.ServiceReference <em>Service Reference</em>}'.
+	 * Returns the meta object for data type '{@link org.nasdanika.cdo.sca.ServiceProvider <em>Service Provider</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Service Reference</em>'.
-	 * @see org.nasdanika.cdo.sca.ServiceReference
-	 * @model instanceClass="org.nasdanika.cdo.sca.ServiceReference" serializeable="false" typeParameters="T"
+	 * @return the meta object for data type '<em>Service Provider</em>'.
+	 * @see org.nasdanika.cdo.sca.ServiceProvider
+	 * @model instanceClass="org.nasdanika.cdo.sca.ServiceProvider" serializeable="false"
 	 * @generated
 	 */
-	EDataType getServiceReference();
+	EDataType getServiceProvider();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -734,20 +705,12 @@ public interface ScaPackage extends EPackage {
 		EAttribute COMPONENT__IMMEDIATELY_ACTIVATED = eINSTANCE.getComponent_ImmediatelyActivated();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Service Reference</b></em>' operation.
+		 * The meta object literal for the '<em><b>Create Service Provider</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation COMPONENT___GET_SERVICE_REFERENCE__CLASS_COMPONENTCONTEXT = eINSTANCE.getComponent__GetServiceReference__Class_ComponentContext();
-
-		/**
-		 * The meta object literal for the '<em><b>Get Service Reference</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation COMPONENT___GET_SERVICE_REFERENCE__STRING_COMPONENTCONTEXT = eINSTANCE.getComponent__GetServiceReference__String_ComponentContext();
+		EOperation COMPONENT___CREATE_SERVICE_PROVIDER__SERVICEPROVIDERCONTEXT = eINSTANCE.getComponent__CreateServiceProvider__ServiceProviderContext();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.sca.impl.CompositeImpl <em>Composite</em>}' class.
@@ -880,24 +843,24 @@ public interface ScaPackage extends EPackage {
 		EReference PROPERTY_ENTRY__VALUE = eINSTANCE.getPropertyEntry_Value();
 
 		/**
-		 * The meta object literal for the '<em>Component Context</em>' data type.
+		 * The meta object literal for the '<em>Service Provider Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.cdo.sca.ComponentContext
-		 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getComponentContext()
+		 * @see org.nasdanika.cdo.sca.ServiceProviderContext
+		 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getServiceProviderContext()
 		 * @generated
 		 */
-		EDataType COMPONENT_CONTEXT = eINSTANCE.getComponentContext();
+		EDataType SERVICE_PROVIDER_CONTEXT = eINSTANCE.getServiceProviderContext();
 
 		/**
-		 * The meta object literal for the '<em>Service Reference</em>' data type.
+		 * The meta object literal for the '<em>Service Provider</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.cdo.sca.ServiceReference
-		 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getServiceReference()
+		 * @see org.nasdanika.cdo.sca.ServiceProvider
+		 * @see org.nasdanika.cdo.sca.impl.ScaPackageImpl#getServiceProvider()
 		 * @generated
 		 */
-		EDataType SERVICE_REFERENCE = eINSTANCE.getServiceReference();
+		EDataType SERVICE_PROVIDER = eINSTANCE.getServiceProvider();
 
 	}
 

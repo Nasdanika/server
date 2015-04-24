@@ -258,5 +258,10 @@ public class AbstractComponentItemProvider
 	public ResourceLocator getResourceLocator() {
 		return ScaEditPlugin.INSTANCE;
 	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
+	}
 
 }

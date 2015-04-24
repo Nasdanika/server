@@ -12,9 +12,11 @@ import org.osgi.framework.BundleContext;
 public class ContextImpl implements Context {
 	
 	private BundleContext bundleContext;
+	private Context[] chain;
 
-	public ContextImpl(BundleContext bundleContext) {
+	public ContextImpl(BundleContext bundleContext, Context... chain) {
 		this.bundleContext = bundleContext;
+		this.chain = chain;
 	}
 	
 	private AdapterManager adapterManager;
@@ -24,6 +26,18 @@ public class ContextImpl implements Context {
 	public <T> T adapt(Class<T> targetType) throws Exception {
 		if (targetType.isInstance(this)) {
 			return (T) this;
+		}
+		
+		for (Context ch: chain) {
+			if (ch!=null) {
+				if (targetType.isInstance(ch)) {
+					return (T) ch;
+				}
+				T ret = ch.adapt(targetType);
+				if (ret!=null) {
+					return ret;
+				}
+			}
 		}
 		
 		synchronized (this) {
@@ -45,6 +59,15 @@ public class ContextImpl implements Context {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T convert(Object source, Class<T> targetType) throws Exception {
+		for (Context ch: chain) {
+			if (ch!=null) {
+				T ret = ch.convert(source, targetType);
+				if (ret!=null) {
+					return ret;
+				}
+			}
+		}		
+		
 		synchronized (this) {
 			if (converter==null) {
 				converter = CoreUtil.createConverter();

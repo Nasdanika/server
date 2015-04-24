@@ -5,6 +5,7 @@ package org.nasdanika.sca.provider;
 
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -127,11 +128,11 @@ public class ServiceItemProvider
 	 * This returns Service.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Service"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Service.png"));
 	}
 
 	/**
@@ -190,6 +191,11 @@ public class ServiceItemProvider
 	@Override
 	public ResourceLocator getResourceLocator() {
 		return ScaEditPlugin.INSTANCE;
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

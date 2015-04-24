@@ -6,19 +6,17 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.cdo.sca.Component;
-import org.nasdanika.cdo.sca.ComponentContext;
 import org.nasdanika.cdo.sca.Composite;
 import org.nasdanika.cdo.sca.PropertySetting;
 import org.nasdanika.cdo.sca.ScaFactory;
 import org.nasdanika.cdo.sca.ScaPackage;
-import org.nasdanika.cdo.sca.ServiceReference;
+import org.nasdanika.cdo.sca.ServiceProvider;
+import org.nasdanika.cdo.sca.ServiceProviderContext;
 import org.nasdanika.cdo.sca.Wire;
 import org.nasdanika.core.JSONLoader;
 
@@ -76,14 +74,14 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType componentContextEDataType = null;
+	private EDataType serviceProviderContextEDataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType serviceReferenceEDataType = null;
+	private EDataType serviceProviderEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -187,17 +185,8 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getComponent__GetServiceReference__Class_ComponentContext() {
+	public EOperation getComponent__CreateServiceProvider__ServiceProviderContext() {
 		return componentEClass.getEOperations().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EOperation getComponent__GetServiceReference__String_ComponentContext() {
-		return componentEClass.getEOperations().get(1);
 	}
 
 	/**
@@ -340,8 +329,8 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getComponentContext() {
-		return componentContextEDataType;
+	public EDataType getServiceProviderContext() {
+		return serviceProviderContextEDataType;
 	}
 
 	/**
@@ -349,8 +338,8 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getServiceReference() {
-		return serviceReferenceEDataType;
+	public EDataType getServiceProvider() {
+		return serviceProviderEDataType;
 	}
 
 	/**
@@ -385,8 +374,7 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		createEReference(componentEClass, COMPONENT__WIRES);
 		createEReference(componentEClass, COMPONENT__PROPERTIES);
 		createEAttribute(componentEClass, COMPONENT__IMMEDIATELY_ACTIVATED);
-		createEOperation(componentEClass, COMPONENT___GET_SERVICE_REFERENCE__CLASS_COMPONENTCONTEXT);
-		createEOperation(componentEClass, COMPONENT___GET_SERVICE_REFERENCE__STRING_COMPONENTCONTEXT);
+		createEOperation(componentEClass, COMPONENT___CREATE_SERVICE_PROVIDER__SERVICEPROVIDERCONTEXT);
 
 		compositeEClass = createEClass(COMPOSITE);
 		createEReference(compositeEClass, COMPOSITE__COMPONENTS);
@@ -409,8 +397,8 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		createEReference(propertyEntryEClass, PROPERTY_ENTRY__VALUE);
 
 		// Create data types
-		componentContextEDataType = createEDataType(COMPONENT_CONTEXT);
-		serviceReferenceEDataType = createEDataType(SERVICE_REFERENCE);
+		serviceProviderContextEDataType = createEDataType(SERVICE_PROVIDER_CONTEXT);
+		serviceProviderEDataType = createEDataType(SERVICE_PROVIDER);
 	}
 
 	/**
@@ -437,7 +425,6 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		setNsURI(eNS_URI);
 
 		// Create type parameters
-		addETypeParameter(serviceReferenceEDataType, "T");
 
 		// Set bounds for type parameters
 
@@ -452,25 +439,8 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		initEReference(getComponent_Properties(), this.getPropertyEntry(), null, "properties", null, 0, -1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getComponent_ImmediatelyActivated(), ecorePackage.getEBoolean(), "immediatelyActivated", null, 0, 1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		EOperation op = initEOperation(getComponent__GetServiceReference__Class_ComponentContext(), null, "getServiceReference", 0, 1, IS_UNIQUE, IS_ORDERED);
-		ETypeParameter t1 = addETypeParameter(op, "T");
-		EGenericType g1 = createEGenericType(ecorePackage.getEJavaClass());
-		EGenericType g2 = createEGenericType(t1);
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "serviceType", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getServiceReference());
-		g2 = createEGenericType(t1);
-		g1.getETypeArguments().add(g2);
-		initEOperation(op, g1);
-
-		op = initEOperation(getComponent__GetServiceReference__String_ComponentContext(), null, "getServiceReference", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "serviceName", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getComponentContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getServiceReference());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEOperation(op, g1);
+		EOperation op = initEOperation(getComponent__CreateServiceProvider__ServiceProviderContext(), this.getServiceProvider(), "createServiceProvider", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getServiceProviderContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(compositeEClass, Composite.class, "Composite", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getComposite_Components(), this.getComponent(), null, "components", null, 0, -1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -493,8 +463,8 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		initEReference(getPropertyEntry_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, Map.Entry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
-		initEDataType(componentContextEDataType, ComponentContext.class, "ComponentContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
-		initEDataType(serviceReferenceEDataType, ServiceReference.class, "ServiceReference", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(serviceProviderContextEDataType, ServiceProviderContext.class, "ServiceProviderContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(serviceProviderEDataType, ServiceProvider.class, "ServiceProvider", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

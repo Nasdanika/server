@@ -187,7 +187,7 @@
               <firstModelOperations xsi:type="tool_1:SetValue" featureName="name" valueExpression="var:0"/>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="WireCreation" label="Wire" edgeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@edgeMappings[name='ReferenceEdge']">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="WireCreation" label="Wire" edgeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@edgeMappings[name='ReferenceEdge']" iconPath="/org.nasdanika.sca.design/images/Wire.png">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>
@@ -221,7 +221,7 @@
               </firstModelOperations>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:EdgeCreationDescription" name="PropertyBindingCreation" label="Property Setting" edgeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@edgeMappings[name='PropertySetting']">
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="PropertyBindingCreation" label="Property Setting" edgeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@edgeMappings[name='PropertySetting']" iconPath="/org.nasdanika.sca.design/images/PropertySetting.png">
             <sourceVariable name="source"/>
             <targetVariable name="target"/>
             <sourceViewVariable name="sourceView"/>

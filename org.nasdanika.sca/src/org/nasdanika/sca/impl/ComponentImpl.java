@@ -203,7 +203,7 @@ public class ComponentImpl extends AbstractComponentImpl implements Component {
 		if (config!=null) {
 			ret.loadJSON(config, context);
 		}
-		ret.setImmediatelyActivated(isImmediatelyActivated());
+		ret.setImmediatelyActivated(isImmediatelyActivated() || getServices().isEmpty());
 		return ret;
 	}
 

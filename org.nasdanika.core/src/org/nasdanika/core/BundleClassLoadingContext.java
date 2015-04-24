@@ -10,8 +10,8 @@ public class BundleClassLoadingContext extends ContextImpl implements ClassLoadi
 
 	private Bundle bundle;
 
-	public BundleClassLoadingContext(Bundle bundle) {
-		super(bundle.getBundleContext());
+	public BundleClassLoadingContext(Bundle bundle, Context... chain) {
+		super(bundle.getBundleContext(), chain);
 		this.bundle = bundle;
 	}
 	

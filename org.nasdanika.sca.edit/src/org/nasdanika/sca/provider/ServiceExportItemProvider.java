@@ -9,13 +9,11 @@ import java.util.List;
 import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
-
 import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
@@ -129,11 +127,11 @@ public class ServiceExportItemProvider extends CDOItemProviderAdapter implements
 	 * This returns ServiceExport.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ServiceExport"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/ServiceExport.png"));
 	}
 
 	/**
@@ -192,6 +190,11 @@ public class ServiceExportItemProvider extends CDOItemProviderAdapter implements
 	@Override
 	public ResourceLocator getResourceLocator() {
 		return ScaEditPlugin.INSTANCE;
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

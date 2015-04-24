@@ -9,22 +9,14 @@
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Sca" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
       ecorePackage="sca.ecore#/">
-    <genDataTypes ecoreDataType="sca.ecore#//ComponentContext"/>
-    <genDataTypes ecoreDataType="sca.ecore#//ServiceReference">
-      <genTypeParameters ecoreTypeParameter="sca.ecore#//ServiceReference/T"/>
-    </genDataTypes>
+    <genDataTypes ecoreDataType="sca.ecore#//ServiceProviderContext"/>
+    <genDataTypes ecoreDataType="sca.ecore#//ServiceProvider"/>
     <genClasses image="false" ecoreClass="sca.ecore#//Component">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Component/wires"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference sca.ecore#//Component/properties"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute sca.ecore#//Component/immediatelyActivated"/>
-      <genOperations ecoreOperation="sca.ecore#//Component/getServiceReference">
-        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference/serviceType"/>
-        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference/context"/>
-        <genTypeParameters ecoreTypeParameter="sca.ecore#//Component/getServiceReference/T"/>
-      </genOperations>
-      <genOperations ecoreOperation="sca.ecore#//Component/getServiceReference.1">
-        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference.1/serviceName"/>
-        <genParameters ecoreParameter="sca.ecore#//Component/getServiceReference.1/context"/>
+      <genOperations ecoreOperation="sca.ecore#//Component/createServiceProvider">
+        <genParameters ecoreParameter="sca.ecore#//Component/createServiceProvider/context"/>
       </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="sca.ecore#//Composite">

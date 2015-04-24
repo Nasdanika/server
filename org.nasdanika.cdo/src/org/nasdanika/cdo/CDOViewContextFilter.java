@@ -21,8 +21,8 @@ public abstract class CDOViewContextFilter<V extends CDOView, CR, MC, T extends 
 		this.target = target;
 	}
 
-	public <T> T adapt(Class<T> targetType) throws Exception {
-		T ret = super.adapt(targetType);
+	public <ST> ST adapt(Class<ST> targetType) throws Exception {
+		ST ret = super.adapt(targetType);
 		return ret==null ? target.adapt(targetType) : ret;
 	}
 
@@ -35,7 +35,7 @@ public abstract class CDOViewContextFilter<V extends CDOView, CR, MC, T extends 
 		super.close();
 	}
 
-	public <T> T convert(Object source, Class<T> targetType) throws Exception {
+	public <ST> ST convert(Object source, Class<ST> targetType) throws Exception {
 		return target.convert(source, targetType);
 	}
 
