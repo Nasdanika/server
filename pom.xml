@@ -46,7 +46,7 @@
 		<!--<module>org.nasdanika.promise</module>-->
 		<module>org.nasdanika.function.cdo</module>
 		<!--<module>org.nasdanika.promise.cdo</module>-->
-		<!-- <module>org.nasdanika.cdo.function</module>  -->
+		<module>org.nasdanika.cdo.function</module>
 		<module>org.nasdanika.cdo.scheduler</module>
 		<module>org.nasdanika.cdo.promise</module>
 		<module>org.nasdanika.equinox.feature</module>
