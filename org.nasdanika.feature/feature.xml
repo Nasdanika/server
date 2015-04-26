@@ -153,13 +153,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="org.nasdanika.promise"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.nasdanika.cdo.boxing"
          download-size="0"
          install-size="0"
@@ -181,19 +174,11 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="org.nasdanika.promise.cdo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.nasdanika.cdo.sca"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
-
 
    <plugin
          id="org.nasdanika.sca"
@@ -204,6 +189,13 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="org.apache.commons.lang3"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.nasdanika.cdo.promise"
          download-size="0"
          install-size="0"
          version="0.0.0"

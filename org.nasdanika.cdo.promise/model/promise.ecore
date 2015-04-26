@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="promise" nsURI="urn:org.nasdanika.cdo.promise" nsPrefix="org.nasdanika.cdo.promise">
+  <eClassifiers xsi:type="ecore:EClass" name="Promise">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="F"/>
+    <eTypeParameters name="R"/>
+    <eTypeParameters name="N"/>
+    <eOperations name="timeout">
+      <eGenericType eClassifier="#//Promise">
+        <eTypeArguments eTypeParameter="#//Promise/CR"/>
+        <eTypeArguments eTypeParameter="#//Promise/F"/>
+        <eTypeArguments eTypeParameter="#//Promise/timeout/TR"/>
+        <eTypeArguments eTypeParameter="#//Promise/N"/>
+      </eGenericType>
+      <eTypeParameters name="TR"/>
+      <eParameters name="scheduler">
+        <eGenericType eClassifier="#//Scheduler">
+          <eTypeArguments eTypeParameter="#//Promise/CR"/>
+          <eTypeArguments eClassifier="#//CDOObject"/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="timeout" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="timeUnit" eType="#//TimeUnit"/>
+      <eParameters name="reason">
+        <eGenericType eTypeParameter="#//Promise/timeout/TR"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="delay">
+      <eGenericType eClassifier="#//Promise">
+        <eTypeArguments eTypeParameter="#//Promise/CR"/>
+        <eTypeArguments eTypeParameter="#//Promise/F"/>
+        <eTypeArguments eTypeParameter="#//Promise/R"/>
+        <eTypeArguments eTypeParameter="#//Promise/N"/>
+      </eGenericType>
+      <eParameters name="scheduler">
+        <eGenericType eClassifier="#//Scheduler">
+          <eTypeArguments eTypeParameter="#//Promise/CR"/>
+          <eTypeArguments eClassifier="#//CDOObject"/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="delay" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+      <eParameters name="timeUnit" eType="#//TimeUnit"/>
+    </eOperations>
+    <eOperations name="resolve">
+      <eParameters name="value">
+        <eGenericType eTypeParameter="#//Promise/F"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="reject">
+      <eParameters name="reason">
+        <eGenericType eTypeParameter="#//Promise/R"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="notify">
+      <eParameters name="progress">
+        <eGenericType eTypeParameter="#//Promise/N"/>
+      </eParameters>
+    </eOperations>
+    <eOperations name="then">
+      <eGenericType eClassifier="#//Promise">
+        <eTypeArguments eTypeParameter="#//Promise/CR"/>
+        <eTypeArguments eTypeParameter="#//Promise/then/TF"/>
+        <eTypeArguments eTypeParameter="#//Promise/then/TR"/>
+        <eTypeArguments eTypeParameter="#//Promise/then/TN"/>
+      </eGenericType>
+      <eTypeParameters name="TF"/>
+      <eTypeParameters name="TR"/>
+      <eTypeParameters name="TN"/>
+      <eParameters name="onFulfill">
+        <eGenericType eClassifier="#//CDOTransactionContextCommand">
+          <eTypeArguments eTypeParameter="#//Promise/CR"/>
+          <eTypeArguments>
+            <eLowerBound eTypeParameter="#//Promise/F"/>
+          </eTypeArguments>
+          <eTypeArguments eTypeParameter="#//Promise/then/TF"/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="onReject">
+        <eGenericType eClassifier="#//CDOTransactionContextCommand">
+          <eTypeArguments eTypeParameter="#//Promise/CR"/>
+          <eTypeArguments>
+            <eLowerBound eTypeParameter="#//Promise/R"/>
+          </eTypeArguments>
+          <eTypeArguments eTypeParameter="#//Promise/then/TR"/>
+        </eGenericType>
+      </eParameters>
+      <eParameters name="onNotify">
+        <eGenericType eClassifier="#//CDOTransactionContextCommand">
+          <eTypeArguments eTypeParameter="#//Promise/CR"/>
+          <eTypeArguments>
+            <eLowerBound eTypeParameter="#//Promise/N"/>
+          </eTypeArguments>
+          <eTypeArguments eTypeParameter="#//Promise/then/TN"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//Promise">
+        <eTypeArguments eTypeParameter="#//Promise/CR"/>
+        <eTypeArguments/>
+        <eTypeArguments/>
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="thens" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//Promise">
+        <eTypeArguments eTypeParameter="#//Promise/CR"/>
+        <eTypeArguments/>
+        <eTypeArguments/>
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="state" eType="#//PromiseState"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fulfillmentValue" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="rejectionReason" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="PromiseState">
+    <eLiterals name="Pending"/>
+    <eLiterals name="Fulfilled" value="1"/>
+    <eLiterals name="Rejected" value="2"/>
+    <eLiterals name="Cancelled" value="3"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="TimeUnit" instanceClassName="java.util.concurrent.TimeUnit"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="CDOTransactionContextCommand" instanceClassName="org.nasdanika.cdo.CDOTransactionContextCommand">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="T"/>
+    <eTypeParameters name="R"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Scheduler" instanceClassName="org.nasdanika.cdo.scheduler.Scheduler">
+    <eTypeParameters name="CR"/>
+    <eTypeParameters name="K"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="CDOObject" instanceClassName="org.eclipse.emf.cdo.CDOObject"/>
+</ecore:EPackage>
