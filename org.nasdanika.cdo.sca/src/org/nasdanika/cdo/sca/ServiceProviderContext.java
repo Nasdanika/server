@@ -6,6 +6,6 @@ public interface ServiceProviderContext extends Context {
 	
 	Object getProperty(String propertyName);
 	
-	<T> T getService(Class<T> serviceType, String serviceName);
+	<T> ServiceReference<T> getServiceReference(Class<T> serviceType, String serviceName);
 
 }

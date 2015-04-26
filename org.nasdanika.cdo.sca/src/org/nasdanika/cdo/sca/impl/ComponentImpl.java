@@ -9,6 +9,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EClass;
@@ -22,6 +23,7 @@ import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.cdo.sca.ScaPackage;
 import org.nasdanika.cdo.sca.ServiceProvider;
 import org.nasdanika.cdo.sca.ServiceProviderContext;
+import org.nasdanika.cdo.sca.ServiceReference;
 import org.nasdanika.cdo.sca.Wire;
 import org.nasdanika.core.Context;
 
@@ -121,7 +123,6 @@ public abstract class ComponentImpl extends CDOObjectImpl implements Component {
 	 * @generated
 	 */
 	@Override
-	@SuppressWarnings({"rawtypes", "unchecked" })
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case ScaPackage.COMPONENT___CREATE_SERVICE_PROVIDER__SERVICEPROVIDERCONTEXT:
@@ -168,6 +169,81 @@ public abstract class ComponentImpl extends CDOObjectImpl implements Component {
 			}
 		}
 		return ret;
+	}
+	
+	protected static class ServiceProviderContextRequest {
+		private Component requestor;
+		private ServiceProviderContext context;
+		
+		public ServiceProviderContextRequest(Component requestor) {
+			this.requestor = requestor;
+		}
+		
+		public Component getRequestor() {
+			return requestor;
+		}
+		
+		public void setContext(ServiceProviderContext context) {
+			this.context = context;
+		}
+		
+		public ServiceProviderContext getContext() {
+			return context;
+		}
+		
+	}
+	
+	/**
+	 * This method shall be used by components which are invoked outside of the composite context and need 
+	 * wiring to be established to perform operation. This method finds the root composite, invokes its 
+	 * <code>createServiceProvider(rootContext)</code> and then returns a context for this component, which
+	 * <code>close()</code> method routed to the root composite's service provider. 
+	 * @param rootContext
+	 * @return
+	 */
+	protected ServiceProviderContext getServiceProviderContext(ServiceProviderContext rootContext) {
+		EObject root = this;
+		while (root.eContainer() instanceof CompositeImpl) {
+			root = root.eContainer();
+		}
+		if (root==this) {
+			return rootContext;
+		}
+		
+		final ServiceProviderContextRequest spcr = new ServiceProviderContextRequest(this);
+		final ServiceProvider rootProvider = ((CompositeImpl) root).createServiceProvider(rootContext, spcr);
+		return new ServiceProviderContext() {
+			
+			@Override
+			public <T> T adapt(Class<T> targetType) throws Exception {
+				return spcr.getContext().adapt(targetType);
+			}
+			
+			@Override
+			public void close() throws Exception {
+				rootProvider.close();				
+			}
+			
+			@Override
+			public <T> T convert(Object source, Class<T> targetType) throws Exception {
+				return spcr.getContext().convert(source, targetType);
+			}
+			
+			@Override
+			public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
+				return spcr.getContext().authorize(target, action, qualifier, environment);
+			}
+			
+			@Override
+			public <T> ServiceReference<T> getServiceReference(Class<T> serviceType, String serviceName) {
+				return spcr.getContext().getServiceReference(serviceType, serviceName);
+			}
+			
+			@Override
+			public Object getProperty(String propertyName) {
+				return spcr.getContext().getProperty(propertyName);
+			}
+		};
 	}
 
 } //ComponentImpl

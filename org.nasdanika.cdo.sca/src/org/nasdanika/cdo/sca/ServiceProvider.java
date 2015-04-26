@@ -8,6 +8,6 @@ import java.util.Map;
  */
 public interface ServiceProvider extends AutoCloseable {
 
-	<T> T getService(Class<T> serviceType, String name, Map<String, Object> properties);
+	<T> ServiceReference<T> getServiceReference(Class<T> serviceType, String name, Map<String, Object> properties);
 	
 }
