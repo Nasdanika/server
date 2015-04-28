@@ -17,6 +17,7 @@ import org.nasdanika.sca.ScaPackage;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.sca.impl.PropertyImportImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.PropertyImportImpl#getDescription <em>Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -68,6 +69,24 @@ public class PropertyImportImpl extends CDOObjectImpl implements PropertyImport 
 	 */
 	public void setName(String newName) {
 		eSet(ScaPackage.Literals.PROPERTY_IMPORT__NAME, newName);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDescription() {
+		return (String)eGet(ScaPackage.Literals.PROPERTY_IMPORT__DESCRIPTION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		eSet(ScaPackage.Literals.PROPERTY_IMPORT__DESCRIPTION, newDescription);
 	}
 
 } //PropertyImportImpl

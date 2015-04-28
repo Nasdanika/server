@@ -53,6 +53,7 @@ public class ServiceItemProvider
 
 			addNamePropertyDescriptor(object);
 			addConfigurationPropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 			addTypePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
@@ -94,6 +95,28 @@ public class ServiceItemProvider
 				 getString("_UI_Wireable_configuration_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_Wireable_configuration_feature", "_UI_Wireable_type"),
 				 ScaPackage.Literals.WIREABLE__CONFIGURATION,
+				 true,
+				 true,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Description feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDescriptionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Wireable_description_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Wireable_description_feature", "_UI_Wireable_type"),
+				 ScaPackage.Literals.WIREABLE__DESCRIPTION,
 				 true,
 				 true,
 				 false,
@@ -164,6 +187,7 @@ public class ServiceItemProvider
 		switch (notification.getFeatureID(Service.class)) {
 			case ScaPackage.SERVICE__NAME:
 			case ScaPackage.SERVICE__CONFIGURATION:
+			case ScaPackage.SERVICE__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

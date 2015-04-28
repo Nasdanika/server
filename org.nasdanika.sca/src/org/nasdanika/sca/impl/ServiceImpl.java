@@ -17,6 +17,7 @@ import org.nasdanika.sca.Service;
  * <ul>
  *   <li>{@link org.nasdanika.sca.impl.ServiceImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.ServiceImpl#getConfiguration <em>Configuration</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.ServiceImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.ServiceImpl#getType <em>Type</em>}</li>
  * </ul>
  * </p>
@@ -87,6 +88,24 @@ public class ServiceImpl extends CDOObjectImpl implements Service {
 	 */
 	public void setConfiguration(String newConfiguration) {
 		eSet(ScaPackage.Literals.WIREABLE__CONFIGURATION, newConfiguration);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDescription() {
+		return (String)eGet(ScaPackage.Literals.WIREABLE__DESCRIPTION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		eSet(ScaPackage.Literals.WIREABLE__DESCRIPTION, newDescription);
 	}
 
 	/**

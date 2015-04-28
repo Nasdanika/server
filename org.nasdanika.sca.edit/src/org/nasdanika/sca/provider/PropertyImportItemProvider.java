@@ -58,6 +58,7 @@ public class PropertyImportItemProvider
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -78,6 +79,28 @@ public class PropertyImportItemProvider
 				 ScaPackage.Literals.PROPERTY_IMPORT__NAME,
 				 true,
 				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Description feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDescriptionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_PropertyImport_description_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_PropertyImport_description_feature", "_UI_PropertyImport_type"),
+				 ScaPackage.Literals.PROPERTY_IMPORT__DESCRIPTION,
+				 true,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -123,6 +146,7 @@ public class PropertyImportItemProvider
 
 		switch (notification.getFeatureID(PropertyImport.class)) {
 			case ScaPackage.PROPERTY_IMPORT__NAME:
+			case ScaPackage.PROPERTY_IMPORT__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

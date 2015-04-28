@@ -18,6 +18,7 @@ import org.nasdanika.sca.WireTarget;
  * <ul>
  *   <li>{@link org.nasdanika.sca.impl.ServiceExportImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.ServiceExportImpl#getConfiguration <em>Configuration</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.ServiceExportImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.ServiceExportImpl#getWireTarget <em>Wire Target</em>}</li>
  * </ul>
  * </p>
@@ -88,6 +89,24 @@ public class ServiceExportImpl extends CDOObjectImpl implements ServiceExport {
 	 */
 	public void setConfiguration(String newConfiguration) {
 		eSet(ScaPackage.Literals.WIREABLE__CONFIGURATION, newConfiguration);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDescription() {
+		return (String)eGet(ScaPackage.Literals.WIREABLE__DESCRIPTION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		eSet(ScaPackage.Literals.WIREABLE__DESCRIPTION, newDescription);
 	}
 
 	/**

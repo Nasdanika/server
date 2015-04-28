@@ -108,7 +108,7 @@ public class AbstractComponentItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_AbstractComponent_description_feature", "_UI_AbstractComponent_type"),
 				 ScaPackage.Literals.ABSTRACT_COMPONENT__DESCRIPTION,
 				 true,
-				 false,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,

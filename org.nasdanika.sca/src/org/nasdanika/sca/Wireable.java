@@ -14,6 +14,7 @@ import org.eclipse.emf.cdo.CDOObject;
  * <ul>
  *   <li>{@link org.nasdanika.sca.Wireable#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.sca.Wireable#getConfiguration <em>Configuration</em>}</li>
+ *   <li>{@link org.nasdanika.sca.Wireable#getDescription <em>Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -74,5 +75,31 @@ public interface Wireable extends CDOObject {
 	 * @generated
 	 */
 	void setConfiguration(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Description</em>' attribute.
+	 * @see #setDescription(String)
+	 * @see org.nasdanika.sca.ScaPackage#getWireable_Description()
+	 * @model
+	 * @generated
+	 */
+	String getDescription();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.sca.Wireable#getDescription <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Description</em>' attribute.
+	 * @see #getDescription()
+	 * @generated
+	 */
+	void setDescription(String value);
 
 } // Wireable

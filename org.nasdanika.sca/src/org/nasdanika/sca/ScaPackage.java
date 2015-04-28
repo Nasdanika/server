@@ -568,13 +568,22 @@ public interface ScaPackage extends EPackage {
 	int WIREABLE__CONFIGURATION = 1;
 
 	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WIREABLE__DESCRIPTION = 2;
+
+	/**
 	 * The number of structural features of the '<em>Wireable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WIREABLE_FEATURE_COUNT = 2;
+	int WIREABLE_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Wireable</em>' class.
@@ -612,6 +621,15 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int WIRE_SOURCE__CONFIGURATION = WIREABLE__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WIRE_SOURCE__DESCRIPTION = WIREABLE__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Wire Target</b></em>' reference.
@@ -679,6 +697,15 @@ public interface ScaPackage extends EPackage {
 	int WIRE_TARGET__CONFIGURATION = WIREABLE__CONFIGURATION;
 
 	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WIRE_TARGET__DESCRIPTION = WIREABLE__DESCRIPTION;
+
+	/**
 	 * The feature id for the '<em><b>Type</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -722,6 +749,15 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int REFERENCE__CONFIGURATION = WIRE_SOURCE__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE__DESCRIPTION = WIRE_SOURCE__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Wire Target</b></em>' reference.
@@ -777,6 +813,15 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE__CONFIGURATION = WIRE_TARGET__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE__DESCRIPTION = WIRE_TARGET__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' reference.
@@ -835,6 +880,15 @@ public interface ScaPackage extends EPackage {
 	int REFERENCE_IMPORT__CONFIGURATION = WIRE_TARGET__CONFIGURATION;
 
 	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REFERENCE_IMPORT__DESCRIPTION = WIRE_TARGET__DESCRIPTION;
+
+	/**
 	 * The feature id for the '<em><b>Type</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -888,6 +942,15 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int SERVICE_EXPORT__CONFIGURATION = WIRE_SOURCE__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_EXPORT__DESCRIPTION = WIRE_SOURCE__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Wire Target</b></em>' reference.
@@ -945,13 +1008,22 @@ public interface ScaPackage extends EPackage {
 	int PROPERTY__BINDING = 1;
 
 	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROPERTY__DESCRIPTION = 2;
+
+	/**
 	 * The number of structural features of the '<em>Property</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROPERTY_FEATURE_COUNT = 2;
+	int PROPERTY_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Property</em>' class.
@@ -982,13 +1054,22 @@ public interface ScaPackage extends EPackage {
 	int PROPERTY_IMPORT__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROPERTY_IMPORT__DESCRIPTION = 1;
+
+	/**
 	 * The number of structural features of the '<em>Property Import</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROPERTY_IMPORT_FEATURE_COUNT = 1;
+	int PROPERTY_IMPORT_FEATURE_COUNT = 2;
 
 	/**
 	 * The number of operations of the '<em>Property Import</em>' class.
@@ -1325,6 +1406,17 @@ public interface ScaPackage extends EPackage {
 	EAttribute getWireable_Configuration();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Wireable#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.nasdanika.sca.Wireable#getDescription()
+	 * @see #getWireable()
+	 * @generated
+	 */
+	EAttribute getWireable_Description();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.Reference <em>Reference</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1397,6 +1489,17 @@ public interface ScaPackage extends EPackage {
 	EReference getProperty_Binding();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Property#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.nasdanika.sca.Property#getDescription()
+	 * @see #getProperty()
+	 * @generated
+	 */
+	EAttribute getProperty_Description();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.PropertyImport <em>Property Import</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1416,6 +1519,17 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getPropertyImport_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.PropertyImport#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.nasdanika.sca.PropertyImport#getDescription()
+	 * @see #getPropertyImport()
+	 * @generated
+	 */
+	EAttribute getPropertyImport_Description();
 
 	/**
 	 * Returns the meta object for data type '{@link org.nasdanika.core.Context <em>Context</em>}'.
@@ -1742,6 +1856,14 @@ public interface ScaPackage extends EPackage {
 		EAttribute WIREABLE__CONFIGURATION = eINSTANCE.getWireable_Configuration();
 
 		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute WIREABLE__DESCRIPTION = eINSTANCE.getWireable_Description();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.sca.impl.ReferenceImpl <em>Reference</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1808,6 +1930,14 @@ public interface ScaPackage extends EPackage {
 		EReference PROPERTY__BINDING = eINSTANCE.getProperty_Binding();
 
 		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PROPERTY__DESCRIPTION = eINSTANCE.getProperty_Description();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.sca.impl.PropertyImportImpl <em>Property Import</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1824,6 +1954,14 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PROPERTY_IMPORT__NAME = eINSTANCE.getPropertyImport_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PROPERTY_IMPORT__DESCRIPTION = eINSTANCE.getPropertyImport_Description();
 
 		/**
 		 * The meta object literal for the '<em>Context</em>' data type.

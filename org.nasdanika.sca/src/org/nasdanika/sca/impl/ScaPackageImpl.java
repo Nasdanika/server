@@ -460,6 +460,15 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getWireable_Description() {
+		return (EAttribute)wireableEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getReference() {
 		return referenceEClass;
 	}
@@ -523,6 +532,15 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getProperty_Description() {
+		return (EAttribute)propertyEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPropertyImport() {
 		return propertyImportEClass;
 	}
@@ -534,6 +552,15 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 */
 	public EAttribute getPropertyImport_Name() {
 		return (EAttribute)propertyImportEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPropertyImport_Description() {
+		return (EAttribute)propertyImportEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -658,6 +685,7 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		wireableEClass = createEClass(WIREABLE);
 		createEAttribute(wireableEClass, WIREABLE__NAME);
 		createEAttribute(wireableEClass, WIREABLE__CONFIGURATION);
+		createEAttribute(wireableEClass, WIREABLE__DESCRIPTION);
 
 		wireSourceEClass = createEClass(WIRE_SOURCE);
 		createEReference(wireSourceEClass, WIRE_SOURCE__WIRE_TARGET);
@@ -676,9 +704,11 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		propertyEClass = createEClass(PROPERTY);
 		createEAttribute(propertyEClass, PROPERTY__NAME);
 		createEReference(propertyEClass, PROPERTY__BINDING);
+		createEAttribute(propertyEClass, PROPERTY__DESCRIPTION);
 
 		propertyImportEClass = createEClass(PROPERTY_IMPORT);
 		createEAttribute(propertyImportEClass, PROPERTY_IMPORT__NAME);
+		createEAttribute(propertyImportEClass, PROPERTY_IMPORT__DESCRIPTION);
 
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
@@ -764,6 +794,7 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		initEClass(wireableEClass, Wireable.class, "Wireable", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getWireable_Name(), ecorePackage.getEString(), "name", null, 0, 1, Wireable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getWireable_Configuration(), ecorePackage.getEString(), "configuration", null, 0, 1, Wireable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getWireable_Description(), ecorePackage.getEString(), "description", null, 0, 1, Wireable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(wireSourceEClass, WireSource.class, "WireSource", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getWireSource_WireTarget(), this.getWireTarget(), null, "wireTarget", null, 0, 1, WireSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -782,9 +813,11 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		initEClass(propertyEClass, Property.class, "Property", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getProperty_Name(), ecorePackage.getEString(), "name", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getProperty_Binding(), this.getPropertyImport(), null, "binding", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getProperty_Description(), ecorePackage.getEString(), "description", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(propertyImportEClass, PropertyImport.class, "PropertyImport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPropertyImport_Name(), ecorePackage.getEString(), "name", null, 0, 1, PropertyImport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPropertyImport_Description(), ecorePackage.getEString(), "description", null, 0, 1, PropertyImport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

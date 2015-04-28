@@ -6,7 +6,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.json.JSONObject;
 import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.sca.Composite;
 import org.nasdanika.sca.CompositeReference;
 import org.nasdanika.sca.ScaPackage;

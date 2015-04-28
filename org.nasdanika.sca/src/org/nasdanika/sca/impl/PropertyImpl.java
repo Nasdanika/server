@@ -19,6 +19,7 @@ import org.nasdanika.sca.ScaPackage;
  * <ul>
  *   <li>{@link org.nasdanika.sca.impl.PropertyImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.PropertyImpl#getBinding <em>Binding</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.PropertyImpl#getDescription <em>Description</em>}</li>
  * </ul>
  * </p>
  *
@@ -88,6 +89,24 @@ public class PropertyImpl extends CDOObjectImpl implements Property {
 	 */
 	public void setBinding(PropertyImport newBinding) {
 		eSet(ScaPackage.Literals.PROPERTY__BINDING, newBinding);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDescription() {
+		return (String)eGet(ScaPackage.Literals.PROPERTY__DESCRIPTION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		eSet(ScaPackage.Literals.PROPERTY__DESCRIPTION, newDescription);
 	}
 
 } //PropertyImpl
