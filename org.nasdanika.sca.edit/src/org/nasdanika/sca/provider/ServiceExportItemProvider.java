@@ -138,7 +138,7 @@ public class ServiceExportItemProvider extends CDOItemProviderAdapter implements
 				 getString("_UI_WireSource_wireTarget_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_WireSource_wireTarget_feature", "_UI_WireSource_type"),
 				 ScaPackage.Literals.WIRE_SOURCE__WIRE_TARGET,
-				 true,
+				 false,
 				 false,
 				 true,
 				 null,

@@ -52,7 +52,7 @@ public class PropertyItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
+	@Override 
 	public List<IItemPropertyDescriptor> getPropertyDescriptors(Object object) {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
@@ -100,7 +100,7 @@ public class PropertyItemProvider
 				 getString("_UI_Property_binding_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_Property_binding_feature", "_UI_Property_type"),
 				 ScaPackage.Literals.PROPERTY__BINDING,
-				 true,
+				 false,
 				 false,
 				 true,
 				 null,
