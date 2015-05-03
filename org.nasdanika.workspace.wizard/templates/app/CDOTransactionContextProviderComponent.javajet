@@ -7,9 +7,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.CDOTransactionContextProviderComponent;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
-import org.nasdanika.web.HttpContext;
 
-public class <%=wizard.getJavaName()%>CDOTransactionContextProviderComponent extends CDOTransactionContextProviderComponent<LoginPasswordCredentials, HttpContext> {
+public class <%=wizard.getJavaName()%>CDOTransactionContextProviderComponent extends CDOTransactionContextProviderComponent<LoginPasswordCredentials> {
 
 	@SuppressWarnings("unchecked")
 	@Override

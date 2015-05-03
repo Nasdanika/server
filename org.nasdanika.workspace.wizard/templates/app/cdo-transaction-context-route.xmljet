@@ -7,6 +7,6 @@
    <service>
       <provide interface="org.nasdanika.web.Route"/>
    </service>
-   <reference bind="setContextProvider" cardinality="1..1" interface="org.nasdanika.cdo.CDOTransactionContextProvider" name="CDOTransactionContextProvider" policy="static" unbind="clearContextProvider"/>
+   <reference bind="setFacadeContextProvider" cardinality="1..1" interface="org.nasdanika.cdo.CDOTransactionContextProvider" name="CDOTransactionContextProvider" policy="static" unbind="clearFacadeContextProvider"/>
    <property name="type" type="String" value="root"/>
 </scr:component>

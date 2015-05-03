@@ -1,29 +1,14 @@
 <%@ jet package="org.nasdanika.workspace.wizard.render.app" class="RouteRenderer" skeleton="../Renderer.skeleton" %>
 package <%=wizard.getApplicationArtifactId()%>;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.Breadcrumbs;
-import org.nasdanika.html.Button;
-import org.nasdanika.html.Carousel;
-import org.nasdanika.html.Form;
-import org.nasdanika.html.Theme;
-import org.nasdanika.html.FormGroup.Status;
-import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
-import org.nasdanika.html.HTMLFactory.InputType;
-import org.nasdanika.html.HTMLFactory.Placement;
-import org.nasdanika.html.Modal;
 import org.nasdanika.html.Navbar;
-import org.nasdanika.html.Table;
-import org.nasdanika.html.Table.Row;
-import org.nasdanika.html.UIElement.Color;
+import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement.DeviceSize;
 import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.html.UIElement.Size;
@@ -40,7 +25,7 @@ import org.nasdanika.web.WebContext;
 public class <%=wizard.getJavaName()%>Route implements Route {
 
 	@Override
-	public Action execute(WebContext context) throws Exception {
+	public Action execute(WebContext context, Object... args) throws Exception {
 		final HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 		
 		ApplicationPanel appPanel = htmlFactory.applicationPanel()

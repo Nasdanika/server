@@ -32,7 +32,7 @@
 		</repository>
 		<repository>
 			<id>jetty</id>
-			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
+			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x/8.1.16.v20140903</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
