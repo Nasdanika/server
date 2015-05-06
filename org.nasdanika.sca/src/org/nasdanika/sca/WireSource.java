@@ -19,7 +19,7 @@ package org.nasdanika.sca;
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface WireSource extends Wireable {
+public interface WireSource extends ModelElement {
 	/**
 	 * Returns the value of the '<em><b>Wire Target</b></em>' reference.
 	 * <!-- begin-user-doc -->

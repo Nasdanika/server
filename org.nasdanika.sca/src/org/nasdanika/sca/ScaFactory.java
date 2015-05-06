@@ -103,6 +103,42 @@ public interface ScaFactory extends EFactory {
 	PropertyImport createPropertyImport();
 
 	/**
+	 * Returns a new object of class '<em>Activator</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Activator</em>'.
+	 * @generated
+	 */
+	Activator createActivator();
+
+	/**
+	 * Returns a new object of class '<em>Operation</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Operation</em>'.
+	 * @generated
+	 */
+	Operation createOperation();
+
+	/**
+	 * Returns a new object of class '<em>Activator Import</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Activator Import</em>'.
+	 * @generated
+	 */
+	ActivatorImport createActivatorImport();
+
+	/**
+	 * Returns a new object of class '<em>Operation Export</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Operation Export</em>'.
+	 * @generated
+	 */
+	OperationExport createOperationExport();
+
+	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

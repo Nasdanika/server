@@ -17,7 +17,9 @@ import org.nasdanika.cdo.sca.Wire;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.sca.AbstractComponent;
+import org.nasdanika.sca.ActivatorImport;
 import org.nasdanika.sca.Composite;
+import org.nasdanika.sca.OperationExport;
 import org.nasdanika.sca.Property;
 import org.nasdanika.sca.PropertyImport;
 import org.nasdanika.sca.Reference;
@@ -38,6 +40,8 @@ import org.osgi.framework.BundleContext;
  *   <li>{@link org.nasdanika.sca.impl.CompositeImpl#getExportedServices <em>Exported Services</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.CompositeImpl#getImportedReferences <em>Imported References</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.CompositeImpl#getImportedProperties <em>Imported Properties</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.CompositeImpl#getExportedOperations <em>Exported Operations</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.CompositeImpl#getImportedActivators <em>Imported Activators</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.CompositeImpl#getImplementation <em>Implementation</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.CompositeImpl#getImplementationClass <em>Implementation Class</em>}</li>
  * </ul>
@@ -103,6 +107,26 @@ public class CompositeImpl extends AbstractComponentImpl implements Composite {
 	@SuppressWarnings("unchecked")
 	public EList<PropertyImport> getImportedProperties() {
 		return (EList<PropertyImport>)eGet(ScaPackage.Literals.COMPOSITE__IMPORTED_PROPERTIES, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<OperationExport> getExportedOperations() {
+		return (EList<OperationExport>)eGet(ScaPackage.Literals.COMPOSITE__EXPORTED_OPERATIONS, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<ActivatorImport> getImportedActivators() {
+		return (EList<ActivatorImport>)eGet(ScaPackage.Literals.COMPOSITE__IMPORTED_ACTIVATORS, true);
 	}
 
 	/**

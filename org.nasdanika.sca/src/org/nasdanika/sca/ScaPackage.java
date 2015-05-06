@@ -59,14 +59,14 @@ public interface ScaPackage extends EPackage {
 	ScaPackage eINSTANCE = org.nasdanika.sca.impl.ScaPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.sca.impl.AbstractComponentImpl <em>Abstract Component</em>}' class.
+	 * The meta object id for the '{@link org.nasdanika.sca.ModelElement <em>Model Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.sca.impl.AbstractComponentImpl
-	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getAbstractComponent()
+	 * @see org.nasdanika.sca.ModelElement
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getModelElement()
 	 * @generated
 	 */
-	int ABSTRACT_COMPONENT = 0;
+	int MODEL_ELEMENT = 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -75,16 +75,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT__NAME = 0;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ABSTRACT_COMPONENT__DESCRIPTION = 1;
+	int MODEL_ELEMENT__NAME = 0;
 
 	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
@@ -93,7 +84,71 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT__CONFIGURATION = 2;
+	int MODEL_ELEMENT__CONFIGURATION = 1;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_ELEMENT__DESCRIPTION = 2;
+
+	/**
+	 * The number of structural features of the '<em>Model Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_ELEMENT_FEATURE_COUNT = 3;
+
+	/**
+	 * The number of operations of the '<em>Model Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_ELEMENT_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.sca.impl.AbstractComponentImpl <em>Abstract Component</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.sca.impl.AbstractComponentImpl
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getAbstractComponent()
+	 * @generated
+	 */
+	int ABSTRACT_COMPONENT = 1;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_COMPONENT__NAME = MODEL_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_COMPONENT__CONFIGURATION = MODEL_ELEMENT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_COMPONENT__DESCRIPTION = MODEL_ELEMENT__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
@@ -102,7 +157,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT__SERVICES = 3;
+	int ABSTRACT_COMPONENT__SERVICES = MODEL_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>References</b></em>' containment reference list.
@@ -111,7 +166,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT__REFERENCES = 4;
+	int ABSTRACT_COMPONENT__REFERENCES = MODEL_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
@@ -120,7 +175,25 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT__PROPERTIES = 5;
+	int ABSTRACT_COMPONENT__PROPERTIES = MODEL_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Operations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_COMPONENT__OPERATIONS = MODEL_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Activators</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ABSTRACT_COMPONENT__ACTIVATORS = MODEL_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>Abstract Component</em>' class.
@@ -129,7 +202,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT_FEATURE_COUNT = 6;
+	int ABSTRACT_COMPONENT_FEATURE_COUNT = MODEL_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The operation id for the '<em>Create Runtime Component</em>' operation.
@@ -138,7 +211,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT = 0;
+	int ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT = MODEL_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of operations of the '<em>Abstract Component</em>' class.
@@ -147,7 +220,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ABSTRACT_COMPONENT_OPERATION_COUNT = 1;
+	int ABSTRACT_COMPONENT_OPERATION_COUNT = MODEL_ELEMENT_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.sca.impl.ComponentImpl <em>Component</em>}' class.
@@ -157,7 +230,7 @@ public interface ScaPackage extends EPackage {
 	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getComponent()
 	 * @generated
 	 */
-	int COMPONENT = 1;
+	int COMPONENT = 2;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -169,15 +242,6 @@ public interface ScaPackage extends EPackage {
 	int COMPONENT__NAME = ABSTRACT_COMPONENT__NAME;
 
 	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPONENT__DESCRIPTION = ABSTRACT_COMPONENT__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -185,6 +249,15 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT__CONFIGURATION = ABSTRACT_COMPONENT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT__DESCRIPTION = ABSTRACT_COMPONENT__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
@@ -212,6 +285,24 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPONENT__PROPERTIES = ABSTRACT_COMPONENT__PROPERTIES;
+
+	/**
+	 * The feature id for the '<em><b>Operations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT__OPERATIONS = ABSTRACT_COMPONENT__OPERATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Activators</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT__ACTIVATORS = ABSTRACT_COMPONENT__ACTIVATORS;
 
 	/**
 	 * The feature id for the '<em><b>Implementation</b></em>' reference.
@@ -302,7 +393,7 @@ public interface ScaPackage extends EPackage {
 	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getComposite()
 	 * @generated
 	 */
-	int COMPOSITE = 2;
+	int COMPOSITE = 3;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -314,15 +405,6 @@ public interface ScaPackage extends EPackage {
 	int COMPOSITE__NAME = ABSTRACT_COMPONENT__NAME;
 
 	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPOSITE__DESCRIPTION = ABSTRACT_COMPONENT__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -330,6 +412,15 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPOSITE__CONFIGURATION = ABSTRACT_COMPONENT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE__DESCRIPTION = ABSTRACT_COMPONENT__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
@@ -357,6 +448,24 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPOSITE__PROPERTIES = ABSTRACT_COMPONENT__PROPERTIES;
+
+	/**
+	 * The feature id for the '<em><b>Operations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE__OPERATIONS = ABSTRACT_COMPONENT__OPERATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Activators</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE__ACTIVATORS = ABSTRACT_COMPONENT__ACTIVATORS;
 
 	/**
 	 * The feature id for the '<em><b>Components</b></em>' containment reference list.
@@ -395,13 +504,31 @@ public interface ScaPackage extends EPackage {
 	int COMPOSITE__IMPORTED_PROPERTIES = ABSTRACT_COMPONENT_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Exported Operations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE__EXPORTED_OPERATIONS = ABSTRACT_COMPONENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Imported Activators</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE__IMPORTED_ACTIVATORS = ABSTRACT_COMPONENT_FEATURE_COUNT + 5;
+
+	/**
 	 * The feature id for the '<em><b>Implementation</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPOSITE__IMPLEMENTATION = ABSTRACT_COMPONENT_FEATURE_COUNT + 4;
+	int COMPOSITE__IMPLEMENTATION = ABSTRACT_COMPONENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Implementation Class</b></em>' reference.
@@ -410,7 +537,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPOSITE__IMPLEMENTATION_CLASS = ABSTRACT_COMPONENT_FEATURE_COUNT + 5;
+	int COMPOSITE__IMPLEMENTATION_CLASS = ABSTRACT_COMPONENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of structural features of the '<em>Composite</em>' class.
@@ -419,7 +546,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPOSITE_FEATURE_COUNT = ABSTRACT_COMPONENT_FEATURE_COUNT + 6;
+	int COMPOSITE_FEATURE_COUNT = ABSTRACT_COMPONENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The operation id for the '<em>Create Runtime Component</em>' operation.
@@ -447,7 +574,7 @@ public interface ScaPackage extends EPackage {
 	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getCompositeReference()
 	 * @generated
 	 */
-	int COMPOSITE_REFERENCE = 3;
+	int COMPOSITE_REFERENCE = 4;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -459,15 +586,6 @@ public interface ScaPackage extends EPackage {
 	int COMPOSITE_REFERENCE__NAME = ABSTRACT_COMPONENT__NAME;
 
 	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPOSITE_REFERENCE__DESCRIPTION = ABSTRACT_COMPONENT__DESCRIPTION;
-
-	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -475,6 +593,15 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPOSITE_REFERENCE__CONFIGURATION = ABSTRACT_COMPONENT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE_REFERENCE__DESCRIPTION = ABSTRACT_COMPONENT__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
@@ -502,6 +629,24 @@ public interface ScaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPOSITE_REFERENCE__PROPERTIES = ABSTRACT_COMPONENT__PROPERTIES;
+
+	/**
+	 * The feature id for the '<em><b>Operations</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE_REFERENCE__OPERATIONS = ABSTRACT_COMPONENT__OPERATIONS;
+
+	/**
+	 * The feature id for the '<em><b>Activators</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPOSITE_REFERENCE__ACTIVATORS = ABSTRACT_COMPONENT__ACTIVATORS;
 
 	/**
 	 * The feature id for the '<em><b>Target</b></em>' reference.
@@ -540,61 +685,6 @@ public interface ScaPackage extends EPackage {
 	int COMPOSITE_REFERENCE_OPERATION_COUNT = ABSTRACT_COMPONENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.sca.Wireable <em>Wireable</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.sca.Wireable
-	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getWireable()
-	 * @generated
-	 */
-	int WIREABLE = 4;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WIREABLE__NAME = 0;
-
-	/**
-	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WIREABLE__CONFIGURATION = 1;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WIREABLE__DESCRIPTION = 2;
-
-	/**
-	 * The number of structural features of the '<em>Wireable</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WIREABLE_FEATURE_COUNT = 3;
-
-	/**
-	 * The number of operations of the '<em>Wireable</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WIREABLE_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link org.nasdanika.sca.WireSource <em>Wire Source</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -611,7 +701,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_SOURCE__NAME = WIREABLE__NAME;
+	int WIRE_SOURCE__NAME = MODEL_ELEMENT__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
@@ -620,7 +710,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_SOURCE__CONFIGURATION = WIREABLE__CONFIGURATION;
+	int WIRE_SOURCE__CONFIGURATION = MODEL_ELEMENT__CONFIGURATION;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -629,7 +719,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_SOURCE__DESCRIPTION = WIREABLE__DESCRIPTION;
+	int WIRE_SOURCE__DESCRIPTION = MODEL_ELEMENT__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Wire Target</b></em>' reference.
@@ -638,7 +728,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_SOURCE__WIRE_TARGET = WIREABLE_FEATURE_COUNT + 0;
+	int WIRE_SOURCE__WIRE_TARGET = MODEL_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Wire Source</em>' class.
@@ -647,7 +737,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_SOURCE_FEATURE_COUNT = WIREABLE_FEATURE_COUNT + 1;
+	int WIRE_SOURCE_FEATURE_COUNT = MODEL_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Wire Source</em>' class.
@@ -656,7 +746,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_SOURCE_OPERATION_COUNT = WIREABLE_OPERATION_COUNT + 0;
+	int WIRE_SOURCE_OPERATION_COUNT = MODEL_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.sca.impl.ReferenceImpl <em>Reference</em>}' class.
@@ -685,7 +775,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_TARGET__NAME = WIREABLE__NAME;
+	int WIRE_TARGET__NAME = MODEL_ELEMENT__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
@@ -694,7 +784,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_TARGET__CONFIGURATION = WIREABLE__CONFIGURATION;
+	int WIRE_TARGET__CONFIGURATION = MODEL_ELEMENT__CONFIGURATION;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -703,7 +793,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_TARGET__DESCRIPTION = WIREABLE__DESCRIPTION;
+	int WIRE_TARGET__DESCRIPTION = MODEL_ELEMENT__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' reference.
@@ -712,7 +802,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_TARGET__TYPE = WIREABLE_FEATURE_COUNT + 0;
+	int WIRE_TARGET__TYPE = MODEL_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Wire Target</em>' class.
@@ -721,7 +811,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_TARGET_FEATURE_COUNT = WIREABLE_FEATURE_COUNT + 1;
+	int WIRE_TARGET_FEATURE_COUNT = MODEL_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Wire Target</em>' class.
@@ -730,7 +820,7 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WIRE_TARGET_OPERATION_COUNT = WIREABLE_OPERATION_COUNT + 0;
+	int WIRE_TARGET_OPERATION_COUNT = MODEL_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1082,6 +1172,417 @@ public interface ScaPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.sca.InvocationSource <em>Invocation Source</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.sca.InvocationSource
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getInvocationSource()
+	 * @generated
+	 */
+	int INVOCATION_SOURCE = 13;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_SOURCE__NAME = MODEL_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_SOURCE__CONFIGURATION = MODEL_ELEMENT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_SOURCE__DESCRIPTION = MODEL_ELEMENT__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Invocation Target</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_SOURCE__INVOCATION_TARGET = MODEL_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_SOURCE__BINDINGS = MODEL_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Invocation Source</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_SOURCE_FEATURE_COUNT = MODEL_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of operations of the '<em>Invocation Source</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_SOURCE_OPERATION_COUNT = MODEL_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.sca.InvocationTarget <em>Invocation Target</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.sca.InvocationTarget
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getInvocationTarget()
+	 * @generated
+	 */
+	int INVOCATION_TARGET = 14;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_TARGET__NAME = MODEL_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_TARGET__CONFIGURATION = MODEL_ELEMENT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_TARGET__DESCRIPTION = MODEL_ELEMENT__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_TARGET__BINDINGS = MODEL_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Invocation Target</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_TARGET_FEATURE_COUNT = MODEL_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of operations of the '<em>Invocation Target</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INVOCATION_TARGET_OPERATION_COUNT = MODEL_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.sca.impl.ActivatorImpl <em>Activator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.sca.impl.ActivatorImpl
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getActivator()
+	 * @generated
+	 */
+	int ACTIVATOR = 15;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR__NAME = INVOCATION_SOURCE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR__CONFIGURATION = INVOCATION_SOURCE__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR__DESCRIPTION = INVOCATION_SOURCE__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Invocation Target</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR__INVOCATION_TARGET = INVOCATION_SOURCE__INVOCATION_TARGET;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR__BINDINGS = INVOCATION_SOURCE__BINDINGS;
+
+	/**
+	 * The number of structural features of the '<em>Activator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_FEATURE_COUNT = INVOCATION_SOURCE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Activator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_OPERATION_COUNT = INVOCATION_SOURCE_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.sca.impl.OperationImpl <em>Operation</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.sca.impl.OperationImpl
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getOperation()
+	 * @generated
+	 */
+	int OPERATION = 16;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION__NAME = INVOCATION_TARGET__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION__CONFIGURATION = INVOCATION_TARGET__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION__DESCRIPTION = INVOCATION_TARGET__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION__BINDINGS = INVOCATION_TARGET__BINDINGS;
+
+	/**
+	 * The number of structural features of the '<em>Operation</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_FEATURE_COUNT = INVOCATION_TARGET_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Operation</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_OPERATION_COUNT = INVOCATION_TARGET_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.sca.impl.ActivatorImportImpl <em>Activator Import</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.sca.impl.ActivatorImportImpl
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getActivatorImport()
+	 * @generated
+	 */
+	int ACTIVATOR_IMPORT = 17;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_IMPORT__NAME = INVOCATION_TARGET__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_IMPORT__CONFIGURATION = INVOCATION_TARGET__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_IMPORT__DESCRIPTION = INVOCATION_TARGET__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_IMPORT__BINDINGS = INVOCATION_TARGET__BINDINGS;
+
+	/**
+	 * The number of structural features of the '<em>Activator Import</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_IMPORT_FEATURE_COUNT = INVOCATION_TARGET_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Activator Import</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTIVATOR_IMPORT_OPERATION_COUNT = INVOCATION_TARGET_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.sca.impl.OperationExportImpl <em>Operation Export</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.sca.impl.OperationExportImpl
+	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getOperationExport()
+	 * @generated
+	 */
+	int OPERATION_EXPORT = 18;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_EXPORT__NAME = INVOCATION_SOURCE__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_EXPORT__CONFIGURATION = INVOCATION_SOURCE__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_EXPORT__DESCRIPTION = INVOCATION_SOURCE__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Invocation Target</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_EXPORT__INVOCATION_TARGET = INVOCATION_SOURCE__INVOCATION_TARGET;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_EXPORT__BINDINGS = INVOCATION_SOURCE__BINDINGS;
+
+	/**
+	 * The number of structural features of the '<em>Operation Export</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_EXPORT_FEATURE_COUNT = INVOCATION_SOURCE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of operations of the '<em>Operation Export</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_EXPORT_OPERATION_COUNT = INVOCATION_SOURCE_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '<em>Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1089,7 +1590,7 @@ public interface ScaPackage extends EPackage {
 	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 13;
+	int CONTEXT = 19;
 
 
 	/**
@@ -1100,7 +1601,7 @@ public interface ScaPackage extends EPackage {
 	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getBundleContext()
 	 * @generated
 	 */
-	int BUNDLE_CONTEXT = 14;
+	int BUNDLE_CONTEXT = 20;
 
 
 	/**
@@ -1111,8 +1612,51 @@ public interface ScaPackage extends EPackage {
 	 * @see org.nasdanika.sca.impl.ScaPackageImpl#getException()
 	 * @generated
 	 */
-	int EXCEPTION = 15;
+	int EXCEPTION = 21;
 
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.sca.ModelElement <em>Model Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Model Element</em>'.
+	 * @see org.nasdanika.sca.ModelElement
+	 * @generated
+	 */
+	EClass getModelElement();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.ModelElement#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.nasdanika.sca.ModelElement#getName()
+	 * @see #getModelElement()
+	 * @generated
+	 */
+	EAttribute getModelElement_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.ModelElement#getConfiguration <em>Configuration</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Configuration</em>'.
+	 * @see org.nasdanika.sca.ModelElement#getConfiguration()
+	 * @see #getModelElement()
+	 * @generated
+	 */
+	EAttribute getModelElement_Configuration();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.ModelElement#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.nasdanika.sca.ModelElement#getDescription()
+	 * @see #getModelElement()
+	 * @generated
+	 */
+	EAttribute getModelElement_Description();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.AbstractComponent <em>Abstract Component</em>}'.
@@ -1123,39 +1667,6 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getAbstractComponent();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.AbstractComponent#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.nasdanika.sca.AbstractComponent#getName()
-	 * @see #getAbstractComponent()
-	 * @generated
-	 */
-	EAttribute getAbstractComponent_Name();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.AbstractComponent#getDescription <em>Description</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Description</em>'.
-	 * @see org.nasdanika.sca.AbstractComponent#getDescription()
-	 * @see #getAbstractComponent()
-	 * @generated
-	 */
-	EAttribute getAbstractComponent_Description();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.AbstractComponent#getConfiguration <em>Configuration</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Configuration</em>'.
-	 * @see org.nasdanika.sca.AbstractComponent#getConfiguration()
-	 * @see #getAbstractComponent()
-	 * @generated
-	 */
-	EAttribute getAbstractComponent_Configuration();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.nasdanika.sca.AbstractComponent#getServices <em>Services</em>}'.
@@ -1189,6 +1700,28 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getAbstractComponent_Properties();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.sca.AbstractComponent#getOperations <em>Operations</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Operations</em>'.
+	 * @see org.nasdanika.sca.AbstractComponent#getOperations()
+	 * @see #getAbstractComponent()
+	 * @generated
+	 */
+	EReference getAbstractComponent_Operations();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.sca.AbstractComponent#getActivators <em>Activators</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Activators</em>'.
+	 * @see org.nasdanika.sca.AbstractComponent#getActivators()
+	 * @see #getAbstractComponent()
+	 * @generated
+	 */
+	EReference getAbstractComponent_Activators();
 
 	/**
 	 * Returns the meta object for the '{@link org.nasdanika.sca.AbstractComponent#createRuntimeComponent(org.osgi.framework.BundleContext, org.nasdanika.core.Context) <em>Create Runtime Component</em>}' operation.
@@ -1331,6 +1864,28 @@ public interface ScaPackage extends EPackage {
 	EReference getComposite_ImportedProperties();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.sca.Composite#getExportedOperations <em>Exported Operations</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Exported Operations</em>'.
+	 * @see org.nasdanika.sca.Composite#getExportedOperations()
+	 * @see #getComposite()
+	 * @generated
+	 */
+	EReference getComposite_ExportedOperations();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.sca.Composite#getImportedActivators <em>Imported Activators</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Imported Activators</em>'.
+	 * @see org.nasdanika.sca.Composite#getImportedActivators()
+	 * @see #getComposite()
+	 * @generated
+	 */
+	EReference getComposite_ImportedActivators();
+
+	/**
 	 * Returns the meta object for the reference '{@link org.nasdanika.sca.Composite#getImplementation <em>Implementation</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1372,49 +1927,6 @@ public interface ScaPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getCompositeReference_Target();
-
-	/**
-	 * Returns the meta object for class '{@link org.nasdanika.sca.Wireable <em>Wireable</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Wireable</em>'.
-	 * @see org.nasdanika.sca.Wireable
-	 * @generated
-	 */
-	EClass getWireable();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Wireable#getName <em>Name</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.nasdanika.sca.Wireable#getName()
-	 * @see #getWireable()
-	 * @generated
-	 */
-	EAttribute getWireable_Name();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Wireable#getConfiguration <em>Configuration</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Configuration</em>'.
-	 * @see org.nasdanika.sca.Wireable#getConfiguration()
-	 * @see #getWireable()
-	 * @generated
-	 */
-	EAttribute getWireable_Configuration();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.Wireable#getDescription <em>Description</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Description</em>'.
-	 * @see org.nasdanika.sca.Wireable#getDescription()
-	 * @see #getWireable()
-	 * @generated
-	 */
-	EAttribute getWireable_Description();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.sca.Reference <em>Reference</em>}'.
@@ -1532,6 +2044,99 @@ public interface ScaPackage extends EPackage {
 	EAttribute getPropertyImport_Description();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.sca.InvocationSource <em>Invocation Source</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Invocation Source</em>'.
+	 * @see org.nasdanika.sca.InvocationSource
+	 * @generated
+	 */
+	EClass getInvocationSource();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.sca.InvocationSource#getInvocationTarget <em>Invocation Target</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Invocation Target</em>'.
+	 * @see org.nasdanika.sca.InvocationSource#getInvocationTarget()
+	 * @see #getInvocationSource()
+	 * @generated
+	 */
+	EReference getInvocationSource_InvocationTarget();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.InvocationSource#getBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Bindings</em>'.
+	 * @see org.nasdanika.sca.InvocationSource#getBindings()
+	 * @see #getInvocationSource()
+	 * @generated
+	 */
+	EAttribute getInvocationSource_Bindings();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.sca.InvocationTarget <em>Invocation Target</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Invocation Target</em>'.
+	 * @see org.nasdanika.sca.InvocationTarget
+	 * @generated
+	 */
+	EClass getInvocationTarget();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.sca.InvocationTarget#getBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Bindings</em>'.
+	 * @see org.nasdanika.sca.InvocationTarget#getBindings()
+	 * @see #getInvocationTarget()
+	 * @generated
+	 */
+	EAttribute getInvocationTarget_Bindings();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.sca.Activator <em>Activator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Activator</em>'.
+	 * @see org.nasdanika.sca.Activator
+	 * @generated
+	 */
+	EClass getActivator();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.sca.Operation <em>Operation</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Operation</em>'.
+	 * @see org.nasdanika.sca.Operation
+	 * @generated
+	 */
+	EClass getOperation();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.sca.ActivatorImport <em>Activator Import</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Activator Import</em>'.
+	 * @see org.nasdanika.sca.ActivatorImport
+	 * @generated
+	 */
+	EClass getActivatorImport();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.sca.OperationExport <em>Operation Export</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Operation Export</em>'.
+	 * @see org.nasdanika.sca.OperationExport
+	 * @generated
+	 */
+	EClass getOperationExport();
+
+	/**
 	 * Returns the meta object for data type '{@link org.nasdanika.core.Context <em>Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1630,6 +2235,40 @@ public interface ScaPackage extends EPackage {
 	 */
 	interface Literals {
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.sca.ModelElement <em>Model Element</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.sca.ModelElement
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getModelElement()
+		 * @generated
+		 */
+		EClass MODEL_ELEMENT = eINSTANCE.getModelElement();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MODEL_ELEMENT__NAME = eINSTANCE.getModelElement_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Configuration</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MODEL_ELEMENT__CONFIGURATION = eINSTANCE.getModelElement_Configuration();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MODEL_ELEMENT__DESCRIPTION = eINSTANCE.getModelElement_Description();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.sca.impl.AbstractComponentImpl <em>Abstract Component</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1638,30 +2277,6 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ABSTRACT_COMPONENT = eINSTANCE.getAbstractComponent();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ABSTRACT_COMPONENT__NAME = eINSTANCE.getAbstractComponent_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ABSTRACT_COMPONENT__DESCRIPTION = eINSTANCE.getAbstractComponent_Description();
-
-		/**
-		 * The meta object literal for the '<em><b>Configuration</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ABSTRACT_COMPONENT__CONFIGURATION = eINSTANCE.getAbstractComponent_Configuration();
 
 		/**
 		 * The meta object literal for the '<em><b>Services</b></em>' containment reference list feature.
@@ -1686,6 +2301,22 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference ABSTRACT_COMPONENT__PROPERTIES = eINSTANCE.getAbstractComponent_Properties();
+
+		/**
+		 * The meta object literal for the '<em><b>Operations</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ABSTRACT_COMPONENT__OPERATIONS = eINSTANCE.getAbstractComponent_Operations();
+
+		/**
+		 * The meta object literal for the '<em><b>Activators</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ABSTRACT_COMPONENT__ACTIVATORS = eINSTANCE.getAbstractComponent_Activators();
 
 		/**
 		 * The meta object literal for the '<em><b>Create Runtime Component</b></em>' operation.
@@ -1796,6 +2427,22 @@ public interface ScaPackage extends EPackage {
 		EReference COMPOSITE__IMPORTED_PROPERTIES = eINSTANCE.getComposite_ImportedProperties();
 
 		/**
+		 * The meta object literal for the '<em><b>Exported Operations</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPOSITE__EXPORTED_OPERATIONS = eINSTANCE.getComposite_ExportedOperations();
+
+		/**
+		 * The meta object literal for the '<em><b>Imported Activators</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMPOSITE__IMPORTED_ACTIVATORS = eINSTANCE.getComposite_ImportedActivators();
+
+		/**
 		 * The meta object literal for the '<em><b>Implementation</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -1828,40 +2475,6 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EReference COMPOSITE_REFERENCE__TARGET = eINSTANCE.getCompositeReference_Target();
-
-		/**
-		 * The meta object literal for the '{@link org.nasdanika.sca.Wireable <em>Wireable</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.sca.Wireable
-		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getWireable()
-		 * @generated
-		 */
-		EClass WIREABLE = eINSTANCE.getWireable();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute WIREABLE__NAME = eINSTANCE.getWireable_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Configuration</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute WIREABLE__CONFIGURATION = eINSTANCE.getWireable_Configuration();
-
-		/**
-		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute WIREABLE__DESCRIPTION = eINSTANCE.getWireable_Description();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.sca.impl.ReferenceImpl <em>Reference</em>}' class.
@@ -1962,6 +2575,90 @@ public interface ScaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PROPERTY_IMPORT__DESCRIPTION = eINSTANCE.getPropertyImport_Description();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.sca.InvocationSource <em>Invocation Source</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.sca.InvocationSource
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getInvocationSource()
+		 * @generated
+		 */
+		EClass INVOCATION_SOURCE = eINSTANCE.getInvocationSource();
+
+		/**
+		 * The meta object literal for the '<em><b>Invocation Target</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference INVOCATION_SOURCE__INVOCATION_TARGET = eINSTANCE.getInvocationSource_InvocationTarget();
+
+		/**
+		 * The meta object literal for the '<em><b>Bindings</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute INVOCATION_SOURCE__BINDINGS = eINSTANCE.getInvocationSource_Bindings();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.sca.InvocationTarget <em>Invocation Target</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.sca.InvocationTarget
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getInvocationTarget()
+		 * @generated
+		 */
+		EClass INVOCATION_TARGET = eINSTANCE.getInvocationTarget();
+
+		/**
+		 * The meta object literal for the '<em><b>Bindings</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute INVOCATION_TARGET__BINDINGS = eINSTANCE.getInvocationTarget_Bindings();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.sca.impl.ActivatorImpl <em>Activator</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.sca.impl.ActivatorImpl
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getActivator()
+		 * @generated
+		 */
+		EClass ACTIVATOR = eINSTANCE.getActivator();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.sca.impl.OperationImpl <em>Operation</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.sca.impl.OperationImpl
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getOperation()
+		 * @generated
+		 */
+		EClass OPERATION = eINSTANCE.getOperation();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.sca.impl.ActivatorImportImpl <em>Activator Import</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.sca.impl.ActivatorImportImpl
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getActivatorImport()
+		 * @generated
+		 */
+		EClass ACTIVATOR_IMPORT = eINSTANCE.getActivatorImport();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.sca.impl.OperationExportImpl <em>Operation Export</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.sca.impl.OperationExportImpl
+		 * @see org.nasdanika.sca.impl.ScaPackageImpl#getOperationExport()
+		 * @generated
+		 */
+		EClass OPERATION_EXPORT = eINSTANCE.getOperationExport();
 
 		/**
 		 * The meta object literal for the '<em>Context</em>' data type.

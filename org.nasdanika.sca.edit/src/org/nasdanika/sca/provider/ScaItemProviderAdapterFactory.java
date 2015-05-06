@@ -279,6 +279,98 @@ public class ScaItemProviderAdapterFactory extends ScaAdapterFactory implements 
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.sca.Activator} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ActivatorItemProvider activatorItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.sca.Activator}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createActivatorAdapter() {
+		if (activatorItemProvider == null) {
+			activatorItemProvider = new ActivatorItemProvider(this);
+		}
+
+		return activatorItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.sca.Operation} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected OperationItemProvider operationItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.sca.Operation}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createOperationAdapter() {
+		if (operationItemProvider == null) {
+			operationItemProvider = new OperationItemProvider(this);
+		}
+
+		return operationItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.sca.ActivatorImport} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ActivatorImportItemProvider activatorImportItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.sca.ActivatorImport}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createActivatorImportAdapter() {
+		if (activatorImportItemProvider == null) {
+			activatorImportItemProvider = new ActivatorImportItemProvider(this);
+		}
+
+		return activatorImportItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.sca.OperationExport} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected OperationExportItemProvider operationExportItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.sca.OperationExport}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createOperationExportAdapter() {
+		if (operationExportItemProvider == null) {
+			operationExportItemProvider = new OperationExportItemProvider(this);
+		}
+
+		return operationExportItemProvider;
+	}
+
+	/**
 	 * This returns the root adapter factory that contains this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -386,6 +478,10 @@ public class ScaItemProviderAdapterFactory extends ScaAdapterFactory implements 
 		if (serviceExportItemProvider != null) serviceExportItemProvider.dispose();
 		if (propertyItemProvider != null) propertyItemProvider.dispose();
 		if (propertyImportItemProvider != null) propertyImportItemProvider.dispose();
+		if (activatorItemProvider != null) activatorItemProvider.dispose();
+		if (operationItemProvider != null) operationItemProvider.dispose();
+		if (activatorImportItemProvider != null) activatorImportItemProvider.dispose();
+		if (operationExportItemProvider != null) operationExportItemProvider.dispose();
 	}
 
 }

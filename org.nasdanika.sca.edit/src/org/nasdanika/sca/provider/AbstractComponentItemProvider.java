@@ -65,8 +65,8 @@ public class AbstractComponentItemProvider
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
-			addDescriptionPropertyDescriptor(object);
 			addConfigurationPropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -82,9 +82,9 @@ public class AbstractComponentItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_AbstractComponent_name_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_AbstractComponent_name_feature", "_UI_AbstractComponent_type"),
-				 ScaPackage.Literals.ABSTRACT_COMPONENT__NAME,
+				 getString("_UI_ModelElement_name_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ModelElement_name_feature", "_UI_ModelElement_type"),
+				 ScaPackage.Literals.MODEL_ELEMENT__NAME,
 				 true,
 				 false,
 				 false,
@@ -104,11 +104,11 @@ public class AbstractComponentItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_AbstractComponent_description_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_AbstractComponent_description_feature", "_UI_AbstractComponent_type"),
-				 ScaPackage.Literals.ABSTRACT_COMPONENT__DESCRIPTION,
+				 getString("_UI_ModelElement_description_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ModelElement_description_feature", "_UI_ModelElement_type"),
+				 ScaPackage.Literals.MODEL_ELEMENT__DESCRIPTION,
 				 true,
-				 true,
+				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -126,11 +126,11 @@ public class AbstractComponentItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_AbstractComponent_configuration_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_AbstractComponent_configuration_feature", "_UI_AbstractComponent_type"),
-				 ScaPackage.Literals.ABSTRACT_COMPONENT__CONFIGURATION,
+				 getString("_UI_ModelElement_configuration_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ModelElement_configuration_feature", "_UI_ModelElement_type"),
+				 ScaPackage.Literals.MODEL_ELEMENT__CONFIGURATION,
 				 true,
-				 true,
+				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -152,6 +152,8 @@ public class AbstractComponentItemProvider
 			childrenFeatures.add(ScaPackage.Literals.ABSTRACT_COMPONENT__SERVICES);
 			childrenFeatures.add(ScaPackage.Literals.ABSTRACT_COMPONENT__REFERENCES);
 			childrenFeatures.add(ScaPackage.Literals.ABSTRACT_COMPONENT__PROPERTIES);
+			childrenFeatures.add(ScaPackage.Literals.ABSTRACT_COMPONENT__OPERATIONS);
+			childrenFeatures.add(ScaPackage.Literals.ABSTRACT_COMPONENT__ACTIVATORS);
 		}
 		return childrenFeatures;
 	}
@@ -208,13 +210,15 @@ public class AbstractComponentItemProvider
 
 		switch (notification.getFeatureID(AbstractComponent.class)) {
 			case ScaPackage.ABSTRACT_COMPONENT__NAME:
-			case ScaPackage.ABSTRACT_COMPONENT__DESCRIPTION:
 			case ScaPackage.ABSTRACT_COMPONENT__CONFIGURATION:
+			case ScaPackage.ABSTRACT_COMPONENT__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 			case ScaPackage.ABSTRACT_COMPONENT__SERVICES:
 			case ScaPackage.ABSTRACT_COMPONENT__REFERENCES:
 			case ScaPackage.ABSTRACT_COMPONENT__PROPERTIES:
+			case ScaPackage.ABSTRACT_COMPONENT__OPERATIONS:
+			case ScaPackage.ABSTRACT_COMPONENT__ACTIVATORS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -246,6 +250,16 @@ public class AbstractComponentItemProvider
 			(createChildParameter
 				(ScaPackage.Literals.ABSTRACT_COMPONENT__PROPERTIES,
 				 ScaFactory.eINSTANCE.createProperty()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ScaPackage.Literals.ABSTRACT_COMPONENT__OPERATIONS,
+				 ScaFactory.eINSTANCE.createOperation()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ScaPackage.Literals.ABSTRACT_COMPONENT__ACTIVATORS,
+				 ScaFactory.eINSTANCE.createActivator()));
 	}
 
 	/**

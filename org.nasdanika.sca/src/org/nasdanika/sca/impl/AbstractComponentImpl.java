@@ -16,6 +16,8 @@ import org.json.JSONTokener;
 import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.core.Context;
 import org.nasdanika.sca.AbstractComponent;
+import org.nasdanika.sca.Activator;
+import org.nasdanika.sca.Operation;
 import org.nasdanika.sca.Property;
 import org.nasdanika.sca.Reference;
 import org.nasdanika.sca.ScaPackage;
@@ -31,11 +33,13 @@ import org.osgi.framework.BundleContext;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getConfiguration <em>Configuration</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getServices <em>Services</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getReferences <em>References</em>}</li>
  *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getProperties <em>Properties</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getOperations <em>Operations</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.AbstractComponentImpl#getActivators <em>Activators</em>}</li>
  * </ul>
  * </p>
  *
@@ -80,7 +84,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 	 * @generated
 	 */
 	public String getName() {
-		return (String)eGet(ScaPackage.Literals.ABSTRACT_COMPONENT__NAME, true);
+		return (String)eGet(ScaPackage.Literals.MODEL_ELEMENT__NAME, true);
 	}
 
 	/**
@@ -89,7 +93,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 	 * @generated
 	 */
 	public void setName(String newName) {
-		eSet(ScaPackage.Literals.ABSTRACT_COMPONENT__NAME, newName);
+		eSet(ScaPackage.Literals.MODEL_ELEMENT__NAME, newName);
 	}
 
 	/**
@@ -98,7 +102,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 	 * @generated
 	 */
 	public String getDescription() {
-		return (String)eGet(ScaPackage.Literals.ABSTRACT_COMPONENT__DESCRIPTION, true);
+		return (String)eGet(ScaPackage.Literals.MODEL_ELEMENT__DESCRIPTION, true);
 	}
 
 	/**
@@ -107,7 +111,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 	 * @generated
 	 */
 	public void setDescription(String newDescription) {
-		eSet(ScaPackage.Literals.ABSTRACT_COMPONENT__DESCRIPTION, newDescription);
+		eSet(ScaPackage.Literals.MODEL_ELEMENT__DESCRIPTION, newDescription);
 	}
 
 	/**
@@ -116,7 +120,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 	 * @generated
 	 */
 	public String getConfiguration() {
-		return (String)eGet(ScaPackage.Literals.ABSTRACT_COMPONENT__CONFIGURATION, true);
+		return (String)eGet(ScaPackage.Literals.MODEL_ELEMENT__CONFIGURATION, true);
 	}
 
 	/**
@@ -125,7 +129,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 	 * @generated
 	 */
 	public void setConfiguration(String newConfiguration) {
-		eSet(ScaPackage.Literals.ABSTRACT_COMPONENT__CONFIGURATION, newConfiguration);
+		eSet(ScaPackage.Literals.MODEL_ELEMENT__CONFIGURATION, newConfiguration);
 	}
 
 	/**
@@ -156,6 +160,26 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 	@SuppressWarnings("unchecked")
 	public EList<Property> getProperties() {
 		return (EList<Property>)eGet(ScaPackage.Literals.ABSTRACT_COMPONENT__PROPERTIES, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<Operation> getOperations() {
+		return (EList<Operation>)eGet(ScaPackage.Literals.ABSTRACT_COMPONENT__OPERATIONS, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<Activator> getActivators() {
+		return (EList<Activator>)eGet(ScaPackage.Literals.ABSTRACT_COMPONENT__ACTIVATORS, true);
 	}
 
 	/**

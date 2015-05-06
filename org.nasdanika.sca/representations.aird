@@ -3,6 +3,10 @@
   <models xmi:type="ecore:EPackage" href="model/sca.ecore#/"/>
   <models xmi:type="ecore:EPackage" href="http://www.eclipse.org/emf/2002/Ecore#/"/>
   <models xmi:type="genmodel:GenModel" href="model/sca.genmodel#/"/>
+  <models xmi:type="ecore:EPackage" href="platform:/resource/org.nasdanika.cdo.sca/model/sca.ecore#/"/>
+  <models xmi:type="ecore:EPackage" href="platform:/resource/org.eclipse.emf.ecore/model/Ecore.ecore#/"/>
+  <models xmi:type="genmodel:GenModel" href="platform:/resource/org.nasdanika.cdo.sca/model/sca.genmodel#/"/>
+  <models xmi:type="genmodel:GenModel" href="platform:/resource/org.eclipse.emf.ecore/model/Ecore.genmodel#/"/>
   <ownedViews xmi:type="viewpoint:DRepresentationContainer" xmi:id="_M8SbUOjyEeS87bbc76ea5Q" initialized="true">
     <viewpoint xmi:type="description:Viewpoint" href="platform:/plugin/org.eclipse.emf.ecoretools.design/description/ecore.odesign#//@ownedViewpoints[name='Review']"/>
   </ownedViews>

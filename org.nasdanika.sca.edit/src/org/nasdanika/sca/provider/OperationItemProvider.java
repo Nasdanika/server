@@ -19,23 +19,30 @@ import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
-import org.nasdanika.sca.ReferenceImport;
+import org.nasdanika.sca.Operation;
 import org.nasdanika.sca.ScaPackage;
 
 /**
- * This is the item provider adapter for a {@link org.nasdanika.sca.ReferenceImport} object.
+ * This is the item provider adapter for a {@link org.nasdanika.sca.Operation} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ReferenceImportItemProvider extends CDOItemProviderAdapter implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
+public class OperationItemProvider 
+	extends CDOItemProviderAdapter
+	implements
+		IEditingDomainItemProvider,
+		IStructuredItemContentProvider,
+		ITreeItemContentProvider,
+		IItemLabelProvider,
+		IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ReferenceImportItemProvider(AdapterFactory adapterFactory) {
+	public OperationItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -53,7 +60,7 @@ public class ReferenceImportItemProvider extends CDOItemProviderAdapter implemen
 			addNamePropertyDescriptor(object);
 			addConfigurationPropertyDescriptor(object);
 			addDescriptionPropertyDescriptor(object);
-			addTypePropertyDescriptor(object);
+			addBindingsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -125,36 +132,36 @@ public class ReferenceImportItemProvider extends CDOItemProviderAdapter implemen
 	}
 
 	/**
-	 * This adds a property descriptor for the Type feature.
+	 * This adds a property descriptor for the Bindings feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addTypePropertyDescriptor(Object object) {
+	protected void addBindingsPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_WireTarget_type_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_WireTarget_type_feature", "_UI_WireTarget_type"),
-				 ScaPackage.Literals.WIRE_TARGET__TYPE,
+				 getString("_UI_InvocationTarget_bindings_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_InvocationTarget_bindings_feature", "_UI_InvocationTarget_type"),
+				 ScaPackage.Literals.INVOCATION_TARGET__BINDINGS,
 				 true,
 				 false,
-				 true,
-				 null,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
 				 null));
 	}
 
 	/**
-	 * This returns ReferenceImport.gif.
+	 * This returns Operation.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated NOT
+	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/ReferenceImport.png"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Operation"));
 	}
 
 	/**
@@ -165,10 +172,10 @@ public class ReferenceImportItemProvider extends CDOItemProviderAdapter implemen
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((ReferenceImport)object).getName();
+		String label = ((Operation)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_ReferenceImport_type") :
-			getString("_UI_ReferenceImport_type") + " " + label;
+			getString("_UI_Operation_type") :
+			getString("_UI_Operation_type") + " " + label;
 	}
 	
 
@@ -183,10 +190,11 @@ public class ReferenceImportItemProvider extends CDOItemProviderAdapter implemen
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(ReferenceImport.class)) {
-			case ScaPackage.REFERENCE_IMPORT__NAME:
-			case ScaPackage.REFERENCE_IMPORT__CONFIGURATION:
-			case ScaPackage.REFERENCE_IMPORT__DESCRIPTION:
+		switch (notification.getFeatureID(Operation.class)) {
+			case ScaPackage.OPERATION__NAME:
+			case ScaPackage.OPERATION__CONFIGURATION:
+			case ScaPackage.OPERATION__DESCRIPTION:
+			case ScaPackage.OPERATION__BINDINGS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

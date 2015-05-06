@@ -68,6 +68,10 @@ public class ScaFactoryImpl extends EFactoryImpl implements ScaFactory {
 			case ScaPackage.SERVICE_EXPORT: return (EObject)createServiceExport();
 			case ScaPackage.PROPERTY: return (EObject)createProperty();
 			case ScaPackage.PROPERTY_IMPORT: return (EObject)createPropertyImport();
+			case ScaPackage.ACTIVATOR: return (EObject)createActivator();
+			case ScaPackage.OPERATION: return (EObject)createOperation();
+			case ScaPackage.ACTIVATOR_IMPORT: return (EObject)createActivatorImport();
+			case ScaPackage.OPERATION_EXPORT: return (EObject)createOperationExport();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -199,6 +203,46 @@ public class ScaFactoryImpl extends EFactoryImpl implements ScaFactory {
 	public PropertyImport createPropertyImport() {
 		PropertyImportImpl propertyImport = new PropertyImportImpl();
 		return propertyImport;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Activator createActivator() {
+		ActivatorImpl activator = new ActivatorImpl();
+		return activator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Operation createOperation() {
+		OperationImpl operation = new OperationImpl();
+		return operation;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ActivatorImport createActivatorImport() {
+		ActivatorImportImpl activatorImport = new ActivatorImportImpl();
+		return activatorImport;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public OperationExport createOperationExport() {
+		OperationExportImpl operationExport = new OperationExportImpl();
+		return operationExport;
 	}
 
 	/**

@@ -21,7 +21,7 @@ import org.eclipse.emf.ecore.EClassifier;
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface WireTarget extends Wireable {
+public interface WireTarget extends ModelElement {
 
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' reference.

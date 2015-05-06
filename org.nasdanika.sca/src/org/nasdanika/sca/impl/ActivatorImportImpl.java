@@ -3,34 +3,35 @@
 package org.nasdanika.sca.impl;
 
 import org.eclipse.emf.ecore.EClass;
+
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.nasdanika.sca.Reference;
+
+import org.nasdanika.sca.ActivatorImport;
 import org.nasdanika.sca.ScaPackage;
-import org.nasdanika.sca.WireTarget;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Reference</b></em>'.
+ * An implementation of the model object '<em><b>Activator Import</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.nasdanika.sca.impl.ReferenceImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.sca.impl.ReferenceImpl#getConfiguration <em>Configuration</em>}</li>
- *   <li>{@link org.nasdanika.sca.impl.ReferenceImpl#getDescription <em>Description</em>}</li>
- *   <li>{@link org.nasdanika.sca.impl.ReferenceImpl#getWireTarget <em>Wire Target</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.ActivatorImportImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.ActivatorImportImpl#getConfiguration <em>Configuration</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.ActivatorImportImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.sca.impl.ActivatorImportImpl#getBindings <em>Bindings</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ReferenceImpl extends CDOObjectImpl implements Reference {
+public class ActivatorImportImpl extends CDOObjectImpl implements ActivatorImport {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ReferenceImpl() {
+	protected ActivatorImportImpl() {
 		super();
 	}
 
@@ -41,7 +42,7 @@ public class ReferenceImpl extends CDOObjectImpl implements Reference {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return ScaPackage.Literals.REFERENCE;
+		return ScaPackage.Literals.ACTIVATOR_IMPORT;
 	}
 
 	/**
@@ -113,8 +114,8 @@ public class ReferenceImpl extends CDOObjectImpl implements Reference {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WireTarget getWireTarget() {
-		return (WireTarget)eGet(ScaPackage.Literals.WIRE_SOURCE__WIRE_TARGET, true);
+	public String getBindings() {
+		return (String)eGet(ScaPackage.Literals.INVOCATION_TARGET__BINDINGS, true);
 	}
 
 	/**
@@ -122,8 +123,8 @@ public class ReferenceImpl extends CDOObjectImpl implements Reference {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setWireTarget(WireTarget newWireTarget) {
-		eSet(ScaPackage.Literals.WIRE_SOURCE__WIRE_TARGET, newWireTarget);
+	public void setBindings(String newBindings) {
+		eSet(ScaPackage.Literals.INVOCATION_TARGET__BINDINGS, newBindings);
 	}
 
-} //ReferenceImpl
+} //ActivatorImportImpl

@@ -68,6 +68,10 @@ public class ScaAdapterFactory extends AdapterFactoryImpl {
 	protected ScaSwitch<Adapter> modelSwitch =
 		new ScaSwitch<Adapter>() {
 			@Override
+			public Adapter caseModelElement(ModelElement object) {
+				return createModelElementAdapter();
+			}
+			@Override
 			public Adapter caseAbstractComponent(AbstractComponent object) {
 				return createAbstractComponentAdapter();
 			}
@@ -82,10 +86,6 @@ public class ScaAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseCompositeReference(CompositeReference object) {
 				return createCompositeReferenceAdapter();
-			}
-			@Override
-			public Adapter caseWireable(Wireable object) {
-				return createWireableAdapter();
 			}
 			@Override
 			public Adapter caseWireSource(WireSource object) {
@@ -120,6 +120,30 @@ public class ScaAdapterFactory extends AdapterFactoryImpl {
 				return createPropertyImportAdapter();
 			}
 			@Override
+			public Adapter caseInvocationSource(InvocationSource object) {
+				return createInvocationSourceAdapter();
+			}
+			@Override
+			public Adapter caseInvocationTarget(InvocationTarget object) {
+				return createInvocationTargetAdapter();
+			}
+			@Override
+			public Adapter caseActivator(Activator object) {
+				return createActivatorAdapter();
+			}
+			@Override
+			public Adapter caseOperation(Operation object) {
+				return createOperationAdapter();
+			}
+			@Override
+			public Adapter caseActivatorImport(ActivatorImport object) {
+				return createActivatorImportAdapter();
+			}
+			@Override
+			public Adapter caseOperationExport(OperationExport object) {
+				return createOperationExportAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -138,6 +162,20 @@ public class ScaAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.ModelElement <em>Model Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.sca.ModelElement
+	 * @generated
+	 */
+	public Adapter createModelElementAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.AbstractComponent <em>Abstract Component</em>}'.
@@ -192,20 +230,6 @@ public class ScaAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createCompositeReferenceAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.Wireable <em>Wireable</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.sca.Wireable
-	 * @generated
-	 */
-	public Adapter createWireableAdapter() {
 		return null;
 	}
 
@@ -290,6 +314,90 @@ public class ScaAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPropertyImportAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.InvocationSource <em>Invocation Source</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.sca.InvocationSource
+	 * @generated
+	 */
+	public Adapter createInvocationSourceAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.InvocationTarget <em>Invocation Target</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.sca.InvocationTarget
+	 * @generated
+	 */
+	public Adapter createInvocationTargetAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.Activator <em>Activator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.sca.Activator
+	 * @generated
+	 */
+	public Adapter createActivatorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.Operation <em>Operation</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.sca.Operation
+	 * @generated
+	 */
+	public Adapter createOperationAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.ActivatorImport <em>Activator Import</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.sca.ActivatorImport
+	 * @generated
+	 */
+	public Adapter createActivatorImportAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.sca.OperationExport <em>Operation Export</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.sca.OperationExport
+	 * @generated
+	 */
+	public Adapter createOperationExportAdapter() {
 		return null;
 	}
 

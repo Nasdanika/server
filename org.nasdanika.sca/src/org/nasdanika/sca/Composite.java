@@ -17,6 +17,8 @@ import org.eclipse.emf.ecore.EClass;
  *   <li>{@link org.nasdanika.sca.Composite#getExportedServices <em>Exported Services</em>}</li>
  *   <li>{@link org.nasdanika.sca.Composite#getImportedReferences <em>Imported References</em>}</li>
  *   <li>{@link org.nasdanika.sca.Composite#getImportedProperties <em>Imported Properties</em>}</li>
+ *   <li>{@link org.nasdanika.sca.Composite#getExportedOperations <em>Exported Operations</em>}</li>
+ *   <li>{@link org.nasdanika.sca.Composite#getImportedActivators <em>Imported Activators</em>}</li>
  *   <li>{@link org.nasdanika.sca.Composite#getImplementation <em>Implementation</em>}</li>
  *   <li>{@link org.nasdanika.sca.Composite#getImplementationClass <em>Implementation Class</em>}</li>
  * </ul>
@@ -90,6 +92,38 @@ public interface Composite extends AbstractComponent {
 	 * @generated
 	 */
 	EList<PropertyImport> getImportedProperties();
+
+	/**
+	 * Returns the value of the '<em><b>Exported Operations</b></em>' containment reference list.
+	 * The list contents are of type {@link org.nasdanika.sca.OperationExport}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Exported Operations</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Exported Operations</em>' containment reference list.
+	 * @see org.nasdanika.sca.ScaPackage#getComposite_ExportedOperations()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<OperationExport> getExportedOperations();
+
+	/**
+	 * Returns the value of the '<em><b>Imported Activators</b></em>' containment reference list.
+	 * The list contents are of type {@link org.nasdanika.sca.ActivatorImport}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Imported Activators</em>' containment reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Imported Activators</em>' containment reference list.
+	 * @see org.nasdanika.sca.ScaPackage#getComposite_ImportedActivators()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<ActivatorImport> getImportedActivators();
 
 	/**
 	 * Returns the value of the '<em><b>Implementation</b></em>' reference.

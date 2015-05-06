@@ -60,7 +60,7 @@ public class ServiceImpl extends CDOObjectImpl implements Service {
 	 * @generated
 	 */
 	public String getName() {
-		return (String)eGet(ScaPackage.Literals.WIREABLE__NAME, true);
+		return (String)eGet(ScaPackage.Literals.MODEL_ELEMENT__NAME, true);
 	}
 
 	/**
@@ -69,7 +69,7 @@ public class ServiceImpl extends CDOObjectImpl implements Service {
 	 * @generated
 	 */
 	public void setName(String newName) {
-		eSet(ScaPackage.Literals.WIREABLE__NAME, newName);
+		eSet(ScaPackage.Literals.MODEL_ELEMENT__NAME, newName);
 	}
 
 	/**
@@ -78,7 +78,7 @@ public class ServiceImpl extends CDOObjectImpl implements Service {
 	 * @generated
 	 */
 	public String getConfiguration() {
-		return (String)eGet(ScaPackage.Literals.WIREABLE__CONFIGURATION, true);
+		return (String)eGet(ScaPackage.Literals.MODEL_ELEMENT__CONFIGURATION, true);
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class ServiceImpl extends CDOObjectImpl implements Service {
 	 * @generated
 	 */
 	public void setConfiguration(String newConfiguration) {
-		eSet(ScaPackage.Literals.WIREABLE__CONFIGURATION, newConfiguration);
+		eSet(ScaPackage.Literals.MODEL_ELEMENT__CONFIGURATION, newConfiguration);
 	}
 
 	/**
@@ -96,7 +96,7 @@ public class ServiceImpl extends CDOObjectImpl implements Service {
 	 * @generated
 	 */
 	public String getDescription() {
-		return (String)eGet(ScaPackage.Literals.WIREABLE__DESCRIPTION, true);
+		return (String)eGet(ScaPackage.Literals.MODEL_ELEMENT__DESCRIPTION, true);
 	}
 
 	/**
@@ -105,7 +105,7 @@ public class ServiceImpl extends CDOObjectImpl implements Service {
 	 * @generated
 	 */
 	public void setDescription(String newDescription) {
-		eSet(ScaPackage.Literals.WIREABLE__DESCRIPTION, newDescription);
+		eSet(ScaPackage.Literals.MODEL_ELEMENT__DESCRIPTION, newDescription);
 	}
 
 	/**

@@ -109,6 +109,8 @@ public class CompositeItemProvider extends AbstractComponentItemProvider {
 			childrenFeatures.add(ScaPackage.Literals.COMPOSITE__EXPORTED_SERVICES);
 			childrenFeatures.add(ScaPackage.Literals.COMPOSITE__IMPORTED_REFERENCES);
 			childrenFeatures.add(ScaPackage.Literals.COMPOSITE__IMPORTED_PROPERTIES);
+			childrenFeatures.add(ScaPackage.Literals.COMPOSITE__EXPORTED_OPERATIONS);
+			childrenFeatures.add(ScaPackage.Literals.COMPOSITE__IMPORTED_ACTIVATORS);
 		}
 		return childrenFeatures;
 	}
@@ -168,6 +170,8 @@ public class CompositeItemProvider extends AbstractComponentItemProvider {
 			case ScaPackage.COMPOSITE__EXPORTED_SERVICES:
 			case ScaPackage.COMPOSITE__IMPORTED_REFERENCES:
 			case ScaPackage.COMPOSITE__IMPORTED_PROPERTIES:
+			case ScaPackage.COMPOSITE__EXPORTED_OPERATIONS:
+			case ScaPackage.COMPOSITE__IMPORTED_ACTIVATORS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -214,6 +218,16 @@ public class CompositeItemProvider extends AbstractComponentItemProvider {
 			(createChildParameter
 				(ScaPackage.Literals.COMPOSITE__IMPORTED_PROPERTIES,
 				 ScaFactory.eINSTANCE.createPropertyImport()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ScaPackage.Literals.COMPOSITE__EXPORTED_OPERATIONS,
+				 ScaFactory.eINSTANCE.createOperationExport()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(ScaPackage.Literals.COMPOSITE__IMPORTED_ACTIVATORS,
+				 ScaFactory.eINSTANCE.createActivatorImport()));
 	}
 
 }

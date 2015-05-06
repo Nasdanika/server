@@ -24,6 +24,20 @@
               <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='yellow']"/>
             </style>
           </borderedNodeMappings>
+          <borderedNodeMappings name="Operation" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="feature:operations" domainClass="sca.Operation">
+            <style xsi:type="style:DotDescription" showIcon="false" sizeComputationExpression="2" resizeKind="NSEW">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_green']"/>
+            </style>
+          </borderedNodeMappings>
+          <borderedNodeMappings name="Activator" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="feature:activators" domainClass="sca.Activator">
+            <style xsi:type="style:DotDescription" showIcon="false" sizeComputationExpression="2" resizeKind="NSEW">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_purple']"/>
+            </style>
+          </borderedNodeMappings>
           <style xsi:type="style:SquareDescription" showIcon="false" sizeComputationExpression="15" labelPosition="node" resizeKind="NSEW" width="15" height="10">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='dark_blue']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
@@ -48,6 +62,20 @@
               <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
               <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
               <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='yellow']"/>
+            </style>
+          </borderedNodeMappings>
+          <borderedNodeMappings name="Operation" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="feature:operations" domainClass="sca.Operation">
+            <style xsi:type="style:DotDescription" showIcon="false" sizeComputationExpression="2" resizeKind="NSEW">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_green']"/>
+            </style>
+          </borderedNodeMappings>
+          <borderedNodeMappings name="Activator" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="feature:activators" domainClass="sca.Activator">
+            <style xsi:type="style:DotDescription" showIcon="false" sizeComputationExpression="2" resizeKind="NSEW">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_purple']"/>
             </style>
           </borderedNodeMappings>
           <style xsi:type="style:SquareDescription" borderSizeComputationExpression="2" showIcon="false" sizeComputationExpression="15" labelPosition="node" resizeKind="NSEW" width="15" height="10">
@@ -76,13 +104,27 @@
               <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='yellow']"/>
             </style>
           </borderedNodeMappings>
+          <borderedNodeMappings name="Operation" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="feature:operations" domainClass="sca.Operation">
+            <style xsi:type="style:DotDescription" showIcon="false" sizeComputationExpression="2" resizeKind="NSEW">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_green']"/>
+            </style>
+          </borderedNodeMappings>
+          <borderedNodeMappings name="Activator" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="feature:activators" domainClass="sca.Activator">
+            <style xsi:type="style:DotDescription" showIcon="false" sizeComputationExpression="2" resizeKind="NSEW">
+              <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+              <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_purple']"/>
+            </style>
+          </borderedNodeMappings>
           <style xsi:type="style:SquareDescription" borderSizeComputationExpression="2" showIcon="false" sizeComputationExpression="15" labelPosition="node" resizeKind="NSEW" width="15" height="10">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_blue']"/>
           </style>
         </nodeMappings>
-        <nodeMappings name="ServiceExport" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="[exportedServices/]" domainClass="sca.ServiceExport">
+        <nodeMappings name="ServiceExport" label="Service Export" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="[exportedServices/]" domainClass="sca.ServiceExport">
           <style xsi:type="style:WorkspaceImageDescription" showIcon="false" sizeComputationExpression="-1" workspacePath="/org.nasdanika.sca.design/images/Service.png">
             <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
             <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
@@ -101,6 +143,20 @@
             <color xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='yellow']"/>
           </style>
         </nodeMappings>
+        <nodeMappings name="OperationExport" label="Operation Export" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="[exportedOperations/]" domainClass="sca.OperationExport">
+          <style xsi:type="style:DotDescription" showIcon="false" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_green']"/>
+          </style>
+        </nodeMappings>
+        <nodeMappings name="ActivatorImport" label="Activator Import" labelDirectEdit="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ComponentNameEdit']" semanticCandidatesExpression="[importedActivators/]" domainClass="sca.ActivatorImport">
+          <style xsi:type="style:DotDescription" showIcon="false" resizeKind="NSEW">
+            <borderColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            <backgroundColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='light_purple']"/>
+          </style>
+        </nodeMappings>
         <edgeMappings name="ReferenceEdge" label="Wire" deletionDescription="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='DeleteConnection']" sourceMapping="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ServiceExport'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Reference'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Reference'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Reference']" targetMapping="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ReferenceImport'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Service'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Service'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Service']" targetFinderExpression="[wireTarget/]" reconnections="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ReconnectWire']">
           <style sizeComputationExpression="2">
             <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='gray']"/>
@@ -117,6 +173,14 @@
             </centerLabelStyleDescription>
           </style>
         </edgeMappings>
+        <edgeMappings name="InvocationEdge" label="Invocation" deletionDescription="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='DeleteConnection']" sourceMapping="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Activator'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Activator'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Activator'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='OperationExport']" targetMapping="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ActivatorImport'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Operation'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Operation'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Operation']" targetFinderExpression="[invocationTarget/]" reconnections="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@toolSections.0/@ownedTools[name='ReconnectInvocation']">
+          <style sizeComputationExpression="2">
+            <strokeColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='blue']"/>
+            <centerLabelStyleDescription>
+              <labelColor xsi:type="description:SystemColor" href="environment:/viewpoint#//@systemColors/@entries[name='black']"/>
+            </centerLabelStyleDescription>
+          </style>
+        </edgeMappings>
         <toolSections>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="ServiceExportCreation" label="Service Export" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ServiceExport']">
             <variable name="container"/>
@@ -125,11 +189,11 @@
               <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.ServiceExport" referenceName="exportedServices"/>
             </initialOperation>
           </ownedTools>
-          <ownedTools xsi:type="tool:NodeCreationDescription" name="PropertyImportCreation" label="Property Import" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='PropertyImport']">
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="OperationExportCreation" label="Operation Export" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='OperationExport']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
-              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.PropertyImport" referenceName="importedProperties"/>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.OperationExport" referenceName="exportedOperations"/>
             </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="ReferenceImportCreation" label="Reference Import" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ReferenceImport']">
@@ -137,6 +201,20 @@
             <viewVariable name="containerView"/>
             <initialOperation>
               <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.ReferenceImport" referenceName="importedReferences"/>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="ActivatorImportCreation" label="Activator Import" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ActivatorImport']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.ActivatorImport" referenceName="importedActivators"/>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="PropertyImportCreation" label="Property Import" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='PropertyImport']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.PropertyImport" referenceName="importedProperties"/>
             </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="ComponentCreation" label="Component" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']">
@@ -167,11 +245,25 @@
               <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.Service" referenceName="services"/>
             </initialOperation>
           </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="OperationCreation" label="Operation" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Operation'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Operation'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Operation']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.Operation" referenceName="operations"/>
+            </initialOperation>
+          </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="ReferenceCreation" label="Reference" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Reference'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Reference'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Reference']">
             <variable name="container"/>
             <viewVariable name="containerView"/>
             <initialOperation>
               <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.Reference" referenceName="references"/>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:NodeCreationDescription" name="ActivatorCreation" label="Activator" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Activator'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Activator'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Activator']">
+            <variable name="container"/>
+            <viewVariable name="containerView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:CreateInstance" typeName="sca.Activator" referenceName="activators"/>
             </initialOperation>
           </ownedTools>
           <ownedTools xsi:type="tool:NodeCreationDescription" name="PropertyCreation" label="Property" nodeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='ComponentNode']/@borderedNodeMappings[name='Property'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeNode']/@borderedNodeMappings[name='Property'] //@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@nodeMappings[name='CompositeReferenceNode']/@borderedNodeMappings[name='Property']">
@@ -207,6 +299,30 @@
             <initialOperation>
               <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
                 <subModelOperations xsi:type="tool_1:SetValue" featureName="wireTarget" valueExpression="var:target"/>
+              </firstModelOperations>
+            </initialOperation>
+            <edgeView name="edgeView"/>
+          </ownedTools>
+          <ownedTools xsi:type="tool:EdgeCreationDescription" name="InvocationCreation" label="Invocation" edgeMappings="//@ownedViewpoints[name='sca']/@ownedRepresentations[name='Composite%20diagram']/@defaultLayer/@edgeMappings[name='InvocationEdge']" iconPath="/org.nasdanika.sca.design/images/Invocation.png">
+            <sourceVariable name="source"/>
+            <targetVariable name="target"/>
+            <sourceViewVariable name="sourceView"/>
+            <targetViewVariable name="targetView"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:source">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="invocationTarget" valueExpression="var:target"/>
+              </firstModelOperations>
+            </initialOperation>
+          </ownedTools>
+          <ownedTools xsi:type="tool:ReconnectEdgeDescription" name="ReconnectInvocation" label="Reconnect Invocation" reconnectionKind="RECONNECT_BOTH">
+            <source name="source"/>
+            <target name="target"/>
+            <sourceView name="sourceView"/>
+            <targetView name="targetView"/>
+            <element name="element"/>
+            <initialOperation>
+              <firstModelOperations xsi:type="tool_1:ChangeContext" browseExpression="var:element">
+                <subModelOperations xsi:type="tool_1:SetValue" featureName="invocationTarget" valueExpression="var:target"/>
               </firstModelOperations>
             </initialOperation>
             <edgeView name="edgeView"/>

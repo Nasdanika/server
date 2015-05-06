@@ -66,9 +66,16 @@ public class ScaSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case ScaPackage.MODEL_ELEMENT: {
+				ModelElement modelElement = (ModelElement)theEObject;
+				T result = caseModelElement(modelElement);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case ScaPackage.ABSTRACT_COMPONENT: {
 				AbstractComponent abstractComponent = (AbstractComponent)theEObject;
 				T result = caseAbstractComponent(abstractComponent);
+				if (result == null) result = caseModelElement(abstractComponent);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -76,6 +83,7 @@ public class ScaSwitch<T> extends Switch<T> {
 				Component component = (Component)theEObject;
 				T result = caseComponent(component);
 				if (result == null) result = caseAbstractComponent(component);
+				if (result == null) result = caseModelElement(component);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -83,6 +91,7 @@ public class ScaSwitch<T> extends Switch<T> {
 				Composite composite = (Composite)theEObject;
 				T result = caseComposite(composite);
 				if (result == null) result = caseAbstractComponent(composite);
+				if (result == null) result = caseModelElement(composite);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -90,26 +99,21 @@ public class ScaSwitch<T> extends Switch<T> {
 				CompositeReference compositeReference = (CompositeReference)theEObject;
 				T result = caseCompositeReference(compositeReference);
 				if (result == null) result = caseAbstractComponent(compositeReference);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ScaPackage.WIREABLE: {
-				Wireable wireable = (Wireable)theEObject;
-				T result = caseWireable(wireable);
+				if (result == null) result = caseModelElement(compositeReference);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case ScaPackage.WIRE_SOURCE: {
 				WireSource wireSource = (WireSource)theEObject;
 				T result = caseWireSource(wireSource);
-				if (result == null) result = caseWireable(wireSource);
+				if (result == null) result = caseModelElement(wireSource);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case ScaPackage.WIRE_TARGET: {
 				WireTarget wireTarget = (WireTarget)theEObject;
 				T result = caseWireTarget(wireTarget);
-				if (result == null) result = caseWireable(wireTarget);
+				if (result == null) result = caseModelElement(wireTarget);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -117,7 +121,7 @@ public class ScaSwitch<T> extends Switch<T> {
 				Reference reference = (Reference)theEObject;
 				T result = caseReference(reference);
 				if (result == null) result = caseWireSource(reference);
-				if (result == null) result = caseWireable(reference);
+				if (result == null) result = caseModelElement(reference);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -125,7 +129,7 @@ public class ScaSwitch<T> extends Switch<T> {
 				Service service = (Service)theEObject;
 				T result = caseService(service);
 				if (result == null) result = caseWireTarget(service);
-				if (result == null) result = caseWireable(service);
+				if (result == null) result = caseModelElement(service);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -133,7 +137,7 @@ public class ScaSwitch<T> extends Switch<T> {
 				ReferenceImport referenceImport = (ReferenceImport)theEObject;
 				T result = caseReferenceImport(referenceImport);
 				if (result == null) result = caseWireTarget(referenceImport);
-				if (result == null) result = caseWireable(referenceImport);
+				if (result == null) result = caseModelElement(referenceImport);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -141,7 +145,7 @@ public class ScaSwitch<T> extends Switch<T> {
 				ServiceExport serviceExport = (ServiceExport)theEObject;
 				T result = caseServiceExport(serviceExport);
 				if (result == null) result = caseWireSource(serviceExport);
-				if (result == null) result = caseWireable(serviceExport);
+				if (result == null) result = caseModelElement(serviceExport);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -157,8 +161,69 @@ public class ScaSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case ScaPackage.INVOCATION_SOURCE: {
+				InvocationSource invocationSource = (InvocationSource)theEObject;
+				T result = caseInvocationSource(invocationSource);
+				if (result == null) result = caseModelElement(invocationSource);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaPackage.INVOCATION_TARGET: {
+				InvocationTarget invocationTarget = (InvocationTarget)theEObject;
+				T result = caseInvocationTarget(invocationTarget);
+				if (result == null) result = caseModelElement(invocationTarget);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaPackage.ACTIVATOR: {
+				Activator activator = (Activator)theEObject;
+				T result = caseActivator(activator);
+				if (result == null) result = caseInvocationSource(activator);
+				if (result == null) result = caseModelElement(activator);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaPackage.OPERATION: {
+				Operation operation = (Operation)theEObject;
+				T result = caseOperation(operation);
+				if (result == null) result = caseInvocationTarget(operation);
+				if (result == null) result = caseModelElement(operation);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaPackage.ACTIVATOR_IMPORT: {
+				ActivatorImport activatorImport = (ActivatorImport)theEObject;
+				T result = caseActivatorImport(activatorImport);
+				if (result == null) result = caseInvocationTarget(activatorImport);
+				if (result == null) result = caseModelElement(activatorImport);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ScaPackage.OPERATION_EXPORT: {
+				OperationExport operationExport = (OperationExport)theEObject;
+				T result = caseOperationExport(operationExport);
+				if (result == null) result = caseInvocationSource(operationExport);
+				if (result == null) result = caseModelElement(operationExport);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Model Element</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Model Element</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseModelElement(ModelElement object) {
+		return null;
 	}
 
 	/**
@@ -218,21 +283,6 @@ public class ScaSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseCompositeReference(CompositeReference object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Wireable</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Wireable</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseWireable(Wireable object) {
 		return null;
 	}
 
@@ -323,6 +373,96 @@ public class ScaSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T casePropertyImport(PropertyImport object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Invocation Source</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Invocation Source</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseInvocationSource(InvocationSource object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Invocation Target</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Invocation Target</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseInvocationTarget(InvocationTarget object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Activator</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Activator</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseActivator(Activator object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Operation</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Operation</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseOperation(Operation object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Activator Import</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Activator Import</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseActivatorImport(ActivatorImport object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Operation Export</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Operation Export</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseOperationExport(OperationExport object) {
 		return null;
 	}
 

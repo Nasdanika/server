@@ -12,9 +12,16 @@ import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.core.Context;
 import org.nasdanika.sca.AbstractComponent;
+import org.nasdanika.sca.Activator;
+import org.nasdanika.sca.ActivatorImport;
 import org.nasdanika.sca.Component;
 import org.nasdanika.sca.Composite;
 import org.nasdanika.sca.CompositeReference;
+import org.nasdanika.sca.InvocationSource;
+import org.nasdanika.sca.InvocationTarget;
+import org.nasdanika.sca.ModelElement;
+import org.nasdanika.sca.Operation;
+import org.nasdanika.sca.OperationExport;
 import org.nasdanika.sca.Property;
 import org.nasdanika.sca.PropertyImport;
 import org.nasdanika.sca.Reference;
@@ -25,7 +32,6 @@ import org.nasdanika.sca.Service;
 import org.nasdanika.sca.ServiceExport;
 import org.nasdanika.sca.WireSource;
 import org.nasdanika.sca.WireTarget;
-import org.nasdanika.sca.Wireable;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -35,6 +41,13 @@ import org.osgi.framework.BundleContext;
  * @generated
  */
 public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass modelElementEClass = null;
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -62,13 +75,6 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * @generated
 	 */
 	private EClass compositeReferenceEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass wireableEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -111,6 +117,48 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * @generated
 	 */
 	private EClass propertyImportEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass invocationSourceEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass invocationTargetEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass activatorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass operationEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass activatorImportEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass operationExportEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -217,6 +265,42 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getModelElement() {
+		return modelElementEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getModelElement_Name() {
+		return (EAttribute)modelElementEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getModelElement_Configuration() {
+		return (EAttribute)modelElementEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getModelElement_Description() {
+		return (EAttribute)modelElementEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAbstractComponent() {
 		return abstractComponentEClass;
 	}
@@ -226,35 +310,8 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAbstractComponent_Name() {
-		return (EAttribute)abstractComponentEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getAbstractComponent_Description() {
-		return (EAttribute)abstractComponentEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getAbstractComponent_Configuration() {
-		return (EAttribute)abstractComponentEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getAbstractComponent_Services() {
-		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(3);
+		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -263,7 +320,7 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * @generated
 	 */
 	public EReference getAbstractComponent_References() {
-		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(4);
+		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -272,7 +329,25 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * @generated
 	 */
 	public EReference getAbstractComponent_Properties() {
-		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(5);
+		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAbstractComponent_Operations() {
+		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAbstractComponent_Activators() {
+		return (EReference)abstractComponentEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -397,7 +472,7 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComposite_Implementation() {
+	public EReference getComposite_ExportedOperations() {
 		return (EReference)compositeEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -406,8 +481,26 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getComposite_ImplementationClass() {
+	public EReference getComposite_ImportedActivators() {
 		return (EReference)compositeEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComposite_Implementation() {
+		return (EReference)compositeEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getComposite_ImplementationClass() {
+		return (EReference)compositeEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -426,42 +519,6 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 */
 	public EReference getCompositeReference_Target() {
 		return (EReference)compositeReferenceEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getWireable() {
-		return wireableEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getWireable_Name() {
-		return (EAttribute)wireableEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getWireable_Configuration() {
-		return (EAttribute)wireableEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getWireable_Description() {
-		return (EAttribute)wireableEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -568,6 +625,87 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getInvocationSource() {
+		return invocationSourceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getInvocationSource_InvocationTarget() {
+		return (EReference)invocationSourceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getInvocationSource_Bindings() {
+		return (EAttribute)invocationSourceEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getInvocationTarget() {
+		return invocationTargetEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getInvocationTarget_Bindings() {
+		return (EAttribute)invocationTargetEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getActivator() {
+		return activatorEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getOperation() {
+		return operationEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getActivatorImport() {
+		return activatorImportEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getOperationExport() {
+		return operationExportEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getContext() {
 		return contextEDataType;
 	}
@@ -654,13 +792,17 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		isCreated = true;
 
 		// Create classes and their features
+		modelElementEClass = createEClass(MODEL_ELEMENT);
+		createEAttribute(modelElementEClass, MODEL_ELEMENT__NAME);
+		createEAttribute(modelElementEClass, MODEL_ELEMENT__CONFIGURATION);
+		createEAttribute(modelElementEClass, MODEL_ELEMENT__DESCRIPTION);
+
 		abstractComponentEClass = createEClass(ABSTRACT_COMPONENT);
-		createEAttribute(abstractComponentEClass, ABSTRACT_COMPONENT__NAME);
-		createEAttribute(abstractComponentEClass, ABSTRACT_COMPONENT__DESCRIPTION);
-		createEAttribute(abstractComponentEClass, ABSTRACT_COMPONENT__CONFIGURATION);
 		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__SERVICES);
 		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__REFERENCES);
 		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__PROPERTIES);
+		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__OPERATIONS);
+		createEReference(abstractComponentEClass, ABSTRACT_COMPONENT__ACTIVATORS);
 		createEOperation(abstractComponentEClass, ABSTRACT_COMPONENT___CREATE_RUNTIME_COMPONENT__BUNDLECONTEXT_CONTEXT);
 
 		componentEClass = createEClass(COMPONENT);
@@ -676,16 +818,13 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		createEReference(compositeEClass, COMPOSITE__EXPORTED_SERVICES);
 		createEReference(compositeEClass, COMPOSITE__IMPORTED_REFERENCES);
 		createEReference(compositeEClass, COMPOSITE__IMPORTED_PROPERTIES);
+		createEReference(compositeEClass, COMPOSITE__EXPORTED_OPERATIONS);
+		createEReference(compositeEClass, COMPOSITE__IMPORTED_ACTIVATORS);
 		createEReference(compositeEClass, COMPOSITE__IMPLEMENTATION);
 		createEReference(compositeEClass, COMPOSITE__IMPLEMENTATION_CLASS);
 
 		compositeReferenceEClass = createEClass(COMPOSITE_REFERENCE);
 		createEReference(compositeReferenceEClass, COMPOSITE_REFERENCE__TARGET);
-
-		wireableEClass = createEClass(WIREABLE);
-		createEAttribute(wireableEClass, WIREABLE__NAME);
-		createEAttribute(wireableEClass, WIREABLE__CONFIGURATION);
-		createEAttribute(wireableEClass, WIREABLE__DESCRIPTION);
 
 		wireSourceEClass = createEClass(WIRE_SOURCE);
 		createEReference(wireSourceEClass, WIRE_SOURCE__WIRE_TARGET);
@@ -709,6 +848,21 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		propertyImportEClass = createEClass(PROPERTY_IMPORT);
 		createEAttribute(propertyImportEClass, PROPERTY_IMPORT__NAME);
 		createEAttribute(propertyImportEClass, PROPERTY_IMPORT__DESCRIPTION);
+
+		invocationSourceEClass = createEClass(INVOCATION_SOURCE);
+		createEReference(invocationSourceEClass, INVOCATION_SOURCE__INVOCATION_TARGET);
+		createEAttribute(invocationSourceEClass, INVOCATION_SOURCE__BINDINGS);
+
+		invocationTargetEClass = createEClass(INVOCATION_TARGET);
+		createEAttribute(invocationTargetEClass, INVOCATION_TARGET__BINDINGS);
+
+		activatorEClass = createEClass(ACTIVATOR);
+
+		operationEClass = createEClass(OPERATION);
+
+		activatorImportEClass = createEClass(ACTIVATOR_IMPORT);
+
+		operationExportEClass = createEClass(OPERATION_EXPORT);
 
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
@@ -748,24 +902,35 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		abstractComponentEClass.getESuperTypes().add(this.getModelElement());
 		componentEClass.getESuperTypes().add(this.getAbstractComponent());
 		compositeEClass.getESuperTypes().add(this.getAbstractComponent());
 		compositeReferenceEClass.getESuperTypes().add(this.getAbstractComponent());
-		wireSourceEClass.getESuperTypes().add(this.getWireable());
-		wireTargetEClass.getESuperTypes().add(this.getWireable());
+		wireSourceEClass.getESuperTypes().add(this.getModelElement());
+		wireTargetEClass.getESuperTypes().add(this.getModelElement());
 		referenceEClass.getESuperTypes().add(this.getWireSource());
 		serviceEClass.getESuperTypes().add(this.getWireTarget());
 		referenceImportEClass.getESuperTypes().add(this.getWireTarget());
 		serviceExportEClass.getESuperTypes().add(this.getWireSource());
+		invocationSourceEClass.getESuperTypes().add(this.getModelElement());
+		invocationTargetEClass.getESuperTypes().add(this.getModelElement());
+		activatorEClass.getESuperTypes().add(this.getInvocationSource());
+		operationEClass.getESuperTypes().add(this.getInvocationTarget());
+		activatorImportEClass.getESuperTypes().add(this.getInvocationTarget());
+		operationExportEClass.getESuperTypes().add(this.getInvocationSource());
 
 		// Initialize classes, features, and operations; add parameters
+		initEClass(modelElementEClass, ModelElement.class, "ModelElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getModelElement_Name(), ecorePackage.getEString(), "name", null, 0, 1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModelElement_Configuration(), ecorePackage.getEString(), "configuration", null, 0, 1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getModelElement_Description(), ecorePackage.getEString(), "description", null, 0, 1, ModelElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(abstractComponentEClass, AbstractComponent.class, "AbstractComponent", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAbstractComponent_Name(), ecorePackage.getEString(), "name", null, 0, 1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractComponent_Description(), ecorePackage.getEString(), "description", null, 0, 1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAbstractComponent_Configuration(), ecorePackage.getEString(), "configuration", null, 0, 1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAbstractComponent_Services(), this.getService(), null, "services", null, 0, -1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAbstractComponent_References(), this.getReference(), null, "references", null, 0, -1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAbstractComponent_Properties(), this.getProperty(), null, "properties", null, 0, -1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAbstractComponent_Operations(), this.getOperation(), null, "operations", null, 0, -1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAbstractComponent_Activators(), this.getActivator(), null, "activators", null, 0, -1, AbstractComponent.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		EOperation op = initEOperation(getAbstractComponent__CreateRuntimeComponent__BundleContext_Context(), theScaPackage_1.getComponent(), "createRuntimeComponent", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getBundleContext(), "bundleContext", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -785,16 +950,13 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		initEReference(getComposite_ExportedServices(), this.getServiceExport(), null, "exportedServices", null, 0, -1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComposite_ImportedReferences(), this.getReferenceImport(), null, "importedReferences", null, 0, -1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComposite_ImportedProperties(), this.getPropertyImport(), null, "importedProperties", null, 0, -1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComposite_ExportedOperations(), this.getOperationExport(), null, "exportedOperations", null, 0, -1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getComposite_ImportedActivators(), this.getActivatorImport(), null, "importedActivators", null, 0, -1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComposite_Implementation(), theScaPackage_1.getComposite(), null, "implementation", null, 0, 1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getComposite_ImplementationClass(), theEcorePackage.getEClass(), null, "implementationClass", null, 0, 1, Composite.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(compositeReferenceEClass, CompositeReference.class, "CompositeReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getCompositeReference_Target(), this.getComposite(), null, "target", null, 0, 1, CompositeReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(wireableEClass, Wireable.class, "Wireable", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getWireable_Name(), ecorePackage.getEString(), "name", null, 0, 1, Wireable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getWireable_Configuration(), ecorePackage.getEString(), "configuration", null, 0, 1, Wireable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getWireable_Description(), ecorePackage.getEString(), "description", null, 0, 1, Wireable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(wireSourceEClass, WireSource.class, "WireSource", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getWireSource_WireTarget(), this.getWireTarget(), null, "wireTarget", null, 0, 1, WireSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -818,6 +980,21 @@ public class ScaPackageImpl extends EPackageImpl implements ScaPackage {
 		initEClass(propertyImportEClass, PropertyImport.class, "PropertyImport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPropertyImport_Name(), ecorePackage.getEString(), "name", null, 0, 1, PropertyImport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPropertyImport_Description(), ecorePackage.getEString(), "description", null, 0, 1, PropertyImport.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(invocationSourceEClass, InvocationSource.class, "InvocationSource", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getInvocationSource_InvocationTarget(), this.getInvocationTarget(), null, "invocationTarget", null, 0, 1, InvocationSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getInvocationSource_Bindings(), ecorePackage.getEString(), "bindings", null, 0, 1, InvocationSource.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(invocationTargetEClass, InvocationTarget.class, "InvocationTarget", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getInvocationTarget_Bindings(), ecorePackage.getEString(), "bindings", null, 0, 1, InvocationTarget.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(activatorEClass, Activator.class, "Activator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(operationEClass, Operation.class, "Operation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(activatorImportEClass, ActivatorImport.class, "ActivatorImport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(operationExportEClass, OperationExport.class, "OperationExport", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
