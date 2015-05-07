@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.boxing.BoxUtil;
+import org.nasdanika.cdo.promise.Promise;
 import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.cdo.sca.ScaPackage;
 import org.nasdanika.cdo.sca.ServiceProvider;
@@ -242,6 +243,16 @@ public abstract class ComponentImpl extends CDOObjectImpl implements Component {
 			@Override
 			public Object getProperty(String propertyName) {
 				return spcr.getContext().getProperty(propertyName);
+			}
+
+			@Override
+			public Object invoke(String activatorName, Object... args) throws Exception {
+				return spcr.getContext().invoke(activatorName, args);
+			}
+
+			@Override
+			public Promise<?, Object, Exception, Object> submit(String activatorName, Object... args) {
+				return spcr.getContext().submit(activatorName, args);
 			}
 		};
 	}

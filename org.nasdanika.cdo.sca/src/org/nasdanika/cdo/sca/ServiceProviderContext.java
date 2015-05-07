@@ -10,8 +10,22 @@ public interface ServiceProviderContext extends Context {
 	
 	<T> ServiceReference<T> getServiceReference(Class<T> serviceType, String serviceName);
 	
-	CDOTransactionContextCommand<?, ?, ?> getActivator(String name);
+	/**
+	 * Synchronously invokes activator
+	 * @param activatorName
+	 * @param args
+	 * @return
+	 * @throws Exception
+	 */
+	Object invoke(String activatorName, Object... args) throws Exception;
 	
-	<CR> CDOTransactionContextCommand<CR, ?, Promise<CR, ?, ?, ?>> getAsyncActivator(String name);
+	/**
+	 * Submits invocation to be executed at a later time according to the wire
+	 * configuration - as soon as possible, delayed, with fixed delay or with fixed rate.
+	 * @param activatorName
+	 * @param args
+	 * @return
+	 */
+	Promise<?, Object, Exception, Object> submit(String activatorName, Object... args);
 
 }

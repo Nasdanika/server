@@ -15,6 +15,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.boxing.BoxUtil;
+import org.nasdanika.cdo.promise.Promise;
 import org.nasdanika.cdo.sca.Component;
 import org.nasdanika.cdo.sca.Composite;
 import org.nasdanika.cdo.sca.PropertySetting;
@@ -24,6 +25,7 @@ import org.nasdanika.cdo.sca.ServiceProvider;
 import org.nasdanika.cdo.sca.ServiceProviderContext;
 import org.nasdanika.cdo.sca.ServiceReference;
 import org.nasdanika.cdo.sca.Wire;
+import org.nasdanika.core.Command;
 import org.nasdanika.core.Context;
 
 /**
@@ -168,6 +170,23 @@ public class CompositeImpl extends ComponentImpl implements Composite {
 						return parentContext.getProperty(((PropertySetting) prop).getTargetName());
 					}
 					return BoxUtil.unbox(prop, parentContext);
+				}
+
+				@SuppressWarnings("unchecked")
+				@Override
+				public Object invoke(String activatorName, Object... args) throws Exception {
+					try (@SuppressWarnings("rawtypes") ServiceReference<Command> sr = getServiceReference(Command.class, activatorName)) {
+						if (sr==null) {
+							throw new IllegalArgumentException("Invalid activator name: "+activatorName);
+						}
+						return sr.getService().execute(this, args);			
+					}
+				}
+
+				@Override
+				public Promise<?, Object, Exception, Object> submit(String activatorName,	Object... args) {
+					// TODO 
+					throw new UnsupportedOperationException();
 				}
 			};
 		}

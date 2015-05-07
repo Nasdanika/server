@@ -3,6 +3,8 @@ package org.nasdanika.cdo.sca;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.nasdanika.cdo.promise.Promise;
+import org.nasdanika.core.Command;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.ContextImpl;
 import org.osgi.framework.BundleContext;
@@ -51,6 +53,23 @@ public class SimpleServiceProviderContext extends ContextImpl implements Service
 			}
 			
 		});
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public Object invoke(String activatorName, Object... args) throws Exception {
+		try (@SuppressWarnings("rawtypes") ServiceReference<Command> sr = getServiceReference(Command.class, activatorName)) {
+			if (sr==null) {
+				throw new IllegalArgumentException("Invalid activator name: "+activatorName);
+			}
+			return sr.getService().execute(this, args);			
+		}
+	}
+
+	@Override
+	public Promise<?, Object, Exception, Object> submit(String activatorName,	Object... args) {
+		// TODO 
+		throw new UnsupportedOperationException();
 	}
 
 }
