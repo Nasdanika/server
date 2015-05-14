@@ -4,12 +4,21 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.SecurityContext;
 
-
-public interface WebContext extends Context, ExportingContext, ClassLoadingContext {
-		
+public interface HttpServletRequestContext extends Context, ExportingContext, ClassLoadingContext, SecurityContext {
+	
+	HttpServletRequest getRequest();
+	
+	HttpServletResponse getResponse();
+	
+	String getContextURL();
+	
 	RequestMethod getMethod();
 	
 	String[] getPath();
@@ -71,11 +80,11 @@ public interface WebContext extends Context, ExportingContext, ClassLoadingConte
 	Store getSessionStore();
 	
 	List<TraceEntry> getPathTrace();
-
+	
 	Collection<TraceEntry> getSessionTrace();
 	
 	void addPathTraceEntry(String path, String displayName);
-
-	void addSessionTraceEntry(String path, String displayName);
 	
+	void addSessionTraceEntry(String path, String displayName);
+
 }

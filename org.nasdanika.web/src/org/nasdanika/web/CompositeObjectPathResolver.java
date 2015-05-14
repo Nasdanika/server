@@ -49,7 +49,7 @@ public class CompositeObjectPathResolver implements ObjectPathResolver<Object>, 
 				return ret;
 			}
 		}
-		return context instanceof WebContext ? ((WebContext) context).getRootObjectsPaths().get(obj) : null;
+		return context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRootObjectsPaths().get(obj) : null;
 	}
 	
 	@Override

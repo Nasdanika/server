@@ -18,7 +18,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.web.html.HTMLRenderer;
 import org.nasdanika.web.html.UIPart;
 
-public abstract class ContextImpl implements WebContext {
+public abstract class ContextImpl implements HttpServletRequestContext {
 	
 	private ExtensionManager extensionManager;
 	private Map<Object, String> rootObjectsPaths = new ConcurrentHashMap<>();
@@ -32,7 +32,7 @@ public abstract class ContextImpl implements WebContext {
 	}
 	
 	private AuthorizationProvider securityManager;
-	private Converter<Object, Object, WebContext> converter;
+	private Converter<Object, Object, HttpServletRequestContext> converter;
 	private String[] path;
 	private Object target;
 	private RouteRegistry routeRegistry;
@@ -84,7 +84,7 @@ public abstract class ContextImpl implements WebContext {
 			throw new IllegalArgumentException("Offset is greater than path length");			
 		}
 		String[] newPath = Arrays.copyOfRange(oldPath, pathOffset, oldPath.length);
-		WebContext subContext = createSubContext(newPath, target);
+		HttpServletRequestContext subContext = createSubContext(newPath, target);
 		for (Route r: routeRegistry.matchObjectRoutes(getMethod(), target, newPath)) {
 			final Object ret = r.execute(subContext);
 			if (ret==null || ret==Action.NOT_FOUND) {
@@ -116,7 +116,7 @@ public abstract class ContextImpl implements WebContext {
 		return eRoute == null ? null : eRoute.execute(this);
 	}
 	
-	protected abstract WebContext createSubContext(String[] subPath, Object target) throws Exception;
+	protected abstract HttpServletRequestContext createSubContext(String[] subPath, Object target) throws Exception;
 
 	@Override
 	public void close() throws Exception {

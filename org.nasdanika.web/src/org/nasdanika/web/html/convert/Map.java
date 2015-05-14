@@ -7,10 +7,10 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.UIElement.Style;
-import org.nasdanika.web.WebContext;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
-public class Map implements Converter<java.util.Map<?,?>, HTMLRenderer, WebContext> {
+public class Map implements Converter<java.util.Map<?,?>, HTMLRenderer, HttpServletRequestContext> {
 
 	@Override
 	public void close() throws Exception {
@@ -18,11 +18,11 @@ public class Map implements Converter<java.util.Map<?,?>, HTMLRenderer, WebConte
 	}
 
 	@Override
-	public HTMLRenderer convert(final java.util.Map<?, ?> source,	Class<HTMLRenderer> target, WebContext context) throws Exception {
+	public HTMLRenderer convert(final java.util.Map<?, ?> source,	Class<HTMLRenderer> target, HttpServletRequestContext context) throws Exception {
 		return new HTMLRenderer() {
 			
 			@Override
-			public String render(WebContext context, String profile, java.util.Map<String, Object> environment) throws Exception {
+			public String render(HttpServletRequestContext context, String profile, java.util.Map<String, Object> environment) throws Exception {
 				Table table = context.adapt(HTMLFactory.class).table().bordered();
 				Row header = table.row().style(Style.INFO);
 				header.header("Key");

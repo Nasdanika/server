@@ -2,7 +2,7 @@ package org.nasdanika.web.html;
 
 import java.util.Map;
 
-import org.nasdanika.web.WebContext;
+import org.nasdanika.web.HttpServletRequestContext;
 
 /**
  * Target type to convert other objects to for HTML rendering.
@@ -18,6 +18,6 @@ public interface HTMLRenderer {
 	 * @param environment Additional rendering configuration.
 	 * @return Object rendered to HTML
 	 */
-	String render(WebContext context, String profile, Map<String, Object> environment) throws Exception;
+	String render(HttpServletRequestContext context, String profile, Map<String, Object> environment) throws Exception;
 	
 }

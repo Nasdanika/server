@@ -158,7 +158,7 @@ public class ExtensionManager extends AdapterManager {
 	public static final String OBJECT_PATH_RESOLVER_ID = "org.nasdanika.web.object_path_resolver";			
 	private static final String SECURITY_ID = "org.nasdanika.core.security";
 	
-	private Converter<Object, Object, WebContext> converter;
+	private Converter<Object, Object, HttpServletRequestContext> converter;
 	
 	/**
 	 * Expands ${bundleId} token.
@@ -178,7 +178,7 @@ public class ExtensionManager extends AdapterManager {
 		return ret.toString();
 	}
 		
-	public synchronized Converter<Object, Object, WebContext> getConverter() throws Exception {
+	public synchronized Converter<Object, Object, HttpServletRequestContext> getConverter() throws Exception {
 		if (converter==null) {
 			converter = CoreUtil.createConverter();
 		}
@@ -245,17 +245,17 @@ public class ExtensionManager extends AdapterManager {
 		return routeRegistry;
 	}
 	
-	protected class MethodRoute extends InstanceMethodCommand<WebContext, Action> implements Route {
+	protected class MethodRoute extends InstanceMethodCommand<HttpServletRequestContext, Action> implements Route {
 		
 		private boolean isVoid;
 
 		protected MethodRoute(Object target, Method routeMethod) throws Exception {
-			super(target, new MethodCommand<WebContext, Action>(routeMethod));
+			super(target, new MethodCommand<HttpServletRequestContext, Action>(routeMethod));
 			this.isVoid = void.class.equals(routeMethod.getReturnType());
 		}
 		
 		@Override
-		public Action execute(WebContext context, Object... args) throws Exception {
+		public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
 			Object result = super.execute(context);
 			if (result==null && isVoid) {
 				return Action.NOP;				
@@ -650,7 +650,7 @@ public class ExtensionManager extends AdapterManager {
 					Route route = new Route() {
 						
 						@Override
-						public Action execute(final WebContext context, Object... args) throws Exception {
+						public Action execute(final HttpServletRequestContext context, Object... args) throws Exception {
 							if (context.getPath().length==1) { // 0?
 								return new Action() {
 									
@@ -670,8 +670,8 @@ public class ExtensionManager extends AdapterManager {
 								
 								@Override
 								public Object execute() throws Exception {
-									if (!CoreUtil.isBlank(contentType) && context instanceof HttpContext) {
-										HttpServletResponse resp = ((HttpContext) context).getResponse();
+									if (!CoreUtil.isBlank(contentType) && context instanceof HttpServletRequestContext) {
+										HttpServletResponse resp = ((HttpServletRequestContext) context).getResponse();
 										if (CoreUtil.isBlank(resp.getContentType())) {
 											resp.setContentType(contentType);
 										}
@@ -750,7 +750,7 @@ public class ExtensionManager extends AdapterManager {
 					final Route route = new Route() {
 						
 						@Override
-						public Action execute(final WebContext context, Object... args) throws Exception {
+						public Action execute(final HttpServletRequestContext context, Object... args) throws Exception {
 							if (context.getPath().length==1) { // 0?
 								return new Action() {
 									
@@ -770,8 +770,8 @@ public class ExtensionManager extends AdapterManager {
 								
 								@Override
 								public Object execute() throws Exception {
-									if (!CoreUtil.isBlank(contentType) && context instanceof HttpContext) {
-										HttpServletResponse resp = ((HttpContext) context).getResponse();
+									if (!CoreUtil.isBlank(contentType) && context instanceof HttpServletRequestContext) {
+										HttpServletResponse resp = ((HttpServletRequestContext) context).getResponse();
 										if (CoreUtil.isBlank(resp.getContentType())) {
 											resp.setContentType(contentType);
 										}

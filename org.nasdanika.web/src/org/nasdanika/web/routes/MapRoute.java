@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.nasdanika.web.Action;
 import org.nasdanika.web.Route;
-import org.nasdanika.web.WebContext;
+import org.nasdanika.web.HttpServletRequestContext;
 
 /**
  * Route for maps with string keys.
@@ -14,7 +14,7 @@ import org.nasdanika.web.WebContext;
 public class MapRoute implements Route {
 
 	@Override
-	public Action execute(WebContext context, Object... args) throws Exception {
+	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
 		// TODO - POST and DELETE support
 		if (context.getPath().length>1) {
 			Object val = ((Map<?,?>) context.getTarget()).get(context.getPath()[1]);

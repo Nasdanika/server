@@ -21,15 +21,15 @@ import javax.servlet.http.HttpSession;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.NasdanikaException;
 
-public class HttpContextImpl extends ContextImpl implements HttpContext {
+public class HttpServletRequestContextImpl extends ContextImpl implements HttpServletRequestContext {
 	
-	private static final String SESSION_TRACE_ATTRIBUTE_NAME = HttpContext.class+":session-trace";
+	private static final String SESSION_TRACE_ATTRIBUTE_NAME = HttpServletRequestContext.class+":session-trace";
 	private HttpServletRequest req;
 	private HttpServletResponse resp;
 	private String contextURL;
 	private ExportingContext exportingContext;
 
-	public HttpContextImpl(
+	public HttpServletRequestContextImpl(
 			String[] path, 
 			Object target, 
 			ExtensionManager extensionManager, 
@@ -49,8 +49,8 @@ public class HttpContextImpl extends ContextImpl implements HttpContext {
 	}
 	
 	@Override
-	protected WebContext createSubContext(String[] subPath, Object target) throws Exception {
-		HttpContextImpl subContext = new HttpContextImpl(
+	protected HttpServletRequestContext createSubContext(String[] subPath, Object target) throws Exception {
+		HttpServletRequestContextImpl subContext = new HttpServletRequestContextImpl(
 				subPath, 
 				target, 
 				getExtensionManager(), 

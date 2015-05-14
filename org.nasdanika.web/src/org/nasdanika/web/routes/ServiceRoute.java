@@ -2,7 +2,7 @@ package org.nasdanika.web.routes;
 
 import org.nasdanika.web.Action;
 import org.nasdanika.web.Route;
-import org.nasdanika.web.WebContext;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -27,7 +27,7 @@ public class ServiceRoute implements Route {
 	}
 
 	@Override
-	public Action execute(WebContext context, Object... args) throws Exception {
+	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
 		if (context.getPath().length>offset+1) {
 			final BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 			String filter = "null".equals(context.getPath()[offset+1]) ? null : context.getPath()[offset+1];

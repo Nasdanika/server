@@ -2,14 +2,14 @@ package org.nasdanika.web.html;
 
 import java.util.Map;
 
-import org.nasdanika.web.WebContext;
+import org.nasdanika.web.HttpServletRequestContext;
 
 /**
  * Implementations of this interface contribute to UI construction.
  * @author Pavel
  *
  */
-public interface UIPart<C extends WebContext, T> {
+public interface UIPart<C extends HttpServletRequestContext, T> {
 
 	/**
 	 * Renders HTML 

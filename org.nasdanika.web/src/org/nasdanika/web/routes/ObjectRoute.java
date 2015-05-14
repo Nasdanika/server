@@ -12,11 +12,11 @@ import java.util.Collections;
 import org.apache.commons.lang3.StringUtils;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.Action;
-import org.nasdanika.web.HttpContext;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.RouteMethod;
-import org.nasdanika.web.WebContext;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -31,7 +31,7 @@ public class ObjectRoute implements Route {
 	 * EObject route. Has feature, operation, resource, and code sub-routes.
 	 */
 	@Override
-	public Action execute(final WebContext context, Object... arguments) throws Exception {
+	public Action execute(final HttpServletRequestContext context, Object... arguments) throws Exception {
 		final Object target = context.getTarget();
 
 		if (target.getClass().isArray() && context.getPath().length>1) {
@@ -128,7 +128,7 @@ public class ObjectRoute implements Route {
 							return Action.NOT_FOUND;
 						}						
 						
-						HttpContext httpContext = (HttpContext) context;
+						HttpServletRequestContext httpContext = (HttpServletRequestContext) context;
 						if (resourceInfo.lastModified!=-1) {
 							httpContext.getResponse().setDateHeader("Last-Modified", resourceInfo.lastModified);
 						}
@@ -158,7 +158,7 @@ public class ObjectRoute implements Route {
 						}
 						resourceStream = new BufferedInputStream(resourceStream);
 						
-						try (OutputStream out = new BufferedOutputStream(((HttpContext) context).getResponse().getOutputStream())) {
+						try (OutputStream out = new BufferedOutputStream(((HttpServletRequestContext) context).getResponse().getOutputStream())) {
 							for (int b = resourceStream.read(); b!=-1; b = resourceStream.read()) {
 								out.write(b);
 							}
