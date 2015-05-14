@@ -1,8 +1,10 @@
 package org.nasdanika.cdo;
 
-import org.nasdanika.core.FacadeContextProvider;
+import org.eclipse.emf.cdo.view.CDOView;
+import org.nasdanika.core.Context;
 
-
-public interface CDOViewContextProvider<CR, C extends CDOViewContext<?, CR>> extends FacadeContextProvider<C> {
+public interface CDOViewContextProvider<V extends CDOView, CR, C extends CDOViewContext<V, CR>> {
+	
+	C createContext(CDOViewContextSubject<V,CR> subject, Context... chain);
 
 }

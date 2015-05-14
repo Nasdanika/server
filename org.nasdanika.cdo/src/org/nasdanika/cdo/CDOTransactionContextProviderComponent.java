@@ -1,6 +1,5 @@
 package org.nasdanika.cdo;
 
-import java.nio.file.AccessMode;
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -9,6 +8,7 @@ import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandlerBase;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
+import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
@@ -52,16 +52,17 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 	public void removeTransactionHandler(CDOTransactionHandlerBase transactionHandler) {
 		transactionHandlers.remove(transactionHandler);
 	}
-
+	
 	@Override
-	public <MC> CDOTransactionContext<CR> createContext(MC masterContext) {
+	public CDOTransactionContext<CR> createContext(CDOViewContextSubject<CDOTransaction, CR> subject, Context... chain) {
 		if (sessionProvider!=null) {			
 			try {
-				return new CDOTransactionContextImpl<CR, MC>(
+				return new CDOTransactionContextImpl<CR>(
 						bundle, 
 						securityPolicyManager,
-						masterContext,
-						defaultAccessDecision) {
+						defaultAccessDecision,
+						subject,
+						chain) {
 					
 					@Override
 					public ProtectionDomain<CR> getProtectionDomain() {

@@ -4,12 +4,13 @@ import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
+import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
 
-public abstract class CDOViewContextProviderComponent<CR> implements CDOViewContextProvider<CR, CDOViewContext<CDOView, CR>> {
+public abstract class CDOViewContextProviderComponent<CR> implements CDOViewContextProvider<CDOView, CR, CDOViewContext<CDOView, CR>> {
 	
 	private CDOSessionProvider sessionProvider;
 	private SecurityPolicyManager securityPolicyManager;
@@ -36,17 +37,18 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 	
 	public void clearSessionProvider(CDOSessionProvider sessionProvider) {
 		this.sessionProvider = null;
-	}	
-
+	}
+	
 	@Override
-	public <MC> CDOViewContext<CDOView, CR> createContext(MC masterContext) {
+	public CDOViewContext<CDOView, CR> createContext(CDOViewContextSubject<CDOView, CR> subject, Context... chain) {
 		if (sessionProvider!=null) {			
 			try {
-				return new CDOViewContextImpl<CDOView, CR, MC>(
+				return new CDOViewContextImpl<CDOView, CR>(
 						bundle, 
 						securityPolicyManager,
-						masterContext,
-						defaultAccessDecision) {
+						defaultAccessDecision,
+						subject,
+						chain) {
 					
 					@Override
 					public ProtectionDomain<CR> getProtectionDomain() {
