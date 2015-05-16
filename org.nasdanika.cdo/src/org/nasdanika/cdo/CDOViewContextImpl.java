@@ -36,7 +36,7 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 		this.bundle = bundle;
 		this.securityPolicyManager = securityPolicyManager;
 		view = openView();
-		this.defaultAccessDecision = defaultAccessDecision;
+		setDefaultAccessDecision(defaultAccessDecision);
 	}
 	
 	private CDOViewContextSubject<V,CR> subject;
@@ -72,12 +72,13 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	@Override
 	public final boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		Principal principal = getPrincipal();
-		if (principal!=null) {			
-			if (securityPolicyManager!=null) {
-				AccessDecision.ALLOW.equals(principal.authorize(securityPolicyManager, this, target, action, qualifier, environment));
+		if (principal!=null && securityPolicyManager!=null) {
+			AccessDecision accessDecision = principal.authorize(securityPolicyManager, this, target, action, qualifier, environment);
+			if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
+				return AccessDecision.ALLOW.equals(accessDecision);
 			}
 		}
-		return AccessDecision.ALLOW.equals(defaultAccessDecision);
+		return super.authorize(target, action, qualifier, environment);
 	}
 	
 	private V view;
@@ -85,8 +86,6 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	private SecurityPolicyManager securityPolicyManager;
 
 	private Bundle bundle;
-
-	private AccessDecision defaultAccessDecision;
 
 	protected abstract V openView();
 

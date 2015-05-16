@@ -22,7 +22,7 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.UIElement.Style;
-import org.nasdanika.web.HttpContext;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.webtest.performance.DocumentTiming;
 import org.nasdanika.webtest.performance.NavigationTiming;
@@ -364,7 +364,7 @@ public class NavigationTimingImpl extends TimingBaseImpl implements NavigationTi
 	}
 
 	@RouteMethod(pattern="L?[\\d]+/resourcesTable")
-	public String resourcesTable(HttpContext context) throws Exception {
+	public String resourcesTable(HttpServletRequestContext context) throws Exception {
 		HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 		if (!context.authorize(this, "read", null, null)) {
 			return htmlFactory.alert(Style.DANGER, false, "Access Denied!").toString(); 
@@ -479,7 +479,7 @@ public class NavigationTimingImpl extends TimingBaseImpl implements NavigationTi
 	}
 		
 	@RouteMethod(pattern="L?[\\d]+\\.html")
-	public String home(HttpContext context) throws Exception {
+	public String home(HttpServletRequestContext context) throws Exception {
 		HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 		if (!context.authorize(this, "read", null, null)) {
 			return htmlFactory.alert(Style.DANGER, false, "Access Denied!").toString(); 

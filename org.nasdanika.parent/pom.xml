@@ -131,6 +131,7 @@
 		<module>../org.nasdanika.cdo.boxing</module>
 		<module>../org.nasdanika.cdo.h2</module>
 		<module>../org.nasdanika.cdo</module>
+		<module>../org.nasdanika.cdo.web</module>
 		<module>../org.nasdanika.function</module>
 		<module>../org.nasdanika.promise</module>
 		<module>../org.nasdanika.function.cdo</module>

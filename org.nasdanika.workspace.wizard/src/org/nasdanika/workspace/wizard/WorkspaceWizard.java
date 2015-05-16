@@ -316,7 +316,8 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			}
 			if (applicationConfigurationPage.btnRoutingServlet.getSelection()
 					|| applicationConfigurationPage.btnWebContent.getSelection()) {
-				requiredBundles.add("org.nasdanika.web");				
+				// requiredBundles.add("org.nasdanika.web"); - cdo.web re-exports web.				
+				requiredBundles.add("org.nasdanika.cdo.web");				
 				requiredBundles.add("org.eclipse.equinox.http.registry");				
 			}
 			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
@@ -1426,6 +1427,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 
 	public String getWebContentBaseName() {
 		return applicationConfigurationPage.btnWebContent.getSelection() ? applicationConfigurationPage.webContentBaseName.getText() : null;
+	}
+
+	public String getSessionServletAlias() {
+		// TODO Take from the wizard UI
+		return "/session";
 	}
 	
 }

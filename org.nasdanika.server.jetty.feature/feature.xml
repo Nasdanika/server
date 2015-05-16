@@ -67,6 +67,13 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.jetty.websocket"
+         download-size="0"
+         install-size="0"
+         version="8.1.16"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.jetty.server"
          download-size="0"
          install-size="0"

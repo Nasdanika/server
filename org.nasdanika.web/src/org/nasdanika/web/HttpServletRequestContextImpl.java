@@ -1,8 +1,12 @@
 package org.nasdanika.web;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLEncoder;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,10 +22,173 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.core.ClassLoadingContext;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.ContextImpl;
 import org.nasdanika.core.NasdanikaException;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.web.html.HTMLRenderer;
+import org.nasdanika.web.html.UIPart;
+import org.osgi.framework.FrameworkUtil;
 
 public class HttpServletRequestContextImpl extends ContextImpl implements HttpServletRequestContext {
+	
+	
+	private ExtensionManager extensionManager;
+	private Map<Object, String> rootObjectsPaths = new ConcurrentHashMap<>();
+	
+	public ExtensionManager getExtensionManager() {
+		return extensionManager;
+	}
+	
+	public Map<Object, String> getRootObjectsPaths() {
+		return rootObjectsPaths;
+	}
+	
+	//private AuthorizationProvider securityManager;
+	private String[] path;
+	private Object target;
+	private RouteRegistry routeRegistry;
+	private CompositeObjectPathResolver objectPathResolver;
+	private ClassLoadingContext classLoadingContext;
+
+	@Override
+	public String[] getPath() {
+		return path;
+	}
+
+	@Override
+	public Action getAction(Object target, int pathOffset, Context... chain) throws Exception {
+		String[] oldPath = getPath();
+		if (oldPath.length<pathOffset) {
+			throw new IllegalArgumentException("Offset is greater than path length");			
+		}
+		String[] newPath = Arrays.copyOfRange(oldPath, pathOffset, oldPath.length);
+		HttpServletRequestContext subContext = createSubContext(newPath, target, chain);
+		for (Route r: routeRegistry.matchObjectRoutes(getMethod(), target, newPath)) {
+			final Object ret = r.execute(subContext);
+			if (ret==null || ret==Action.NOT_FOUND) {
+				continue;
+			}
+			if (ret instanceof Action) {
+				return (Action) ret;
+			}
+			
+			return new Action() {
+				
+				@Override
+				public void close() throws Exception {
+					// NOP					
+				}
+				
+				@Override
+				public Object execute() throws Exception {
+					return ret;
+				}
+			};
+		}
+		return null;
+	}
+	
+	@Override
+	public Action getExtensionAction(Object target, String extension) throws Exception {
+		Route eRoute = routeRegistry.getExtensionRoute(getMethod(), target, extension);
+		return eRoute == null ? null : eRoute.execute(this);
+	}
+	
+	@Override
+	public void close() throws Exception {
+		// NOP		
+	}	
+
+	@Override
+	public Object getTarget() {
+		return target;
+	}
+	
+	@Override
+	public String toHTML(Object obj, String profile, Map<String, Object> environment) throws Exception {
+		HTMLRenderer renderer = convert(obj, HTMLRenderer.class);
+		if (renderer == null) {
+			return "<pre>"+StringEscapeUtils.escapeHtml4(String.valueOf(obj))+"</pre>";
+		}
+		return renderer.render(this, profile, environment);
+	}
+	
+	@Override
+	public String getObjectPath(Object object) throws Exception {
+		return objectPathResolver.resolve(object, null, this);
+	}
+	
+	@Override
+	public void addPathTraceEntry(final String path, final String displayName) {
+		pathTrace.add(new TraceEntry() {
+			
+			@Override
+			public String getPath() {
+				return path;
+			}
+			
+			@Override
+			public String getDisplayName() {
+				return displayName;
+			}
+		});		
+	}
+	
+	private List<TraceEntry> pathTrace = new ArrayList<>();
+	
+	@Override
+	public List<TraceEntry> getPathTrace() {
+		return pathTrace;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public void buildUICategory(
+			String category, 
+			Object out,
+			Map<String, Object> environment) throws Exception {
+		for (@SuppressWarnings("rawtypes") UIPart uiPart: extensionManager.getUIParts(target, category)) {
+			uiPart.create(this, out, environment);
+		}
+	}
+	
+	@Override
+	public Class<?> loadClass(String name) throws ClassNotFoundException {
+		return classLoadingContext.loadClass(name);
+	}
+	
+	@Override
+	public URL getResource(String name) {
+		return classLoadingContext.getResource(name);
+	}
+	
+	@Override
+	public Iterable<URL> getResources(String name) throws IOException {
+		return classLoadingContext.getResources(name);
+	}
+	
+//	TODO - Explicitly add adapters, adapter map from parent.
+	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <T> T adapt(Class<T> targetType) throws Exception {
+		if (targetType.isAssignableFrom(HTMLFactory.class)) {
+			return (T) extensionManager.getHTMLFactory();
+		}
+		
+		T ret = super.adapt(targetType);
+		if (ret!=null) {
+			return ret;
+		}
+				
+		return ret==null ? extensionManager.adapt(targetType) : ret;
+
+	}
+	
 	
 	private static final String SESSION_TRACE_ATTRIBUTE_NAME = HttpServletRequestContext.class+":session-trace";
 	private HttpServletRequest req;
@@ -38,18 +205,30 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 			HttpServletRequest req, 
 			HttpServletResponse resp,
 			String contextUrl,
-			ExportingContext exportingContext) throws Exception {
+			ExportingContext exportingContext,
+			Context[] chain) throws Exception {	
 		
+		super(FrameworkUtil.getBundle(HttpServletRequestContext.class).getBundleContext(), chain);
 		
-		super(path, target, extensionManager, classLoadingContext, pathTrace);
+		this.extensionManager = extensionManager;
+		setDefaultAccessDecision(extensionManager.getDefaultAccessDecision());
+		this.path = path;
+		this.target = target;
+		this.classLoadingContext = classLoadingContext;
+		this.routeRegistry = extensionManager.getRouteRegistry();
+
+		objectPathResolver = extensionManager.getObjectPathResolver();
+		
+		if (pathTrace!=null) {
+			this.pathTrace.addAll(pathTrace);
+		}
 		this.req = req;
 		this.resp = resp;
 		this.contextURL = contextUrl;
 		this.exportingContext = exportingContext;
 	}
 	
-	@Override
-	protected HttpServletRequestContext createSubContext(String[] subPath, Object target) throws Exception {
+	protected HttpServletRequestContext createSubContext(String[] subPath, Object target, Context[] chain) throws Exception {
 		HttpServletRequestContextImpl subContext = new HttpServletRequestContextImpl(
 				subPath, 
 				target, 
@@ -59,7 +238,8 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 				getRequest(), 
 				getResponse(),
 				subContextURL(subPath, false),
-				this);
+				this, 
+				chain);
 		subContext.getRootObjectsPaths().putAll(getRootObjectsPaths());
 		return subContext;
 	}

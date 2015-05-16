@@ -2,6 +2,8 @@ package org.nasdanika.web;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.nasdanika.core.NasdanikaException;
+
 /**
  * This exception is handled by the routing servlet by passing its message to the
  * client side as response 500 message.
@@ -9,16 +11,12 @@ import javax.servlet.http.HttpServletResponse;
  *
  */
 @SuppressWarnings("serial")
-public class ServerException extends RuntimeException {
+public class ServerException extends NasdanikaException {
 	
 	private int statusCode = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
 	
 	public int getStatusCode() {
 		return statusCode;
-	}
-
-	public ServerException() {
-		
 	}
 
 	public ServerException(String message) {
@@ -42,6 +40,7 @@ public class ServerException extends RuntimeException {
 	}
 	
 	public ServerException(int statusCode) {
+		super("Status: "+statusCode);
 		this.statusCode = statusCode;
 	}
 

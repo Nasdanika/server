@@ -27,10 +27,11 @@ public interface HttpServletRequestContext extends Context, ExportingContext, Cl
 	 * Returns action for a given target object with current path offset to pathOffset. 
 	 * @param target
 	 * @param pathOffset
+	 * @param chain Contexts to be added to the sub-context for the target object.
 	 * @return
 	 * @throws Exception
 	 */
-	Action getAction(Object target, int pathOffset) throws Exception;
+	Action getAction(Object target, int pathOffset, Context... chain) throws Exception;
 	
 	Action getExtensionAction(Object target, String extension) throws Exception;
 		

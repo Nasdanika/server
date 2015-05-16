@@ -36,6 +36,15 @@
       </object_route>
    </extension>
    <% } %>
+  <% if (wizard.getSessionServletAlias()!=null) { %>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="<%=wizard.getSessionServletAlias()%>"
+            class="org.nasdanika.web.WebSocketNotificationServlet">
+      </servlet>
+   </extension>
+   <% } %>
    <% if (wizard.getWebContentAlias()!=null) { %>
    <extension
          point="org.eclipse.equinox.http.registry.resources">

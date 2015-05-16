@@ -29,8 +29,6 @@ import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.BoxingPackage;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.core.AdapterProvider;
-import org.nasdanika.core.AuthorizationProvider.AccessDecision;
-import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
 public abstract class AbstractSchedulerProviderComponent<CR> implements SchedulerProvider<CR>, AdapterProvider<CDOTransactionContext<CR>, Scheduler<CR, CDOObject>>, CDOSessionInitializer {
@@ -38,8 +36,8 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 	private int threadPoolSize = 1; 
 	private ScheduledExecutorService scheduledExecutorService;
 	private Map<CDOID, Future<?>> scheduledTasks = new ConcurrentHashMap<>();
-	private AccessDecision defaultAccessDecision;
-	private BundleContext bundleContext;
+//	private AccessDecision defaultAccessDecision;
+//	private BundleContext bundleContext;
 	
 	public void setThreadPoolSize(int threadPoolSize) {
 		this.threadPoolSize = threadPoolSize;
@@ -109,25 +107,20 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 	}
 	
 	public CDOTransactionContext<CR> createCommandContext(CDOTransactionContext<CR> transactionContext, final Principal runAs) {
-		return new CDOTransactionContextFilter<CR, Principal>(bundleContext, transactionContext) {
+		return new CDOTransactionContextFilter<CR>(transactionContext) {
 
 			@Override
-			protected Principal getMasterContext() {
+			public Principal getPrincipal() {
 				return runAs;
-			}
-
-			@Override
-			protected AccessDecision getDefaultAccessDecision() {
-				return defaultAccessDecision;
 			}
 			
 		};
 	}
 
 	public void activate(ComponentContext componentContext) throws Exception {
-		this.bundleContext = componentContext.getBundleContext();
+//		this.bundleContext = componentContext.getBundleContext();
 		scheduledExecutorService = Executors.newScheduledThreadPool(threadPoolSize);
-		defaultAccessDecision = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW;
+//		defaultAccessDecision = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW;
 		try (CDOTransactionContext<CR> transactionContext = createContext()) {
 			CDOTransaction transaction = transactionContext.getView();
 			Lock readLock = tasksReadLock(transaction);

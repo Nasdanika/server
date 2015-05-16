@@ -7,12 +7,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.nasdanika.core.BundleClassLoadingContext;
 import org.nasdanika.core.ClassLoadingContext;
+import org.nasdanika.core.Context;
 import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("serial")
 public class RoutingServlet extends AbstractRoutingServlet {
 	
-	private ClassLoadingContext classLoadingContext;
+	protected ClassLoadingContext classLoadingContext;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -36,7 +37,8 @@ public class RoutingServlet extends AbstractRoutingServlet {
 				req, 
 				resp,
 				reqUrl, 
-				null);
+				null,
+				new Context[] {});
 		}
 	
 	@Override

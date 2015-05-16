@@ -19,7 +19,6 @@ import org.nasdanika.cdo.function.ContextArgument;
 import org.nasdanika.cdo.function.FunctionFactory;
 import org.nasdanika.cdo.function.FunctionPackage;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.function.FunctionException;
 import org.nasdanika.function.ServiceBinding;
 import org.nasdanika.function.cdo.CDOTransactionContextFunction;
@@ -118,16 +117,11 @@ public abstract class AbstractFunctionImpl<CR, T, R> extends CDOObjectImpl imple
 	public R execute(CDOTransactionContext<CR> context, @SuppressWarnings("unchecked") T... args) throws Exception {
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
 		if (getRunAs()!=null && getRunAs()!=context.getPrincipal()) {
-			context = new CDOTransactionContextFilter<CR, Principal>(bundleContext, context) {
-
+			context = new CDOTransactionContextFilter<CR>(context) {
+				
 				@Override
-				protected Principal getMasterContext() {
+				public Principal getPrincipal() throws Exception {
 					return getRunAs();
-				}
-
-				@Override
-				protected AccessDecision getDefaultAccessDecision() {
-					return AccessDecision.DENY; // Strict
 				}
 				
 			};			

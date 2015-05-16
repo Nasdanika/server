@@ -5,14 +5,13 @@ package org.nasdanika.cdo.security.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
-
-import javax.script.Bindings;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.mozilla.javascript.Scriptable;
+import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.ActionContainer;
 import org.nasdanika.cdo.security.Property;
@@ -293,14 +292,19 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 			if (CoreUtil.isBlank(condition)) {
 				return true;
 			}
-			ScriptEngineManager sm = new ScriptEngineManager();
-			ScriptEngine s = sm.getEngineByMimeType("application/javascript");
-			Bindings b = s.createBindings();
-			if (environment!=null) {
-				b.putAll(environment);
-			}
-			b.put("actionProperties", effectiveActionProperties(context));
-			return Boolean.TRUE.equals(s.eval(condition, b));
+			org.mozilla.javascript.Context scriptContext = org.mozilla.javascript.Context.enter();
+			try {
+				Scriptable scope = scriptContext.initStandardObjects();
+				ScriptableObject.putProperty(scope, "context", org.mozilla.javascript.Context.javaToJS(context, scope));
+				for (Entry<String, Object> ee: environment.entrySet()) {
+					ScriptableObject.putProperty(scope, ee.getKey(), org.mozilla.javascript.Context.javaToJS(ee.getValue(), scope));					
+				}
+				ScriptableObject.putProperty(scope, "actionProperties", org.mozilla.javascript.Context.javaToJS(effectiveActionProperties(context), scope));					
+
+				return Boolean.TRUE.equals(scriptContext.evaluateString(scope, condition, "actionCondition", 1, null));
+			} finally {
+				org.mozilla.javascript.Context.exit();
+			}			
 		} catch (Exception e) {
 			throw new NasdanikaException("Action condition evaluation error", e);
 		}

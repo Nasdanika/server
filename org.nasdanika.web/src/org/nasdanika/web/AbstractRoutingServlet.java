@@ -55,7 +55,7 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 		}
 		String[] path = pathInfo.split("/");
 		try (HttpServletRequestContext context = createContext(path, req, resp, reqUrl)) {
-			for (Route route: extensionManager.getRouteRegistry().matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
+			for (Route route: matchRootRoutes(req, path)) {
 				try (Action action = route.execute(context)) {
 					if (action!=null) {
 						resultToResponse(action.execute(), resp, context);
@@ -71,6 +71,10 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 		} catch (Exception e) {
 			throw new ServletException(e);			
 		}
+	}
+
+	protected Iterable<Route> matchRootRoutes(HttpServletRequest req, String[] path) throws Exception {
+		return extensionManager.getRouteRegistry().matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path);
 	}
 
 	protected abstract HttpServletRequestContext createContext(

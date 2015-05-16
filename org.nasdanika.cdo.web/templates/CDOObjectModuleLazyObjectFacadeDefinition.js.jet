@@ -1,0 +1,43 @@
+<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOObjectModuleLazyObjectFacadeDefinitionGenerator" skeleton="Generator.skeleton"%>
+<%
+	org.nasdanika.web.HttpServletRequestContext context = (org.nasdanika.web.HttpServletRequestContext) args[0];
+	org.eclipse.emf.cdo.CDOObject cdoObject = (org.eclipse.emf.cdo.CDOObject) args[1]; 
+	org.eclipse.emf.ecore.EReference ref = (org.eclipse.emf.ecore.EReference) args[2]; 
+%>
+// Lazy object load strategy - returns a promise for an array of objects
+get <%=ref.getName()%>() {
+	if (!data.<%=ref.getName()%>.hasOwnProperty('value')) {
+		data.<%=ref.getName()%>.value = Q.Promise(function(vResolve, vReject, vNotify) {
+			jquery.ajax(
+				"<%=context.getObjectPath(cdoObject)%>/feature/<%=ref.getName()%>.json",
+			    {
+			        success: function(refData) {
+			        	data.<%=ref.getName()%>.initialValue = refData;
+						<% if (ref.isMany()) { %>
+							var promises = [];
+							for (var ref in refData) {
+								promises.push(Q.Promise(function(idx, resolve, reject, notify) {
+									require([refData[idx]+".js"], function(mod) {
+										resolve(mod);
+									});																						
+								}.bind(this, ref)));
+							}
+							Q.all(promises).then(function(res) { vResolve(res); });
+						<% } else { %>
+							require([refData+".js"], function(mod) {
+								vResolve(mod);
+							});				
+						<% } %>
+			        },
+			        error: function(jqXHR, textStatus, errorThrown) {
+			        	vReject({ status: textStatus, error: errorThrown });
+			        }
+			    });				
+		});
+	}
+	return data.<%=ref.getName()%>.value;
+}<% if (ref.isChangeable() && context.authorize(cdoObject, "write", ref.getName(), null)) { %>,
+set <%=ref.getName()%>(newValue) {
+	data.<%=ref.getName()%>.value = newValue;
+}<% } %>
+

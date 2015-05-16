@@ -1,0 +1,70 @@
+<%@ jet package="org.nasdanika.cdo.web.routes" class="CDOObjectModuleGenerator" skeleton="Generator.skeleton"%>
+
+<%
+	org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig config = (org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig) args[0];
+%>
+
+define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object eager: config.getEager()) { %>, "<%=config.getContext().getObjectPath(eager)%>.js"<% } %>], function(session, Q, jquery) {
+	//console.log("Defining <%=config.getObjectPath()%>.js");
+    var data = <%=config.getDataDefinitions()%>;
+
+    session.sessionObjects["<%=config.getObjectPath()%>"] = {
+
+        get delta() {
+        	var delta = {};
+        	<% for (String getDeltaEntry: config.getGetDeltaEntries()) { %>
+        		<%=getDeltaEntry%>
+        	<% } %>
+        	return delta;
+       },
+       
+       applyDelta: function(delta) {
+       		if (delta === 'detached') {
+       			delete facade.$store;
+       			delete facade.$delete;
+       			delete facade.$refresh;
+       		} else {
+	        	var deltaPromises = [];
+	        	<% for (String setDeltaEntry: config.getSetDeltaEntries()) { %>
+	        		<%=setDeltaEntry%>
+	        	<% } %>
+	        	if (deltaPromises.length > 0) {
+	        		return Q.all(deltaPromises);
+	        	}
+	        }
+        },
+
+        reset: function() {
+        	<% for (String resetEntry: config.getResetEntries()) { %>
+        		<%=resetEntry%>
+        	<% } %>
+        }   
+    };
+
+    var facade = {
+    
+    	<% 
+    		java.util.Iterator<String> fit = config.getFacadeDefinitions().iterator();
+    		while (fit.hasNext()) {
+    	%>
+	    	<%=fit.next()%>,
+    	<% } %>
+
+		get $session() {
+			return session; 
+		}, 
+		
+        $refresh: function() {
+            return session.refresh().thenResolve(this); 
+        },
+
+        $path: "<%=config.getObjectPath()%>"
+
+    };
+        
+	<% for (String preloadAction: config.getPreloadActions()) { %>
+		<%=preloadAction%>
+	<% } %>    
+    
+    return facade;
+});

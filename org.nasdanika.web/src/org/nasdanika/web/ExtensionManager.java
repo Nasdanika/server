@@ -18,10 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.Platform;
 import org.nasdanika.core.AdapterManager;
-import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
-import org.nasdanika.core.Context;
-import org.nasdanika.core.Converter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.InstanceMethodCommand;
 import org.nasdanika.core.MethodCommand;
@@ -64,6 +61,10 @@ public class ExtensionManager extends AdapterManager {
 	
 	private List<UIPartEntry> uiPartEntries = new ArrayList<>();
 	private AccessDecision defaultAccessDecision;
+	
+	public AccessDecision getDefaultAccessDecision() {
+		return defaultAccessDecision;
+	}
 	
 	@SuppressWarnings("unchecked")
 	public ExtensionManager(
@@ -156,10 +157,7 @@ public class ExtensionManager extends AdapterManager {
 	public static final String HTML_FACTORY_ID = "org.nasdanika.web.html_factory";			
 	public static final String ROUTE_ID = "org.nasdanika.web.route";			
 	public static final String OBJECT_PATH_RESOLVER_ID = "org.nasdanika.web.object_path_resolver";			
-	private static final String SECURITY_ID = "org.nasdanika.core.security";
-	
-	private Converter<Object, Object, HttpServletRequestContext> converter;
-	
+		
 	/**
 	 * Expands ${bundleId} token.
 	 * @param property
@@ -177,70 +175,7 @@ public class ExtensionManager extends AdapterManager {
 		}
 		return ret.toString();
 	}
-		
-	public synchronized Converter<Object, Object, HttpServletRequestContext> getConverter() throws Exception {
-		if (converter==null) {
-			converter = CoreUtil.createConverter();
-		}
-		
-		return converter;
-	}
 	
-	private AuthorizationProvider authorizationProvider;
-	
-	public synchronized AuthorizationProvider getAuthorizationProvider() throws Exception {
-		if (authorizationProvider == null) {
-			class AuthorizationProviderEntry implements Comparable<AuthorizationProviderEntry> {
-				
-				public AuthorizationProviderEntry(AuthorizationProvider sm) {
-					this.sm = sm;
-				}
-				
-				int priority;
-				
-				AuthorizationProvider sm;
-
-				@Override
-				public int compareTo(AuthorizationProviderEntry o) {
-					return o.priority - priority;
-				}
-				
-			}
-			final List<AuthorizationProviderEntry> smeList = new ArrayList<>();
-			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(SECURITY_ID)) {
-				if ("authorization_provider".equals(ce.getName())) {					
-					AuthorizationProvider ap = (AuthorizationProvider) ce.createExecutableExtension("class");
-					CoreUtil.injectProperties(ce, ap);
-					AuthorizationProviderEntry sme = new AuthorizationProviderEntry(ap);
-					
-					String priorityStr = ce.getAttribute("priority");
-					if (!CoreUtil.isBlank(priorityStr)) {
-						sme.priority = Integer.parseInt(priorityStr);
-					}
-					
-					smeList.add(sme);
-				}					
-			}
-			
-			Collections.sort(smeList);
-			
-			authorizationProvider = new AuthorizationProvider() {
-				
-				@Override
-				public AccessDecision authorize(Context context, Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
-					for (AuthorizationProviderEntry sme: smeList) {
-						AccessDecision result = sme.sm.authorize(context, target, action, qualifier, environment);
-						if (AccessDecision.ALLOW.equals(result) || AccessDecision.DENY.equals(result)) {
-							return result;
-						}
-					}
-
-					return defaultAccessDecision;
-				}
-			};
-		}
-		return authorizationProvider;
-	}
 	public RouteRegistry getRouteRegistry() {
 		return routeRegistry;
 	}
@@ -855,14 +790,6 @@ public class ExtensionManager extends AdapterManager {
 			uiPartServiceTracker.close();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}
-		
-		if (converter!=null) {
-			try {
-				converter.close();
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
 		}
 		
 		// Closing routes.
