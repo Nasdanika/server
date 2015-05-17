@@ -183,19 +183,28 @@ public class ExtensionManager extends AdapterManager {
 	protected class MethodRoute extends InstanceMethodCommand<HttpServletRequestContext, Action> implements Route {
 		
 		private boolean isVoid;
+		private String action;
+		String qualifier;
 
 		protected MethodRoute(Object target, Method routeMethod) throws Exception {
 			super(target, new MethodCommand<HttpServletRequestContext, Action>(routeMethod));
+			RouteMethod rma = routeMethod.getAnnotation(RouteMethod.class);
+			this.action = rma.action();
+			this.qualifier = rma.qualifier().length()==0 ? routeMethod.getName() : rma.qualifier();
 			this.isVoid = void.class.equals(routeMethod.getReturnType());
 		}
 		
 		@Override
-		public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
-			Object result = super.execute(context);
-			if (result==null && isVoid) {
-				return Action.NOP;				
+		public Action execute(HttpServletRequestContext context, Object... args) throws Exception {			
+			if (context.authorize(target, action.length()==0 ? context.getMethod().name() : action, qualifier, null)) {
+				Object result = super.execute(context);
+				if (result==null && isVoid) {
+					return Action.NOP;				
+				}
+				return ValueAction.wrap(result);
 			}
-			return ValueAction.wrap(result);
+			
+			return Action.FORBIDDEN;
 		}
 		
 	}

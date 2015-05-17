@@ -115,31 +115,17 @@ public class CDOWebUtil {
 	public static final String ANNOTATION_EAGER_REF = "org.nasdanika.cdo.web:eager-ref"; 
 	
 	/**
-	 * Lazily loads a list of object ID's. Objects are pre-loaded when reference is retrieved. 
-	 * Reference property is a promise for an array of promises for objects.
-	 * This is a default strategy for many references.
-	 */
-	public static final String ANNOTATION_LAZY_REF = "org.nasdanika.cdo.web:lazy-ref"; // Default for many
-			
-	/**
 	 * Lazily loads a list of object ID's. Objects are loaded when reference is retrieved. 
 	 * Reference property is a promise for an array of objects.
-	 * This is a default strategy for one references.
 	 */		
-	public static final String ANNOTATION_LAZY_OBJ = "org.nasdanika.cdo.web:lazy-obj"; // Default for one
+	public static final String ANNOTATION_LAZY = "org.nasdanika.cdo.web:lazy"; // Default for one
 	
 	/**
 	 * Loads a list of object ID's and referenced objects asynchronously when the object is loaded. 
-	 * Reference property is a promise for an array of promises for objects.
-	 */				
-	public static final String ANNOTATION_PRELOAD_REF = "org.nasdanika.cdo.web:preload-ref";
-	
-	/**
-	 * Loads a list of object ID's asynchronously, referenced objects are loaded eagerly once the reference is loaded. 
 	 * Reference property is a promise for an array of objects.
 	 */				
-	public static final String ANNOTATION_PRELOAD_OBJ = "org.nasdanika.cdo.web:preload-obj";
-		
+	public static final String ANNOTATION_PRELOAD = "org.nasdanika.cdo.web:preload";
+			
 	/**
 	 * Annotation for an operation parameter indicating that the argument value shall be obtained by adapting the context.
 	 */				
@@ -150,6 +136,12 @@ public class CDOWebUtil {
 	 * Optional <code>filter</code> data entry specifies service filter.
 	 */				
 	public static final String ANNOTATION_SERVICE_PARAMETER = "org.nasdanika.cdo:service-parameter";
+
+	/**
+	 * This annotation allows to list custom requirements for the module through detail entries with required module
+	 * as detail key, and parameter name as value. 
+	 */				
+	public static final String ANNOTATION_REQUIRES = "org.nasdanika.cdo.web:requires";
 
 	private CDOWebUtil() {
 		// Utility class
@@ -429,8 +421,8 @@ public class CDOWebUtil {
 			
 			JSONObject dd = new JSONObject();
 			if ((ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_REF)!=null || !ref.isMany())
-					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_OBJ)==null
-					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_REF)==null) {
+					&& ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY)==null) {
+				
 				Object value = cdoObject.eGet(ref);
 				if (value!=null) {
 					if (ref.isMany()) {
@@ -561,9 +553,10 @@ public class CDOWebUtil {
 		JSONObject ret = new JSONObject();
 		if (result instanceof CDOObject) {
 			ret.put(PATH_KEY, getObjectPath(context, (CDOObject) result));
+		} else {
+			// Value
+			ret.put(VALUE_KEY, result);
 		}
-		// Value
-		ret.put(VALUE_KEY, result);
 		return ret;
 	}
 	

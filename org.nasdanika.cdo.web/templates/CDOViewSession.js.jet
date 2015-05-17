@@ -83,46 +83,58 @@ define(["q"], function(Q) {
 	var deferredCounter = 0;
 	var deferreds = {};
 	
-	var sessionSocket = new WebSocket("<%=webSocketUrl%>");
-	sessionSocket.onMessage(function(event) {
-		var response = JSON.parse(event.data);
-		var deferred = deferreds[response.id];
-		if (deferred) {
-			if (response.hasOwnProperty("progressNotification")) {
-				deferred.notify(response.progressNotification);
-			} else if (response.hasOwnProperty("reason")) {
-				deferred.reject(response.reason); //reject(unmarshal(response.reason, false));
-				delete deferreds[response.id];
-	    	} else if (response.hasOwnProperty('validationResults')) { 
-	    		deferred.reject({ validationFailed:true, validationResults: unmarshal(response.validationResults, false) });
-	    		delete deferreds[response.id];
-	    	} else { 
-	    	 	if (response.hasOwnProperty('deltas')) {
+	var socketPromise = Q.Promise(function(resolve, reject, notify) {
+		var sessionSocket = new WebSocket("<%=webSocketUrl%>");
+		sessionSocket.onmessage = function(event) {
+			var response = JSON.parse(event.data);
+			var deferred = deferreds[response.id];
+			if (deferred) {
+				if (response.hasOwnProperty("progressNotification")) {
+					deferred.notify(response.progressNotification);
+				} else if (response.hasOwnProperty("rejectionReason")) {
+					deferred.reject(response.rejectionReason); //reject(unmarshal(response.reason, false));
+					delete deferreds[response.id];
+		    	} else if (response.hasOwnProperty('validationResults')) { 
+		    		deferred.reject({ validationFailed:true, validationResults: unmarshal(response.validationResults, false) });
+		    		delete deferreds[response.id];
+		    	} else { 
 	    	 		var deltaPromises = [];
-	        		for (var k in response.deltas) {
-	        			if (session.sessionObjects.hasOwnProperty(k)) {
-	        				if (response.deltas[k] === 'detached') {
-	        					delete session.sessionObjects[k];
-	        				} else {
-		        				var deltaPromise = session.sessionObjects[k].applyDelta(response.deltas[k]);
-		        				if (Q.isPromise(deltaPromise)) {
-		        					deltaPromises.push(deltaPromise);
-		        				}
+		    	 	if (response.hasOwnProperty('deltas')) {
+		        		for (var k in response.deltas) {
+		        			if (session.sessionObjects.hasOwnProperty(k)) {
+		        				if (response.deltas[k] === 'detached') {
+		        					delete session.sessionObjects[k];
+		        				} else {
+			        				var deltaPromise = session.sessionObjects[k].applyDelta(response.deltas[k]);
+			        				if (Q.isPromise(deltaPromise)) {
+			        					deltaPromises.push(deltaPromise);
+			        				}
+			        			}
 		        			}
-	        			}
-	        		}
-	        	}
-	        	if (deltaPromises.length===0) {
-	        		deferred.resolve(unmarshal(response.result, false));
-	        	} else {
-	    			Q.all(deltaPromises).then(function() { deferred.resolve(unmarshal(response.result, false)); });
-	    		}
-	    	}
-		} else {
-			console.log("Invalid response id: "+response);
+		        		}
+		        	}
+		        	if (deltaPromises.length===0) {
+		        		deferred.resolve(unmarshal(response.result, false));
+		        	} else {
+		    			Q.all(deltaPromises).then(function(dfrd, result) { 
+		    				dfrd.resolve(unmarshal(result, false)); 
+		    			}.bind(this, deferred, response.result));
+		    		}
+		    	}
+			} else {
+				console.log("Invalid response id: "+response);
+			}
+		};
+		
+		sessionSocket.onerror = function(error) {
+			cosole.error("Session socket error: "+error);
 		}
+		
+		sessionSocket.onopen = function() {
+			resolve(sessionSocket);
+		};
 	});
-
+	
 	var session = {
 		sessionObjects : {},
 		
@@ -135,7 +147,7 @@ define(["q"], function(Q) {
 		// Posts local changes to the server, including operation target, name, and arguments, if specified.
 		// Applies returned server-side changes to the model
 		// Returns a promise which is fulfilled with the operation result or undefined when store operation completes.
-		apply : function(target, operation, opArgs) {
+		apply : function(target, operation, opArgs, feature) {
 			var deferred = Q.defer();
 			var deferredId = deferredCounter++;
 			deferreds[deferredId] = deferred;
@@ -146,6 +158,7 @@ define(["q"], function(Q) {
 			if (target) {
 				applyData.target = target;
 				applyData.operation = operation;
+				applyData.feature = feature;
 				applyData.args = [];
 				for (var ak in opArgs) {
 					applyData.args.push(marshal(opArgs[ak]));
@@ -156,7 +169,10 @@ define(["q"], function(Q) {
 				applyData.deltas[k] = session.sessionObjects[k].delta;
 			}
 			
-			sessionSocket.send(JSON.stringify(applyData));
+			socketPromise.then(function(data, sessionSocket) { 
+				sessionSocket.send(JSON.stringify(data)); 
+			}.bind(this, applyData));
+			
 			return deferred.promise;
 		},
 			
@@ -172,11 +188,10 @@ define(["q"], function(Q) {
 			var deferred = Q.defer();
 			var deferredId = deferredCounter++;
 			deferreds[deferredId] = deferred;
-			var applyData = ;			
-			
-			sessionSocket.send(JSON.stringify({ 
-				id: deferredId 
-			}));
+
+			socketPromise.then(function(data, sessionSocket) { 
+				sessionSocket.send(JSON.stringify(data)); 
+			}.bind(this, { id: deferredId }));
 			return deferred.promise;
 		}		
 	};	

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletConfig;
@@ -83,6 +84,20 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 
 		String getObjectPath(CDOObject cdoObject);
 		
+		/**
+		 * Stores an attribute in the socket object.
+		 * @param name
+		 * @param value
+		 */
+		void setAttribute(String name, Object value);
+		
+		/**
+		 * Retrieves attribute from the socket object.
+		 * @param name
+		 * @return
+		 */
+		Object getAttribute(String name);
+		
 	}		
 
 	@Override
@@ -131,6 +146,7 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 	private static final String PRINCIPAL_ID_ATTRIBUTE_NAME = Principal.class.getName()+":id";
 	
 	private static final String OPERATION_KEY = "operation";
+	private static final String FEATURE_KEY = "feature";
 	private static final String ID_KEY = "id";
 	
 	private static class DeltaEntry<CR> {
@@ -435,6 +451,8 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 		
 		private Connection connection;
 		private CDOID principalID; 
+		
+		private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
 		public SessionWebSocket(HttpServletRequest request, String protocol) {
 			Object idAttr = request.getAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
@@ -458,10 +476,10 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 		public void onMessage(String message) {
 			try {
 				JSONObject jsonRequest = new JSONObject(message);
-				final Object requestId = jsonRequest.get(ID_KEY);
+				final Object requestID = jsonRequest.get(ID_KEY);
 				CDOTransactionContextProvider<CR> cdoTransactionContextProvider = cdoTransactionContextProviderServiceTracker.getService();
 				if (cdoTransactionContextProvider == null) {
-					reject(requestId, "Transaction provided is not available");
+					reject(requestID, "Transaction provider is not available");
 				} else {															
 					CDOViewContextSubject<CDOTransaction, CR> subject = new CDOViewContextSubject<CDOTransaction, CR>() {
 
@@ -480,275 +498,307 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 						}
 						
 					};
-					try (final CDOTransactionContext<CR> cdoTransactionContext = cdoTransactionContextProvider.createContext(subject)) {	
-						final WebSocketContext<CR> webSocketContext = new WebSocketContext<CR>() {
-
-							@Override
-							public void setRollbackOnly() {
-								cdoTransactionContext.setRollbackOnly();							
-							}
-
-							@Override
-							public boolean isRollbackOnly() {
-								return cdoTransactionContext.isRollbackOnly();
-							}
-
-							@Override
-							public boolean authorize(Object target,	String action, String qualifier, Map<String, Object> environment) throws Exception {
-								return cdoTransactionContext.authorize(target, action, qualifier, environment);
-							}
-
-							@Override
-							public <T> T convert(Object source,	Class<T> targetType) throws Exception {
-								return cdoTransactionContext.convert(source, targetType);
-							}
-
-							@Override
-							public void close() throws Exception {
-								cdoTransactionContext.close();								
-							}
-
-							@Override
-							public <T> T adapt(Class<T> targetType) throws Exception {
-								return cdoTransactionContext.adapt(targetType);
-							}
-
-							@Override
-							public CDOTransaction getView() {
-								return cdoTransactionContext.getView();
-							}
-
-							@Override
-							public Principal getPrincipal() throws Exception {
-								return cdoTransactionContext.getPrincipal();
-							}
-
-							@Override
-							public ProtectionDomain<CR> getProtectionDomain() {
-								return cdoTransactionContext.getProtectionDomain();
-							}
-
-							@Override
-							public Principal authenticate(CR credentials) throws Exception {
-								return cdoTransactionContext.authenticate(credentials);
-							}
-
-							@Override
-							public void onProgress(Object progressNotification) throws Exception {
-								JSONObject jo = new JSONObject();
-								jo.put("progressNotification", progressNotification);
-								connection.sendMessage(jo.toString());								
-							}
-
-							@Override
-							public String getViewPath() {
-								return viewPath;
-							}
-
-							@Override
-							public String getObjectPath(CDOObject cdoObject) {
-								if (cdoObject.cdoView()!=getView()) {
-									throw new IllegalArgumentException("Object does not belong to the view: "+cdoObject);
+					try (final CDOTransactionContext<CR> cdoTransactionContext = cdoTransactionContextProvider.createContext(subject)) {
+						try {
+							final WebSocketContext<CR> webSocketContext = new WebSocketContext<CR>() {
+	
+								@Override
+								public void setRollbackOnly() {
+									cdoTransactionContext.setRollbackOnly();							
 								}
-								StringBuilder builder = new StringBuilder(getViewPath()).append("/objects/");
-								CDOIDUtil.write(builder, cdoObject.cdoID());
-								return builder.toString();
-							}
-							
-						};					
-						
-						Map<String, Map<?,?>> objectValidationResults = new HashMap<>();
-						final Map<CDOID, DeltaEntry<CR>> sessionObjects = new HashMap<>();
-						String targetPath = jsonRequest.has("target") ? jsonRequest.getString("target") : null;
-						CDOObject invocationTarget = null;
-						if (jsonRequest.has("deltas")) {
-							JSONObject deltas = jsonRequest.getJSONObject("deltas");
-							Iterator<String> kit = deltas.keys();
-							while (kit.hasNext()) {
-								String path = kit.next();
-								DeltaEntry<CR> deltaEntry = new DeltaEntry<CR>();
-								deltaEntry.context = webSocketContext;
-								deltaEntry.path = path;
-								deltaEntry.inDelta = deltas.getJSONObject(path);
-								try {
-									CDOObject cdoObject = CDOWebUtil.resolvePath(webSocketContext, path);
-									if (targetPath!=null && targetPath.equals(path)) {
-										invocationTarget = cdoObject;
-									}
-									deltaEntry.target = cdoObject;
-									
-									CDORevision cdoRevision = cdoObject.cdoRevision();
-									deltaEntry.isSameVersion = cdoRevision!=null 
-											&& deltaEntry.inDelta.has("$version") 
-											&& cdoRevision.getVersion() == deltaEntry.inDelta.getInt("$version");
-									
-									sessionObjects.put(cdoObject.cdoID(), deltaEntry);
-									Map<?, ?> vr = deltaEntry.applyInDelta();
-									if (vr!=null) {
-										objectValidationResults.put(path, vr);
-									}
-								} catch (ObjectNotFoundException onfe) {
-									// Not found - maybe was deleted by a different transaction
-									sessionObjects.put(onfe.getID(), deltaEntry);
+	
+								@Override
+								public boolean isRollbackOnly() {
+									return cdoTransactionContext.isRollbackOnly();
 								}
-							}
-						}
-						
-						final Object[] opResult = { null };
-						final JSONObject response = new JSONObject();
-						response.put(ID_KEY, requestId);
-						
-						webSocketContext.getView().addTransactionHandler(new CDOTransactionHandler2() {
-							
-							@Override
-							public void rolledBackTransaction(CDOTransaction transaction) {
-								// NOP
+	
+								@Override
+								public boolean authorize(Object target,	String action, String qualifier, Map<String, Object> environment) throws Exception {
+									return cdoTransactionContext.authorize(target, action, qualifier, environment);
+								}
+	
+								@Override
+								public <T> T convert(Object source,	Class<T> targetType) throws Exception {
+									return cdoTransactionContext.convert(source, targetType);
+								}
+	
+								@Override
+								public void close() throws Exception {
+									cdoTransactionContext.close();								
+								}
+	
+								@Override
+								public <T> T adapt(Class<T> targetType) throws Exception {
+									if (targetType.isInstance(this)) {
+										return (T) this;
+									}
+									return cdoTransactionContext.adapt(targetType);
+								}
+	
+								@Override
+								public CDOTransaction getView() {
+									return cdoTransactionContext.getView();
+								}
+	
+								@Override
+								public Principal getPrincipal() throws Exception {
+									return cdoTransactionContext.getPrincipal();
+								}
+	
+								@Override
+								public ProtectionDomain<CR> getProtectionDomain() {
+									return cdoTransactionContext.getProtectionDomain();
+								}
+	
+								@Override
+								public Principal authenticate(CR credentials) throws Exception {
+									return cdoTransactionContext.authenticate(credentials);
+								}
+	
+								@Override
+								public void onProgress(Object progressNotification) throws Exception {
+									JSONObject jo = new JSONObject();
+									jo.put(ID_KEY, requestID);
+									jo.put("progressNotification", progressNotification);
+									connection.sendMessage(jo.toString());								
+								}
+	
+								@Override
+								public String getViewPath() {
+									return viewPath;
+								}
+	
+								@Override
+								public String getObjectPath(CDOObject cdoObject) {
+									if (cdoObject.cdoView()!=getView()) {
+										throw new IllegalArgumentException("Object does not belong to the view: "+cdoObject);
+									}
+									StringBuilder builder = new StringBuilder(getViewPath()).append("/objects/");
+									CDOIDUtil.write(builder, cdoObject.cdoID());
+									return builder.toString();
+								}
+
+								@Override
+								public void setAttribute(String name, Object value) {									
+									attributes.put(name, value);
+								}
+
+								@Override
+								public Object getAttribute(String name) {
+									return attributes.get(name);
+								}
 								
-							}
+							};					
 							
-							@Override
-							public void committingTransaction(CDOTransaction transaction, CDOCommitContext context) {
-								// NOP
-								
-							}
-							
-							@Override
-							public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
-								try {
-									JSONObject rDeltas = new JSONObject();
-									response.put("deltas", rDeltas);
-									for (CDOID did: commitContext.getDetachedObjects().keySet()) {
-										DeltaEntry<CR> deltaEntry = sessionObjects.remove(did);
-										if (deltaEntry!=null) {												
-											rDeltas.put(deltaEntry.path, "detached");
+							Map<String, Map<?,?>> objectValidationResults = new HashMap<>();
+							final Map<CDOID, DeltaEntry<CR>> sessionObjects = new HashMap<>();
+							String targetPath = jsonRequest.has("target") ? jsonRequest.getString("target") : null;
+							CDOObject target = null;
+							if (jsonRequest.has("deltas")) {
+								JSONObject deltas = jsonRequest.getJSONObject("deltas");
+								Iterator<String> kit = deltas.keys();
+								while (kit.hasNext()) {
+									String path = kit.next();
+									DeltaEntry<CR> deltaEntry = new DeltaEntry<CR>();
+									deltaEntry.context = webSocketContext;
+									deltaEntry.path = path;
+									deltaEntry.inDelta = deltas.getJSONObject(path);
+									try {
+										CDOObject cdoObject = CDOWebUtil.resolvePath(webSocketContext, path);
+										if (targetPath!=null && targetPath.equals(path)) {
+											target = cdoObject;
 										}
-						
-									}
-									for (Entry<CDOID, CDORevisionDelta> rde: commitContext.getRevisionDeltas().entrySet()) {
-										DeltaEntry<CR> sessionObjectDeltaEntry = sessionObjects.remove(rde.getKey());
-										if (sessionObjectDeltaEntry!=null) {
-											sessionObjectDeltaEntry.outDelta(rde.getValue(), rDeltas);
+										deltaEntry.target = cdoObject;
+										
+										CDORevision cdoRevision = cdoObject.cdoRevision();
+										deltaEntry.isSameVersion = cdoRevision!=null 
+												&& deltaEntry.inDelta.has("$version") 
+												&& cdoRevision.getVersion() == deltaEntry.inDelta.getInt("$version");
+										
+										sessionObjects.put(cdoObject.cdoID(), deltaEntry);
+										Map<?, ?> vr = deltaEntry.applyInDelta();
+										if (vr!=null) {
+											objectValidationResults.put(path, vr);
 										}
+									} catch (ObjectNotFoundException onfe) {
+										// Not found - maybe was deleted by a different transaction
+										sessionObjects.put(onfe.getID(), deltaEntry);
 									}
-									for (DeltaEntry<CR> sde: sessionObjects.values()) {
-										sde.outDelta(null, rDeltas);
-									}
+								}
+							}
+							
+							final Object[] result = { null };
+							final JSONObject response = new JSONObject();
+							response.put(ID_KEY, requestID);
+							
+							webSocketContext.getView().addTransactionHandler(new CDOTransactionHandler2() {
+								
+								@Override
+								public void rolledBackTransaction(CDOTransaction transaction) {
+									// NOP
 									
-									response.put("result", CDOWebUtil.marshal(webSocketContext, opResult[0])); //Marshaling here so CDOID's are not transient for new objects.
-									connection.sendMessage(response.toString());
-								} catch (Exception e) {
-									//e.printStackTrace();
-									getServletConfig().getServletContext().log("Error processing client request", e);
-									reject(requestId, e.toString());
 								}
 								
-							}
-						});
-						
-						if (jsonRequest.has(OPERATION_KEY)) {
-							if (invocationTarget==null) {
-								throw new ServerException("Invocation target not in session: "+targetPath);
-							}
-							String opName = jsonRequest.getString(OPERATION_KEY);
-							JSONArray opArgs = jsonRequest.getJSONArray("args");
-							if ("$delete".equals(opName)) {
-								if (webSocketContext.authorize(invocationTarget, "write", null, null)) {
-									if (invocationTarget instanceof Deletable) {
-										((Deletable<Context>) invocationTarget).delete(webSocketContext);
-									} else {
-										EcoreUtil.delete(invocationTarget, true);
-									}
-								} else {
-									throw new ServerException("Can't delete: "+targetPath);
+								@Override
+								public void committingTransaction(CDOTransaction transaction, CDOCommitContext context) {
+									// NOP
+									
 								}
-							} else {
-								for (EOperation op: invocationTarget.eClass().getEAllOperations()) {
-									if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null && op.getName().equals(opName)) { 
-																					
-										int argCount = 0;
-										for (EParameter p: op.getEParameters()) {
-											if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)==null && p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)==null) {
-												++argCount;
+								
+								@Override
+								public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
+									try {
+										JSONObject rDeltas = new JSONObject();
+										response.put("deltas", rDeltas);
+										for (CDOID did: commitContext.getDetachedObjects().keySet()) {
+											DeltaEntry<CR> deltaEntry = sessionObjects.remove(did);
+											if (deltaEntry!=null) {												
+												rDeltas.put(deltaEntry.path, "detached");
 											}
+							
+										}
+										for (Entry<CDOID, CDORevisionDelta> rde: commitContext.getRevisionDeltas().entrySet()) {
+											DeltaEntry<CR> sessionObjectDeltaEntry = sessionObjects.remove(rde.getKey());
+											if (sessionObjectDeltaEntry!=null) {
+												sessionObjectDeltaEntry.outDelta(rde.getValue(), rDeltas);
+											}
+										}
+										for (DeltaEntry<CR> sde: sessionObjects.values()) {
+											sde.outDelta(null, rDeltas);
 										}
 										
-										if (argCount==opArgs.length()) { // No type matching - conversion	
-											EList<EParameter> params = op.getEParameters();
-											List<Class<?>> pTypes = new ArrayList<Class<?>>();
-											for (EParameter p: params) {
+										response.put("result", CDOWebUtil.marshal(webSocketContext, result[0])); //Marshaling here so CDOID's are not transient for new objects.
+										connection.sendMessage(response.toString());
+									} catch (Exception e) {
+										//e.printStackTrace();
+										getServletConfig().getServletContext().log("Error processing client request", e);
+										reject(requestID, e.toString());
+									}
+									
+								}
+							});
+							
+							if (jsonRequest.has(OPERATION_KEY)) {
+								if (target==null) {
+									throw new ServerException("Invocation target not in session: "+targetPath);
+								}
+								String opName = jsonRequest.getString(OPERATION_KEY);
+								JSONArray opArgs = jsonRequest.getJSONArray("args");
+								if ("$delete".equals(opName)) {
+									if (webSocketContext.authorize(target, "write", null, null)) {
+										if (target instanceof Deletable) {
+											((Deletable<Context>) target).delete(webSocketContext);
+										} else {
+											EcoreUtil.delete(target, true);
+										}
+									} else {
+										throw new ServerException("Can't delete: "+targetPath);
+									}
+								} else {
+									for (EOperation op: target.eClass().getEAllOperations()) {
+										if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null && op.getName().equals(opName)) { 
+																						
+											int argCount = 0;
+											for (EParameter p: op.getEParameters()) {
 												if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)==null && p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)==null) {
-													pTypes.add(p.getEType().getInstanceClass());										
-												}
-											}
-											Map<String,Object> argMap = new HashMap<>();
-											EList<?> clientArgs = CDOWebUtil.unmarshal(webSocketContext, opArgs, pTypes, invocationTarget.eClass());
-											int caIdx = 0;
-											for (EParameter p: params) {
-												if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)==null && p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)==null) {
-													argMap.put(p.getName(), clientArgs.get(caIdx++));										
+													++argCount;
 												}
 											}
 											
-											Map<String, Object> env = new HashMap<>();
-											env.put("arguments", argMap);											
-											if (webSocketContext.authorize(invocationTarget, CDOWebUtil.getEOperationPermission(op), opName, env)) {											
-												List<ServiceReference<?>> toUnget = new ArrayList<>();
-												caIdx = 0;
-												EList<Object> args = new BasicEList<>();
+											if (argCount==opArgs.length()) { // No type matching - conversion	
+												EList<EParameter> params = op.getEParameters();
+												List<Class<?>> pTypes = new ArrayList<Class<?>>();
 												for (EParameter p: params) {
-													if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)!=null) {
-														args.add(webSocketContext.adapt(p.getEType().getInstanceClass()));
-													} else if (p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)!=null) {
-														String serviceFilter = p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER).getDetails().get("filter");
-														for (ServiceReference<?> ref: bundleContext.getServiceReferences(p.getEType().getInstanceClass(), serviceFilter)) {
-															Object service = bundleContext.getService(ref);
-															if (service!=null) {
-																args.add(service);
-																toUnget.add(ref);
-																break;
+													if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)==null && p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)==null) {
+														pTypes.add(p.getEType().getInstanceClass());										
+													}
+												}
+												Map<String,Object> argMap = new HashMap<>();
+												EList<?> clientArgs = CDOWebUtil.unmarshal(webSocketContext, opArgs, pTypes, target.eClass());
+												int caIdx = 0;
+												for (EParameter p: params) {
+													if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)==null && p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)==null) {
+														argMap.put(p.getName(), clientArgs.get(caIdx++));										
+													}
+												}
+												
+												Map<String, Object> env = new HashMap<>();
+												env.put("arguments", argMap);											
+												if (webSocketContext.authorize(target, CDOWebUtil.getEOperationPermission(op), opName, env)) {											
+													List<ServiceReference<?>> toUnget = new ArrayList<>();
+													caIdx = 0;
+													EList<Object> args = new BasicEList<>();
+													for (EParameter p: params) {
+														if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)!=null) {
+															args.add(webSocketContext.adapt(p.getEType().getInstanceClass()));
+														} else if (p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)!=null) {
+															String serviceFilter = p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER).getDetails().get("filter");
+															for (ServiceReference<?> ref: bundleContext.getServiceReferences(p.getEType().getInstanceClass(), serviceFilter)) {
+																Object service = bundleContext.getService(ref);
+																if (service!=null) {
+																	args.add(service);
+																	toUnget.add(ref);
+																	break;
+																}
 															}
+														} else {
+															args.add(clientArgs.get(caIdx++));										
 														}
-													} else {
-														args.add(clientArgs.get(caIdx++));										
 													}
-												}
-
-												try {
-													Object operationValidationResult = CDOWebUtil.validateEOperation(webSocketContext, op, invocationTarget, args);
-													if (operationValidationResult!=null || !objectValidationResults.isEmpty()) {
-														Map<String,Object> vr = new HashMap<>();
-														if (!objectValidationResults.isEmpty()) {
-															vr.put("objects", objectValidationResults);
+	
+													try {
+														Object operationValidationResult = CDOWebUtil.validateEOperation(webSocketContext, op, target, args);
+														if (operationValidationResult!=null || !objectValidationResults.isEmpty()) {
+															Map<String,Object> vr = new HashMap<>();
+															if (!objectValidationResults.isEmpty()) {
+																vr.put("objects", objectValidationResults);
+															}
+															if (operationValidationResult!=null) {
+																vr.put("operation", operationValidationResult);
+															}
+															response.put("validationResults", CDOWebUtil.marshal(webSocketContext, vr));
+															webSocketContext.setRollbackOnly();
+														} else {
+															result[0] = target.eInvoke(op, args);
 														}
-														if (operationValidationResult!=null) {
-															vr.put("operation", operationValidationResult);
-														}
-														response.put("validationResults", CDOWebUtil.marshal(webSocketContext, vr));
-														webSocketContext.setRollbackOnly();
-													} else {
-														opResult[0] = invocationTarget.eInvoke(op, args);
+													} finally {
+														for (ServiceReference<?> sr: toUnget) {
+															bundleContext.ungetService(sr);
+														}													
 													}
-												} finally {
-													for (ServiceReference<?> sr: toUnget) {
-														bundleContext.ungetService(sr);
-													}													
+													return;
 												}
-												return;
 											}
 										}
 									}
-								}								
-								throw new ServerException("No such operation "+opName+" of "+targetPath);								
+									cdoTransactionContext.setRollbackOnly();
+									reject(requestID, "No such operation "+opName+" of "+targetPath);								
+								}
+							} else if (jsonRequest.has(FEATURE_KEY)) {
+								if (target==null) {
+									throw new ServerException("Target not in session: "+targetPath);
+								}
+								String featureName = jsonRequest.getString(FEATURE_KEY);								
+								if (webSocketContext.authorize(target, "read", featureName, null)) {
+									EStructuralFeature feature = target.eClass().getEStructuralFeature(featureName);
+									result[0] = target.eGet(feature);									
+								} else {
+									reject(requestID, "Feature not found: "+featureName);
+								}
+							} else if (!objectValidationResults.isEmpty()) {
+								Map<String,Object> vr = new HashMap<>();
+								vr.put("objects", objectValidationResults);
+								response.put("validationResults", CDOWebUtil.marshal(webSocketContext, vr));
+								webSocketContext.setRollbackOnly();
 							}
-						} else if (!objectValidationResults.isEmpty()) {
-							Map<String,Object> vr = new HashMap<>();
-							vr.put("objects", objectValidationResults);
-							response.put("validationResults", CDOWebUtil.marshal(webSocketContext, vr));
-							webSocketContext.setRollbackOnly();
+						} catch (Exception e) {
+							cdoTransactionContext.setRollbackOnly();
+							e.printStackTrace();
+							reject(requestID, "Server error: "+e);
 						}
-					} catch (Exception e) {												
+					} catch (Exception e) {		
 						e.printStackTrace();
-						reject(requestId, "Server error: "+e);
+						reject(requestID, "Server error: "+e);
 					}
 				}
 			} catch (JSONException e) {

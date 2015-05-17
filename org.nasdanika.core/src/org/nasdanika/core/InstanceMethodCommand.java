@@ -14,7 +14,7 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class InstanceMethodCommand<C extends Context, R> implements Command<C, Object, R> {
 	
-	private Object target;
+	protected Object target;
 	private MethodCommand<C,R> methodCommand;
 
 	public InstanceMethodCommand(Object target, String name) throws Exception {

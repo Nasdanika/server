@@ -4,7 +4,7 @@
 	org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig config = (org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute.ModuleGeneratorConfig) args[0];
 %>
 
-define(["<%=config.getSessionPath()%>/session.js", "q", "jquery", <% for (Object eager: config.getEager()) { %>, "<%=config.getContext().getObjectPath(eager)%>.js"<% } %>], function(session, Q, jquery) {
+define(["<%=config.getSessionPath()%>/session.js", "q" <% for (String dependency: config.getDependencies()) { %>, "<%=dependency%>"<% } %> <% for (Object eager: config.getEager()) { %>, "<%=config.getContext().getObjectPath(eager)%>.js"<% } %>], function(session, Q <% for (String dependencyName: config.getDependencyNames()) { %>, <%=dependencyName%><% } %>) {
 	//console.log("Defining <%=config.getObjectPath()%>.js");
     var data = <%=config.getDataDefinitions()%>;
 

@@ -39,5 +39,17 @@ public @interface RouteMethod {
 	 * @return
 	 */
 	String contentType() default "";
+	
+	/**
+	 * Authorization action. If not set, the request method name is used, e.g. GET.
+	 * @return
+	 */
+	String action() default "";
+	
+	/**
+	 * Authorization qualifier. If not set, the route method name is used.
+	 * @return
+	 */
+	String qualifier() default "";
 
 }

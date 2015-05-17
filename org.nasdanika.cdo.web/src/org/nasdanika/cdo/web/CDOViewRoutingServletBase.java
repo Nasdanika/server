@@ -9,10 +9,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
-import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
-import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextProvider;
 import org.nasdanika.cdo.CDOViewContextSubject;
@@ -45,7 +43,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		
-		sessionWebSocketServletPath = config.getInitParameter("session-web-socket-servlet-path");
+		sessionWebSocketServletPath = config.getInitParameter("ws-session-path");
 		
 		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
 		String serviceFilter = config.getInitParameter("cdo-view-context-provider-service-filter");
@@ -229,8 +227,8 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 					@SuppressWarnings("unchecked")
 					CDOView view = ((CDOViewContext<?, CR>) context).getView();
 					if (RequestMethod.GET.equals(context.getMethod())) {
-						context.getResponse().setContentType("application/javascript");
-						String fullSessionWebSocketServletPath = context.getRequest().getContextPath()+"/"+sessionWebSocketServletPath;
+						context.getResponse().setContentType("application/javascript");						
+						String fullSessionWebSocketServletPath = "ws://"+context.getRequest().getServerName()+":"+context.getRequest().getServerPort()+context.getRequest().getContextPath()+"/"+sessionWebSocketServletPath+"";
 						return new ValueAction(cdoViewSessionModuleGenerator.generate(context, view, fullSessionWebSocketServletPath));
 					}
 					

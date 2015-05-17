@@ -3,6 +3,7 @@ package org.nasdanika.cdo.web.routes;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
@@ -17,10 +18,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.Route;
-import org.nasdanika.web.HttpServletRequestContext;
 
 public class CDOObjectJsExtensionRoute implements Route {
 
@@ -87,10 +88,27 @@ public class CDOObjectJsExtensionRoute implements Route {
 		
 		private CDOObject cdoObject;
 		private HttpServletRequestContext context;
+		private List<String> dependencies = new ArrayList<>();
+		private List<String> dependencyNames = new ArrayList<>();
 
 		public ModuleGeneratorConfig(HttpServletRequestContext context,CDOObject cdoObject) {
 			this.context = context;
 			this.cdoObject = cdoObject;
+			EClass eClass = cdoObject.eClass();
+			for (EClass st: eClass.getEAllSuperTypes()) {
+				collectDependencies(st);
+			}
+			collectDependencies(eClass);			
+		}
+
+		void collectDependencies(EClass eClass) {
+			EAnnotation reqa = eClass.getEAnnotation(CDOWebUtil.ANNOTATION_REQUIRES);
+			if (reqa!=null) {
+				for (Entry<String, String> de: reqa.getDetails().entrySet()) {
+					dependencies.add(de.getKey());
+					dependencyNames.add(de.getValue());
+				}
+			}
 		}
 
 		public String getObjectPath() throws Exception {
@@ -232,16 +250,11 @@ public class CDOObjectJsExtensionRoute implements Route {
 			Collection<String> ret = new ArrayList<>(); 
 			EClass eClass = cdoObject.eClass();
 			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
-				for (EReference ref: eClass.getEAllReferences()) {
-					if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
-							&& context.authorize(cdoObject, "read", ref.getName(), null) 
-							&& (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_REF)!=null)) {
-						StringBuilder sb = new StringBuilder("facade."+ref.getName()+"()");
-//						if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_OBJ)!=null) {
-//							if (ref.isMany()) {
-//								sb.append(".then(function(fa) { for (f in fa) { fa[f](); } }");
-//							}
-//						}
+				for (EStructuralFeature feature: eClass.getEAllStructuralFeatures()) {
+					if (feature.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
+							&& context.authorize(cdoObject, "read", feature.getName(), null) 
+							&& (feature.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD)!=null)) {
+						StringBuilder sb = new StringBuilder("facade."+feature.getName()+"()");
 						sb.append(";");
 						ret.add(sb.toString());
 					}
@@ -337,26 +350,27 @@ public class CDOObjectJsExtensionRoute implements Route {
 		private static final CDOObjectModuleAttributeFacadeDefinitionGenerator CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleAttributeFacadeDefinitionGenerator();
 
 		private String generateFacadeDefinition(EAttribute attr) throws Exception {
-			String ret = CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR.generate(context, cdoObject, attr);
-			return ret.trim().length()==0 ? null : ret;
+			if (attr.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY)==null && attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD)==null) {
+				String ret = CDO_OBJECT_MODULE_ATTRIBUTE_FACADE_DEFINITION_GENERATOR.generate(context, cdoObject, attr);
+				return ret.trim().length()==0 ? null : ret;
+			}
+			String ret = CDO_OBJECT_MODULE_LAZY_FEATURE_FACADE_DEFINITION_GENERATOR.generate(context, cdoObject, attr);
+			return ret.trim().length()==0 ? null : ret;			
 		}
 		
 		private static final CDOObjectModuleEagerObjectFacadeDefinitionGenerator CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleEagerObjectFacadeDefinitionGenerator();
 		private static final CDOObjectModuleEagerReferenceFacadeDefinitionGenerator CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleEagerReferenceFacadeDefinitionGenerator();
-		private static final CDOObjectModuleLazyObjectFacadeDefinitionGenerator CDO_OBJECT_MODULE_LAZY_OBJECT_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleLazyObjectFacadeDefinitionGenerator();
-		private static final CDOObjectModuleLazyReferenceFacadeDefinitionGenerator CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleLazyReferenceFacadeDefinitionGenerator();
+		private static final CDOObjectModuleLazyFeatureFacadeDefinitionGenerator CDO_OBJECT_MODULE_LAZY_FEATURE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleLazyFeatureFacadeDefinitionGenerator();
 
 		private String generateFacadeDefinition(EReference ref) throws Exception {
 			if (context.authorize(cdoObject, "read", ref.getName(), null)) {
-				Generator generator = ref.isMany() ? CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR : CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
+				Generator generator = ref.isMany() ? CDO_OBJECT_MODULE_LAZY_FEATURE_FACADE_DEFINITION_GENERATOR : CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
 				if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null) {
 					generator = CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR;
 				} else if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_REF)!=null) {
 					generator = CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
-				} else if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_OBJ)!=null) {
-					generator = CDO_OBJECT_MODULE_LAZY_OBJECT_FACADE_DEFINITION_GENERATOR;
-				} else if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY_REF)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD_REF)!=null) {
-					generator = CDO_OBJECT_MODULE_LAZY_REFERENCE_FACADE_DEFINITION_GENERATOR;
+				} else if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_LAZY)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD)!=null) {
+					generator = CDO_OBJECT_MODULE_LAZY_FEATURE_FACADE_DEFINITION_GENERATOR;
 				}
 				String ret = generator.generate(context, cdoObject, ref);
 				return ret.trim().length()==0 ? null : ret;
@@ -396,6 +410,14 @@ public class CDOObjectJsExtensionRoute implements Route {
 		private String generateResetEntry(EAttribute attr) {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		public List<String> getDependencies() {
+			return dependencies;
+		}
+
+		public List<String> getDependencyNames() {
+			return dependencyNames;
 		}
 		
 	}
