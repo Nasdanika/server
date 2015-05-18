@@ -180,7 +180,7 @@ public class AuthorizationHelper {
 		if (target instanceof EObject) {
 			EClass eClass = target instanceof EClass ? (EClass) target : ((EObject) target).eClass();
 			for (Permission p: permissions) {
-				int distance = distance(p, eClass);
+				int distance = (p.getTarget()!=null && p.getTarget().equals(target)) ? 0 : distance(p, eClass);
 				if (distance!=-1) {
 					tmp.add(new PermissionEntry(p, distance));
 				}
@@ -188,7 +188,7 @@ public class AuthorizationHelper {
 		} else {
 			Class<? extends Object> targetClass = target instanceof Class ? (Class<?>) target : target.getClass();
 			for (Permission p: permissions) {
-				int distance = distance(p, targetClass);
+				int distance = (p.getTarget()!=null && p.getTarget().equals(target)) ? 0 : distance(p, targetClass);
 				if (distance!=-1) {
 					tmp.add(new PermissionEntry(p, distance));
 				}
@@ -327,6 +327,7 @@ public class AuthorizationHelper {
 			String inheritedClass, 
 			String inheritedName) {
 		for (Action action: ac.getActions()) {
+//			System.out.println(actionKey.getName());
 			String effectiveNamespace = effective(action.getTargetNamespaceURI(), inheritedNamespace);
 			String effectiveClass = effective(action.getTargetClass(), inheritedClass);
 			String effectiveName = effective(action.getName(), inheritedName);

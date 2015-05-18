@@ -5,6 +5,7 @@ package org.nasdanika.cdo.security.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -15,6 +16,7 @@ import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -168,6 +170,8 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 	 * @generated NOT
 	 */
 	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String path, Map<String, Object> environment) {
+		//System.out.println(target + " "+action+" "+path);
+		
 		Date now = new Date();
 		if (getStartDate()!=null && getStartDate().after(now)) {
 			return AccessDecision.ABSTAIN;
@@ -178,6 +182,13 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 		
 		Action permissionAction = securityPolicy==null ? null : securityPolicy.getAction(this);
 		if (permissionAction==null) {
+			if (
+					(getTarget()==null || (target!=null && target.equals(getTarget()))) &&
+					("*".equals(getName()) || action.equals(getName())) && 
+					(CoreUtil.isBlank(getQualifier()) || Pattern.matches(getQualifier(), path))) {
+				
+				return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;					
+			}
 			return AccessDecision.ABSTAIN;
 		}
 		

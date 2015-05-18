@@ -39,9 +39,9 @@ public class ObjectRoute implements Route {
 		
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(target, "read", null, null)) {
-					int dotIdx = context.getPath()[0].lastIndexOf(".");
-					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
+				int dotIdx = context.getPath()[0].lastIndexOf(".");
+				String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
+				if (context.authorize(target, "extension", extension, null)) {
 					Action extensionAction = context.getExtensionAction(target, extension);
 					if (extensionAction==null) {
 						return new Action() {

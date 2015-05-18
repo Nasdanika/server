@@ -230,12 +230,12 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 			EList<String> pathPatterns = getEffectivePathPatterns();
 			if (pathPatterns.isEmpty()) {
 				if ("/".equals(path)) {
-					return eval(context, environment);
+					return eval(context, path, environment);
 				}
 			} else {
 				for (String p: pathPatterns) {
 					if (Pattern.matches(p, path)) {
-						return true;
+						return eval(context, path, environment);
 					}
 				}
 			}
@@ -287,7 +287,7 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
-	private Boolean eval(Context context, Map<String, Object> environment) {
+	private Boolean eval(Context context, String path, Map<String, Object> environment) {
 		try {
 			String condition = getEffectiveCondition();
 			if (CoreUtil.isBlank(condition)) {
@@ -301,6 +301,7 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 					ScriptableObject.putProperty(scope, ee.getKey(), org.mozilla.javascript.Context.javaToJS(ee.getValue(), scope));					
 				}
 				ScriptableObject.putProperty(scope, "actionProperties", org.mozilla.javascript.Context.javaToJS(effectiveActionProperties(context), scope));					
+				ScriptableObject.putProperty(scope, "path", org.mozilla.javascript.Context.javaToJS(path, scope));					
 
 				return Boolean.TRUE.equals(scriptContext.evaluateString(scope, condition, "actionCondition", 1, null));
 			} finally {
