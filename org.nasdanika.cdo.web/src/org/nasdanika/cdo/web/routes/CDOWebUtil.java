@@ -143,6 +143,18 @@ public class CDOWebUtil {
 	 */				
 	public static final String ANNOTATION_REQUIRES = "org.nasdanika.cdo.web:requires";
 
+	/**
+	 * This annotation marks route operation. Details can contain pattern (route matches operation name if pattern is not provided),
+	 * method (comma-separated values GET, PUT, ... matches any method if not set), action (defaults to HTTP method value), qualifier (defaults to operation name). 
+	 */				
+	public static final String ANNOTATION_ROUTE = "org.nasdanika.cdo.web:route";
+
+	/**
+	 * This annotation marks object's home route, which matches &lt;object id&gt;.html, e.g. L3.html. Supports 
+	 * the same details as the route annotation except the 'pattern' key. 
+	 */
+	public static final String ANNOTATION_HOME_ROUTE = "org.nasdanika.cdo.web:home-route";
+
 	private CDOWebUtil() {
 		// Utility class
 	}

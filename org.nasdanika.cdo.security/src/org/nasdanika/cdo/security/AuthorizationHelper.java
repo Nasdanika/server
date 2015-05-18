@@ -332,7 +332,7 @@ public class AuthorizationHelper {
 			String effectiveName = effective(action.getName(), inheritedName);
 			if (equal(actionKey.getTargetNamespaceURI(), effectiveNamespace)
 					&& equal(actionKey.getTargetClass(), effectiveClass)
-					&& equal(actionKey.getName(), effectiveName) 
+					&& ("*".equals(effectiveName) || equal(actionKey.getName(), effectiveName)) 
 					&& equal(actionKey.getQualifier(), action.getQualifier())) {
 				return action;
 			}

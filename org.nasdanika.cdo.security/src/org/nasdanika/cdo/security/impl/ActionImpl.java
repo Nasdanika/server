@@ -224,6 +224,7 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 	 * @generated NOT
 	 */
 	public boolean match(Context context, String action, String path, Map<String, Object> environment) {
+//		System.out.println(action+" "+path);
 		String name = getEffectiveName();
 		if ("*".equals(name) || name.equals(action)) {
 			EList<String> pathPatterns = getEffectivePathPatterns();

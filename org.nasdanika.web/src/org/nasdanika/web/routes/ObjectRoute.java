@@ -16,7 +16,6 @@ import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.RouteMethod;
-import org.nasdanika.web.HttpServletRequestContext;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 

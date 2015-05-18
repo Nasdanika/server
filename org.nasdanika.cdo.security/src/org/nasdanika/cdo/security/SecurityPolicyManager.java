@@ -108,12 +108,15 @@ public class SecurityPolicyManager implements AutoCloseable, SecurityPolicy {
 			}
 		}
 		
-		for (ServiceReference<SecurityPolicy> spr: securityPolicyProviderServiceTracker.getServiceReferences()) {
-			SecurityPolicy sp = securityPolicyProviderServiceTracker.getService(spr);
-			Action action = sp.getAction(actionKey);
-			if (action!=null) {
-				return action;
-			}			
+		ServiceReference<SecurityPolicy>[] serviceReferences = securityPolicyProviderServiceTracker.getServiceReferences();
+		if (serviceReferences!=null) {
+			for (ServiceReference<SecurityPolicy> spr: serviceReferences) {
+				SecurityPolicy sp = securityPolicyProviderServiceTracker.getService(spr);
+				Action action = sp.getAction(actionKey);
+				if (action!=null) {
+					return action;
+				}			
+			}
 		}
 		
 		return null;

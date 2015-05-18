@@ -176,9 +176,19 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T adapt(Class<T> targetType) throws Exception {
-		if (targetType.isAssignableFrom(HTMLFactory.class)) {
-			return (T) extensionManager.getHTMLFactory();
+		HTMLFactory htmlFactory = extensionManager.getHTMLFactory();
+		if (targetType.isInstance(htmlFactory)) {
+			return (T) htmlFactory;
 		}
+		
+		if (targetType.isInstance(getRequest())) {
+			return (T) getRequest();
+		}
+		
+		if (targetType.isInstance(getResponse())) {
+			return (T) getResponse();
+		}
+		
 		
 		T ret = super.adapt(targetType);
 		if (ret!=null) {
