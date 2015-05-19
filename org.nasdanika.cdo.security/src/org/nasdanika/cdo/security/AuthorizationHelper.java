@@ -7,9 +7,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -24,6 +27,7 @@ import org.nasdanika.core.CoreUtil;
  */
 public class AuthorizationHelper {
 
+	public static final String ANNOTATION_PERMISSIONS = "org.nasdanika.cdo.security:permissions";
 	private static final String SLASH = "/";
 	private Principal principal;
 	
@@ -93,6 +97,45 @@ public class AuthorizationHelper {
 				}					
 			}
 			
+		}
+		
+		// Implies from the permissions annotation
+		if (target instanceof EObject) {
+			List<EAnnotation> permissionsAnnotations = new ArrayList<EAnnotation>();
+			EClass eClass = ((EObject) target).eClass();
+			EAnnotation pa = eClass.getEAnnotation(ANNOTATION_PERMISSIONS);
+			if (pa!=null) {
+				permissionsAnnotations.add(pa);
+			}
+			for (EClass st: eClass.getEAllSuperTypes()) {
+				pa = st.getEAnnotation(ANNOTATION_PERMISSIONS);
+				if (pa!=null) {
+					permissionsAnnotations.add(pa);
+				}				
+			}
+			for (EAnnotation permissionsAnnotation: permissionsAnnotations) {
+				for (Entry<String, String> de: permissionsAnnotation.getDetails().entrySet()) {
+					for (String implied: de.getValue().split("\\r?\\n")) {
+						if (!CoreUtil.isBlank(implied) && !implied.trim().startsWith("#")) {
+							int idx = implied.indexOf(SLASH);
+							String impliedAction = (idx==-1 ? implied : implied.substring(0, idx)).trim();
+							if ("*".equals(impliedAction) || impliedAction.equals(action)) {
+								String impliedPattern = idx==-1 ? SLASH : implied.substring(idx).trim();
+								String fullPath = path.endsWith(SLASH) ? path+qualifier : path+SLASH+qualifier;
+								if (Pattern.matches(impliedPattern, fullPath)) {
+									int iidx = de.getKey().indexOf(SLASH);
+									String implyingAction = (iidx==-1 ? de.getKey() : de.getKey().substring(0, iidx)).trim();
+									String implyingQualifier = iidx==-1 || iidx==de.getKey().length()-1 ? null : de.getKey().substring(iidx+1);
+									AccessDecision implyingAccessDecision = authorize(securityPolicy, principal, context, target, implyingAction, implyingQualifier, SLASH, environment, traversed);
+									if (AccessDecision.ALLOW.equals(implyingAccessDecision)) {
+										return implyingAccessDecision;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
 		}
 		
 		if (traversed.add(principal)) { // prevention of infinite loops if groups are cyclically nested.

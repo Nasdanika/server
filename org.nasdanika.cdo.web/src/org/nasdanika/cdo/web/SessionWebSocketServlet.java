@@ -209,7 +209,7 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 			if (!attr.isChangeable() || attr.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)!=null) {
 				throw new ServerException("Attribute not found: "+attr.getName());
 			}
-			if (!context.authorize(target, "write", attr.getName(), null)) {
+			if (!CDOWebUtil.authorize(context, target, attr, "write", null)) {
 				throw new ServerException("Read only attribute "+attr.getName());
 			}
 			EClass targetClass = target.eClass();
@@ -249,7 +249,7 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 			if (!ref.isChangeable() || ref.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)!=null) {
 				throw new ServerException("Reference not found: "+ref.getName());
 			}
-			if (!context.authorize(target, "write", ref.getName(), null)) {
+			if (!CDOWebUtil.authorize(context, target, ref, "write", null)) {
 				throw new ServerException("Read only reference: "+ref.getName());
 			}
 			EClass targetClass = target.eClass();
@@ -723,8 +723,9 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 												}
 												
 												Map<String, Object> env = new HashMap<>();
-												env.put("arguments", argMap);											
-												if (webSocketContext.authorize(target, CDOWebUtil.getEOperationPermission(op), opName, env)) {											
+												env.put("arguments", argMap);
+												
+												if (CDOWebUtil.authorize(webSocketContext, target, op, env)) {											
 													List<ServiceReference<?>> toUnget = new ArrayList<>();
 													caIdx = 0;
 													EList<Object> args = new BasicEList<>();
@@ -779,8 +780,8 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 									throw new ServerException("Target not in session: "+targetPath);
 								}
 								String featureName = jsonRequest.getString(FEATURE_KEY);								
-								if (webSocketContext.authorize(target, "read", featureName, null)) {
-									EStructuralFeature feature = target.eClass().getEStructuralFeature(featureName);
+								EStructuralFeature feature = target.eClass().getEStructuralFeature(featureName);
+								if (CDOWebUtil.authorize(webSocketContext, target, feature, "read", null)) {
 									result[0] = target.eGet(feature);									
 								} else {
 									reject(requestID, "Feature not found: "+featureName);

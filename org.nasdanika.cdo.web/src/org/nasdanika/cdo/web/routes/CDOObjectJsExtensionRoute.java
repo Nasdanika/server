@@ -189,8 +189,8 @@ public class CDOObjectJsExtensionRoute implements Route {
 		
 		private static final CDOObjectModuleEagerObjectSetDeltaGenerator CDO_OBJECT_MODULE_EAGER_OBJECT_SET_DELTA_GENERATOR = new CDOObjectModuleEagerObjectSetDeltaGenerator(); 
 
-		private String generateSetDeltaEntry(EReference ref) throws Exception {
-			if (context.authorize(cdoObject, "read", ref.getName(), null)) {
+		private String generateSetDeltaEntry(EReference ref) throws Exception {			
+			if (CDOWebUtil.authorize(context, cdoObject, ref, "read", null)) {
 				if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ) == null) {
 					return "if (delta.hasOwnProperty('"+ref.getName()+"')) { data."+ref.getName()+" = delta."+ref.getName()+"; }";
 				}
@@ -200,7 +200,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 		}
 
 		private String generateSetDeltaEntry(EAttribute attr) throws Exception {
-			if (context.authorize(cdoObject, "read", attr.getName(), null)) {
+			if (CDOWebUtil.authorize(context, cdoObject, attr, "read", null)) {
 				return "if (delta.hasOwnProperty('"+attr.getName()+"')) { data."+attr.getName()+" = delta."+attr.getName()+"; }";
 			}
 			return null;
@@ -240,7 +240,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 		private static final CDOObjectAttributeGetDeltaGenerator ATTRIBUTE_GET_DELTA_GENERATOR = new CDOObjectAttributeGetDeltaGenerator(); 
 
 		private String generateGetDeltaEntry(EAttribute attr) throws Exception {
-			if (attr.isChangeable() && context.authorize(cdoObject, "write", attr.getName(), null)) {
+			if (attr.isChangeable() && CDOWebUtil.authorize(context, cdoObject, attr, "write", null)) {
 				return ATTRIBUTE_GET_DELTA_GENERATOR.generate(context, cdoObject, attr);
 			}
 			return null;
@@ -252,7 +252,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				for (EStructuralFeature feature: eClass.getEAllStructuralFeatures()) {
 					if (feature.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null 
-							&& context.authorize(cdoObject, "read", feature.getName(), null) 
+							&& CDOWebUtil.authorize(context, cdoObject, feature, "read", null) 
 							&& (feature.getEAnnotation(CDOWebUtil.ANNOTATION_PRELOAD)!=null)) {
 						StringBuilder sb = new StringBuilder("facade."+feature.getName()+"()");
 						sb.append(";");
@@ -278,11 +278,11 @@ public class CDOObjectJsExtensionRoute implements Route {
 			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				EObject container = cdoObject.eContainer();
 				if (container!=null) { 
-					if (context.authorize(cdoObject, "read", null, null)) {						
+					if (context.authorize(cdoObject, "read", null, null)) {	// TODO - permission annotation?					
 						ret.add(CDO_OBJECT_MODULE_GET_CONTAINER_FACADE_DEFINITION_GENERATOR.generate());
 					}
 				}
-				if (context.authorize(cdoObject, "write", null, null)) {
+				if (context.authorize(cdoObject, "write", null, null)) { // TODO - permission annotation?
 					ret.add("$delete: function() { return session.apply('"+getObjectPath()+"', '$delete', arguments); }");
 					ret.add("$store: function() { return session.apply().thenResolve(this); }");
 				}										
@@ -329,7 +329,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 					}
 				}
 				for (EOperation op: ops.values()) {
-					if (context.authorize(cdoObject, CDOWebUtil.getEOperationPermission(op), op.getName(), null)) {
+					if (CDOWebUtil.authorize(context, cdoObject, op, null)) {
 						// Getters
 						String defHead;
 						if (op.getEAnnotation(CDOWebUtil.ANNOTATION_GETTER)!=null) {
@@ -363,7 +363,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 		private static final CDOObjectModuleLazyFeatureFacadeDefinitionGenerator CDO_OBJECT_MODULE_LAZY_FEATURE_FACADE_DEFINITION_GENERATOR = new CDOObjectModuleLazyFeatureFacadeDefinitionGenerator();
 
 		private String generateFacadeDefinition(EReference ref) throws Exception {
-			if (context.authorize(cdoObject, "read", ref.getName(), null)) {
+			if (CDOWebUtil.authorize(context, cdoObject, ref, "read", null)) {
 				Generator generator = ref.isMany() ? CDO_OBJECT_MODULE_LAZY_FEATURE_FACADE_DEFINITION_GENERATOR : CDO_OBJECT_MODULE_EAGER_REFERENCE_FACADE_DEFINITION_GENERATOR;
 				if (ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null) {
 					generator = CDO_OBJECT_MODULE_EAGER_OBJECT_FACADE_DEFINITION_GENERATOR;

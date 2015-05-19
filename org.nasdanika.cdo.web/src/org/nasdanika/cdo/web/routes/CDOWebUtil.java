@@ -144,6 +144,13 @@ public class CDOWebUtil {
 	public static final String ANNOTATION_REQUIRES = "org.nasdanika.cdo.web:requires";
 
 	/**
+	 * This annotation allows to customize JavaScript operation action and qualifier.
+	 * Supports <code>action</code> and <code>qualifier</code> detail keys. Action defaults to <code>invoke</code>
+	 * and qualifier defaults to the operation name.
+	 */				
+	public static final String ANNOTATION_PERMISSION = "org.nasdanika.cdo.security:permission";
+
+	/**
 	 * This annotation marks route operation. Details can contain pattern (route matches operation name if pattern is not provided),
 	 * method (comma-separated values GET, PUT, ... matches any method if not set), action (defaults to HTTP method value), qualifier (defaults to operation name). 
 	 */				
@@ -586,11 +593,51 @@ public class CDOWebUtil {
 	}
 	
 	/**
+	 * Authorizes taking the permission annotation into account.
+	 * @param context
+	 * @param op
+	 * @param action
+	 * @param qualifier
+	 * @param env
+	 * @return
+	 * @throws Exception 
+	 */
+	public static boolean authorize(Context context, Object target, EOperation op, Map<String, Object> environment) throws Exception {
+		EAnnotation permissionAnnotation = op.getEAnnotation(CDOWebUtil.ANNOTATION_PERMISSION);
+		
+		String action = permissionAnnotation==null ? null : permissionAnnotation.getDetails().get("action");
+		if (action==null) {
+			action = CDOWebUtil.getEOperationPermission(op);
+		}
+		String qualifier = permissionAnnotation==null ? null : permissionAnnotation.getDetails().get("qualifier");
+		if (qualifier==null) {
+			qualifier = op.getName();
+		}															
+		
+		return context.authorize(target, action, qualifier, environment);
+	}
+	
+	public static boolean authorize(Context context, Object target, EStructuralFeature feature, String action, Map<String, Object> environment) throws Exception {
+		EAnnotation permissionAnnotation = feature.getEAnnotation(CDOWebUtil.ANNOTATION_PERMISSION);
+		
+		String effectiveAction = permissionAnnotation==null ? null : permissionAnnotation.getDetails().get(action);
+		if (effectiveAction==null) {
+			effectiveAction = action;
+		}
+		String qualifier = permissionAnnotation==null ? null : permissionAnnotation.getDetails().get("qualifier");
+		if (qualifier==null) {
+			qualifier = feature.getName();
+		}															
+		
+		return context.authorize(target, effectiveAction, qualifier, environment);
+	}
+	
+	/**
 	 * read for getters, write for setters, invoke otherwise
 	 * @param op
 	 * @return
 	 */
-	public static String getEOperationPermission(EOperation op) {
+	private static String getEOperationPermission(EOperation op) {
 		if (op.getEAnnotation(ANNOTATION_GETTER)!=null) {
 			return "read";
 		}
