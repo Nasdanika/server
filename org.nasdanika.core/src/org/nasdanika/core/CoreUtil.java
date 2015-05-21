@@ -136,14 +136,18 @@ public class CoreUtil {
 	public static boolean isBlank(String str) {
 		return str==null || str.trim().length()==0;
 	}
-		
+
 	public static String join(String[] sa, String separator) {
+		return join(sa, separator, 0);
+	}
+	
+	public static String join(String[] sa, String separator, int beginIndex) {
 		StringBuilder sb = new StringBuilder();
-		for (String pe: sa) {
+		for (int i=beginIndex; i<sa.length; ++i) {
 			if (sb.length()>0) {
 				sb.append(separator);
 			}
-			sb.append(pe);
+			sb.append(sa[i]);
 		}
 		return sb.toString();
 	}

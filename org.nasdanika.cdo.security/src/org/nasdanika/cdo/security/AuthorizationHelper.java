@@ -29,6 +29,7 @@ public class AuthorizationHelper {
 
 	public static final String ANNOTATION_PERMISSIONS = "org.nasdanika.cdo.security:permissions";
 	private static final String SLASH = "/";
+	private static final String PARENT_NAVIGATION = "../";
 	private Principal principal;
 	
 	public AuthorizationHelper(Principal principal) {
@@ -166,10 +167,14 @@ public class AuthorizationHelper {
 			EObject targetContainer = ((EObject) target).eContainer();
 			EStructuralFeature targetContainingFeature = ((EObject) target).eContainingFeature();
 			if (targetContainer!=null && targetContainingFeature!=null) {
-				if (path.equals(SLASH)) {
-					path=SLASH+targetContainingFeature.getName();
+				if (qualifier!=null && qualifier.startsWith(PARENT_NAVIGATION)) {
+					qualifier = qualifier.substring(PARENT_NAVIGATION.length());
 				} else {
-					path=SLASH+targetContainingFeature.getName()+path;
+					if (path.equals(SLASH)) {
+						path=SLASH+targetContainingFeature.getName();
+					} else {
+						path=SLASH+targetContainingFeature.getName()+path;
+					}
 				}
 				AccessDecision accessDecision = authorize(securityPolicy, principal, context, targetContainer, action, qualifier, path, environment, traversed);
 				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {

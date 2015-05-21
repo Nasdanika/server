@@ -87,11 +87,15 @@ public class EObjectRoute extends ObjectRoute {
 			} else {
 				String patternStr = routeAnnotation.getDetails().get("pattern");
 				if (patternStr==null) {
-					if (path.length!=1 || op.getName().equals(path[0])) {
+					if (path.length!=2) {
+						continue;
+					}
+					
+					if (!op.getName().equals(path[1])) {
 						continue;
 					}
 				} else {
-					if (!Pattern.matches(patternStr, CoreUtil.join(path, "/"))) {
+					if (!Pattern.matches(patternStr, CoreUtil.join(path, "/", 1))) {
 						continue;
 					}
 				}

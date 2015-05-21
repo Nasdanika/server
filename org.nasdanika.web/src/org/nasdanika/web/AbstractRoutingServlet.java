@@ -54,22 +54,31 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 			pathInfo = pathInfo.substring(1);
 		}
 		String[] path = pathInfo.split("/");
+		Action action = null;
 		try (HttpServletRequestContext context = createContext(path, req, resp, reqUrl)) {
 			for (Route route: matchRootRoutes(req, path)) {
-				try (Action action = route.execute(context)) {
-					if (action!=null) {
-						resultToResponse(action.execute(), resp, context);
-						return;
-					}
+				action = route.execute(context);
+				if (action!=null) {
+					break;
 				}
 			}
-			resp.sendError(HttpServletResponse.SC_NOT_FOUND);
 		} catch (ServerException e) {
 			resp.sendError(e.getStatusCode(), e.getMessage());
 		} catch (ServletException | IOException e) {
 			throw e;
 		} catch (Exception e) {
 			throw new ServletException(e);			
+		}
+		if (action==null) {			
+			resp.sendError(HttpServletResponse.SC_NOT_FOUND);			
+		} else {
+			try {
+				resultToResponse(action.execute(), resp);
+			} catch (IOException | ServletException e) {
+				throw e;
+			} catch (Exception e) {
+				throw new ServletException(e);
+			}
 		}
 	}
 
@@ -83,7 +92,7 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 			HttpServletResponse resp, 
 			String reqUrl) throws Exception;
 
-	public void resultToResponse(Object result, HttpServletResponse resp, HttpServletRequestContext context) throws Exception {
+	public void resultToResponse(Object result, HttpServletResponse resp) throws Exception {
 		if (result instanceof ProcessingError) {
 			ProcessingError processingError = (ProcessingError) result;
 			if (processingError.getMessage()==null) {
@@ -131,23 +140,9 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 				}
 			}
 		} else if (result instanceof URL) {
-			resultToResponse(((URL) result).openStream(), resp, context);
+			resultToResponse(((URL) result).openStream(), resp);
 		} else if (result!=null) {
-			JSONObject jsonResult = context.convert(result, JSONObject.class);
-			if (jsonResult == null || jsonResult.length()==0) {
-				try {
-					JSONArray jaResult = context.convert(result, JSONArray.class);
-					if (jaResult==null) {
-						resp.getWriter().write(String.valueOf(result));
-					} else {
-						resultToResponse(jaResult, resp, context);					
-					}
-				} catch (Exception e) {
-					resp.getWriter().write(String.valueOf(result));					
-				}
-			} else {
-				resultToResponse(jsonResult, resp, context);
-			}
+			resp.getWriter().write(result.toString());
 		}
 	}
 	
