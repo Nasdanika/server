@@ -156,6 +156,10 @@
 		<module>../org.nasdanika.sca.editor</module>
 		<module>../org.nasdanika.sca.feature</module>
 
+		<module>../org.nasdanika.tools.design</module>
+		<module>../org.nasdanika.tools.feature</module>
+
+
 	</modules>
 	<name>Nasdanika Foundation Server</name>
 	<url>http://www.nasdanika.org/wiki/doku.php?id=products:server:start</url>

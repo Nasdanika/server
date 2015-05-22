@@ -68,5 +68,8 @@
 		<module>org.nasdanika.sca.editor</module>
 		<module>org.nasdanika.sca.feature</module>
 
+		<module>org.nasdanika.tools.design</module>
+		<module>org.nasdanika.tools.feature</module>
+
 	</modules>
 </project>
