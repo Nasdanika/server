@@ -74,7 +74,7 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ECl
 		for (EStructuralFeature sf: getSource().getEAllStructuralFeatures()) {			
 			if (sf instanceof EAttribute) {
 				EAnnotation formControlAnnotation = sf.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
-				if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(VALIDATOR_KEY)) {
+				if (formControlAnnotation!=null && hasDetails(formControlAnnotation, VALIDATOR_KEY)) {
 					ret.add(generateValidationEntry("this.data."+sf.getName(), formControlAnnotation.getDetails().get(VALIDATOR_KEY), "this.validationResults."+sf.getName()));
 				}				
 			}
@@ -92,7 +92,7 @@ public class AngularJsEClassFormGenerator extends AngularJsFormGeneratorBase<ECl
 				if (details.containsKey(PRIVATE_KEY) && TRUE_LITERAL.equalsIgnoreCase(details.get(PRIVATE_KEY))) {
 					continue;
 				}
-				if (details.containsKey(DEFAULT_VALUE_KEY)) {
+				if (hasDetails(ann, DEFAULT_VALUE_KEY)) {
 					ret.put(attr.getName(), details.get(DEFAULT_VALUE_KEY));
 					continue;
 				}

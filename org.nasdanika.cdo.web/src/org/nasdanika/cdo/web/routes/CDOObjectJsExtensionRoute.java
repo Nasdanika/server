@@ -324,7 +324,10 @@ public class CDOObjectJsExtensionRoute implements Route {
 				
 				Map<String, EOperation> ops = new HashMap<>();
 				for (EOperation op: eClass.getEAllOperations()) {
-					if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null && !ops.containsKey(op.getName())) {
+					if (op.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null
+							&& op.getEAnnotation(CDOWebUtil.ANNOTATION_ROUTE)==null
+							&& op.getEAnnotation(CDOWebUtil.ANNOTATION_HOME_ROUTE)==null
+							&& !ops.containsKey(op.getName())) {
 						ops.put(op.getName(), op);
 					}
 				}

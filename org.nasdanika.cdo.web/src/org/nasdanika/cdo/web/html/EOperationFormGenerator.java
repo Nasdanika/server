@@ -27,7 +27,7 @@ public class EOperationFormGenerator extends FormGeneratorBase<EParameter> {
 	 * @throws Exception
 	 */
 	protected void populateForm(HTMLFactory htmlFactory, Form form) throws Exception {
-		for (EParameter param: sortParameters(eOperation.getEParameters().subList(1, eOperation.getEParameters().size()))) {
+		for (EParameter param: sortParameters(eOperation.getEParameters())) {
 			generateGroup(htmlFactory, form, param);
 		}		
 	}

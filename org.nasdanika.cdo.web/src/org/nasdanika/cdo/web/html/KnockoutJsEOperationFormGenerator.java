@@ -6,6 +6,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
+import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 
@@ -28,7 +29,7 @@ public class KnockoutJsEOperationFormGenerator extends KnockoutJsFormGeneratorBa
 	 */
 	protected void populateForm(HTMLFactory htmlFactory, Form form) throws Exception {
 		super.populateForm(htmlFactory, form);
-		for (EParameter param: sortParameters(getSource().getEParameters().subList(1, getSource().getEParameters().size()))) {
+		for (EParameter param: sortParameters(getSource().getEParameters())) {
 			generateGroup(htmlFactory, form, param);
 		}		
 	}
@@ -45,7 +46,7 @@ public class KnockoutJsEOperationFormGenerator extends KnockoutJsFormGeneratorBa
 	@Override
 	protected List<String[]> generateModelEntries() {
 		List<String[]> ret = super.generateModelEntries();
-		for (EParameter param: getSource().getEParameters().subList(1, getSource().getEParameters().size())) {
+		for (EParameter param: getSource().getEParameters()) {
 			EAnnotation ann = param.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 			ret.add(new String[] { 
 					param.getName(), 
@@ -58,7 +59,7 @@ public class KnockoutJsEOperationFormGenerator extends KnockoutJsFormGeneratorBa
 	@Override
 	protected String generateApply() throws Exception {
 		StringBuilder applyBuilder = new StringBuilder("return (typeof applyTarget === 'object' && typeof applyTarget."+getSource().getName()+" === 'function' ? applyTarget."+getSource().getName()+" : applyTarget)(");
-		Iterator<EParameter> pit = getSource().getEParameters().subList(1, getSource().getEParameters().size()).iterator();
+		Iterator<EParameter> pit = getSource().getEParameters().iterator();
 		while (pit.hasNext()) {
 			applyBuilder.append("this.observableData."+pit.next().getName());
 			if (pit.hasNext()) {
@@ -68,4 +69,11 @@ public class KnockoutJsEOperationFormGenerator extends KnockoutJsFormGeneratorBa
 		return applyBuilder.append(");").toString();
 	}
 	
+	@Override
+	protected Object generateControl(HTMLFactory htmlFactory, Form form, EParameter element) throws Exception {
+		if (element.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)!=null || element.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)!=null) {
+			return null;
+		}
+		return super.generateControl(htmlFactory, form, element);
+	}
 }

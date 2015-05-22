@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Button.Type;
 import org.nasdanika.html.Form;
@@ -41,6 +42,10 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 
 	public static final String FORM_CONTROL_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.html.form-control";
 	public static final String FORM_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.html.form";
+	
+	public static boolean hasDetails(EAnnotation ann, String key) {
+		return !CoreUtil.isBlank(ann.getDetails().get(key));
+	}
 	
 	/**
 	 * Generates form from EClass metadata.
@@ -113,7 +118,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 	protected boolean isInlineCheckbox(T element, Object control) {
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 		return formControlAnnotation!=null 
-				&& formControlAnnotation.getDetails().containsKey(INLINE_KEY) 
+				&& hasDetails(formControlAnnotation, INLINE_KEY) 
 				&& TRUE_LITERAL.equalsIgnoreCase(formControlAnnotation.getDetails().get(INLINE_KEY));
 	}
 
@@ -155,7 +160,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 
 	protected Object generateCondrolId(HTMLFactory htmlFactory, T element) {
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
-		if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(CONTROL_ID_KEY)) {
+		if (formControlAnnotation!=null && hasDetails(formControlAnnotation, CONTROL_ID_KEY)) {
 			return formControlAnnotation.getDetails().get(CONTROL_ID_KEY);
 		}
 		return "form_control_"+element.getName();
@@ -164,10 +169,10 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 	protected Object generateLabel(HTMLFactory htmlFactory, T element) {		
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
 		boolean isRequired = formControlAnnotation!=null 
-				&& formControlAnnotation.getDetails().containsKey(REQUIRED_KEY) 
+				&& hasDetails(formControlAnnotation, REQUIRED_KEY) 
 				&& TRUE_LITERAL.equals(formControlAnnotation.getDetails().get(REQUIRED_KEY).trim());
 		
-		if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(LABEL_KEY)) {
+		if (formControlAnnotation!=null && hasDetails(formControlAnnotation, LABEL_KEY)) {
 			return formControlAnnotation.getDetails().get(LABEL_KEY) + (isRequired ? " <span style='color:red'>*</span>" : "");
 		}
 		String[] splitStr = StringUtils.splitByCharacterTypeCamelCase(element.getName());
@@ -180,7 +185,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 
 	protected Object generatePlaceholder(HTMLFactory htmlFactory, T element) {
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
-		if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(PLACEHOLDER_KEY)) {
+		if (formControlAnnotation!=null && hasDetails(formControlAnnotation, PLACEHOLDER_KEY)) {
 			return formControlAnnotation.getDetails().get(PLACEHOLDER_KEY);
 		}
 		String[] splitStr = StringUtils.splitByCharacterTypeCamelCase(element.getName());
@@ -201,7 +206,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 	 */
 	protected Object generateControl(HTMLFactory htmlFactory, Form form, T element) throws Exception {
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
-		boolean isPrivate = formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(PRIVATE_KEY) && TRUE_LITERAL.equalsIgnoreCase(formControlAnnotation.getDetails().get(PRIVATE_KEY).trim());
+		boolean isPrivate = formControlAnnotation!=null && hasDetails(formControlAnnotation, PRIVATE_KEY) && TRUE_LITERAL.equalsIgnoreCase(formControlAnnotation.getDetails().get(PRIVATE_KEY).trim());
 		if (isPrivate) {
 			return null;
 		}
@@ -229,7 +234,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 					} else if (de.getKey().startsWith(STYLE_PREFIX)) {
 						((UIElement<?>) control).style(de.getKey().substring(STYLE_PREFIX.length()), de.getValue());						
 					}
-					boolean isRequired = details.containsKey(REQUIRED_KEY) && TRUE_LITERAL.equals(details.get(REQUIRED_KEY).trim());
+					boolean isRequired = hasDetails(formControlAnnotation, REQUIRED_KEY) && TRUE_LITERAL.equals(details.get(REQUIRED_KEY).trim());
 					if (isRequired && control instanceof InputBase) {
 						((InputBase<?>) control).required();
 					}
@@ -245,7 +250,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 
 	protected InputType getInputType(T element) {
 		EAnnotation formControlAnnotation = element.getEAnnotation(FORM_CONTROL_ANNOTATION_SOURCE);
-		if (formControlAnnotation!=null && formControlAnnotation.getDetails().containsKey(INPUT_TYPE_KEY)) {
+		if (formControlAnnotation!=null && hasDetails(formControlAnnotation, INPUT_TYPE_KEY)) {
 			return InputType.valueOf(formControlAnnotation.getDetails().get(INPUT_TYPE_KEY).trim());
 		}
 		return getInputType(element.getEType().getInstanceClassName());

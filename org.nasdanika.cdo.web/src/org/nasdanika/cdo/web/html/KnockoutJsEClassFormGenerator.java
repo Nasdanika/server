@@ -74,7 +74,7 @@ public class KnockoutJsEClassFormGenerator extends KnockoutJsFormGeneratorBase<E
 					}
 				}
 				String defaultValue = null;
-				if (ann!=null && ann.getDetails().containsKey(DEFAULT_VALUE_KEY)) {
+				if (ann!=null && hasDetails(ann, DEFAULT_VALUE_KEY)) {
 					defaultValue = ann.getDetails().get(DEFAULT_VALUE_KEY);
 				} else {
 					defaultValue = sf.getDefaultValueLiteral();
