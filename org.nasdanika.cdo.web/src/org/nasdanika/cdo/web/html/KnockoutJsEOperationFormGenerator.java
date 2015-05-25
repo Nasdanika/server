@@ -17,8 +17,8 @@ import org.nasdanika.html.HTMLFactory;
  */
 public class KnockoutJsEOperationFormGenerator extends KnockoutJsFormGeneratorBase<EOperation, EParameter> {
 
-	public KnockoutJsEOperationFormGenerator(EOperation eOperation, String model, String handler) {
-		super(eOperation, model, handler);
+	public KnockoutJsEOperationFormGenerator(EOperation eOperation, String model, String submitHandler, String cancelHandler) {
+		super(eOperation, model, submitHandler, cancelHandler);
 	}
 
 	/**
@@ -61,9 +61,12 @@ public class KnockoutJsEOperationFormGenerator extends KnockoutJsFormGeneratorBa
 		StringBuilder applyBuilder = new StringBuilder("return (typeof applyTarget === 'object' && typeof applyTarget."+getSource().getName()+" === 'function' ? applyTarget."+getSource().getName()+" : applyTarget)(");
 		Iterator<EParameter> pit = getSource().getEParameters().iterator();
 		while (pit.hasNext()) {
-			applyBuilder.append("this.observableData."+pit.next().getName());
-			if (pit.hasNext()) {
-				applyBuilder.append(", ");
+			EParameter param = pit.next();
+			if (param.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)==null && param.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)==null) {			
+				applyBuilder.append("this.observableData."+param.getName()+"()");
+				if (pit.hasNext()) {
+					applyBuilder.append(", ");
+				}
 			}
 		}
 		return applyBuilder.append(");").toString();

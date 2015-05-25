@@ -3,7 +3,7 @@
 	// { name, defaultValueLiteral, validator }
 	java.util.List<String[]> dataMap = (java.util.List<String[]>) args[0];
 %>
-function() {
+function(inputData, applyTarget) {
     
     this.observableData = {
     	<% for (int i=1; i<dataMap.size(); ++i) { %>
@@ -64,12 +64,18 @@ function() {
             return validationResults; 
         },
         set: function(newValidationResults) {
-            for (k in newValidationResults) {
-                if (ko.isObservable(this.observableValidationResults[k])) {
-                    this.observableValidationResults[k](newValidationResults[k]);
-                } else {
-                    this.observableValidationResults[k] = newValidationResults[k];
-                }
+            for (k in this.observableValidationResults) {
+            	if (newValidationResults.hasOwnProperty(k)) {
+	                if (ko.isObservable(this.observableValidationResults[k])) {
+	                    this.observableValidationResults[k](newValidationResults[k]);
+	                } else {
+	                    this.observableValidationResults[k] = newValidationResults[k];
+	                }
+            	} else {
+	                if (ko.isObservable(this.observableValidationResults[k])) {
+	                    this.observableValidationResults[k]("");
+	                }            		
+            	}  
             }
         }
     });
@@ -108,14 +114,14 @@ function() {
         });
     };
     
-    this.apply = function(applyTarget) {
+    this.apply = function() {
         <%=args[2]%>
     }
     
     this.validateAndApply = function(applyTarget) {
 	    return this.validate().then(function(isValid) {
 	        if (isValid) {
-                return this.apply(applyTarget).then(undefined, function(reason) {
+                return this.apply().then(undefined, function(reason) {
                     if (reason.validationFailed) {
 				        if (reason.validationResults && reason.validationResults.operation) {
                             this.validationResults = reason.validationResults.operation;
@@ -135,4 +141,8 @@ function() {
     
     // Custom declarations
     <%=args[3]%>
+    
+    if (inputData) {
+    	this.data = inputData;
+    }
 }

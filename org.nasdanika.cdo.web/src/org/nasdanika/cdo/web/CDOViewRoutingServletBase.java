@@ -6,10 +6,14 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
+import org.eclipse.emf.cdo.transaction.CDOCommitContext;
+import org.eclipse.emf.cdo.transaction.CDOTransaction;
+import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextProvider;
@@ -85,7 +89,8 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 
 			@Override
 			public Principal getPrincipal(CDOViewContext<V, CR> context) {
-				Object idAttr = req.getAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
+				HttpSession session = req.getSession();
+				Object idAttr = session.getAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
 				if (idAttr instanceof CDOID) {
 					return (Principal) context.getView().getObject((CDOID) idAttr);
 				}
@@ -98,7 +103,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 							if (((LoginUser) pdu).isDisabled() || (pdu instanceof LoginPasswordHashUser && ((LoginPasswordHashUser) pdu).getPasswordHash() != null)) {
 								break;
 							} else {
-								req.getSession().setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, pdu.cdoID());								
+								session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, pdu.cdoID());								
 								return pdu;
 							}
 						}
@@ -107,17 +112,41 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 				
 				User unauthenticatedPrincipal = context.getProtectionDomain().getUnauthenticatedPrincipal();
 				if (unauthenticatedPrincipal!=null) {
-					req.getSession().setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, unauthenticatedPrincipal.cdoID());
+					session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, unauthenticatedPrincipal.cdoID());
 				}
 				return unauthenticatedPrincipal;
 			}						
 
 			@Override
-			public void setPrincipal(CDOViewContext<V, CR> context, Principal principal) {
+			public void setPrincipal(CDOViewContext<V, CR> context, final Principal principal) {
 				if (principal == null) {
 					req.getSession().removeAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
 				} else {
-					req.getSession().setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principal.cdoID());
+					V view = context.getView();
+					if (view instanceof CDOTransaction && principal.cdoID().isTemporary()) {
+						((CDOTransaction) view).addTransactionHandler(new CDOTransactionHandler2() {
+
+							@Override
+							public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
+								req.getSession().setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principal.cdoID());
+							}
+
+							@Override
+							public void committingTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
+								// NOP
+								
+							}
+
+							@Override
+							public void rolledBackTransaction(CDOTransaction transaction) {
+								// NOP
+								
+							}
+							
+						});
+					} else {					
+						req.getSession().setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principal.cdoID());
+					}
 				}
 			}
 

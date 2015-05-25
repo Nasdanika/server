@@ -15,6 +15,7 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
@@ -143,7 +144,7 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 		}
     }
 	
-	private static final String PRINCIPAL_ID_ATTRIBUTE_NAME = Principal.class.getName()+":id";
+	static final String PRINCIPAL_ID_ATTRIBUTE_NAME = Principal.class.getName()+":id";
 	
 	private static final String OPERATION_KEY = "operation";
 	private static final String FEATURE_KEY = "feature";
@@ -451,11 +452,13 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 		
 		private Connection connection;
 		private CDOID principalID; 
+		private HttpSession session;
 		
 		private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
 		public SessionWebSocket(HttpServletRequest request, String protocol) {
-			Object idAttr = request.getAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
+			this.session = request.getSession();
+			Object idAttr = session.getAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
 			if (idAttr instanceof CDOID) {
 				principalID = (CDOID) idAttr;
 			} 
@@ -489,11 +492,37 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 						}
 
 						@Override
-						public void setPrincipal(CDOViewContext<CDOTransaction, CR> context, Principal principal) {
+						public void setPrincipal(CDOViewContext<CDOTransaction, CR> context, final Principal principal) {
 							if (principal==null) {
 								principalID = null;
+								session.removeAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
 							} else {
-								principalID = principal.cdoID();
+								if (principal.cdoID().isTemporary()) {
+									context.getView().addTransactionHandler(new CDOTransactionHandler2() {
+
+										@Override
+										public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
+											principalID = principal.cdoID();
+											session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principalID);
+										}
+
+										@Override
+										public void committingTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
+											// NOP
+											
+										}
+
+										@Override
+										public void rolledBackTransaction(CDOTransaction transaction) {
+											// NOP
+											
+										}
+										
+									});
+								} else {
+									principalID = principal.cdoID();
+									session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principalID);
+								}
 							}							
 						}
 						

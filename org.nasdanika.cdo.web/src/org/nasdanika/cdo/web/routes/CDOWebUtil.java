@@ -569,6 +569,10 @@ public class CDOWebUtil {
 			}
 			return marshalValue(ret);
 		}
+		if (result instanceof JSONObject) {
+			// Assuming marshaling was done by the code which produced the result.
+			return result;
+		}
 		JSONObject ret = new JSONObject();
 		if (result instanceof CDOObject) {
 			ret.put(PATH_KEY, getObjectPath(context, (CDOObject) result));

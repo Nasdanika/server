@@ -7,6 +7,7 @@ import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
+import org.nasdanika.html.Button;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
@@ -23,7 +24,8 @@ import org.nasdanika.html.UIElement;
 public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T extends ETypedElement> extends FormGeneratorBase<T> {
 
 	private String model;
-	private String handler;
+	private String submitHandler;	
+	private String cancelHandler;
 	private S source;
 	
 	/**
@@ -38,18 +40,33 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	 * 
 	 * @param model Model expression. The model object shall contain data object to which form controls are bound, validationResults object
 	 * which holds validation messages for controls, and validationResult string with form validation result.
-	 * @param handler Form submit handler expression
+	 * @param submitHandler Form submit handler expression.
+	 * @param cancelHandler Handler for the cancel button click.
 	 */
-	protected KnockoutJsFormGeneratorBase(S source, String model, String handler) {
+	protected KnockoutJsFormGeneratorBase(
+			S source, 
+			String model, 
+			String submitHandler, 
+			String cancelHandler) {
 		this.source = source;
 		this.model = model;
-		this.handler = handler;
+		this.submitHandler = submitHandler;
+		this.cancelHandler = cancelHandler;
 	}
+	
+	@Override
+	protected Button createCancelButton(HTMLFactory htmlFactory, Form form) {
+		Button ret = super.createCancelButton(htmlFactory, form);
+		if (cancelHandler!=null) {
+			ret.koDataBind("click", cancelHandler);
+		}
+		return ret;
+	}	
 	
 	@Override
 	public Form generateForm(HTMLFactory htmlFactory) throws Exception {		
 		Form form = super.generateForm(htmlFactory);
-		form.koDataBind("submit", handler);
+		form.koDataBind("submit", submitHandler);
 		return form;
 	}
 	

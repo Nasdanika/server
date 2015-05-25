@@ -70,10 +70,13 @@ public class AngularJsEOperationFormGenerator extends AngularJsFormGeneratorBase
 		applyBuilder.append("if (typeof target === 'object' && typeof target."+getSource().getName()+" === 'function') { target = target."+getSource().getName()+"; } ");
 		applyBuilder.append("return target(");
 		Iterator<EParameter> pit = getSource().getEParameters().iterator();
-		while (pit.hasNext()) {
-			applyBuilder.append("this.data."+pit.next().getName());
-			if (pit.hasNext()) {
-				applyBuilder.append(",");
+		while (pit.hasNext()) {			
+			EParameter param = pit.next();
+			if (param.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)==null && param.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)==null) {
+				applyBuilder.append("this.data."+param.getName());
+				if (pit.hasNext()) {
+					applyBuilder.append(",");
+				}
 			}
 		}		
 		

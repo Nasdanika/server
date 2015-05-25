@@ -19,8 +19,8 @@ import org.nasdanika.html.HTMLFactory;
  */
 public class KnockoutJsEClassFormGenerator extends KnockoutJsFormGeneratorBase<EClass, EStructuralFeature> {
 
-	public KnockoutJsEClassFormGenerator(EClass eClass, String model, String handler) {
-		super(eClass, model, handler);
+	public KnockoutJsEClassFormGenerator(EClass eClass, String model, String submitHandler, String cancelHandler) {
+		super(eClass, model, submitHandler, cancelHandler);
 	}
 	
 	/**
