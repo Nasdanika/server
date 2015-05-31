@@ -1,0 +1,7 @@
+public class CLASS<C extends org.nasdanika.core.Context, T> extends org.nasdanika.core.AbstractCommand<C,T,String> {
+
+@Override
+public String execute(C context, T... args) throws Exception {
+     return "";
+   }
+ }

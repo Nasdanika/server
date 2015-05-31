@@ -1,6 +1,6 @@
 package org.nasdanika.html;
 
-public interface Dropdown<T extends Dropdown<?>> extends UIElement<T> {
+public interface Dropdown<T extends Dropdown<T>> extends UIElement<T> {
 
 	T item(Object... item);
 	

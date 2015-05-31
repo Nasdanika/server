@@ -11,7 +11,7 @@ import org.nasdanika.html.InputBase;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.Tag.TagName;
 
-class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<InputGroup<?>> {
+class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup<InputGroupImpl> {
 
 	private Object leftAddOn;
 	private Object rightAddOn;
@@ -28,13 +28,13 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 	}
 	
 	@Override
-	public InputGroup<?> size(Size size) {
+	public InputGroupImpl size(Size size) {
 		addClass("input-group-"+size.code);
 		return this;
 	}
 
 	@Override
-	public InputGroup<?> leftAddOn(Object... addOn) {
+	public InputGroupImpl leftAddOn(Object... addOn) {
 		if (leftAddOn!=null) {
 			throw new IllegalStateException("Left add-on has already been set");
 		}
@@ -52,7 +52,7 @@ class InputGroupImpl extends UIElementImpl<InputGroup<?>> implements InputGroup<
 	}
 
 	@Override
-	public InputGroup<?> rightAddOn(Object... addOn) {
+	public InputGroupImpl rightAddOn(Object... addOn) {
 		if (rightAddOn!=null) {
 			throw new IllegalStateException("Right add-on has already been set");
 		}

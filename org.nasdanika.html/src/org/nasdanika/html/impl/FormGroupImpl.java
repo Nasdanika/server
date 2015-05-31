@@ -8,7 +8,7 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
 
-class FormGroupImpl<T extends FormGroup<?>, C> extends UIElementImpl<T> implements FormGroup<T> {
+class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implements FormGroup<T> {
 	
 	private Object label;
 	private Object controlId;

@@ -9,7 +9,7 @@ import java.io.Reader;
  * @author Pavel
  *
  */
-public interface UIElement<T extends UIElement<?>> extends AutoCloseable {
+public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 	
 	enum Style { DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER }
 	

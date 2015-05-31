@@ -23,7 +23,7 @@ import org.nasdanika.html.UIElement;
  *
  * @param <T>
  */
-public abstract class UIElementImpl<T extends UIElement<?>> implements UIElement<T>, AutoCloseable {
+public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement<T>, AutoCloseable {
 
 	private static final String STYLE = "style";
 

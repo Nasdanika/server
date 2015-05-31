@@ -13,7 +13,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.UIElement;
 
-class FieldContainerImpl<T extends FieldContainer<?>> implements FieldContainer<T> {
+class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<T> {
 	
 	private FormImpl form;
 	private T master;
@@ -39,7 +39,8 @@ class FieldContainerImpl<T extends FieldContainer<?>> implements FieldContainer<
 	
 	@Override
 	public FormGroup<?> formGroup(Object label, Object controlId, Object control, Object helpText) {
-		FormGroup<?> ret = new FormGroupImpl<FormGroup<?>, Object>(factory, form, label, controlId, control, helpText);
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		FormGroup<?> ret = new FormGroupImpl(factory, form, label, controlId, control, helpText);
 		content.add(ret);
 		return ret;
 	}

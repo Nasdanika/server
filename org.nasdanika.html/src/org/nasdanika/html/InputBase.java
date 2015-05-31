@@ -6,7 +6,7 @@ package org.nasdanika.html;
  *
  * @param <T>
  */
-public interface InputBase<T extends InputBase<?>> extends UIElement<T> {
+public interface InputBase<T extends InputBase<T>> extends UIElement<T> {
 	
 	T autofocus(boolean autofocus);
 	T autofocus();

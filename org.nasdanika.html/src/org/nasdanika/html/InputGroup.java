@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.nasdanika.html.HTMLFactory.Placement;
 
-public interface InputGroup<T extends InputGroup<?>> extends UIElement<T> {
+public interface InputGroup<T extends InputGroup<T>> extends UIElement<T> {
 
 	/**
 	 * Sets left add-on

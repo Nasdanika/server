@@ -4,7 +4,7 @@ import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputBase;
 
-abstract class InputBaseImpl<T extends InputBase<?>> extends UIElementImpl<T> implements InputBase<T> {
+abstract class InputBaseImpl<T extends InputBase<T>> extends UIElementImpl<T> implements InputBase<T> {
 	
 	InputBaseImpl(HTMLFactory factory) {
 		super(factory);
