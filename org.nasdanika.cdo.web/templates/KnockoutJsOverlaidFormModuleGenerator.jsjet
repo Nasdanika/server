@@ -31,7 +31,7 @@ require(["<%=moduleName%>.js", 'q', 'jquery', 'knockout', 'domReady!'], function
 				if (reason.targetInvocationError) {
 					this.validationResults['$this'] = reason.targetInvocationError;
 				} else {
-					this.validationResults['$this'] = JSON.strinfigy(reason);					
+					//this.validationResults['$this'] = JSON.stringify(reason);					
 				}
 			}.bind(this.model)).done();
 		},

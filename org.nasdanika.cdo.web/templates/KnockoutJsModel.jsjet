@@ -114,8 +114,14 @@ function(inputData, applyTarget) {
         });
     };
     
-    this.apply = function() {
+    this._apply = function() {
         <%=args[2]%>
+    }
+    
+    this.apply = function() {
+    	var ret = this._apply();
+    	ret.then(function() { this.isDirty(false); }.bind(this));
+    	return ret;
     }
     
     this.validateAndApply = function(applyTarget) {
@@ -145,4 +151,18 @@ function(inputData, applyTarget) {
     if (inputData) {
     	this.data = inputData;
     }
+    
+    // Notifications
+    this.isDirty = ko.observable(false);
+
+	<% for (int i=1; i<dataMap.size(); ++i) { %>
+		this.observableData.<%=dataMap.get(i)[0]%>.subscribe(function(newValue) {
+			this.isDirty(true);
+			if (typeof this.notify === 'function') {
+				this.notify("<%=dataMap.get(i)[0]%>", newValue);
+			}
+		}.bind(this));
+	<% } %>
+
+    
 }

@@ -69,9 +69,14 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	}	
 	
 	@Override
+	protected Button createSubmitButton(HTMLFactory htmlFactory, Form form) {
+		return super.createSubmitButton(htmlFactory, form).koDataBind("enable", getModelPrefix()+"isDirty");
+	}
+	
+	@Override
 	public Form generateForm(HTMLFactory htmlFactory) throws Exception {		
 		Form form = super.generateForm(htmlFactory);
-		form.koDataBind("submit", submitHandler);
+		form.koDataBind("submit", submitHandler);		
 		return form;
 	}
 	
