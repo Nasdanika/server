@@ -39,6 +39,11 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	public S getSource() {
 		return source;
 	}
+	
+	@Override
+	protected EAnnotation getFormAnnotation() {
+		return source.getEAnnotation(FORM_ANNOTATION_SOURCE);
+	}
 
 	/**
 	 * 

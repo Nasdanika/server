@@ -3,6 +3,7 @@ package org.nasdanika.cdo.web.html;
 import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -32,6 +33,11 @@ public class EClassFormGenerator extends FormGeneratorBase<EStructuralFeature> {
 		for (EStructuralFeature sf: sortFeatures(eClass.getEAllStructuralFeatures())) {
 			generateGroup(htmlFactory, form, sf);
 		}		
+	}
+	
+	@Override
+	protected EAnnotation getFormAnnotation() {
+		return eClass.getEAnnotation(FORM_ANNOTATION_SOURCE);
 	}
 
 	/**

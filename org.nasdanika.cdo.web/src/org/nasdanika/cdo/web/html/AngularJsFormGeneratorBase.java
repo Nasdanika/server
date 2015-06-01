@@ -34,6 +34,11 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 	public S getSource() {
 		return source;
 	}
+	
+	@Override
+	protected EAnnotation getFormAnnotation() {
+		return source.getEAnnotation(FORM_ANNOTATION_SOURCE);
+	}
 
 	/**
 	 * 

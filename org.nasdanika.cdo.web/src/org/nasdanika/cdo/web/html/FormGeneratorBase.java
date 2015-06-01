@@ -21,6 +21,7 @@ import org.nasdanika.html.InputBase;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.TextArea;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.UIElement.DeviceSize;
 import org.nasdanika.html.UIElement.Style;
 
 public abstract class FormGeneratorBase<T extends ETypedElement> {
@@ -57,12 +58,29 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 	 */
 	public Form generateForm(HTMLFactory htmlFactory) throws Exception {
 		Form form = htmlFactory.form();
+		EAnnotation formAnnotation = getFormAnnotation();
+		if (formAnnotation!=null) {
+			if ("true".equalsIgnoreCase(formAnnotation.getDetails().get("inline"))) {
+				form.inline();
+			}
+			String horizontal = formAnnotation.getDetails().get("horizontal");
+			if (horizontal!=null) {
+				for (String def: horizontal.split(";")) {
+					int idx = def.indexOf("=");
+					if (idx!=-1) {
+						form.horizontal(DeviceSize.valueOf(def.substring(0, idx).trim().toUpperCase()), Integer.parseInt(def.substring(idx+1).trim()));
+					}
+				}
+			}
+		}
 		populateForm(htmlFactory, form);
 		createSubmitButton(htmlFactory, form);
 		form.content("&nbsp;");
 		createCancelButton(htmlFactory, form);
 		return form;
 	}
+	
+	protected abstract EAnnotation getFormAnnotation(); 
 	
 	protected Button createSubmitButton(HTMLFactory htmlFactory, Form form) {
 		return form.button(getSubmitButtonLabel()).type(Type.SUBMIT).style(Style.PRIMARY);

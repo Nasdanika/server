@@ -48,13 +48,13 @@ public class KnockoutJsModelGenerator implements org.nasdanika.cdo.web.routes.Ge
   protected final String TEXT_33 = "(validationResult); " + NL + "\t\t                return !validationResult; " + NL + "\t\t            }.bind(this))\t\t   \t\t\t   \t" + NL + "\t\t   \t";
   protected final String TEXT_34 = NL + "        ]).then(function(vResults) { " + NL + "            return vResults.reduce(function(r1, r2) { " + NL + "                return r1 && r2; " + NL + "            }, true); " + NL + "        });" + NL + "    };" + NL + "    " + NL + "    this._apply = function() {";
   protected final String TEXT_35 = NL + "        ";
-  protected final String TEXT_36 = NL + "    }" + NL + "    " + NL + "    this.apply = function() {" + NL + "    \tvar ret = this._apply();" + NL + "    \tret.then(function() { this.isDirty(false); }.bind(this));" + NL + "    \treturn ret;" + NL + "    }" + NL + "    " + NL + "    this.validateAndApply = function(applyTarget) {" + NL + "\t    return this.validate().then(function(isValid) {" + NL + "\t        if (isValid) {" + NL + "                return this.apply().then(undefined, function(reason) {" + NL + "                    if (reason.validationFailed) {" + NL + "\t\t\t\t        if (reason.validationResults && reason.validationResults.operation) {" + NL + "                            this.validationResults = reason.validationResults.operation;" + NL + "                        } " + NL + "\t\t\t\t        throw reason;" + NL + "\t\t\t\t    }" + NL + "\t\t\t\t    throw { " + NL + "                        targetInvocationError: reason " + NL + "                    };" + NL + "                }.bind(this));" + NL + "            }" + NL + "            throw { " + NL + "                validationFailed: true " + NL + "            };" + NL + "        }.bind(this));        " + NL + "    }" + NL + "    " + NL + "    // Custom declarations";
-  protected final String TEXT_37 = NL + "    ";
-  protected final String TEXT_38 = NL + "    " + NL + "    if (inputData) {" + NL + "    \tthis.data = inputData;" + NL + "    }" + NL + "    " + NL + "    // Notifications" + NL + "    this.isDirty = ko.observable(false);" + NL + "" + NL + "\t";
-  protected final String TEXT_39 = NL + "\t\tthis.observableData.";
-  protected final String TEXT_40 = ".subscribe(function(newValue) {" + NL + "\t\t\tthis.isDirty(true);" + NL + "\t\t\tif (typeof this.notify === 'function') {" + NL + "\t\t\t\tthis.notify(\"";
-  protected final String TEXT_41 = "\", newValue);" + NL + "\t\t\t}" + NL + "\t\t}.bind(this));" + NL + "\t";
-  protected final String TEXT_42 = NL + NL + "    " + NL + "}";
+  protected final String TEXT_36 = NL + "    }" + NL + "    " + NL + "    this.apply = function() {" + NL + "    \tvar ret = this._apply();" + NL + "    \tret.then(function() { this.isDirty(false); }.bind(this));" + NL + "    \treturn ret;" + NL + "    }" + NL + "    " + NL + "    this.validateAndApply = function(applyTarget) {" + NL + "\t    return this.validate().then(function(isValid) {" + NL + "\t        if (isValid) {" + NL + "                return this.apply().then(undefined, function(reason) {" + NL + "                    if (reason.validationFailed) {" + NL + "\t\t\t\t        if (reason.validationResults && reason.validationResults.operation) {" + NL + "                            this.validationResults = reason.validationResults.operation;" + NL + "                        } " + NL + "\t\t\t\t        throw reason;" + NL + "\t\t\t\t    }" + NL + "\t\t\t\t    throw { " + NL + "                        targetInvocationError: reason " + NL + "                    };" + NL + "                }.bind(this));" + NL + "            }" + NL + "            throw { " + NL + "                validationFailed: true " + NL + "            };" + NL + "        }.bind(this));        " + NL + "    }" + NL + "    " + NL + "    if (inputData) {" + NL + "    \tthis.data = inputData;" + NL + "    }" + NL + "    " + NL + "    // Notifications" + NL + "    this.isDirty = ko.observable(false);" + NL + "" + NL + "\t";
+  protected final String TEXT_37 = NL + "\t\tthis.observableData.";
+  protected final String TEXT_38 = ".subscribe(function(newValue) {" + NL + "\t\t\tthis.isDirty(true);" + NL + "\t\t\tif (typeof this.notify === 'function') {" + NL + "\t\t\t\tthis.notify(\"";
+  protected final String TEXT_39 = "\", newValue);" + NL + "\t\t\t}" + NL + "\t\t}.bind(this));" + NL + "\t";
+  protected final String TEXT_40 = NL + "    " + NL + "    // Custom declarations";
+  protected final String TEXT_41 = NL + "    ";
+  protected final String TEXT_42 = NL + "    " + NL + "}";
   protected final String TEXT_43 = NL;
 
 public String generate(Object... args) throws Exception
@@ -147,16 +147,16 @@ public String generate(Object... args) throws Exception
     stringBuffer.append(TEXT_35);
     stringBuffer.append(args[2]);
     stringBuffer.append(TEXT_36);
-    stringBuffer.append(TEXT_37);
-    stringBuffer.append(args[3]);
-    stringBuffer.append(TEXT_38);
      for (int i=1; i<dataMap.size(); ++i) { 
+    stringBuffer.append(TEXT_37);
+    stringBuffer.append(dataMap.get(i)[0]);
+    stringBuffer.append(TEXT_38);
+    stringBuffer.append(dataMap.get(i)[0]);
     stringBuffer.append(TEXT_39);
-    stringBuffer.append(dataMap.get(i)[0]);
-    stringBuffer.append(TEXT_40);
-    stringBuffer.append(dataMap.get(i)[0]);
-    stringBuffer.append(TEXT_41);
      } 
+    stringBuffer.append(TEXT_40);
+    stringBuffer.append(TEXT_41);
+    stringBuffer.append(args[3]);
     stringBuffer.append(TEXT_42);
     stringBuffer.append(TEXT_43);
     return stringBuffer.toString();

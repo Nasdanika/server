@@ -17,18 +17,24 @@ public class KnockoutJsOverlaidFormGenerator {
 	private String cancelHandler;
 	private HTMLFactory htmlFactory;
 	private String objectPath;
+	
+	private Object[] customDeclarations;
+
 
 	protected KnockoutJsOverlaidFormGenerator(
 			KnockoutJsFormGeneratorBase<?,?> formGenerator, 
 			HTMLFactory htmlFactory,
 			String objectPath,
 			String onSubmitted, 
-			String cancelHandler) {
+			String cancelHandler,
+			Object[] customDeclarations
+			) {
 		this.formGenerator = formGenerator;
 		this.htmlFactory = htmlFactory;
 		this.objectPath = objectPath;
 		this.onSubmitted = onSubmitted;
 		this.cancelHandler = cancelHandler;
+		this.customDeclarations = customDeclarations;
 	}
 	 
 	public KnockoutJsOverlaidFormGenerator(
@@ -36,13 +42,16 @@ public class KnockoutJsOverlaidFormGenerator {
 		HTMLFactory htmlFactory,
 		String objectPath,
 		String onSubmitted, 
-		String cancelHandler) {
+		String cancelHandler,
+		Object... customDeclarations
+		) {
 		this(
 				new KnockoutJsEOperationFormGenerator(eOperation, "model", "submitHandler",	cancelHandler==null ? null : "cancelHandler"),
 				htmlFactory,
 				objectPath,
 				onSubmitted, 
-				cancelHandler);
+				cancelHandler,
+				customDeclarations);
 	}
 	 
 	public KnockoutJsOverlaidFormGenerator(
@@ -50,13 +59,15 @@ public class KnockoutJsOverlaidFormGenerator {
 		HTMLFactory htmlFactory,
 		String objectPath,
 		String onSubmitted, 
-		String cancelHandler) {
+		String cancelHandler,
+		Object... customDeclarations) {
 		this(
 				new KnockoutJsEClassFormGenerator(eClass, "model", "submitHandler",	cancelHandler==null ? null : "cancelHandler"),
 				htmlFactory,
 				objectPath,
 				onSubmitted, 
-				cancelHandler);
+				cancelHandler,
+				customDeclarations);
 	}
 	
 	public interface OverlaidFormContainer extends UIElement<Tag> {
@@ -95,7 +106,7 @@ public class KnockoutJsOverlaidFormGenerator {
 		Form form = formGenerator.generateForm(htmlFactory);
 		final Tag containerDiv = htmlFactory.div(htmlFactory.overlay(overlayContent).style("display", "none"), form);
 		containerDiv.content(new Object() {
-			
+
 			@Override
 			public String toString() {
 				KnockoutJsOverlaidFormModuleGenerator<Context, Object> generator = new KnockoutJsOverlaidFormModuleGenerator<>();
@@ -104,7 +115,7 @@ public class KnockoutJsOverlaidFormGenerator {
 					script = generator.execute(
 							null, 
 							objectPath, 
-							formGenerator.generateModel(),
+							formGenerator.generateModel(customDeclarations),
 							containerDiv.getId(),
 							onSubmitted,
 							cancelHandler);

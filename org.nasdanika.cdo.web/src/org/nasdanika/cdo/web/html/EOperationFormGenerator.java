@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.html;
 
 import java.util.List;
 
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.nasdanika.html.Form;
@@ -18,6 +19,11 @@ public class EOperationFormGenerator extends FormGeneratorBase<EParameter> {
 
 	public EOperationFormGenerator(EOperation eOperation) {
 		this.eOperation = eOperation;
+	}
+	
+	@Override
+	protected EAnnotation getFormAnnotation() {
+		return eOperation.getEAnnotation(FORM_ANNOTATION_SOURCE);
 	}
 
 	/**

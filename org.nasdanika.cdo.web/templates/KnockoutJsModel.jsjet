@@ -145,9 +145,6 @@ function(inputData, applyTarget) {
         }.bind(this));        
     }
     
-    // Custom declarations
-    <%=args[3]%>
-    
     if (inputData) {
     	this.data = inputData;
     }
@@ -163,6 +160,8 @@ function(inputData, applyTarget) {
 			}
 		}.bind(this));
 	<% } %>
-
+    
+    // Custom declarations
+    <%=args[3]%>
     
 }
