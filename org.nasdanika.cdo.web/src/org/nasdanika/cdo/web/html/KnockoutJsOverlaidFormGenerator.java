@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.web.html;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
 import org.nasdanika.core.Context;
 import org.nasdanika.html.FontAwesome.Spinner;
@@ -12,30 +13,12 @@ import org.nasdanika.html.UIElementFilter;
 
 public class KnockoutJsOverlaidFormGenerator {
 	
-	private KnockoutJsFormGeneratorBase<?, ?> formGenerator;
 	private String onSubmitted;
 	private String cancelHandler;
 	private HTMLFactory htmlFactory;
 	private String objectPath;
-	
+	private ENamedElement source;
 	private Object[] customDeclarations;
-
-
-	protected KnockoutJsOverlaidFormGenerator(
-			KnockoutJsFormGeneratorBase<?,?> formGenerator, 
-			HTMLFactory htmlFactory,
-			String objectPath,
-			String onSubmitted, 
-			String cancelHandler,
-			Object[] customDeclarations
-			) {
-		this.formGenerator = formGenerator;
-		this.htmlFactory = htmlFactory;
-		this.objectPath = objectPath;
-		this.onSubmitted = onSubmitted;
-		this.cancelHandler = cancelHandler;
-		this.customDeclarations = customDeclarations;
-	}
 	 
 	public KnockoutJsOverlaidFormGenerator(
 		EOperation eOperation, 
@@ -45,15 +28,18 @@ public class KnockoutJsOverlaidFormGenerator {
 		String cancelHandler,
 		Object... customDeclarations
 		) {
-		this(
-				new KnockoutJsEOperationFormGenerator(eOperation, "model", "submitHandler",	cancelHandler==null ? null : "cancelHandler"),
-				htmlFactory,
-				objectPath,
-				onSubmitted, 
-				cancelHandler,
-				customDeclarations);
+		this.source = eOperation;
+		this.htmlFactory = htmlFactory;
+		this.objectPath = objectPath;
+		this.onSubmitted = onSubmitted;
+		this.cancelHandler = cancelHandler;
+		this.customDeclarations = customDeclarations;
 	}
-	 
+
+	protected KnockoutJsEOperationFormGenerator createFormGenerator(EOperation eOperation, String model, String submitHandler, String cancelHandler) {
+		return new KnockoutJsEOperationFormGenerator(eOperation, model, submitHandler, cancelHandler);
+	}
+		 
 	public KnockoutJsOverlaidFormGenerator(
 		EClass eClass, 
 		HTMLFactory htmlFactory,
@@ -61,14 +47,17 @@ public class KnockoutJsOverlaidFormGenerator {
 		String onSubmitted, 
 		String cancelHandler,
 		Object... customDeclarations) {
-		this(
-				new KnockoutJsEClassFormGenerator(eClass, "model", "submitHandler",	cancelHandler==null ? null : "cancelHandler"),
-				htmlFactory,
-				objectPath,
-				onSubmitted, 
-				cancelHandler,
-				customDeclarations);
+		this.source = eClass;
+		this.htmlFactory = htmlFactory;
+		this.objectPath = objectPath;
+		this.onSubmitted = onSubmitted;
+		this.cancelHandler = cancelHandler;
+		this.customDeclarations = customDeclarations;
 	}
+	
+	protected KnockoutJsEClassFormGenerator createFormGenerator(EClass eClass, String model, String submitHandler, String cancelHandler) {
+		return new KnockoutJsEClassFormGenerator(eClass, model, submitHandler, cancelHandler);
+	}	
 	
 	public interface OverlaidFormContainer extends UIElement<Tag> {
 		
@@ -103,6 +92,7 @@ public class KnockoutJsOverlaidFormGenerator {
 	}
 	
 	public OverlaidFormContainer generateOverlaidFormContainer(Object... overlayContent) throws Exception {
+		final KnockoutJsFormGeneratorBase<?, ?> formGenerator = createFormGenerator();
 		Form form = formGenerator.generateForm(htmlFactory);
 		final Tag containerDiv = htmlFactory.div(htmlFactory.overlay(overlayContent).style("display", "none"), form);
 		containerDiv.content(new Object() {
@@ -130,8 +120,17 @@ public class KnockoutJsOverlaidFormGenerator {
 		
 		return new OverlaidFormContainerImpl(containerDiv, htmlFactory, form);
 	}
+
+	protected KnockoutJsFormGeneratorBase<?, ?> createFormGenerator() {
+		if (source instanceof EOperation) {
+			return createFormGenerator((EOperation) source, "model", "submitHandler", cancelHandler==null ? null : "cancelHandler");
+		}
+		
+		return createFormGenerator((EClass) source, "model", "submitHandler", cancelHandler==null ? null : "cancelHandler");
+	}
 	
 	public OverlaidFormContainer generateSpinnerOverlaidFormContainer(Spinner spinner) throws Exception {
+		final KnockoutJsFormGeneratorBase<?, ?> formGenerator = createFormGenerator();
 		Form form = formGenerator.generateForm(htmlFactory);
 		final Tag containerDiv = htmlFactory.div(htmlFactory.spinnerOverlay(Spinner.spinner).style("display", "none"), form);
 		containerDiv.content(new Object() {

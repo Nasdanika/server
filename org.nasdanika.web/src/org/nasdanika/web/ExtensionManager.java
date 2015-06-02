@@ -332,7 +332,8 @@ public class ExtensionManager extends AdapterManager {
 			
 			// Service routes			
 			for (Entry<ServiceReference<Route>, Route> se: routeServiceTracker.getTracked().entrySet()) {	
-				if ("root".equals(se.getKey().getProperty("type"))) {
+				Object routeType = se.getKey().getProperty("type");
+				if (routeType==null || "root".equals(routeType)) {
 					Object methodsProperty = se.getKey().getProperty("methods");					
 					RequestMethod[] methods;
 					if (methodsProperty==null || (methodsProperty instanceof String && "*".equals(((String) methodsProperty).trim()))) {

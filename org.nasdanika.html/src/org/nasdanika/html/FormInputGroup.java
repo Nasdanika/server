@@ -6,5 +6,10 @@ package org.nasdanika.html;
  *
  */
 public interface FormInputGroup extends FormGroup<FormInputGroup>, InputGroup<FormInputGroup> {
+	
+	/**
+	 * @return Wrapped input group.
+	 */
+	InputGroup<FormInputGroup> getInputGroup();
 
 }

@@ -34,7 +34,11 @@ class FragmentImpl implements Fragment {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		for (Object c: content) {
-			sb.append(c);
+			try {
+				sb.append(TagImpl.renderContent(c));
+			} catch (Exception e) {
+				sb.append(e.toString());
+			}
 		}
 		return sb.toString();
 	}

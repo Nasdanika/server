@@ -6,6 +6,7 @@ import org.nasdanika.html.Button;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Placement;
+import org.nasdanika.html.InputGroup;
 
 class FormInputGroupImpl extends FormGroupImpl<FormInputGroup, InputGroupImpl> implements FormInputGroup {
 		
@@ -49,6 +50,12 @@ class FormInputGroupImpl extends FormGroupImpl<FormInputGroup, InputGroupImpl> i
 	@Override
 	public Button rightPopoverHelpButton(Placement placement, String title, String body, Map<String, Object> options) {
 		return control.rightPopoverHelpButton(placement, title, body, options);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public InputGroup<FormInputGroup> getInputGroup() {
+		return (InputGroup<FormInputGroup>) (Object) control; // A hack
 	}
 	
 }
