@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -31,6 +33,7 @@ import org.apache.lucene.store.RAMDirectory;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
@@ -74,8 +77,7 @@ public class DocRoute implements Route {
 		this.docRoutePath = docRoutePath;
 	}
 	
-	private String baseURL = "/webtesthub/router/doc/"; // TODO - computed and/or from properties
-	private String internalLinkPrefix = "/webtesthub/router/doc.html#router/doc-content/doc/"; // TODO - computed and/or from properties		
+	private String baseURL = "http://localhost:18080/webtesthub/router/doc.html"; // TODO - computed and/or from properties
 	
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 		
@@ -100,6 +102,8 @@ public class DocRoute implements Route {
 	}
 
 	private TocNode tocRoot;
+	private Map<String, List<String>> linkMap;
+	private Set<String> missingPaths;
 	
 	public void setCdoSessionProvider(CDOSessionProvider cdoSessionProvider) {
 		this.cdoSessionProvider = cdoSessionProvider;
@@ -167,7 +171,21 @@ public class DocRoute implements Route {
 					}
 	        		
 	        	};
-				final Indexer indexer = new Indexer(searchableContentProvider, writer, baseURL, internalLinkPrefix);
+				final Indexer indexer = new Indexer(searchableContentProvider, writer, baseURL) {
+					
+					private String prefix = "http://localhost:18080/webtesthub/router/doc.html#router/doc-content//webtesthub/router/doc/"; // TODO - compute.
+					
+					@Override
+					protected boolean isInternalLink(String href) {
+						return href.startsWith(prefix);
+					}
+					
+					@Override
+					protected String internalLinkPath(String href) {
+						return href.substring(prefix.length()-1);
+					}
+					
+				};
 				tocRoot.accept(new TocNodeVisitor() {
 					
 					@Override
@@ -178,25 +196,20 @@ public class DocRoute implements Route {
 					}
 					
 				});
-	        	// TODO - index
+	
+				this.linkMap = indexer.getLinkMap();
+				this.missingPaths = indexer.getMissingPaths();
 	        }
 			
 	        searchIndexReader = DirectoryReader.open(searchIndexDirectory);
-	        // Path -> Doc ID map.
-	        for (int docID=0; docID<searchIndexReader.numDocs(); ++docID) {
-	        	Document document = searchIndexReader.document(docID);
-//	        	String documentText = document.get("text");
-//	        	if (documentText.length()>500) {
-//	        		System.out.println(documentText);
-//	        	}
-	        	// TODO - map paths to docs.
-	        }
 	        System.out.println("Indexed "+searchIndexReader.numDocs()+" pages");
 	        indexSearcher = new IndexSearcher(searchIndexReader);
 		} finally {
 			lock.writeLock().unlock();
 		}
 	}
+	
+	
 
 	private void createPackageRegistryToc(Registry registry, TocNode owner, String prefix) {
 		List<EPackage> packages = new ArrayList<>();
@@ -271,7 +284,7 @@ public class DocRoute implements Route {
 			if (subPath.length==1) {
 				return getEPackageContent(ePackage, docRoutePath+"/packages/global");
 			}
-			return getEClassifierContent(ePackage.getEClassifier(subPath[1]));
+			return getEClassifierContent(ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");
 		} 
 		
 		if (path.startsWith(PACKAGES_SESSION_PATH)) {
@@ -280,7 +293,7 @@ public class DocRoute implements Route {
 			if (subPath.length==1) {
 				return getEPackageContent(ePackage, docRoutePath+"/packages/session");
 			}
-			return getEClassifierContent(ePackage.getEClassifier(subPath[1]));				
+			return getEClassifierContent(ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");				
 		} 
 		
 		if (path.startsWith(BUNDLE_PATH)) {
@@ -311,10 +324,20 @@ public class DocRoute implements Route {
 		return null; // Not found
 	}
 	
-	private Object getEClassifierContent(EClassifier eClassifier) {
-		// TODO - title script
-		// TODO Auto-generated method stub
-		return "Classifier "+eClassifier.getName();
+	private EClassDocumentationGenerator eClassDocumentationGenerator = new EClassDocumentationGenerator();	
+	private EDataTypeDocumentationGenerator eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator();	
+	private EEnumDocumentationGenerator eEnumDocumentationGenerator = new EEnumDocumentationGenerator();	
+	
+	private Object getEClassifierContent(EClassifier eClassifier, String registryPath) {
+		if (eClassifier instanceof EClass) {
+			return eClassDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, (EClass) eClassifier);
+		} 
+		
+		if (eClassifier instanceof EEnum) {
+			return eEnumDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, (EEnum) eClassifier);			
+		}
+		
+		return eDataTypeDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, (EDataType) eClassifier);			
 	}
 	
 	private EPackageDocumentationGenerator ePackageDocumentationGenerator = new EPackageDocumentationGenerator();

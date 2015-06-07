@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.doc;
 
 import static org.pegdown.FastEncoder.encode;
 
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +11,10 @@ import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.UIElement.Style;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
@@ -21,6 +26,7 @@ import org.pegdown.ast.WikiLinkNode;
 
 public class EModelElementDocumentationGenerator {
 	
+	private static final String ECORE_DOC_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";
 	private Pattern sentencePattern;
 	private int maxFirstSentenceLength = 250;
 
@@ -243,7 +249,7 @@ public class EModelElementDocumentationGenerator {
 	}
 	
 	public String getModelDocumentation(EModelElement modelElement) {
-		EAnnotation docAnn = modelElement.getEAnnotation("http://www.eclipse.org/emf/2002/GenModel");
+		EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
 		if (docAnn==null) {
 			return null;
 		}
@@ -278,6 +284,26 @@ public class EModelElementDocumentationGenerator {
 	 */
 	protected String getLinkTarget(String href) {
 		return null;
+	}
+	
+	protected String documentAnnotation(HTMLFactory htmlFactory, EAnnotation eAnnotation) {
+		if (ECORE_DOC_ANNOTATION_SOURCE.equals(eAnnotation.getSource())) {
+			return ""; // Already generated as doc.
+		}
+		
+		// TODO - extensions
+		
+		
+		// Forms, routes, form controls - in sub-classes.
+		
+		// Default - table.
+		Table detailsTable = htmlFactory.table().bordered();
+		for (String key: new TreeSet<String>(eAnnotation.getDetails().keySet())) {
+			Row row = detailsTable.row();
+			row.cell(StringEscapeUtils.escapeHtml4(key));
+			row.cell(StringEscapeUtils.escapeHtml4(eAnnotation.getDetails().get(key))).style("white-space", "pre-wrap").style("font-family", "monospace");
+		}
+		return htmlFactory.panel(Style.INFO, "Annotation " + StringEscapeUtils.escapeHtml4(eAnnotation.getSource()), detailsTable, null).toString();		
 	}
 
 }

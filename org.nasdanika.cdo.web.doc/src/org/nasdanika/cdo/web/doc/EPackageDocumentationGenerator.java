@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Hex;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
@@ -13,9 +14,9 @@ import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.Style;
@@ -33,7 +34,9 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 				.attribute("src", docRoutePath+"/resources/images/EPackage.gif")
 				.style("margin-right", "5px");
 		
+				
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EPackage "+ePackage.getName()));
+		
 		ret.content(htmlFactory.tag(TagName.h2, packageIcon, ePackage.getName()));
 		ret.content(htmlFactory.div("<B>Namespace URI:</B> "+ePackage.getNsURI()));
 		String doc = getModelDocumentation(ePackage);
@@ -46,11 +49,29 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 				
 		EPackage eSuperPackage = ePackage.getESuperPackage();
 		if (eSuperPackage!=null) {
-			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link("#"+registryPath+"/"+Hex.encodeHexString(eSuperPackage.getNsURI().getBytes(/* UTF-8? */)), packageIcon, eSuperPackage.getName())));			
+			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link("#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(eSuperPackage.getNsURI().getBytes(/* UTF-8? */)), packageIcon, eSuperPackage.getName())));			
 		}
 		
-		// TODO - annotations
-		// TODO - sub-packages
+		for (EAnnotation eAnnotation: ePackage.getEAnnotations()) {
+			ret.content(documentAnnotation(htmlFactory, eAnnotation));
+		}
+		
+		Tabs tabs = htmlFactory.tabs();
+		ret.content(tabs);		
+
+		Table subPackageTable = htmlFactory.table().bordered();
+		Row subPackageTableHeaderRow = subPackageTable.row().style(Style.INFO);
+		subPackageTableHeaderRow.header("Name");
+		subPackageTableHeaderRow.header("Description");
+		for (EPackage subPackage: ePackage.getESubpackages()) {
+			Row row = subPackageTable.row();
+			row.cell(htmlFactory.link("#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */)), subPackage.getName()));
+			row.cell(getFirstDocSentence(subPackage));			
+		}
+		
+		if (subPackageTable.rows().size()>1) {
+			tabs.item(packageIcon+" Sub-packages", subPackageTable);			
+		}
 		
 		String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */));
 		List<EClassifier> pClassifiers = new ArrayList<>(ePackage.getEClassifiers());
@@ -108,17 +129,16 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 				.attribute("src", docRoutePath+"/resources/images/EDataType.gif")
 				.style("margin-right", "5px");
 				
-		// TODO - group, icons, sort by name
 		if (enumTable.rows().size()>1) {
-			ret.content(htmlFactory.collapsible(Style.INFO, enumIcon+" Enumerations", false, enumTable));
+			tabs.item(enumIcon+" Enumerations", enumTable);
 		}
 		if (dataTypeTable.rows().size()>1) {
-			ret.content(htmlFactory.collapsible(Style.INFO, dataTypeIcon+" Data types", false, dataTypeTable));			
+			tabs.item(dataTypeIcon+" Data types", dataTypeTable);			
 		}
 		
 		if (classTable.rows().size()>1) {
-			ret.content(htmlFactory.collapsible(Style.INFO, classIcon+" Classes", false, classTable));
-		}				
+			tabs.item(classIcon+" Classes", classTable);
+		}
 		
 		return ret.toString();		
 		

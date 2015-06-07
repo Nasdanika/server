@@ -1,7 +1,11 @@
 package org.nasdanika.cdo.web.doc;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.lucene.document.Field;
@@ -17,10 +21,10 @@ public class Indexer {
 	
 	private Set<String> processedPaths = new HashSet<>();
 	private Set<String> missingPaths = new HashSet<>();
+	private Map<String, List<String>> linkMap = new HashMap<>();
 	private IndexWriter indexWriter;
 	private SearchableContentProvider searchableContentProvider;
 	private String baseURL;
-	private String internalLinkPrefix;
 
 	/**
 	 * 
@@ -32,12 +36,28 @@ public class Indexer {
 	public Indexer(
 			SearchableContentProvider searchableContentProvider, 
 			IndexWriter indexWriter, 
-			String baseURL,
-			String internalLinkPrefix) {
+			String baseURL) {
 		this.searchableContentProvider = searchableContentProvider;
 		this.indexWriter = indexWriter;
 		this.baseURL = baseURL;
-		this.internalLinkPrefix = internalLinkPrefix;
+	}
+	
+	/**
+	 * Override to detect internal links.
+	 * @param href
+	 * @return
+	 */
+	protected boolean isInternalLink(String href) {
+		return false;
+	}
+	
+	/**
+	 * Override to extract relative path from internal link URL.
+	 * @param href
+	 * @return
+	 */
+	protected String internalLinkPath(String href) {
+		return href;
 	}
 			
 	public void index(String path) {
@@ -47,24 +67,25 @@ public class Indexer {
 				missingPaths.add(path);
 			} else {
 				if (indexableContent.isHTML()) {
+					List<String> links = new ArrayList<>();
 					Document document = Jsoup.parse(indexableContent.getContent(), baseURL);
-					StringBuilder internalLinks = new StringBuilder();
 					for (Element link: document.body().getElementsByTag("a")) {
 						String href = link.absUrl("href");
 						if (!CoreUtil.isBlank(href)) {
-							if (href.startsWith(internalLinkPrefix)) {
+							if (isInternalLink(href)) {
 								// Internal link
-								String relativePath = href.substring(internalLinkPrefix.length());
+								String relativePath = internalLinkPath(href);
 								index(relativePath);
-								internalLinks.append(relativePath).append(System.lineSeparator());
+								links.add(relativePath);
 							}
 						}
 					}
+					if (!links.isEmpty()) {
+						linkMap.put(path, links);
+					}
 					org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
 			        doc.add(new Field("path", path, TextField.TYPE_STORED));
-			        doc.add(new Field("html", indexableContent.getContent(), TextField.TYPE_STORED));
 			        doc.add(new Field("text", document.body().text(), TextField.TYPE_STORED));
-			        doc.add(new Field("internalLinks", internalLinks.toString(), TextField.TYPE_STORED));
 			        try {
 						indexWriter.addDocument(doc);
 					} catch (IOException e) {
@@ -91,4 +112,7 @@ public class Indexer {
 		return missingPaths;
 	}
 
+	public Map<String, List<String>> getLinkMap() {
+		return linkMap;
+	}
 }
