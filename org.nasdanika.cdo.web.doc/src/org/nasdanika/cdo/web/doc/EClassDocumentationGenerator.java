@@ -112,7 +112,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		}
 		if (!routes.isEmpty()) {
 			Collections.sort(routes, namedElementComparator);
-			tabs.item("Routes", "TODO");
+			tabs.item(htmlFactory.glyphicon(Glyphicon.road)+" Routes", "TODO");
 		}
 		if (!forms.isEmpty()) {
 			Collections.sort(forms, namedElementComparator);
