@@ -73,6 +73,8 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 	private String viewPath;
 	private BundleContext bundleContext;
 	
+	//org.eclipse.equinox.http.jetty.context.path
+
 	public interface WebSocketContext<CR> extends CDOTransactionContext<CR> {
 		
 		/**

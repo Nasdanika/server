@@ -1,0 +1,19 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Nasdanika CDO Web Documentation
+Bundle-SymbolicName: org.nasdanika.cdo.web.doc;singleton:=true
+Bundle-Version: 0.1.0.qualifier
+Bundle-Vendor: Nasdanika
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Require-Bundle: org.nasdanika.cdo.web;bundle-version="0.1.0",
+ org.apache.commons.lang3;bundle-version="3.3.2",
+ org.nasdanika.html,
+ org.jsoup;bundle-version="1.7.2",
+ org.apache.lucene.analyzers-common;bundle-version="5.1.0",
+ org.apache.lucene.core;bundle-version="5.1.0",
+ org.apache.lucene.queryparser;bundle-version="5.1.0",
+ org.apache.commons.codec;bundle-version="1.10.0",
+ org.pegdown;bundle-version="1.5.0"
+Export-Package: org.nasdanika.cdo.web.doc
+Import-Package: javax.servlet;version="2.6.0",
+ javax.servlet.http;version="2.6.0"

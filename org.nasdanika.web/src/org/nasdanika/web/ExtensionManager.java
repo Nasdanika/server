@@ -74,7 +74,8 @@ public class ExtensionManager extends AdapterManager {
 			String routeServiceFilter,
 			String uiPartServiceFilter,
 			String htmlFactoryName,
-			AccessDecision defaultAccessDecision) throws Exception {
+			AccessDecision defaultAccessDecision,
+			String contextPath) throws Exception {
 		super(target, context, adapterServiceFilter);
 		
 		// TODO - converter profiles map: class name -> profile.
@@ -102,12 +103,24 @@ public class ExtensionManager extends AdapterManager {
 			if ("default_html_factory".equals(ce.getName())) {
 				if (htmlFactoryName==null || htmlFactoryName.equals("default")) {
 					DefaultHTMLFactory defaultHTMLFactory = new DefaultHTMLFactory();
-					defaultHTMLFactory.setBootstrapCssContainer(ce.getAttribute("bootstrapCssContainer"));
+					String bootstrapCssContainer = ce.getAttribute("bootstrapCssContainer");
+					if (!"/".equals(contextPath)) {
+						bootstrapCssContainer = contextPath+bootstrapCssContainer;
+					}
+					defaultHTMLFactory.setBootstrapCssContainer(bootstrapCssContainer);
 					for (IConfigurationElement s: ce.getChildren("script")) {
-						defaultHTMLFactory.getScripts().add(s.getValue());
+						String scriptPath = s.getValue();
+						if (!"/".equals(contextPath)) {
+							scriptPath = contextPath+scriptPath;
+						}
+						defaultHTMLFactory.getScripts().add(scriptPath);
 					}
 					for (IConfigurationElement s: ce.getChildren("stylesheet")) {
-						defaultHTMLFactory.getStylesheets().add(s.getValue());
+						String stylesheetPath = s.getValue();
+						if (!"/".equals(contextPath)) {
+							stylesheetPath = contextPath+stylesheetPath;
+						}
+						defaultHTMLFactory.getStylesheets().add(stylesheetPath);
 					}
 					this.htmlFactory = defaultHTMLFactory;
 					break;

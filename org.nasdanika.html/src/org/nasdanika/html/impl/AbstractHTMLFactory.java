@@ -130,6 +130,9 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 
 	@Override
 	public Tag div(Object... content) {
+		if (content.length==0) {
+			return tag(TagName.div, "");
+		}
 		return tag(TagName.div, content);
 	}
 

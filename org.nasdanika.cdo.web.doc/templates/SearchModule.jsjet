@@ -1,0 +1,50 @@
+<%@ jet package="org.nasdanika.cdo.web.doc" class="SearchModuleGenerator" %>
+
+require(['jquery', 'knockout', '<%=argument%>/toc.js', '<%=argument%>/resources/jstree/jstree.js', 'domReady!'], function(jQuery, ko, toc, jstree, doc) {
+	jQuery('#toc').jstree({
+		'core': { 
+			'data': toc.tree 
+			}
+	}).bind("select_node.jstree", function (e, data) {
+		window.location = toc.idMap[data.node.id];
+	});
+
+	var leftOverlay = jQuery("#left-overlay");
+		
+	ko.applyBindings({
+		
+		query: ko.observable(),
+		error: ko.observable(),
+		search: function() {
+			leftOverlay.height(leftOverlay.parent().height());
+			leftOverlay.css("display", "block");
+			this.error(undefined);
+			this.results(undefined);
+			jQuery.ajax("doc/search", {
+				data: {
+					query: this.query
+				},
+				dataType: "json",
+				success: function(data, textStatus, jqXHR) {
+					if (data.length>0) {
+						this.results(data);
+					} else {
+						this.error("No results");
+					}					
+				}.bind(this),
+				error: function(jqXHR, textStatus, errorThrown) {
+					this.error("Search error: "+errorThrown);				
+				}.bind(this),
+				complete: function() {
+					leftOverlay.css("display", "none");						
+				}
+			});
+		},
+		
+		results: ko.observable()
+		
+	}, doc.getElementById('searchContainer'));
+	
+	jQuery('div.split-pane').splitPane();		
+	
+});

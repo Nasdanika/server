@@ -36,7 +36,8 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 					config.getInitParameter("route-service-filter"),
 					config.getInitParameter("ui-part-service-filter"),
 					config.getInitParameter("html-factory"),
-					"deny".equalsIgnoreCase(config.getInitParameter("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW);
+					"deny".equalsIgnoreCase(config.getInitParameter("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW,
+					config.getServletContext().getContextPath());
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}		
