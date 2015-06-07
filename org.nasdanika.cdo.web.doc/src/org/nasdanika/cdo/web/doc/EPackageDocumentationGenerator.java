@@ -14,6 +14,8 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.LinkGroup;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.Style;
@@ -61,17 +63,36 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			
 		});
 		
-		LinkGroup classList = htmlFactory.linkGroup();
-		LinkGroup enumList = htmlFactory.linkGroup();
-		LinkGroup dataTypeList = htmlFactory.linkGroup();
+		Table classTable = htmlFactory.table().bordered();
+		Row classTableHeaderRow = classTable.row().style(Style.INFO);
+		classTableHeaderRow.header("Name");
+		classTableHeaderRow.header("Description");
+		
+		Table dataTypeTable = htmlFactory.table().bordered();
+		Row dataTypeTableHeaderRow = dataTypeTable.row().style(Style.INFO);
+		dataTypeTableHeaderRow.header("Name");
+		dataTypeTableHeaderRow.header("Instance Type Name");
+		dataTypeTableHeaderRow.header("Description");
+		
+		Table enumTable = htmlFactory.table().bordered();
+		Row enumTableHeaderRow = enumTable.row().style(Style.INFO);
+		enumTableHeaderRow.header("Name");
+		enumTableHeaderRow.header("Description");
 		
 		for (EClassifier eClassifier: pClassifiers) {
 			if (eClassifier instanceof EClass) {
-				classList.item(eClassifier.getName(), packagePath+"/"+eClassifier.getName(), Style.DEFAULT, false);
+				Row row = classTable.row();
+				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
+				row.cell(getFirstDocSentence(eClassifier));
 			} else if (eClassifier instanceof EEnum) {
-				enumList.item(eClassifier.getName(), packagePath+"/"+eClassifier.getName(), Style.DEFAULT, false);				
+				Row row = enumTable.row();
+				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
+				row.cell(getFirstDocSentence(eClassifier));
 			} else {
-				dataTypeList.item(eClassifier.getName()+" ("+eClassifier.getInstanceTypeName()+")", packagePath+"/"+eClassifier.getName(), Style.DEFAULT, false);				
+				Row row = dataTypeTable.row();
+				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
+				row.cell(eClassifier.getInstanceTypeName());
+				row.cell(getFirstDocSentence(eClassifier));
 			}
 		}
 		
@@ -88,15 +109,15 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 				.style("margin-right", "5px");
 				
 		// TODO - group, icons, sort by name
-		if (enumList.length()>0) {
-			ret.content(htmlFactory.collapsible(Style.INFO, enumIcon+" Enumerations", false, enumList));
+		if (enumTable.rows().size()>1) {
+			ret.content(htmlFactory.collapsible(Style.INFO, enumIcon+" Enumerations", false, enumTable));
 		}
-		if (dataTypeList.length()>0) {
-			ret.content(htmlFactory.collapsible(Style.INFO, dataTypeIcon+" Data types", false, dataTypeList));			
+		if (dataTypeTable.rows().size()>1) {
+			ret.content(htmlFactory.collapsible(Style.INFO, dataTypeIcon+" Data types", false, dataTypeTable));			
 		}
 		
-		if (classList.length()>0) {
-			ret.content(htmlFactory.collapsible(Style.INFO, classIcon+" Classes", false, classList));
+		if (classTable.rows().size()>1) {
+			ret.content(htmlFactory.collapsible(Style.INFO, classIcon+" Classes", false, classTable));
 		}				
 		
 		return ret.toString();		

@@ -44,7 +44,5 @@ require(['jquery', 'knockout', '<%=argument%>/toc.js', '<%=argument%>/resources/
 		results: ko.observable()
 		
 	}, doc.getElementById('searchContainer'));
-	
-	jQuery('div.split-pane').splitPane();		
-	
+		
 });

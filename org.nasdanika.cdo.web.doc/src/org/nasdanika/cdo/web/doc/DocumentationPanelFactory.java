@@ -14,52 +14,33 @@ import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Style;
 
 /**
- * This class generated documentation panel HTML.
+ * This class generates documentation panel HTML.
  * @author Pavel
  *
  */
-public class DocumentationPanel {
+public class DocumentationPanelFactory {
 
 	private HTMLFactory htmlFactory;
 	private String docRoutePath;
 
-	public DocumentationPanel(HTMLFactory htmlFactory, String docRoutePath) {
+	public DocumentationPanelFactory(HTMLFactory htmlFactory, String docRoutePath) {
 		this.htmlFactory = htmlFactory;
 		this.docRoutePath = docRoutePath;
 	}
-	
-	@Override
-	public String toString() {
+
+	/**
+	 * @return Tag for the left panel - tree, search.
+	 */
+	public Tag leftPanel() {
 		Tag leftOverlay = htmlFactory.spinnerOverlay(Spinner.spinner).id("left-overlay").style("display", "none");				
-		Tag leftComponent = htmlFactory.div(leftOverlay, leftTabs())
-				.addClass("split-pane-component")
-				.style("width", "20em");						
-		
-		Tag divider = htmlFactory.div()
-				.addClass("split-pane-divider")
-				.background(BootstrapColor.GRAY_LIGHT)
-				.style("left", "20em")
-				.style("width", "3px");
-		
-		Tag rightComponent = htmlFactory.div()
-				.addClass("split-pane-component")
-				.style("left", "20em")
-				.style("margin-left", "3px")
-				.style("padding-left", "3px")
-				.style("padding-right", "3px")
-				.id("doc-content");
-		
-		Tag splitPane = htmlFactory.div(leftComponent, divider, rightComponent)
-				.addClass("split-pane")
-				.addClass("fixed-left")
-				.style("min-height", "550px");
-		
-		//Tag initScript = htmlFactory.tag(TagName.script, "$('div.split-pane').splitPane();");
-		
-		return splitPane.toString(); // + initScript.toString();
+		return htmlFactory.div(leftOverlay, leftTabs());
 	}
 	
-	Tabs leftTabs() {
+	public Tag rightPanel() {
+		return htmlFactory.div().id("doc-content");		
+	}
+	
+	protected Tabs leftTabs() {
 		Tabs leftTabs = htmlFactory.tabs();
 		Tag tocDIV = htmlFactory.div().id("toc");
 		leftTabs.item(htmlFactory.glyphicon(Glyphicon.book)+"&nbsp;Content", tocDIV);
