@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="extensions" name="Documentation extensions" schema="schema/extensions.exsd"/>
+   <extension
+         point="org.nasdanika.cdo.web.doc.extensions">
+      <wiki-link-renderer
+            class="org.nasdanika.cdo.web.doc.LightboxWikiLinkRenderer"
+            name="image">
+      </wiki-link-renderer>
+      <toc
+            name="Test TOC">
+         <topic
+               icon="images/EGenericSuperType.gif"
+               name="Test topic">
+         </topic>
+      </toc>
+   </extension>
 
 </plugin>

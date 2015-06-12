@@ -10,7 +10,6 @@ import org.nasdanika.html.Input;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Style;
 
 /**
@@ -47,7 +46,11 @@ public class DocumentationPanelFactory {
 		
 		Form searchForm = htmlFactory.form().style("padding-top", "3px");
 		searchForm.inline();
-		Input searchInput = htmlFactory.input(InputType.text).id("searchText").placeholder("Search query").koDataBind("textInput", "query");
+		Input searchInput = htmlFactory.input(InputType.text)
+				.id("searchText")
+				.placeholder("Search query")
+				.koDataBind("textInput", "query")
+				.koDataBind("event", "{ keypress: searchKeyPress }");
 		FormInputGroup searchGroup = searchForm.formInputGroup("Search", "searchText", searchInput, "Search query");
 		searchGroup.rightButton(htmlFactory.glyphicon(Glyphicon.search)).koDataBind("click", "search").koDataBind("enable", "query");
 		searchGroup.style("width", "100%");

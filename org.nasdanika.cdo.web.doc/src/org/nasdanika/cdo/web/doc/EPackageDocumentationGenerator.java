@@ -36,7 +36,6 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		
 				
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EPackage "+ePackage.getName()));
-		
 		ret.content(htmlFactory.tag(TagName.h2, packageIcon, ePackage.getName()));
 		ret.content(htmlFactory.div("<B>Namespace URI:</B> "+ePackage.getNsURI()));
 		String doc = getModelDocumentation(ePackage);
@@ -117,27 +116,26 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			}
 		}
 		
-		Tag classIcon = htmlFactory.tag(TagName.img)
-				.attribute("src", docRoutePath+"/resources/images/EClass.gif")
-				.style("margin-right", "5px");
-		
-		Tag enumIcon = htmlFactory.tag(TagName.img)
-				.attribute("src", docRoutePath+"/resources/images/EEnum.gif")
-				.style("margin-right", "5px");
-		
-		Tag dataTypeIcon = htmlFactory.tag(TagName.img)
-				.attribute("src", docRoutePath+"/resources/images/EDataType.gif")
-				.style("margin-right", "5px");
-				
-		if (enumTable.rows().size()>1) {
-			tabs.item(enumIcon+" Enumerations", enumTable);
+		if (classTable.rows().size()>1) {
+			Tag classIcon = htmlFactory.tag(TagName.img)
+					.attribute("src", docRoutePath+"/resources/images/EClass.gif")
+					.style("margin-right", "5px");
+			
+			tabs.item(classIcon+" Classes", classTable);
 		}
 		if (dataTypeTable.rows().size()>1) {
+			Tag dataTypeIcon = htmlFactory.tag(TagName.img)
+					.attribute("src", docRoutePath+"/resources/images/EDataType.gif")
+					.style("margin-right", "5px");
+					
 			tabs.item(dataTypeIcon+" Data types", dataTypeTable);			
 		}
-		
-		if (classTable.rows().size()>1) {
-			tabs.item(classIcon+" Classes", classTable);
+		if (enumTable.rows().size()>1) {
+			Tag enumIcon = htmlFactory.tag(TagName.img)
+					.attribute("src", docRoutePath+"/resources/images/EEnum.gif")
+					.style("margin-right", "5px");
+			
+			tabs.item(enumIcon+" Enumerations", enumTable);
 		}
 		
 		return ret.toString();		

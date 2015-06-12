@@ -13,7 +13,7 @@ Require-Bundle: org.nasdanika.cdo.web;bundle-version="0.1.0",
  org.apache.lucene.core;bundle-version="5.1.0",
  org.apache.lucene.queryparser;bundle-version="5.1.0",
  org.apache.commons.codec;bundle-version="1.10.0",
- org.pegdown;bundle-version="1.5.0"
+ org.pegdown;bundle-version="1.5.0";visibility:=reexport
 Export-Package: org.nasdanika.cdo.web.doc
 Import-Package: javax.servlet;version="2.6.0",
  javax.servlet.http;version="2.6.0"

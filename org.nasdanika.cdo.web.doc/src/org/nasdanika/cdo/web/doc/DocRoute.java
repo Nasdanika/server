@@ -13,7 +13,11 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.commons.codec.binary.Hex;
@@ -30,6 +34,15 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.RAMDirectory;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
+import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -41,6 +54,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
+import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.web.Action;
@@ -49,18 +63,23 @@ import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.ValueAction;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
 
 public class DocRoute implements Route {
 		
+	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
+	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
+	private static final String TOC = "toc";
 	private static final String RESOURCES_PATH = "/resources/";
 	private static final String BUNDLE_PATH = "/bundle/";
 	private static final String PACKAGES_SESSION_PATH = "/packages/session/";
 	private static final String PACKAGES_GLOBAL_PATH = "/packages/global/";
 	private static final String TOC_PATH = "/toc/";
 	private int pathOffset = 1;
-	private Bundle bundle;
+	private Bundle docBundle;
+	private BundleContext bundleContext;
 	private Directory searchIndexDirectory;
 	private DirectoryReader searchIndexReader;
 	private IndexSearcher indexSearcher;
@@ -68,6 +87,13 @@ public class DocRoute implements Route {
 	private CDOSessionProvider cdoSessionProvider;
 	private HTMLFactory htmlFactory = new DefaultHTMLFactory();
 	private String docRoutePath = "/router/doc";
+	private String docAppPath = "/router/doc.html";
+	private long reloadDelay = 30000; // Wait 30 seconds before reloading index on extension tracker notifications. 
+	private Timer loadTimer;
+	
+	public void setReloadDelay(long reloadDelay) {
+		this.reloadDelay = reloadDelay;
+	}
 	
 	public void setHtmlFactory(HTMLFactory htmlFactory) {
 		this.htmlFactory = htmlFactory;
@@ -77,16 +103,27 @@ public class DocRoute implements Route {
 		this.docRoutePath = docRoutePath;
 	}
 	
-	private String baseURL = "http://localhost:18080/webtesthub/router/doc.html"; // TODO - computed and/or from properties
+	public void setDocAppPath(String docAppPath) {
+		this.docAppPath = docAppPath;
+	}
+	
+	private String baseURL;
 	
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+	private ExtensionTracker extensionTracker;
+	
+	private Map<String, WikiLinkProcessor.Renderer> wikiLinkRendererMap = new ConcurrentHashMap<>();
+	private Map<String, WikiLinkProcessor.Resolver> wikiLinkResolverMap = new ConcurrentHashMap<>();
+	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 		
 	public void activate(ComponentContext context) throws Exception {
 		Object pathOffsetProp = context.getProperties().get("pathOffset");
 		if (pathOffsetProp instanceof Number) {
 			pathOffset = ((Number) pathOffsetProp).intValue();
 		}
-		bundle = FrameworkUtil.getBundle(getClass());
+		bundleContext = context.getBundleContext();
+		docBundle = FrameworkUtil.getBundle(getClass());
+		
 		File searchIndexDir = context.getBundleContext().getBundle().getDataFile("searchIndex");
 		if (searchIndexDir==null) {
 			searchIndexDirectory = new RAMDirectory();
@@ -94,11 +131,119 @@ public class DocRoute implements Route {
 			searchIndexDirectory = new NIOFSDirectory(searchIndexDir.toPath());
 		}
     	analyzer = new StandardAnalyzer();
+    	
+    	baseURL = "http://localhost";
+    	String port = System.getProperty("org.osgi.service.http.port");
+    	if (port!=null) {
+    		baseURL+=":"+port;
+    	}
     	String contextPath = System.getProperty("org.eclipse.equinox.http.jetty.context.path");
     	if (contextPath!=null) {
     		docRoutePath = contextPath + docRoutePath;
+    		baseURL+=contextPath;
     	}
-		load();
+    	baseURL+=docAppPath;
+    	
+    	IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
+    	extensionTracker = new ExtensionTracker(extensionRegistry);
+    	
+    	doLoad.set(true); // To prevent scheduling of delayed loading.
+    	
+    	// Tracking doc extensions
+    	IExtensionPoint docExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.cdo.web.doc.extensions");    	
+    	IExtensionChangeHandler docExtensionChangeHandler = new IExtensionChangeHandler() {
+
+    		@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+    			for (IConfigurationElement ce: extension.getConfigurationElements()) {
+    				switch (ce.getName()) {
+    				case WIKI_LINK_RENDERER:
+	    				String rendererName = ce.getAttribute("name");
+						if (!wikiLinkRendererMap.containsKey(rendererName)) {
+	    					try {
+								wikiLinkRendererMap.put(rendererName, (Renderer) ce.createExecutableExtension("class"));
+								tracker.registerObject(extension, WIKI_LINK_RENDERER+":"+rendererName, IExtensionTracker.REF_WEAK);
+							} catch (CoreException e) {
+								e.printStackTrace();
+							}
+	    				}
+						break;
+    				case WIKI_LINK_RESOLVER:
+	    				String resolverName = ce.getAttribute("name");
+						if (!wikiLinkResolverMap.containsKey(resolverName)) {
+	    					try {
+								wikiLinkResolverMap.put(resolverName, (WikiLinkProcessor.Resolver) ce.createExecutableExtension("class"));
+								tracker.registerObject(extension, WIKI_LINK_RESOLVER+":"+resolverName, IExtensionTracker.REF_WEAK);
+							} catch (CoreException e) {
+								e.printStackTrace();
+							}
+	    				}
+						break;
+    				case TOC:
+						try {
+							TocNodeFactory tocNodeFactory = new TocNodeFactory(baseURL, extension.getContributor().getName(), ce);
+	   						synchronized (tocNodeFactories) {
+	   							tocNodeFactories.add(tocNodeFactory);
+	   						}
+							tracker.registerObject(extension, tocNodeFactory, IExtensionTracker.REF_WEAK);
+						} catch (Exception e) {
+							// TODO proper logging
+							e.printStackTrace();
+						}
+    					break;
+    				default:
+    					System.err.println("Unrecognized extension: "+ce.getName());
+    				}
+    			}
+    			scheduleReloading();
+			}
+			
+			@Override
+			public void removeExtension(IExtension extension, Object[] objects) {
+				for (Object obj: objects) {
+					if (obj instanceof String) {
+						if (((String) obj).startsWith(WIKI_LINK_RENDERER+":")) {
+							wikiLinkRendererMap.remove(((String) obj).substring(WIKI_LINK_RENDERER.length()+1));
+						} else if (((String) obj).startsWith(WIKI_LINK_RESOLVER+":")) {
+							wikiLinkResolverMap.remove(((String) obj).substring(WIKI_LINK_RESOLVER.length()+1));
+						} else if (obj instanceof TocNodeFactory) {
+							synchronized (tocNodeFactories) {
+								tocNodeFactories.remove(obj);
+							}
+						} 						
+					}
+				}
+    			scheduleReloading();				
+			}
+			
+		};
+		
+		extensionTracker.registerHandler(docExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(docExtensionPoint));
+		for (IExtension ex: docExtensionPoint.getExtensions()) {
+			docExtensionChangeHandler.addExtension(extensionTracker, ex);
+		}
+
+		// Global package registry changes
+		IExtensionPoint generatedPackageExtensionPoint = extensionRegistry.getExtensionPoint("org.eclipse.emf.ecore.generated_package");
+		IExtensionChangeHandler generatedPackageExtensionChangeHandler = new IExtensionChangeHandler() {
+			
+			@Override
+			public void removeExtension(IExtension extension, Object[] objects) {
+				scheduleReloading();				
+			}
+			
+			@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+				scheduleReloading();				
+			}
+			
+		};
+		
+		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
+    	
+		loadTimer = new Timer();
+		doLoad.set(false);
+		loadTimer.schedule(loadTask, 500);
 	}
 
 	private TocNode tocRoot;
@@ -108,6 +253,34 @@ public class DocRoute implements Route {
 	public void setCdoSessionProvider(CDOSessionProvider cdoSessionProvider) {
 		this.cdoSessionProvider = cdoSessionProvider;
 	}
+
+	/**
+	 * doLoad is set to true when loading is scheduled and 
+	 * reset to false when loading is completed.
+	 */
+	private AtomicBoolean doLoad = new AtomicBoolean();
+	
+	void scheduleReloading() {
+		if (!doLoad.getAndSet(true)) {
+			loadTimer.schedule(loadTask, reloadDelay);
+		}
+	}
+	
+	TimerTask loadTask = new TimerTask() {
+		
+		@Override
+		public void run() {
+			do {
+				try {
+					load();
+				} catch (Exception e) {
+					// TODO proper logging
+					System.err.println("Loading failed: "+e);
+					e.printStackTrace();
+				}
+			} while (doLoad.getAndSet(false));
+		}
+	};	
 
 	/**
 	 * (Re)Builds TOC and index. 
@@ -123,6 +296,16 @@ public class DocRoute implements Route {
 			if (cdoSessionProvider!=null) {
 				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), packagesToc.createChild("Session", null, null), "/packages/session");				
 			}
+			
+			synchronized (tocNodeFactories) {
+				for (TocNodeFactory tnf: tocNodeFactories) {
+					if (tnf.isRoot(tocNodeFactories)) {
+						tnf.createTocNode(tocRoot, tocNodeFactories, false);
+					}
+				}
+			}
+			
+			tocRoot.sort(false);
 						
 			// TODO - from extensions
 			
@@ -302,7 +485,7 @@ public class DocRoute implements Route {
 				return null;
 			}
 			String bundleId = path.substring(BUNDLE_PATH.length(), idx);
-			for (Bundle targetBundle: bundle.getBundleContext().getBundles()) {
+			for (Bundle targetBundle: bundleContext.getBundles()) {
 				if (bundleId.equals(targetBundle.getSymbolicName())) {
 					return targetBundle.getResource(path.substring(idx+1));
 				}
@@ -312,7 +495,7 @@ public class DocRoute implements Route {
 		
 		if (path.startsWith(RESOURCES_PATH)) {
 			// TODO - .md processing
-			return bundle.getResource(path.substring(RESOURCES_PATH.length()));
+			return docBundle.getResource(path.substring(RESOURCES_PATH.length()));
 		} 
 		
 		if (path.startsWith(TOC_PATH)) {
@@ -356,6 +539,15 @@ public class DocRoute implements Route {
 		}
 		if (analyzer!=null) {
 			analyzer.close();
+			analyzer = null;
+		}
+		if (extensionTracker!=null) {
+			extensionTracker.close();
+			extensionTracker = null;
+		}
+		if (loadTimer!=null) {
+			loadTimer.cancel();
+			loadTimer = null;
 		}
 	}
 
@@ -431,7 +623,7 @@ public class DocRoute implements Route {
 			
 			if (path.length>2 && "resources".equals(path[0])) {
 				String resourcePath = StringUtils.join(path, "/", 1, path.length);
-				URL res = bundle.getResource(resourcePath);
+				URL res = docBundle.getResource(resourcePath);
 				if (res==null) {
 					return Action.NOT_FOUND;
 				}						

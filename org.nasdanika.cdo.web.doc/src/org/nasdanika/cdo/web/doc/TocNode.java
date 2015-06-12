@@ -1,6 +1,8 @@
 package org.nasdanika.cdo.web.doc;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -9,6 +11,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class TocNode {	
+	
+	public enum ContentType { TEXT, MARKDOWN, HTML }
 	
 	public interface TocNodeVisitor {
 		
@@ -23,6 +27,21 @@ public class TocNode {
 	private List<TocNode> children = new ArrayList<>();
 	private AtomicLong counter;
 	private String id;
+	private ContentType contentType;
+	private String content;
+			
+	public String getContent() {
+		return content;
+	}
+	
+	public ContentType getContentType() {
+		return contentType;
+	}
+	
+	public void setContent(ContentType contentType, String content) {
+		this.contentType = contentType;
+		this.content = content;
+	}
 	
 	public String getHref() {
 		return href;
@@ -51,7 +70,7 @@ public class TocNode {
 	public TocNode(String text, String href, String icon) {
 		this(text, href, icon, new AtomicLong());
 	}
-	
+
 	public List<TocNode> getChildren() {
 		return children;
 	}
@@ -82,7 +101,7 @@ public class TocNode {
 		return null;
 	}
 	
-	public JSONObject toJSON(String contextURL) throws JSONException {
+	public JSONObject toJSON(String contextURL) throws Exception {
 		JSONObject ret = new JSONObject();
 		if (text!=null) {
 			ret.put("text", text);
@@ -111,6 +130,32 @@ public class TocNode {
 		visitor.visit(this);
 		for (TocNode child: children) {
 			child.accept(visitor);
+		}
+	}
+	
+	public static final Comparator<TocNode> NAME_COMPARATOR = new Comparator<TocNode>() {
+
+		@Override
+		public int compare(TocNode o1, TocNode o2) {
+			if (o1==null || o1.getText()==null) {
+				if (o2==null || o2.getText()==null) {
+					return 0;
+				}
+				return 1;
+			}
+			if (o2==null || o2.getText()==null) {
+				return -1;
+			}
+			return o1.getText().compareTo(o2.getText());
+		}
+	};	
+
+	public void sort(boolean recursive) {
+		Collections.sort(children, NAME_COMPARATOR);
+		if (recursive) {
+			for (TocNode child: children) {
+				child.sort(recursive);
+			}
 		}
 	}
 }

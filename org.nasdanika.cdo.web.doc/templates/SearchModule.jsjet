@@ -15,8 +15,16 @@ require(['jquery', 'knockout', '<%=argument%>/toc.js', '<%=argument%>/resources/
 		
 		query: ko.observable(),
 		error: ko.observable(),
+		searchKeyPress: function(data, event) {
+		    if (event.which == 13) {
+		        this.search();
+		    } else {
+		    	return true;
+		    }			
+		},
 		search: function() {
 			leftOverlay.height(leftOverlay.parent().height());
+			leftOverlay.width(leftOverlay.parent().width());
 			leftOverlay.css("display", "block");
 			this.error(undefined);
 			this.results(undefined);
