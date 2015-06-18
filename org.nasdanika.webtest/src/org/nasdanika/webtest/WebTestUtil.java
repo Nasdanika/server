@@ -332,11 +332,33 @@ public class WebTestUtil {
 	 * @param pageClassToProxy
 	 * @return
 	 */
-	public static <T extends Page<WebDriver>> T initElements(WebDriver driver, Class<T> pageClassToProxy) {
+	@SuppressWarnings("unchecked")
+	public static <T extends Page<WebDriver>> T initElements(WebDriver driver, Class<T> pageClassToProxy, Object... args) {
 		doWait(driver, pageClassToProxy);
 		AbstractNasdanikaWebTestRunner.beforePageInitialization(driver, pageClassToProxy);
 		try {
-			T page = PageFactory.initElements(driver, pageClassToProxy);
+			T page;
+			if (args.length==0) {
+				page = PageFactory.initElements(driver, pageClassToProxy);
+			} else {
+				Z: for (Constructor<?> constructor: pageClassToProxy.getConstructors()) {
+					Class<?>[] pt = constructor.getParameterTypes();
+					if (args.length==pt.length) {
+						for (int i=0; i<args.length; ++i) {
+							if (args[i]!=null && !pt[i].isInstance(args[i])) {
+								continue Z;
+							}
+						}
+						try {
+							page = (T) constructor.newInstance(args);
+						} catch (Exception e) {
+							throw new WebTestException(e);
+						}
+						break;
+					}
+				}
+				throw new WebTestException("No constructor for "+pageClassToProxy+" which can accepts arguments "+Arrays.toString(args));
+			}
 			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, pageClassToProxy, page, null);
 			return page;
 		} catch (Throwable th) {
@@ -567,8 +589,7 @@ public class WebTestUtil {
 	}
 	
 	public static JSONObject capturePerformance(WebDriver webDriver) {
-		// For testing
-		if (webDriver instanceof JavascriptExecutor) {
+		if ("true".equals(System.getenv("NASDANIKA_WEBTEST_CAPTURE_PERFORMANCE")) && webDriver instanceof JavascriptExecutor) {
 			try {
 				Object perfData = ((JavascriptExecutor) webDriver).executeScript("return JSON.stringify(window.performance ? {timestamp: Date.now(), href: window.location.href, timing: window.performance.timing, entries: typeof window.performance.getEntries === 'function' && window.performance.getEntries()} : {timestamp: Date.now(), href: window.location.href});");				
 				if (perfData instanceof String) {
