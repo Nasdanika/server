@@ -4,10 +4,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.nasdanika.cdo.web.doc.TocNode.ContentType;
-
 
 public class TocNodeFactory {
 	
@@ -15,13 +15,45 @@ public class TocNodeFactory {
 	private String id;
 	private String icon;
 	private String location;
-	private ContentType contentType;
 	private String content;
 	private String linkTo;		
 	private List<String> links = new ArrayList<>();
 	private List<TocNodeFactory> children = new ArrayList<>();
 	
-	public TocNodeFactory(String docBaseURL, String contributorName, IConfigurationElement iConfigurationElement) throws MalformedURLException {
+	public TocNodeFactory(
+			String docBaseURL,
+			String docRoutePath,
+			String contributorName,
+			Map<String, Map<String, ContentFilter>> contentFilters,
+			IConfigurationElement iConfigurationElement) throws MalformedURLException {
+		
+		ContentFilter textFilter = new ContentFilter() {
+
+			@Override
+			public Object filter(Object content, String docRoutePath) {
+				return "<div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
+			}
+
+		};
+		
+		Map<String, ContentFilter> tm = contentFilters.get("text/plain");
+		if (tm!=null) {
+			textFilter = tm.get("text/html");
+		}
+		
+		ContentFilter markdownFilter = new ContentFilter() {
+
+			@Override
+			public Object filter(Object content, String docRoutePath) {
+				return "<H1>Cannot convert markdown to HTML</H1><div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
+			}
+
+		};
+		tm = contentFilters.get("text/markdown");
+		if (tm!=null) {
+			markdownFilter = tm.get("text/html");
+		}
+		
 		URL baseURL = new URL(docBaseURL+"/bundle/"+contributorName+"/");
 		name = iConfigurationElement.getAttribute("name");
 		id = iConfigurationElement.getAttribute("id");
@@ -44,15 +76,12 @@ public class TocNodeFactory {
 					contentElements = iConfigurationElement.getChildren("html");
 					if (contentElements.length!=0) {
 						content = contentElements[0].getValue();
-						contentType = ContentType.HTML;
 					}
 				} else {
-					content = contentElements[0].getValue();
-					contentType = ContentType.TEXT;
+					content = (String) textFilter.filter(contentElements[0].getValue(), docRoutePath);
 				}
 			} else {
-				content = contentElements[0].getValue();
-				contentType = ContentType.MARKDOWN;
+				content = (String) markdownFilter.filter(contentElements[0].getValue(), docRoutePath);
 			}
 		} else {
 			location = new URL(baseURL, location).toString();
@@ -65,16 +94,22 @@ public class TocNodeFactory {
 			links.add(link.getAttribute("id"));
 		}
 		for (IConfigurationElement child: iConfigurationElement.getChildren("topic")) {
-			children.add(new TocNodeFactory(docBaseURL, contributorName, child));
+			children.add(new TocNodeFactory(
+					docBaseURL, 
+					docRoutePath, 
+					contributorName, 
+					contentFilters, 
+					child));
 		}
 	}
 
 	public void createTocNode(TocNode parent, List<TocNodeFactory> tocNodeFactories, boolean merge) {
+		boolean doSort = false;
 		TocNode node = parent;
 		if (!merge) {
 			node = parent.createChild(name, location, icon);
 			if (content!=null) {
-				node.setContent(contentType, content);
+				node.setContent(content);
 			}
 		}
 		for (TocNodeFactory child: children) {
@@ -84,10 +119,15 @@ public class TocNodeFactory {
 			TocNodeFactory linkedChild = find(link);
 			if (linkedChild!=null) {
 				linkedChild.createTocNode(parent, tocNodeFactories, true);
+				doSort = true;
 			}
 		}
 		for (TocNodeFactory linked: findLinked(id)) {
 			linked.createTocNode(parent, tocNodeFactories, true);
+			doSort = true;
+		}
+		if (doSort) {
+			node.sort(false);
 		}
 	}
 	

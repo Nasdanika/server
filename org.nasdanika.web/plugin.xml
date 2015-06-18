@@ -41,4 +41,19 @@
             target="java.util.List">
       </object_route>
    </extension>
+   <extension
+         point="org.nasdanika.toc">
+      <toc
+            linkTo="org.nasdanika.core/credits"
+            name="Credits">
+         <topic
+               name="Web">
+            <markdown><![CDATA[
+               ``org.nasdanika.web`` bundle uses the following open source artifacts:
+
+* ``mime.types`` from Apache 2.4.x branch - http://svn.apache.org/viewvc/httpd/httpd/branches/2.4.x/docs/conf/mime.types?revision=1305131&view=co
+            ]]></markdown>
+         </topic>
+      </toc>
+   </extension>
 </plugin>

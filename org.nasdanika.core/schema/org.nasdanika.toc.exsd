@@ -1,0 +1,258 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Schema file written by PDE -->
+<schema targetNamespace="org.nasdanika.core" xmlns="http://www.w3.org/2001/XMLSchema">
+<annotation>
+      <appinfo>
+         <meta.schema plugin="org.nasdanika.core" id="org.nasdanika.toc" name="Nasdanika Documentation Table Of Contents"/>
+      </appinfo>
+      <documentation>
+         [Enter description of this extension point.]
+      </documentation>
+   </annotation>
+
+   <element name="extension">
+      <annotation>
+         <appinfo>
+            <meta.element />
+         </appinfo>
+      </annotation>
+      <complexType>
+         <choice>
+            <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
+         </choice>
+         <attribute name="point" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="name" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="link">
+      <annotation>
+         <documentation>
+            Links a TOC to the containing topic
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  ID of the linked topic
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="text" type="string">
+      <annotation>
+         <documentation>
+            Plain text topic/toc content.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="html" type="string">
+      <annotation>
+         <documentation>
+            HTML toc/topic content.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="markdown" type="string">
+      <annotation>
+         <documentation>
+            Markdown toc/topic content.
+         </documentation>
+      </annotation>
+   </element>
+
+   <element name="toc">
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="1">
+               <element ref="markdown"/>
+               <element ref="html"/>
+               <element ref="text"/>
+            </choice>
+            <sequence>
+               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  TOC name. For TOC&apos;s linked to EPackages and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in EPackage/EClassifier documentation and sub-topics are rendered as sections.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Icon resource or URL.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="location" type="string">
+            <annotation>
+               <documentation>
+                  Location of topic content - html, text, or markdown.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="linkTo" type="string">
+            <annotation>
+               <documentation>
+                  Topic to link this Toc to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="nsURI" type="string">
+            <annotation>
+               <documentation>
+                  Namespace URI for topics linked to EPackages and EClassifiers.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="classifier" type="string">
+            <annotation>
+               <documentation>
+                  Classifier name for toc&apos;s linked to classifiers.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="topic">
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="1">
+               <element ref="markdown"/>
+               <element ref="html"/>
+               <element ref="text"/>
+            </choice>
+            <sequence>
+               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Topic name
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Icon resource or URL.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="location" type="string">
+            <annotation>
+               <documentation>
+                  Location of topic content - html, text, or markdown.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="description" type="string">
+   </element>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="since"/>
+      </appinfo>
+      <documentation>
+         [Enter the first release in which this extension point appears.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="examples"/>
+      </appinfo>
+      <documentation>
+         [Enter extension point usage example here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="apiinfo"/>
+      </appinfo>
+      <documentation>
+         [Enter API information here.]
+      </documentation>
+   </annotation>
+
+   <annotation>
+      <appinfo>
+         <meta.section type="implementation"/>
+      </appinfo>
+      <documentation>
+         [Enter information about supplied implementation of this extension point.]
+      </documentation>
+   </annotation>
+
+
+</schema>

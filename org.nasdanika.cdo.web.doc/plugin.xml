@@ -8,13 +8,16 @@
             class="org.nasdanika.cdo.web.doc.LightboxWikiLinkRenderer"
             name="image">
       </wiki-link-renderer>
-      <toc
-            name="Test TOC">
-         <topic
-               icon="images/EGenericSuperType.gif"
-               name="Test topic">
-         </topic>
-      </toc>
+      <content-filter
+            class="org.nasdanika.cdo.web.doc.TextContentFilter"
+            source-type="text/plain"
+            target-type="text/html">
+      </content-filter>
+      <content-filter
+            class="org.nasdanika.cdo.web.doc.MarkdownContentFilter"
+            source-type="text/markdown"
+            target-type="text/html">
+      </content-filter>
    </extension>
 
 </plugin>

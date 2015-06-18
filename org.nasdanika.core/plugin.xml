@@ -3,6 +3,7 @@
 <plugin>
    <extension-point id="convert" name="Converter definitions" schema="schema/convert.exsd"/>
   <extension-point id="security" name="Security " schema="schema/security.exsd"/>
+  <extension-point id="org.nasdanika.toc" name="Nasdanika Documentation Table Of Contents" schema="schema/org.nasdanika.toc.exsd"/>
     <extension
          point="org.nasdanika.core.convert">
       <converter

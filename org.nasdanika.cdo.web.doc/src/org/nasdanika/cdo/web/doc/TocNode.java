@@ -7,12 +7,10 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
+import org.nasdanika.core.CoreUtil;
 
 public class TocNode {	
-	
-	public enum ContentType { TEXT, MARKDOWN, HTML }
 	
 	public interface TocNodeVisitor {
 		
@@ -27,19 +25,13 @@ public class TocNode {
 	private List<TocNode> children = new ArrayList<>();
 	private AtomicLong counter;
 	private String id;
-	private ContentType contentType;
 	private String content;
 			
 	public String getContent() {
 		return content;
 	}
 	
-	public ContentType getContentType() {
-		return contentType;
-	}
-	
-	public void setContent(ContentType contentType, String content) {
-		this.contentType = contentType;
+	public void setContent(String content) {
 		this.content = content;
 	}
 	
@@ -65,6 +57,9 @@ public class TocNode {
 		this.icon = icon;
 		this.counter = counter;
 		this.id = "n_"+Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
+		if (CoreUtil.isBlank(this.href)) {
+			this.href = "/toc/"+this.id;
+		}
 	}
 		
 	public TocNode(String text, String href, String icon) {
@@ -109,9 +104,6 @@ public class TocNode {
 		if (icon!=null) {
 			ret.put("icon", contextURL+icon);
 		}
-//		if (href!=null) {
-//			ret.put("href", href);
-//		}
 		ret.put("id", id);
 		JSONArray jsonChildren = new JSONArray();
 		for (TocNode child: children) {

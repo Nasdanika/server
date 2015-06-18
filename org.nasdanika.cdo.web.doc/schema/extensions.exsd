@@ -20,7 +20,7 @@
          <choice>
             <element ref="wiki-link-renderer" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="wiki-link-resolver" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="content-filter" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -52,7 +52,7 @@
    <element name="wiki-link-renderer">
       <complexType>
          <sequence>
-            <element ref="description"/>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -77,7 +77,7 @@
    <element name="wiki-link-resolver">
       <complexType>
          <sequence>
-            <element ref="description"/>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -99,171 +99,56 @@
       </complexType>
    </element>
 
-   <element name="description" type="string">
-   </element>
-
-   <element name="topic">
+   <element name="content-filter">
+      <annotation>
+         <documentation>
+            Content filter entry, e.g. for conversion from markdown to HTML.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
-            <choice minOccurs="0" maxOccurs="1">
-               <element ref="markdown"/>
-               <element ref="html"/>
-               <element ref="text"/>
-            </choice>
-            <sequence>
-               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
-               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-            </sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
-         <attribute name="name" type="string" use="required">
+         <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
-                  Topic name
+                  
                </documentation>
                <appinfo>
-                  <meta.attribute translatable="true"/>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.cdo.web.doc.ContentFilter"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="icon" type="string">
+         <attribute name="source-type" type="string" use="required">
             <annotation>
                <documentation>
-                  Icon resource or URL.
+                  
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
             </annotation>
          </attribute>
-         <attribute name="location" type="string">
+         <attribute name="target-type" type="string" use="required">
             <annotation>
                <documentation>
-                  Location of topic content - html, text, or markdown.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
+                  
                </documentation>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
-   <element name="toc">
+   <element name="property">
       <complexType>
-         <sequence>
-            <choice minOccurs="0" maxOccurs="1">
-               <element ref="markdown"/>
-               <element ref="html"/>
-               <element ref="text"/>
-            </choice>
-            <sequence>
-               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
-               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
-            </sequence>
-         </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  TOC name. For TOC&apos;s linked to EPackages and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in EPackage/EClassifier documentation and sub-topics are rendered as sections.
-               </documentation>
-               <appinfo>
-                  <meta.attribute translatable="true"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="icon" type="string">
-            <annotation>
-               <documentation>
-                  Icon resource or URL.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="location" type="string">
-            <annotation>
-               <documentation>
-                  Location of topic content - html, text, or markdown.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="linkTo" type="string">
-            <annotation>
-               <documentation>
-                  Topic to link this Toc to.
+                  
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="id" type="string">
+         <attribute name="value" type="string" use="required">
             <annotation>
                <documentation>
-                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="nsURI" type="string">
-            <annotation>
-               <documentation>
-                  Namespace URI for topics linked to EPackages and EClassifiers.
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="classifier" type="string">
-            <annotation>
-               <documentation>
-                  Classifier name for toc&apos;s linked to classifiers.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="markdown" type="string">
-      <annotation>
-         <documentation>
-            Markdown toc/topic content.
-         </documentation>
-      </annotation>
-   </element>
-
-   <element name="html" type="string">
-      <annotation>
-         <documentation>
-            HTML toc/topic content.
-         </documentation>
-      </annotation>
-   </element>
-
-   <element name="text" type="string">
-      <annotation>
-         <documentation>
-            Plain text topic/toc content.
-         </documentation>
-      </annotation>
-   </element>
-
-   <element name="link">
-      <annotation>
-         <documentation>
-            Links a TOC to the containing topic
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="id" type="string">
-            <annotation>
-               <documentation>
-                  ID of the linked topic
+                  
                </documentation>
             </annotation>
          </attribute>

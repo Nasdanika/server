@@ -10,6 +10,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -20,7 +22,10 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.activation.MimetypesFileTypeMap;
+
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -55,8 +60,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
+import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
+import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
@@ -71,6 +81,7 @@ public class DocRoute implements Route {
 		
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
+	private static final String CONTENT_FILTER = "content-filter";
 	private static final String TOC = "toc";
 	private static final String RESOURCES_PATH = "/resources/";
 	private static final String BUNDLE_PATH = "/bundle/";
@@ -90,6 +101,8 @@ public class DocRoute implements Route {
 	private String docAppPath = "/router/doc.html";
 	private long reloadDelay = 30000; // Wait 30 seconds before reloading index on extension tracker notifications. 
 	private Timer loadTimer;
+	
+	private Map<String, Map<String, ContentFilter>> contentFilters = new ConcurrentHashMap<>();
 	
 	public void setReloadDelay(long reloadDelay) {
 		this.reloadDelay = reloadDelay;
@@ -115,6 +128,7 @@ public class DocRoute implements Route {
 	private Map<String, WikiLinkProcessor.Renderer> wikiLinkRendererMap = new ConcurrentHashMap<>();
 	private Map<String, WikiLinkProcessor.Resolver> wikiLinkResolverMap = new ConcurrentHashMap<>();
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
+	private MimetypesFileTypeMap mimeTypesMap;
 		
 	public void activate(ComponentContext context) throws Exception {
 		Object pathOffsetProp = context.getProperties().get("pathOffset");
@@ -140,6 +154,7 @@ public class DocRoute implements Route {
     	String contextPath = System.getProperty("org.eclipse.equinox.http.jetty.context.path");
     	if (contextPath!=null) {
     		docRoutePath = contextPath + docRoutePath;
+    		docAppPath = contextPath + docAppPath;
     		baseURL+=contextPath;
     	}
     	baseURL+=docAppPath;
@@ -161,9 +176,9 @@ public class DocRoute implements Route {
 	    				String rendererName = ce.getAttribute("name");
 						if (!wikiLinkRendererMap.containsKey(rendererName)) {
 	    					try {
-								wikiLinkRendererMap.put(rendererName, (Renderer) ce.createExecutableExtension("class"));
+								wikiLinkRendererMap.put(rendererName, (Renderer) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
 								tracker.registerObject(extension, WIKI_LINK_RENDERER+":"+rendererName, IExtensionTracker.REF_WEAK);
-							} catch (CoreException e) {
+							} catch (Exception e) {
 								e.printStackTrace();
 							}
 	    				}
@@ -172,16 +187,88 @@ public class DocRoute implements Route {
 	    				String resolverName = ce.getAttribute("name");
 						if (!wikiLinkResolverMap.containsKey(resolverName)) {
 	    					try {
-								wikiLinkResolverMap.put(resolverName, (WikiLinkProcessor.Resolver) ce.createExecutableExtension("class"));
+								wikiLinkResolverMap.put(resolverName, (WikiLinkProcessor.Resolver) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
 								tracker.registerObject(extension, WIKI_LINK_RESOLVER+":"+resolverName, IExtensionTracker.REF_WEAK);
-							} catch (CoreException e) {
+							} catch (Exception e) {
+								// TODO - proper logging
 								e.printStackTrace();
 							}
 	    				}
 						break;
+    				case CONTENT_FILTER: 
+	    				String sourceType = ce.getAttribute("source-type");
+	    				Map<String, ContentFilter> targetMap = contentFilters.get(sourceType);
+	    				if (targetMap==null) {
+	    					targetMap = new ConcurrentHashMap<>();
+	    					contentFilters.put(sourceType, targetMap);
+	    				}
+	    				String targetType = ce.getAttribute("target-type");
+						if (!targetMap.containsKey(targetType)) {
+	    					try {
+								ContentFilter contentFilter = (ContentFilter) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class"));
+								targetMap.put(targetType, contentFilter);
+								tracker.registerObject(extension, contentFilter, IExtensionTracker.REF_WEAK);
+							} catch (Exception e) {
+								// TODO - proper logging
+								e.printStackTrace();
+							}
+	    				}
+    					
+    					break;
+    				default:
+    					System.err.println("Unrecognized extension: "+ce.getName());
+    				}
+    			}
+    			scheduleReloading();
+			}
+			
+			@Override
+			public void removeExtension(IExtension extension, Object[] objects) {
+				for (Object obj: objects) {
+					if (obj instanceof String) {
+						if (((String) obj).startsWith(WIKI_LINK_RENDERER+":")) {
+							wikiLinkRendererMap.remove(((String) obj).substring(WIKI_LINK_RENDERER.length()+1));
+						} else if (((String) obj).startsWith(WIKI_LINK_RESOLVER+":")) {
+							wikiLinkResolverMap.remove(((String) obj).substring(WIKI_LINK_RESOLVER.length()+1));
+						} 						
+					} else if (obj instanceof ContentFilter) {
+						for (Map<String, ContentFilter> tm: contentFilters.values()) {
+							Iterator<ContentFilter> cfit = tm.values().iterator();
+							while (cfit.hasNext()) {
+								if (obj == cfit.next()) {
+									cfit.remove();
+									break;
+								}
+							}
+						}
+					}
+				}
+    			scheduleReloading();				
+			}
+			
+		};
+		
+		extensionTracker.registerHandler(docExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(docExtensionPoint));
+		for (IExtension ex: docExtensionPoint.getExtensions()) {
+			docExtensionChangeHandler.addExtension(extensionTracker, ex);
+		}
+
+    	// Tracking TOC extensions
+    	IExtensionPoint tocExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.toc");    	
+    	IExtensionChangeHandler tocExtensionChangeHandler = new IExtensionChangeHandler() {
+
+    		@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+    			for (IConfigurationElement ce: extension.getConfigurationElements()) {
+    				switch (ce.getName()) {
     				case TOC:
 						try {
-							TocNodeFactory tocNodeFactory = new TocNodeFactory(baseURL, extension.getContributor().getName(), ce);
+							TocNodeFactory tocNodeFactory = new TocNodeFactory(
+									baseURL,
+									docRoutePath,
+									extension.getContributor().getName(),
+									contentFilters,
+									ce);
 	   						synchronized (tocNodeFactories) {
 	   							tocNodeFactories.add(tocNodeFactory);
 	   						}
@@ -201,28 +288,22 @@ public class DocRoute implements Route {
 			@Override
 			public void removeExtension(IExtension extension, Object[] objects) {
 				for (Object obj: objects) {
-					if (obj instanceof String) {
-						if (((String) obj).startsWith(WIKI_LINK_RENDERER+":")) {
-							wikiLinkRendererMap.remove(((String) obj).substring(WIKI_LINK_RENDERER.length()+1));
-						} else if (((String) obj).startsWith(WIKI_LINK_RESOLVER+":")) {
-							wikiLinkResolverMap.remove(((String) obj).substring(WIKI_LINK_RESOLVER.length()+1));
-						} else if (obj instanceof TocNodeFactory) {
-							synchronized (tocNodeFactories) {
-								tocNodeFactories.remove(obj);
-							}
-						} 						
-					}
+					if (obj instanceof TocNodeFactory) {
+						synchronized (tocNodeFactories) {
+							tocNodeFactories.remove(obj);
+						}
+					} 						
 				}
     			scheduleReloading();				
 			}
 			
 		};
 		
-		extensionTracker.registerHandler(docExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(docExtensionPoint));
-		for (IExtension ex: docExtensionPoint.getExtensions()) {
-			docExtensionChangeHandler.addExtension(extensionTracker, ex);
+		extensionTracker.registerHandler(tocExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(tocExtensionPoint));
+		for (IExtension ex: tocExtensionPoint.getExtensions()) {
+			tocExtensionChangeHandler.addExtension(extensionTracker, ex);
 		}
-
+    	
 		// Global package registry changes
 		IExtensionPoint generatedPackageExtensionPoint = extensionRegistry.getExtensionPoint("org.eclipse.emf.ecore.generated_package");
 		IExtensionChangeHandler generatedPackageExtensionChangeHandler = new IExtensionChangeHandler() {
@@ -238,6 +319,9 @@ public class DocRoute implements Route {
 			}
 			
 		};
+		
+		mimeTypesMap = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));		
+		mimeTypesMap.addMimeTypes("text/markdown md");
 		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
     	
@@ -323,6 +407,21 @@ public class DocRoute implements Route {
 					@Override
 					public ContentEntry get(String path) {				
 						if (path.startsWith(TOC_PATH)) {
+							final TocNode tocNode = tocRoot.find(path);
+							if (tocNode!=null && !CoreUtil.isBlank(tocNode.getContent())) {
+								return new ContentEntry() {
+									
+									@Override
+									public boolean isHTML() {
+										return true; // Embedded content is always rendered to HTML
+									}
+									
+									@Override
+									public String getContent() {
+										return tocNode.getContent();
+									}
+								};
+							}
 							return null; // We don't index automatically generated TOC pages
 						}
 						
@@ -356,7 +455,7 @@ public class DocRoute implements Route {
 	        	};
 				final Indexer indexer = new Indexer(searchableContentProvider, writer, baseURL) {
 					
-					private String prefix = "http://localhost:18080/webtesthub/router/doc.html#router/doc-content//webtesthub/router/doc/"; // TODO - compute.
+					private String prefix = "http://localhost:18080"+docAppPath+"#router/doc-content/"+docRoutePath+"/";
 					
 					@Override
 					protected boolean isInternalLink(String href) {
@@ -560,25 +659,23 @@ public class DocRoute implements Route {
 				if (lock.readLock().tryLock(30, TimeUnit.SECONDS)) {
 					try {
 						if ("toc.js".equals(path[0])) {
-							final String hrefPrefix = "#router/doc-content/doc"; // TODO - compute.
+							final String hrefPrefix = "#router/doc-content/"+docRoutePath; 
 							final JSONObject idMap = new JSONObject();
 							tocRoot.accept(new TocNodeVisitor() {
 								
 								@Override
 								public void visit(TocNode tocNode) {
-									if (tocNode.getHref()!=null) {
-										try{
-											idMap.put(tocNode.getId(), hrefPrefix+tocNode.getHref());
-										} catch (JSONException e) {
-											e.printStackTrace(); // TODO - better handling.
-										}
+									try{
+										idMap.put(tocNode.getId(), hrefPrefix+tocNode.getHref());
+									} catch (JSONException e) {
+										e.printStackTrace(); // TODO - better handling.
 									}
 									
 								}
 							});
 							JSONObject ret = new JSONObject();
 							ret.put("idMap", idMap);
-							ret.put("tree", tocRoot.toJSON(context.getContextURL()+"/doc").get("children"));
+							ret.put("tree", tocRoot.toJSON(docRoutePath).get("children"));
 							return new ValueAction("define("+ret+")");
 						} else if ("search".equals(path[0])) {
 					        QueryParser parser = new QueryParser("text", analyzer);
@@ -590,7 +687,7 @@ public class DocRoute implements Route {
 								JSONObject searchResult = new JSONObject();
 								searchResults.put(searchResult);
 								String hitPath = hitDoc.get("path");
-								searchResult.put("href", "#router/doc-content/doc"+hitPath); // TODO - compute
+								searchResult.put("href", "#router/doc-content/"+docRoutePath+hitPath);
 								TocNode tocEntry = tocRoot.find(hitPath);
 								if (tocEntry==null || tocEntry.getText()==null) {
 									int idx = hitPath.lastIndexOf("/");
@@ -619,6 +716,29 @@ public class DocRoute implements Route {
 			Object content = getContent("/"+StringUtils.join(path, "/"));
 			if (content!=null) {
 				return new ValueAction(content);
+			}
+			
+			if (path.length==2 && "toc".equals(path[0])) {
+				String nodePath = StringUtils.join(path, "/");
+				TocNode toc = tocRoot.find("/"+nodePath);
+				if (toc==null) {
+					return Action.NOT_FOUND;
+				}
+								
+				context.getResponse().setContentType("text/html");
+				Fragment fragment = htmlFactory.fragment(htmlFactory.tag(TagName.h1, StringEscapeUtils.escapeHtml4(toc.getText())));
+				if (CoreUtil.isBlank(toc.getContent())) {
+					Tag childList = htmlFactory.tag(TagName.ul);
+					fragment.content(childList);
+					for (TocNode ch: toc.getChildren()) {
+						String prefix = docAppPath+"#router/doc-content/"+docRoutePath;
+						childList.content(htmlFactory.tag(TagName.li, htmlFactory.link(prefix+ch.getHref(), StringEscapeUtils.escapeHtml4(ch.getText()))));
+					}										
+				} else {
+					fragment.content(toc.getContent());
+				}
+				return new ValueAction(fragment.toString());
+				
 			}
 			
 			if (path.length>2 && "resources".equals(path[0])) {

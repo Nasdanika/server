@@ -7,6 +7,7 @@ import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
 
+import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 
 @SuppressWarnings("serial")
@@ -23,6 +25,7 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 	protected ExtensionManager extensionManager;
 	
 	private boolean jsonPrettyPrint;
+	protected MimetypesFileTypeMap mimeTypesMap;
 
 	@Override
 	public void init(ServletConfig config) throws ServletException {
@@ -41,6 +44,7 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}		
+		mimeTypesMap = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));		
 	}
 			
 	@Override
@@ -55,6 +59,15 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 			pathInfo = pathInfo.substring(1);
 		}
 		String[] path = pathInfo.split("/");
+		if (path.length>0) {
+			String fn = path[path.length-1];
+			if (fn.indexOf('.')!=-1) {
+				String contentType = mimeTypesMap.getContentType(fn);
+				if (!CoreUtil.isBlank(contentType)) {
+					resp.setContentType(contentType);
+				}
+			}
+		}
 		Action action = null;
 		try (HttpServletRequestContext context = createContext(path, req, resp, reqUrl)) {
 			for (Route route: matchRootRoutes(req, path)) {
