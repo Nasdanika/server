@@ -5,7 +5,10 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -463,7 +466,39 @@ public class DocRoute implements Route {
 							}
 							return null;
 						}
-						// TODO - do the rest, type guessing by extension.
+						
+						int idx = path.lastIndexOf('/');
+						String fn = idx==-1 ? path : path.substring(idx+1);
+						String contentType = mimeTypesMap.getContentType(fn);
+						if (contentType!=null) {
+							if (!MIME_TYPE_HTML.equals(contentType)) {
+								Map<String, ContentFilter> tm = contentFilters.get(contentType);
+								if (tm!=null && tm.containsKey(MIME_TYPE_HTML)) {
+									contentType = MIME_TYPE_HTML;
+								}
+							}
+							if (MIME_TYPE_HTML.equals(contentType)) {
+								try {
+									final String content = DocRoute.stringify(DocRoute.this.getContent(path));
+									return new ContentEntry() {
+	
+										@Override
+										public boolean isHTML() {
+											return true;
+										}
+										
+										@Override
+										public String getContent() {
+											return content;
+										}
+									};
+								} catch (Exception de) {
+									de.printStackTrace(); 
+								}
+								return null;
+							}
+						}
+						
 						return null;
 					}
 	        		
@@ -813,8 +848,6 @@ public class DocRoute implements Route {
 	}
 
 	protected LinkRenderer createMarkdownLinkRenderer(final URL baseURL, final String urlPrefix) {
-		// Markdown Link Renderer ...
-		
 		Renderer.Registry rendererRegistry = new Renderer.Registry() {
 
 			@Override
@@ -879,4 +912,32 @@ public class DocRoute implements Route {
 		return new MarkdownLinkRenderer(rendererRegistry, resolverRegistry, linkRegistry, urlRewriter);				
 	}
 
+	public static String stringify(Object content) throws Exception {
+		if (content==null) {
+			return null;
+		}
+		if (content instanceof String) {
+			return (String) content;
+		}
+		if (content instanceof Reader) {
+			StringWriter sw = new StringWriter();
+			try (Reader reader = (Reader) content) {
+				for (int ch = reader.read(); ch!=-1; ch = reader.read()) {
+					sw.write(ch);
+				}
+			} 
+			sw.close();
+			return stringify(sw.toString());
+		}
+		if (content instanceof InputStream) {
+			try (InputStream in = (InputStream) content) {
+				return stringify(new InputStreamReader(in));
+			}
+		}
+		if (content instanceof URL) {
+			return stringify(((URL) content).openStream());
+		}
+		throw new IllegalArgumentException("Cannot stringify: "+content);
+	}
+	
 }
