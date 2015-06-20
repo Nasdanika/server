@@ -112,7 +112,10 @@ public class WikiLinkProcessor {
 			if (resolver==null) {
 				gtIdx = -1;
 			}
-		}			
+		}	
+		if (gtIdx==-1) {
+			gtIdx = colonIdx;
+		}
 		
 		String href;
 		String text = null;

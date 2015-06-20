@@ -20,8 +20,13 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.Style;
+import org.pegdown.LinkRenderer;
 
 public class EPackageDocumentationGenerator extends EModelElementDocumentationGenerator {
+
+	public EPackageDocumentationGenerator(LinkRenderer linkRenderer) {
+		super(linkRenderer);
+	}
 
 	public String generate(
 			HTMLFactory htmlFactory,

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,7 +41,6 @@ import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.RAMDirectory;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -59,7 +60,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
+import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
+import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -76,9 +79,11 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
+import org.pegdown.LinkRenderer;
 
 public class DocRoute implements Route {
 		
+	private static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
 	private static final String CONTENT_FILTER = "content-filter";
@@ -121,6 +126,7 @@ public class DocRoute implements Route {
 	}
 	
 	private String baseURL;
+	private String urlPrefix;
 	
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	private ExtensionTracker extensionTracker;
@@ -151,6 +157,7 @@ public class DocRoute implements Route {
     	if (port!=null) {
     		baseURL+=":"+port;
     	}
+    	urlPrefix = baseURL;
     	String contextPath = System.getProperty("org.eclipse.equinox.http.jetty.context.path");
     	if (contextPath!=null) {
     		docRoutePath = contextPath + docRoutePath;
@@ -252,7 +259,7 @@ public class DocRoute implements Route {
 		for (IExtension ex: docExtensionPoint.getExtensions()) {
 			docExtensionChangeHandler.addExtension(extensionTracker, ex);
 		}
-
+		
     	// Tracking TOC extensions
     	IExtensionPoint tocExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.toc");    	
     	IExtensionChangeHandler tocExtensionChangeHandler = new IExtensionChangeHandler() {
@@ -263,9 +270,11 @@ public class DocRoute implements Route {
     				switch (ce.getName()) {
     				case TOC:
 						try {
+							Map<Object, Object> contentFilterEnv = createContentFilterEnvironment(new URL(baseURL), urlPrefix);
 							TocNodeFactory tocNodeFactory = new TocNodeFactory(
 									baseURL,
 									docRoutePath,
+									contentFilterEnv,
 									extension.getContributor().getName(),
 									contentFilters,
 									ce);
@@ -324,7 +333,13 @@ public class DocRoute implements Route {
 		mimeTypesMap.addMimeTypes("text/markdown md");
 		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
-    	
+    			
+		URL bURL = new URL(baseURL);
+		eClassDocumentationGenerator = new EClassDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));	
+		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));	
+		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));			
+		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));				
+		
 		loadTimer = new Timer();
 		doLoad.set(false);
 		loadTimer.schedule(loadTask, 500);
@@ -606,9 +621,9 @@ public class DocRoute implements Route {
 		return null; // Not found
 	}
 	
-	private EClassDocumentationGenerator eClassDocumentationGenerator = new EClassDocumentationGenerator();	
-	private EDataTypeDocumentationGenerator eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator();	
-	private EEnumDocumentationGenerator eEnumDocumentationGenerator = new EEnumDocumentationGenerator();	
+	private EClassDocumentationGenerator eClassDocumentationGenerator;	
+	private EDataTypeDocumentationGenerator eDataTypeDocumentationGenerator;	
+	private EEnumDocumentationGenerator eEnumDocumentationGenerator;	
 	
 	private Object getEClassifierContent(EClassifier eClassifier, String registryPath) {
 		if (eClassifier instanceof EClass) {
@@ -622,7 +637,7 @@ public class DocRoute implements Route {
 		return eDataTypeDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, (EDataType) eClassifier);			
 	}
 	
-	private EPackageDocumentationGenerator ePackageDocumentationGenerator = new EPackageDocumentationGenerator();
+	private EPackageDocumentationGenerator ePackageDocumentationGenerator;
 
 	private Object getEPackageContent(EPackage ePackage, String registryPath) {
 		return ePackageDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, ePackage);
@@ -712,9 +727,24 @@ public class DocRoute implements Route {
 				}
 
 			} 
-			
+									
 			Object content = getContent("/"+StringUtils.join(path, "/"));
 			if (content!=null) {
+				if (path.length>0) {
+					String contentType = mimeTypesMap.getContentType(path[path.length-1]);
+					if (contentType!=null) {
+						Map<String, ContentFilter> tm = contentFilters.get(contentType);
+						if (tm!=null) {
+							for (Entry<String, ContentFilter> tme: tm.entrySet()) {
+								context.getResponse().setContentType(tme.getKey());
+								String requestURL = context.getRequest().getRequestURL().toString();
+								String requestURI = context.getRequest().getRequestURI();
+								String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
+								return new ValueAction(tme.getValue().filter(content, createContentFilterEnvironment(new URL(requestURL), urlPrefix)));
+							}
+						}
+					}
+				}
 				return new ValueAction(content);
 			}
 			
@@ -725,7 +755,7 @@ public class DocRoute implements Route {
 					return Action.NOT_FOUND;
 				}
 								
-				context.getResponse().setContentType("text/html");
+				context.getResponse().setContentType(MIME_TYPE_HTML);
 				Fragment fragment = htmlFactory.fragment(htmlFactory.tag(TagName.h1, StringEscapeUtils.escapeHtml4(toc.getText())));
 				if (CoreUtil.isBlank(toc.getContent())) {
 					Tag childList = htmlFactory.tag(TagName.ul);
@@ -773,5 +803,80 @@ public class DocRoute implements Route {
 		
 	}
 
+	protected Map<Object, Object> createContentFilterEnvironment(URL baseURL, String urlPrefix) {
+		Map<Object, Object> contentFilterEnv = new HashMap<>();
+		contentFilterEnv.put(LinkRenderer.class, createMarkdownLinkRenderer(baseURL, urlPrefix));
+		contentFilterEnv.put("docRoutePath", docRoutePath);
+		contentFilterEnv.put("docAppPath", docAppPath);
+		contentFilterEnv.put(HTMLFactory.class, htmlFactory);
+		return contentFilterEnv;
+	}
+
+	protected LinkRenderer createMarkdownLinkRenderer(final URL baseURL, final String urlPrefix) {
+		// Markdown Link Renderer ...
+		
+		Renderer.Registry rendererRegistry = new Renderer.Registry() {
+
+			@Override
+			public Renderer getRenderer(String name) {
+				return wikiLinkRendererMap.get(name);
+			}
+			
+		};
+		
+		Resolver.Registry resolverRegistry = new Resolver.Registry() {
+			
+			@Override
+			public Resolver getResolver(String name) {
+				return wikiLinkResolverMap.get(name);
+			}
+		};
+		
+		LinkInfo.Registry linkRegistry = new LinkInfo.Registry() {
+			
+			@Override
+			public LinkInfo getLinkInfo(String url) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		};
+		
+		URLRewriter urlRewriter = new URLRewriter() {
+			
+			@Override
+			public String rewrite(String spec) {
+				URL url;
+				try {
+					url = new URL(baseURL, spec);
+					String ret = url.toString();
+					if (ret.startsWith(urlPrefix)) {
+						String relURL = ret.substring(urlPrefix.length());
+						if (relURL.startsWith(docRoutePath)) {
+							int idx = relURL.lastIndexOf('/');
+							String fn = idx==-1 ? relURL : relURL.substring(idx+1);
+							String contentType = mimeTypesMap.getContentType(fn);
+							if (contentType!=null) {
+								if (!MIME_TYPE_HTML.equals(contentType)) {
+									Map<String, ContentFilter> tm = contentFilters.get(contentType);
+									if (tm!=null && tm.containsKey(MIME_TYPE_HTML)) {
+										contentType = MIME_TYPE_HTML;
+									}
+								}
+								if (MIME_TYPE_HTML.equals(contentType)) {
+									return "#router/doc-content/"+relURL;
+								}
+							}
+						}
+					}
+					return ret;
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+					return spec;
+				}
+			}
+		};
+		
+		return new MarkdownLinkRenderer(rendererRegistry, resolverRegistry, linkRegistry, urlRewriter);				
+	}
 
 }

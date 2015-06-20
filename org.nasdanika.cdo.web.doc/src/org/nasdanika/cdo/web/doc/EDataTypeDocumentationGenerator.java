@@ -1,27 +1,19 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import org.apache.commons.codec.binary.Hex;
 import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
-import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Table;
-import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.Style;
+import org.pegdown.LinkRenderer;
 
 public class EDataTypeDocumentationGenerator extends EModelElementDocumentationGenerator {
+
+	public EDataTypeDocumentationGenerator(LinkRenderer linkRenderer) {
+		super(linkRenderer);
+	}
 
 	public String generate(
 			HTMLFactory htmlFactory,

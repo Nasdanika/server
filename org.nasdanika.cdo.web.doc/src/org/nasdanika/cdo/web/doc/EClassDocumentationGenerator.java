@@ -8,8 +8,6 @@ import java.util.List;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
@@ -19,14 +17,16 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
-import org.nasdanika.html.Table;
-import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.Style;
+import org.pegdown.LinkRenderer;
 
 public class EClassDocumentationGenerator extends EModelElementDocumentationGenerator {
+
+	public EClassDocumentationGenerator(LinkRenderer linkRenderer) {
+		super(linkRenderer);
+	}
 
 	public String generate(
 			HTMLFactory htmlFactory,

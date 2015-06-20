@@ -7,8 +7,13 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.pegdown.LinkRenderer;
 
 public class EEnumDocumentationGenerator extends EModelElementDocumentationGenerator {
+
+	public EEnumDocumentationGenerator(LinkRenderer linkRenderer) {
+		super(linkRenderer);
+	}
 
 	public String generate(
 			HTMLFactory htmlFactory,

@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,14 +22,15 @@ public class TocNodeFactory {
 	public TocNodeFactory(
 			String docBaseURL,
 			String docRoutePath,
+			Map<Object, Object> contentFilterEnv,
 			String contributorName,
 			Map<String, Map<String, ContentFilter>> contentFilters,
-			IConfigurationElement iConfigurationElement) throws MalformedURLException {
+			IConfigurationElement iConfigurationElement) throws Exception {
 		
 		ContentFilter textFilter = new ContentFilter() {
 
 			@Override
-			public Object filter(Object content, String docRoutePath) {
+			public Object filter(Object content, Map<Object, Object> env) {
 				return "<div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
 			}
 
@@ -44,7 +44,7 @@ public class TocNodeFactory {
 		ContentFilter markdownFilter = new ContentFilter() {
 
 			@Override
-			public Object filter(Object content, String docRoutePath) {
+			public Object filter(Object content, Map<Object, Object> env) {
 				return "<H1>Cannot convert markdown to HTML</H1><div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
 			}
 
@@ -78,10 +78,10 @@ public class TocNodeFactory {
 						content = contentElements[0].getValue();
 					}
 				} else {
-					content = (String) textFilter.filter(contentElements[0].getValue(), docRoutePath);
+					content = (String) textFilter.filter(contentElements[0].getValue(), contentFilterEnv);
 				}
 			} else {
-				content = (String) markdownFilter.filter(contentElements[0].getValue(), docRoutePath);
+				content = (String) markdownFilter.filter(contentElements[0].getValue(), contentFilterEnv);
 			}
 		} else {
 			location = new URL(baseURL, location).toString();
@@ -97,6 +97,7 @@ public class TocNodeFactory {
 			children.add(new TocNodeFactory(
 					docBaseURL, 
 					docRoutePath, 
+					contentFilterEnv,
 					contributorName, 
 					contentFilters, 
 					child));

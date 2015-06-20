@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.util.Map;
+
 /**
  * Converts content from one format to another.
  * @author Pavel
@@ -7,6 +9,6 @@ package org.nasdanika.cdo.web.doc;
  */
 public interface ContentFilter {
 	
-	Object filter(Object content, String docRoutePath);
+	Object filter(Object content, Map<Object, Object> env) throws Exception;
 
 }
