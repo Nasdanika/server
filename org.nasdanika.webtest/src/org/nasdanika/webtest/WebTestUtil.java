@@ -341,16 +341,19 @@ public class WebTestUtil {
 			if (args.length==0) {
 				page = PageFactory.initElements(driver, pageClassToProxy);
 			} else {
+				Object[] cArgs = new Object[args.length+1];
+				cArgs[0] = driver;
+				System.arraycopy(args, 0, cArgs, 1, args.length);
 				Z: for (Constructor<?> constructor: pageClassToProxy.getConstructors()) {
 					Class<?>[] pt = constructor.getParameterTypes();
-					if (args.length==pt.length) {
-						for (int i=0; i<args.length; ++i) {
-							if (args[i]!=null && !pt[i].isInstance(args[i])) {
+					if (cArgs.length==pt.length) {
+						for (int i=0; i<cArgs.length; ++i) {
+							if (cArgs[i]!=null && !pt[i].isInstance(cArgs[i])) {
 								continue Z;
 							}
 						}
 						try {
-							page = (T) constructor.newInstance(args);
+							page = (T) constructor.newInstance(cArgs);
 						} catch (Exception e) {
 							throw new WebTestException(e);
 						}
@@ -448,7 +451,7 @@ public class WebTestUtil {
 			super(null);
 			
 			List<Class<?>> inheritanceChain = new ArrayList<Class<?>>();
-			for (Class<?> cls = pageClass; Page.class.isAssignableFrom(cls); cls = cls.getSuperclass()) {
+			for (Class<?> cls = pageClass; cls!=null && Page.class.isAssignableFrom(cls); cls = cls.getSuperclass()) {
 				inheritanceChain.add(cls);
 			}
 			Collections.reverse(inheritanceChain);
