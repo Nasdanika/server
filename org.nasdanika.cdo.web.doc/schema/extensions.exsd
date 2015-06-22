@@ -92,7 +92,7 @@
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.nasdanika.cdo.web.doc.WikiLinkProcessor$Renderer"/>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.cdo.web.doc.WikiLinkResolver"/>
                </appinfo>
             </annotation>
          </attribute>

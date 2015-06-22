@@ -19,6 +19,7 @@ import org.nasdanika.core.CoreUtil;
 
 public class Indexer {
 	
+//	private static final String INTERNAL_LINK_PREFIX = "#router/doc-content/";
 	private Set<String> processedPaths = new HashSet<>();
 	private Set<String> missingPaths = new HashSet<>();
 	private Map<String, List<String>> linkMap = new HashMap<>();
@@ -48,7 +49,7 @@ public class Indexer {
 	 * @return
 	 */
 	protected boolean isInternalLink(String href) {
-		return false;
+		return false; //href.startsWith(INTERNAL_LINK_PREFIX);
 	}
 	
 	/**
@@ -57,7 +58,7 @@ public class Indexer {
 	 * @return
 	 */
 	protected String internalLinkPath(String href) {
-		return href;
+		return null; //href.substring(INTERNAL_LINK_PREFIX.length());
 	}
 			
 	public void index(String path) {

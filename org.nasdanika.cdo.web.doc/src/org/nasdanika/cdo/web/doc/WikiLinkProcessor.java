@@ -135,15 +135,16 @@ public class WikiLinkProcessor {
 				text = linkInfo.getLabel(); 
 			}
 			if (CoreUtil.isBlank(text)) {
-				int slashIdx = href.lastIndexOf('/');
+				text = href;
+				int slashIdx = text.lastIndexOf('/');
 				if (slashIdx!=-1) {
-					href = href.substring(slashIdx+1);				
+					text = text.substring(slashIdx+1);				
 				}
-				int dotIdx = href.lastIndexOf('.');
+				int dotIdx = text.lastIndexOf('.');
 				if (dotIdx!=-1) {
-					href = href.substring(0, dotIdx);
+					text = text.substring(0, dotIdx);
 				}
-				text = href.replace('_', ' ');				
+				text = text.replace('_', ' ');				
 			}
 		}
 

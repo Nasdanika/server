@@ -18,6 +18,14 @@
             source-type="text/markdown"
             target-type="text/html">
       </content-filter>
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.ECoreGlobalResolver"
+            name="global">
+      </wiki-link-resolver>
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.ECoreSessionResolver"
+            name="session">
+      </wiki-link-resolver>
    </extension>
 
 </plugin>
