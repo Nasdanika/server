@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -24,8 +25,8 @@ import org.pegdown.LinkRenderer;
 
 public class EPackageDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EPackageDocumentationGenerator(LinkRenderer linkRenderer) {
-		super(linkRenderer);
+	public EPackageDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+		super(linkRenderer, eAnnotationRenderers);
 	}
 
 	public String generate(

@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EEnum;
 import org.nasdanika.core.CoreUtil;
@@ -11,8 +13,8 @@ import org.pegdown.LinkRenderer;
 
 public class EEnumDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EEnumDocumentationGenerator(LinkRenderer linkRenderer) {
-		super(linkRenderer);
+	public EEnumDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+		super(linkRenderer, eAnnotationRenderers);
 	}
 
 	public String generate(

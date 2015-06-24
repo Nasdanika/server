@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.util.Map;
+
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EDataType;
 import org.nasdanika.core.CoreUtil;
@@ -11,8 +13,8 @@ import org.pegdown.LinkRenderer;
 
 public class EDataTypeDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EDataTypeDocumentationGenerator(LinkRenderer linkRenderer) {
-		super(linkRenderer);
+	public EDataTypeDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+		super(linkRenderer, eAnnotationRenderers);
 	}
 
 	public String generate(

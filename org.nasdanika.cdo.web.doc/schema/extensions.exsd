@@ -21,6 +21,7 @@
             <element ref="wiki-link-renderer" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="wiki-link-resolver" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="content-filter" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="eannotation-renderer" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -93,6 +94,31 @@
                </documentation>
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.nasdanika.cdo.web.doc.WikiLinkResolver"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="eannotation-renderer">
+      <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="source" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.cdo.web.doc.EAnnotationRenderer"/>
                </appinfo>
             </annotation>
          </attribute>

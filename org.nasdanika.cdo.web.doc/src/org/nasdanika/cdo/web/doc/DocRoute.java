@@ -89,6 +89,7 @@ public class DocRoute implements Route {
 	private static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
+	private static final String EANNOTATION_RENDERER = "eannotation-renderer";
 	private static final String CONTENT_FILTER = "content-filter";
 	private static final String TOC = "toc";
 	private static final String RESOURCES_PATH = "/resources/";
@@ -111,6 +112,7 @@ public class DocRoute implements Route {
 	private Timer loadTimer;
 	
 	private Map<String, Map<String, ContentFilter>> contentFilters = new ConcurrentHashMap<>();
+	private Map<String, EAnnotationRenderer> eAnnotationRenderers = new ConcurrentHashMap<>();
 	
 	public void setReloadDelay(long reloadDelay) {
 		this.reloadDelay = reloadDelay;
@@ -215,6 +217,18 @@ public class DocRoute implements Route {
 							}
 	    				}
 						break;
+    				case EANNOTATION_RENDERER:
+	    				String source = ce.getAttribute("source");
+						if (!eAnnotationRenderers.containsKey(source)) {
+	    					try {
+								eAnnotationRenderers.put(source, (EAnnotationRenderer) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
+								tracker.registerObject(extension, EANNOTATION_RENDERER+":"+source, IExtensionTracker.REF_WEAK);
+							} catch (Exception e) {
+								// TODO - proper logging
+								e.printStackTrace();
+							}
+	    				}
+						break;
     				case CONTENT_FILTER: 
 	    				String sourceType = ce.getAttribute("source-type");
 	    				Map<String, ContentFilter> targetMap = contentFilters.get(sourceType);
@@ -250,6 +264,8 @@ public class DocRoute implements Route {
 							wikiLinkRendererMap.remove(((String) obj).substring(WIKI_LINK_RENDERER.length()+1));
 						} else if (((String) obj).startsWith(WIKI_LINK_RESOLVER+":")) {
 							wikiLinkResolverMap.remove(((String) obj).substring(WIKI_LINK_RESOLVER.length()+1));
+						} else if (((String) obj).startsWith(EANNOTATION_RENDERER+":")) {
+							eAnnotationRenderers.remove(((String) obj).substring(EANNOTATION_RENDERER.length()+1));
 						} 						
 					} else if (obj instanceof ContentFilter) {
 						for (Map<String, ContentFilter> tm: contentFilters.values()) {
@@ -371,10 +387,10 @@ public class DocRoute implements Route {
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
     			
 		URL bURL = new URL(baseURL);
-		eClassDocumentationGenerator = new EClassDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));	
-		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));	
-		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));			
-		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix));				
+		eClassDocumentationGenerator = new EClassDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);	
+		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);	
+		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);			
+		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);				
 		
 		loadTimer = new Timer();
 		doLoad.set(false);
