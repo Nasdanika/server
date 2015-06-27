@@ -10,8 +10,11 @@ Require-Bundle: org.json;bundle-version="1.0.0",
  org.nasdanika.cdo;bundle-version="0.1.0";visibility:=reexport,
  org.apache.commons.lang3;bundle-version="3.3.2",
  org.mozilla.rhino;bundle-version="1.0.0",
- org.eclipse.jetty.util;bundle-version="8.1.16",
- org.eclipse.jetty.websocket;bundle-version="8.1.16";visibility:=reexport
+ org.eclipse.jetty.util;bundle-version="9.2.9",
+ org.eclipse.jetty.websocket.api;bundle-version="9.2.9",
+ org.eclipse.jetty.websocket.common;bundle-version="9.2.9",
+ org.eclipse.jetty.websocket.server;bundle-version="9.2.9",
+ org.eclipse.jetty.websocket.servlet;bundle-version="9.2.9"
 Export-Package: org.nasdanika.cdo.web,
  org.nasdanika.cdo.web.html,
  org.nasdanika.cdo.web.routes

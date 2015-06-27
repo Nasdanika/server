@@ -62,6 +62,13 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			}
 			modifiers.append("class ");
 		}
+		
+//		if (eClass.getName().endsWith("ProtectionDomain")) {
+//			System.out.println("--- "+eClass.getName());
+//			System.out.println("\t"+eClass.getETypeParameters());
+//			System.out.println("\t"+eClass.getEGenericSuperTypes());
+//		}
+		
 		ret.content(htmlFactory.div(modifiers, eClass.getInstanceClassName()).style("margin-bottom", "5px").style("font-family", "monospace"));
 		String doc = getModelDocumentation(eClass);
 		if (!CoreUtil.isBlank(doc)) {

@@ -84,7 +84,7 @@ define(["q"], function(Q) {
 	var deferreds = {};
 	
 	var socketPromise = Q.Promise(function(resolve, reject, notify) {
-		var sessionSocket = new WebSocket("<%=webSocketUrl%>");
+		var sessionSocket = new WebSocket("<%=webSocketUrl%>", "text");
 		sessionSocket.onmessage = function(event) {
 			var response = JSON.parse(event.data);
 			var deferred = deferreds[response.id];
@@ -127,7 +127,7 @@ define(["q"], function(Q) {
 		};
 		
 		sessionSocket.onerror = function(error) {
-			cosole.error("Session socket error: "+error);
+			console.error("Session socket error: "+error);
 		}
 		
 		sessionSocket.onopen = function() {
