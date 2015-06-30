@@ -27,6 +27,7 @@ import org.pegdown.PegDownProcessor;
 
 public class EModelElementDocumentationGenerator {
 	
+	private static Pattern SENTENCE_PATTERN = Pattern.compile("[^\\.?!]+[\\.?!]+");	
 	
 	public static Comparator<ENamedElement> NAMED_ELEMENT_COMPARATOR = new Comparator<ENamedElement>() {
 
@@ -37,8 +38,7 @@ public class EModelElementDocumentationGenerator {
 		
 	};
 		
-	private static final String ECORE_DOC_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";
-	private Pattern sentencePattern;
+	static final String ECORE_DOC_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";
 	private int maxFirstSentenceLength = 250;
 	private LinkRenderer linkRenderer;
 	private Map<String, EAnnotationRenderer> eAnnotationRenderers;
@@ -46,7 +46,6 @@ public class EModelElementDocumentationGenerator {
 	public EModelElementDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
 		this.linkRenderer = linkRenderer;
 		this.eAnnotationRenderers = eAnnotationRenderers;
-		sentencePattern = Pattern.compile("[^\\.?!]+[\\.?!]+");
 	}
 	
 	public void setMaxFirstSentenceLength(int maxFirstSentenceLength) {
@@ -80,7 +79,7 @@ public class EModelElementDocumentationGenerator {
 			return "";
 		}
 		String text = Jsoup.parse(html).text();
-		Matcher matcher = sentencePattern.matcher(text);
+		Matcher matcher = SENTENCE_PATTERN.matcher(text);
 		if (matcher.find()) {
 			String group = matcher.group();
 			if (group.length()<maxFirstSentenceLength) {
@@ -90,7 +89,24 @@ public class EModelElementDocumentationGenerator {
 		
 		return text.length()<maxFirstSentenceLength ? text : "";
 	}
-	
+		
+	public String getFirstDocSentence(String markdown) {
+		if (CoreUtil.isBlank(markdown)) {
+			return "";
+		}
+
+		String text = Jsoup.parse(markdownToHtml(markdown)).text();
+		Matcher matcher = SENTENCE_PATTERN.matcher(text);
+		if (matcher.find()) {
+			String group = matcher.group();
+			if (group.length()<maxFirstSentenceLength) {
+				return group;
+			}
+		}
+		
+		return text.length()<maxFirstSentenceLength ? text : "";
+	}
+		
 	protected String documentAnnotation(HTMLFactory htmlFactory, EAnnotation eAnnotation) {
 		if (ECORE_DOC_ANNOTATION_SOURCE.equals(eAnnotation.getSource())) {
 			return ""; // Already generated as doc.

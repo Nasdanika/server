@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -53,6 +54,7 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
+import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -139,6 +141,82 @@ public class DocRoute implements Route {
 	private Map<String, WikiLinkProcessor.Renderer> wikiLinkRendererMap = new ConcurrentHashMap<>();
 	private Map<String, WikiLinkResolver> wikiLinkResolverMap = new ConcurrentHashMap<>();
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
+	
+	static class EClassKey implements Comparable<EClassKey> {
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result + ((nsURI == null) ? 0 : nsURI.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			EClassKey other = (EClassKey) obj;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			if (nsURI == null) {
+				if (other.nsURI != null)
+					return false;
+			} else if (!nsURI.equals(other.nsURI))
+				return false;
+			return true;
+		}
+
+		public String getNsURI() {
+			return nsURI;
+		}
+
+		public String getName() {
+			return name;
+		}
+		
+		public String getDocumentation() {
+			return documentation;
+		}
+
+		String nsURI;
+		String name;
+		String documentation;
+		
+		public EClassKey(EClass eClass) {
+			nsURI = eClass.getEPackage().getNsURI();
+			name = eClass.getName();
+			EAnnotation docAnn = eClass.getEAnnotation(EModelElementDocumentationGenerator.ECORE_DOC_ANNOTATION_SOURCE);
+			if (docAnn==null) {
+				documentation = "";
+			} else {
+				documentation = docAnn.getDetails().get("documentation");
+			}
+		}
+
+		@Override
+		public int compareTo(EClassKey o) {
+			if (o==this) {
+				return 0;
+			}
+			
+			if (o.nsURI.equals(nsURI)) {
+				return name.compareTo(o.getName());
+			}
+			
+			return nsURI.compareTo(o.nsURI);
+		}
+		
+	}
+	
+	private Map<EClassKey,Set<EClassKey>> inheritanceMap = new ConcurrentHashMap<>(); 
 	
 	private static class PackageTocNodeFactoryEntry {
 
@@ -387,7 +465,7 @@ public class DocRoute implements Route {
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
     			
 		URL bURL = new URL(baseURL);
-		eClassDocumentationGenerator = new EClassDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);	
+		eClassDocumentationGenerator = new EClassDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers, inheritanceMap);	
 		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);	
 		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);			
 		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);				
@@ -678,6 +756,16 @@ public class DocRoute implements Route {
 		TocNode cToc;
 		if (eClassifier instanceof EClass) {
 			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EClass.gif");
+			EClassKey subTypeKey = new EClassKey((EClass) eClassifier);
+			for (EClass sc: ((EClass) eClassifier).getESuperTypes()) {
+				EClassKey superTypeKey = new EClassKey(sc);
+				Set<EClassKey> subTypes = inheritanceMap.get(superTypeKey);
+				if (subTypes==null) {
+					subTypes = new TreeSet<>();
+					inheritanceMap.put(superTypeKey, subTypes);
+				}
+				subTypes.add(subTypeKey);
+			}
 		} else if (eClassifier instanceof EEnum) {
 			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EEnum.gif");
 		} else {

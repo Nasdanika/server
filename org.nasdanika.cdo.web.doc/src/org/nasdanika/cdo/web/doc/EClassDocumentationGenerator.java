@@ -4,13 +4,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
+import org.nasdanika.cdo.web.doc.DocRoute.EClassKey;
 import org.nasdanika.cdo.web.html.FormGeneratorBase;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.core.CoreUtil;
@@ -28,8 +31,14 @@ import org.pegdown.LinkRenderer;
 
 public class EClassDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EClassDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+	private Map<EClassKey, Set<EClassKey>> inheritanceMap;
+
+	public EClassDocumentationGenerator(
+			LinkRenderer linkRenderer, 
+			Map<String, EAnnotationRenderer> eAnnotationRenderers,
+			Map<EClassKey,Set<EClassKey>> inheritanceMap) {
 		super(linkRenderer, eAnnotationRenderers);
+		this.inheritanceMap = inheritanceMap;
 	}
 
 	public String generate(
@@ -133,7 +142,20 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			tabs.item("Supertypes", stTable);
 		}
 		
-		// TODO - subtypes - collect from other classes present in the repo.
+		Set<EClassKey> subTypes = inheritanceMap.get(new EClassKey(eClass));
+		if (subTypes!=null && !subTypes.isEmpty()) {
+			Table stTable = htmlFactory.table().bordered();
+			Row hr = stTable.row().style(Style.INFO);
+			hr.header("Name");
+			hr.header("Description");
+			for (EClassKey st: subTypes) {
+				Row stRow = stTable.row();
+				String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(st.getNsURI().getBytes(/* UTF-8? */));
+				stRow.cell(htmlFactory.link(packagePath+"/"+st.getName(), st.getName()));
+				stRow.cell(getFirstDocSentence(st.getDocumentation()));
+			}
+			tabs.item("Subtypes", stTable);
+		}
 								
 		return ret.toString();		
 		
