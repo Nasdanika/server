@@ -78,7 +78,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 //			System.out.println("\t"+eClass.getEGenericSuperTypes());
 //		}
 		
-		ret.content(htmlFactory.div(modifiers, eClass.getInstanceClassName()).style("margin-bottom", "5px").style("font-family", "monospace"));
+		ret.content(htmlFactory.div(markdownToHtml(modifiers+" [[javadoc>"+eClass.getInstanceClassName()+"|"+eClass.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
 		String doc = getModelDocumentation(eClass);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)

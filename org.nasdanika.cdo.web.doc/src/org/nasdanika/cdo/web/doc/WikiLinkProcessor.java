@@ -129,7 +129,7 @@ public class WikiLinkProcessor {
 		if (resolver!=null) {
 			href = resolver.resolve(href);
 		}
-		LinkInfo linkInfo = linkRegistry==null ? null : linkRegistry.getLinkInfo(href);
+		LinkInfo linkInfo = linkRegistry==null || href==null ? null : linkRegistry.getLinkInfo(href);
 		if (CoreUtil.isBlank(text)) {
 			if (linkInfo!=null) {
 				text = linkInfo.getLabel(); 
@@ -148,7 +148,7 @@ public class WikiLinkProcessor {
 			}
 		}
 
-		if (urlRewriter!=null) {
+		if (urlRewriter!=null && href!=null) {
 			href = urlRewriter.rewrite(href);
 		}
 		

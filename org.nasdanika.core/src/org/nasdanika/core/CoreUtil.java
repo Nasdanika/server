@@ -52,8 +52,13 @@ public class CoreUtil {
 		return target;
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void injectProperty(Object target, String[] propertyPath, String value) throws Exception {
-		if (propertyPath.length==1) {
+		if (target instanceof Map) {
+			// Injection to a Map, e.g. some object has a method Map<String, String> getConfig(), 
+			// then config.property_a -> 123 would put <property_a, 123> to the config map
+			((Map<String, String>) target).put(join(propertyPath, "."), value);
+		} else if (propertyPath.length==1) {
 			String mName = "set"+propertyPath[0].substring(0, 1).toUpperCase()+propertyPath[0].substring(1);
 			
 			// Methods
@@ -103,7 +108,7 @@ public class CoreUtil {
 			}
 			
 			throw new IllegalArgumentException("Cannot inject property "+propertyPath[0]+" with value '"+value+"' into "+target.getClass().getName());
-		} else if (propertyPath.length>1) {
+		} else {
 			String mName = "get"+propertyPath[0].substring(0, 1).toUpperCase()+propertyPath[0].substring(1);
 			// Method
 			for (Method mth: target.getClass().getMethods()) {
