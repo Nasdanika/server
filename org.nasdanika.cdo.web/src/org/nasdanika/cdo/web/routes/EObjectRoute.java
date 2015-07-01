@@ -1,10 +1,16 @@
 package org.nasdanika.cdo.web.routes;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
@@ -23,6 +29,7 @@ import org.nasdanika.cdo.EReferenceClosure;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.ServerException;
 import org.nasdanika.web.ValueAction;
 import org.nasdanika.web.routes.ObjectRoute;
 import org.osgi.framework.BundleContext;
@@ -39,7 +46,7 @@ public class EObjectRoute extends ObjectRoute {
 		final EObject eObject = (EObject) context.getTarget();
 		String[] path = context.getPath();
 		
-		for (EOperation op: eObject.eClass().getEAllOperations()) {
+		Z: for (EOperation op: eObject.eClass().getEAllOperations()) {
 			EAnnotation routeAnnotation = op.getEAnnotation(CDOWebUtil.ANNOTATION_HOME_ROUTE); 
 			boolean isHomeRoute = routeAnnotation!=null && eObject instanceof CDOObject;
 			if (!isHomeRoute) {
@@ -49,6 +56,13 @@ public class EObjectRoute extends ObjectRoute {
 				continue;
 			}
 			
+			String consumes = routeAnnotation.getDetails().get("consumes");
+			if (consumes!=null && !consumes.trim().equals(context.getRequest().getContentType())) {
+				continue;
+			}
+			
+			String pathStr = routeAnnotation.getDetails().get("path");
+			Map<String, Object> pathParameters = new HashMap<>();
 			if (isHomeRoute) {
 				if (path.length!=1) {
 					continue;
@@ -84,7 +98,7 @@ public class EObjectRoute extends ObjectRoute {
 						}
 					}
 				}
-			} else {
+			} else if (pathStr==null) {
 				String patternStr = routeAnnotation.getDetails().get("pattern");
 				if (patternStr==null) {
 					if (path.length!=2) {
@@ -97,6 +111,33 @@ public class EObjectRoute extends ObjectRoute {
 				} else {
 					if (!Pattern.matches(patternStr, CoreUtil.join(path, "/", 1))) {
 						continue;
+					}
+				}
+			} else {
+				String[] segments = pathStr.split("/");				
+				for (int i=0; i<path.length; ++i) {
+					if (segments.length<=i) {
+						continue Z; 
+					}
+					String segment = segments[i].trim();
+					if (segment.startsWith("{") && segment.endsWith("}")) {
+						String pathParameterName = segment.substring(1, segment.length()-1).trim();
+						if (i==segments.length-1) {
+							if (segments.length==path.length) {
+								pathParameters.put(pathParameterName, path[i]);
+							} else {
+								List<String> sList = new ArrayList<>();
+								for (int j=i; j<path.length; ++j) {
+									sList.add(path[j]);
+								}
+								pathParameters.put(pathParameterName, sList);
+							}
+							break;
+						} else {
+							pathParameters.put(pathParameterName, path[i]);
+						}
+					} else if (!path[i].equals(segment)) {
+						continue Z;
 					}
 				}
 			}
@@ -121,17 +162,52 @@ public class EObjectRoute extends ObjectRoute {
 			BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
 			for (EParameter p: op.getEParameters()) {
 				Object arg = null;
+				Class<?> parameterType = p.getEType().getInstanceClass();
 				if (p.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)!=null) {
-					arg = context.adapt(p.getEType().getInstanceClass());
+					arg = context.adapt(parameterType);
 				} else if (p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)!=null) {
 					String serviceFilter = p.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER).getDetails().get("filter");
-					for (ServiceReference<?> ref: bundleContext.getServiceReferences(p.getEType().getInstanceClass(), serviceFilter)) {
+					for (ServiceReference<?> ref: bundleContext.getServiceReferences(parameterType, serviceFilter)) {
 						Object service = bundleContext.getService(ref);
 						if (service!=null) {
 							arg = service;
 							toUnget.add(ref);
 							break;
 						}
+					}
+				} else if (p.getEAnnotation(CDOWebUtil.ANNOTATION_COOKIE_PARAMETER)!=null) {
+					String cookieName = p.getEAnnotation(CDOWebUtil.ANNOTATION_COOKIE_PARAMETER).getDetails().get("name");
+					List<Cookie> cookies = new ArrayList<>(); 
+					for (Cookie cookie: context.getRequest().getCookies()) {
+						if (CoreUtil.isBlank(cookieName) || cookieName.trim().equals(cookie.getName())) {
+							cookies.add(cookie);
+						}
+					}
+					arg = convert(context, cookies, parameterType);
+					
+				} else if (p.getEAnnotation(CDOWebUtil.ANNOTATION_QUERY_PARAMETER)!=null) {
+					EAnnotation queryParameterAnnotation = p.getEAnnotation(CDOWebUtil.ANNOTATION_QUERY_PARAMETER);
+					String parameterName = queryParameterAnnotation.getDetails().get("name");
+					if (CoreUtil.isBlank(parameterName)) {
+						throw new ServerException("Missing parameter name in annotation", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					}
+					String[] pv = context.getRequest().getParameterValues(parameterName.trim());
+					if (pv==null || pv.length==0) {
+						arg = convert(context, queryParameterAnnotation.getDetails().get("defaultValue"), parameterType);
+					} else {
+						arg = convert(context, pv, parameterType);
+					}
+				} else if (p.getEAnnotation(CDOWebUtil.ANNOTATION_PATH_PARAMETER)!=null) {
+					EAnnotation pathParameterAnnotation = p.getEAnnotation(CDOWebUtil.ANNOTATION_PATH_PARAMETER);
+					String parameterName = pathParameterAnnotation.getDetails().get("name");
+					if (CoreUtil.isBlank(parameterName)) {
+						throw new ServerException("Missing parameter name in annotation", HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+					}
+					Object pathParameter = pathParameters.get(parameterName.trim());
+					if (pathParameter==null) {
+						arg = convert(context, pathParameterAnnotation.getDetails().get("defaultValue"), parameterType);
+					} else {					
+						arg = convert(context, pathParameter, parameterType);
 					}
 				}
 				opArgs.add(arg);
@@ -152,6 +228,11 @@ public class EObjectRoute extends ObjectRoute {
 							
 				if (!context.authorize(eObject, action, qualifier, null)) {
 					return Action.FORBIDDEN;
+				}
+				
+				String produces = routeAnnotation.getDetails().get("produces");
+				if (produces!=null) {
+					context.getResponse().setContentType(produces);
 				}
 
 				return new ValueAction(eObject.eInvoke(op, opArgs));
@@ -194,6 +275,36 @@ public class EObjectRoute extends ObjectRoute {
 			}			
 		}
 		return super.execute(context);
+	}
+
+	private Object convert(HttpServletRequestContext context, Object obj, Class<?> target) throws Exception {
+		if (obj==null) {
+			return null;
+		}
+		if (target.isInstance(obj)) {
+			return obj;
+		}
+		// Array, list, singleton manipulations first, delegation to context next
+		if (target.isAssignableFrom(List.class)) {
+			return Collections.singletonList(obj);
+		}
+		if (target.isArray()) {
+			Object ret = Array.newInstance(target.getComponentType(), 1);
+			Array.set(ret, 0, context.convert(obj, target.getComponentType()));
+			return ret;
+		}
+		if (obj instanceof Collection && ((Collection<?>) obj).size()==1) {
+			return context.convert(((Collection<?>) obj).iterator().next(), target);
+		}
+		if (obj.getClass().isArray() && Array.getLength(obj)==1) {
+			return context.convert(Array.get(obj, 0), target);
+		}
+		
+		Object ret = context.convert(obj, target);
+		if (ret==null) {
+			throw new IllegalArgumentException("Cannot convert "+obj+" to "+target);
+		}
+		return ret;
 	}
 
 }

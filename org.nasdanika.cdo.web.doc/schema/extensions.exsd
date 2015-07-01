@@ -50,10 +50,14 @@
       </complexType>
    </element>
 
+   <element name="description" type="string">
+   </element>
+
    <element name="wiki-link-renderer">
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -79,6 +83,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -104,6 +109,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description"/>
          </sequence>
          <attribute name="source" type="string" use="required">
             <annotation>
@@ -134,6 +140,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description"/>
          </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>

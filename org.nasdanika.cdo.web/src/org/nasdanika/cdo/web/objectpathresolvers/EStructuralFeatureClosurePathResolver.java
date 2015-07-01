@@ -4,8 +4,8 @@ import java.net.URLEncoder;
 
 import org.nasdanika.cdo.EStructuralFeatureClosure;
 import org.nasdanika.core.Context;
-import org.nasdanika.web.ObjectPathResolver;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.ObjectPathResolver;
 
 public class EStructuralFeatureClosurePathResolver implements ObjectPathResolver<EStructuralFeatureClosure<?, ?>> {
 

@@ -4,9 +4,9 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.web.Action;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
-import org.nasdanika.web.HttpServletRequestContext;
 
 public class CDOResourceRoute implements Route {
 

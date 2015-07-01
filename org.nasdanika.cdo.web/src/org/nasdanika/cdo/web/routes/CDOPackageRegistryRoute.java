@@ -4,9 +4,9 @@ import org.eclipse.emf.cdo.common.model.CDOPackageInfo;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.json.JSONArray;
 import org.nasdanika.web.Action;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.ProcessingError;
 import org.nasdanika.web.Route;
-import org.nasdanika.web.HttpServletRequestContext;
 
 public class CDOPackageRegistryRoute implements Route {
 

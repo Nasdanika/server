@@ -7,17 +7,13 @@ import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
-import org.nasdanika.core.Context;
 import org.nasdanika.html.Button;
-import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputBase;
-import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.UIElementFilter;
 
 /**
  * Adds KnockoutJs bindings, uses help text to display validation errors, adds form validation error text on the top of the form. 

@@ -5,7 +5,6 @@ import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.Route;
-import org.nasdanika.web.HttpServletRequestContext;
 
 public class CDOResourceFolderHtmlExtensionRoute implements Route {
 

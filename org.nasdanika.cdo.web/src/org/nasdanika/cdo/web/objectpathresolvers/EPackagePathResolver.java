@@ -4,8 +4,8 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.core.Context;
-import org.nasdanika.web.ObjectPathResolver;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.ObjectPathResolver;
 
 public class EPackagePathResolver implements ObjectPathResolver<EPackage> {
 

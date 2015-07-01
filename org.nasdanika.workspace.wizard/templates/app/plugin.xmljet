@@ -59,7 +59,7 @@
       <default_html_factory
             bootstrapCssContainer="/bootstrap/css">
             <script>
-               /js/jquery-1.11.1.min.js
+               /js/jquery-1.11.3.min.js
             </script>
             <script>
                /js/underscore-min.js
@@ -70,9 +70,8 @@
             <script>
                /js/require.js
             </script>
-            <script>/js/angular.min.js</script>
             <stylesheet>
-               /font-awesome-4.2.0/css/font-awesome.min.css
+               /font-awesome-4.3.0/css/font-awesome.min.css
             </stylesheet>            
       </default_html_factory>
    </extension>

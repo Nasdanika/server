@@ -37,8 +37,8 @@ import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.SessionWebSocketServlet.WebSocketContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.JSONLoader;
-import org.nasdanika.web.ServerException;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.ServerException;
 
 public class CDOWebUtil {
 	
@@ -130,6 +130,21 @@ public class CDOWebUtil {
 	 * Annotation for an operation parameter indicating that the argument value shall be obtained by adapting the context.
 	 */				
 	public static final String ANNOTATION_CONTEXT_PARAMETER = "org.nasdanika.cdo:context-parameter";
+	
+	/**
+	 * Annotation for an operation parameter indicating that the argument value shall be obtained from a request cookie.
+	 */				
+	public static final String ANNOTATION_COOKIE_PARAMETER = "org.nasdanika.cdo:cookie-parameter";
+	
+	/**
+	 * Annotation for an operation parameter indicating that the argument value shall be obtained from a request query parameter.
+	 */				
+	public static final String ANNOTATION_QUERY_PARAMETER = "org.nasdanika.cdo:query-parameter";
+	
+	/**
+	 * Annotation for an operation parameter indicating that the argument value shall be obtained from path segment.
+	 */				
+	public static final String ANNOTATION_PATH_PARAMETER = "org.nasdanika.cdo:path-parameter";
 	
 	/**
 	 * Annotation for an operation parameter indicating that the argument value shall be obtained by looking up a service with parameter type. 

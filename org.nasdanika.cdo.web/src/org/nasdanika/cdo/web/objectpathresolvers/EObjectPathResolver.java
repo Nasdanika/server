@@ -10,8 +10,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.nasdanika.core.Context;
-import org.nasdanika.web.ObjectPathResolver;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.ObjectPathResolver;
 
 /**
  * Resolves EObject path relative to its resource using URI fragment.

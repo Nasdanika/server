@@ -25,8 +25,8 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Event;
-import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.html.HTMLRenderer;
 
 public class EObjectToHTMLRendererConverter<T extends EObject> implements Converter<T, HTMLRenderer, HttpServletRequestContext> {

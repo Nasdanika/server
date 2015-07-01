@@ -10,9 +10,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
-import org.nasdanika.web.HttpServletRequestContext;
 
 public class CDOResourceXMIExportRoute implements Route {
 
