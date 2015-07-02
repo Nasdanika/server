@@ -5,7 +5,8 @@ package org.nasdanika.cdo.promise.util;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
-import org.nasdanika.cdo.promise.*;
+import org.nasdanika.cdo.promise.Promise;
+import org.nasdanika.cdo.promise.PromisePackage;
 
 /**
  * <!-- begin-user-doc -->

@@ -3,12 +3,15 @@
 package org.nasdanika.cdo.sca.util;
 
 import java.util.Map;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.util.Switch;
-
-import org.nasdanika.cdo.sca.*;
+import org.nasdanika.cdo.sca.Component;
+import org.nasdanika.cdo.sca.Composite;
+import org.nasdanika.cdo.sca.PropertySetting;
+import org.nasdanika.cdo.sca.ScaPackage;
+import org.nasdanika.cdo.sca.Wire;
 import org.nasdanika.core.JSONLoader;
 
 /**

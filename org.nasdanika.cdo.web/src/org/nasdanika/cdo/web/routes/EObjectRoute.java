@@ -109,9 +109,9 @@ public class EObjectRoute extends ObjectRoute {
 						continue;
 					}
 				}
-			} else {
+			} else {				
 				String[] segments = pathStr.split("/");				
-				for (int i=0; i<path.length; ++i) {
+				for (int i=0; i<path.length-1; ++i) {
 					if (segments.length<=i) {
 						continue Z; 
 					}
@@ -119,20 +119,20 @@ public class EObjectRoute extends ObjectRoute {
 					if (segment.startsWith("{") && segment.endsWith("}")) {
 						String pathParameterName = segment.substring(1, segment.length()-1).trim();
 						if (i==segments.length-1) {
-							if (segments.length==path.length) {
-								pathParameters.put(pathParameterName, path[i]);
+							if (segments.length==path.length-1) {
+								pathParameters.put(pathParameterName, path[i+1]);
 							} else {
 								List<String> sList = new ArrayList<>();
-								for (int j=i; j<path.length; ++j) {
+								for (int j=i+1; j<path.length; ++j) {
 									sList.add(path[j]);
 								}
 								pathParameters.put(pathParameterName, sList);
 							}
 							break;
 						} else {
-							pathParameters.put(pathParameterName, path[i]);
+							pathParameters.put(pathParameterName, path[i+1]);
 						}
-					} else if (!path[i].equals(segment)) {
+					} else if (!path[i+1].equals(segment)) {
 						continue Z;
 					}
 				}

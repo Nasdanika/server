@@ -9,14 +9,13 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
 import org.nasdanika.cdo.CDOTransactionContextCommand;
-
-import org.nasdanika.cdo.promise.*;
+import org.nasdanika.cdo.promise.Promise;
+import org.nasdanika.cdo.promise.PromiseFactory;
+import org.nasdanika.cdo.promise.PromisePackage;
+import org.nasdanika.cdo.promise.PromiseState;
 import org.nasdanika.cdo.scheduler.Scheduler;
 
 /**

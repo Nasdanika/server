@@ -4,10 +4,27 @@ package org.nasdanika.sca.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.util.Switch;
-
-import org.nasdanika.sca.*;
+import org.nasdanika.sca.AbstractComponent;
+import org.nasdanika.sca.Activator;
+import org.nasdanika.sca.ActivatorImport;
+import org.nasdanika.sca.Component;
+import org.nasdanika.sca.Composite;
+import org.nasdanika.sca.CompositeReference;
+import org.nasdanika.sca.InvocationSource;
+import org.nasdanika.sca.InvocationTarget;
+import org.nasdanika.sca.ModelElement;
+import org.nasdanika.sca.Operation;
+import org.nasdanika.sca.OperationExport;
+import org.nasdanika.sca.Property;
+import org.nasdanika.sca.PropertyImport;
+import org.nasdanika.sca.Reference;
+import org.nasdanika.sca.ReferenceImport;
+import org.nasdanika.sca.ScaPackage;
+import org.nasdanika.sca.Service;
+import org.nasdanika.sca.ServiceExport;
+import org.nasdanika.sca.WireSource;
+import org.nasdanika.sca.WireTarget;
 
 /**
  * <!-- begin-user-doc -->

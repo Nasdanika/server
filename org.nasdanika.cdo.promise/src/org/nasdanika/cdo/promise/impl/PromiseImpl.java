@@ -3,19 +3,14 @@
 package org.nasdanika.cdo.promise.impl;
 
 import java.lang.reflect.InvocationTargetException;
-
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.CDOTransactionContextCommand;
-
 import org.nasdanika.cdo.promise.Promise;
 import org.nasdanika.cdo.promise.PromisePackage;
 import org.nasdanika.cdo.promise.PromiseState;

@@ -5,6 +5,7 @@ package org.nasdanika.cdo.sca.provider;
 
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;

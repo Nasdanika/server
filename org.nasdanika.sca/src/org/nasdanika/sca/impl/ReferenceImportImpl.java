@@ -3,7 +3,6 @@
 package org.nasdanika.sca.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.sca.ReferenceImport;

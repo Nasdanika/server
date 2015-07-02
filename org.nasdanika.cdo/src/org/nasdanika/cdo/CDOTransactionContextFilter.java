@@ -5,7 +5,6 @@ import java.util.Map;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
-import org.osgi.framework.BundleContext;
 
 /**
  * Filter which allows to replace master context and default access decision.

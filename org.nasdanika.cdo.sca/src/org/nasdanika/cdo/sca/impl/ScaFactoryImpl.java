@@ -3,13 +3,18 @@
 package org.nasdanika.cdo.sca.impl;
 
 import java.util.Map;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.nasdanika.cdo.sca.*;
+import org.nasdanika.cdo.sca.Composite;
+import org.nasdanika.cdo.sca.PropertySetting;
+import org.nasdanika.cdo.sca.ScaFactory;
+import org.nasdanika.cdo.sca.ScaPackage;
+import org.nasdanika.cdo.sca.Wire;
 
 /**
  * <!-- begin-user-doc -->

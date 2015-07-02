@@ -3,9 +3,7 @@
 package org.nasdanika.sca.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.sca.Activator;
 import org.nasdanika.sca.InvocationTarget;
 import org.nasdanika.sca.ScaPackage;

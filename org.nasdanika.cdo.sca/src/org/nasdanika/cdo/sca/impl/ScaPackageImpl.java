@@ -3,6 +3,7 @@
 package org.nasdanika.cdo.sca.impl;
 
 import java.util.Map;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;

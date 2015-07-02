@@ -2,8 +2,8 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
-import org.nasdanika.core.Context;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.Context;
 import org.osgi.framework.Bundle;
 
 public abstract class CDOTransactionContextImpl<CR> extends CDOViewContextImpl<CDOTransaction, CR> implements CDOTransactionContext<CR> {

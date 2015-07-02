@@ -8,7 +8,6 @@ import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.cdo.function.*;
 import org.nasdanika.cdo.function.AbstractFunction;
 import org.nasdanika.cdo.function.BoundFunction;
 import org.nasdanika.cdo.function.CDOServiceBinding;

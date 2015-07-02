@@ -3,8 +3,8 @@ package org.nasdanika.web.routes;
 import java.util.Map;
 
 import org.nasdanika.web.Action;
-import org.nasdanika.web.Route;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.Route;
 
 /**
  * Route for maps with string keys.

@@ -4,9 +4,9 @@ import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
-import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
 

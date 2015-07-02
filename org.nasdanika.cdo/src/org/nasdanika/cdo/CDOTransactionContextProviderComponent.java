@@ -8,11 +8,11 @@ import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandlerBase;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
+import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
 import org.osgi.framework.Bundle;
 import org.osgi.service.component.ComponentContext;
-import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 
 public abstract class CDOTransactionContextProviderComponent<CR> implements CDOTransactionContextProvider<CR> {
 

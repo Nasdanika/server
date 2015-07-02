@@ -14,11 +14,8 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.nasdanika.cdo.CDOTransactionContextCommand;
-
 import org.nasdanika.cdo.promise.Promise;
 import org.nasdanika.cdo.promise.PromiseFactory;
 import org.nasdanika.cdo.promise.PromisePackage;

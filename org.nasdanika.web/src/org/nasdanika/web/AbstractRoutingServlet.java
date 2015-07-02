@@ -16,8 +16,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.CoreUtil;
 
 @SuppressWarnings("serial")
 public abstract class AbstractRoutingServlet extends HttpServlet {

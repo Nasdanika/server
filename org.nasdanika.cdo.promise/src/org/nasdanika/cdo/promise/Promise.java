@@ -5,11 +5,8 @@ package org.nasdanika.cdo.promise;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.emf.cdo.CDOObject;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EObject;
-
 import org.nasdanika.cdo.CDOTransactionContextCommand;
 import org.nasdanika.cdo.scheduler.Scheduler;
 

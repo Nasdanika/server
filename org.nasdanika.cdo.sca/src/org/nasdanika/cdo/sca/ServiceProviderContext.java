@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.sca;
 
-import org.nasdanika.cdo.CDOTransactionContextCommand;
 import org.nasdanika.cdo.promise.Promise;
 import org.nasdanika.core.Context;
 

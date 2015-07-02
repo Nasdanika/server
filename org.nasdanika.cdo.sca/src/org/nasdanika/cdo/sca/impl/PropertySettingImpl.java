@@ -3,9 +3,7 @@
 package org.nasdanika.cdo.sca.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.cdo.sca.PropertySetting;
 import org.nasdanika.cdo.sca.ScaPackage;
 
