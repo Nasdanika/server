@@ -37,7 +37,7 @@ public class CDOPackageRegistryRoute implements Route {
 		
 		int idx = Integer.parseInt(context.getPath()[1]);
 		CDOPackageInfo pi = registry.getPackageInfos()[idx];
-		return context.getAction(pi.getEPackage(), 1);
+		return context.getAction(pi.getEPackage(), 1, null);
 	}
 
 	@Override

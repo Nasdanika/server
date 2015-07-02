@@ -82,6 +82,12 @@ public class ExtensionManager extends AdapterManager {
 		if (context==null) {
 			context = FrameworkUtil.getBundle(target.getClass()).getBundleContext();
 		}
+		if (context==null) {
+			context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
+		}
+		if (context==null) {
+			throw new IllegalStateException("Bundle context is not available, make sure that bundle "+FrameworkUtil.getBundle(ExtensionManager.class).getSymbolicName()+" is activated");
+		}
 		// TODO - bundle is still null???
 		if (routeServiceFilter==null || routeServiceFilter.trim().length()==0) {
 			routeServiceTracker = new ServiceTracker<>(context, Route.class.getName(), null);

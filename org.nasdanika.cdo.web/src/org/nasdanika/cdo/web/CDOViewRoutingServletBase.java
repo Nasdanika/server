@@ -50,6 +50,13 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 		sessionWebSocketServletPath = config.getInitParameter("ws-session-path");
 		
 		BundleContext bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		if (bundleContext==null) {
+			bundleContext = FrameworkUtil.getBundle(RoutingServlet.class).getBundleContext();
+		}
+		if (bundleContext==null) {
+			throw new IllegalStateException("Bundle context is not available, make sure that bundle "+FrameworkUtil.getBundle(RoutingServlet.class).getSymbolicName()+" is activated");
+		}
+		
 		String serviceFilter = config.getInitParameter("cdo-view-context-provider-service-filter");
 		// TODO - bundle is still null???
 		if (serviceFilter==null || serviceFilter.trim().length()==0) {
@@ -202,7 +209,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 					CDOView view = ((CDOViewContext<?, CR>) context).getView();
 					for (CDOResourceNode e: view.getElements()) {
 						if (e.getName().equals(NasdanikaCDOUtil.stripExtension(context.getPath()[1]))) {
-							final Action eAction = context.getAction(e, 1);
+							final Action eAction = context.getAction(e, 1, null, context.getPath()[1]);
 							return eAction==null ? Action.NOT_FOUND : eAction;
 						}
 					}	
@@ -232,7 +239,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 					CDOID id = CDOIDUtil.read(NasdanikaCDOUtil.stripExtension(context.getPath()[1]));
 					@SuppressWarnings("unchecked")
 					CDOView view = ((CDOViewContext<?, CR>) context).getView();
-					return context.getAction(view.getObject(id), 1);
+					return context.getAction(view.getObject(id), 1, null, context.getPath()[1]);
 				}
 
 				@Override

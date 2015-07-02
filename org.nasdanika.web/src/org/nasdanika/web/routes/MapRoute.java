@@ -19,7 +19,7 @@ public class MapRoute implements Route {
 		if (context.getPath().length>1) {
 			Object val = ((Map<?,?>) context.getTarget()).get(context.getPath()[1]);
 			if (val!=null) {
-				return context.getAction(val, 1);
+				return context.getAction(val, 1, null);
 			}
 		}
 		return Action.NOT_FOUND;

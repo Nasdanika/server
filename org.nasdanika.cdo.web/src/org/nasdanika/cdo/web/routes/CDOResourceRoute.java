@@ -40,7 +40,7 @@ public class CDOResourceRoute implements Route {
 		
 		if (Character.isDigit(objId.charAt(0))) {
 			// Index in content
-			return context.getAction(cdoResource.getContents().get(Integer.parseInt(objId)), 1);
+			return context.getAction(cdoResource.getContents().get(Integer.parseInt(objId)), 1, null, context.getPath()[1]);
 		}
 		
 		// CDO ID / uriFragment
@@ -48,7 +48,7 @@ public class CDOResourceRoute implements Route {
 		if (eObj==null) {
 			return Action.NOT_FOUND;
 		}
-		return context.getAction(eObj, 1);
+		return context.getAction(eObj, 1, null, context.getPath()[1]);
 	}
 
 	@Override

@@ -57,7 +57,7 @@ public class EOperationClosureRoute implements Route {
 			if (result==null) {
 				return Action.NOT_FOUND;
 			}
-			return context.getAction(result, idx);
+			return context.getAction(result, idx, null);
 		}
 		
 		return new Action() {

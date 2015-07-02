@@ -36,7 +36,7 @@ public class ServiceRoute implements Route {
 				for (final ServiceReference<?> ref: refs) {
 					final Object service = bundleContext.getService(ref);
 					if (service!=null) {
-						final Action serviceAction = context.getAction(service, offset+1);
+						final Action serviceAction = context.getAction(service, offset+1, null);
 						if (serviceAction!=null) {
 							return new Action() {
 	

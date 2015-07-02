@@ -34,7 +34,7 @@ public class CDOResourceFolderRoute implements Route {
 		
 		for (CDOResourceNode n: folder.getNodes()) {
 			if (context.getPath()[1].equals(n.getName())) {
-				return context.getAction(n, 1);
+				return context.getAction(n, 1, null);
 			}
 			
 			// TODO - create resource in folder.

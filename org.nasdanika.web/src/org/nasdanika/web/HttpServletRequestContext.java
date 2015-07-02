@@ -31,7 +31,7 @@ public interface HttpServletRequestContext extends Context, ExportingContext, Cl
 	 * @return
 	 * @throws Exception
 	 */
-	Action getAction(Object target, int pathOffset, Context... chain) throws Exception;
+	Action getAction(Object target, int pathOffset, Context[] contextChain, Object... args) throws Exception;
 	
 	Action getExtensionAction(Object target, String extension) throws Exception;
 		

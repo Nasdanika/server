@@ -41,7 +41,7 @@ public class EAttributeClosureRoute implements Route {
 				index = index.substring(0, idx);
 			}
 			Object element = ((List<?>) eAttributeClosure.getValue()).get(Integer.parseInt(index));
-			return context.getAction(element, 1);
+			return context.getAction(element, 1, null);
 		}
 
 		return Action.NOT_FOUND;

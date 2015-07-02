@@ -59,15 +59,15 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 	}
 
 	@Override
-	public Action getAction(Object target, int pathOffset, Context... chain) throws Exception {
+	public Action getAction(Object target, int pathOffset, Context[] contextChain, Object... args) throws Exception {
 		String[] oldPath = getPath();
 		if (oldPath.length<pathOffset) {
 			throw new IllegalArgumentException("Offset is greater than path length");			
 		}
-		String[] newPath = Arrays.copyOfRange(oldPath, pathOffset, oldPath.length);
-		HttpServletRequestContext subContext = createSubContext(newPath, target, chain);
+		String[] newPath = pathOffset==0 ? oldPath : Arrays.copyOfRange(oldPath, pathOffset, oldPath.length);
+		HttpServletRequestContext subContext = createSubContext(newPath, target, contextChain);
 		for (Route r: routeRegistry.matchObjectRoutes(getMethod(), target, newPath)) {
-			final Object ret = r.execute(subContext);
+			final Object ret = r.execute(subContext, args);
 			if (ret==null || ret==Action.NOT_FOUND) {
 				continue;
 			}

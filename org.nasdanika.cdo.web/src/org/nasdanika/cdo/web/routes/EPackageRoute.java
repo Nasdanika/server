@@ -34,7 +34,7 @@ public class EPackageRoute implements Route {
 		if (idx!=-1) {
 			className = className.substring(0, idx);
 		}
-		return context.getAction(ePackage.getEClassifier(className), 1);
+		return context.getAction(ePackage.getEClassifier(className), 1, null);
 	}
 
 	@Override

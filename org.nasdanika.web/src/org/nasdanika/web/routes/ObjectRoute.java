@@ -34,7 +34,7 @@ public class ObjectRoute implements Route {
 		final Object target = context.getTarget();
 
 		if (target.getClass().isArray() && context.getPath().length>1) {
-			return context.getAction(Array.get(target, Integer.parseInt(context.getPath()[1])), 1);
+			return context.getAction(Array.get(target, Integer.parseInt(context.getPath()[1])), 1, null);
 		}
 		
 		if (context.getPath().length==1) { 
@@ -66,7 +66,7 @@ public class ObjectRoute implements Route {
 		} 
 		
 		if (context.getPath().length==2 && ("self".equals(context.getPath()[1]) || context.getPath()[1].startsWith("self.")) ) {
-			return context.getAction(target, 1);
+			return context.getAction(target, 1, null);
 		}				
 		
 		if (context.getPath().length>2) {
@@ -82,7 +82,7 @@ public class ObjectRoute implements Route {
 					Field field = target.getClass().getField(fieldName);
 					// TODO - handle post - set field - if path length is 3.
 					Object val = field.get(target);
-					return val==null ? Action.NOT_FOUND : context.getAction(val, 2);
+					return val==null ? Action.NOT_FOUND : context.getAction(val, 2, null);
 				} catch (NoSuchFieldError nsfe) {
 					return Action.NOT_FOUND;
 				}
@@ -112,7 +112,7 @@ public class ObjectRoute implements Route {
 							if (result==null) {
 								return void.class.equals(method.getReturnType()) ? Action.NOP : Action.NOT_FOUND;
 							}
-							return context.getAction(result, parameterTypes.length+2);
+							return context.getAction(result, parameterTypes.length+2, null);
 						}
 					}
 				}

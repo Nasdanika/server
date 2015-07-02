@@ -13,7 +13,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -67,10 +66,7 @@ public class EObjectRoute extends ObjectRoute {
 				if (path.length!=1) {
 					continue;
 				}
-				StringBuilder sb = new StringBuilder();
-				CDOIDUtil.write(sb, ((CDOObject) eObject).cdoID());
-				sb.append(".html");
-				if (!path[0].equals(sb.toString())) {
+				if (!path[0].equals(args[0])) {
 					// Possibly hierarchical addressing - check container or resource.
 					EObject container = eObject.eContainer();
 					if (container==null) {
@@ -244,7 +240,7 @@ public class EObjectRoute extends ObjectRoute {
 		}		
 										
 		if (path.length>=2 && ("container".equals(path[1]) || path[1].startsWith("container.")) ) {
-			return context.getAction(eObject.eContainer(), 1);
+			return context.getAction(eObject.eContainer(), 1, null);
 		}
 		
 		if (path.length>2) {
@@ -258,17 +254,17 @@ public class EObjectRoute extends ObjectRoute {
 		
 				EStructuralFeature feature = eObject.eClass().getEStructuralFeature(featureName);
 				if (feature instanceof EReference) {
-					return context.getAction(new EReferenceClosure<EObject>(eObject, (EReference) feature), 2);
+					return context.getAction(new EReferenceClosure<EObject>(eObject, (EReference) feature), 2, null);
 				}
 				if (feature instanceof EAttribute) {
-					return context.getAction(new EAttributeClosure<EObject>(eObject, (EAttribute) feature), 2);
+					return context.getAction(new EAttributeClosure<EObject>(eObject, (EAttribute) feature), 2, null);
 				}
 				return Action.NOT_FOUND;
 			case "operation":
 				String operationName = path[2];
 				for (EOperation op: eObject.eClass().getEAllOperations()) {
 					if (operationName.equals(op.getName()) && op.getEParameters().size()<=path.length-3) {
-						return context.getAction(new EOperationClosure<EObject>(eObject, op), 2);
+						return context.getAction(new EOperationClosure<EObject>(eObject, op), 2, null);
 					}
 				}
 				return Action.NOT_FOUND;
