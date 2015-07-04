@@ -45,5 +45,16 @@
             class="org.nasdanika.core.Converters">
       </converter_provider>
    </extension>
+    <extension
+          point="org.nasdanika.toc">
+       <toc
+             id="server"
+             name="Nasdanika Foundation Server">
+          <topic
+                id="credits"
+                name="Credits">
+          </topic>
+       </toc>
+    </extension>
 
 </plugin>

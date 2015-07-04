@@ -119,13 +119,15 @@ public class TocNodeFactory {
 		for (String link: links) {
 			TocNodeFactory linkedChild = find(link);
 			if (linkedChild!=null) {
-				linkedChild.createTocNode(parent, tocNodeFactories, true);
+				linkedChild.createTocNode(node, tocNodeFactories, true);
 				doSort = true;
 			}
 		}
-		for (TocNodeFactory linked: findLinked(id)) {
-			linked.createTocNode(parent, tocNodeFactories, true);
-			doSort = true;
+		for (TocNodeFactory tnf: tocNodeFactories) {
+			for (TocNodeFactory linked: tnf.findLinked(id)) {
+				linked.createTocNode(node, tocNodeFactories, true);
+				doSort = true;
+			}
 		}
 		if (doSort) {
 			node.sort(false);

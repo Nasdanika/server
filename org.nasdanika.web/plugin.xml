@@ -55,5 +55,13 @@
             ]]></markdown>
          </topic>
       </toc>
+      <toc
+            linkTo="org.nasdanika.core/server"
+            name="Nasdanika Foundation Server">
+         <topic
+               id="web"
+               name="Web">
+         </topic>
+      </toc>
    </extension>
 </plugin>

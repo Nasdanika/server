@@ -14,12 +14,14 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Style;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
@@ -116,8 +118,6 @@ public class EModelElementDocumentationGenerator {
 		if (renderer!=null) {
 			return renderer.render(eAnnotation, htmlFactory);
 		}
-				
-		// Forms, routes, form controls - in sub-classes.
 		
 		// Default - table.
 		Table detailsTable = htmlFactory.table().bordered();
@@ -135,6 +135,9 @@ public class EModelElementDocumentationGenerator {
 			String docRoutePath,
 			String registryPath,			
 			boolean withIcon) {
+		if (eClassifier==null) {
+			return "";
+		}
 		String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */));
 		return htmlFactory.link(packagePath+"/"+eClassifier.getName(), (withIcon ? eClassifierIcon(htmlFactory, eClassifier, docRoutePath) : ""), eClassifier.getName()).toString();		
 	}
@@ -160,5 +163,20 @@ public class EModelElementDocumentationGenerator {
 				.style("margin-right", "5px")
 				.toString();
 	}
+	
+	public static String cardinality(ETypedElement typedElement) {
+		if (typedElement.getLowerBound()==0 && typedElement.getUpperBound()==-1) {
+			return "*";
+		} 
+		
+		if (typedElement.getLowerBound()==typedElement.getUpperBound()) {
+			return String.valueOf(typedElement.getLowerBound());
+		}
+		
+		return typedElement.getLowerBound() + ".." + (typedElement.getUpperBound()==-1 ? "*" : String.valueOf(typedElement.getUpperBound()));
+	}
 
+	public static void preStyle(UIElement<?> uiElement) {
+		uiElement.style("white-space", "pre-wrap").style("font-family", "monospace");
+	}
 }

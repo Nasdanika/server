@@ -147,5 +147,23 @@
             target="org.nasdanika.cdo.EOperationClosure">
       </resolver>
    </extension>
+   <extension
+         point="org.nasdanika.toc">
+      <toc
+            linkTo="org.nasdanika.web/web"
+            name="Web">
+         <topic
+               name="CDO">
+            <topic
+                  location="doc/routeOperations.md"
+                  name="Route operations">
+            </topic>
+            <topic
+                  location="doc/forms.md"
+                  name="Forms">
+            </topic>
+         </topic>
+      </toc>
+   </extension>
 
 </plugin>
