@@ -45,7 +45,15 @@ public class EModelElementDocumentationGenerator {
 	private LinkRenderer linkRenderer;
 	private Map<String, EAnnotationRenderer> eAnnotationRenderers;
 
-	public EModelElementDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+	private TocNode rootToc;
+
+	private DocRoute docRoute;
+
+	public EModelElementDocumentationGenerator(
+			DocRoute docRoute, 
+			LinkRenderer linkRenderer, 
+			Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+		this.docRoute = docRoute;
 		this.linkRenderer = linkRenderer;
 		this.eAnnotationRenderers = eAnnotationRenderers;
 	}
@@ -129,7 +137,7 @@ public class EModelElementDocumentationGenerator {
 		return htmlFactory.panel(Style.INFO, "Annotation " + StringEscapeUtils.escapeHtml4(eAnnotation.getSource()), detailsTable, null).toString();		
 	}
 	
-	protected static String eClassifierLink(
+	protected String eClassifierLink(
 			HTMLFactory htmlFactory,
 			EClassifier eClassifier,
 			String docRoutePath,
@@ -139,7 +147,7 @@ public class EModelElementDocumentationGenerator {
 			return "";
 		}
 		String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */));
-		return htmlFactory.link(packagePath+"/"+eClassifier.getName(), (withIcon ? eClassifierIcon(htmlFactory, eClassifier, docRoutePath) : ""), eClassifier.getName()).toString();		
+		return htmlFactory.link(docRoute.tocLink(packagePath+"/"+eClassifier.getName()), (withIcon ? eClassifierIcon(htmlFactory, eClassifier, docRoutePath) : ""), eClassifier.getName()).toString();		
 	}
 
 	protected static String eClassifierIcon(HTMLFactory htmlFactory, EClassifier eClassifier, String docRoutePath) {

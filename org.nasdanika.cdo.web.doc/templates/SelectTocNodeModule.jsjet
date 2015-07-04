@@ -1,0 +1,15 @@
+<%@ jet package="org.nasdanika.cdo.web.doc" class="SelectTocNodeModuleGenerator" %>
+
+<%
+	Object path = ((Object[]) argument)[0];
+	Object nodeID = ((Object[]) argument)[1];
+%>
+
+
+require(['jquery', '<%=path%>/resources/jstree/jstree.js', 'domReady!'], function(jQuery, jstree, doc) {
+	var toc = jQuery('#toc');
+	if (!tocTree.jstree("is_selected", "#<%=nodeID%>")) { 
+		tocTree.jstree("deselect_all");  
+		tocTree.jstree("select_node", "#<%=nodeID%>"); 
+	}			
+});

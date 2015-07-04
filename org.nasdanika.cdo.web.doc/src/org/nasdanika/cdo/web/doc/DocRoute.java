@@ -69,6 +69,7 @@ import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
@@ -465,17 +466,19 @@ public class DocRoute implements Route {
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
     			
 		URL bURL = new URL(baseURL);
-		eClassDocumentationGenerator = new EClassDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers, inheritanceMap);	
-		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);	
-		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);			
-		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(createMarkdownLinkRenderer(bURL, urlPrefix), eAnnotationRenderers);				
+		LinkRenderer markdownLinkRenderer = createMarkdownLinkRenderer(bURL, urlPrefix);
+		eClassDocumentationGenerator = new EClassDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers, inheritanceMap);	
+		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers);	
+		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers);			
+		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers);				
 		
 		loadTimer = new Timer();
 		doLoad.set(false);
 		loadTimer.schedule(loadTask, 500);
 	}
-
+		
 	private TocNode tocRoot;
+	
 	private Map<String, List<String>> linkMap;
 	private Set<String> missingPaths;
 	
@@ -944,10 +947,12 @@ public class DocRoute implements Route {
 
 			} 
 									
-			Object content = getContent("/"+StringUtils.join(path, "/"));
+			String prefix = docAppPath+"#router/doc-content/"+docRoutePath;
+			String pathStr = "/"+StringUtils.join(path, "/");
+			Object content = getContent(pathStr);
 			if (content!=null) {
 				if (path.length>0) {
-					String contentType = mimeTypesMap.getContentType(path[path.length-1]);
+					String contentType = "packages".equals(path[0]) ? "text/html" : mimeTypesMap.getContentType(path[path.length-1]);
 					if (contentType!=null) {
 						Map<String, ContentFilter> tm = contentFilters.get(contentType);
 						if (tm!=null) {
@@ -956,8 +961,21 @@ public class DocRoute implements Route {
 								String requestURL = context.getRequest().getRequestURL().toString();
 								String requestURI = context.getRequest().getRequestURI();
 								String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
-								return new ValueAction(tme.getValue().filter(content, createContentFilterEnvironment(new URL(requestURL), urlPrefix)));
+								Object filteredContent = tme.getValue().filter(content, createContentFilterEnvironment(new URL(requestURL), urlPrefix));
+								if ("text/html".equals(tme.getKey()) && filteredContent instanceof String) {
+									TocNode toc = tocRoot.find(pathStr);
+									if (toc!=null) {
+										filteredContent = navWrap(context.adapt(HTMLFactory.class), toc, (String) filteredContent, prefix);
+									}
+								}
+								return new ValueAction(filteredContent);
 							}
+						}
+					}
+					if ("text/html".equals(contentType) && content instanceof String) {
+						TocNode toc = tocRoot.find(pathStr);
+						if (toc!=null) {
+							content = navWrap(context.adapt(HTMLFactory.class), toc, (String) content, prefix);
 						}
 					}
 				}
@@ -965,8 +983,7 @@ public class DocRoute implements Route {
 			}
 			
 			if (path.length==2 && "toc".equals(path[0])) {
-				String nodePath = StringUtils.join(path, "/");
-				TocNode toc = tocRoot.find("/"+nodePath);
+				TocNode toc = tocRoot.find(pathStr);
 				if (toc==null) {
 					return Action.NOT_FOUND;
 				}
@@ -977,13 +994,12 @@ public class DocRoute implements Route {
 					Tag childList = htmlFactory.tag(TagName.ul);
 					fragment.content(childList);
 					for (TocNode ch: toc.getChildren()) {
-						String prefix = docAppPath+"#router/doc-content/"+docRoutePath;
 						childList.content(htmlFactory.tag(TagName.li, htmlFactory.link(prefix+ch.getHref(), StringEscapeUtils.escapeHtml4(ch.getText()))));
 					}										
 				} else {
 					fragment.content(toc.getContent());
 				}
-				return new ValueAction(fragment.toString());
+				return new ValueAction(navWrap(context.adapt(HTMLFactory.class), toc, fragment.toString(), prefix));
 				
 			}
 			
@@ -1006,6 +1022,43 @@ public class DocRoute implements Route {
 			}
 		}
 		return Action.NOT_FOUND;
+	}
+	
+	private String navWrap(HTMLFactory htmlFactory, TocNode toc, String content, String prefix) {
+		Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
+		for (TocNode pathElement: toc.getPath()) {
+			if (pathElement.getText()!=null) {
+				breadcrumbs.item(pathElement==toc ? null : "javascript:"+tocNodeSelectScript(pathElement.getId()), pathElement.getText()); // prefix+pathElement.getHref()
+			}
+		}
+		return breadcrumbs + content;
+	}
+	
+	/**
+	 * For paths corresponding to TOC node returns javascript to activate path through content tree
+	 * @param relPath
+	 * @return
+	 */
+	public String tocLink(String href) {
+		String prefix = "#router/doc-content/"+docRoutePath;
+		if (href==null || !href.startsWith(prefix)) {
+			return href;
+		}
+		
+		String path = href.substring(prefix.length());
+		TocNode toc = tocRoot.find(path);
+		if (toc==null) {
+			return href;
+		}
+		return "javascript:"+tocNodeSelectScript(toc.getId());
+	}
+
+	public static String tocNodeSelectScript(String nodeID) {
+		String selectScript = 
+				"var tocTree = jQuery('#toc'); "
+				+ "if (!tocTree.jstree('is_selected', '#"+nodeID+"')) { "
+				+ "tocTree.jstree('deselect_all');  tocTree.jstree('select_node', '#"+nodeID+"'); }";
+		return selectScript;
 	}
 
 	@Override
@@ -1099,15 +1152,14 @@ public class DocRoute implements Route {
 			
 			@Override
 			public String rewrite(String spec) {
-				URL url;
 				try {
-					url = new URL(baseURL, spec);
+					URL url = new URL(baseURL, spec);
 					String ret = url.toString();
 					if (ret.startsWith(urlPrefix)) {
 						String relURL = ret.substring(urlPrefix.length());
 						if (relURL.startsWith(docRoutePath)) {
 							if (relURL.startsWith(docRoutePath+"/packages/")) {
-								return "#router/doc-content/"+relURL;								
+								return tocLink("#router/doc-content/"+relURL);								
 							}
 							int idx = relURL.lastIndexOf('/');
 							String fn = idx==-1 ? relURL : relURL.substring(idx+1);
@@ -1120,7 +1172,7 @@ public class DocRoute implements Route {
 									}
 								}
 								if (MIME_TYPE_HTML.equals(contentType)) {
-									return "#router/doc-content/"+relURL;
+									return tocLink("#router/doc-content/"+relURL);
 								}
 							}
 						}

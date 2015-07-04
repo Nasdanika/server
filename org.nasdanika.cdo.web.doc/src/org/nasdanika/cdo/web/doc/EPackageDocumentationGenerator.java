@@ -25,8 +25,11 @@ import org.pegdown.LinkRenderer;
 
 public class EPackageDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EPackageDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
-		super(linkRenderer, eAnnotationRenderers);
+	public EPackageDocumentationGenerator(
+			DocRoute docRoute,
+			LinkRenderer linkRenderer, 
+			Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+		super(docRoute, linkRenderer, eAnnotationRenderers);
 	}
 
 	public String generate(

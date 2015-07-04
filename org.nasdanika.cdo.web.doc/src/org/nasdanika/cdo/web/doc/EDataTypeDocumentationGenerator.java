@@ -13,8 +13,11 @@ import org.pegdown.LinkRenderer;
 
 public class EDataTypeDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EDataTypeDocumentationGenerator(LinkRenderer linkRenderer, Map<String, EAnnotationRenderer> eAnnotationRenderers) {
-		super(linkRenderer, eAnnotationRenderers);
+	public EDataTypeDocumentationGenerator(
+			DocRoute docRoute,
+			LinkRenderer linkRenderer, 
+			Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+		super(docRoute, linkRenderer, eAnnotationRenderers);
 	}
 
 	public String generate(

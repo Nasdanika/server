@@ -41,10 +41,11 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 	private Map<EClassKey, Set<EClassKey>> inheritanceMap;
 
 	public EClassDocumentationGenerator(
+			DocRoute docRoute,
 			LinkRenderer linkRenderer, 
 			Map<String, EAnnotationRenderer> eAnnotationRenderers,
 			Map<EClassKey,Set<EClassKey>> inheritanceMap) {
-		super(linkRenderer, eAnnotationRenderers);
+		super(docRoute, linkRenderer, eAnnotationRenderers);
 		this.inheritanceMap = inheritanceMap;
 	}
 

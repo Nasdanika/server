@@ -56,7 +56,7 @@ public class TocNode {
 		this.href = href;
 		this.icon = icon;
 		this.counter = counter;
-		this.id = "n_"+Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
+		this.id = "content_node_"+Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
 		if (CoreUtil.isBlank(this.href)) {
 			this.href = "/toc/"+this.id;
 		}

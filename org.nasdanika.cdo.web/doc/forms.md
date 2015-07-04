@@ -1,4 +1,4 @@
-## Form operations
+## Forms
 
 ``org.nasdanika.cdo`` bundle provides several classes for generating Bootstrap/AngularJS/KnockoutJS forms and models from EClass and EOperation metadata and annotations:
 
