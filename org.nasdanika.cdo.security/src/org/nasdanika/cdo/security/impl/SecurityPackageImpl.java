@@ -992,7 +992,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		op = initEOperation(getProtectionDomain__ClearPermissions__EObject(), null, "clearPermissions", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEObject(), "obj", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEOperation(getProtectionDomain__GetAllUsers(), this.getUser(), "getAllUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getProtectionDomain__GetAllUsers(), null, "getAllUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
+		ETypeParameter t1 = addETypeParameter(op, "U");
+		g1 = createEGenericType(this.getUser());
+		t1.getEBounds().add(g1);
+		g1 = createEGenericType(t1);
+		initEOperation(op, g1);
 
 		initEClass(loginPasswordProtectionDomainEClass, LoginPasswordProtectionDomain.class, "LoginPasswordProtectionDomain", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 

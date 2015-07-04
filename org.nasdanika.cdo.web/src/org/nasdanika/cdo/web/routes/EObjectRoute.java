@@ -66,33 +66,12 @@ public class EObjectRoute extends ObjectRoute {
 				if (path.length!=1) {
 					continue;
 				}
+				if (!path[0].endsWith(".html")) {
+					continue; // Home route only matches .html extension.
+				}
+				
 				if (!path[0].equals(args[0])) {
-					// Possibly hierarchical addressing - check container or resource.
-					EObject container = eObject.eContainer();
-					if (container==null) {
-						int idx = eObject.eResource().getContents().indexOf(eObject);
-						if (idx==-1) {
-							continue;
-						}
-						if (!path[0].equals(idx+".html")) {
-							continue;
-						}
-					} else {
-						EStructuralFeature cf = eObject.eContainingFeature();
-						if (cf.isMany()) {
-							int idx = ((List<?>) container.eGet(cf)).indexOf(eObject);
-							if (idx==-1) {
-								continue;
-							}
-							if (!path[0].equals(idx+".html")) {
-								continue;
-							}
-						} else {
-							if (!path[0].equals(cf.getName()+".html")) {
-								continue;
-							}
-						}
-					}
+					continue; 
 				}
 			} else if (pathStr==null) {
 				String patternStr = routeAnnotation.getDetails().get("pattern");

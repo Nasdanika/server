@@ -7,7 +7,9 @@ import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
+import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
@@ -86,12 +88,20 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 	}
 
 	/**
+	 * Default implementation searches protection domain in the containers hierarchy.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
-	public ProtectionDomain<?> getProtectionDomain() {
-		return (ProtectionDomain<?>)eGet(SecurityPackage.Literals.PRINCIPAL__PROTECTION_DOMAIN, true);
+	public ProtectionDomain<?> getProtectionDomain() {		
+		//return (ProtectionDomain<?>)eGet(SecurityPackage.Literals.PRINCIPAL__PROTECTION_DOMAIN, true);
+		for (EObject container = eContainer(); container!=null; container = container.eContainer()) {
+			if (container instanceof ProtectionDomain) {
+				return (ProtectionDomain<?>) container;
+			}
+		}
+		
+		return null;
 	}
 
 	/**
@@ -130,15 +140,15 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 		eSet(SecurityPackage.Literals.LOGIN_USER__DISABLED, newDisabled);
 	}
 
+	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String qualifier, Map<String, Object> environment) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return authorizationHelper.authorize(securityPolicy, context, target, action, qualifier, environment);
 	}
 
 	/**

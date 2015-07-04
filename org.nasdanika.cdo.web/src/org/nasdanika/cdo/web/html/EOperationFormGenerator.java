@@ -5,6 +5,7 @@ import java.util.List;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
+import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 
@@ -45,6 +46,14 @@ public class EOperationFormGenerator extends FormGeneratorBase<EParameter> {
 	 */
 	protected List<EParameter> sortParameters(List<EParameter> parameters) {
 		return parameters;
+	}
+	
+	@Override
+	protected Object generateControl(HTMLFactory htmlFactory, Form form, EParameter element) throws Exception {
+		if (element.getEAnnotation(CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER)!=null || element.getEAnnotation(CDOWebUtil.ANNOTATION_SERVICE_PARAMETER)!=null) {
+			return null;
+		}
+		return super.generateControl(htmlFactory, form, element);
 	}
 	
 }

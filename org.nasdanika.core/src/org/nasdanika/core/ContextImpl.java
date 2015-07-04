@@ -132,14 +132,16 @@ public class ContextImpl implements Context {
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T convert(Object source, Class<T> targetType) throws Exception {
-		for (Context ch: chain) {
-			if (ch!=null) {
-				T ret = ch.convert(source, targetType);
-				if (ret!=null) {
-					return ret;
+		if (chain!=null) {
+			for (Context ch: chain) {
+				if (ch!=null) {
+					T ret = ch.convert(source, targetType);
+					if (ret!=null) {
+						return ret;
+					}
 				}
 			}
-		}		
+		}
 		
 		synchronized (this) {
 			if (converter==null) {

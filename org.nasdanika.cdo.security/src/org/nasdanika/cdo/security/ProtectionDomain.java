@@ -17,12 +17,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getSuperUsersGroup <em>Super Users Group</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getUnauthenticatedPrincipal <em>Unauthenticated Principal</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ProtectionDomain#getEveryoneGroup <em>Everyone Group</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getProtectionDomain()
  * @model interface="true" abstract="true"
@@ -133,6 +133,6 @@ public interface ProtectionDomain<CR> extends CDOObject {
 	 * @model kind="operation"
 	 * @generated
 	 */
-	EList<User> getAllUsers();
+	<U extends User> EList<U> getAllUsers();
 
 } // ProtectionDomain

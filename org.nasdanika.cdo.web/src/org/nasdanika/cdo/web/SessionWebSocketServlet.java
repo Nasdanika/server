@@ -11,6 +11,7 @@ import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOTransactionContextProvider;
+import org.nasdanika.web.AbstractRoutingServlet;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
@@ -100,6 +101,13 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 		}
 		
 		bundleContext = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		if (bundleContext==null) {
+			// Try the web bundle if cdo.web is not started
+			bundleContext = FrameworkUtil.getBundle(AbstractRoutingServlet.class).getBundleContext();			
+		}
+		if (bundleContext==null) {
+			throw new ServletException("Unable to obtain bundle context, make sure that org.nasdanika.web or org.nasdanika.cdo.web bundles are started");
+		}
 		String serviceFilter = config.getInitParameter("cdo-transaction-context-provider-service-filter");
 		
 		// TODO - bundle is still null???

@@ -395,7 +395,8 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 	@Override
 	public void onWebSocketConnect(Session webSocketSession) {
 		this.webSocketSession = webSocketSession;
-		
+		int timeout = session.getMaxInactiveInterval()*1000;
+		webSocketSession.setIdleTimeout(timeout < 0 ? 0 : timeout);
 	}
 
 	@SuppressWarnings("unchecked")

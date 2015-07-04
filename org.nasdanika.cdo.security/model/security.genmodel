@@ -23,7 +23,9 @@
       <genOperations ecoreOperation="security.ecore#//ProtectionDomain/clearPermissions">
         <genParameters ecoreParameter="security.ecore#//ProtectionDomain/clearPermissions/obj"/>
       </genOperations>
-      <genOperations ecoreOperation="security.ecore#//ProtectionDomain/getAllUsers"/>
+      <genOperations ecoreOperation="security.ecore#//ProtectionDomain/getAllUsers">
+        <genTypeParameters ecoreTypeParameter="security.ecore#//ProtectionDomain/getAllUsers/U"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordProtectionDomain">
       <genOperations ecoreOperation="security.ecore#//LoginPasswordProtectionDomain/setPasswordHash">

@@ -26,12 +26,12 @@ import org.nasdanika.core.NasdanikaException;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getSuperUsersGroup <em>Super Users Group</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getUnauthenticatedPrincipal <em>Unauthenticated Principal</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getEveryoneGroup <em>Everyone Group</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -176,7 +176,7 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<User> getAllUsers() {
+	public <U extends User> EList<U> getAllUsers() {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
