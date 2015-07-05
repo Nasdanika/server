@@ -57,7 +57,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -83,7 +83,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
@@ -109,7 +109,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="source" type="string" use="required">
             <annotation>
@@ -140,7 +140,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
