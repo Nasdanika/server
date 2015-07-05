@@ -26,13 +26,28 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 			String registryPath,
 			EDataType eDataType) {
 		
-		// TODO - path?
 		Tag dataTypeIcon = htmlFactory.tag(TagName.img)
 				.attribute("src", docRoutePath+"/resources/images/EDataType.gif")
 				.style("margin-right", "5px");
 		
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EDataType "+eDataType.getName()));
 		ret.content(htmlFactory.tag(TagName.h2, dataTypeIcon, eDataType.getName()));
+		
+		Class<?> instanceClass = eDataType.getInstanceClass();
+		boolean isArray = instanceClass.isArray();
+		if (isArray) {
+			instanceClass = instanceClass.getComponentType();
+		}
+		Tag icDiv = htmlFactory.div().style("margin-bottom", "5px").style("font-family", "monospace");
+		ret.content(icDiv);
+		if (instanceClass.isPrimitive()) {
+			icDiv.content(instanceClass.getName());
+		} else {
+			icDiv.content(markdownToHtml("[[javadoc>"+eDataType.getInstanceClassName()+"|"+eDataType.getInstanceClassName()+"]]"));
+		}
+		if (isArray) {
+			icDiv.content("[]");
+		}
 		String doc = getModelDocumentation(eDataType);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
@@ -41,8 +56,6 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 					.style("margin-bottom", "10px"));
 		}		
 
-		// TODO - other things.
-		
 		
 		for (EAnnotation eAnnotation: eDataType.getEAnnotations()) {
 			ret.content(documentAnnotation(htmlFactory, eAnnotation));
