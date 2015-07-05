@@ -1,0 +1,9 @@
+<%@ jet package="org.nasdanika.cdo.web.doc" class="HighlightModuleGenerator" %>
+
+require(['jquery', 'domReady!'], function(jQuery, doc) {
+	$('pre code').each(function(i, block) {
+		hljs.highlightBlock(block);
+	});		
+});
+	
+	

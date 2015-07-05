@@ -107,7 +107,8 @@ generator to generate a form and a model:
 ##### registrationForm()
 
 ###### Using KnockoutJsOverlaidFormGenerator
-```
+
+```java
 HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 KnockoutJsOverlaidFormGenerator generator = new KnockoutJsOverlaidFormGenerator(
 		HubPackage.eINSTANCE.getGuest__Register__WebSocketContext_String_String_String_String_String(), 
