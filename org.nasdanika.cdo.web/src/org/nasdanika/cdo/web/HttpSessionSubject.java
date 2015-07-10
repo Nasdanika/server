@@ -3,6 +3,7 @@ package org.nasdanika.cdo.web;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.cdo.common.id.CDOID;
@@ -19,31 +20,27 @@ import org.nasdanika.cdo.security.User;
 
 public class HttpSessionSubject<V extends CDOView, CR> implements CDOViewContextSubject<V, CR> {
 	
-	// A better approach? A service???
-	private static Map<String, Object> ID_MAP = new ConcurrentHashMap<>();
+private static final String PRINCIPAL_ID_KEY = Principal.class.getName()+":id";
 
-//	static void invalidate(String sessionID) {
-//		ID_MAP.remove(sessionID);
-//	}
-		
 	private HttpSession session;
 	private String principalName;
 
-	public HttpSessionSubject(HttpSession session, String principalName) {		
+	public HttpSessionSubject(HttpSession session, String principalName) {			
 		this.session = session;
 		this.principalName = principalName;
 	}
-
+	
 	protected void setPrincipalID(CDOID cdoID) {
 		if (cdoID==null) {
-			ID_MAP.remove(session.getId());		
+			session.removeAttribute(PRINCIPAL_ID_KEY);		
 		} else {
-			ID_MAP.put(session.getId(), cdoID);
+			session.setAttribute(PRINCIPAL_ID_KEY, cdoID);
 		}
 	}
 
 	protected Object getPrincipalID() {
-		return ID_MAP.get(session.getId());
+		Object ret = session.getAttribute(PRINCIPAL_ID_KEY);
+		return ret;
 	}
 	
 	@Override
@@ -69,7 +66,7 @@ public class HttpSessionSubject<V extends CDOView, CR> implements CDOViewContext
 		
 		User unauthenticatedPrincipal = context.getProtectionDomain().getUnauthenticatedPrincipal();
 		if (unauthenticatedPrincipal!=null) {
-			setPrincipalID(unauthenticatedPrincipal.cdoID());
+			setPrincipal(context, unauthenticatedPrincipal);
 		}
 		return unauthenticatedPrincipal;
 	}						
