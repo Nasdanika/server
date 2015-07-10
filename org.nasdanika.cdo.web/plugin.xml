@@ -153,7 +153,12 @@
             linkTo="org.nasdanika.web/web"
             name="Web">
          <topic
+               location="doc/cdo.web.md"
                name="CDO">
+            <topic
+                  location="doc/javascriptApi.md"
+                  name="JavaScript API">
+            </topic>
             <topic
                   location="doc/routeOperations.md"
                   name="Route operations">

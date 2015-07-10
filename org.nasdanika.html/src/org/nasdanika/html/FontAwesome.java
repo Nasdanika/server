@@ -58,7 +58,7 @@ public interface FontAwesome<T extends UIElement<?>> {
 	FontAwesome<T> brand(Brand brand);
 	FontAwesome<T> chart(Chart chart);
 	FontAwesome<T> currency(Currency currency);
-	FontAwesome<T> directional(Directional currency);
+	FontAwesome<T> directional(Directional directional);
 	FontAwesome<T> fileType(FileType fileType);
 	FontAwesome<T> formControl(FormControl formControl);
 	FontAwesome<T> medical(Medical medical);
