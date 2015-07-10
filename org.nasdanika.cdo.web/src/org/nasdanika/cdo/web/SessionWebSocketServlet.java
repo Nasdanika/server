@@ -26,7 +26,7 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 @SuppressWarnings("serial")
 public class SessionWebSocketServlet<CR> extends WebSocketServlet {
-	
+		
 	private ServiceTracker<CDOTransactionContextProvider<CR>, CDOTransactionContextProvider<CR>> cdoTransactionContextProviderServiceTracker;
 	private String viewPath;
 	private BundleContext bundleContext;
@@ -75,8 +75,7 @@ public class SessionWebSocketServlet<CR> extends WebSocketServlet {
 			                		cdoTransactionContextProviderServiceTracker, 
 			                		viewPath,
 			                		bundleContext,
-			                		getServletContext(),
-			                		request);
+			                		getServletContext());
 			            }
 			        }				
 				return null;

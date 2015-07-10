@@ -44,7 +44,7 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 
 	@Override
 	public final Principal getPrincipal() throws Exception {
-		if (authenticatedPrincipal==null && subject!=null) {
+		if (subject!=null) {
 			authenticatedPrincipal = subject.getPrincipal(this);
 		}
 

@@ -35,14 +35,11 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
-import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOTransactionContextProvider;
-import org.nasdanika.cdo.CDOViewContext;
-import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.web.SessionWebSocketServlet.WebSocketContext;
@@ -50,12 +47,14 @@ import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.cdo.web.routes.CDOWebUtil.DataDefinitionFilter;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.Deletable;
+import org.nasdanika.web.Action;
 import org.nasdanika.web.ServerException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class SessionWebSocket<CR> implements WebSocketListener {
+	
 	
 	private ServiceTracker<CDOTransactionContextProvider<CR>, CDOTransactionContextProvider<CR>> cdoTransactionContextProviderServiceTracker;
 	private String viewPath;
@@ -66,14 +65,7 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 			ServiceTracker<CDOTransactionContextProvider<CR>, CDOTransactionContextProvider<CR>> cdoTransactionContextProviderServiceTracker,
 			String viewPath,
 			BundleContext bundleContext,
-			ServletContext servletContext,
-			ServletUpgradeRequest request) {
-		
-		this.session = request.getSession();
-		Object idAttr = session.getAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
-		if (idAttr instanceof CDOID) {
-			principalID = (CDOID) idAttr;
-		} 
+			ServletContext servletContext) {
 		
 		this.cdoTransactionContextProviderServiceTracker = cdoTransactionContextProviderServiceTracker;
 		this.viewPath = viewPath;
@@ -81,8 +73,6 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 		this.servletContext = servletContext;
 	}
 	
-	
-	static final String PRINCIPAL_ID_ATTRIBUTE_NAME = Principal.class.getName()+":id";
 	
 	private static final String OPERATION_KEY = "operation";
 	private static final String FEATURE_KEY = "feature";
@@ -387,21 +377,19 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 	}	
 		
 	private Session webSocketSession;
-	private CDOID principalID; 
-	private HttpSession session;
 	
 	private Map<String, Object> attributes = new ConcurrentHashMap<>();
 
 	@Override
 	public void onWebSocketConnect(Session webSocketSession) {
 		this.webSocketSession = webSocketSession;
-		int timeout = session.getMaxInactiveInterval()*1000;
+		int timeout = ((HttpSession) webSocketSession.getUpgradeRequest().getSession()).getMaxInactiveInterval()*1000;
 		webSocketSession.setIdleTimeout(timeout < 0 ? 0 : timeout);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void onWebSocketText(String message) {
+	public void onWebSocketText(String message) {		
 		try {
 			JSONObject jsonRequest = new JSONObject(message);
 			final Object requestID = jsonRequest.get(ID_KEY);
@@ -409,50 +397,7 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 			if (cdoTransactionContextProvider == null) {
 				reject(requestID, "Transaction provider is not available");
 			} else {															
-				CDOViewContextSubject<CDOTransaction, CR> subject = new CDOViewContextSubject<CDOTransaction, CR>() {
-
-					@Override
-					public Principal getPrincipal(CDOViewContext<CDOTransaction, CR> context) {
-						return principalID==null ? null : (Principal) context.getView().getObject(principalID);
-					}
-
-					@Override
-					public void setPrincipal(CDOViewContext<CDOTransaction, CR> context, final Principal principal) {
-						if (principal==null) {
-							principalID = null;
-							session.removeAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
-						} else {
-							if (principal.cdoID().isTemporary()) {
-								context.getView().addTransactionHandler(new CDOTransactionHandler2() {
-
-									@Override
-									public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
-										principalID = principal.cdoID();
-										session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principalID);
-									}
-
-									@Override
-									public void committingTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
-										// NOP
-										
-									}
-
-									@Override
-									public void rolledBackTransaction(CDOTransaction transaction) {
-										// NOP
-										
-									}
-									
-								});
-							} else {
-								principalID = principal.cdoID();
-								session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principalID);
-							}
-						}							
-					}
-					
-				};
-				try (final CDOTransactionContext<CR> cdoTransactionContext = cdoTransactionContextProvider.createContext(subject)) {
+				try (final CDOTransactionContext<CR> cdoTransactionContext = cdoTransactionContextProvider.createContext(new HttpSessionSubject<CDOTransaction, CR>((HttpSession) webSocketSession.getUpgradeRequest().getSession(), null))) {
 					try {
 						final WebSocketContext<CR> webSocketContext = new WebSocketContext<CR>() {
 
@@ -621,8 +566,11 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 										sde.outDelta(null, rDeltas);
 									}
 									
-									response.put("result", CDOWebUtil.marshal(webSocketContext, result[0])); //Marshaling here so CDOID's are not transient for new objects.
+									response.put("result", CDOWebUtil.marshal(webSocketContext, result[0] instanceof Action ? ((Action) result[0]).execute() : result[0])); //Marshaling here so CDOID's are not transient for new objects.									
 									webSocketSession.getRemote().sendString(response.toString());
+									if (result[0] instanceof AutoCloseable) {
+										((AutoCloseable) result[0]).close();
+									}
 								} catch (Exception e) {
 									//e.printStackTrace();
 									servletContext.log("Error processing client request", e);

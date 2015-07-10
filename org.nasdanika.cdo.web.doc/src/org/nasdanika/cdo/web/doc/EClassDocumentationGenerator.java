@@ -713,7 +713,25 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 										groupStyles.put(de.getKey().substring("group-style:".length()), de.getValue());									
 									}
 								}
-								
+							} else if (CDOWebUtil.ANNOTATION_CONTEXT_PARAMETER.equals(ann.getSource())) {
+								Row prmRow = prmPropTable.row();
+								prmRow.header("Type").style("align", "left");
+								prmRow.cell("Context");																
+							} else if (CDOWebUtil.ANNOTATION_SERVICE_PARAMETER.equals(ann.getSource())) {
+								Row prmRow = prmPropTable.row();
+								prmRow.header("Type").style("align", "left");
+								prmRow.cell("Service");
+								if (ann.getDetails().containsKey("filter")) {
+									prmRow = prmPropTable.row();
+									prmRow.header("Service filter").style("align", "left");
+									preStyle(prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("filter"))));									
+								}																
+							} else if (CDOWebUtil.ANNOTATION_VALIDATOR.equals(ann.getSource())) {
+								if (ann.getDetails().containsKey("server")) {
+									Row prmRow = prmPropTable.row();
+									prmRow.header("Server-side validator").style("align", "left");
+									preStyle(prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("server"))));
+								}
 							} else {
 								accordionFragment.content(documentAnnotation(htmlFactory, ann));									
 							}

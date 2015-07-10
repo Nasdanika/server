@@ -6,22 +6,13 @@ import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
-import org.eclipse.emf.cdo.transaction.CDOCommitContext;
-import org.eclipse.emf.cdo.transaction.CDOTransaction;
-import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextProvider;
-import org.nasdanika.cdo.CDOViewContextSubject;
-import org.nasdanika.cdo.security.LoginPasswordHashUser;
-import org.nasdanika.cdo.security.LoginUser;
-import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.User;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.cdo.web.routes.CDOViewSessionModuleGenerator;
 import org.nasdanika.web.Action;
@@ -39,7 +30,6 @@ import org.osgi.util.tracker.ServiceTracker;
 @SuppressWarnings("serial")
 public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends CDOViewContext<V, CR>> extends RoutingServlet {
 	
-	private static final String PRINCIPAL_ID_ATTRIBUTE_NAME = Principal.class.getName()+":id";
 	private ServiceTracker<CDOViewContextProvider<V,CR,C>, CDOViewContextProvider<V,CR,C>> cdoViewContextProviderServiceTracker;
 	private String sessionWebSocketServletPath;
 	
@@ -92,73 +82,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			throw new ServletException("View provider not found");
 		}
 		
-		CDOViewContextSubject<V, CR> subject = new CDOViewContextSubject<V, CR>() {
-
-			@Override
-			public Principal getPrincipal(CDOViewContext<V, CR> context) {
-				HttpSession session = req.getSession();
-				Object idAttr = session.getAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
-				if (idAttr instanceof CDOID) {
-					return (Principal) context.getView().getObject((CDOID) idAttr);
-				}
-				
-				java.security.Principal securityPrincipal = req.getUserPrincipal();
-				if (securityPrincipal != null) {
-					for (User pdu : context.getProtectionDomain().getAllUsers()) { 
-						// TODO - find(login) to optimize search in large user populations
-						if (pdu instanceof LoginUser && ((LoginUser) pdu).getLogin().equalsIgnoreCase(securityPrincipal.getName())) {
-							if (((LoginUser) pdu).isDisabled() || (pdu instanceof LoginPasswordHashUser && ((LoginPasswordHashUser) pdu).getPasswordHash() != null)) {
-								break;
-							} else {
-								session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, pdu.cdoID());								
-								return pdu;
-							}
-						}
-					}
-				}
-				
-				User unauthenticatedPrincipal = context.getProtectionDomain().getUnauthenticatedPrincipal();
-				if (unauthenticatedPrincipal!=null) {
-					session.setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, unauthenticatedPrincipal.cdoID());
-				}
-				return unauthenticatedPrincipal;
-			}						
-
-			@Override
-			public void setPrincipal(CDOViewContext<V, CR> context, final Principal principal) {
-				if (principal == null) {
-					req.getSession().removeAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME);
-				} else {
-					V view = context.getView();
-					if (view instanceof CDOTransaction && principal.cdoID().isTemporary()) {
-						((CDOTransaction) view).addTransactionHandler(new CDOTransactionHandler2() {
-
-							@Override
-							public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
-								req.getSession().setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principal.cdoID());
-							}
-
-							@Override
-							public void committingTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
-								// NOP
-								
-							}
-
-							@Override
-							public void rolledBackTransaction(CDOTransaction transaction) {
-								// NOP
-								
-							}
-							
-						});
-					} else {					
-						req.getSession().setAttribute(PRINCIPAL_ID_ATTRIBUTE_NAME, principal.cdoID());
-					}
-				}
-			}
-
-		};
-		C viewContext = provider.createContext(subject);
+		C viewContext = provider.createContext(new HttpSessionSubject<V, CR>(req.getSession(), req.getUserPrincipal()==null ? null : req.getUserPrincipal().getName()));
 		HttpServletRequestContext compositeContext = createCompositeContext(path, req, resp, reqUrl, viewContext);
 		compositeContext.getRootObjectsPaths().put(viewContext.getView(), reqUrl);
 		return compositeContext;
