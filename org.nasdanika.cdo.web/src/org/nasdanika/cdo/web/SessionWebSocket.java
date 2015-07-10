@@ -729,8 +729,7 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 
 	@Override
 	public void onWebSocketClose(int statusCode, String reason) {
-		// NOP
-		
+//		HttpSessionSubject.invalidate(((HttpSession) webSocketSession.getUpgradeRequest().getSession()).getId()); 		
 	}
 
 	@Override

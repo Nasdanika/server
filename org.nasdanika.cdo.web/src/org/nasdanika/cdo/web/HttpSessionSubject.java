@@ -1,11 +1,6 @@
 package org.nasdanika.cdo.web;
 
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpSession;
@@ -26,12 +21,11 @@ public class HttpSessionSubject<V extends CDOView, CR> implements CDOViewContext
 	
 	// A better approach? A service???
 	private static Map<String, Object> ID_MAP = new ConcurrentHashMap<>();
-	
-	// For cleanup
-	private static Map<HttpSession, String> SESSION_MAP = new WeakHashMap<>();
-	
-	private static int CLEANUP_THRESHOLD = 1000000;
-	
+
+//	static void invalidate(String sessionID) {
+//		ID_MAP.remove(sessionID);
+//	}
+		
 	private HttpSession session;
 	private String principalName;
 
@@ -41,28 +35,9 @@ public class HttpSessionSubject<V extends CDOView, CR> implements CDOViewContext
 	}
 
 	protected void setPrincipalID(CDOID cdoID) {
-		if (ID_MAP.size()>CLEANUP_THRESHOLD) {
-			synchronized (SESSION_MAP) {
-				Set<String> activeSessions = new HashSet<>();
-				for (Entry<HttpSession, String> e: SESSION_MAP.entrySet()) {
-					activeSessions.add(e.getValue());
-				}
-				Iterator<String> kit = ID_MAP.keySet().iterator();
-				while (kit.hasNext()) {
-					if (!activeSessions.contains(kit.next())) {
-						kit.remove();
-					}
-				}
-			}
-		}
 		if (cdoID==null) {
 			ID_MAP.remove(session.getId());		
 		} else {
-			if (!ID_MAP.containsKey(session.getId())) {
-				synchronized (SESSION_MAP) {
-					SESSION_MAP.put(session, session.getId());
-				}
-			}			
 			ID_MAP.put(session.getId(), cdoID);
 		}
 	}
