@@ -57,7 +57,7 @@ public class EModelElementDocumentationGenerator {
 	}
 	
 	public String markdownToHtml(URL baseURL, String urlPrefix, String markdownSource) {
-		PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL);
+		PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
 		return pegDownProcessor.markdownToHtml(markdownSource, docRoute.createMarkdownLinkRenderer(baseURL, urlPrefix));
 	}
 	

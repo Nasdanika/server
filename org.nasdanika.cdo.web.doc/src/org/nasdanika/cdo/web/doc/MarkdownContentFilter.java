@@ -12,7 +12,7 @@ import org.pegdown.PegDownProcessor;
  *
  */
 public class MarkdownContentFilter implements ContentFilter {
-	PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL);
+	PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
 
 	@Override
 	public Object filter(Object content, Map<Object, Object> env) throws Exception {
