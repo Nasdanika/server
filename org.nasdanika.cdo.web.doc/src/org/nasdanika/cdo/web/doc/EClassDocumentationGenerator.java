@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -34,22 +35,16 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.Style;
-import org.pegdown.LinkRenderer;
 
 public class EClassDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	private Map<EClassKey, Set<EClassKey>> inheritanceMap;
-
-	public EClassDocumentationGenerator(
-			DocRoute docRoute,
-			LinkRenderer linkRenderer, 
-			Map<String, EAnnotationRenderer> eAnnotationRenderers,
-			Map<EClassKey,Set<EClassKey>> inheritanceMap) {
-		super(docRoute, linkRenderer, eAnnotationRenderers);
-		this.inheritanceMap = inheritanceMap;
+	public EClassDocumentationGenerator(DocRoute docRoute) {
+		super(docRoute);
 	}
 
 	public String generate(
+			URL baseURL,
+			String urlPrefix,
 			HTMLFactory htmlFactory,
 			String docRoutePath,
 			String registryPath,
@@ -72,8 +67,8 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			modifiers.append("class ");
 		}
 		
-		ret.content(htmlFactory.div(markdownToHtml(modifiers+" [[javadoc>"+eClass.getInstanceClassName()+"|"+eClass.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
-		String doc = getModelDocumentation(eClass);
+		ret.content(htmlFactory.div(markdownToHtml(baseURL, urlPrefix, modifiers+" [[javadoc>"+eClass.getInstanceClassName()+"|"+eClass.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
+		String doc = getModelDocumentation(baseURL, urlPrefix, eClass);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")
@@ -88,8 +83,8 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		Tabs tabs = htmlFactory.tabs();
 		ret.content(tabs);
 						
-		generateAttributesTab(eClass, htmlFactory, docRoutePath, tabs, registryPath);
-		generateReferencesTab(eClass, htmlFactory, docRoutePath, tabs, registryPath);
+		generateAttributesTab(baseURL, urlPrefix, eClass, htmlFactory, docRoutePath, tabs, registryPath);
+		generateReferencesTab(baseURL, urlPrefix, eClass, htmlFactory, docRoutePath, tabs, registryPath);
 		
 		List<EOperation> eOperations = new ArrayList<>();
 		List<EOperation> routes = new ArrayList<>();
@@ -105,9 +100,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			}
 		}
 		
-		generateOperationsTab(eClass, eOperations, htmlFactory, docRoutePath, tabs, registryPath);
-		generateRoutesTab(eClass, routes, htmlFactory, docRoutePath, tabs, registryPath);
-		generateFormsTab(eClass, forms, htmlFactory, docRoutePath, tabs, registryPath);
+		generateOperationsTab(baseURL, urlPrefix, eClass, eOperations, htmlFactory, docRoutePath, tabs, registryPath);
+		generateRoutesTab(baseURL, urlPrefix, eClass, routes, htmlFactory, docRoutePath, tabs, registryPath);
+		generateFormsTab(baseURL, urlPrefix, eClass, forms, htmlFactory, docRoutePath, tabs, registryPath);
 		
 		if (!eClass.getESuperTypes().isEmpty()) {
 			Table stTable = htmlFactory.table().bordered();
@@ -117,12 +112,12 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			for (EClass st: eClass.getESuperTypes()) {
 				Row stRow = stTable.row();
 				stRow.cell(eClassifierLink(htmlFactory, st, docRoutePath, registryPath, false));
-				stRow.cell(getFirstDocSentence(st));
+				stRow.cell(getFirstDocSentence(baseURL, urlPrefix, st));
 			}
 			tabs.item("Supertypes", stTable);
 		}
 		
-		Set<EClassKey> subTypes = inheritanceMap.get(new EClassKey(eClass));
+		Set<EClassKey> subTypes = docRoute.getInheritanceMap().get(new EClassKey(eClass));
 		if (subTypes!=null && !subTypes.isEmpty()) {
 			Table stTable = htmlFactory.table().bordered();
 			Row hr = stTable.row().style(Style.INFO);
@@ -132,7 +127,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				Row stRow = stTable.row();
 				String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(st.getNsURI().getBytes(/* UTF-8? */));
 				stRow.cell(htmlFactory.link(packagePath+"/"+st.getName(), st.getName()));
-				stRow.cell(getFirstDocSentence(st.getDocumentation()));
+				stRow.cell(getFirstDocSentence(baseURL, urlPrefix, st.getDocumentation()));
 			}
 			tabs.item("Subtypes", stTable);
 		}
@@ -141,7 +136,14 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		
 	}
 
-	void generateAttributesTab(EClass eClass, HTMLFactory htmlFactory, String docRoutePath, Tabs tabs, String registryPath) {
+	private void generateAttributesTab(
+			URL baseURL,
+			String urlPrefix,
+			EClass eClass, 
+			HTMLFactory htmlFactory, 
+			String docRoutePath, 
+			Tabs tabs, 
+			String registryPath) {
 		Tag attributeIcon = htmlFactory.tag(TagName.img)
 				.attribute("src", docRoutePath+"/resources/images/EAttribute.gif")
 				.style("margin-right", "5px");
@@ -151,7 +153,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			Collections.sort(eAllAttributes, NAMED_ELEMENT_COMPARATOR);
 			Accordion attributesAccordion = htmlFactory.accordion();
 			for (EAttribute attr: eAllAttributes) {
-				String firstDocSentence = getFirstDocSentence(attr);
+				String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, attr);
 				String declaringType = attr.getEContainingClass()==eClass ? "" : " ("+attr.getEContainingClass().getName()+") ";
 				
 				Table propTable = htmlFactory.table().bordered();
@@ -199,7 +201,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				row.header("Volatile").style("align", "left");
 				row.cell(attr.isVolatile() ? htmlFactory.glyphicon(Glyphicon.ok) : "");
 
-				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(attr), propTable);				
+				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(baseURL, urlPrefix, attr), propTable);				
 								
 				for (EAnnotation ann: attr.getEAnnotations()) {
 					accordionFragment.content(documentAnnotation(htmlFactory, ann));
@@ -213,7 +215,15 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		}
 	}
 
-	void generateReferencesTab(EClass eClass, HTMLFactory htmlFactory, String docRoutePath, Tabs tabs, String registryPath) {
+	private void generateReferencesTab(
+			URL baseURL, 
+			String urlPrefix,
+			EClass eClass, 
+			HTMLFactory htmlFactory, 
+			String docRoutePath, 
+			Tabs tabs, 
+			String registryPath) {
+		
 		Tag referenceIcon = htmlFactory.tag(TagName.img)
 				.attribute("src", docRoutePath+"/resources/images/EReference.gif")
 				.style("margin-right", "5px");
@@ -223,7 +233,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			Collections.sort(eAllReferences, NAMED_ELEMENT_COMPARATOR);
 			Accordion referencesAccordion = htmlFactory.accordion();
 			for (EReference ref: eAllReferences) {
-				String firstDocSentence = getFirstDocSentence(ref);
+				String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, ref);
 				String declaringType = ref.getEContainingClass()==eClass ? "" : " ("+ref.getEContainingClass().getName()+") ";
 				
 				Table propTable = htmlFactory.table().bordered();
@@ -296,7 +306,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				row.header("Volatile").style("align", "left");
 				row.cell(ref.isVolatile() ? htmlFactory.glyphicon(Glyphicon.ok) : "");
 
-				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(ref), propTable);				
+				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(baseURL, urlPrefix, ref), propTable);				
 				
 				for (EAnnotation ann: ref.getEAnnotations()) {
 					accordionFragment.content(documentAnnotation(htmlFactory, ann));
@@ -310,12 +320,21 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		}
 	}
 	
-	void generateOperationsTab(EClass eClass, List<EOperation> operations, HTMLFactory htmlFactory, String docRoutePath, Tabs tabs, String registryPath) {
+	private void generateOperationsTab(
+			URL baseURL,
+			String urlPrefix,
+			EClass eClass, 
+			List<EOperation> operations, 
+			HTMLFactory htmlFactory, 
+			String docRoutePath, 
+			Tabs tabs, 
+			String registryPath) {
+		
 		if (!operations.isEmpty()) {
 			Collections.sort(operations, NAMED_ELEMENT_COMPARATOR);
 			Accordion operationsAccordion = htmlFactory.accordion();
 			for (EOperation operation: operations) {
-				String firstDocSentence = getFirstDocSentence(operation);
+				String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, operation);
 				String declaringType = operation.getEContainingClass()==eClass ? "" : " ("+operation.getEContainingClass().getName()+") ";
 				
 				Table propTable = htmlFactory.table().bordered();
@@ -343,7 +362,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				row.header("Unique").style("align", "left");
 				row.cell(operation.isUnique() ? htmlFactory.glyphicon(Glyphicon.ok) : "");								
 				
-				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(operation), propTable);
+				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(baseURL, urlPrefix, operation), propTable);
 				
 				for (EAnnotation ann: operation.getEAnnotations()) {
 					accordionFragment.content(documentAnnotation(htmlFactory, ann));
@@ -353,7 +372,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					accordionFragment.content(htmlFactory.tag(TagName.h3, "Parameters"));
 					for (EParameter param: operation.getEParameters()) {
 						accordionFragment.content(htmlFactory.tag(TagName.h4, param.getName(), " : ", eClassifierLink(htmlFactory, param.getEType(), docRoutePath, registryPath, true), " ", cardinality(param)));						
-						getModelDocumentation(param);
+						getModelDocumentation(baseURL, urlPrefix, param);
 						for (EAnnotation ann: param.getEAnnotations()) {
 							accordionFragment.content(documentAnnotation(htmlFactory, ann));
 						}						
@@ -373,7 +392,16 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		}		
 	}
 	
-	void generateRoutesTab(EClass eClass, List<EOperation> routes, HTMLFactory htmlFactory, String docRoutePath, Tabs tabs, String registryPath) {
+	private void generateRoutesTab(
+			URL baseURL, 
+			String urlPrefix,
+			EClass eClass, 
+			List<EOperation> routes, 
+			HTMLFactory htmlFactory, 
+			String docRoutePath, 
+			Tabs tabs, 
+			String registryPath) {
+		
 		// TODO - Routes from extensions.
 		if (!routes.isEmpty()) {
 			Collections.sort(routes, NAMED_ELEMENT_COMPARATOR);
@@ -385,7 +413,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					rAnn = route.getEAnnotation(CDOWebUtil.ANNOTATION_ROUTE);
 				}
 				
-				String firstDocSentence = getFirstDocSentence(route);
+				String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, route);
 				String declaringType = route.getEContainingClass()==eClass ? "" : " ("+route.getEContainingClass().getName()+") ";
 				
 				Table propTable = htmlFactory.table().bordered();
@@ -455,7 +483,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				row.header("Unique").style("align", "left");
 				row.cell(route.isUnique() ? htmlFactory.glyphicon(Glyphicon.ok) : "");								
 								
-				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(route), propTable);
+				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(baseURL, urlPrefix, route), propTable);
 				
 				for (EAnnotation ann: route.getEAnnotations()) {
 					if (CDOWebUtil.ANNOTATION_ROUTE.equals(ann.getSource())) {
@@ -471,7 +499,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					accordionFragment.content(htmlFactory.tag(TagName.h3, "Parameters"));
 					for (EParameter param: route.getEParameters()) {
 						accordionFragment.content(htmlFactory.tag(TagName.h4, param.getName(), " : ", eClassifierLink(htmlFactory, param.getEType(), docRoutePath, registryPath, true), " ", cardinality(param)));						
-						getModelDocumentation(param);
+						getModelDocumentation(baseURL, urlPrefix, param);
 						Table prmPropTable = htmlFactory.table().bordered();
 						
 						for (EAnnotation ann: param.getEAnnotations()) {							
@@ -558,7 +586,16 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		}		
 	}
 
-	void generateFormsTab(EClass eClass, List<EOperation> forms, HTMLFactory htmlFactory, String docRoutePath, Tabs tabs, String registryPath) {
+	private void generateFormsTab(
+			URL baseURL, 
+			String urlPrefix,
+			EClass eClass, 
+			List<EOperation> forms, 
+			HTMLFactory htmlFactory, 
+			String docRoutePath, 
+			Tabs tabs, 
+			String registryPath) {
+		
 		if (!forms.isEmpty()) {
 			Collections.sort(forms, NAMED_ELEMENT_COMPARATOR);
 			
@@ -566,9 +603,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			for (EOperation form: forms) {
 				EAnnotation formAnn = form.getEAnnotation(FormGeneratorBase.FORM_ANNOTATION_SOURCE);
 				
-				String firstDocSentence = getFirstDocSentence(form);
+				String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, form);
 				String declaringType = form.getEContainingClass()==eClass ? "" : " ("+form.getEContainingClass().getName()+") ";
-				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(form));
+				Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(baseURL, urlPrefix, form));
 
 				EOperationFormGenerator formGenerator = new EOperationFormGenerator(form) {
 					@Override
@@ -642,7 +679,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					accordionFragment.content(htmlFactory.tag(TagName.h3, "Parameters"));
 					for (EParameter param: form.getEParameters()) {
 						accordionFragment.content(htmlFactory.tag(TagName.h4, param.getName(), " : ", eClassifierLink(htmlFactory, param.getEType(), docRoutePath, registryPath, true), " ", cardinality(param)));						
-						getModelDocumentation(param);
+						getModelDocumentation(baseURL, urlPrefix, param);
 						Table prmPropTable = htmlFactory.table().bordered();
 						Map<String, String> attributes = new TreeMap<>();
 						Map<String, String> groupAttributes = new TreeMap<>();

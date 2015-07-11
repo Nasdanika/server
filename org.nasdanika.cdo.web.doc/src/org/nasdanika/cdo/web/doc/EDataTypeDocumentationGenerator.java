@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.util.Map;
+import java.net.URL;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EDataType;
@@ -9,18 +9,16 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.pegdown.LinkRenderer;
 
 public class EDataTypeDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EDataTypeDocumentationGenerator(
-			DocRoute docRoute,
-			LinkRenderer linkRenderer, 
-			Map<String, EAnnotationRenderer> eAnnotationRenderers) {
-		super(docRoute, linkRenderer, eAnnotationRenderers);
+	public EDataTypeDocumentationGenerator(DocRoute docRoute) {
+		super(docRoute);
 	}
 
 	public String generate(
+			URL baseURL, 
+			String urlPrefix,
 			HTMLFactory htmlFactory,
 			String docRoutePath,
 			String registryPath,
@@ -43,12 +41,12 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 		if (instanceClass.isPrimitive()) {
 			icDiv.content(instanceClass.getName());
 		} else {
-			icDiv.content(markdownToHtml("[[javadoc>"+eDataType.getInstanceClassName()+"|"+eDataType.getInstanceClassName()+"]]"));
+			icDiv.content(markdownToHtml(baseURL, urlPrefix, "[[javadoc>"+eDataType.getInstanceClassName()+"|"+eDataType.getInstanceClassName()+"]]"));
 		}
 		if (isArray) {
 			icDiv.content("[]");
 		}
-		String doc = getModelDocumentation(eDataType);
+		String doc = getModelDocumentation(baseURL, urlPrefix, eDataType);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")

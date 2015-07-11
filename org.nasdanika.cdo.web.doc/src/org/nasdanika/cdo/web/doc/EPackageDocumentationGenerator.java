@@ -1,10 +1,10 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -21,18 +21,16 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.Style;
-import org.pegdown.LinkRenderer;
 
 public class EPackageDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EPackageDocumentationGenerator(
-			DocRoute docRoute,
-			LinkRenderer linkRenderer, 
-			Map<String, EAnnotationRenderer> eAnnotationRenderers) {
-		super(docRoute, linkRenderer, eAnnotationRenderers);
+	public EPackageDocumentationGenerator(DocRoute docRoute) {
+		super(docRoute);
 	}
 
 	public String generate(
+			URL baseURL,
+			String urlPrefix,
 			HTMLFactory htmlFactory,
 			String docRoutePath,
 			String registryPath,
@@ -47,7 +45,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EPackage "+ePackage.getName()));
 		ret.content(htmlFactory.tag(TagName.h2, packageIcon, ePackage.getName()));
 		ret.content(htmlFactory.div("<B>Namespace URI:</B> "+ePackage.getNsURI()));
-		String doc = getModelDocumentation(ePackage);
+		String doc = getModelDocumentation(baseURL, urlPrefix, ePackage);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")
@@ -74,7 +72,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		for (EPackage subPackage: ePackage.getESubpackages()) {
 			Row row = subPackageTable.row();
 			row.cell(htmlFactory.link("#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */)), subPackage.getName()));
-			row.cell(getFirstDocSentence(subPackage));			
+			row.cell(getFirstDocSentence(baseURL, urlPrefix, subPackage));			
 		}
 		
 		if (subPackageTable.rows().size()>1) {
@@ -112,16 +110,16 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			if (eClassifier instanceof EClass) {
 				Row row = classTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
-				row.cell(getFirstDocSentence(eClassifier));
+				row.cell(getFirstDocSentence(baseURL, urlPrefix, eClassifier));
 			} else if (eClassifier instanceof EEnum) {
 				Row row = enumTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
-				row.cell(getFirstDocSentence(eClassifier));
+				row.cell(getFirstDocSentence(baseURL, urlPrefix, eClassifier));
 			} else {
 				Row row = dataTypeTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
 				row.cell(eClassifier.getInstanceTypeName());
-				row.cell(getFirstDocSentence(eClassifier));
+				row.cell(getFirstDocSentence(baseURL, urlPrefix, eClassifier));
 			}
 		}
 		

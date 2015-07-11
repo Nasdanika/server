@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.util.Map;
+import java.net.URL;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -11,21 +11,19 @@ import org.nasdanika.html.Accordion;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Tag;
 import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.pegdown.LinkRenderer;
 
 public class EEnumDocumentationGenerator extends EModelElementDocumentationGenerator {
 
-	public EEnumDocumentationGenerator(
-			DocRoute docRoute,
-			LinkRenderer linkRenderer, 
-			Map<String, EAnnotationRenderer> eAnnotationRenderers) {
-		super(docRoute, linkRenderer, eAnnotationRenderers);
+	public EEnumDocumentationGenerator(DocRoute docRoute) {
+		super(docRoute);
 	}
 
 	public String generate(
+			URL baseURL, 
+			String urlPrefix,
 			HTMLFactory htmlFactory,
 			String docRoutePath,
 			String registryPath,
@@ -38,8 +36,8 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EEnum "+eEnum.getName()));
 		ret.content(htmlFactory.tag(TagName.h2, enumIcon, eEnum.getName()));
 		
-		ret.content(htmlFactory.div(markdownToHtml("enum [[javadoc>"+eEnum.getInstanceClassName()+"|"+eEnum.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
-		String doc = getModelDocumentation(eEnum);
+		ret.content(htmlFactory.div(markdownToHtml(baseURL, urlPrefix, "enum [[javadoc>"+eEnum.getInstanceClassName()+"|"+eEnum.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
+		String doc = getModelDocumentation(baseURL, urlPrefix, eEnum);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")
@@ -55,7 +53,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		ret.content(literalsAccordion);
 		
 		for (EEnumLiteral literal: eEnum.getELiterals()) {			
-			Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(literal));
+			Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(baseURL, urlPrefix, literal));
 			Table propTable = htmlFactory.table().bordered();
 			accordionFragment.content(propTable);
 			
@@ -70,7 +68,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 			for (EAnnotation ann: literal.getEAnnotations()) {
 				accordionFragment.content(documentAnnotation(htmlFactory, ann));
 			}
-			String firstDocSentence = getFirstDocSentence(literal);
+			String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, literal);
 			literalsAccordion.item(
 					"<b>"+literal.getName()+"</b> "+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
 					accordionFragment);

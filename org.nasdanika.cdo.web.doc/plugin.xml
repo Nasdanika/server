@@ -26,6 +26,14 @@
             class="org.nasdanika.cdo.web.doc.ECoreSessionResolver"
             name="session">
       </wiki-link-resolver>
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.BundleResolver"
+            name="bundle">
+      </wiki-link-resolver>
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.EClassifierResolver"
+            name="classifier">
+      </wiki-link-resolver>
    </extension>
 
 </plugin>

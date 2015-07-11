@@ -89,6 +89,7 @@ import org.pegdown.LinkRenderer;
 
 public class DocRoute implements Route {
 		
+	private static final String PACKAGE_SUMMARY_HTML = "package-summary.html";
 	private static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
@@ -117,6 +118,9 @@ public class DocRoute implements Route {
 	private Map<String, Map<String, ContentFilter>> contentFilters = new ConcurrentHashMap<>();
 	private Map<String, EAnnotationRenderer> eAnnotationRenderers = new ConcurrentHashMap<>();
 	
+	public Map<String, EAnnotationRenderer> geteAnnotationRenderers() {
+		return eAnnotationRenderers;
+	}	
 	public void setReloadDelay(long reloadDelay) {
 		this.reloadDelay = reloadDelay;
 	}
@@ -134,7 +138,7 @@ public class DocRoute implements Route {
 	}
 	
 	private String baseURL;
-	private String urlPrefix;
+	private String urlPrefix;	
 	
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	private ExtensionTracker extensionTracker;
@@ -218,6 +222,10 @@ public class DocRoute implements Route {
 	}
 	
 	private Map<EClassKey,Set<EClassKey>> inheritanceMap = new ConcurrentHashMap<>(); 
+	
+	public Map<EClassKey, Set<EClassKey>> getInheritanceMap() {
+		return inheritanceMap;
+	}
 	
 	private static class PackageTocNodeFactoryEntry {
 
@@ -465,12 +473,10 @@ public class DocRoute implements Route {
 		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
     			
-		URL bURL = new URL(baseURL);
-		LinkRenderer markdownLinkRenderer = createMarkdownLinkRenderer(bURL, urlPrefix);
-		eClassDocumentationGenerator = new EClassDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers, inheritanceMap);	
-		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers);	
-		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers);			
-		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(this, markdownLinkRenderer, eAnnotationRenderers);				
+		eClassDocumentationGenerator = new EClassDocumentationGenerator(this);	
+		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(this);	
+		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(this);			
+		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(this);				
 		
 		loadTimer = new Timer();
 		doLoad.set(false);
@@ -576,7 +582,7 @@ public class DocRoute implements Route {
 						if (path.startsWith(PACKAGES_GLOBAL_PATH) || path.startsWith(PACKAGES_SESSION_PATH)) {
 							// Always HTML String for packages if not null.
 							try {
-								final Object content = DocRoute.this.getContent(path);
+								final Object content = DocRoute.this.getContent(new URL(new URL(baseURL), path), urlPrefix, path);
 								if (content instanceof String) { 
 									return new ContentEntry() {
 	
@@ -603,7 +609,7 @@ public class DocRoute implements Route {
 						if (contentType!=null) {
 							if (MIME_TYPE_HTML.equals(contentType)) {
 								try {
-									final String content = DocRoute.stringify(DocRoute.this.getContent(path));
+									final String content = DocRoute.stringify(DocRoute.this.getContent(new URL(new URL(baseURL), path), urlPrefix, path));
 									return new ContentEntry() {
 	
 										@Override
@@ -626,7 +632,7 @@ public class DocRoute implements Route {
 							ContentFilter cf = tm==null ? null : tm.get(MIME_TYPE_HTML);
 							if (cf!=null) {
 								try {
-									String content = DocRoute.stringify(DocRoute.this.getContent(path));
+									String content = DocRoute.stringify(DocRoute.this.getContent(new URL(new URL(baseURL), path), urlPrefix, path));
 									final String htmlContent = String.valueOf(cf.filter(content, createContentFilterEnvironment(new URL(urlPrefix+docRoutePath+path), urlPrefix)));
 									return new ContentEntry() {
 	
@@ -713,7 +719,7 @@ public class DocRoute implements Route {
 	}
 		
 	private void createEPackageToc(TocNode parent, EPackage ePackage, String prefix) {
-		TocNode ePackageToc = parent.createChild(ePackage.getName(), prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */)), "/resources/images/EPackage.gif");
+		TocNode ePackageToc = parent.createChild(ePackage.getName(), prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, "/resources/images/EPackage.gif");
 		List<EPackage> subPackages = new ArrayList<>(ePackage.getESubpackages());
 		Collections.sort(subPackages, new Comparator<EPackage>() {
 
@@ -792,23 +798,23 @@ public class DocRoute implements Route {
 		// TODO - from extensions
 	}
 	
-	private Object getContent(String path) throws Exception {
+	private Object getContent(URL baseURL, String urlPrefix, String path) throws Exception {
 		if (path.startsWith(PACKAGES_GLOBAL_PATH)) {
 			String[] subPath = path.substring(PACKAGES_GLOBAL_PATH.length()).split("/");
 			EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
-			if (subPath.length==1) {
-				return getEPackageContent(ePackage, docRoutePath+"/packages/global");
+			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
+				return getEPackageContent(baseURL, urlPrefix, ePackage, docRoutePath+"/packages/global");
 			}
-			return getEClassifierContent(ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");
+			return getEClassifierContent(baseURL, urlPrefix, ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");
 		} 
 		
 		if (path.startsWith(PACKAGES_SESSION_PATH)) {
 			String[] subPath = path.substring(PACKAGES_SESSION_PATH.length()).split("/");
 			EPackage ePackage = cdoSessionProvider.getSession().getPackageRegistry().getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
-			if (subPath.length==1) {
-				return getEPackageContent(ePackage, docRoutePath+"/packages/session");
+			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
+				return getEPackageContent(baseURL, urlPrefix, ePackage, docRoutePath+"/packages/session");
 			}
-			return getEClassifierContent(ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");				
+			return getEClassifierContent(baseURL, urlPrefix, ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");				
 		} 
 		
 		if (path.startsWith(BUNDLE_PATH)) {
@@ -826,13 +832,8 @@ public class DocRoute implements Route {
 		} 
 		
 		if (path.startsWith(RESOURCES_PATH)) {
-			// TODO - .md processing
 			return docBundle.getResource(path.substring(RESOURCES_PATH.length()));
 		} 
-		
-		if (path.startsWith(TOC_PATH)) {
-			// TODO - generate 
-		}
 		
 		// TODO - extensions
 		
@@ -843,22 +844,22 @@ public class DocRoute implements Route {
 	private EDataTypeDocumentationGenerator eDataTypeDocumentationGenerator;	
 	private EEnumDocumentationGenerator eEnumDocumentationGenerator;	
 	
-	private Object getEClassifierContent(EClassifier eClassifier, String registryPath) {
+	private Object getEClassifierContent(URL baseURL, String urlPrefix, EClassifier eClassifier, String registryPath) {
 		if (eClassifier instanceof EClass) {
-			return eClassDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, (EClass) eClassifier);
+			return eClassDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, (EClass) eClassifier);
 		} 
 		
 		if (eClassifier instanceof EEnum) {
-			return eEnumDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, (EEnum) eClassifier);			
+			return eEnumDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, (EEnum) eClassifier);			
 		}
 		
-		return eDataTypeDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, (EDataType) eClassifier);			
+		return eDataTypeDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, (EDataType) eClassifier);			
 	}
 	
 	private EPackageDocumentationGenerator ePackageDocumentationGenerator;
 
-	private Object getEPackageContent(EPackage ePackage, String registryPath) {
-		return ePackageDocumentationGenerator.generate(htmlFactory, docRoutePath, registryPath, ePackage);
+	private Object getEPackageContent(URL baseURL, String urlPrefix, EPackage ePackage, String registryPath) {
+		return ePackageDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, ePackage);
 	}
 
 	public void deactivate(ComponentContext context) throws Exception {
@@ -947,9 +948,12 @@ public class DocRoute implements Route {
 
 			} 
 									
+			String requestURL = context.getRequest().getRequestURL().toString();
+			String requestURI = context.getRequest().getRequestURI();
+			String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
 			String prefix = docAppPath+"#router/doc-content/"+docRoutePath;
 			String pathStr = "/"+StringUtils.join(path, "/");
-			Object content = getContent(pathStr);
+			Object content = getContent(new URL(requestURL), urlPrefix, pathStr);
 			if (content!=null) {
 				if (path.length>0) {
 					String contentType = "packages".equals(path[0]) ? "text/html" : mimeTypesMap.getContentType(path[path.length-1]);
@@ -958,9 +962,6 @@ public class DocRoute implements Route {
 						if (tm!=null) {
 							for (Entry<String, ContentFilter> tme: tm.entrySet()) {
 								context.getResponse().setContentType(tme.getKey());
-								String requestURL = context.getRequest().getRequestURL().toString();
-								String requestURI = context.getRequest().getRequestURI();
-								String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
 								Object filteredContent = tme.getValue().filter(content, createContentFilterEnvironment(new URL(requestURL), urlPrefix));
 								if ("text/html".equals(tme.getKey()) && filteredContent instanceof String) {
 									TocNode toc = tocRoot.find(pathStr);
@@ -1082,7 +1083,7 @@ public class DocRoute implements Route {
 		contentFilterEnv.put(HTMLFactory.class, htmlFactory);
 		return contentFilterEnv;
 	}
-
+	
 	protected LinkRenderer createMarkdownLinkRenderer(final URL baseURL, final String urlPrefix) {
 		Renderer.Registry rendererRegistry = new Renderer.Registry() {
 

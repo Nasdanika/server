@@ -1,7 +1,7 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.net.URL;
 import java.util.Comparator;
-import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,7 +24,6 @@ import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Style;
 import org.pegdown.Extensions;
-import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
 
 public class EModelElementDocumentationGenerator {
@@ -42,20 +41,11 @@ public class EModelElementDocumentationGenerator {
 		
 	static final String ECORE_DOC_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";
 	private int maxFirstSentenceLength = 250;
-	private LinkRenderer linkRenderer;
-	private Map<String, EAnnotationRenderer> eAnnotationRenderers;
 
-	private TocNode rootToc;
+	protected DocRoute docRoute;
 
-	private DocRoute docRoute;
-
-	public EModelElementDocumentationGenerator(
-			DocRoute docRoute, 
-			LinkRenderer linkRenderer, 
-			Map<String, EAnnotationRenderer> eAnnotationRenderers) {
+	public EModelElementDocumentationGenerator(DocRoute docRoute) {
 		this.docRoute = docRoute;
-		this.linkRenderer = linkRenderer;
-		this.eAnnotationRenderers = eAnnotationRenderers;
 	}
 	
 	public void setMaxFirstSentenceLength(int maxFirstSentenceLength) {
@@ -66,12 +56,12 @@ public class EModelElementDocumentationGenerator {
 		return maxFirstSentenceLength;
 	}
 	
-	public String markdownToHtml(String markdownSource) {
+	public String markdownToHtml(URL baseURL, String urlPrefix, String markdownSource) {
 		PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL);
-		return pegDownProcessor.markdownToHtml(markdownSource, linkRenderer);
+		return pegDownProcessor.markdownToHtml(markdownSource, docRoute.createMarkdownLinkRenderer(baseURL, urlPrefix));
 	}
 	
-	public String getModelDocumentation(EModelElement modelElement) {
+	public String getModelDocumentation(URL baseURL, String urlPrefix, EModelElement modelElement) {
 		EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
 		if (docAnn==null) {
 			return "";
@@ -80,11 +70,11 @@ public class EModelElementDocumentationGenerator {
 		if (CoreUtil.isBlank(markdown)) {
 			return null;
 		}
-		return markdownToHtml(markdown);		
+		return markdownToHtml(baseURL, urlPrefix, markdown);		
 	}
 	
-	public String getFirstDocSentence(EModelElement modelElement) {
-		String html = getModelDocumentation(modelElement);
+	public String getFirstDocSentence(URL baseURL, String urlPrefix, EModelElement modelElement) {
+		String html = getModelDocumentation(baseURL, urlPrefix, modelElement);
 		if (CoreUtil.isBlank(html)) {
 			return "";
 		}
@@ -100,12 +90,12 @@ public class EModelElementDocumentationGenerator {
 		return text.length()<maxFirstSentenceLength ? text : "";
 	}
 		
-	public String getFirstDocSentence(String markdown) {
+	public String getFirstDocSentence(URL baseURL, String urlPrefix, String markdown) {
 		if (CoreUtil.isBlank(markdown)) {
 			return "";
 		}
 
-		String text = Jsoup.parse(markdownToHtml(markdown)).text();
+		String text = Jsoup.parse(markdownToHtml(baseURL, urlPrefix, markdown)).text();
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);
 		if (matcher.find()) {
 			String group = matcher.group();
@@ -122,7 +112,7 @@ public class EModelElementDocumentationGenerator {
 			return ""; // Already generated as doc.
 		}
 
-		EAnnotationRenderer renderer = eAnnotationRenderers.get(eAnnotation.getSource());
+		EAnnotationRenderer renderer = docRoute.geteAnnotationRenderers().get(eAnnotation.getSource());
 		if (renderer!=null) {
 			return renderer.render(eAnnotation, htmlFactory);
 		}
