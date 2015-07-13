@@ -13,26 +13,27 @@
 	<prerequisites>
 		<maven>3.0</maven>
 	</prerequisites>
-
+	
 	<properties>
 		<tycho-version>0.23.0</tycho-version>
-		<luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
+		<mars-repo.url>http://download.eclipse.org/releases/mars</mars-repo.url>
 	</properties>
-	 
+
 	<repositories>
+		<!-- configure p2 repository to resolve against -->
 		<repository>
-			<id>luna</id>
-			<url>${luna-repo.url}</url>
+			<id>mars</id>
+			<url>${mars-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150124073747/repository</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>jetty</id>
-			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-8.x</url>
+			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.2.9.v20150224</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
