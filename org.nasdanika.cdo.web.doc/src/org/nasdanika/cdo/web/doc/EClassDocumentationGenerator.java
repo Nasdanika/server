@@ -165,9 +165,10 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				row.header("Cardinality").style("align", "left");
 				row.cell(cardinality(attr));
 				
+				String defaultValueLiteral = attr.getDefaultValueLiteral();
 				row = propTable.row();				
 				row.header("Default value").style("align", "left");
-				row.cell(htmlFactory.div(StringEscapeUtils.escapeHtml4(attr.getDefaultValueLiteral())).style("white-space", "pre").style("font-family", "monospace"));
+				row.cell(htmlFactory.div(CoreUtil.isBlank(defaultValueLiteral) ? "" : StringEscapeUtils.escapeHtml4(defaultValueLiteral)).style("white-space", "pre").style("font-family", "monospace"));
 
 				row = propTable.row();
 				row.header("Changeable").style("align", "left");

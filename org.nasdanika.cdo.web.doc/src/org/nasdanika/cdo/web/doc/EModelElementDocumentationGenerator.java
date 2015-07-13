@@ -28,7 +28,9 @@ import org.pegdown.PegDownProcessor;
 
 public class EModelElementDocumentationGenerator {
 	
-	private static Pattern SENTENCE_PATTERN = Pattern.compile("[^\\.?!]+[\\.?!]+");	
+	private static Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
+	
+	private static String[] ABBREVIATIONS = { "e.g.", "i.e." }; // TODO - load from extensions?
 	
 	public static Comparator<ENamedElement> NAMED_ELEMENT_COMPARATOR = new Comparator<ENamedElement>() {
 
@@ -79,15 +81,24 @@ public class EModelElementDocumentationGenerator {
 			return "";
 		}
 		String text = Jsoup.parse(html).text();
-		Matcher matcher = SENTENCE_PATTERN.matcher(text);
-		if (matcher.find()) {
+		return firstSentence(text);
+	}
+
+	private String firstSentence(String text) {
+		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
+		Z: while (matcher.find()) {
 			String group = matcher.group();
-			if (group.length()<maxFirstSentenceLength) {
-				return group;
+			for (String abbr: ABBREVIATIONS) {
+				if (group.trim().endsWith(abbr)) {
+					continue Z;
+				}
+			}
+			if (matcher.end()<maxFirstSentenceLength) {
+				return text.substring(0, matcher.end());
 			}
 		}
 		
-		return text.length()<maxFirstSentenceLength ? text : "";
+		return text.length()<maxFirstSentenceLength ? text : text.substring(0, maxFirstSentenceLength)+"...";
 	}
 		
 	public String getFirstDocSentence(URL baseURL, String urlPrefix, String markdown) {
@@ -96,15 +107,7 @@ public class EModelElementDocumentationGenerator {
 		}
 
 		String text = Jsoup.parse(markdownToHtml(baseURL, urlPrefix, markdown)).text();
-		Matcher matcher = SENTENCE_PATTERN.matcher(text);
-		if (matcher.find()) {
-			String group = matcher.group();
-			if (group.length()<maxFirstSentenceLength) {
-				return group;
-			}
-		}
-		
-		return text.length()<maxFirstSentenceLength ? text : "";
+		return firstSentence(text);
 	}
 		
 	protected String documentAnnotation(HTMLFactory htmlFactory, EAnnotation eAnnotation) {
@@ -145,8 +148,7 @@ public class EModelElementDocumentationGenerator {
 			return htmlFactory.tag(TagName.img)
 					.attribute("src", docRoutePath+"/resources/images/EClass.gif")
 					.style("margin-right", "5px")
-					.toString();
-			
+					.toString();			
 		}
 		
 		if (eClassifier instanceof EEnum) {
