@@ -1026,6 +1026,7 @@ public class DocRoute implements Route {
 	}
 	
 	private static HighlightModuleGenerator HIGHLIGHT_MODULE_GENERATOR = new HighlightModuleGenerator();
+	private static SelectTocNodeModuleGenerator SELECT_TOC_NODE_MODULE_GENERATOR = new SelectTocNodeModuleGenerator();
 	
 	private String navWrap(HTMLFactory htmlFactory, TocNode toc, String content, String prefix) {
 		Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
@@ -1034,7 +1035,10 @@ public class DocRoute implements Route {
 				breadcrumbs.item(pathElement==toc ? null : "javascript:"+tocNodeSelectScript(pathElement.getId()), pathElement.getText()); // prefix+pathElement.getHref()
 			}
 		}
-		return breadcrumbs + content + htmlFactory.tag(TagName.script, HIGHLIGHT_MODULE_GENERATOR.generate(docRoutePath));
+		return breadcrumbs + 
+				content + 
+				htmlFactory.tag(TagName.script, HIGHLIGHT_MODULE_GENERATOR.generate(docRoutePath)) +
+				htmlFactory.tag(TagName.script, SELECT_TOC_NODE_MODULE_GENERATOR.generate(new Object[] {docRoutePath, toc.getId()}));
 	}
 	
 	/**

@@ -5,11 +5,14 @@
 	Object nodeID = ((Object[]) argument)[1];
 %>
 
-
 require(['jquery', '<%=path%>/resources/jstree/jstree.js', 'domReady!'], function(jQuery, jstree, doc) {
-	var toc = jQuery('#toc');
-	if (!tocTree.jstree("is_selected", "#<%=nodeID%>")) { 
-		tocTree.jstree("deselect_all");  
-		tocTree.jstree("select_node", "#<%=nodeID%>"); 
-	}			
+	// A little trick to give jstree time to load without going into complexities of listening for load event. 
+	setTimeout(
+		function() {
+			var toc = jQuery('#toc');
+			if (!toc.jstree("is_selected", "#<%=nodeID%>")) {	
+				toc.jstree("deselect_all");  
+				toc.jstree("select_node", "#<%=nodeID%>", true, false);
+			}
+		}, 200); 
 });

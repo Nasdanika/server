@@ -5,8 +5,10 @@ require(['jquery', 'knockout', '<%=argument%>/toc.js', '<%=argument%>/resources/
 		'core': { 
 			'data': toc.tree 
 			}
-	}).bind("select_node.jstree", function (e, data) {
-		window.location = toc.idMap[data.node.id];
+	}).bind("changed.jstree", function (e, data) {
+		if (data.selected.length>0) {
+			window.location = toc.idMap[data.selected[0]];
+		}
 	});
 
 	var leftOverlay = jQuery("#left-overlay");
