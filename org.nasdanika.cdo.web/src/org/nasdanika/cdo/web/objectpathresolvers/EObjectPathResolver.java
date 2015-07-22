@@ -23,24 +23,15 @@ public class EObjectPathResolver implements ObjectPathResolver<EObject> {
 	@Override
 	public String resolve(EObject obj, ObjectPathResolver<Object> master, Context context) throws Exception {
 		if (obj instanceof CDOObject) {
-			CDOView view = ((CDOObject) obj).cdoView();
-			if (view!=null) {				
+			CDOObject cdoObj = (CDOObject) obj;
+			CDOView view = cdoObj.cdoView();
+			if (view!=null && cdoObj.cdoID()!=null && !cdoObj.cdoID().isTemporary()) {				
 				String viewPath = master.resolve(view, null, context);
 				if (viewPath!=null) {
 					StringBuilder builder = new StringBuilder(viewPath);
 					builder.append("/objects/");
-					CDOIDUtil.write(builder, ((CDOObject) obj).cdoID());
+					CDOIDUtil.write(builder, cdoObj.cdoID());
 					return builder.toString();
-				}
-			}
-		}
-		Resource res = obj.eResource();
-		if (res!=null) {
-			String resPath = master.resolve(res, master, context);
-			if (resPath!=null) {
-				String fragment = res.getURIFragment(obj);
-				if (fragment != null) {
-					return resPath+"/"+fragment;
 				}
 			}
 		}
@@ -60,6 +51,17 @@ public class EObjectPathResolver implements ObjectPathResolver<EObject> {
 				}
 				return ret;
 			}			
+		}
+		// Resource URI fragment
+		Resource res = obj.eResource();
+		if (res!=null) {
+			String resPath = master.resolve(res, master, context);
+			if (resPath!=null) {
+				String fragment = res.getURIFragment(obj);
+				if (fragment != null) {
+					return resPath+"/"+fragment;
+				}
+			}
 		}
 		return null;
 	}
