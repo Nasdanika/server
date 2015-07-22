@@ -883,8 +883,6 @@ public class DocRoute implements Route {
 			loadTimer = null;
 		}
 	}
-
-	private static LeftPanelModuleGenerator LEFT_PANEL_MODULE_GENERATOR = new LeftPanelModuleGenerator();
 	
 	@Override
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
@@ -894,9 +892,7 @@ public class DocRoute implements Route {
 			if (path.length==1) {
 				if (lock.readLock().tryLock(30, TimeUnit.SECONDS)) {
 					try {
-						if ("left-panel.js".equals(path[0])) {
-							return new ValueAction(LEFT_PANEL_MODULE_GENERATOR.generate(null));
-						} else if ("toc.js".equals(path[0])) {
+						if ("toc.js".equals(path[0])) {
 							final String hrefPrefix = "#router/doc-content/"+docRoutePath; 
 							final JSONObject idMap = new JSONObject();
 							tocRoot.accept(new TocNodeVisitor() {

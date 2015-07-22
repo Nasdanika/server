@@ -5,7 +5,7 @@
 	Object nodeID = ((Object[]) argument)[1];
 %>
 
-require(['<%=path%>/left-panel.js'], function(tocTreePromise) {
+require(['<%=path%>/resources/js/left-panel.js'], function(tocTreePromise) {
 	tocTreePromise.then(function(tocTree) {
 		if (!tocTree.jstree("is_selected", "#<%=nodeID%>")) {	
 			tocTree.jstree("deselect_all");  

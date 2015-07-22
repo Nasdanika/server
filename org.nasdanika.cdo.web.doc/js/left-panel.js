@@ -1,6 +1,4 @@
-<%@ jet package="org.nasdanika.cdo.web.doc" class="LeftPanelModuleGenerator" %>
-
-define(['jquery', 'knockout', 'q', './toc.js', './resources/jstree/jstree.js', 'domReady!'], function(jQuery, ko, q, toc, jstree, doc) {
+define(['jquery', 'knockout', 'q', './../../toc.js', './../jstree/jstree.js', 'domReady!'], function(jQuery, ko, q, toc, jstree, doc) {
 	var jToc = jQuery('#toc');
 	
 	var treeDeferred = q.defer();

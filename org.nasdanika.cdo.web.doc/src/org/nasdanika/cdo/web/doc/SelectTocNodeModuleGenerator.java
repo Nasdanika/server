@@ -14,7 +14,7 @@ public class SelectTocNodeModuleGenerator
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
   protected final String TEXT_1 = "";
   protected final String TEXT_2 = NL + NL + "require(['";
-  protected final String TEXT_3 = "/left-panel.js'], function(tocTreePromise) {" + NL + "\ttocTreePromise.then(function(tocTree) {" + NL + "\t\tif (!tocTree.jstree(\"is_selected\", \"#";
+  protected final String TEXT_3 = "/resources/js/left-panel.js'], function(tocTreePromise) {" + NL + "\ttocTreePromise.then(function(tocTree) {" + NL + "\t\tif (!tocTree.jstree(\"is_selected\", \"#";
   protected final String TEXT_4 = "\")) {\t" + NL + "\t\t\ttocTree.jstree(\"deselect_all\");  " + NL + "\t\t\ttocTree.jstree(\"select_node\", \"#";
   protected final String TEXT_5 = "\", true, false);" + NL + "\t\t}" + NL + "\t}); " + NL + "});";
   protected final String TEXT_6 = NL;
