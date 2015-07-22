@@ -1,11 +1,19 @@
-<%@ jet package="org.nasdanika.cdo.web.doc" class="SearchModuleGenerator" %>
+<%@ jet package="org.nasdanika.cdo.web.doc" class="LeftPanelModuleGenerator" %>
 
-require(['jquery', 'knockout', '<%=argument%>/toc.js', '<%=argument%>/resources/jstree/jstree.js', 'domReady!'], function(jQuery, ko, toc, jstree, doc) {
-	jQuery('#toc').jstree({
+define(['jquery', 'knockout', 'q', './toc.js', './resources/jstree/jstree.js', 'domReady!'], function(jQuery, ko, q, toc, jstree, doc) {
+	var jToc = jQuery('#toc');
+	
+	var treeDeferred = q.defer();
+	
+	jToc.bind("ready.jstree", function(e, data) {
+		treeDeferred.resolve(jToc);	
+	});
+	
+	jToc.jstree({
 		'core': { 
 			'data': toc.tree 
 			}
-	}).bind("changed.jstree", function (e, data) {
+	}).bind("changed.jstree", function(e, data) {
 		if (data.selected.length>0) {
 			window.location = toc.idMap[data.selected[0]];
 		}
@@ -55,4 +63,5 @@ require(['jquery', 'knockout', '<%=argument%>/toc.js', '<%=argument%>/resources/
 		
 	}, doc.getElementById('searchContainer'));
 		
+	return treeDeferred.promise;	
 });

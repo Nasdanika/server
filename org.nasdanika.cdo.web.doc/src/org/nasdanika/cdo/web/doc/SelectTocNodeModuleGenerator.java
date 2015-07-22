@@ -13,10 +13,10 @@ public class SelectTocNodeModuleGenerator
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
   protected final String TEXT_1 = "";
-  protected final String TEXT_2 = NL + NL + "require(['jquery', '";
-  protected final String TEXT_3 = "/resources/jstree/jstree.js', 'domReady!'], function(jQuery, jstree, doc) {" + NL + "\t// A little trick to give jstree time to load without going into complexities of listening for load event. " + NL + "\tsetTimeout(" + NL + "\t\tfunction() {" + NL + "\t\t\tvar toc = jQuery('#toc');" + NL + "\t\t\tif (!toc.jstree(\"is_selected\", \"#";
-  protected final String TEXT_4 = "\")) {\t" + NL + "\t\t\t\ttoc.jstree(\"deselect_all\");  " + NL + "\t\t\t\ttoc.jstree(\"select_node\", \"#";
-  protected final String TEXT_5 = "\", true, false);" + NL + "\t\t\t}" + NL + "\t\t}, 200); " + NL + "});";
+  protected final String TEXT_2 = NL + NL + "require(['";
+  protected final String TEXT_3 = "/left-panel.js'], function(tocTreePromise) {" + NL + "\ttocTreePromise.then(function(tocTree) {" + NL + "\t\tif (!tocTree.jstree(\"is_selected\", \"#";
+  protected final String TEXT_4 = "\")) {\t" + NL + "\t\t\ttocTree.jstree(\"deselect_all\");  " + NL + "\t\t\ttocTree.jstree(\"select_node\", \"#";
+  protected final String TEXT_5 = "\", true, false);" + NL + "\t\t}" + NL + "\t}); " + NL + "});";
   protected final String TEXT_6 = NL;
 
   public String generate(Object argument)

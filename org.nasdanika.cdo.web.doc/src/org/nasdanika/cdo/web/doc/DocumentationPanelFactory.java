@@ -75,7 +75,7 @@ public class DocumentationPanelFactory {
 		Tag searchResults = htmlFactory.tag(TagName.ol, searchResult).koDataBind("foreach", "results");
 		Tag searchContainer = htmlFactory.div(searchForm, searchResultError, searchResults).id("search-container");
 		
-		Tag searchModule = htmlFactory.tag(TagName.script, new SearchModuleGenerator().generate(docRoutePath));
+		Tag searchModule = htmlFactory.tag(TagName.script, "require(['"+docRoutePath+"/left-panel.js'], function(tocTree) { /* NOP */ })");
 		leftTabs.item(htmlFactory.glyphicon(Glyphicon.search)+"&nbsp;Search", searchContainer, searchModule);
 		return leftTabs;
 	}
