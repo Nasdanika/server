@@ -2,7 +2,9 @@ package org.nasdanika.cdo.web.doc;
 
 import static org.pegdown.FastEncoder.encode;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
+import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo.Registry;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.core.CoreUtil;
@@ -17,6 +19,7 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 
 	private URLRewriter urlRewriter;
 	private WikiLinkProcessor wikiLinkProcessor;
+	private Registry linkRegistry;
 
 	public MarkdownLinkRenderer(
 			Renderer.Registry rendererRegistry, 
@@ -38,46 +41,70 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 				resolverRegistry, 
 				linkRegistry, 
 				urlRewriter);
+		
+		this.linkRegistry = linkRegistry;
+	}
+	
+	protected Rendering createRendering(String href, String text, String title) {
+		LinkInfo linkInfo = linkRegistry==null || href==null ? null : linkRegistry.getLinkInfo(href);
+		if (CoreUtil.isBlank(text)) {
+			if (linkInfo!=null) {
+				text = linkInfo.getLabel(); 
+			}
+			if (CoreUtil.isBlank(text)) {
+				text = href;
+				int slashIdx = text.lastIndexOf('/');
+				if (slashIdx!=-1) {
+					text = text.substring(slashIdx+1);				
+				}
+				int dotIdx = text.lastIndexOf('.');
+				if (dotIdx!=-1) {
+					text = text.substring(0, dotIdx);
+				}
+				text = text.replace('_', ' ');				
+			}
+		}
+
+		if (urlRewriter!=null && href!=null) {
+			href = urlRewriter.rewrite(href);
+		}
+		
+		boolean isMissing = href==null || (linkInfo!=null && linkInfo.isMissing());
+		String iconTag = linkInfo==null ? null : linkInfo.getIconTag();
+		String linkContent = (CoreUtil.isBlank(iconTag) ? "" : iconTag+" ") + StringEscapeUtils.escapeHtml4(text);
+		
+		Rendering ret = new Rendering(href==null ? "#" : href, linkContent);
+		
+		if (isMissing) {
+			ret.withAttribute("style", "color:red");
+		}
+		
+		String target = getLinkTarget(href);
+        if (!CoreUtil.isBlank(target)) {
+        	ret.withAttribute("target", target);
+        }
+        
+        if (!CoreUtil.isBlank(title)) {
+        	ret.withAttribute("title", encode(title));
+        }
+		
+        return ret;		
 	}
 		
     public Rendering render(ExpLinkNode node, String text) {
-        Rendering rendering = new Rendering(urlRewriter.rewrite(node.url), text);
-        Rendering ret = CoreUtil.isBlank(node.title) ? rendering : rendering.withAttribute("title", encode(node.title));
-        String target = getLinkTarget(node.url);
-        if (!CoreUtil.isBlank(target)) {
-        	ret.withAttribute("target", target);
-        }
-		return ret;
+    	return createRendering(node.url, text, node.title);
     }
 
     public Rendering render(ExpImageNode node, String text) {
-        Rendering rendering = new Rendering(urlRewriter.rewrite(node.url), text);
-        Rendering ret = CoreUtil.isBlank(node.title) ? rendering : rendering.withAttribute("title", encode(node.title));
-        String target = getLinkTarget(node.url);
-        if (!CoreUtil.isBlank(target)) {
-        	ret.withAttribute("target", target);
-        }
-		return ret;
+    	return createRendering(node.url, text, node.title);
     }
 
     public Rendering render(RefLinkNode node, String url, String title, String text) {
-        Rendering rendering = new Rendering(urlRewriter.rewrite(url), text);
-        Rendering ret = CoreUtil.isBlank(title) ? rendering : rendering.withAttribute("title", encode(title));
-        String target = getLinkTarget(url);
-        if (!CoreUtil.isBlank(target)) {
-        	ret.withAttribute("target", target);
-        }
-		return ret;
+    	return createRendering(url, text, title);
     }
 
     public Rendering render(RefImageNode node, String url, String title, String alt) {
-        Rendering rendering = new Rendering(urlRewriter.rewrite(url), alt);
-        Rendering ret = CoreUtil.isBlank(title) ? rendering : rendering.withAttribute("title", encode(title));
-        String target = getLinkTarget(url);
-        if (!CoreUtil.isBlank(target)) {
-        	ret.withAttribute("target", target);
-        }
-		return ret;
+    	return createRendering(url, alt, title);
     }
 
     public Rendering render(WikiLinkNode node) {

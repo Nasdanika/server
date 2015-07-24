@@ -802,19 +802,27 @@ public class DocRoute implements Route {
 		if (path.startsWith(PACKAGES_GLOBAL_PATH)) {
 			String[] subPath = path.substring(PACKAGES_GLOBAL_PATH.length()).split("/");
 			EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
+			if (ePackage==null) {
+				return null;
+			}
 			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
 				return getEPackageContent(baseURL, urlPrefix, ePackage, docRoutePath+"/packages/global");
 			}
-			return getEClassifierContent(baseURL, urlPrefix, ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");
+			EClassifier eClassifier = ePackage.getEClassifier(subPath[1]);
+			return eClassifier==null ? null : getEClassifierContent(baseURL, urlPrefix, eClassifier, docRoutePath+"/packages/global");
 		} 
 		
 		if (path.startsWith(PACKAGES_SESSION_PATH)) {
 			String[] subPath = path.substring(PACKAGES_SESSION_PATH.length()).split("/");
 			EPackage ePackage = cdoSessionProvider.getSession().getPackageRegistry().getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
+			if (ePackage==null) {
+				return null;
+			}
 			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
 				return getEPackageContent(baseURL, urlPrefix, ePackage, docRoutePath+"/packages/session");
 			}
-			return getEClassifierContent(baseURL, urlPrefix, ePackage.getEClassifier(subPath[1]), docRoutePath+"/packages/global");				
+			EClassifier eClassifier = ePackage.getEClassifier(subPath[1]);
+			return eClassifier==null ? null : getEClassifierContent(baseURL, urlPrefix, eClassifier, docRoutePath+"/packages/global");				
 		} 
 		
 		if (path.startsWith(BUNDLE_PATH)) {
