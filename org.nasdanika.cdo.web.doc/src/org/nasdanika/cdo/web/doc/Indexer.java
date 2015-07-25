@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -21,7 +22,7 @@ public class Indexer {
 	
 //	private static final String INTERNAL_LINK_PREFIX = "#router/doc-content/";
 	private Set<String> processedPaths = new HashSet<>();
-	private Set<String> missingPaths = new HashSet<>();
+	private Set<String> missingPaths = new TreeSet<>();
 	private Map<String, List<String>> linkMap = new HashMap<>();
 	private IndexWriter indexWriter;
 	private SearchableContentProvider searchableContentProvider;

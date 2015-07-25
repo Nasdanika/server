@@ -562,7 +562,7 @@ public class DocRoute implements Route {
 					public ContentEntry get(String path) {				
 						if (path.startsWith(TOC_PATH)) {
 							final TocNode tocNode = tocRoot.find(path);
-							if (tocNode!=null && !CoreUtil.isBlank(tocNode.getContent())) {
+							if (tocNode!=null) {
 								return new ContentEntry() {
 									
 									@Override
@@ -572,44 +572,40 @@ public class DocRoute implements Route {
 									
 									@Override
 									public String getContent() {
-										return tocNode.getContent();
+										return CoreUtil.isBlank(tocNode.getContent()) ? "" : tocNode.getContent();
 									}
 								};
-							}
-							return null; // We don't index automatically generated TOC pages
-						}
-						
-						if (path.startsWith(PACKAGES_GLOBAL_PATH) || path.startsWith(PACKAGES_SESSION_PATH)) {
-							// Always HTML String for packages if not null.
-							try {
-								final Object content = DocRoute.this.getContent(new URL(new URL(baseURL), path), urlPrefix, path);
-								if (content instanceof String) { 
-									return new ContentEntry() {
-	
-										@Override
-										public boolean isHTML() {
-											return true;
-										}
-										
-										@Override
-										public String getContent() {
-											return (String) content;
-										}
-									};
-								}
-							} catch (Exception de) {
-								de.printStackTrace(); // TODO - proper logging.
 							}
 							return null;
 						}
 						
-						int idx = path.lastIndexOf('/');
-						String fn = idx==-1 ? path : path.substring(idx+1);
-						String contentType = mimeTypesMap.getContentType(fn);
-						if (contentType!=null) {
-							if (MIME_TYPE_HTML.equals(contentType)) {
-								try {
-									final String content = DocRoute.stringify(DocRoute.this.getContent(new URL(new URL(baseURL), path), urlPrefix, path));
+						try {
+							URL theBaseURL = new URL(baseURL);
+							if (path.startsWith(PACKAGES_GLOBAL_PATH) || path.startsWith(PACKAGES_SESSION_PATH)) {
+								// Always HTML String for packages if not null.
+									final Object content = DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path);
+									if (content instanceof String) { 
+										return new ContentEntry() {
+		
+											@Override
+											public boolean isHTML() {
+												return true;
+											}
+											
+											@Override
+											public String getContent() {
+												return (String) content;
+											}
+										};
+									}
+							}
+							
+							int idx = path.lastIndexOf('/');
+							String fn = idx==-1 ? path : path.substring(idx+1);
+							String contentType = mimeTypesMap.getContentType(fn);
+							if (contentType!=null) {
+								if (MIME_TYPE_HTML.equals(contentType)) {
+									final String content = DocRoute.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
 									return new ContentEntry() {
 	
 										@Override
@@ -622,35 +618,31 @@ public class DocRoute implements Route {
 											return content;
 										}
 									};
-								} catch (Exception de) {
-									de.printStackTrace(); 
-									return null;
+								}
+								
+								Map<String, ContentFilter> tm = contentFilters.get(contentType);
+								ContentFilter cf = tm==null ? null : tm.get(MIME_TYPE_HTML);
+								if (cf!=null) {
+									String content = DocRoute.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+									if (content!=null) {
+										final String htmlContent = String.valueOf(cf.filter(content, createContentFilterEnvironment(new URL(urlPrefix+docRoutePath+path), urlPrefix)));
+										return new ContentEntry() {
+		
+											@Override
+											public boolean isHTML() {
+												return true;
+											}
+											
+											@Override
+											public String getContent() {
+												return htmlContent;
+											}
+										};
+									}
 								}
 							}
-							
-							Map<String, ContentFilter> tm = contentFilters.get(contentType);
-							ContentFilter cf = tm==null ? null : tm.get(MIME_TYPE_HTML);
-							if (cf!=null) {
-								try {
-									String content = DocRoute.stringify(DocRoute.this.getContent(new URL(new URL(baseURL), path), urlPrefix, path));
-									final String htmlContent = String.valueOf(cf.filter(content, createContentFilterEnvironment(new URL(urlPrefix+docRoutePath+path), urlPrefix)));
-									return new ContentEntry() {
-	
-										@Override
-										public boolean isHTML() {
-											return true;
-										}
-										
-										@Override
-										public String getContent() {
-											return htmlContent;
-										}
-									};
-								} catch (Exception de) {
-									de.printStackTrace(); 
-									return null;
-								}
-							}
+						} catch (Exception de) {
+							de.printStackTrace(); 
 						}
 						
 						return null;
@@ -689,6 +681,12 @@ public class DocRoute implements Route {
 			
 	        searchIndexReader = DirectoryReader.open(searchIndexDirectory);
 	        System.out.println("Indexed "+searchIndexReader.numDocs()+" pages");
+			if (!missingPaths.isEmpty()) {
+				System.out.println("Missing paths:");
+				for (String mp: missingPaths) {
+					System.out.println("\t"+mp);
+				}
+			}
 	        indexSearcher = new IndexSearcher(searchIndexReader);
 		} finally {
 			lock.writeLock().unlock();
@@ -1131,27 +1129,47 @@ public class DocRoute implements Route {
 					String absURL = new URL(baseURL, url).toString();
 					if (absURL.startsWith(absDocRoutePath)) {
 						String relPath = absURL.substring(absDocRoutePath.length());
-						final TocNode toc = tocRoot.find(relPath);
-						if (toc!=null) {
+						final boolean isMissing = missingPaths!=null && missingPaths.contains(relPath);
+						final TocNode toc = tocRoot.find(relPath);						
+						if (toc==null) {
 							return new LinkInfo() {
 
 								@Override
 								public String getIconTag() {
-									return CoreUtil.isBlank(toc.getIcon()) ? "" : "<img src=\""+docRoutePath+toc.getIcon()+"\"/>";
+									return null;
 								}
 
 								@Override
 								public String getLabel() {
-									return toc.getText();
+									return null;
 								}
 
 								@Override
 								public boolean isMissing() {
-									return false;
+									return isMissing;
 								}
 								
 							};
-						}
+						}						
+						
+						return new LinkInfo() {
+
+							@Override
+							public String getIconTag() {
+								return CoreUtil.isBlank(toc.getIcon()) ? "" : "<img src=\""+docRoutePath+toc.getIcon()+"\"/>";
+							}
+
+							@Override
+							public String getLabel() {
+								return toc.getText();
+							}
+
+							@Override
+							public boolean isMissing() {
+								return isMissing;
+							}
+							
+						};
 					}
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
