@@ -4,10 +4,13 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.nasdanika.cdo.web.doc.DocRoute.ExtensionEntry;
+import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.Topic;
 
 public class TocNodeFactory {
 	
@@ -19,6 +22,7 @@ public class TocNodeFactory {
 	private String linkTo;		
 	private List<String> links = new ArrayList<>();
 	private List<TocNodeFactory> children = new ArrayList<>();
+	private Topic topic;
 	
 	public TocNodeFactory(
 			String docBaseURL,
@@ -71,32 +75,39 @@ public class TocNodeFactory {
 				icon=icon.substring(docBaseURL.length());
 			}
 		}
-		location = iConfigurationElement.getAttribute("location");
-		if (location==null) {
-			IConfigurationElement[] contentElements = iConfigurationElement.getChildren("markdown");
-			if (contentElements.length==0) {
-				contentElements = iConfigurationElement.getChildren("text");
+		
+		if (iConfigurationElement.getAttribute("class")==null) {
+			location = iConfigurationElement.getAttribute("location");
+			if (location==null) {
+				IConfigurationElement[] contentElements = iConfigurationElement.getChildren("markdown");
 				if (contentElements.length==0) {
-					contentElements = iConfigurationElement.getChildren("html");
-					if (contentElements.length!=0) {
-						content = contentElements[0].getValue();
+					contentElements = iConfigurationElement.getChildren("text");
+					if (contentElements.length==0) {
+						contentElements = iConfigurationElement.getChildren("html");
+						if (contentElements.length!=0) {
+							content = contentElements[0].getValue();
+						}
+					} else {
+						content = (String) textFilter.filter(contentElements[0].getValue(), contentFilterEnv);
 					}
 				} else {
-					content = (String) textFilter.filter(contentElements[0].getValue(), contentFilterEnv);
+					content = (String) markdownFilter.filter(contentElements[0].getValue(), contentFilterEnv);
 				}
 			} else {
-				content = (String) markdownFilter.filter(contentElements[0].getValue(), contentFilterEnv);
+				location = new URL(baseURL, location).toString();
+				if (location.startsWith(docBaseURL)) {
+					location = location.substring(docBaseURL.length());
+				}
 			}
 		} else {
-			location = new URL(baseURL, location).toString();
-			if (location.startsWith(docBaseURL)) {
-				location = location.substring(docBaseURL.length());
-			}
+			topic = CoreUtil.injectProperties(iConfigurationElement, (Topic) iConfigurationElement.createExecutableExtension("class"));
 		}
+		
 		linkTo = iConfigurationElement.getAttribute("linkTo");
 		for (IConfigurationElement link: iConfigurationElement.getChildren("link")) {
 			links.add(link.getAttribute("id"));
 		}
+		
 		for (IConfigurationElement child: iConfigurationElement.getChildren("topic")) {
 			children.add(new TocNodeFactory(
 					docBaseURL, 
@@ -113,10 +124,23 @@ public class TocNodeFactory {
 		TocNode node = parent;
 		if (!merge) {
 			node = parent.createChild(name, location, icon);
-			if (content!=null) {
+			if (topic!=null) {
+				node.setContent(topic.getContent());
+			} else if (content!=null) {
 				node.setContent(content);
 			}
 		}
+		
+		if (topic!=null) {
+			Map<String, Topic> subTopics = topic.getSubTopics();
+			if (subTopics!=null && !subTopics.isEmpty()) {
+				doSort = !children.isEmpty();
+				for (Entry<String, Topic> ste: subTopics.entrySet()) {
+					createTocNode(node, ste.getKey(), ste.getValue());
+				}
+			}
+		}
+		
 		for (TocNodeFactory child: children) {
 			child.createTocNode(node, tocNodeFactories, false);
 		}
@@ -136,6 +160,18 @@ public class TocNodeFactory {
 		if (doSort) {
 			node.sort(false);
 		}
+	}
+	
+	private void createTocNode(TocNode parent, String name, Topic topic) {
+		TocNode node = parent.createChild(name, null, topic.getIcon());					
+		node.setContent(topic.getContent());
+		
+		Map<String, Topic> subTopics = topic.getSubTopics();
+		if (subTopics!=null && !subTopics.isEmpty()) {
+			for (Entry<String, Topic> ste: subTopics.entrySet()) {
+				createTocNode(node, ste.getKey(), ste.getValue());
+			}
+		}		
 	}
 	
 	private List<TocNodeFactory> findLinked(String linkTo) {

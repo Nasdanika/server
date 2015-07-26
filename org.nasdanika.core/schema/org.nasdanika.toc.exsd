@@ -47,6 +47,25 @@
       </complexType>
    </element>
 
+   <element name="property">
+      <complexType>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="value" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
    <element name="link">
       <annotation>
          <documentation>
@@ -99,6 +118,7 @@
             <sequence>
                <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
                <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
          </sequence>
          <attribute name="name" type="string" use="required">
@@ -159,6 +179,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Provides dynamic content and sub-topics. Takes precedence over static content - html, markdown, text or location. If both dynamic and static sub-topics are present, they get sorted alphabetically.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.core.Topic"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -173,6 +203,7 @@
             <sequence>
                <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
                <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
             </sequence>
          </sequence>
          <attribute name="name" type="string" use="required">
@@ -210,6 +241,16 @@
                <documentation>
                   Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
                </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Provides dynamic content and sub-topics. Takes precedence over static content - html, markdown, text or location. If both dynamic and static sub-topics are present, they get sorted alphabetically.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.core.Topic"/>
+               </appinfo>
             </annotation>
          </attribute>
       </complexType>
