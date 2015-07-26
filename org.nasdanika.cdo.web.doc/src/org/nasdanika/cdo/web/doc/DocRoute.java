@@ -72,8 +72,12 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
@@ -85,7 +89,9 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
+import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
+import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route {
 		
@@ -115,11 +121,15 @@ public class DocRoute implements Route {
 	private long reloadDelay = 30000; // Wait 30 seconds before reloading index on extension tracker notifications. 
 	private Timer loadTimer;
 	
-	private Map<String, Map<String, ContentFilter>> contentFilters = new ConcurrentHashMap<>();
-	private Map<String, EAnnotationRenderer> eAnnotationRenderers = new ConcurrentHashMap<>();
+	private Map<String, Map<String, ExtensionEntry<ContentFilter>>> contentFilters = new ConcurrentHashMap<>();
+	private Map<String, ExtensionEntry<EAnnotationRenderer>> eAnnotationRenderers = new ConcurrentHashMap<>();
 	
 	public Map<String, EAnnotationRenderer> geteAnnotationRenderers() {
-		return eAnnotationRenderers;
+		Map<String, EAnnotationRenderer> ret = new ConcurrentHashMap<>();
+		for (Entry<String, ExtensionEntry<EAnnotationRenderer>> e: eAnnotationRenderers.entrySet()) {
+			ret.put(e.getKey(), e.getValue().extension);
+		}
+		return ret;
 	}	
 	public void setReloadDelay(long reloadDelay) {
 		this.reloadDelay = reloadDelay;
@@ -143,8 +153,24 @@ public class DocRoute implements Route {
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	private ExtensionTracker extensionTracker;
 	
-	private Map<String, WikiLinkProcessor.Renderer> wikiLinkRendererMap = new ConcurrentHashMap<>();
-	private Map<String, WikiLinkResolver> wikiLinkResolverMap = new ConcurrentHashMap<>();
+	static class ExtensionEntry<T> {
+		
+		T extension;
+		String description;
+		
+		ExtensionEntry(T extension, IConfigurationElement ce) {
+			this.extension = extension;
+			StringBuilder descriptionBuilder = new StringBuilder();
+			for (IConfigurationElement de: ce.getChildren("description")) {
+				descriptionBuilder.append(de.getValue());
+			}
+			this.description = descriptionBuilder.toString();
+		}						
+		
+	}
+	
+	private Map<String, ExtensionEntry<WikiLinkProcessor.Renderer>> wikiLinkRendererMap = new ConcurrentHashMap<>();
+	private Map<String, ExtensionEntry<WikiLinkResolver>> wikiLinkResolverMap = new ConcurrentHashMap<>();
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 	
 	static class EClassKey implements Comparable<EClassKey> {
@@ -285,7 +311,7 @@ public class DocRoute implements Route {
 	    				String rendererName = ce.getAttribute("name");
 						if (!wikiLinkRendererMap.containsKey(rendererName)) {
 	    					try {
-								wikiLinkRendererMap.put(rendererName, (Renderer) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
+								wikiLinkRendererMap.put(rendererName, new ExtensionEntry<Renderer>((Renderer) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
 								tracker.registerObject(extension, WIKI_LINK_RENDERER+":"+rendererName, IExtensionTracker.REF_WEAK);
 							} catch (Exception e) {
 								e.printStackTrace();
@@ -296,7 +322,7 @@ public class DocRoute implements Route {
 	    				String resolverName = ce.getAttribute("name");
 						if (!wikiLinkResolverMap.containsKey(resolverName)) {
 	    					try {
-								wikiLinkResolverMap.put(resolverName, (WikiLinkResolver) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
+								wikiLinkResolverMap.put(resolverName, new ExtensionEntry<WikiLinkResolver>((WikiLinkResolver) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
 								tracker.registerObject(extension, WIKI_LINK_RESOLVER+":"+resolverName, IExtensionTracker.REF_WEAK);
 							} catch (Exception e) {
 								// TODO - proper logging
@@ -308,7 +334,7 @@ public class DocRoute implements Route {
 	    				String source = ce.getAttribute("source");
 						if (!eAnnotationRenderers.containsKey(source)) {
 	    					try {
-								eAnnotationRenderers.put(source, (EAnnotationRenderer) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")));
+								eAnnotationRenderers.put(source, new ExtensionEntry<EAnnotationRenderer>((EAnnotationRenderer) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
 								tracker.registerObject(extension, EANNOTATION_RENDERER+":"+source, IExtensionTracker.REF_WEAK);
 							} catch (Exception e) {
 								// TODO - proper logging
@@ -318,7 +344,7 @@ public class DocRoute implements Route {
 						break;
     				case CONTENT_FILTER: 
 	    				String sourceType = ce.getAttribute("source-type");
-	    				Map<String, ContentFilter> targetMap = contentFilters.get(sourceType);
+	    				Map<String, ExtensionEntry<ContentFilter>> targetMap = contentFilters.get(sourceType);
 	    				if (targetMap==null) {
 	    					targetMap = new ConcurrentHashMap<>();
 	    					contentFilters.put(sourceType, targetMap);
@@ -327,7 +353,7 @@ public class DocRoute implements Route {
 						if (!targetMap.containsKey(targetType)) {
 	    					try {
 								ContentFilter contentFilter = (ContentFilter) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class"));
-								targetMap.put(targetType, contentFilter);
+								targetMap.put(targetType, new ExtensionEntry<ContentFilter>(contentFilter, ce));
 								tracker.registerObject(extension, contentFilter, IExtensionTracker.REF_WEAK);
 							} catch (Exception e) {
 								// TODO - proper logging
@@ -355,8 +381,8 @@ public class DocRoute implements Route {
 							eAnnotationRenderers.remove(((String) obj).substring(EANNOTATION_RENDERER.length()+1));
 						} 						
 					} else if (obj instanceof ContentFilter) {
-						for (Map<String, ContentFilter> tm: contentFilters.values()) {
-							Iterator<ContentFilter> cfit = tm.values().iterator();
+						for (Map<String, ExtensionEntry<ContentFilter>> tm: contentFilters.values()) {
+							Iterator<ExtensionEntry<ContentFilter>> cfit = tm.values().iterator();
 							while (cfit.hasNext()) {
 								if (obj == cfit.next()) {
 									cfit.remove();
@@ -620,8 +646,9 @@ public class DocRoute implements Route {
 									};
 								}
 								
-								Map<String, ContentFilter> tm = contentFilters.get(contentType);
-								ContentFilter cf = tm==null ? null : tm.get(MIME_TYPE_HTML);
+								Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
+								ExtensionEntry<ContentFilter> extensionEntry = tm==null ? null : tm.get(MIME_TYPE_HTML);
+								ContentFilter cf = extensionEntry==null ? null : extensionEntry.extension;
 								if (cf!=null) {
 									String content = DocRoute.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
 									if (content!=null) {
@@ -829,6 +856,12 @@ public class DocRoute implements Route {
 				return null;
 			}
 			String bundleId = path.substring(BUNDLE_PATH.length(), idx);
+			
+			// A hack to document extensions, need a better way in the future
+			if ("org.nasdanika.cdo.web.doc".equals(bundleId) && "extensions.html".equals(path.substring(idx+1))) {
+				return generateExtensionsDocumentation(baseURL, urlPrefix, path);
+			}			
+			
 			for (Bundle targetBundle: bundleContext.getBundles()) {
 				if (bundleId.equals(targetBundle.getSymbolicName())) {
 					return targetBundle.getResource(path.substring(idx+1));
@@ -951,6 +984,8 @@ public class DocRoute implements Route {
 					System.out.println("Could not perform action due to toc and index being rebuilt");
 					return Action.INTERNAL_SERVER_ERROR; // TODO - better info if reloading takes too long
 				}
+				
+				return Action.NOT_FOUND;
 			} 
 									
 			String requestURL = context.getRequest().getRequestURL().toString();
@@ -963,11 +998,11 @@ public class DocRoute implements Route {
 				if (path.length>0) {
 					String contentType = "packages".equals(path[0]) ? "text/html" : mimeTypesMap.getContentType(path[path.length-1]);
 					if (contentType!=null) {
-						Map<String, ContentFilter> tm = contentFilters.get(contentType);
+						Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
 						if (tm!=null) {
-							for (Entry<String, ContentFilter> tme: tm.entrySet()) {
+							for (Entry<String, ExtensionEntry<ContentFilter>> tme: tm.entrySet()) {
 								context.getResponse().setContentType(tme.getKey());
-								Object filteredContent = tme.getValue().filter(content, createContentFilterEnvironment(new URL(requestURL), urlPrefix));
+								Object filteredContent = tme.getValue().extension.filter(content, createContentFilterEnvironment(new URL(requestURL), urlPrefix));
 								if ("text/html".equals(tme.getKey()) && filteredContent instanceof String) {
 									TocNode toc = tocRoot.find(pathStr);
 									if (toc!=null) {
@@ -1030,6 +1065,106 @@ public class DocRoute implements Route {
 		return Action.NOT_FOUND;
 	}
 	
+	private String generateExtensionsDocumentation(URL baseURL, String urlPrefix, String path) {		
+		try {
+			Tabs ret = htmlFactory.tabs();
+			PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
+			LinkRenderer mlr = createMarkdownLinkRenderer(new URL(baseURL, path), urlPrefix);
+			if (!wikiLinkResolverMap.isEmpty()) {
+				Table resolverTable = htmlFactory.table().bordered();
+				Row hRow = resolverTable.row().style(Style.INFO);
+				hRow.header("Name");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				for (String rName: new TreeSet<String>(wikiLinkResolverMap.keySet())) {
+					Row rRow = resolverTable.row();
+					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
+					ExtensionEntry<WikiLinkResolver> extensionEntry = wikiLinkResolverMap.get(rName);
+					rRow.cell(pegDownProcessor.markdownToHtml(extensionEntry.description, mlr));
+					if (extensionEntry.extension instanceof ConfigurableExtension) {
+						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
+					} else {
+						rRow.cell("");
+					}
+				}
+				ret.item("Wiki Link Resolvers", resolverTable);
+			}
+			if (!wikiLinkRendererMap.isEmpty()) {
+				Table rendererTable = htmlFactory.table().bordered();
+				Row hRow = rendererTable.row().style(Style.INFO);
+				hRow.header("Name");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				for (String rName: new TreeSet<String>(wikiLinkRendererMap.keySet())) {
+					Row rRow = rendererTable.row();
+					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
+					ExtensionEntry<Renderer> extensionEntry = wikiLinkRendererMap.get(rName);
+					rRow.cell(pegDownProcessor.markdownToHtml(extensionEntry.description, mlr));
+					if (extensionEntry.extension instanceof ConfigurableExtension) {
+						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
+					} else {
+						rRow.cell("");
+					}
+				}
+				ret.item("Wiki Link Renderers", rendererTable);				
+			}
+			if (!contentFilters.isEmpty()) {
+				Table contentFiltersTable = htmlFactory.table().bordered();
+				Row hRow = contentFiltersTable.row().style(Style.INFO);
+				hRow.header("From");
+				hRow.header("To");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				for (String fromType: new TreeSet<String>(contentFilters.keySet())) {
+					Row filterRow = contentFiltersTable.row();
+					Map<String, ExtensionEntry<ContentFilter>> toFilters = contentFilters.get(fromType);
+					filterRow.cell(StringEscapeUtils.escapeHtml4(fromType)).rowspan(toFilters.size());
+					boolean isFirst = true;
+					for (String toType: new TreeSet<String>(toFilters.keySet())) {
+						if (!isFirst) {
+							filterRow = contentFiltersTable.row();
+						}
+						filterRow.cell(toType);
+						ExtensionEntry<ContentFilter> extensionEntry = toFilters.get(toType);
+						filterRow.cell(pegDownProcessor.markdownToHtml(extensionEntry.description, mlr));
+						if (extensionEntry.extension instanceof ConfigurableExtension) {
+							filterRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
+						} else {
+							filterRow.cell("");
+						}						
+						isFirst = false;
+					}
+				}
+				ret.item("Content Filters", contentFiltersTable);				
+			}
+			
+			if (!eAnnotationRenderers.isEmpty()) {
+				Table rendererTable = htmlFactory.table().bordered();
+				Row hRow = rendererTable.row().style(Style.INFO);
+				hRow.header("Name");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				for (String rName: new TreeSet<String>(eAnnotationRenderers.keySet())) {
+					Row rRow = rendererTable.row();
+					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
+					ExtensionEntry<EAnnotationRenderer> extensionEntry = eAnnotationRenderers.get(rName);
+					rRow.cell(pegDownProcessor.markdownToHtml(extensionEntry.description, mlr));
+					if (extensionEntry.extension instanceof ConfigurableExtension) {
+						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
+					} else {
+						rRow.cell("");
+					}
+				}
+				ret.item("Wiki Link Renderers", rendererTable);				
+			}
+					
+			return ret.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return e.toString();
+		}
+	}
+
 	private static HighlightModuleGenerator HIGHLIGHT_MODULE_GENERATOR = new HighlightModuleGenerator();
 	private static SelectTocNodeModuleGenerator SELECT_TOC_NODE_MODULE_GENERATOR = new SelectTocNodeModuleGenerator();
 	
@@ -1098,7 +1233,8 @@ public class DocRoute implements Route {
 
 			@Override
 			public Renderer getRenderer(String name) {
-				return wikiLinkRendererMap.get(name);
+				ExtensionEntry<Renderer> extensionEntry = wikiLinkRendererMap.get(name);
+				return extensionEntry==null ? null : extensionEntry.extension;
 			}
 			
 		};
@@ -1109,7 +1245,8 @@ public class DocRoute implements Route {
 			
 			@Override
 			public Resolver getResolver(String name) {
-				final WikiLinkResolver toWrap = wikiLinkResolverMap.get(name);
+				ExtensionEntry<WikiLinkResolver> resolverExtensionEntry = wikiLinkResolverMap.get(name);
+				final WikiLinkResolver toWrap = resolverExtensionEntry==null ? null : resolverExtensionEntry.extension;
 				return toWrap==null ? null : new Resolver() {
 
 					@Override
@@ -1198,7 +1335,7 @@ public class DocRoute implements Route {
 							String contentType = mimeTypesMap.getContentType(fn);
 							if (contentType!=null) {
 								if (!MIME_TYPE_HTML.equals(contentType)) {
-									Map<String, ContentFilter> tm = contentFilters.get(contentType);
+									Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
 									if (tm!=null && tm.containsKey(MIME_TYPE_HTML)) {
 										contentType = MIME_TYPE_HTML;
 									}

@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.nasdanika.cdo.web.doc.DocRoute.ExtensionEntry;
 
 public class TocNodeFactory {
 	
@@ -24,7 +25,7 @@ public class TocNodeFactory {
 			String docRoutePath,
 			Map<Object, Object> contentFilterEnv,
 			String contributorName,
-			Map<String, Map<String, ContentFilter>> contentFilters,
+			Map<String, Map<String, DocRoute.ExtensionEntry<ContentFilter>>> contentFilters,
 			IConfigurationElement iConfigurationElement) throws Exception {
 		
 		ContentFilter textFilter = new ContentFilter() {
@@ -36,9 +37,10 @@ public class TocNodeFactory {
 
 		};
 		
-		Map<String, ContentFilter> tm = contentFilters.get("text/plain");
+		Map<String, DocRoute.ExtensionEntry<ContentFilter>> tm = contentFilters.get("text/plain");
 		if (tm!=null) {
-			textFilter = tm.get("text/html");
+			ExtensionEntry<ContentFilter> ee = tm.get("text/html");
+			textFilter = ee==null ? null : ee.extension;
 		}
 		
 		ContentFilter markdownFilter = new ContentFilter() {
@@ -49,9 +51,11 @@ public class TocNodeFactory {
 			}
 
 		};
+		
 		tm = contentFilters.get("text/markdown");
 		if (tm!=null) {
-			markdownFilter = tm.get("text/html");
+			ExtensionEntry<ContentFilter> ee = tm.get("text/html");
+			markdownFilter = ee==null ? null : ee.extension;
 		}
 		
 		URL baseURL = new URL(docBaseURL+"/bundle/"+contributorName+"/");

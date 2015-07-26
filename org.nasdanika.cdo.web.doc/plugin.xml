@@ -7,90 +7,76 @@
       <wiki-link-renderer
             class="org.nasdanika.cdo.web.doc.LightboxWikiLinkRenderer"
             name="image">
-         <description>
+         <description><![CDATA[
             Renders a [lightbox](http://lokeshdhakar.com/projects/lightbox2/) image link. 
 
 Example:
 
 * ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` is rendered as [[image:https://github.com/Nasdanika/server/wiki/webtest.png]]
-         </description>
-         <description>
+         ]]></description>
+      </wiki-link-renderer>
+      <content-filter
+            class="org.nasdanika.cdo.web.doc.TextContentFilter"
+            source-type="text/plain"
+            target-type="text/html">
+            <description><![CDATA[
+	            Renders plain text as pre-formatted HTML text.
+            ]]></description>
+      </content-filter>
+      <content-filter
+            class="org.nasdanika.cdo.web.doc.MarkdownContentFilter"
+            source-type="text/markdown"
+            target-type="text/html">
+            <description><![CDATA[
             Renders [markdown](http://daringfireball.net/projects/markdown/) to HTML using [pegdown](https://github.com/sirthias/pegdown) and  [highlight.js](https://highlightjs.org/) for syntax highlighting. 
 
-Uses wiki link resolvers and renderers. Wiki link is a link enclosed in double brackets: ``[[renderer:resolver>
-         <description>
-            Resolves a package or classifier URL from the sesson registry. Format: ``[[session>EClassifier name@EPackage NS URI]]``. EClassifier name with @ can be omitted to address the package.
+Uses wiki link resolvers and renderers. Wiki link is a link enclosed in double brackets: ``[[renderer:resolver>location|text]]``. Renderer, resolver, and text are optional. Examples of wiki links:
 
-Examples:
-
-* ``[[session>EString@http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[session>EString@http://www.eclipse.org/emf/2002/Ecore]]
-* ``[[session>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[session>http://www.eclipse.org/emf/2002/Ecore]]
-         </description>
-         <description>
-            Resolves a package or classifier URL from the sesson registry. Format: ``[[global>
-         <description>
-            Resolves resource from a bundle. Format: ``[[bundle>resource path in bundle]]``. Example: ``[[bundle>
-         <description>
-            This resolver can be used in EClassifier documentation to reference classifiers from different packages in the same registry (session or global). Format: ``[[classifier>EClassifier name@EPackage NS URI]]``. Example: ``[[classifier>EString@http://www.eclipse.org/emf/2002/Ecore]]``. 
-
-EClassifiers in the same package can be referenced simply by their name, e.g. ``[[MyOtherClass]]`` or with ``classifier`` resolver, e.g. ``[[classifier>MyOtherClass]]``.
-         </description>org.nasdanika.cdo.web/doc/forms.md]]`` is rendered as [[bundle>org.nasdanika.cdo.web/doc/forms.md]].
-         </description>EClassifier name@EPackage NS URI]]``. EClassifier name with @ can be omitted to address the package.
-
-Examples:
-
-* ``[[global>EString@http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[global>EString@http://www.eclipse.org/emf/2002/Ecore]]
-* ``[[global>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[global>http://www.eclipse.org/emf/2002/Ecore]]
-         </description>
-         <description>
+* ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` - Uses ``image`` renderer.
+* ``[[javadoc>java.lang.String]]`` - Uses ``javadoc`` resolver.
+* ``[[image:bundle>org.nasdanika.webtest.hub/images/my-image.png]]`` - ``image`` renderer with ``bundle`` resolver.
+            
+            ]]></description>
+      </content-filter>
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.ECoreGlobalResolver"
+            name="global">
+            <description><![CDATA[
             Resolves a package or classifier URL from the global registry. Format: ``[[global>EClassifier name@EPackage NS URI]]``. EClassifier name with @ can be omitted to address the package.
 
 Examples:
 
 * ``[[global>EString@http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[global>EString@http://www.eclipse.org/emf/2002/Ecore]]
 * ``[[global>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[global>http://www.eclipse.org/emf/2002/Ecore]]
-         </description>location|text]]``. Renderer, resolver, and text are optional. Examples of wiki links:
-
-* ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` - Uses ``image`` renderer.
-* ``[[javadoc>java.lang.String]]`` - Uses ``javadoc`` resolver.
-* ``[[image:bundle>org.nasdanika.webtest.hub/images/my-image.png]]`` - ``image`` renderer with ``bundle`` resolver.
-         </description>
-         <description>
-            Renders plain text as pre-formatted HTML text.
-         </description>
-         <description>
-            Renders a [lightbox](http://lokeshdhakar.com/projects/lightbox2/) image link. 
-
-Example:
-
-* ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` ->[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]
-         </description>
-      </wiki-link-renderer>
-      <content-filter
-            class="org.nasdanika.cdo.web.doc.TextContentFilter"
-            source-type="text/plain"
-            target-type="text/html">
-      </content-filter>
-      <content-filter
-            class="org.nasdanika.cdo.web.doc.MarkdownContentFilter"
-            source-type="text/markdown"
-            target-type="text/html">
-      </content-filter>
-      <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.ECoreGlobalResolver"
-            name="global">
+            ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.ECoreSessionResolver"
             name="session">
+            <description><![CDATA[
+            Resolves a package or classifier URL from the session registry. Format: ``[[session>EClassifier name@EPackage NS URI]]``. EClassifier name with @ can be omitted to address the package.
+
+Examples:
+
+* ``[[session>EString@http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[session>EString@http://www.eclipse.org/emf/2002/Ecore]]
+* ``[[session>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[session>http://www.eclipse.org/emf/2002/Ecore]]
+            ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.BundleResolver"
             name="bundle">
+            <description><![CDATA[
+            Resolves resource from a bundle. Format: ``[[bundle>resource path in bundle]]``. Example: ``[[bundle>org.nasdanika.cdo.web/doc/forms.md]]`` is rendered as [[bundle>org.nasdanika.cdo.web/doc/forms.md]].
+            ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.EClassifierResolver"
             name="classifier">
+            <description><![CDATA[
+            This resolver can be used in EClassifier documentation to reference classifiers from different packages in the same registry (session or global). Format: ``[[classifier>EClassifier name@EPackage NS URI]]``. Example: ``[[classifier>EString@http://www.eclipse.org/emf/2002/Ecore]]``. 
+
+EClassifiers in the same package can be referenced simply by their name, e.g. ``[[MyOtherClass]]`` or with ``classifier`` resolver, e.g. ``[[classifier>MyOtherClass]]``.
+            ]]></description>
       </wiki-link-resolver>
    </extension>
    <extension
