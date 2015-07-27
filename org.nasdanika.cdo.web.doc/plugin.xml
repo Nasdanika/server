@@ -30,7 +30,7 @@ Example:
             <description><![CDATA[
             Renders [markdown](http://daringfireball.net/projects/markdown/) to HTML using [pegdown](https://github.com/sirthias/pegdown) and  [highlight.js](https://highlightjs.org/) for syntax highlighting. 
 
-Uses wiki link resolvers and renderers. Wiki link is a link enclosed in double brackets: ``[[renderer:resolver>location|text]]``. Renderer, resolver, and text are optional. Examples of wiki links:
+Uses wiki link resolvers and renderers. Wiki link is a link enclosed in double brackets: ``[[renderer(config):resolver>location|text]]``. Renderer, renderer config, resolver, and text are optional. Examples of wiki links:
 
 * ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` - Uses ``image`` renderer.
 * ``[[javadoc>java.lang.String]]`` - Uses ``javadoc`` resolver.
