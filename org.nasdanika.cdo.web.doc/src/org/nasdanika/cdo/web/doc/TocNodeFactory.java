@@ -227,4 +227,8 @@ public class TocNodeFactory {
 		return true;
 	}
 
+	public boolean isSection() {
+		return name!=null && name.startsWith("#");
+	}
+	
 }

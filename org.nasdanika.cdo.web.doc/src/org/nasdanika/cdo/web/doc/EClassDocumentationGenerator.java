@@ -131,6 +131,8 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			}
 			tabs.item("Subtypes", stTable);
 		}
+		
+		sections(eClass, docRoutePath, htmlFactory, tabs);
 								
 		return ret.toString();		
 		

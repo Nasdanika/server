@@ -53,11 +53,13 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 					.style("margin-top", "10px")
 					.style("margin-bottom", "10px"));
 		}		
-
 		
 		for (EAnnotation eAnnotation: eDataType.getEAnnotations()) {
 			ret.content(documentAnnotation(htmlFactory, eAnnotation));
 		}
+		
+		// sections?
+		
 		return ret.toString();		
 		
 	}

@@ -253,7 +253,7 @@ public class DocRoute implements Route {
 		return inheritanceMap;
 	}
 	
-	private static class PackageTocNodeFactoryEntry {
+	static class PackageTocNodeFactoryEntry {
 
 		List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 		
@@ -262,6 +262,10 @@ public class DocRoute implements Route {
 	}
 
 	private Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = new HashMap<>();	
+	
+	public Map<String, PackageTocNodeFactoryEntry> getPackageTocNodeFactories() {
+		return packageTocNodeFactories;
+	}
 	
 	private MimetypesFileTypeMap mimeTypesMap;
 		
@@ -777,7 +781,7 @@ public class DocRoute implements Route {
 			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(ePackage.getNsURI());
 			if (pe!=null) {
 				for (TocNodeFactory tnf: pe.tocNodeFactories) {
-					if (tnf.isRoot(pe.tocNodeFactories)) {
+					if (!tnf.isSection() && tnf.isRoot(pe.tocNodeFactories)) {
 						tnf.createTocNode(ePackageToc, pe.tocNodeFactories, false);
 					}
 				}
@@ -812,7 +816,7 @@ public class DocRoute implements Route {
 				List<TocNodeFactory> ctnfl = pe.classifierTocNodeFactories.get(eClassifier.getName());
 				if (ctnfl!=null) {
 					for (TocNodeFactory tnf: ctnfl) {
-						if (tnf.isRoot(ctnfl)) {
+						if (!tnf.isSection() && tnf.isRoot(ctnfl)) {
 							tnf.createTocNode(cToc, ctnfl, false);
 						}
 					}
@@ -1175,6 +1179,9 @@ public class DocRoute implements Route {
 				breadcrumbs.item(pathElement==toc ? null : "javascript:"+tocNodeSelectScript(pathElement.getId()), pathElement.getText()); // prefix+pathElement.getHref()
 			}
 		}
+		
+		// TODO - backlinks collapsible.
+		
 		return breadcrumbs + 
 				content + 
 				htmlFactory.tag(TagName.script, HIGHLIGHT_MODULE_GENERATOR.generate(docRoutePath)) +

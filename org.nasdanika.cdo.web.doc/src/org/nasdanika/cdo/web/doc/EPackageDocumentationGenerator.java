@@ -5,13 +5,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
+import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -144,6 +147,32 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			
 			tabs.item(enumIcon+" Enumerations", enumTable);
 		}
+		
+		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
+		TocNode sections = new TocNode(null, null, null);
+		
+		synchronized (packageTocNodeFactories) {
+			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(ePackage.getNsURI());
+			if (pe!=null) {
+				for (TocNodeFactory tnf: pe.tocNodeFactories) {
+					if (tnf.isSection() && tnf.isRoot(pe.tocNodeFactories)) {
+						tnf.createTocNode(sections, pe.tocNodeFactories, false);
+					}
+				}
+			}
+		}		
+		
+		sections.sort(false);
+		
+		for (TocNode section: sections.getChildren()) {
+			String tabName = StringEscapeUtils.escapeHtml4(section.getText().substring(1));
+			if (section.getIcon()!=null) {
+				tabName = htmlFactory.tag(TagName.img).attribute("src", docRoutePath+section.getIcon()).style("margin-right", "5px") + tabName;
+			}
+			Fragment sectionFragment = htmlFactory.fragment();
+			section(section, -1, htmlFactory, docRoutePath, sectionFragment);
+			tabs.item(tabName, sectionFragment);
+		}		
 		
 		return ret.toString();		
 		

@@ -74,6 +74,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 					accordionFragment);
 		}
 		
+		// sections ?
 		
 		return ret.toString();		
 		

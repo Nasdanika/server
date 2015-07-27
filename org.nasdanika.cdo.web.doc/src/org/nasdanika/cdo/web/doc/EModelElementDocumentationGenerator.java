@@ -2,6 +2,8 @@ package org.nasdanika.cdo.web.doc;
 
 import java.net.URL;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -16,10 +18,13 @@ import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.jsoup.Jsoup;
+import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Style;
@@ -174,6 +179,68 @@ public class EModelElementDocumentationGenerator {
 		}
 		
 		return typedElement.getLowerBound() + ".." + (typedElement.getUpperBound()==-1 ? "*" : String.valueOf(typedElement.getUpperBound()));
+	}
+	
+	protected void sections(EClassifier eClassifier, String docRoutePath, HTMLFactory htmlFactory, Tabs tabs) {
+		
+		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
+		TocNode sections = new TocNode(null, null, null);
+		
+		synchronized (packageTocNodeFactories) {
+			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(eClassifier.getEPackage().getNsURI());
+			if (pe!=null) {
+				List<TocNodeFactory> ctnfl = pe.classifierTocNodeFactories.get(eClassifier.getName());
+				if (ctnfl!=null) {
+					for (TocNodeFactory tnf: ctnfl) {
+						if (tnf.isSection() && tnf.isRoot(ctnfl)) {
+							tnf.createTocNode(sections, ctnfl, false);
+						}
+					}
+				}
+			}
+		}
+		
+		sections.sort(false);
+		
+		for (TocNode section: sections.getChildren()) {
+			String tabName = StringEscapeUtils.escapeHtml4(section.getText().substring(1));
+			if (section.getIcon()!=null) {
+				tabName = htmlFactory.tag(TagName.img).attribute("src", docRoutePath+section.getIcon()).style("margin-right", "5px") + tabName;
+			}
+			Fragment sectionFragment = htmlFactory.fragment();
+			section(section, -1, htmlFactory, docRoutePath, sectionFragment);
+			tabs.item(tabName, sectionFragment);
+		}		
+	}
+	
+	protected static void section(
+			TocNode section, 
+			int level, 
+			HTMLFactory htmlFactory, 
+			String docRoutePath, 
+			Fragment sectionFragment) {
+		
+		if (level!=-1) {
+			String header = StringEscapeUtils.escapeHtml4(section.getText().substring(1));
+			if (section.getIcon()!=null) {
+				header = htmlFactory.tag(TagName.img).attribute("src", docRoutePath+section.getIcon()).style("margin-right", "5px") + header;
+			}
+			sectionFragment.content(htmlFactory.tag("h"+level, header));
+		}		
+		
+		String content = section.getContent();
+		if (content==null) {
+			String sectionId = "section_"+htmlFactory.nextId();
+			String script = htmlFactory.tag(TagName.script, "nsdLoad('#"+sectionId+"','"+docRoutePath+section.getHref()+"');").toString();
+			sectionFragment.content(htmlFactory.div("").id(sectionId), script); 
+		} else {
+			sectionFragment.content(content); 
+		}
+		
+		for (TocNode subSection: section.getChildren()) {
+			section(subSection, level==-1 ? 3 : Math.min(6, level+1), htmlFactory, docRoutePath, sectionFragment);
+		}
+		
 	}
 
 	public static void preStyle(UIElement<?> uiElement) {
