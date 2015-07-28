@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -156,6 +157,15 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			Accordion attributesAccordion = htmlFactory.accordion();
 			for (EAttribute attr: eAllAttributes) {
 				String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, attr);
+				if (CoreUtil.isBlank(firstDocSentence)) {
+					try {
+						EClassifier type = attr.getEType();
+						URL typeURL = new URL(baseURL, "../"+Hex.encodeHexString(type.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+type.getName());
+						firstDocSentence = getFirstDocSentence(typeURL, urlPrefix, type);
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					} 
+				}
 				String declaringType = attr.getEContainingClass()==eClass ? "" : " ("+attr.getEContainingClass().getName()+") ";
 				
 				Table propTable = htmlFactory.table().bordered();
@@ -237,6 +247,15 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			Accordion referencesAccordion = htmlFactory.accordion();
 			for (EReference ref: eAllReferences) {
 				String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, ref);
+				if (CoreUtil.isBlank(firstDocSentence)) {
+					try {
+						EClassifier type = ref.getEType();
+						URL typeURL = new URL(baseURL, "../"+Hex.encodeHexString(type.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+type.getName());
+						firstDocSentence = getFirstDocSentence(typeURL, urlPrefix, type);
+					} catch (MalformedURLException e) {
+						e.printStackTrace();
+					} 
+				}
 				String declaringType = ref.getEContainingClass()==eClass ? "" : " ("+ref.getEContainingClass().getName()+") ";
 				
 				Table propTable = htmlFactory.table().bordered();
@@ -395,6 +414,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		}		
 	}
 	
+	@SuppressWarnings("resource")
 	private void generateRoutesTab(
 			URL baseURL, 
 			String urlPrefix,
