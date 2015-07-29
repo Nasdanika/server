@@ -104,9 +104,13 @@ public class DocRoute implements Route {
 	private static final String TOC = "toc";
 	private static final String RESOURCES_PATH = "/resources/";
 	private static final String BUNDLE_PATH = "/bundle/";
-	private static final String PACKAGES_SESSION_PATH = "/packages/session/";
-	private static final String PACKAGES_GLOBAL_PATH = "/packages/global/";
+	private static final String PACKAGES_PATH = "/packages/";
+	private static final String PACKAGES_SESSION_PATH = PACKAGES_PATH + "session/";
+	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
 	private static final String TOC_PATH = "/toc/";
+
+	static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
+
 	private int pathOffset = 1;
 	private Bundle docBundle;
 	private BundleContext bundleContext;
@@ -1246,7 +1250,17 @@ public class DocRoute implements Route {
 			
 		};
 		
-		final String absDocRoutePath = urlPrefix+docRoutePath;
+		final String absDocRoutePath = urlPrefix+docRoutePath;	
+		final Map<Object, Object> env = new HashMap<>();
+		String baseURLStr = baseURL.toString();
+		if (baseURLStr.startsWith(absDocRoutePath)) {
+			String relPath = baseURLStr.substring(absDocRoutePath.length());
+			for (TocNode toc = tocRoot==null ? null : tocRoot.find(relPath); toc!=null; toc = toc.getParent()) {
+				if (toc.getHref()!=null && toc.getHref().startsWith(PACKAGES_PATH)) {
+					env.put(CONTEXT_MODEL_ELEMENT_PATH_KEY, docRoutePath+toc.getHref());
+				}
+			}
+		}				
 		
 		Resolver.Registry resolverRegistry = new Resolver.Registry() {
 			
@@ -1258,7 +1272,7 @@ public class DocRoute implements Route {
 
 					@Override
 					public String resolve(String href) {
-						return toWrap.resolve(href, absDocRoutePath);
+						return toWrap.resolve(href, absDocRoutePath, env);
 					}
 					
 				};

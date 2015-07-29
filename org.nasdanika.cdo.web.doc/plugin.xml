@@ -73,9 +73,11 @@ Examples:
             class="org.nasdanika.cdo.web.doc.EClassifierResolver"
             name="classifier">
             <description><![CDATA[
-            This resolver can be used in EClassifier documentation to reference classifiers from different packages in the same registry (session or global). Format: ``[[classifier>EClassifier name@EPackage NS URI]]``. Example: ``[[classifier>EString@http://www.eclipse.org/emf/2002/Ecore]]``. 
+            This resolver can be used in EClassifier and EPackage documentation and TOC entries mounted to EClassifiers or EPackages to reference classifiers from different packages in the same registry (session or global). Format: ``[[classifier>EClassifier name@EPackage NS URI]]``. Example: ``[[classifier>EString@http://www.eclipse.org/emf/2002/Ecore]]``. 
 
-EClassifiers in the same package can be referenced simply by their name, e.g. ``[[MyOtherClass]]`` or with ``classifier`` resolver, e.g. ``[[classifier>MyOtherClass]]``.
+In EClassifier or EPackage documentation EClassifiers in the same package can be referenced simply by their name, e.g. ``[[MyOtherClass]]`` or with ``classifier`` resolver, e.g. ``[[classifier>MyOtherClass]]``. In mounted TOC entries the latter form shall be used. 
+
+This resolver doesn't work for TOC's/topics with embedded content, i.e. with text, markdown, or html nested elements. 
             ]]></description>
       </wiki-link-resolver>
    </extension>

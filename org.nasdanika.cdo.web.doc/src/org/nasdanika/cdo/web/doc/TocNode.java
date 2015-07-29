@@ -83,6 +83,10 @@ public class TocNode {
 		return ret;
 	}
 	
+	public TocNode getParent() {
+		return parent;
+	}
+	
 	public TocNode find(String href) {
 		if (this.href!=null && this.href.equals(href)) {
 			return this;

@@ -1,11 +1,13 @@
 package org.nasdanika.cdo.web.doc;
 
+import java.util.Map;
+
 import org.apache.commons.codec.binary.Hex;
 
 public class ECoreGlobalResolver implements WikiLinkResolver {
 
 	@Override
-	public String resolve(String spec, String docRoutePath) {
+	public String resolve(String spec, String docRoutePath, Map<Object, Object> environment) {
 		int idx = spec.indexOf("@");
 		if (idx==-1) {
 			return docRoutePath+"/packages/global/"+Hex.encodeHexString(spec.trim().getBytes(/* UTF-8? */))+"/package-summary.html";			

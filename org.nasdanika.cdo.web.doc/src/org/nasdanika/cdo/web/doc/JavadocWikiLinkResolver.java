@@ -14,7 +14,7 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 	private Map<String, String> packageMap = new LinkedHashMap<String, String>();
 
 	@Override
-	public String resolve(String spec, String docRoutePath) {
+	public String resolve(String spec, String docRoutePath, Map<Object, Object> environment) {
 		for (Entry<String, String> pe: packageMap.entrySet()) {
 			String key = pe.getKey();
 			String value = pe.getValue();
