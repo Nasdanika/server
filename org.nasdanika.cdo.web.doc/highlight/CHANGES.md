@@ -1,3 +1,44 @@
+## Version 8.7
+
+New languages:
+
+- *Zephir* by [Oleg Efimov][]
+- *Elm* by [Janis Voigtländer][]
+- *XQuery* by [Dirk Kirsten][]
+- *Mojolicious* by [Dotan Dimet][]
+- *AutoIt* by Manh Tuan from [J2TeaM][]
+- *Toml* (ini extension) by [Guillaume Gomez][]
+
+New Styles:
+
+- *Hopscotch* by [Jan T. Sott][]
+- *Grayscale* by [MY Sun][]
+
+Notable fixes and improvements to existing languages:
+
+- Fix encoding of images when copied over in certain builds
+- Fix incorrect highlighting of the word "bug" in comments
+- Treat decorators different from matrix multiplication in Python
+- Fix traits inheritance highlighting in Rust
+- Fix incorrect document
+- Oracle keywords added to SQL language definition by [Vadimtro][]
+- Postgres keywords added to SQL language definition by [Benjamin Auder][]
+- Fix registers in x86asm being highlighted as a hex number
+- Fix highlighting for numbers with a leading decimal point
+- Correctly highlight numbers and strings inside of C/C++ macros
+- C/C++ functions now support pointer, reference, and move returns
+
+[Oleg Efimov]: https://github.com/Sannis
+[Guillaume Gomez]: https://github.com/GuillaumeGomez
+[Janis Voigtländer]: https://github.com/jvoigtlaender
+[Jan T. Sott]: https://github.com/idleberg
+[Dirk Kirsten]: https://github.com/dirkk
+[MY Sun]: https://github.com/simonmysun
+[Vadimtro]: https://github.com/Vadimtro
+[Benjamin Auder]: https://github.com/ghost
+[Dotan Dimet]: https://github.com/dotandimet
+[J2TeaM]: https://github.com/J2TeaM
+
 ## Version 8.6
 
 New languages:

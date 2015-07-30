@@ -1314,7 +1314,7 @@ public class DocRoute implements Route {
 
 							@Override
 							public String getIconTag() {
-								return CoreUtil.isBlank(toc.getIcon()) ? "" : "<img src=\""+docRoutePath+toc.getIcon()+"\"/>";
+								return CoreUtil.isBlank(toc.getIcon()) ? "" : "<img style=\"vertical-align: text-top; margin-right:1px;\" src=\""+docRoutePath+toc.getIcon()+"\"/>";
 							}
 
 							@Override

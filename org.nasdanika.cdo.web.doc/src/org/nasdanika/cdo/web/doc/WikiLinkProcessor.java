@@ -154,7 +154,7 @@ public class WikiLinkProcessor {
 		
 		boolean isMissing = href==null || (linkInfo!=null && linkInfo.isMissing());
 		String iconTag = linkInfo==null ? null : linkInfo.getIconTag();
-		String linkContent = (CoreUtil.isBlank(iconTag) ? "" : iconTag+" ") + StringEscapeUtils.escapeHtml4(text);
+		String linkContent = (CoreUtil.isBlank(iconTag) ? "" : iconTag) + StringEscapeUtils.escapeHtml4(text);
 		
 		if (renderer==null) {
 			Rendering ret = new Rendering(href==null ? "#" : href, linkContent);

@@ -71,7 +71,7 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 		
 		boolean isMissing = href==null || (linkInfo!=null && linkInfo.isMissing());
 		String iconTag = linkInfo==null ? null : linkInfo.getIconTag();
-		String linkContent = (CoreUtil.isBlank(iconTag) ? "" : iconTag+" ") + StringEscapeUtils.escapeHtml4(text);
+		String linkContent = (CoreUtil.isBlank(iconTag) ? "" : iconTag) + StringEscapeUtils.escapeHtml4(text);
 		
 		Rendering ret = new Rendering(href==null ? "#" : href, linkContent);
 		
