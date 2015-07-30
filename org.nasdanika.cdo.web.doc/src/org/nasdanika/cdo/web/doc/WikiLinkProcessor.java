@@ -159,7 +159,7 @@ public class WikiLinkProcessor {
 		if (renderer==null) {
 			Rendering ret = new Rendering(href==null ? "#" : href, linkContent);
 			if (isMissing) {
-				ret.withAttribute("style", "color:red");
+				ret.withAttribute("style", "color:red;border-bottom:1px dashed");
 			}
 			return ret;
 		}

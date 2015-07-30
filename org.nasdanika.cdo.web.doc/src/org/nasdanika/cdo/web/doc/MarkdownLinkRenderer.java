@@ -76,7 +76,7 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 		Rendering ret = new Rendering(href==null ? "#" : href, linkContent);
 		
 		if (isMissing) {
-			ret.withAttribute("style", "color:red");
+			ret.withAttribute("style", "color:red;border-bottom:1px dashed");
 		}
 		
 		String target = getLinkTarget(href);

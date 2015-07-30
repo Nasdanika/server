@@ -112,7 +112,6 @@ public class DocRoute implements Route {
 	static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
 
 	private int pathOffset = 1;
-	private Bundle docBundle;
 	private BundleContext bundleContext;
 	private Directory searchIndexDirectory;
 	private DirectoryReader searchIndexReader;
@@ -279,7 +278,6 @@ public class DocRoute implements Route {
 			pathOffset = ((Number) pathOffsetProp).intValue();
 		}
 		bundleContext = context.getBundleContext();
-		docBundle = FrameworkUtil.getBundle(getClass());
 		
 		File searchIndexDir = context.getBundleContext().getBundle().getDataFile("searchIndex");
 		if (searchIndexDir==null) {
@@ -879,7 +877,7 @@ public class DocRoute implements Route {
 		} 
 		
 		if (path.startsWith(RESOURCES_PATH)) {
-			return docBundle.getResource(path.substring(RESOURCES_PATH.length()));
+			return getResource(getClass(), path.substring(RESOURCES_PATH.length()));
 		} 
 		
 		// TODO - extensions
@@ -1054,7 +1052,7 @@ public class DocRoute implements Route {
 			
 			if (path.length>2 && "resources".equals(path[0])) {
 				String resourcePath = StringUtils.join(path, "/", 1, path.length);
-				URL res = docBundle.getResource(resourcePath);
+				URL res = getResource(getClass(), resourcePath);
 				if (res==null) {
 					return Action.NOT_FOUND;
 				}						
@@ -1071,6 +1069,33 @@ public class DocRoute implements Route {
 			}
 		}
 		return Action.NOT_FOUND;
+	}
+	
+	protected URL getResource(Class<?> clazz, String resourcePath) {
+		Bundle docBundle = FrameworkUtil.getBundle(clazz);
+		if (docBundle!=null) {
+			URL res = docBundle.getResource(resourcePath);
+			if (res!=null) {
+				return res;
+			}
+		}
+		
+		Class<?> superClass = clazz.getSuperclass();
+		if (superClass!=null) {
+			URL res = getResource(superClass, resourcePath);
+			if (res!=null) {
+				return res;
+			}
+		}
+		
+		for (Class<?> i: clazz.getInterfaces()) {
+			URL res = getResource(i, resourcePath);
+			if (res!=null) {
+				return res;
+			}			
+		}
+		
+		return null;
 	}
 	
 	private String generateExtensionsDocumentation(URL baseURL, String urlPrefix, String path) {		
@@ -1176,7 +1201,7 @@ public class DocRoute implements Route {
 	private static HighlightModuleGenerator HIGHLIGHT_MODULE_GENERATOR = new HighlightModuleGenerator();
 	private static SelectTocNodeModuleGenerator SELECT_TOC_NODE_MODULE_GENERATOR = new SelectTocNodeModuleGenerator();
 	
-	private String navWrap(HTMLFactory htmlFactory, TocNode toc, String content, String prefix) {
+	protected String navWrap(HTMLFactory htmlFactory, TocNode toc, String content, String prefix) {
 		Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
 		for (TocNode pathElement: toc.getPath()) {
 			if (pathElement.getText()!=null) {
@@ -1190,6 +1215,7 @@ public class DocRoute implements Route {
 				content + 
 				htmlFactory.tag(TagName.script, HIGHLIGHT_MODULE_GENERATOR.generate(docRoutePath)) +
 				htmlFactory.tag(TagName.script, SELECT_TOC_NODE_MODULE_GENERATOR.generate(new Object[] {docRoutePath, toc.getId()}));
+		
 	}
 	
 	/**

@@ -19,8 +19,8 @@ import org.nasdanika.html.UIElement.Style;
  */
 public class DocumentationPanelFactory {
 
-	private HTMLFactory htmlFactory;
-	private String docRoutePath;
+	protected HTMLFactory htmlFactory;
+	protected String docRoutePath;
 
 	public DocumentationPanelFactory(HTMLFactory htmlFactory, String docRoutePath) {
 		this.htmlFactory = htmlFactory;
@@ -41,7 +41,7 @@ public class DocumentationPanelFactory {
 	
 	protected Tabs leftTabs() {
 		Tabs leftTabs = htmlFactory.tabs();
-		Tag tocDIV = htmlFactory.div().id("toc");
+		Tag tocDIV = tocDiv();
 		leftTabs.item(htmlFactory.glyphicon(Glyphicon.book)+"&nbsp;Content", tocDIV);
 		
 		Form searchForm = htmlFactory.form().style("padding-top", "3px");
@@ -78,6 +78,10 @@ public class DocumentationPanelFactory {
 		Tag searchModule = htmlFactory.tag(TagName.script, "require(['"+docRoutePath+"/resources/js/left-panel.js'], function(tocTree) { /* NOP */ })");
 		leftTabs.item(htmlFactory.glyphicon(Glyphicon.search)+"&nbsp;Search", searchContainer, searchModule);
 		return leftTabs;
+	}
+
+	protected Tag tocDiv() {
+		return htmlFactory.div().id("toc");
 	}
 	
 
