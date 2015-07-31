@@ -21,6 +21,13 @@ class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoClo
 	public T getTarget() {
 		return target;
 	}
+	
+	@Override
+	public FontAwesome<T> custom(String custom) {
+		getTarget().addClass("fa");
+		getTarget().addClass("fa-"+custom);
+		return this;
+	}	
 
 	@Override
 	public FontAwesome<T> brand(Brand brand) {

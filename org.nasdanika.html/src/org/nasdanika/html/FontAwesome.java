@@ -55,6 +55,7 @@ public interface FontAwesome<T extends UIElement<?>> {
 	
 	T getTarget();
 	
+	FontAwesome<T> custom(String custom);
 	FontAwesome<T> brand(Brand brand);
 	FontAwesome<T> chart(Chart chart);
 	FontAwesome<T> currency(Currency currency);
