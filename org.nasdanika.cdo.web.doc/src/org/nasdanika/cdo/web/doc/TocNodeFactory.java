@@ -123,7 +123,7 @@ public class TocNodeFactory {
 		boolean doSort = false;
 		TocNode node = parent;
 		if (!merge) {
-			node = parent.createChild(name, location, icon);
+			node = parent.createChild(name, location, icon, id);
 			if (topic!=null) {
 				node.setContent(topic.getContent());
 			} else if (content!=null) {
@@ -163,7 +163,7 @@ public class TocNodeFactory {
 	}
 	
 	private void createTocNode(TocNode parent, String name, Topic topic) {
-		TocNode node = parent.createChild(name, null, topic.getIcon());					
+		TocNode node = parent.createChild(name, null, topic.getIcon(), null);					
 		node.setContent(topic.getContent());
 		
 		Map<String, Topic> subTopics = topic.getSubTopics();

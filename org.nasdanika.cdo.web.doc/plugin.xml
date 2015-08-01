@@ -70,6 +70,13 @@ Examples:
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.TocWikiLinkResolver"
+            name="toc">
+            <description><![CDATA[
+            Resolves TOC URL from TOC ID. Format: ``[[toc>bundle/id]]``. Example: ``[[toc>org.nasdanika.core/credits]]`` is rendered as [[toc>org.nasdanika.core/credits]].
+            ]]></description>
+      </wiki-link-resolver>
+      <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.EClassifierResolver"
             name="classifier">
             <description><![CDATA[

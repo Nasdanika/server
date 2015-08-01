@@ -517,6 +517,10 @@ public class DocRoute implements Route {
 		
 	private TocNode tocRoot;
 	
+	public TocNode getTocRoot() {
+		return tocRoot;
+	}
+	
 	private Map<String, List<String>> linkMap;
 	private Set<String> missingPaths;
 	
@@ -561,10 +565,10 @@ public class DocRoute implements Route {
 		try {
 			// TOC
 			tocRoot = new TocNode(null, null, null);
-			TocNode packagesToc = tocRoot.createChild("Packages", null, null);
-			createPackageRegistryToc(EPackage.Registry.INSTANCE, packagesToc.createChild("Global", null, null), "/packages/global");
+			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null);
+			createPackageRegistryToc(EPackage.Registry.INSTANCE, packagesToc.createChild("Global", null, null, null), "/packages/global");
 			if (cdoSessionProvider!=null) {
-				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), packagesToc.createChild("Session", null, null), "/packages/session");				
+				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), packagesToc.createChild("Session", null, null, null), "/packages/session");				
 			}
 			
 			synchronized (tocNodeFactories) {
@@ -750,7 +754,7 @@ public class DocRoute implements Route {
 	}
 		
 	private void createEPackageToc(TocNode parent, EPackage ePackage, String prefix) {
-		TocNode ePackageToc = parent.createChild(ePackage.getName(), prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, "/resources/images/EPackage.gif");
+		TocNode ePackageToc = parent.createChild(ePackage.getName(), prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, "/resources/images/EPackage.gif", null);
 		List<EPackage> subPackages = new ArrayList<>(ePackage.getESubpackages());
 		Collections.sort(subPackages, new Comparator<EPackage>() {
 
@@ -795,7 +799,7 @@ public class DocRoute implements Route {
 		String href = prefix+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClassifier.getName();
 		TocNode cToc;
 		if (eClassifier instanceof EClass) {
-			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EClass.gif");
+			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EClass.gif", null);
 			EClassKey subTypeKey = new EClassKey((EClass) eClassifier);
 			for (EClass sc: ((EClass) eClassifier).getESuperTypes()) {
 				EClassKey superTypeKey = new EClassKey(sc);
@@ -807,9 +811,9 @@ public class DocRoute implements Route {
 				subTypes.add(subTypeKey);
 			}
 		} else if (eClassifier instanceof EEnum) {
-			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EEnum.gif");
+			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EEnum.gif", null);
 		} else {
-			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EDataType.gif");
+			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EDataType.gif", null);
 		}
 		
 		synchronized (packageTocNodeFactories) {
@@ -1286,7 +1290,8 @@ public class DocRoute implements Route {
 					env.put(CONTEXT_MODEL_ELEMENT_PATH_KEY, docRoutePath+toc.getHref());
 				}
 			}
-		}				
+		}
+		env.put(DocRoute.class, this);
 		
 		Resolver.Registry resolverRegistry = new Resolver.Registry() {
 			
@@ -1374,7 +1379,7 @@ public class DocRoute implements Route {
 					if (ret.startsWith(urlPrefix)) {
 						String relURL = ret.substring(urlPrefix.length());
 						if (relURL.startsWith(docRoutePath)) {
-							if (relURL.startsWith(docRoutePath+"/packages/")) {
+							if (relURL.startsWith(docRoutePath+"/packages/") || relURL.startsWith(docRoutePath+"/toc/")) {
 								return tocLink("#router/doc-content/"+relURL);								
 							}
 							int idx = relURL.lastIndexOf('/');

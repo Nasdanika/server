@@ -26,6 +26,7 @@ public class TocNode {
 	private AtomicLong counter;
 	private String id;
 	private String content;
+	private String tocId;
 			
 	public String getContent() {
 		return content;
@@ -51,7 +52,12 @@ public class TocNode {
 		return id;
 	}
 
-	protected TocNode(String text, String href, String icon, AtomicLong counter) {
+	protected TocNode(
+			String text, 
+			String href, 
+			String icon, 
+			AtomicLong counter,
+			String tocId) {
 		this.text = text;
 		this.href = href;
 		this.icon = icon;
@@ -60,18 +66,19 @@ public class TocNode {
 		if (CoreUtil.isBlank(this.href)) {
 			this.href = "/toc/"+this.id;
 		}
+		this.tocId = tocId;
 	}
 		
 	public TocNode(String text, String href, String icon) {
-		this(text, href, icon, new AtomicLong());
+		this(text, href, icon, new AtomicLong(), null);
 	}
 
 	public List<TocNode> getChildren() {
 		return children;
 	}
 	
-	public TocNode createChild(String text, String href, String icon) {
-		TocNode child = new TocNode(text, href, icon, counter);
+	public TocNode createChild(String text, String href, String icon, String tocId) {
+		TocNode child = new TocNode(text, href, icon, counter, tocId);
 		children.add(child);
 		child.parent = this;
 		return child;
@@ -98,6 +105,19 @@ public class TocNode {
 			}
 		}
 		return null;
+	}
+	
+	public TocNode findByTocId(String tocId) {
+		if (this.tocId!=null && this.tocId.equals(tocId)) {
+			return this;
+		}
+		for (TocNode child: children) {
+			TocNode ret = child.findByTocId(tocId);
+			if (ret!=null) {
+				return ret;
+			}
+		}
+		return null;		
 	}
 	
 	public JSONObject toJSON(String contextURL) throws Exception {
