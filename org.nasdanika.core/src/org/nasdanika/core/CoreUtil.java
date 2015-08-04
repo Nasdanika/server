@@ -1,14 +1,22 @@
 package org.nasdanika.core;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
@@ -39,9 +47,113 @@ public class CoreUtil {
 		primitivesToBoxesMap.put(boolean.class, Boolean.class);
 		primitivesToBoxesMap.put(char.class, char.class);
 		PRIMITIVES_TO_BOXES_MAP = Collections.unmodifiableMap(primitivesToBoxesMap);
-	}	
+	}
 	
+	private static final Pattern EXPANDER_PATTERN = Pattern.compile("\\$\\{(.+?)\\}");	
 	
+	/**
+	 * Source of token values for interpolation.
+	 * @author Pavel Vlasov.
+	 *
+	 */
+	public interface TokenSource {
+		
+		Object get(String token);
+		
+	}
+
+	/**
+	 * Expands tokens in the form of <code>${token name}</code> to their values.
+	 * If a token is not found expansion is not processed.
+	 * @param input
+	 * @param env
+	 * @return
+	 */
+	public static String interpolate(String input, TokenSource tokenSource) {
+		if (tokenSource==null) {
+			return input;
+		}
+		Matcher matcher = EXPANDER_PATTERN.matcher(input);
+		StringBuilder output = new StringBuilder();
+		int i = 0;
+		while (matcher.find()) {
+		    String token = matcher.group();
+			Object replacement = tokenSource.get(token.substring(2, token.length()-1));
+		    if (replacement != null) {
+			    output.append(input.substring(i, matcher.start())).append(replacement);			    
+			    i = matcher.end();
+		    }
+		}
+		output.append(input.substring(i, input.length()));
+		return output.toString();
+	}
+	
+	public static String interpolate(String input, final Map<String, Object> env) {
+		return interpolate(input, new TokenSource() {
+
+			@Override
+			public Object get(String token) {
+				return env==null ? null : env.get(token);
+			}
+			
+		});
+	}
+
+	/**
+	 * Expands tokens found in URL, InputStream, Reader or String. 
+	 * @param input URL, InputStream, Reader or String.
+	 * @param tokenSource Source of tokens.
+	 * @return String with expanded tokens.
+	 * @throws IOException
+	 */
+	public static String interpolate(Object input, TokenSource tokenSource) throws IOException {
+		return interpolate(stringify(input), tokenSource);
+	}
+
+	/**
+	 * Expands tokens found in URL, InputStream, Reader or String. 
+	 * @param input URL, InputStream, Reader or String.
+	 * @param env token to value map.
+	 * @return String with expanded tokens.
+	 * @throws IOException
+	 */
+	public static String interpolate(Object input, Map<String, Object> env) throws IOException {
+		return interpolate(stringify(input), env);
+	}
+	
+	/**
+	 * Converts content of URL, InputStream or Reader to String.
+	 * @param content URL, InputStream, Reader or String.
+	 * @return
+	 * @throws Exception
+	 */
+	public static String stringify(Object content) throws IOException {
+		if (content==null) {
+			return null;
+		}
+		if (content instanceof String) {
+			return (String) content;
+		}
+		if (content instanceof Reader) {
+			StringWriter sw = new StringWriter();
+			try (Reader reader = (Reader) content) {
+				for (int ch = reader.read(); ch!=-1; ch = reader.read()) {
+					sw.write(ch);
+				}
+			} 
+			sw.close();
+			return stringify(sw.toString());
+		}
+		if (content instanceof InputStream) {
+			try (InputStream in = (InputStream) content) {
+				return stringify(new InputStreamReader(in));
+			}
+		}
+		if (content instanceof URL) {
+			return stringify(((URL) content).openStream());
+		}
+		throw new IllegalArgumentException("Cannot stringify: "+content);
+	}
 
 	public static <T> T injectProperties(IConfigurationElement ce, final T target) throws Exception {
 		for (IConfigurationElement cce: ce.getChildren()) {

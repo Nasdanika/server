@@ -1,8 +1,8 @@
 package org.nasdanika.cdo.web.doc;
 
 import java.net.URL;
-import java.util.Map;
 
+import org.nasdanika.core.CoreUtil;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
@@ -21,7 +21,7 @@ public class MarkdownContentFilter implements ContentFilter {
 		if (linkRenderer==null) {
 			linkRenderer = new LinkRenderer();
 		}
-		String markdown = DocRoute.stringify(content);
+		String markdown = CoreUtil.stringify(content);
 		// TODO - expand markdown
 		return "<div class=\"markdown-body\">"+pegDownProcessor.markdownToHtml(markdown, linkRenderer)+"</div>";
 	}

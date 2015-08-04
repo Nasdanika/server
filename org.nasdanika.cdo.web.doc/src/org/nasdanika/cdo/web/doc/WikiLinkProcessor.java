@@ -156,6 +156,10 @@ public class WikiLinkProcessor {
 		String iconTag = linkInfo==null ? null : linkInfo.getIconTag();
 		String linkContent = (CoreUtil.isBlank(iconTag) ? "" : iconTag) + StringEscapeUtils.escapeHtml4(text);
 		
+		if (renderer==null && resolver instanceof Renderer) {
+			renderer = (Renderer) resolver;
+		}
+		
 		if (renderer==null) {
 			Rendering ret = new Rendering(href==null ? "#" : href, linkContent);
 			if (isMissing) {

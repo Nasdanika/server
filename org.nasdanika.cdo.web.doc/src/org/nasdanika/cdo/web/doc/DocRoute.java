@@ -5,10 +5,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -91,6 +88,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.service.component.ComponentContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
+import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route {
@@ -654,7 +652,7 @@ public class DocRoute implements Route {
 							String contentType = mimeTypesMap.getContentType(fn);
 							if (contentType!=null) {
 								if (MIME_TYPE_HTML.equals(contentType)) {
-									final String content = DocRoute.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+									final String content = CoreUtil.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
 									return new ContentEntry() {
 	
 										@Override
@@ -673,7 +671,7 @@ public class DocRoute implements Route {
 								ExtensionEntry<ContentFilter> extensionEntry = tm==null ? null : tm.get(MIME_TYPE_HTML);
 								ContentFilter cf = extensionEntry==null ? null : extensionEntry.extension;
 								if (cf!=null) {
-									String content = DocRoute.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+									String content = CoreUtil.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
 									if (content!=null) {
 										final String htmlContent = String.valueOf(cf.filter(content, DocRoute.this, new URL(urlPrefix+docRoutePath+path), urlPrefix));
 										return new ContentEntry() {
@@ -1222,7 +1220,13 @@ public class DocRoute implements Route {
 		Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
 		for (TocNode pathElement: toc.getPath()) {
 			if (pathElement.getText()!=null) {
-				breadcrumbs.item(pathElement==toc ? null : "javascript:"+tocNodeSelectScript(pathElement.getId()), pathElement.getText()); // prefix+pathElement.getHref()
+				String bcContent;
+				if (pathElement.getIcon()==null) {
+					bcContent = pathElement.getText();
+				} else {
+					bcContent = htmlFactory.tag(TagName.img).attribute("src", getDocRoutePath()+pathElement.getIcon()).style("margin-right", "1px") + pathElement.getText();
+				}
+				breadcrumbs.item(pathElement==toc ? null : "javascript:"+tocNodeSelectScript(pathElement.getId()), bcContent); // prefix+pathElement.getHref()
 			}
 		}
 		
@@ -1303,7 +1307,28 @@ public class DocRoute implements Route {
 			public Resolver getResolver(String name) {
 				ExtensionEntry<WikiLinkResolver> resolverExtensionEntry = wikiLinkResolverMap.get(name);
 				final WikiLinkResolver toWrap = resolverExtensionEntry==null ? null : resolverExtensionEntry.extension;
-				return toWrap==null ? null : new Resolver() {
+				if (toWrap==null) {
+					return null;
+				}
+				if (toWrap instanceof Renderer) {
+					class JackOfTwoTrades implements Renderer, Resolver {
+
+						@Override
+						public String resolve(String href) {
+							return toWrap.resolve(href, absDocRoutePath, env);
+						}
+
+						@Override
+						public Rendering render(String href, String content, String config, boolean isMissing) {
+							return ((Renderer) toWrap).render(href, content, config, isMissing);
+						}
+						
+					}
+					
+					return new JackOfTwoTrades();
+				}
+				
+				return new Resolver() {
 
 					@Override
 					public String resolve(String href) {
@@ -1411,34 +1436,6 @@ public class DocRoute implements Route {
 		};
 		
 		return new MarkdownLinkRenderer(rendererRegistry, resolverRegistry, linkRegistry, urlRewriter);				
-	}
-
-	public static String stringify(Object content) throws Exception {
-		if (content==null) {
-			return null;
-		}
-		if (content instanceof String) {
-			return (String) content;
-		}
-		if (content instanceof Reader) {
-			StringWriter sw = new StringWriter();
-			try (Reader reader = (Reader) content) {
-				for (int ch = reader.read(); ch!=-1; ch = reader.read()) {
-					sw.write(ch);
-				}
-			} 
-			sw.close();
-			return stringify(sw.toString());
-		}
-		if (content instanceof InputStream) {
-			try (InputStream in = (InputStream) content) {
-				return stringify(new InputStreamReader(in));
-			}
-		}
-		if (content instanceof URL) {
-			return stringify(((URL) content).openStream());
-		}
-		throw new IllegalArgumentException("Cannot stringify: "+content);
 	}
 	
 //	/**

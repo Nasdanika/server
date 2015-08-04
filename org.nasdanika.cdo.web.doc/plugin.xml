@@ -77,6 +77,13 @@ Examples:
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.WikipediaResolver"
+            name="wp">
+            <description><![CDATA[
+            Resolves Wikipedia URL from the article name, renders wikipedia icon before the link. Replaces spaces with underscores in the article name. Format: ``[[wp>article name|text]]``. Example: ``[[wp>Domain-driven design]]`` is rendered as [[wp>Domain-driven design]].
+            ]]></description>
+      </wiki-link-resolver>
+      <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.EClassifierResolver"
             name="classifier">
             <description><![CDATA[

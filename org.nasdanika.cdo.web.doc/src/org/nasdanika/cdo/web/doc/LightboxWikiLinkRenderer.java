@@ -26,7 +26,7 @@ public class LightboxWikiLinkRenderer implements WikiLinkProcessor.Renderer {
 		}
 		ret.withAttribute("data-lightbox", id);
 		if (isMissing) {
-			ret.withAttribute("style", "color:red");
+			ret.withAttribute("style", "color:red;border-bottom:1px dashed");
 		}
 		return ret;
 	}
