@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.util.Map;
+import java.net.URL;
 
 /**
  * Converts content from one format to another.
@@ -9,6 +9,6 @@ import java.util.Map;
  */
 public interface ContentFilter {
 	
-	Object filter(Object content, Map<Object, Object> env) throws Exception;
+	Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) throws Exception;
 
 }

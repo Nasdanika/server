@@ -105,6 +105,36 @@ class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoClo
 		getTarget().addClass("fa-"+webApplication.name().replace('_', '-'));
 		return this;
 	}
+	
+
+	@Override
+	public FontAwesome<T> hand(FontAwesome.Hand hand) {
+		getTarget().addClass("fa");
+		getTarget().addClass("fa-"+hand.name().replace('_', '-'));
+		return this;
+	}
+
+	@Override
+	public FontAwesome<T> transportation(Transportation transportation) {
+		getTarget().addClass("fa");
+		getTarget().addClass("fa-"+transportation.name().replace('_', '-'));
+		return this;
+	}
+
+	@Override
+	public FontAwesome<T> gender(Gender gender) {
+		getTarget().addClass("fa");
+		getTarget().addClass("fa-"+gender.name().replace('_', '-'));
+		return this;
+	}
+
+	@Override
+	public FontAwesome<T> textEditor(TextEditor textEditor) {
+		getTarget().addClass("fa");
+		getTarget().addClass("fa-"+textEditor.name().replace('_', '-'));
+		return this;
+	}
+	
 
 	@Override
 	public FontAwesome<T> fixedWidth() {

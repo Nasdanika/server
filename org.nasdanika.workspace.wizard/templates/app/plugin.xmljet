@@ -71,7 +71,7 @@
                /js/require.js
             </script>
             <stylesheet>
-               /font-awesome-4.3.0/css/font-awesome.min.css
+               /font-awesome-4.4.0/css/font-awesome.min.css
             </stylesheet>            
       </default_html_factory>
    </extension>

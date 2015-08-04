@@ -25,9 +25,10 @@ public class TocNodeFactory {
 	private Topic topic;
 	
 	public TocNodeFactory(
+			DocRoute docRoute,
 			String docBaseURL,
+			String urlPrefix,
 			String docRoutePath,
-			Map<Object, Object> contentFilterEnv,
 			String contributorName,
 			Map<String, Map<String, DocRoute.ExtensionEntry<ContentFilter>>> contentFilters,
 			IConfigurationElement iConfigurationElement) throws Exception {
@@ -35,7 +36,7 @@ public class TocNodeFactory {
 		ContentFilter textFilter = new ContentFilter() {
 
 			@Override
-			public Object filter(Object content, Map<Object, Object> env) {
+			public Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) {
 				return "<div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
 			}
 
@@ -50,7 +51,7 @@ public class TocNodeFactory {
 		ContentFilter markdownFilter = new ContentFilter() {
 
 			@Override
-			public Object filter(Object content, Map<Object, Object> env) {
+			public Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) {
 				return "<H1>Cannot convert markdown to HTML</H1><div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
 			}
 
@@ -88,10 +89,10 @@ public class TocNodeFactory {
 							content = contentElements[0].getValue();
 						}
 					} else {
-						content = (String) textFilter.filter(contentElements[0].getValue(), contentFilterEnv);
+						content = (String) textFilter.filter(contentElements[0].getValue(), docRoute, baseURL, urlPrefix);
 					}
 				} else {
-					content = (String) markdownFilter.filter(contentElements[0].getValue(), contentFilterEnv);
+					content = (String) markdownFilter.filter(contentElements[0].getValue(), docRoute, baseURL, urlPrefix);
 				}
 			} else {
 				location = new URL(baseURL, location).toString();
@@ -110,9 +111,10 @@ public class TocNodeFactory {
 		
 		for (IConfigurationElement child: iConfigurationElement.getChildren("topic")) {
 			children.add(new TocNodeFactory(
-					docBaseURL, 
+					docRoute,
+					docBaseURL,
+					urlPrefix,
 					docRoutePath, 
-					contentFilterEnv,
 					contributorName, 
 					contentFilters, 
 					child));

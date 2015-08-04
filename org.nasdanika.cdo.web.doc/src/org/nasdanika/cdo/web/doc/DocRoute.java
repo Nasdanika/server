@@ -124,6 +124,18 @@ public class DocRoute implements Route {
 	private long reloadDelay = 30000; // Wait 30 seconds before reloading index on extension tracker notifications. 
 	private Timer loadTimer;
 	
+	public HTMLFactory getHtmlFactory() {
+		return htmlFactory;
+	}
+	
+	public String getDocAppPath() {
+		return docAppPath;
+	}
+	
+	public String getDocRoutePath() {
+		return docRoutePath;
+	}
+	
 	private Map<String, Map<String, ExtensionEntry<ContentFilter>>> contentFilters = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<EAnnotationRenderer>> eAnnotationRenderers = new ConcurrentHashMap<>();
 	
@@ -418,11 +430,12 @@ public class DocRoute implements Route {
     				switch (ce.getName()) {
     				case TOC:
 						try {
-							Map<Object, Object> contentFilterEnv = createContentFilterEnvironment(new URL(baseURL), urlPrefix);
+							//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
 							TocNodeFactory tocNodeFactory = new TocNodeFactory(
+									DocRoute.this, 
 									baseURL,
+									urlPrefix,
 									docRoutePath,
-									contentFilterEnv,
 									extension.getContributor().getName(),
 									contentFilters,
 									ce);
@@ -662,7 +675,7 @@ public class DocRoute implements Route {
 								if (cf!=null) {
 									String content = DocRoute.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
 									if (content!=null) {
-										final String htmlContent = String.valueOf(cf.filter(content, createContentFilterEnvironment(new URL(urlPrefix+docRoutePath+path), urlPrefix)));
+										final String htmlContent = String.valueOf(cf.filter(content, DocRoute.this, new URL(urlPrefix+docRoutePath+path), urlPrefix));
 										return new ContentEntry() {
 		
 											@Override
@@ -1012,7 +1025,7 @@ public class DocRoute implements Route {
 						if (tm!=null) {
 							for (Entry<String, ExtensionEntry<ContentFilter>> tme: tm.entrySet()) {
 								context.getResponse().setContentType(tme.getKey());
-								Object filteredContent = tme.getValue().extension.filter(content, createContentFilterEnvironment(new URL(requestURL), urlPrefix));
+								Object filteredContent = tme.getValue().extension.filter(content, this, new URL(requestURL), urlPrefix);
 								if ("text/html".equals(tme.getKey()) && filteredContent instanceof String) {
 									TocNode toc = tocRoot.find(pathStr);
 									if (toc!=null) {
@@ -1259,17 +1272,8 @@ public class DocRoute implements Route {
 		// NOP
 		
 	}
-
-	protected Map<Object, Object> createContentFilterEnvironment(URL baseURL, String urlPrefix) {
-		Map<Object, Object> contentFilterEnv = new HashMap<>();
-		contentFilterEnv.put(LinkRenderer.class, createMarkdownLinkRenderer(baseURL, urlPrefix));
-		contentFilterEnv.put("docRoutePath", docRoutePath);
-		contentFilterEnv.put("docAppPath", docAppPath);
-		contentFilterEnv.put(HTMLFactory.class, htmlFactory);
-		return contentFilterEnv;
-	}
 	
-	protected LinkRenderer createMarkdownLinkRenderer(final URL baseURL, final String urlPrefix) {
+	public LinkRenderer createMarkdownLinkRenderer(final URL baseURL, final String urlPrefix) {
 		Renderer.Registry rendererRegistry = new Renderer.Registry() {
 
 			@Override
@@ -1436,5 +1440,17 @@ public class DocRoute implements Route {
 		}
 		throw new IllegalArgumentException("Cannot stringify: "+content);
 	}
+	
+//	/**
+//	 * Expands {{plugin(config)&gt;content}} tokens. Examples <code>{{modal&gt;Hello!}}, {{ajax-modal(small)&gt;{{basePath}}/mymodal.html}}}}</code>.
+//	 * Plugin name is mandatory, config and content are optional. <code>}}</code> in config and content can be escaped with <code>\</code>, e.g. <code>\}}</code>
+//	 * @param content
+//	 * @param path
+//	 * @return
+//	 */
+//	public String expand(String content, String path) {
+//		// TODO - iterate over token processors, look for token start in the content {{<tokenName>, then look for }}, ... \}} is an escape sequence
+//		return content;
+//	}
 	
 }
