@@ -1232,7 +1232,8 @@ public class DocRoute implements Route {
 		
 		// TODO - backlinks collapsible.
 		
-		return breadcrumbs + 
+		return breadcrumbs.toString() + 
+				(toc.getText()==null ? "Documentation" : htmlFactory.title(toc.getText())) +
 				content + 
 				htmlFactory.tag(TagName.script, HIGHLIGHT_MODULE_GENERATOR.generate(docRoutePath)) +
 				htmlFactory.tag(TagName.script, SELECT_TOC_NODE_MODULE_GENERATOR.generate(new Object[] {docRoutePath, toc.getId()}));
