@@ -19,7 +19,7 @@ import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.HttpServletRequestContext;

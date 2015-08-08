@@ -4,136 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.Table;
 
-class TableImpl extends UIElementImpl<Table> implements Table {
+class TableImpl extends RowContainerImpl<Table> implements Table {
 	
 	TableImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, "table");
 	}
 
-	class RowImpl extends UIElementImpl<Row> implements Row {
-		
-		RowImpl() {
-			super(TableImpl.this.factory);
-		}
-		
-		private List<Object> content = new ArrayList<>();
-		
-		class CellImpl extends UIElementImpl<Cell> implements Cell {
-			
-			private boolean isHeader;
-
-			CellImpl(boolean isHeader, Object... content) {
-				super(TableImpl.this.factory);
-				content(content);
-				this.isHeader = isHeader;
-			}
-
-			@Override
-			public Cell colspan(int colspan) {
-				return attribute("colspan", String.valueOf(colspan));
-			}
-
-			@Override
-			public Cell rowspan(int rowspan) {
-				return attribute("rowspan", String.valueOf(rowspan));
-			}
-			
-			@Override
-			public String toString() {
-				String tagName = isHeader ? "th" : "td";
-				if (content.isEmpty()) {
-					return "<"+tagName+" "+attributes()+"/>";
-				}				
-				StringBuilder sb = new StringBuilder("<").append(tagName).append(attributes()).append(">");
-				for (Object c: content) {
-					sb.append(c);
-				}
-				return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
-			}
-			
-			private List<Object> content = new ArrayList<>();
-
-			@Override
-			public void close() throws Exception {
-				super.close();
-				for (Object c: content) {
-					close(c);
-				}
-			}
-
-			@Override
-			public Cell content(Object... content) {
-				for (Object c: content) {
-					this.content.add(c);
-				}
-				return this;
-			}
-			
-		}
-
-		@Override
-		public Cell cell(Object... content) {
-			CellImpl cell = new CellImpl(false, content);
-			this.content.add(cell);
-			return cell;
-		}
-
-		@Override
-		public Cell header(Object... content) {
-			CellImpl cell = new CellImpl(true, content);
-			this.content.add(cell);
-			return cell;
-		}
-
-		@Override
-		public Row style(org.nasdanika.html.UIElement.Style style) {
-			return attribute("class", Style.PRIMARY.equals(style) ? "active" : style.name().toLowerCase());
-		}
-		
-		@Override
-		public String toString() {
-			StringBuilder ret = new StringBuilder("<tr"+attributes()+">");
-			for (Object c: content) {
-				if (c!=null) {
-					ret.append(c);
-				}
-			}
-			ret.append("</tr>");
-			return ret.append(genLoadRemoteContentScript()).toString();
-		}
-		
-		@Override
-		public void close() throws Exception {
-			super.close();
-			for (Object c: content) {
-				close(c);
-			}			
-		}
-
-		@Override
-		public List<Cell> cells() {
-			List<Cell> cells = new ArrayList<>();
-			for (Object c: content) {
-				if (c instanceof Cell) {
-					cells.add((Cell) c);
-				}
-			}
-			return cells;
-		}
-
-		@Override
-		public Row content(Object... content) {
-			for (Object c: content) {
-				this.content.add(c);
-			}
-			return this;
-		}
-		
-	}
-	
-	private List<Object> content = new ArrayList<>();
 	private boolean bordered;
 	private boolean hover;
 	private boolean striped;
@@ -267,6 +146,40 @@ class TableImpl extends UIElementImpl<Table> implements Table {
 			this.content.add(c);
 		}
 		return this;
+	}
+	
+	private RowContainer<?> header;
+	private RowContainer<?> body;
+	private RowContainer<?> footer;	
+
+	@Override
+	public RowContainer<?> header() {
+		if (header == null) {
+			header = new RowContainerImpl<>(factory, "thead");
+			content.add(header);
+		}
+		
+		return header;
+	}
+
+	@Override
+	public RowContainer<?> body() {
+		if (body == null) {
+			body = new RowContainerImpl<>(factory, "tbody");
+			content.add(body);
+		}
+		
+		return body;
+	}
+
+	@Override
+	public RowContainer<?> footer() {
+		if (footer == null) {
+			footer = new RowContainerImpl<>(factory, "tfoot");
+			content.add(footer);
+		}
+		
+		return footer;
 	}
 
 }

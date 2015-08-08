@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Table.Row;
+import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.html.HTMLRenderer;

@@ -1,30 +1,6 @@
 package org.nasdanika.html;
 
-import java.util.List;
-
-public interface Table extends UIElement<Table>, Container<Table> {
-	
-	interface Row extends UIElement<Row>, Container<Row> {
-		
-		interface Cell extends UIElement<Cell>, Container<Cell> {
-			
-			Cell colspan(int colspan);
-			
-			Cell rowspan(int rowspan);
-			
-		}				
-		
-		Cell cell(Object... content);
-		
-		Cell header(Object... content);
-		
-		Row style(Style style);
-		
-		List<Cell> cells();
-		
-	}
-	
-	Row row();
+public interface Table extends UIElement<Table>, RowContainer<Table> {
 	
 	Table bordered(boolean bordered);
 	
@@ -45,7 +21,11 @@ public interface Table extends UIElement<Table>, Container<Table> {
 	Table condensed();
 	
 	Table responsive();
-	
-	List<Row> rows();
 
+	RowContainer<?> header();
+
+	RowContainer<?> body();
+	
+	RowContainer<?> footer();
+	
 }
