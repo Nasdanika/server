@@ -10,6 +10,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	
 	private List<Object> content = new ArrayList<>();
 	private boolean isInputGroupButton;
+	private Object forEachExpresion;
 
 	ButtonImpl(HTMLFactory factory, boolean isInputGroupButton, Object... content) {
 		super(factory);
@@ -248,7 +249,11 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 			sb.append("</button>");
 		}
 		
-		sb.append("<ul class=\"dropdown-menu\" role=\"menu\">");
+		sb.append("<ul class=\"dropdown-menu\" role=\"menu\"");
+		if (forEachExpresion!=null && forEachExpresion.toString().trim().length()>0) {
+			sb.append(" data-bind=\"foreach: "+forEachExpresion+"\"");
+		}
+		sb.append(">");
 		for (DropdownItem item: items) {
 			if (item instanceof Item) {
 				sb.append("<li>");
@@ -285,14 +290,9 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	@Override
 	public void close() throws Exception {
 		super.close();
-		for (Object o: content) {
-			if (o instanceof AutoCloseable) {
-				((AutoCloseable) o).close();
-			}
-		}
-		for (DropdownItem item: items) {
-			item.close();
-		}
+		close(content);
+		close(items);
+		close(forEachExpresion);
 	}
 	
 	@Override
@@ -308,4 +308,9 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		return items.isEmpty();
 	}
 
+	@Override
+	public Button koItemForEach(Object forEachExpression) {
+		this.forEachExpresion = forEachExpression;
+		return this;
+	}
 }

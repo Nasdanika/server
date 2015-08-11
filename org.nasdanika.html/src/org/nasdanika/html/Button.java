@@ -29,5 +29,13 @@ public interface Button extends UIElement<Button>, Dropdown<Button>, Container<B
 	Button dropup(boolean dropup);
 	
 	Button dropup();
+	
+	/**
+	 * If forEachExpression is not blank, <code>data-bind="foreach: &lt;forEachExpression&gt;"</code> attribute is added to <code>&lt;ul&gt;</code>
+	 * tag in the button group.
+	 * @param forEach
+	 * @return
+	 */
+	Button koItemForEach(Object forEachExpression);
 
 }
