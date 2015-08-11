@@ -479,4 +479,6 @@ public interface HTMLFactory {
 	 * @param overlayedSelector
 	 */
 	String showOverlay(String overlaySelector, String overlayedSelector, int widthAdjustment, int heightAdjustment);
+	
+	Well well(Object... content);
 }

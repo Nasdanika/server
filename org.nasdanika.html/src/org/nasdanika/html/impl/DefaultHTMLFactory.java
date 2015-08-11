@@ -28,6 +28,7 @@ import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.html.Well;
 
 /**
  * HTML factory which relies on Bootstrap styles and scripts.
@@ -510,5 +511,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public String showOverlay(String overlaySelector, String overlaidSelector, int widthAdjustment, int heightAdjustment) {
 		return "(function(overlay, overlaid) { overlay.width(overlaid.width()+"+widthAdjustment+"); overlay.height(overlaid.height()+"+heightAdjustment+"); overlay.show(); })(jQuery('"+overlaySelector+"'),jQuery('"+overlaidSelector+"'));";		
+	}
+
+	@Override
+	public Well well(Object... content) {		
+		return new WellImpl(this, content);
 	}
 }
