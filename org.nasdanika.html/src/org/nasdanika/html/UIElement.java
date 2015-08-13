@@ -467,6 +467,7 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 	 *
 	 */
 	enum KnockoutBinding {
+				
 		visible,
 		text,
 		html,
@@ -474,7 +475,7 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 		style,
 		attr,
 		foreach,
-		IF,
+		IF("if"),
 		ifnot,
 		with,
 		component,
@@ -490,7 +491,18 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 		options,
 		selectedOptions,
 		uniqueName,
-		template
+		template;
+		
+		public final String literal;
+		
+		private KnockoutBinding() {
+			this.literal = name();
+		}
+		
+		private KnockoutBinding(String literal) {
+			this.literal = literal;
+		}
+		
 	}	
 	
 	/**

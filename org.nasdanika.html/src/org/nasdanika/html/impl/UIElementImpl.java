@@ -396,7 +396,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	
 	@Override
 	public T koDataBind(UIElement.KnockoutBinding binding, Object value) {
-		return koDataBind(binding.name().toLowerCase(), value);
+		return koDataBind(binding.literal, value);
 	}
 			
 	@Override
