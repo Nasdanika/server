@@ -483,4 +483,10 @@ public interface HTMLFactory {
 	String showOverlay(String overlaySelector, String overlayedSelector, int widthAdjustment, int heightAdjustment);
 	
 	Well well(Object... content);
+	
+	/**
+	 * Generates script to stack modals as demonstrated at http://miles-by-motorcycle.com/static/bootstrap-modal/index.html
+	 * @return
+	 */
+	Tag stackModal();
 }

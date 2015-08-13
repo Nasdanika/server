@@ -15,6 +15,7 @@ import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.Size;
 import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.FontAwesome.Stack;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.LinkGroup;
@@ -522,5 +523,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Well well(Object... content) {		
 		return new WellImpl(this, content);
+	}
+	
+	@Override
+	public Tag stackModal() {
+		return tag(TagName.script, getClass().getResource("StackedModal.js"));
 	}
 }
