@@ -63,10 +63,14 @@ public class TocNode {
 		this.icon = icon;
 		this.counter = counter;
 		this.id = "content_node_"+Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
-		if (CoreUtil.isBlank(this.href)) {
-			this.href = "/toc/"+this.id;
-		}
 		this.tocId = tocId;
+		if (CoreUtil.isBlank(this.href)) {
+			if (CoreUtil.isBlank(this.tocId)) {
+				this.href = "/toc/"+this.id;
+			} else {
+				this.href = "/toc/"+this.tocId;				
+			}
+		}
 	}
 		
 	public TocNode(String text, String href, String icon) {

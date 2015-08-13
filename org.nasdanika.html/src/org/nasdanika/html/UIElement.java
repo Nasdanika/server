@@ -470,4 +470,6 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 	 */
 	T koDataBind(String name, Object value);
 	
+	Grid<T> grid();
+	
 }

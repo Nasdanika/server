@@ -133,4 +133,9 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.toString();
 	}
 
+	@Override
+	public Grid<T> grid() {
+		return target.grid();
+	}
+
 }

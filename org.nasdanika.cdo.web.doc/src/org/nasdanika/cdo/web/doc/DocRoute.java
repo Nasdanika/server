@@ -1044,8 +1044,14 @@ public class DocRoute implements Route {
 				return new ValueAction(content);
 			}
 			
-			if (path.length==2 && "toc".equals(path[0])) {
-				TocNode toc = tocRoot.find(pathStr);
+			if ("toc".equals(path[0])) {
+				TocNode toc;
+				if (path.length==2) {
+					toc = tocRoot.find(pathStr);
+				} else {					
+					toc = tocRoot.findByTocId(CoreUtil.join(path, "/", 1));
+				}
+					
 				if (toc==null) {
 					return Action.NOT_FOUND;
 				}
@@ -1062,7 +1068,6 @@ public class DocRoute implements Route {
 					fragment.content(toc.getContent());
 				}
 				return new ValueAction(navWrap(context.adapt(HTMLFactory.class), toc, fragment.toString(), prefix));
-				
 			}
 			
 			if (path.length>2 && "resources".equals(path[0])) {

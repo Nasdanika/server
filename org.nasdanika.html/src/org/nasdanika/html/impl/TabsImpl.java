@@ -147,24 +147,24 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		if (isEmpty()) {
 			return "";
 		}
-		
-		Tag ret = factory.div();
-		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-tabs");
-		ret.content(navUL);
+				
+		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-tabs");		
 		boolean hasAjaxTabs = false;
 		for (Tab tab: tabs) {
 			navUL.content(tab.li());
 			hasAjaxTabs = hasAjaxTabs || tab instanceof AjaxTab;
 		}
 		Tag contentDiv = factory.div().addClass("tab-content");
-		ret.content(contentDiv);
 		for (Tab tab: tabs) {
 			contentDiv.content(tab.div());
 		}
+		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");		
+		sb.append(navUL);
+		sb.append(contentDiv);
 		if (hasAjaxTabs) {
-			ret.content(tabAjaxDataToggleScriptRenderer.generate(null));
+			sb.append(tabAjaxDataToggleScriptRenderer.generate(null));
 		}		
-		return ret.toString()+genLoadRemoteContentScript();
+		return sb.append("</div>").append(genLoadRemoteContentScript()).toString();
 	};
 
 	@Override

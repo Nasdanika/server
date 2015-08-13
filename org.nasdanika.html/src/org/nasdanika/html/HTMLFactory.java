@@ -91,6 +91,8 @@ public interface HTMLFactory {
 	
 	Tabs tabs();
 	
+	Pills pills();
+	
 	Tag panel(UIElement.Style style, Object header, Object body, Object footer);
 	
 	/**

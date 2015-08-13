@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.FontAwesome;
+import org.nasdanika.html.Grid;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.UIElement;
 
@@ -391,6 +392,43 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			koDataBindEntries.put(name, value);
 		}
 		return (T) this;
+	}
+			
+	@Override
+	public Grid<T> grid() {
+		return new Grid<T>() {
+
+			@Override
+			public T container() {
+				return addClass("container");
+			}
+
+			@Override
+			public T fluidContainer() {
+				return addClass("container-fluid");
+			}
+
+			@Override
+			public T row() {
+				return addClass("row");
+			}
+
+			@Override
+			public T col(DeviceSize deviceSize, int width) {
+				return addClass("col-"+deviceSize.code+"-"+width);
+			}
+
+			@Override
+			public void close() throws Exception {
+				UIElementImpl.this.close();
+			}
+			
+			@Override
+			public String toString() {
+				return UIElementImpl.this.toString();
+			}
+			
+		};
 	}
 	
 }

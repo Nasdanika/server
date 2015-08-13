@@ -21,6 +21,7 @@ import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.Navbar;
+import org.nasdanika.html.Pills;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
@@ -286,6 +287,11 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Tabs tabs() {
 		return new TabsImpl(this);
+	}
+
+	@Override
+	public Pills pills() {
+		return new PillsImpl(this);
 	}
 
 	@Override
