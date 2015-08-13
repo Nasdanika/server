@@ -461,6 +461,37 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 	
 	FontAwesome<T> fontAwesome();
 	
+	/**
+	 * Built-in KnockoutJS bindings
+	 * @author Pavel Vlasov
+	 *
+	 */
+	enum KnockoutBinding {
+		visible,
+		text,
+		html,
+		css,
+		style,
+		attr,
+		foreach,
+		IF,
+		ifnot,
+		with,
+		component,
+		click,
+		event,
+		submit,
+		enable,
+		disable,
+		value,
+		textInput,
+		hasFocus,
+		checked,
+		options,
+		selectedOptions,
+		uniqueName,
+		template
+	}	
 	
 	/**
 	 * Adds Knockout JS entry to 'data-bind' attribute.
@@ -469,6 +500,14 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 	 * @return
 	 */
 	T koDataBind(String name, Object value);
+	
+	/**
+	 * Adds Knockout JS entry to 'data-bind' attribute.
+	 * @param name
+	 * @param value
+	 * @return
+	 */
+	T koDataBind(KnockoutBinding binding, Object value);	
 	
 	Grid<T> grid();
 	

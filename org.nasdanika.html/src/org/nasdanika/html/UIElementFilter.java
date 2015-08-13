@@ -121,6 +121,11 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 	public T koDataBind(String name, Object value) {
 		return target.koDataBind(name, value);
 	}
+	
+	@Override
+	public T koDataBind(UIElement.KnockoutBinding binding, Object value) {
+		return target.koDataBind(binding, value);
+	}
 
 	private T target;
 

@@ -393,6 +393,11 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		}
 		return (T) this;
 	}
+	
+	@Override
+	public T koDataBind(UIElement.KnockoutBinding binding, Object value) {
+		return koDataBind(binding.name().toLowerCase(), value);
+	}
 			
 	@Override
 	public Grid<T> grid() {
