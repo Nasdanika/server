@@ -13,9 +13,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.nasdanika.html.Angular;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.Grid;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Knockout;
 import org.nasdanika.html.UIElement;
 
 /**
@@ -322,81 +324,157 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		return factory.tag("script", "nsdLoad(\"#"+getId()+"\", \""+remoteContent+"\");").toString();
 	}
 	
-	@Override
-	public T ngApp() {
-		return ngApp("");
-	}
-	
-	@Override
-	public T ngApp(Object appName) {
-		return attribute("ng-app", appName);
-	}
-	
-	@Override
-	public T ngController(Object controllerName) {
-		return attribute("ng-controller", controllerName);
-	}
-	
-	@Override
-	public T ngBind(Object expr) {
-		return attribute("ng-bind", expr);
-	}
-	
-	@Override
-	public T ngBindHtml(Object expr) {
-		return attribute("ng-bind-html", expr);
-	}
-	
-	@Override
-	public T ngClass(Object expr) {
-		return attribute("ng-class", expr);
-	}
-	
-	@Override
-	public T ngCloak() {
-		return attribute("ng-cloak", true);
-	}
-	
-	@Override
-	public T ngHide(Object expr) {
-		return attribute("ng-hide", expr);
-	}
-	
-	@Override
-	public T ngShow(Object expr) {
-		return attribute("ng-show", expr);
-	}
-	
-	@Override
-	public T ngRepeat(Object expr) {
-		return attribute("ng-repeat", expr);
-	}
-	
-	@Override
-	public T ngClick(Object expr) {
-		return attribute("ng-click", expr);
-	}
-	
 	@SuppressWarnings("unchecked")
 	@Override
 	public FontAwesome<T> fontAwesome() {
 		return new FontAwesomeImpl<T>((T) this);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
-	public T koDataBind(String name, Object value) {
-		if (value==null) {
-			koDataBindEntries.remove(name);
-		} else {
-			koDataBindEntries.put(name, value);
-		}
-		return (T) this;
-	}
-	
-	@Override
-	public T koDataBind(UIElement.KnockoutBinding binding, Object value) {
-		return koDataBind(binding.literal, value);
+	public Knockout<T> knockout() {
+		return new Knockout<T>() {
+
+			@Override
+			public void close() throws Exception {
+				UIElementImpl.this.close();
+			}
+			
+			@Override
+			public String toString() {
+				return UIElementImpl.this.toString();
+			}
+
+			@Override
+			public T visible(Object expression) {
+				return bind("visible", expression);
+			}
+
+			@Override
+			public T text(Object expression) {
+				return bind("text", expression);
+			}
+
+			@Override
+			public T html(Object expression) {
+				return bind("html", expression);
+			}
+
+			@Override
+			public T css(Object expression) {
+				return bind("css", expression);
+			}
+
+			@Override
+			public T style(Object expression) {
+				return bind("style", expression);
+			}
+
+			@Override
+			public T attr(Object expression) {
+				return bind("attr", expression);
+			}
+
+			@Override
+			public T foreach(Object expression) {
+				return bind("foreach", expression);
+			}
+
+			@Override
+			public T if_(Object expression) {
+				return bind("if", expression);
+			}
+
+			@Override
+			public T ifnot(Object expression) {
+				return bind("ifnot", expression);
+			}
+
+			@Override
+			public T with(Object expression) {
+				return bind("with", expression);
+			}
+
+			@Override
+			public T component(Object expression) {
+				return bind("component", expression);
+			}
+
+			@Override
+			public T click(Object expression) {
+				return bind("click", expression);
+			}
+
+			@Override
+			public T event(Object expression) {
+				return bind("event", expression);
+			}
+
+			@Override
+			public T submit(Object expression) {
+				return bind("submit", expression);
+			}
+
+			@Override
+			public T enable(Object expression) {
+				return bind("enable", expression);
+			}
+
+			@Override
+			public T disable(Object expression) {
+				return bind("disable", expression);
+			}
+
+			@Override
+			public T value(Object expression) {
+				return bind("value", expression);
+			}
+
+			@Override
+			public T textInput(Object expression) {
+				return bind("textInput", expression);
+			}
+
+			@Override
+			public T hasFocus(Object expression) {
+				return bind("hasFocus", expression);
+			}
+
+			@Override
+			public T checked(Object expression) {
+				return bind("checked", expression);
+			}
+
+			@Override
+			public T options(Object expression) {
+				return bind("options", expression);
+			}
+
+			@Override
+			public T selectedOptions(Object expression) {
+				return bind("selectedOptions", expression);
+			}
+
+			@Override
+			public T uniqueName(Object expression) {
+				return bind("uniqueName", expression);
+			}
+
+			@Override
+			public T template(Object expression) {
+				return bind("template", expression);
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T bind(String binding, Object expression) {
+				if (expression==null) {
+					koDataBindEntries.remove(binding);
+				} else {
+					koDataBindEntries.put(binding, expression);
+				}
+				return (T) UIElementImpl.this;
+			}
+		};
 	}
 			
 	@Override
@@ -436,4 +514,85 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		};
 	}
 	
+	@Override
+	public Angular<T> angular() {
+		return new Angular<T>() {
+			
+			@Override
+			public T app() {
+				return app("");
+			}
+
+			@Override
+			public T app(Object appName) {
+				return directive("app", appName);
+			}
+
+			@Override
+			public T controller(Object controllerName) {				
+				return directive("controller", controllerName);
+			}
+
+			@Override
+			public T bind(Object expr) {
+				return directive("bind", expr);
+			}
+
+			@Override
+			public T bindHtml(Object expr) {
+				return directive("bind-html", expr);
+			}
+
+			@Override
+			public T clazz(Object expr) {
+				return directive("class", expr);
+			}
+
+			@Override
+			public T cloak() {
+				return directive("cloak", true);
+			}
+
+			@Override
+			public T hide(Object expr) {
+				return directive("hide", expr);
+			}
+
+			@Override
+			public T show(Object expr) {
+				return directive("show", expr);
+			}
+
+			@Override
+			public T repeat(Object expr) {
+				return directive("repeat", expr);
+			}
+
+			@Override
+			public T click(Object expr) {
+				return directive("click", expr);
+			}
+			
+			
+			@Override
+			public T directive(String directive, Object expr) {
+				return attribute("ng-"+directive, expr);
+			}
+
+			@Override
+			public void close() throws Exception {
+				UIElementImpl.this.close();
+			}
+			
+			@Override
+			public String toString() {
+				return UIElementImpl.this.toString();
+			}
+			
+		};
+	}
+	
 }
+
+
+

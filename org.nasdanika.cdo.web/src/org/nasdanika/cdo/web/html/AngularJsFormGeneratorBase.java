@@ -64,12 +64,12 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 	 */
 	@Override
 	protected void populateForm(HTMLFactory htmlFactory, Form form)	throws Exception {
-		form.content(htmlFactory.div().style("color", "red").ngBind(model+".validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));		
+		form.content(htmlFactory.div().style("color", "red").angular().bind(model+".validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));		
 	}
 	
 	@Override
 	protected Object generateHelpText(HTMLFactory htmlFactory, T element) {
-		return htmlFactory.span().style("color", "red").ngBind(model+".validationResults."+element.getName());
+		return htmlFactory.span().style("color", "red").angular().bind(model+".validationResults."+element.getName());
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 			if (!(group instanceof FormInputGroup)) {
 				formGroup.feedback();
 			}
-			formGroup.ngClass("{ 'has-error' : "+model+".validationResults."+element.getName()+" }");
+			formGroup.angular().clazz("{ 'has-error' : "+model+".validationResults."+element.getName()+" }");
 		}
 	}
 	
@@ -90,7 +90,7 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 		if (control instanceof InputBase) {
 			((InputBase<?>) control).ngModel(model+".data."+element.getName());
 		} else if (control instanceof UIElement) {
-			((UIElement<?>) control).ngBind(model+".data."+element.getName());
+			((UIElement<?>) control).angular().bind(model+".data."+element.getName());
 		}
 	}
 	

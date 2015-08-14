@@ -69,62 +69,19 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 	public T remoteContent(Object href) {
 		return target.remoteContent(href);
 	}
-
-	public T ngApp() {
-		return target.ngApp();
-	}
-
-	public T ngApp(Object appName) {
-		return target.ngApp(appName);
-	}
-
-	public T ngController(Object controllerName) {
-		return target.ngController(controllerName);
-	}
-
-	public T ngHide(Object expr) {
-		return target.ngHide(expr);
-	}
-
-	public T ngShow(Object expr) {
-		return target.ngShow(expr);
-	}
-
-	public T ngRepeat(Object expr) {
-		return target.ngRepeat(expr);
-	}
-
-	public T ngClass(Object expr) {
-		return target.ngClass(expr);
-	}
-
-	public T ngCloak() {
-		return target.ngCloak();
-	}
-
-	public T ngBind(Object expr) {
-		return target.ngBind(expr);
-	}
-
-	public T ngBindHtml(Object expr) {
-		return target.ngBindHtml(expr);
-	}
-
-	public T ngClick(Object expr) {
-		return target.ngClick(expr);
+	
+	@Override
+	public Angular<T> angular() {
+		return target.angular();
 	}
 
 	public FontAwesome<T> fontAwesome() {
 		return target.fontAwesome();
 	}
-
-	public T koDataBind(String name, Object value) {
-		return target.koDataBind(name, value);
-	}
 	
 	@Override
-	public T koDataBind(UIElement.KnockoutBinding binding, Object value) {
-		return target.koDataBind(binding, value);
+	public Knockout<T> knockout() {
+		return target.knockout();
 	}
 
 	private T target;

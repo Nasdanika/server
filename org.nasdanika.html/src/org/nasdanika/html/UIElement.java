@@ -423,103 +423,14 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 	 */
 	T remoteContent(Object href);
 	
-	/**
-	 * Adds AngularJS application attribute with blank name.
-	 * @return
-	 */
-	T ngApp();
-	
-	/**
-	 * Adds AngularJS application attribute.
-	 * @param appName
-	 * @return
-	 */
-	T ngApp(Object appName);
-	
-	/**
-	 * Adds AngularJS controller attribute.
-	 * @param controllerName
-	 * @return
-	 */
-	T ngController(Object controllerName);
-	
-	T ngHide(Object expr);
-	
-	T ngShow(Object expr);
-
-	T ngRepeat(Object expr);
-	
-	T ngClass(Object expr);
-	
-	T ngCloak();
-	
-	T ngBind(Object expr);
-	
-	T ngBindHtml(Object expr);
-	
-	T ngClick(Object expr);
+	Angular<T> angular();
 	
 	FontAwesome<T> fontAwesome();
 	
 	/**
-	 * Built-in KnockoutJS bindings
-	 * @author Pavel Vlasov
-	 *
+	 * @return Knockout interface instance to manipulate Knockout.js binding.
 	 */
-	enum KnockoutBinding {
-				
-		visible,
-		text,
-		html,
-		css,
-		style,
-		attr,
-		foreach,
-		IF("if"),
-		ifnot,
-		with,
-		component,
-		click,
-		event,
-		submit,
-		enable,
-		disable,
-		value,
-		textInput,
-		hasFocus,
-		checked,
-		options,
-		selectedOptions,
-		uniqueName,
-		template;
-		
-		public final String literal;
-		
-		private KnockoutBinding() {
-			this.literal = name();
-		}
-		
-		private KnockoutBinding(String literal) {
-			this.literal = literal;
-		}
-		
-	}	
-	
-	/**
-	 * Adds Knockout JS entry to 'data-bind' attribute.
-	 * @param name
-	 * @param value
-	 * @return
-	 */
-	T koDataBind(String name, Object value);
-	
-	/**
-	 * Adds Knockout JS entry to 'data-bind' attribute.
-	 * @param name
-	 * @param value
-	 * @return
-	 */
-	T koDataBind(KnockoutBinding binding, Object value);	
+	Knockout<T> knockout();
 	
 	Grid<T> grid();
 	

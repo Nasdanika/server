@@ -49,30 +49,34 @@ public class DocumentationPanelFactory {
 		Input searchInput = htmlFactory.input(InputType.text)
 				.id("searchText")
 				.placeholder("Search query")
-				.koDataBind("textInput", "query")
-				.koDataBind("event", "{ keypress: searchKeyPress }");
+				.knockout().textInput("query")
+				.knockout().event("{ keypress: searchKeyPress }");
 		FormInputGroup searchGroup = searchForm.formInputGroup("Search", "searchText", searchInput, "Search query");
-		searchGroup.rightButton(htmlFactory.glyphicon(Glyphicon.search)).koDataBind("click", "search").koDataBind("enable", "query");
+		
+		searchGroup.rightButton(htmlFactory.glyphicon(Glyphicon.search))
+			.knockout().click("search")
+			.knockout().enable("query");
+		
 		searchGroup.style("width", "100%");
 		searchGroup.getInputGroup().style("width", "100%");
 		
 		Tag searchResultIcon = htmlFactory.tag("img")
 				.style("margin-right", "3px")
-				.koDataBind("attr", "{ src: icon }")
-				.koDataBind("visible", "icon");
+				.knockout().attr("{ src: icon }")
+				.knockout().if_("icon");
 		
 		Tag searchResultLink = htmlFactory.tag("a", "")
-				.koDataBind("text", "name")
-				.koDataBind("attr", "{ href: href }");
+				.knockout().text("name")
+				.knockout().attr("{ href: href }");
 		
 		Tag searchResultError = htmlFactory.alert(Style.DANGER, false)
-				.koDataBind("text", "error")
-				.koDataBind("visible", "error")
+				.knockout().text("error")
+				.knockout().visible("error")
 				.style("margin-right", "5px")
 				.style("margin-top", "5px");
 		
 		Tag searchResult = htmlFactory.tag(TagName.li, searchResultIcon, searchResultLink);					
-		Tag searchResults = htmlFactory.tag(TagName.ol, searchResult).koDataBind("foreach", "results");
+		Tag searchResults = htmlFactory.tag(TagName.ol, searchResult).knockout().foreach("results");
 		Tag searchContainer = htmlFactory.div(searchForm, searchResultError, searchResults).id("search-container");
 		
 		Tag searchModule = htmlFactory.tag(TagName.script, "require(['"+docRoutePath+"/resources/js/left-panel.js'], function(tocTree) { /* NOP */ })");

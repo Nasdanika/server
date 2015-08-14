@@ -63,7 +63,7 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	protected Button createCancelButton(HTMLFactory htmlFactory, Form form) {
 		if (cancelHandler!=null) {
 			Button ret = super.createCancelButton(htmlFactory, form);
-			ret.koDataBind("click", cancelHandler);
+			ret.knockout().click(cancelHandler);
 			return ret;
 		}
 		return null;
@@ -71,13 +71,13 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	
 	@Override
 	protected Button createSubmitButton(HTMLFactory htmlFactory, Form form) {
-		return super.createSubmitButton(htmlFactory, form).koDataBind("enable", getModelPrefix()+"isDirty");
+		return super.createSubmitButton(htmlFactory, form).knockout().enable(getModelPrefix()+"isDirty");
 	}
 	
 	@Override
 	public Form generateForm(HTMLFactory htmlFactory) throws Exception {		
 		Form form = super.generateForm(htmlFactory);
-		form.koDataBind("submit", submitHandler);		
+		form.knockout().submit(submitHandler);		
 		return form;
 	}
 	
@@ -90,12 +90,12 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	 */
 	@Override
 	protected void populateForm(HTMLFactory htmlFactory, Form form)	throws Exception {
-		form.content(htmlFactory.div("").style("color", "red").koDataBind("text", getModelPrefix()+"validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));		
+		form.content(htmlFactory.div("").style("color", "red").knockout().text(getModelPrefix()+"validationResults['"+CDOWebUtil.getThisKey(getSource())+"']"));		
 	}
 	
 	@Override
 	protected Object generateHelpText(HTMLFactory htmlFactory, T element) {
-		return htmlFactory.span().style("color", "red").koDataBind("text", getModelPrefix()+"validationResults."+element.getName());
+		return htmlFactory.span().style("color", "red").knockout().text(getModelPrefix()+"validationResults."+element.getName());
 	}
 
 	@Override
@@ -106,7 +106,7 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 			if (!(group instanceof FormInputGroup)) {
 				formGroup.feedback();
 			}
-			formGroup.koDataBind("css", "{ 'has-error' : "+getModelPrefix()+"validationResults."+element.getName()+" }");
+			formGroup.knockout().css("{ 'has-error' : "+getModelPrefix()+"validationResults."+element.getName()+" }");
 		}
 	}
 	
@@ -114,9 +114,9 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	protected void configureControl(HTMLFactory htmlFactory, T element,	Object control) {		
 		super.configureControl(htmlFactory, element, control);
 		if (control instanceof InputBase) {
-			((InputBase<?>) control).koDataBind(isCheckbox(element, control) ? "checked" : "value", getModelPrefix()+"data."+element.getName());
+			((InputBase<?>) control).knockout().bind(isCheckbox(element, control) ? "checked" : "value", getModelPrefix()+"data."+element.getName());
 		} else if (control instanceof UIElement) {
-			((UIElement<?>) control).koDataBind("text", getModelPrefix()+"data."+element.getName());
+			((UIElement<?>) control).knockout().text(getModelPrefix()+"data."+element.getName());
 		}
 	}
 	
