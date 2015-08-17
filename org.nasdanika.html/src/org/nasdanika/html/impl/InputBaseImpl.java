@@ -63,14 +63,5 @@ abstract class InputBaseImpl<T extends InputBase<T>> extends UIElementImpl<T> im
 	public T required() {
 		return required(true);
 	}
-
-	@Override
-	public T ngModel(Object expr) {
-		return attribute("ng-model", expr);
-	}
-
-	@Override
-	public T ngRequired(Object expr) {
-		return attribute("ng-required", expr);
-	}
+	
 }

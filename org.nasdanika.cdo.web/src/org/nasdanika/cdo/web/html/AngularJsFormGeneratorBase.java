@@ -88,7 +88,7 @@ public abstract class AngularJsFormGeneratorBase<S extends EModelElement, T exte
 	protected void configureControl(HTMLFactory htmlFactory, T element,	Object control) {		
 		super.configureControl(htmlFactory, element, control);
 		if (control instanceof InputBase) {
-			((InputBase<?>) control).ngModel(model+".data."+element.getName());
+			((InputBase<?>) control).angular().model(model+".data."+element.getName());
 		} else if (control instanceof UIElement) {
 			((UIElement<?>) control).angular().bind(model+".data."+element.getName());
 		}

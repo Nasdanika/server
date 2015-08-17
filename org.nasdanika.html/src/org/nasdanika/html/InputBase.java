@@ -20,14 +20,5 @@ public interface InputBase<T extends InputBase<T>> extends UIElement<T> {
 	T disabled();
 		
 	T form(Form... form);
-		
-	/**
-	 * Adds AngularJS model attribute.
-	 * @param expr
-	 * @return
-	 */
-	T ngModel(Object expr);
-	
-	T ngRequired(Object expr);
-	
+			
 }

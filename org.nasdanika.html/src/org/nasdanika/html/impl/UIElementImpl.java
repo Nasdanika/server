@@ -572,8 +572,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			public T click(Object expr) {
 				return directive("click", expr);
 			}
-			
-			
+						
 			@Override
 			public T directive(String directive, Object expr) {
 				return attribute("ng-"+directive, expr);
@@ -587,6 +586,251 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			@Override
 			public String toString() {
 				return UIElementImpl.this.toString();
+			}
+
+			@Override
+			public T bindTemplate(Object expr) {
+				return directive("bind-template", expr);
+			}
+
+			@Override
+			public T blur(Object expr) {
+				return directive("blur", expr);
+			}
+
+			@Override
+			public T change(Object expr) {
+				return directive("change", expr);
+			}
+
+			@Override
+			public T checked(Object expr) {
+				return directive("checked", expr);
+			}
+
+			@Override
+			public T classEven(Object expr) {
+				return directive("class-even", expr);
+			}
+
+			@Override
+			public T classOdd(Object expr) {
+				return directive("class-odd", expr);
+			}
+
+			@Override
+			public T copy(Object expr) {
+				return directive("copy", expr);
+			}
+
+			@Override
+			public T csp() {
+				return directive("csp", ""); 
+			}
+
+			@Override
+			public T cut(Object expr) {
+				return directive("cut", expr);
+			}
+
+			@Override
+			public T dblClick(Object expr) {
+				return directive("dblclick", expr);
+			}
+
+			@Override
+			public T disabled(Object expr) {
+				return directive("disabled", expr);
+			}
+
+			@Override
+			public T focus(Object expr) {
+				return directive("focus", expr);
+			}
+
+			@Override
+			public T form(Object expr) {
+				return directive("form", expr);
+			}
+
+			@Override
+			public T href(Object expr) {
+				return directive("href", expr);
+			}
+
+			@Override
+			public T if_(Object expr) {
+				return directive("if", expr);
+			}
+
+			@Override
+			public T include(Object expr) {
+				return directive("include", expr);
+			}
+
+			@Override
+			public T init(Object expr) {
+				return directive("init", expr);
+			}
+
+			@Override
+			public T jq(Object expr) {
+				return directive("jq", expr);
+			}
+
+			@Override
+			public T keyDown(Object expr) {
+				return directive("keydown", expr);
+			}
+
+			@Override
+			public T keyPress(Object expr) {
+				return directive("keypress", expr);
+			}
+
+			@Override
+			public T keyUp(Object expr) {
+				return directive("keyup", expr);
+			}
+
+			@Override
+			public T list() {
+				return directive("list", "");
+			}
+
+			@Override
+			public T model(Object expr) {
+				return directive("model", expr);
+			}
+
+			@Override
+			public T modelOptions(Object expr) {
+				return directive("model-options", expr);
+			}
+
+			@Override
+			public T mouseDown(Object expr) {
+				return directive("mousedown", expr);
+			}
+
+			@Override
+			public T mouseEenter(Object expr) {
+				return directive("mouseenter", expr);
+			}
+
+			@Override
+			public T mouseLeave(Object expr) {
+				return directive("mouseleave", expr);
+			}
+
+			@Override
+			public T mouseMove(Object expr) {
+				return directive("mousemove", expr);
+			}
+
+			@Override
+			public T mouseOver(Object expr) {
+				return directive("mouseover", expr);
+			}
+
+			@Override
+			public T mouseUp(Object expr) {
+				return directive("mouseup", expr);
+			}
+
+			@Override
+			public T nonBindable() {
+				return directive("non-bindable", "");
+			}
+
+			@Override
+			public T open(Object expr) {
+				return directive("open", expr);
+			}
+
+			@Override
+			public T options(Object expr) {
+				return directive("optins", expr);
+			}
+
+			@Override
+			public T paste(Object expr) {
+				return directive("paste", expr);
+			}
+
+			@Override
+			public T readonly(Object expr) {
+				return directive("readonly", expr);
+			}
+
+			@Override
+			public T selected(Object expr) {
+				return directive("selected", expr);
+			}
+
+			@Override
+			public T src(Object expr) {
+				return directive("src", expr); 
+			}
+
+			@Override
+			public T srcset(Object expr) {
+				return directive("srcset", expr);
+			}
+
+			@Override
+			public T style(Object expr) {
+				return directive("style", expr);
+			}
+
+			@Override
+			public T submit(Object expr) {
+				return directive("submit", expr);
+			}
+
+			@Override
+			public T switch_(Object expr) {
+				return directive("switch", expr);
+			}
+
+			@Override
+			public T switchWhen(Object expr) {
+				return directive("switch-when", expr);
+			}
+
+			@Override
+			public T switchDefault() {
+				return directive("switch-default", "");
+			}
+
+			@Override
+			public T value(Object expr) {
+				return directive("value", expr);
+			}
+
+			@Override
+			public T required(Object expr) {
+				return directive("required", expr);
+			}
+
+			@Override
+			public T minLength(Object expr) {
+				return directive("minlength", expr);
+			}
+
+			@Override
+			public T maxLength(Object expr) {
+				return directive("maxlength", expr);
+			}
+
+			@Override
+			public T pattern(Object expr) {
+				return directive("pattern", expr);
+			}
+
+			@Override
+			public T trim(Object expr) {
+				return directive("trim", expr);
 			}
 			
 		};

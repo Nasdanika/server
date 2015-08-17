@@ -188,7 +188,10 @@ public class ObjectRoute implements Route {
 			return null;
 		}
 		
-		InputStream is = clazz.getClassLoader().getResourceAsStream(clazz.getName().replace('.',  '/')+"$"+resourceName);
+		String baseName = clazz.getName();
+		int idx = baseName.lastIndexOf('.');
+		baseName = baseName.substring(0, idx+1).replace('.',  '/');
+		InputStream is = clazz.getClassLoader().getResourceAsStream(baseName+resourceName);
 		if (is!=null) {
 			ResourceInfo ret = new ResourceInfo(is);
 			Bundle bundle = FrameworkUtil.getBundle(clazz);
