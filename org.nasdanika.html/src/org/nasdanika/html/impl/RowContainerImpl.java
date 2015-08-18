@@ -48,9 +48,9 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 			public String toString() {
 				String tagName = isHeader ? "th" : "td";
 				if (content.isEmpty()) {
-					return "<"+tagName+" "+attributes()+"/>";
+					return renderComment()+"<"+tagName+" "+attributes()+"/>";
 				}				
-				StringBuilder sb = new StringBuilder("<").append(tagName).append(attributes()).append(">");
+				StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 				for (Object c: content) {
 					sb.append(c);
 				}
@@ -98,7 +98,7 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 		
 		@Override
 		public String toString() {
-			StringBuilder ret = new StringBuilder("<tr"+attributes()+">");
+			StringBuilder ret = new StringBuilder(renderComment()).append("<tr"+attributes()+">");
 			for (Object c: content) {
 				if (c!=null) {
 					ret.append(c);
@@ -151,7 +151,7 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 		if (content.isEmpty()) {
 			return "";
 		}
-		StringBuilder sb = new StringBuilder("<").append(tagName).append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 		for (Object c: content) {
 			try {
 				sb.append(TagImpl.renderContent(c));

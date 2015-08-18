@@ -166,7 +166,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	public String toString() {
 		// Simple button - no items
 		if (items.isEmpty()) {
-			StringBuilder sb = new StringBuilder("<button type=\"");
+			StringBuilder sb = new StringBuilder(renderComment()).append("<button type=\"");
 			sb.append(type.name().toLowerCase());
 			sb.append("\" class=\"btn");
 			buttonClasses(sb);

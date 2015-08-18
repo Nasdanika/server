@@ -67,7 +67,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 		
 		@Override
 		public String toString() {
-			StringBuilder ret = new StringBuilder("<div");
+			StringBuilder ret = new StringBuilder(renderComment()).append("<div");
 			if (sizeMap.isEmpty()) {
 				// plain div
 				ret.append(attributes());
@@ -144,7 +144,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	
 	@Override
 	public String toString() {
-		return applicationPanelRenderer.generate(new ApplicationPanelConfig() {
+		return renderComment()+applicationPanelRenderer.generate(new ApplicationPanelConfig() {
 			
 			@Override
 			public int getWidth() {

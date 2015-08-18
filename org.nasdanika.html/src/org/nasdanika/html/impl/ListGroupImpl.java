@@ -29,7 +29,7 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 	
 	@Override
 	public String toString() {
-		StringBuilder ret = new StringBuilder("<ul");
+		StringBuilder ret = new StringBuilder(renderComment()).append("<ul");
 		ret.append(attributes());
 		ret.append(">");
 		for (Tag item: items) {

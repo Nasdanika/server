@@ -98,7 +98,7 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 		if (getId()==null) {
 			id(factory.nextId());
 		}
-		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		Tag ol = factory.tag(TagName.ol).addClass("carousel-indicators");
 		if (indicatorsBootstrapBackground!=null) {
 			ol.style("background", indicatorsBootstrapBackground.code);

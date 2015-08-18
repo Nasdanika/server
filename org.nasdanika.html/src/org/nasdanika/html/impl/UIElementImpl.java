@@ -223,6 +223,12 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	private List<Object> classes = new ArrayList<>();
 
 	private Object remoteContent;
+
+	private String comment;
+	
+	protected String renderComment() {
+		return comment==null || comment.trim().length()==0 ? "" : "<!-- "+comment+" -->";
+	}
 	
 	@SuppressWarnings("unchecked")
 	@Override
@@ -834,6 +840,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 			
 		};
+	}
+		
+	@SuppressWarnings("unchecked")
+	@Override
+	public T comment(String comment) {
+		this.comment = comment;
+		return (T) this;
 	}
 	
 }

@@ -35,7 +35,7 @@ class BreadcrumbsImpl extends UIElementImpl<Breadcrumbs> implements Breadcrumbs 
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("<ol").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<ol").append(attributes()).append(">");
 		for (Tag item: items) {
 			sb.append(item);
 		}

@@ -100,4 +100,9 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.grid();
 	}
 
+	@Override
+	public T comment(String comment) {
+		return target.comment(comment);
+	}
+
 }

@@ -90,7 +90,6 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 							.append(radioControl)
 							.append(label) 
 							.append("</label>");
-					content.add(sb.toString());
 				} else {
 					sb.append("<div class=\"radio\">") 
 							.append("<label>") 
@@ -98,7 +97,6 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 							.append(label) 
 							.append("</label>")
 							.append("</div>");
-					content.add(sb.toString());
 				}
 				if (form.horizontal) {
 					UIElement<?> controlDiv = form.factory.div(sb.toString());

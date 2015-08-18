@@ -41,9 +41,9 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 	public String toString() {		
 		List<Object> theContent = getContent();
 		if (theContent.isEmpty()) {
-			return "<"+tagName+attributes()+"/>";
+			return renderComment()+"<"+tagName+attributes()+"/>";
 		}
-		StringBuilder sb = new StringBuilder("<").append(tagName).append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 		for (Object c: theContent) {
 			try {
 				sb.append(renderContent(c));

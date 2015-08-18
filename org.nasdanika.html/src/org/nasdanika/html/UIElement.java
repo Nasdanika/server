@@ -434,4 +434,6 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable {
 	
 	Grid<T> grid();
 	
+	T comment(String comment);
+	
 }

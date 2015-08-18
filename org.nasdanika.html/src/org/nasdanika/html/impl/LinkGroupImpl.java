@@ -38,7 +38,7 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 	
 	@Override
 	public String toString() {
-		StringBuilder ret = new StringBuilder("<div");
+		StringBuilder ret = new StringBuilder(renderComment()).append("<div");
 		ret.append(attributes());
 		ret.append(">");
 		for (Tag item: items) {

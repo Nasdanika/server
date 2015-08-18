@@ -158,7 +158,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		for (Tab tab: tabs) {
 			contentDiv.content(tab.div());
 		}
-		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");		
+		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");		
 		sb.append(navUL);
 		sb.append(contentDiv);
 		if (hasAjaxTabs) {

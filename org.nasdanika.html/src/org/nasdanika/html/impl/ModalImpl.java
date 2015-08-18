@@ -84,7 +84,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 	
 	@Override
 	public String toString() {		
-		StringBuilder sb = new StringBuilder("<").append("div").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		Tag dialogDiv = factory.div(contentDiv).addClass("modal-dialog");
 		if (large) {
 			dialogDiv.addClass("modal-lg");

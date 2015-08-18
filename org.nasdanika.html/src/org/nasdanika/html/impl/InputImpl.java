@@ -33,9 +33,9 @@ class InputImpl extends InputBaseImpl<Input> implements Input {
 	public String toString() {		
 		List<Object> theContent = getContent();
 		if (theContent.isEmpty()) {
-			return "<input"+attributes()+"/>";
+			return renderComment()+"<input"+attributes()+"/>";
 		}
-		StringBuilder sb = new StringBuilder("<input").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<input").append(attributes()).append(">");
 		for (Object c: theContent) {
 			sb.append(c);
 		}

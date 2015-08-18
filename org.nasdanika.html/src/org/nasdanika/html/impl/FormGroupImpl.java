@@ -58,7 +58,7 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 		if (feedback) {
 			addClass("has-feedback");
 		}
-		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		if (label!=null) {
 			UIElement<?> labelTag = form.factory.tag(TagName.label, label).attribute("for", String.valueOf(controlId));
 			if (form.inline) {

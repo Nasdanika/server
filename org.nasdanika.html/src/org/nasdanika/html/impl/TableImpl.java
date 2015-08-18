@@ -85,7 +85,7 @@ class TableImpl extends RowContainerImpl<Table> implements Table {
 	public String toString() {
 		StringBuilder ret = new StringBuilder();
 		if (responsive) {
-			ret.append("<div class=\"table-responsive\">");
+			ret.append(renderComment()).append("<div class=\"table-responsive\">");
 		}
 		
 		ret.append("<table class=\"table");

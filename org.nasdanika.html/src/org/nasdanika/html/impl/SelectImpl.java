@@ -76,7 +76,7 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("<select").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<select").append(attributes()).append(">");
 		for (Object item: items) {
 			sb.append(item);
 		}

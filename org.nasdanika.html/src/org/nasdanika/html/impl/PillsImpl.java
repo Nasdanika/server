@@ -185,7 +185,7 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 			contentDiv.content(pill.div());
 		}
 		
-		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		
 		if (pillsWidth.isEmpty()) {
 			sb.append(navUL);

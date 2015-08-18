@@ -71,7 +71,7 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("<div");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<div");
 		sb.append(attributes());
 		sb.append(">");
 		if (leftAddOn instanceof Button) {

@@ -101,7 +101,8 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	
 	@Override
 	public String toString() {
-		return new StringBuilder("<form")
+		return new StringBuilder(renderComment())
+			.append("<form")
 			.append(attributes())
 			.append(">")
 			.append(container.toString())

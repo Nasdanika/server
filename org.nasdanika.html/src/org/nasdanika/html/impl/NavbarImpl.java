@@ -139,7 +139,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 		
 		final String collapseTargetId = factory.nextId()+"_collapse";
 
-		return navbarRenderer.generate(new NavbarConfig() {
+		return renderComment()+navbarRenderer.generate(new NavbarConfig() {
 			
 			@Override
 			public Object getBrand() {

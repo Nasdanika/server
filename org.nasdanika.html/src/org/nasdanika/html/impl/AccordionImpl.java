@@ -99,7 +99,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("<div").append(attributes()).append(">");
+		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		for (Item item: items) {
 			sb.append(item.toString());
 		}

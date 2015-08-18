@@ -71,7 +71,7 @@ class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 	
 	@Override
 	public String toString() {
-		StringBuilder sb = new StringBuilder("<fieldset").append(attributes("disabled"));
+		StringBuilder sb = new StringBuilder(renderComment()).append("<fieldset").append(attributes("disabled"));
 		if (disabled) {
 			sb.append(" disabled=\"disabled\"");
 		}
