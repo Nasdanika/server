@@ -11,7 +11,9 @@ import org.nasdanika.html.Button;
 import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.ButtonToolbar;
 import org.nasdanika.html.Carousel;
+import org.nasdanika.html.Dropdown;
 import org.nasdanika.html.FontAwesome;
+import org.nasdanika.html.FontAwesome.Directional;
 import org.nasdanika.html.FontAwesome.Size;
 import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.FontAwesome.Stack;
@@ -528,5 +530,15 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Tag stackModal() {
 		return tag(TagName.script, getClass().getResource("StackedModal.js"));
+	}
+
+	@Override
+	public Dropdown<?> dropdown(UIElement<?> toggle) {
+		return new DropdownImpl(this, "span", toggle);
+	}
+	
+	@Override
+	public Dropdown<?> caretDropdown() {
+		return dropdown(link("#", fontAwesome().directional(Directional.caret_down)));
 	}
 }

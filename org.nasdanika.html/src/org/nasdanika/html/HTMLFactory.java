@@ -489,4 +489,12 @@ public interface HTMLFactory {
 	 * @return
 	 */
 	Tag stackModal();
+	
+	Dropdown<?> dropdown(UIElement<?> toggle);
+	
+	/**
+	 * Dropdown with the caret-down toggle.
+	 * @return
+	 */
+	Dropdown<?> caretDropdown();
 }

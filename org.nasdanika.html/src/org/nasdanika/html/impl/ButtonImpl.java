@@ -98,7 +98,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	@Override
 	public Button size(Size size) {
 		this.size = size;
-		return null;
+		return this;
 	}
 
 	@Override
