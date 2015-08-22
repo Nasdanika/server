@@ -230,7 +230,11 @@ public class TocNodeFactory {
 	}
 
 	public boolean isSection() {
-		return name!=null && name.startsWith("#");
+		return name!=null && name.startsWith("#") && !isElementDoc();
+	}
+	
+	public boolean isElementDoc() {
+		return name!=null && "#".equals(name.trim());
 	}
 	
 }

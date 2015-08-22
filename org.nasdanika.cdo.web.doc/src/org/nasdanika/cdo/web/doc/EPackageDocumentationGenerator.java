@@ -54,8 +54,28 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 					.addClass("markdown-body")
 					.style("margin-top", "10px")
 					.style("margin-bottom", "10px"));
+		}	
+		
+		// Mounted doc - "#" section
+		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();		
+		
+		TocNode elementDoc = new TocNode(null, null, null);
+		
+		synchronized (packageTocNodeFactories) {
+			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(ePackage.getNsURI());
+			if (pe!=null) {
+				for (TocNodeFactory tnf: pe.tocNodeFactories) {
+					if (tnf.isElementDoc() && tnf.isRoot(pe.tocNodeFactories)) {
+						tnf.createTocNode(elementDoc, pe.tocNodeFactories, false);
+					}
+				}
+			}
 		}		
-				
+		
+		for (TocNode eDoc: elementDoc.getChildren()) {
+			section(eDoc, -1, htmlFactory, docRoutePath, ret);
+		}		
+						
 		EPackage eSuperPackage = ePackage.getESuperPackage();
 		if (eSuperPackage!=null) {
 			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link("#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(eSuperPackage.getNsURI().getBytes(/* UTF-8? */)), packageIcon, eSuperPackage.getName())));			
@@ -148,7 +168,6 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			tabs.item(enumIcon+" Enumerations", enumTable);
 		}
 		
-		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
 		TocNode sections = new TocNode(null, null, null);
 		
 		synchronized (packageTocNodeFactories) {

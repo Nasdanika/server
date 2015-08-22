@@ -80,6 +80,31 @@ public class EModelElementDocumentationGenerator {
 		return markdownToHtml(baseURL, urlPrefix, markdown);		
 	}
 	
+	public void mountedModelElementDocumentation(HTMLFactory htmlFactory, String docRoutePath, EClassifier eClassifier, Fragment sink) {
+		
+		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
+		TocNode elementDoc = new TocNode(null, null, null);
+		
+		synchronized (packageTocNodeFactories) {
+			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(eClassifier.getEPackage().getNsURI());
+			if (pe!=null) {
+				List<TocNodeFactory> ctnfl = pe.classifierTocNodeFactories.get(eClassifier.getName());
+				if (ctnfl!=null) {
+					for (TocNodeFactory tnf: ctnfl) {
+						if (tnf.isElementDoc() && tnf.isRoot(ctnfl)) {
+							tnf.createTocNode(elementDoc, ctnfl, false);
+						}
+					}
+				}
+			}
+		}
+		
+		for (TocNode eDoc: elementDoc.getChildren()) {
+			section(eDoc, -1, htmlFactory, docRoutePath, sink);
+		}		
+				
+	}
+	
 	public String getFirstDocSentence(URL baseURL, String urlPrefix, EModelElement modelElement) {
 		String html = getModelDocumentation(baseURL, urlPrefix, modelElement);
 		if (CoreUtil.isBlank(html)) {
@@ -181,8 +206,7 @@ public class EModelElementDocumentationGenerator {
 		return typedElement.getLowerBound() + ".." + (typedElement.getUpperBound()==-1 ? "*" : String.valueOf(typedElement.getUpperBound()));
 	}
 	
-	protected void sections(EClassifier eClassifier, String docRoutePath, HTMLFactory htmlFactory, Tabs tabs) {
-		
+	protected void sections(EClassifier eClassifier, String docRoutePath, HTMLFactory htmlFactory, Tabs tabs) {		
 		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
 		TocNode sections = new TocNode(null, null, null);
 		

@@ -76,6 +76,8 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					.style("margin-top", "10px")
 					.style("margin-bottom", "10px"));
 		}
+		
+		mountedModelElementDocumentation(htmlFactory, docRoutePath, eClass, ret);
 
 		for (EAnnotation eAnnotation: eClass.getEAnnotations()) {
 			ret.content(documentAnnotation(htmlFactory, eAnnotation));

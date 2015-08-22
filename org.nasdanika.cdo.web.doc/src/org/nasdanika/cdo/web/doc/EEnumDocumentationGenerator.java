@@ -44,6 +44,8 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 					.style("margin-top", "10px")
 					.style("margin-bottom", "10px"));
 		}		
+		
+		mountedModelElementDocumentation(htmlFactory, docRoutePath, eEnum, ret);
 
 		for (EAnnotation eAnnotation: eEnum.getEAnnotations()) {
 			ret.content(documentAnnotation(htmlFactory, eAnnotation));

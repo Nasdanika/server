@@ -52,7 +52,9 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 					.addClass("markdown-body")
 					.style("margin-top", "10px")
 					.style("margin-bottom", "10px"));
-		}		
+		}	
+		
+		mountedModelElementDocumentation(htmlFactory, docRoutePath, eDataType, ret);
 		
 		for (EAnnotation eAnnotation: eDataType.getEAnnotations()) {
 			ret.content(documentAnnotation(htmlFactory, eAnnotation));
