@@ -364,8 +364,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			binIncludes.add("plugin.xml");
 			binIncludes.add(getDashedName()+".nasdanika_cdo_security");
 			
+			String appSuffix = projectsPage.applicationSuffix.getText();
 			IJavaProject project = createPluginProject(
-					getGroupId()+"."+projectsPage.applicationSuffix.getText(), 
+					getGroupId()+(appSuffix==null || appSuffix.trim().length()==0 ? "" : "."+appSuffix), 
 					requiredBundles, 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
