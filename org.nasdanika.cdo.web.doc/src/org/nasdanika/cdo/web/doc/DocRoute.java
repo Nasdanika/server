@@ -859,6 +859,9 @@ public class DocRoute implements Route {
 		} 
 		
 		if (path.startsWith(PACKAGES_SESSION_PATH)) {
+			if (cdoSessionProvider==null) {
+				return null;
+			}
 			String[] subPath = path.substring(PACKAGES_SESSION_PATH.length()).split("/");
 			EPackage ePackage = cdoSessionProvider.getSession().getPackageRegistry().getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
 			if (ePackage==null) {
