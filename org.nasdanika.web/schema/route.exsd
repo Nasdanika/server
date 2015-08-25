@@ -3,7 +3,7 @@
 <schema targetNamespace="org.nasdanika.web" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appinfo>
-         <meta.schema plugin="org.nasdanika.web" id="action" name="Web Action"/>
+         <meta.schema plugin="org.nasdanika.web" id="route" name="Routes"/>
       </appinfo>
       <documentation>
          Action definitions.

@@ -7,6 +7,8 @@ import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 	
@@ -21,6 +23,13 @@ class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 	@Override
 	public FieldSet content(Object... content) {
 		return container.content(content);
+	}
+	
+	@Override
+	public Tag legend(Object... content) {
+		Tag legend = factory.tag(TagName.legend, content);
+		content(legend);
+		return legend;
 	}
 
 	@Override
