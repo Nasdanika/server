@@ -11,6 +11,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -69,8 +71,8 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -106,7 +108,7 @@ public class DocRoute implements Route {
 	private static final String PACKAGES_SESSION_PATH = PACKAGES_PATH + "session/";
 	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
 	private static final String TOC_PATH = "/toc/";
-
+	
 	static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
 
 	private int pathOffset = 1;
@@ -121,6 +123,13 @@ public class DocRoute implements Route {
 	private String docAppPath = "/router/doc.html";
 	private long reloadDelay = 30000; // Wait 30 seconds before reloading index on extension tracker notifications. 
 	private Timer loadTimer;
+	
+	private boolean includeSessionRegistry = true;
+	private boolean includeGlobalRegistry = true;
+	private List<Pattern> bundleIncludes = new ArrayList<>();
+	private List<Pattern> bundleExcludes = new ArrayList<>();
+	private List<Pattern> packageIncludes = new ArrayList<>();
+	private List<Pattern> packageExcludes = new ArrayList<>();
 	
 	public HTMLFactory getHtmlFactory() {
 		return htmlFactory;
@@ -281,13 +290,41 @@ public class DocRoute implements Route {
 	}
 	
 	private MimetypesFileTypeMap mimeTypesMap;
+	
+	private static void patternProperty(Object value, List<Pattern> accumulator) {
+		if (value instanceof String[]) {
+			for (String p: (String[]) value) {
+				patternProperty(p, accumulator);
+			}
+		} else if (value instanceof String) {
+			if (!CoreUtil.isBlank((String) value)) {
+				accumulator.add(Pattern.compile((String) value));
+			}			
+		}
+	}
 		
 	public void activate(ComponentContext context) throws Exception {
-		Object pathOffsetProp = context.getProperties().get("pathOffset");
+		Dictionary<String, Object> properties = context.getProperties();
+		Object pathOffsetProp = properties.get("pathOffset");
 		if (pathOffsetProp instanceof Number) {
 			pathOffset = ((Number) pathOffsetProp).intValue();
 		}
 		bundleContext = context.getBundleContext();
+		
+		Object sessionRegistry = properties.get("sessionRegistry");
+		if (sessionRegistry instanceof Boolean) {
+			includeSessionRegistry = ((Boolean) sessionRegistry).booleanValue();
+		}
+		
+		Object packageRegistry = properties.get("globalRegistry");
+		if (packageRegistry instanceof Boolean) {
+			includeGlobalRegistry = ((Boolean) packageRegistry).booleanValue();
+		}
+		
+		patternProperty(properties.get("bundleExcludes"), bundleExcludes);
+		patternProperty(properties.get("bundleIncludes"), bundleIncludes);
+		patternProperty(properties.get("packageExcludes"), packageExcludes);
+		patternProperty(properties.get("packageIncludes"), packageIncludes);
 		
 		File searchIndexDir = context.getBundleContext().getBundle().getDataFile("searchIndex");
 		if (searchIndexDir==null) {
@@ -428,6 +465,24 @@ public class DocRoute implements Route {
     				switch (ce.getName()) {
     				case TOC:
 						try {
+							for (Pattern p: bundleExcludes) {
+								if (p.matcher(ce.getContributor().getName()).matches()) {
+									return;
+								}
+							}
+							if (!bundleIncludes.isEmpty()) {
+								boolean included = false;
+								for (Pattern p: bundleIncludes) {
+									if (p.matcher(ce.getContributor().getName()).matches()) {
+										included = true;
+										break;
+									}
+								}				
+								if (!included) {
+									return;
+								}
+							}
+							
 							//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
 							TocNodeFactory tocNodeFactory = new TocNodeFactory(
 									DocRoute.this, 
@@ -577,8 +632,11 @@ public class DocRoute implements Route {
 			// TOC
 			tocRoot = new TocNode(null, null, null);
 			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null);
-			createPackageRegistryToc(EPackage.Registry.INSTANCE, packagesToc.createChild("Global", null, null, null), "/packages/global");
-			if (cdoSessionProvider!=null) {
+			if (includeGlobalRegistry) {
+				createPackageRegistryToc(EPackage.Registry.INSTANCE, packagesToc.createChild("Global", null, null, null), "/packages/global");
+			}
+			
+			if (includeSessionRegistry && cdoSessionProvider!=null) {
 				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), packagesToc.createChild("Session", null, null, null), "/packages/session");				
 			}
 			
@@ -741,8 +799,6 @@ public class DocRoute implements Route {
 		}
 	}
 	
-	
-
 	private void createPackageRegistryToc(Registry registry, TocNode owner, String prefix) {
 		List<EPackage> packages = new ArrayList<>();
 		for (String nsURI: registry.keySet()) {			
@@ -759,7 +815,24 @@ public class DocRoute implements Route {
 			}
 			
 		});
-		for (EPackage ePackage: packages) {
+		Z: for (EPackage ePackage: packages) {
+			for (Pattern p: packageExcludes) {
+				if (p.matcher(ePackage.getNsURI()).matches()) {
+					continue Z;
+				}
+			}
+			if (!packageIncludes.isEmpty()) {
+				boolean included = false;
+				for (Pattern p: packageIncludes) {
+					if (p.matcher(ePackage.getNsURI()).matches()) {
+						included = true;
+						break;
+					}
+				}				
+				if (!included) {
+					continue Z;
+				}
+			}
 			createEPackageToc(owner, ePackage, prefix);
 		}
 	}

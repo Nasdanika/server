@@ -136,15 +136,19 @@ public class WikiLinkProcessor {
 			}
 			if (CoreUtil.isBlank(text)) {
 				text = href;
-				int slashIdx = text.lastIndexOf('/');
-				if (slashIdx!=-1) {
-					text = text.substring(slashIdx+1);				
+				if (CoreUtil.isBlank(text)) {
+					text = wikiLink;
+				} else {
+					int slashIdx = text.lastIndexOf('/');
+					if (slashIdx!=-1) {
+						text = text.substring(slashIdx+1);				
+					}
+					int dotIdx = text.lastIndexOf('.');
+					if (dotIdx!=-1) {
+						text = text.substring(0, dotIdx);
+					}
+					text = text.replace('_', ' ');
 				}
-				int dotIdx = text.lastIndexOf('.');
-				if (dotIdx!=-1) {
-					text = text.substring(0, dotIdx);
-				}
-				text = text.replace('_', ' ');				
 			}
 		}
 
