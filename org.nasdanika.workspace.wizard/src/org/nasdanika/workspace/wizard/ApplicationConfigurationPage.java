@@ -21,10 +21,19 @@ public class ApplicationConfigurationPage extends WizardPage {
 	Button btnRepository;
 	Button btnServer;
 	Button btnTransactionContextProvider;
-	Button btnTransactionRoute;
+	Button btnDocumentationRoute;
 	Button btnSessionInitializer;
-	Label lblPattern;
-	Text transactionContextRoutePattern;
+	private Label docRoutePatternLabel;
+	Text documentationRoutePatternText;
+	Text httpContextIdText;
+	Text contextPathText;
+	private Label lblContextPath;
+	private Label lblHttpContextId;
+	Button btnWebsocketSessionServlet;
+	Text sessionServletAlias;
+	Button btnDocumentationApplicationRoute;
+	private Label docAppRoutePatternLabel;
+	Text docAppRoutePatternText;
 
 	/**
 	 * Create the wizard.
@@ -33,6 +42,16 @@ public class ApplicationConfigurationPage extends WizardPage {
 		super("ApplicationConfigurationPage");
 		setTitle("Application configuration");
 		setDescription("Application components and their configuration");
+	}
+	
+	@Override
+	public void setVisible(boolean visible) {
+		if (visible) {
+			WorkspaceWizard wizard = (WorkspaceWizard) getWizard();
+			httpContextIdText.setText(wizard.getGroupId());
+			contextPathText.setText("/"+wizard.getName().replace(' ', '-'));
+		}
+		super.setVisible(visible);
 	}
 
 	/**
@@ -50,6 +69,24 @@ public class ApplicationConfigurationPage extends WizardPage {
 		grpWebApplication.setText("Web Application");
 		grpWebApplication.setLayout(new GridLayout(2, false));
 		
+		lblContextPath = new Label(grpWebApplication, SWT.NONE);
+		lblContextPath.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblContextPath.setText("Context path");
+		
+		contextPathText = new Text(grpWebApplication, SWT.BORDER);
+		contextPathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		lblHttpContextId = new Label(grpWebApplication, SWT.NONE);
+		lblHttpContextId.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		lblHttpContextId.setText("HTTP Context ID");
+		
+		httpContextIdText = new Text(grpWebApplication, SWT.BORDER);
+		httpContextIdText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		// Context path
+		
+		// context id
+		
 		btnRoutingServlet = new Button(grpWebApplication, SWT.CHECK);
 		btnRoutingServlet.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -63,8 +100,19 @@ public class ApplicationConfigurationPage extends WizardPage {
 		routingServletAlias = new Text(grpWebApplication, SWT.BORDER);
 		routingServletAlias.setText("/router");
 		routingServletAlias.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-		new Label(grpWebApplication, SWT.NONE);
-		new Label(grpWebApplication, SWT.NONE);
+		
+		btnWebsocketSessionServlet = new Button(grpWebApplication, SWT.CHECK);
+		btnWebsocketSessionServlet.setSelection(true);
+		btnWebsocketSessionServlet.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+			}
+		});
+		btnWebsocketSessionServlet.setText("Session Servlet");
+		
+		sessionServletAlias = new Text(grpWebApplication, SWT.BORDER);
+		sessionServletAlias.setText("/session");
+		sessionServletAlias.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		btnWebContent = new Button(grpWebApplication, SWT.CHECK);
 		btnWebContent.addSelectionListener(new SelectionAdapter() {
@@ -117,23 +165,35 @@ public class ApplicationConfigurationPage extends WizardPage {
 		new Label(grpOsgiComponents, SWT.NONE);
 		new Label(grpOsgiComponents, SWT.NONE);
 		
-		btnTransactionRoute = new Button(grpOsgiComponents, SWT.CHECK);
-		btnTransactionRoute.setSelection(true);
-		btnTransactionRoute.addSelectionListener(new SelectionAdapter() {
+		btnDocumentationRoute = new Button(grpOsgiComponents, SWT.CHECK);
+		btnDocumentationRoute.setSelection(true);
+		btnDocumentationRoute.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				transactionContextRoutePattern.setEnabled(((Button) e.getSource()).getSelection());
+				documentationRoutePatternText.setEnabled(((Button) e.getSource()).getSelection());
 			}
 		});
-		btnTransactionRoute.setText("Transaction Context Route");
+		btnDocumentationRoute.setText("Documentation Route");
 		
-		lblPattern = new Label(grpOsgiComponents, SWT.NONE);
-		lblPattern.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		lblPattern.setText("Pattern:");
+		docRoutePatternLabel = new Label(grpOsgiComponents, SWT.NONE);
+		docRoutePatternLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		docRoutePatternLabel.setText("Pattern:");
 		
-		transactionContextRoutePattern = new Text(grpOsgiComponents, SWT.BORDER);
-		transactionContextRoutePattern.setText("transaction(\\.[^/]+)?(/.+)?");
-		transactionContextRoutePattern.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		documentationRoutePatternText = new Text(grpOsgiComponents, SWT.BORDER);
+		documentationRoutePatternText.setText("doc/.+");
+		documentationRoutePatternText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		
+		btnDocumentationApplicationRoute = new Button(grpOsgiComponents, SWT.CHECK);
+		btnDocumentationApplicationRoute.setSelection(true);
+		btnDocumentationApplicationRoute.setText("Documentation Application Route");
+		
+		docAppRoutePatternLabel = new Label(grpOsgiComponents, SWT.NONE);
+		docAppRoutePatternLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		docAppRoutePatternLabel.setText("Pattern:");
+		
+		docAppRoutePatternText = new Text(grpOsgiComponents, SWT.BORDER);
+		docAppRoutePatternText.setText("doc\\.html");
+		docAppRoutePatternText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		btnSessionInitializer = new Button(grpOsgiComponents, SWT.CHECK);
 		btnSessionInitializer.setSelection(true);

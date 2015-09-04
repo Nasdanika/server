@@ -70,7 +70,7 @@ import org.nasdanika.workspace.wizard.render.app.ApplicationPluginRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderComponentRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderRenderer;
-import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextRouteRenderer;
+import org.nasdanika.workspace.wizard.render.app.DocRouteRenderer;
 import org.nasdanika.workspace.wizard.render.app.IndexRenderer;
 import org.nasdanika.workspace.wizard.render.app.RepositoryRenderer;
 import org.nasdanika.workspace.wizard.render.app.RouteRenderer;
@@ -353,8 +353,8 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				components.add("OSGI-INF/"+getDashedName()+"-cdo-transaction-context-provider.xml");
 				binIncludes.add("OSGI-INF/");
 			}
-			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
-				components.add("OSGI-INF/"+getDashedName()+"-cdo-transaction-context-route.xml");
+			if (applicationConfigurationPage.btnDocumentationRoute.getSelection()) {
+				components.add("OSGI-INF/"+getDashedName()+"-doc-route.xml");
 				binIncludes.add("OSGI-INF/");
 			}
 			if (applicationConfigurationPage.btnWebContent.getSelection()) {
@@ -465,13 +465,21 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				}
 				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-provider.xml").create(new ByteArrayInputStream(new CDOTransactionContextProviderComponentRenderer().generate(this).getBytes()), false, progressMonitor);										
 			}
-			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
+//			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
+//				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
+//				if (!osgiInfFolder.exists()) {
+//					osgiInfFolder.create(false, true, progressMonitor);
+//				}
+//				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-route.xml").create(new ByteArrayInputStream(new CDOTransactionContextRouteRenderer().generate(this).getBytes()), false, progressMonitor);														
+//			}
+			if (applicationConfigurationPage.btnDocumentationRoute.getSelection()) {
 				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
 				if (!osgiInfFolder.exists()) {
 					osgiInfFolder.create(false, true, progressMonitor);
 				}
-				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-route.xml").create(new ByteArrayInputStream(new CDOTransactionContextRouteRenderer().generate(this).getBytes()), false, progressMonitor);														
+				osgiInfFolder.getFile(getDashedName()+"-doc-route.xml").create(new ByteArrayInputStream(new DocRouteRenderer().generate(this).getBytes()), false, progressMonitor);														
 			}
+			
 		}
 	}
 	
@@ -1054,6 +1062,10 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	public boolean isApplication() {
 		return projectsPage.btnApplication.getSelection() || projectsPage.btnModel.getSelection();
 	}
+	
+	public boolean isCdoTransactionContextProvider() {
+		return applicationConfigurationPage.btnTransactionContextProvider.getSelection();
+	}
 
 	public String getTestsArtifactId() {		
 		return projectsPage.testsSuffix.getText().trim().length()==0 ? 
@@ -1400,11 +1412,10 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				(applicationConfigurationPage.btnRepository.getSelection()
 						|| applicationConfigurationPage.btnServer.getSelection()
 						|| applicationConfigurationPage.btnSessionInitializer.getSelection()
-						|| applicationConfigurationPage.btnTransactionContextProvider.getSelection()
-						|| applicationConfigurationPage.btnTransactionRoute.getSelection());
+						|| applicationConfigurationPage.btnTransactionContextProvider.getSelection());
 	}
 
-	public Object getName() {		
+	public String getName() {		
 		return generalInformationPage.nameField.getText();
 	}
 
@@ -1430,9 +1441,26 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		return applicationConfigurationPage.btnWebContent.getSelection() ? applicationConfigurationPage.webContentBaseName.getText() : null;
 	}
 
-	public String getSessionServletAlias() {
-		// TODO Take from the wizard UI
-		return "/session";
+	public String getSessionServletAlias() {		
+		return applicationConfigurationPage.btnWebsocketSessionServlet.getSelection() ? applicationConfigurationPage.sessionServletAlias.getText() : null;
+	}
+	
+	public String getContextPath() {
+		String text = applicationConfigurationPage.contextPathText.getText();
+		return text==null || text.trim().length()==0 ? null : text;		
+	}
+	
+	public String getHttpContextId() {
+		String text = applicationConfigurationPage.httpContextIdText.getText();
+		return text==null || text.trim().length()==0 ? null : text;
+	}
+	
+	public String getDocRoutePattern() {
+		return applicationConfigurationPage.btnDocumentationRoute.getSelection() ? applicationConfigurationPage.documentationRoutePatternText.getText() : null;
+	}
+	
+	public String getDocAppRoutePattern() {
+		return applicationConfigurationPage.btnDocumentationApplicationRoute.getSelection() ? applicationConfigurationPage.docAppRoutePatternText.getText() : null;
 	}
 	
 }
