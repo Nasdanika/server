@@ -70,14 +70,17 @@ import org.nasdanika.workspace.wizard.render.app.ApplicationPluginRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderComponentRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderRenderer;
+import org.nasdanika.workspace.wizard.render.app.DocAppRouteRenderer;
 import org.nasdanika.workspace.wizard.render.app.DocRouteRenderer;
 import org.nasdanika.workspace.wizard.render.app.IndexRenderer;
 import org.nasdanika.workspace.wizard.render.app.RepositoryRenderer;
+import org.nasdanika.workspace.wizard.render.app.RequireConfigRenderer;
 import org.nasdanika.workspace.wizard.render.app.RouteRenderer;
 import org.nasdanika.workspace.wizard.render.app.SecurityPolicyRenderer;
 import org.nasdanika.workspace.wizard.render.app.ServerRenderer;
 import org.nasdanika.workspace.wizard.render.app.SessionInitializerComponentRenderer;
 import org.nasdanika.workspace.wizard.render.app.SessionInitializerRenderer;
+import org.nasdanika.workspace.wizard.render.app.SetHeightScriptRenderer;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -325,6 +328,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				requiredBundles.add("org.eclipse.emf.cdo");								
 				requiredBundles.add("org.eclipse.emf.ecore");								
 			}
+			if (applicationConfigurationPage.btnDocumentationApplicationRoute.getSelection() || applicationConfigurationPage.btnDocumentationRoute.getSelection()) {
+				requiredBundles.add("org.nasdanika.cdo.web.doc");	
+				requiredBundles.add("org.apache.commons.lang3;bundle-version=\"3.3.2\"");
+			}
+			
 //			Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
 //					 org.eclipse.emf.ecore.change;bundle-version="2.10.0";visibility:=reexport,
 //					 org.eclipse.emf.ecore.xmi;bundle-version="2.10.1";visibility:=reexport,
@@ -428,7 +436,14 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				if (applicationConfigurationPage.btnRoutingServlet.getSelection()) {
 					IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/index.html");	
 					target.create(new ByteArrayInputStream(new IndexRenderer().generate(this).getBytes()), false, progressMonitor);		
-				}				
+				}	
+				if (applicationConfigurationPage.btnDocumentationApplicationRoute.getSelection() || applicationConfigurationPage.btnDocumentationRoute.getSelection()) {
+					IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/js/domReady.js");	
+					target.create(getClass().getResourceAsStream("resources/domReady.js"), false, progressMonitor);		
+				}	
+								
+				IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/js/require-config.js");	
+				target.create(new ByteArrayInputStream(new RequireConfigRenderer().generate(this).getBytes()), false, progressMonitor);						
 			}
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ApplicationPomRenderer().generate(this).getBytes()), false, progressMonitor);		
@@ -454,6 +469,16 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getApplicationArtifactId(), false, progressMonitor);
 				pkg.createCompilationUnit(getJavaName()+"Route.java", new RouteRenderer().generate(this), false, progressMonitor);
 			}
+			if (applicationConfigurationPage.btnDocumentationApplicationRoute.getSelection()) {
+				IFolder sourceFolder = project.getProject().getFolder("src");
+				IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getApplicationArtifactId(), false, progressMonitor);
+				pkg.createCompilationUnit(getJavaName()+"DocAppRoute.java", new DocAppRouteRenderer().generate(this), false, progressMonitor);
+				IFolder iFolder = (IFolder) pkg.getResource();
+				iFolder.getFile("Splitter.js").create(getClass().getResourceAsStream("resources/Splitter.js"), false, progressMonitor);
+				iFolder.getFile("Scroller.js").create(getClass().getResourceAsStream("resources/Scroller.js"), false, progressMonitor);
+				iFolder.getFile("SetHeight.js").create(new ByteArrayInputStream(new SetHeightScriptRenderer().generate(this).getBytes()), false, progressMonitor);
+			}	
+
 			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {
 				IFolder sourceFolder = project.getProject().getFolder("src");
 				IPackageFragment pkg = project.getPackageFragmentRoot(sourceFolder).createPackageFragment(getApplicationArtifactId(), false, progressMonitor);
@@ -1455,8 +1480,8 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		return text==null || text.trim().length()==0 ? null : text;
 	}
 	
-	public String getDocRoutePattern() {
-		return applicationConfigurationPage.btnDocumentationRoute.getSelection() ? applicationConfigurationPage.documentationRoutePatternText.getText() : null;
+	public String getDocRoutePath() {
+		return applicationConfigurationPage.btnDocumentationRoute.getSelection() ? applicationConfigurationPage.documentationRoutePathText.getText() : null;
 	}
 	
 	public String getDocAppRoutePattern() {

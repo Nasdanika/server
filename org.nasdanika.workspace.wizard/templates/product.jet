@@ -49,6 +49,7 @@
       <plugin id="<%=wizard.getActorImplArtifactId()%>" autoStart="true" startLevel="0" />
       <% } %>
       <% if (wizard.getApplicationPlugin()!=null) { %>
+      <plugin id="org.nasdanika.cdo.web" autoStart="true" startLevel="0" />
       <plugin id="<%=wizard.getApplicationPlugin()%>" autoStart="true" startLevel="0" />
       <% } %>
    </configurations>

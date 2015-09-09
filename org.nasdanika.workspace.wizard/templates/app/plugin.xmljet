@@ -2,12 +2,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <% if (wizard.getRoutingServletAlias()!=null) { %>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
+   <% if (wizard.getRoutingServletAlias()!=null || wizard.getSessionServletAlias()!=null) { %>
+   <extension point="org.eclipse.equinox.http.registry.servlets">
+   
+   	<% if (wizard.getRoutingServletAlias()!=null) { %>
       <servlet
             alias="<%=wizard.getRoutingServletAlias()%>"
-            class="org.nasdanika.web.RoutingServlet">
+            class="org.nasdanika.cdo.web.CDOTransactionRoutingServlet"
+            <% if (wizard.getHttpContextId()!=null) { %> httpcontextId="<%=wizard.getHttpContextId()%>"<% } %>>
          <init-param
                name="json-pretty-print"
                value="true">
@@ -16,14 +18,73 @@
                name="default-access-decision"
                value="deny">
          </init-param>
+         <init-param
+               name="ws-session-path"
+               value="<%=wizard.getSessionServletAlias()%>">
+         </init-param>
       </servlet>
+      <!-- NTLM Authentication 
+      <servlet
+            alias="/ntlm<%=wizard.getRoutingServletAlias()%>"
+            class="org.nasdanika.cdo.web.CDOTransactionRoutingServlet"
+            <% if (wizard.getHttpContextId()!=null) { %> httpcontextId="<%=wizard.getHttpContextId()%>"<% } %>>
+         <init-param
+               name="json-pretty-print"
+               value="true">
+         </init-param>
+         <init-param
+               name="default-access-decision"
+               value="deny">
+         </init-param>
+         <init-param
+               name="ws-session-path"
+               value="/ntlm<%=wizard.getSessionServletAlias()%>">
+         </init-param>
+      </servlet>
+	   	<% if (wizard.getSessionServletAlias()!=null) { %>
+	      <servlet
+	            alias="<%=wizard.getSessionServletAlias()%>"
+	            class="org.nasdanika.cdo.web.SessionWebSocketServlet"
+	            <% if (wizard.getHttpContextId()!=null) { %> httpcontextId="<%=wizard.getHttpContextId()%>"<% } %>>
+	         <init-param
+	               name="view-path"
+	               value="/ntlm<%=wizard.getRoutingServletAlias()%>">
+	         </init-param>
+	      </servlet>
+		<% } %>   
+      -->
+      <% } %>
+   	<% if (wizard.getSessionServletAlias()!=null) { %>
+      <servlet
+            alias="<%=wizard.getSessionServletAlias()%>"
+            class="org.nasdanika.cdo.web.SessionWebSocketServlet"
+            <% if (wizard.getHttpContextId()!=null) { %> httpcontextId="<%=wizard.getHttpContextId()%>"<% } %>>
+         <init-param
+               name="view-path"
+               value="<%=wizard.getRoutingServletAlias()%>">
+         </init-param>
+      </servlet>
+	<% } %>   
    </extension>
+   <% } %>
+   
+	<% if (wizard.getRoutingServletAlias()!=null) { %>
    <extension point="org.nasdanika.web.route">
       <root_route
             class="<%=wizard.getApplicationArtifactId()%>.<%=wizard.getJavaName()%>Route"
             method="GET"
             pattern="<%=wizard.getDashedName()%>.html">
       </root_route>
+      
+      <% if (wizard.getDocAppRoutePattern()!=null) { %>
+      <root_route
+            class="<%=wizard.getApplicationArtifactId()%>.<%=wizard.getJavaName()%>DocAppRoute"
+            method="GET"
+            pattern="<%=wizard.getDocAppRoutePattern()%>">
+      </root_route>
+      <% } %>
+      
+      <!--
       <object_route
             class="org.nasdanika.web.routes.ServiceRoute"
             method="*"
@@ -34,17 +95,10 @@
                value="2">
          </property>
       </object_route>
+      -->
    </extension>
    <% } %>
-  <% if (wizard.getSessionServletAlias()!=null) { %>
-   <extension
-         point="org.eclipse.equinox.http.registry.servlets">
-      <servlet
-            alias="<%=wizard.getSessionServletAlias()%>"
-            class="org.nasdanika.web.WebSocketNotificationServlet">
-      </servlet>
-   </extension>
-   <% } %>
+   
    <% if (wizard.getWebContentAlias()!=null) { %>
    <extension
          point="org.eclipse.equinox.http.registry.resources">
@@ -53,7 +107,8 @@
             base-name="<%=wizard.getWebContentBaseName()%>">
       </resource>
    </extension>
-   <% } %>   
+   <% } %>
+      
    <% if (wizard.getWebContentAlias()!=null && wizard.getRoutingServletAlias()!=null) { %>
    <extension point="org.nasdanika.web.html_factory">
       <default_html_factory
@@ -69,10 +124,19 @@
             <script>/js/knockout-3.3.0.js</script>
             <script>
                /js/require.js
+            </script>            
+            <script>
+               /js/require-config.js
             </script>
             <stylesheet>
                /font-awesome-4.4.0/css/font-awesome.min.css
-            </stylesheet>            
+            </stylesheet>      
+            <script>
+               /js/lightbox.min.js
+            </script>
+            <stylesheet>
+               /css/lightbox.css
+            </stylesheet>                  
       </default_html_factory>
    </extension>
    <% } %>
@@ -81,4 +145,12 @@
             resource="<%=wizard.getDashedName()%>.nasdanika_cdo_security">
       </policy_resource>
    </extension>
+   <% if (wizard.getHttpContextId()!=null) { %> 
+   <extension
+         point="org.eclipse.equinox.http.registry.httpcontexts">
+      <httpcontext
+            id="<%=wizard.getHttpContextId()%>">
+      </httpcontext>
+   </extension>   
+   <% } %>
 </plugin>

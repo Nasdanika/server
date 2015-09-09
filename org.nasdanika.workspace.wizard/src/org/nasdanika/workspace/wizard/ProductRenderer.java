@@ -34,7 +34,7 @@ public class ProductRenderer {
   protected final String TEXT_19 = "\" autoStart=\"true\" startLevel=\"0\" />";
   protected final String TEXT_20 = NL + "      <plugin id=\"";
   protected final String TEXT_21 = "\" autoStart=\"true\" startLevel=\"0\" />";
-  protected final String TEXT_22 = NL + "      <plugin id=\"";
+  protected final String TEXT_22 = NL + "      <plugin id=\"org.nasdanika.cdo.web\" autoStart=\"true\" startLevel=\"0\" />" + NL + "      <plugin id=\"";
   protected final String TEXT_23 = "\" autoStart=\"true\" startLevel=\"0\" />";
   protected final String TEXT_24 = NL + "   </configurations>" + NL + "</product>";
   protected final String TEXT_25 = NL;

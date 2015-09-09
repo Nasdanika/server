@@ -23,8 +23,8 @@ public class ApplicationConfigurationPage extends WizardPage {
 	Button btnTransactionContextProvider;
 	Button btnDocumentationRoute;
 	Button btnSessionInitializer;
-	private Label docRoutePatternLabel;
-	Text documentationRoutePatternText;
+	private Label docRoutePathLabel;
+	Text documentationRoutePathText;
 	Text httpContextIdText;
 	Text contextPathText;
 	private Label lblContextPath;
@@ -49,7 +49,7 @@ public class ApplicationConfigurationPage extends WizardPage {
 		if (visible) {
 			WorkspaceWizard wizard = (WorkspaceWizard) getWizard();
 			httpContextIdText.setText(wizard.getGroupId());
-			contextPathText.setText("/"+wizard.getName().replace(' ', '-'));
+			contextPathText.setText("/"+wizard.getDashedName());
 		}
 		super.setVisible(visible);
 	}
@@ -170,18 +170,18 @@ public class ApplicationConfigurationPage extends WizardPage {
 		btnDocumentationRoute.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				documentationRoutePatternText.setEnabled(((Button) e.getSource()).getSelection());
+				documentationRoutePathText.setEnabled(((Button) e.getSource()).getSelection());
 			}
 		});
 		btnDocumentationRoute.setText("Documentation Route");
 		
-		docRoutePatternLabel = new Label(grpOsgiComponents, SWT.NONE);
-		docRoutePatternLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
-		docRoutePatternLabel.setText("Pattern:");
+		docRoutePathLabel = new Label(grpOsgiComponents, SWT.NONE);
+		docRoutePathLabel.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
+		docRoutePathLabel.setText("Path:");
 		
-		documentationRoutePatternText = new Text(grpOsgiComponents, SWT.BORDER);
-		documentationRoutePatternText.setText("doc/.+");
-		documentationRoutePatternText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+		documentationRoutePathText = new Text(grpOsgiComponents, SWT.BORDER);
+		documentationRoutePathText.setText("doc");
+		documentationRoutePathText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
 		
 		btnDocumentationApplicationRoute = new Button(grpOsgiComponents, SWT.CHECK);
 		btnDocumentationApplicationRoute.setSelection(true);

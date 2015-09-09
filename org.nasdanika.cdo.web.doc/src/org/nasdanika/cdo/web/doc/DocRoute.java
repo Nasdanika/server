@@ -124,8 +124,8 @@ public class DocRoute implements Route {
 	private long reloadDelay = 30000; // Wait 30 seconds before reloading index on extension tracker notifications. 
 	private Timer loadTimer;
 	
-	private boolean includeSessionRegistry = true;
-	private boolean includeGlobalRegistry = true;
+	private Boolean includeSessionRegistry = true;
+	private Boolean includeGlobalRegistry;
 	private List<Pattern> bundleIncludes = new ArrayList<>();
 	private List<Pattern> bundleExcludes = new ArrayList<>();
 	private List<Pattern> packageIncludes = new ArrayList<>();
@@ -313,12 +313,12 @@ public class DocRoute implements Route {
 		
 		Object sessionRegistry = properties.get("sessionRegistry");
 		if (sessionRegistry instanceof Boolean) {
-			includeSessionRegistry = ((Boolean) sessionRegistry).booleanValue();
+			includeSessionRegistry = (Boolean) sessionRegistry;
 		}
 		
 		Object packageRegistry = properties.get("globalRegistry");
 		if (packageRegistry instanceof Boolean) {
-			includeGlobalRegistry = ((Boolean) packageRegistry).booleanValue();
+			includeGlobalRegistry = (Boolean) packageRegistry;
 		}
 		
 		patternProperty(properties.get("bundleExcludes"), bundleExcludes);
@@ -632,7 +632,7 @@ public class DocRoute implements Route {
 			// TOC
 			tocRoot = new TocNode(null, null, null);
 			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null);
-			if (includeGlobalRegistry) {
+			if (includeGlobalRegistry==null ? cdoSessionProvider==null : includeGlobalRegistry) {
 				createPackageRegistryToc(EPackage.Registry.INSTANCE, packagesToc.createChild("Global", null, null, null), "/packages/global");
 			}
 			

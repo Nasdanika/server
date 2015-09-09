@@ -1,0 +1,8 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="RequireConfigRenderer" skeleton="../Renderer.skeleton" %>
+require.config({
+    baseUrl: '<%=wizard.getContextPath()%>/js',
+    paths: {
+        jquery: 'jquery-global', 
+        knockout: 'knockout-3.3.0'
+    }
+});

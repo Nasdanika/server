@@ -188,7 +188,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 					CDOView view = ((CDOViewContext<?, CR>) context).getView();
 					if (RequestMethod.GET.equals(context.getMethod())) {
 						context.getResponse().setContentType("application/javascript");						
-						String fullSessionWebSocketServletPath = "ws://"+context.getRequest().getServerName()+":"+context.getRequest().getServerPort()+context.getRequest().getContextPath()+"/"+sessionWebSocketServletPath+"";
+						String fullSessionWebSocketServletPath = "ws://"+context.getRequest().getServerName()+":"+context.getRequest().getServerPort()+context.getRequest().getContextPath()+sessionWebSocketServletPath+"";
 						return new ValueAction(cdoViewSessionModuleGenerator.generate(context, view, fullSessionWebSocketServletPath));
 					}
 					
