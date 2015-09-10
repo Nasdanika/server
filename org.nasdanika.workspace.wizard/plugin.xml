@@ -16,5 +16,12 @@
             id="org.nasdanika.workspace.wizard.WorkspaceWizard">
       </wizard>
    </extension>
+   <extension
+         point="org.eclipse.help.toc">
+      <toc
+            file="toc.xml"
+            primary="true">
+      </toc>
+   </extension>
 
 </plugin>

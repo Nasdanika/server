@@ -25,15 +25,17 @@
 				<artifactId>tycho-p2-director-plugin</artifactId>
 				<version>${tycho-version}</version>
 				<executions>
+					<!--
 					<execution>
 						<id>build-distributions</id>
 						<goals>
-							<!-- install the product using the p2 director -->
+							< ! - - install the product using the p2 director - - >
 							<goal>materialize-products</goal>
-							<!-- create zip file with the installed product -->
+							< ! - - create zip file with the installed product - - >
 							<goal>archive-products</goal>
 						</goals>
 					</execution>
+					-->
 				</executions>
 				<configuration>
 					<products>
