@@ -69,6 +69,7 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_15);
     stringBuffer.append(wizard.getJavaName());
     stringBuffer.append(TEXT_16);
+    stringBuffer.append(wizard.getContextPath());
     stringBuffer.append(wizard.getRoutingServletAlias());
     stringBuffer.append(TEXT_17);
     stringBuffer.append(wizard.getDashedName());

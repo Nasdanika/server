@@ -38,7 +38,9 @@ public class TestFragmentPomRenderer {
   protected final String TEXT_23 = "</id>" + NL + "\t\t\t\t\t\t\t<level>3</level>" + NL + "\t\t\t\t\t\t\t<autoStart>true</autoStart>" + NL + "\t\t\t\t\t\t</bundle>" + NL + "\t\t\t\t\t\t<bundle>" + NL + "\t\t\t\t\t\t\t<id>";
   protected final String TEXT_24 = "</id>" + NL + "\t\t\t\t\t\t\t<level>3</level>" + NL + "\t\t\t\t\t\t\t<autoStart>true</autoStart>" + NL + "\t\t\t\t\t\t</bundle>" + NL + "\t\t\t\t\t\t<bundle>" + NL + "\t\t\t\t\t\t\t<id>";
   protected final String TEXT_25 = "</id>" + NL + "\t\t\t\t\t\t\t<level>4</level>" + NL + "\t\t\t\t\t\t\t<autoStart>true</autoStart>" + NL + "\t\t\t\t\t\t</bundle>" + NL + "\t\t\t\t\t</bundleStartLevel>" + NL + "                    <includes>" + NL + "\t                    <include>**/";
-  protected final String TEXT_26 = "Tests.java</include>" + NL + "                    </includes>" + NL + "\t\t\t\t\t<argLine>-Xmx512m -Dorg.osgi.service.http.port=8080</argLine>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t</plugin>" + NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "</project>";
+  protected final String TEXT_26 = "Tests.java</include>" + NL + "                    </includes>" + NL + "\t\t\t\t\t<argLine>-Xmx512m -Dorg.osgi.service.http.port=8080 ";
+  protected final String TEXT_27 = "-Dorg.eclipse.equinox.http.jetty.context.path=";
+  protected final String TEXT_28 = "</argLine>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t</plugin>" + NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "</project>";
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
@@ -94,6 +96,11 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_25);
     stringBuffer.append(wizard.getJavaName());
     stringBuffer.append(TEXT_26);
+     if (wizard.getContextPath()!=null) { 
+    stringBuffer.append(TEXT_27);
+    stringBuffer.append(wizard.getContextPath());
+     } 
+    stringBuffer.append(TEXT_28);
     return stringBuffer.toString();
   }
 }

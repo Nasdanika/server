@@ -117,7 +117,7 @@
                     <includes>
 	                    <include>**/<%=wizard.getJavaName()%>Tests.java</include>
                     </includes>
-					<argLine>-Xmx512m -Dorg.osgi.service.http.port=8080</argLine>
+					<argLine>-Xmx512m -Dorg.osgi.service.http.port=8080 <% if (wizard.getContextPath()!=null) { %>-Dorg.eclipse.equinox.http.jetty.context.path=<%=wizard.getContextPath()%><% } %></argLine>
 				</configuration>
 			</plugin>
 		</plugins>

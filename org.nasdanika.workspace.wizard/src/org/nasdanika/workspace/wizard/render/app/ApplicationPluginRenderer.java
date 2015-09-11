@@ -45,7 +45,7 @@ public class ApplicationPluginRenderer {
   protected final String TEXT_30 = NL + "   <extension point=\"org.nasdanika.web.route\">" + NL + "      <root_route" + NL + "            class=\"";
   protected final String TEXT_31 = ".";
   protected final String TEXT_32 = "Route\"" + NL + "            method=\"GET\"" + NL + "            pattern=\"";
-  protected final String TEXT_33 = ".html\">" + NL + "      </root_route>" + NL + "      ";
+  protected final String TEXT_33 = "\\.html\">" + NL + "      </root_route>" + NL + "      ";
   protected final String TEXT_34 = NL + "      <root_route" + NL + "            class=\"";
   protected final String TEXT_35 = ".";
   protected final String TEXT_36 = "DocAppRoute\"" + NL + "            method=\"GET\"" + NL + "            pattern=\"";

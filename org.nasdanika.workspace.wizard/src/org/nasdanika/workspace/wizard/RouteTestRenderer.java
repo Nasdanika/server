@@ -34,6 +34,7 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_4);
     stringBuffer.append(wizard.getName());
     stringBuffer.append(TEXT_5);
+    stringBuffer.append(wizard.getContextPath());
     stringBuffer.append(wizard.getRoutingServletAlias());
     stringBuffer.append(TEXT_6);
     stringBuffer.append(wizard.getDashedName());

@@ -560,7 +560,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			}
 
 			Collection<String> binIncludes = new HashSet<String>();
-			if (!projectsPage.btnApplication.getSelection()) {
+			if (projectsPage.btnApplication.getSelection()) {
+				binIncludes.add("fragment.xml");
+			} else {
 				binIncludes.add("plugin.xml");
 				requiredBundles.add("org.eclipse.equinox.app");
 				requiredBundles.add("org.nasdanika.html");
@@ -775,6 +777,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getTestsArtifactId());
 						fplugin.setVersion("0.0.0");
+						if (projectsPage.btnApplication.getSelection()) {
+							fplugin.setFragment(true);
+						}
 						plugins.add(fplugin);
 					}
 					
@@ -811,7 +816,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					List<FeatureChild> includedFeatures = new ArrayList<>();
 					
 					FeatureChild mainFeature = (FeatureChild) model.getFactory().createChild();
-					mainFeature.setVersion(getVersion());
+					mainFeature.setVersion("0.0.0");
 					mainFeature.setId(getGroupId()+".feature");
 					includedFeatures.add(mainFeature);
 					
@@ -1205,7 +1210,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			ret.add(getTestsArtifactId()+".feature");			
 		}
 		
-		ret.add(getGroupId()+".target");
+		//ret.add(getGroupId()+".target");
 		ret.add(getGroupId()+".feature");
 		ret.add(getGroupId()+".repository");								
 		return ret;

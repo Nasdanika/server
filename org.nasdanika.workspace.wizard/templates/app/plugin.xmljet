@@ -73,7 +73,7 @@
       <root_route
             class="<%=wizard.getApplicationArtifactId()%>.<%=wizard.getJavaName()%>Route"
             method="GET"
-            pattern="<%=wizard.getDashedName()%>.html">
+            pattern="<%=wizard.getDashedName()%>\.html">
       </root_route>
       
       <% if (wizard.getDocAppRoutePattern()!=null) { %>

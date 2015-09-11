@@ -29,7 +29,7 @@ class <%=wizard.getJavaName()%>ActorImpl implements <%=wizard.getJavaName()%>Act
 	@Description("Navigates to <%=wizard.getJavaName()%>Page")
 	@Screenshot({Screenshot.When.AFTER, Screenshot.When.EXCEPTION})
 	public <%=wizard.getJavaName()%>Page navigateTo<%=wizard.getJavaName()%>Page() {
-		webDriver.get("http://localhost:8080<%=wizard.getRoutingServletAlias()%>/<%=wizard.getDashedName()%>.html");
+		webDriver.get("http://localhost:8080<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias()%>/<%=wizard.getDashedName()%>.html");
 		<%=wizard.getJavaName()%>Page ret = factory.getPageFactory().create<%=wizard.getJavaName()%>Page(webDriver);
 		
 		return ret;
