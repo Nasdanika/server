@@ -75,7 +75,10 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 	
 	static File configOutputDir(Class<?> klass) throws IOException {
 		Report reportAnnotation = klass.getAnnotation(Report.class);
-		String outputDirTemplate = reportAnnotation==null ? "target/nasdanika-web-tests/{2}" : reportAnnotation.outputDir();
+		if (reportAnnotation==null) {
+			return null;
+		}
+		String outputDirTemplate = reportAnnotation.outputDir();
 		String className = klass.getName();
 		String shortClassName = className.substring(className.lastIndexOf('.')+1);
 		String outputDirName = MessageFormat.format(outputDirTemplate.replace('/', File.separatorChar), new Object[] {shortClassName, className, className.replace('.', File.separatorChar)});

@@ -7,6 +7,7 @@ require(['jquery', '<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias
 	var body = jQuery("body");
 	var docContent = jQuery('#doc-content');	
 	var toc = jQuery('#toc');
+	var searchContainer = jQuery('#search-container');
 	var oldBottom = -1;
 	
 	function resizeHandler() {		
@@ -23,6 +24,10 @@ require(['jquery', '<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias
 			var tocRect = toc[0].getBoundingClientRect();
 			var tocHeight = docContentBottom - tocRect.top - 1;
 			toc.height(tocHeight);
+			
+			var searchContainerRect = searchContainer[0].getBoundingClientRect();
+			var searchContainerHeight = docContentBottom - searchContainerRect.top - 1;
+			searchContainer.height(searchContainerHeight);
 			
 			// Scrolling current selection into view
 			tocTreePromise.then(function(tocTree) {
