@@ -80,7 +80,7 @@ import org.nasdanika.workspace.wizard.render.app.SecurityPolicyRenderer;
 import org.nasdanika.workspace.wizard.render.app.ServerRenderer;
 import org.nasdanika.workspace.wizard.render.app.SessionInitializerComponentRenderer;
 import org.nasdanika.workspace.wizard.render.app.SessionInitializerRenderer;
-import org.nasdanika.workspace.wizard.render.app.SetHeightScriptRenderer;
+import org.nasdanika.workspace.wizard.render.app.SetDimensionsScriptRenderer;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -476,7 +476,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				IFolder iFolder = (IFolder) pkg.getResource();
 				iFolder.getFile("Splitter.js").create(getClass().getResourceAsStream("resources/Splitter.js"), false, progressMonitor);
 				iFolder.getFile("Scroller.js").create(getClass().getResourceAsStream("resources/Scroller.js"), false, progressMonitor);
-				iFolder.getFile("SetHeight.js").create(new ByteArrayInputStream(new SetHeightScriptRenderer().generate(this).getBytes()), false, progressMonitor);
+				iFolder.getFile("SetDimensions.js").create(new ByteArrayInputStream(new SetDimensionsScriptRenderer().generate(this).getBytes()), false, progressMonitor);
 			}	
 
 			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {

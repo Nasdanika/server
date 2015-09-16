@@ -37,10 +37,11 @@ public class <%=wizard.getJavaName()%>DocAppRoute implements Route {
 				return super.tocDiv().style("overflow-y", "scroll");
 			}
 		};
-		row.cell(documentationPanelFactory.leftPanel()).id("left-panel");
+		row.cell(documentationPanelFactory.leftPanel()).id("left-panel").style("min-width", "17em");
 		row.cell("")
 			.id("splitter")
 			.style("width", "5px")
+			.style("min-width", "5px")
 			.style("padding", "0px")
 			.style("background", "#d9edf7")
 			.style("border", "solid 1px #bce8f1")

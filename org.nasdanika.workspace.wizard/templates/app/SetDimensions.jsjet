@@ -1,4 +1,4 @@
-<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="SetHeightScriptRenderer" skeleton="../Renderer.skeleton" %>
+<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="SetDimensionsScriptRenderer" skeleton="../Renderer.skeleton" %>
 require(['jquery', '<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias()%>/<%=wizard.getDocRoutePath()%>/resources/js/left-panel.js'], function(jQuery, tocTreePromise) { 
 	
 	// Set padding to 0 in panel body.
@@ -7,10 +7,19 @@ require(['jquery', '<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias
 	var body = jQuery("body");
 	var docContent = jQuery('#doc-content');	
 	var toc = jQuery('#toc');
-	var searchContainer = jQuery('#search-container');
 	var oldBottom = -1;
 	
-	function resizeHandler() {		
+	function resizeHandler() {
+		// Markdown width
+		jQuery("div#doc-content .markdown-body").each(function() {
+			var delta = jQuery("#docAppPanel")[0].getBoundingClientRect().right - this.getBoundingClientRect().right - 30;
+			if (Math.abs(delta)>5) {
+				var jThis = jQuery(this);
+				jThis.css("max-width", jThis.width()+delta+"px");
+			}
+		});
+		
+		// Height
 		var delta = window.innerHeight - body.height();
 		delta-=5; // offset - app panel margin
 		if (delta!=0) {
@@ -25,10 +34,6 @@ require(['jquery', '<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias
 			var tocHeight = docContentBottom - tocRect.top - 1;
 			toc.height(tocHeight);
 			
-			var searchContainerRect = searchContainer[0].getBoundingClientRect();
-			var searchContainerHeight = docContentBottom - searchContainerRect.top - 1;
-			searchContainer.height(searchContainerHeight);
-			
 			// Scrolling current selection into view
 			tocTreePromise.then(function(tocTree) {
 				var selected = tocTree.jstree("get_top_selected");
@@ -41,8 +46,7 @@ require(['jquery', '<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias
 					if (nodeOffsetTop < tocScrollTop || nodeOffsetBottom > tocScrollBottom) {			
 						var targetScrollTop = nodeOffsetTop - toc.height()/2;
 						toc.animate({ scrollTop: targetScrollTop+"px" });
-					}							
-					
+					}												
 				}
 			})
 		}

@@ -6,15 +6,15 @@
       provider-name="Nasdanika LLC">
 
    <description url="http://www.example.com/description">
-      [Enter Feature Description here.]
+      Nasdanika Application Workspace Wizard generates plugin projects which together constitute a Nasdanika Foundation Server based application.
    </description>
 
-   <copyright url="http://www.example.com/copyright">
-      [Enter Copyright Description here.]
+   <copyright>
+      %copyright
    </copyright>
 
-   <license url="http://www.example.com/license">
-      [Enter License Description here.]
+   <license url="%licenseURL">
+      %license
    </license>
 
    <plugin
