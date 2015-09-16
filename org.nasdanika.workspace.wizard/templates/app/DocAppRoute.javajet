@@ -52,7 +52,7 @@ public class <%=wizard.getJavaName()%>DocAppRoute implements Route {
 				table, 
 				htmlFactory.tag(TagName.script, getClass().getResource("Splitter.js")),
 				htmlFactory.tag(TagName.script, getClass().getResource("Scroller.js")),
-				htmlFactory.tag(TagName.script, getClass().getResource("SetHeight.js")));
+				htmlFactory.tag(TagName.script, getClass().getResource("SetDimensions.js")));
 		
 		final AutoCloseable app = htmlFactory.bootstrapRouterApplication(
 				Theme.Default,
