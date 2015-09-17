@@ -46,6 +46,11 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	}
 
 	@Override
+	public FormGroup<?> formGroup(Object label, UIElement<?> control, Object helpText) {
+		return formGroup(label, UIElementImpl.autoId(factory, control), control, helpText) ;
+	}
+
+	@Override
 	public T checkbox(final Object label, final Object checkboxControl, final boolean inline) {
 		content.add(new Object() {
 			
@@ -150,6 +155,11 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		content.add(ret);
 		return ret;
 	}	
+
+	@Override
+	public FormInputGroup formInputGroup(Object label, UIElement<?> control, Object helpText) {
+		return formInputGroup(label, UIElementImpl.autoId(factory, control), control, helpText);
+	}
 	
 	@Override
 	public String toString() {
@@ -168,6 +178,5 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 			}
 		}
 	}
-
 
 }

@@ -47,11 +47,11 @@ public class DocumentationPanelFactory {
 		Form searchForm = htmlFactory.form().style("padding-top", "3px");
 		searchForm.inline();
 		Input searchInput = htmlFactory.input(InputType.text)
-				.id("searchText")
+				//.id("searchText")
 				.placeholder("Search query")
 				.knockout().textInput("query")
 				.knockout().event("{ keypress: searchKeyPress }");
-		FormInputGroup searchGroup = searchForm.formInputGroup("Search", "searchText", searchInput, "Search query");
+		FormInputGroup searchGroup = searchForm.formInputGroup("Search", searchInput, "Search query");
 		
 		searchGroup.rightButton(htmlFactory.glyphicon(Glyphicon.search))
 			.knockout().click("search")

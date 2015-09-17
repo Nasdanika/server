@@ -9,6 +9,7 @@ import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
+import org.nasdanika.html.UIElement;
 
 class FormImpl extends UIElementImpl<Form> implements Form {
 	
@@ -63,6 +64,11 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	public FormGroup<?> formGroup(Object label, Object controlId, Object control, Object helpText) {
 		return container.formGroup(label, controlId, control, helpText);
 	}
+	
+	@Override
+	public FormGroup<?> formGroup(Object label, UIElement<?> control, Object helpText) {
+		return formGroup(label, UIElementImpl.autoId(factory, control), control, helpText) ;
+	}
 
 	@Override
 	public Form checkbox(Object label, Object checkboxControl, boolean inline) {
@@ -97,6 +103,11 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	@Override
 	public FormInputGroup formInputGroup(Object label, Object controlId, Object control, Object helpText) {
 		return container.formInputGroup(label, controlId, control, helpText);
+	}
+
+	@Override
+	public FormInputGroup formInputGroup(Object label, UIElement<?> control, Object helpText) {
+		return formInputGroup(label, UIElementImpl.autoId(factory, control), control, helpText);
 	}
 	
 	@Override

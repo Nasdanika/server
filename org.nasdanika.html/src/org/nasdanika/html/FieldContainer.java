@@ -12,9 +12,13 @@ public interface FieldContainer<T extends FieldContainer<T>> extends Container<T
 	 */
 	FormGroup<?> formGroup(Object label, Object controlId, Object control, Object helpText);
 	
+	FormGroup<?> formGroup(Object label, UIElement<?> control, Object helpText);
+	
 	InputGroup<?> inputGroup(Object control);
 	
 	FormInputGroup formInputGroup(Object label, Object controlId, Object control, Object helpText);
+	
+	FormInputGroup formInputGroup(Object label, UIElement<?> control, Object helpText);
 	
 	/**
 	 * Creates a checkbox control with a label.
