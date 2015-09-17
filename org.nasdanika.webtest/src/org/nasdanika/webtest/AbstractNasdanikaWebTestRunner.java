@@ -295,10 +295,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 
 	static File configOutputDir(Class<?> klass) throws IOException {
 		Report reportAnnotation = klass.getAnnotation(Report.class);
-		if (reportAnnotation==null) {
-			return null;
-		}
-		String outputDirTemplate = reportAnnotation.outputDir();
+		String outputDirTemplate = reportAnnotation==null ? "target/nasdanika-web-tests/{2}" : reportAnnotation.outputDir();
 		String className = klass.getName();
 		String shortClassName = className.substring(className.lastIndexOf('.')+1);
 		String outputDirName = MessageFormat.format(outputDirTemplate.replace('/', File.separatorChar), new Object[] {shortClassName, className, className.replace('.', File.separatorChar)});

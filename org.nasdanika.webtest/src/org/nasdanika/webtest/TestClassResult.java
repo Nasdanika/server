@@ -49,7 +49,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	private ScreenshotEntry currentScreenshot;
 		
 	private ScreenshotEntry createScreenshotEntry(OperationResult<?> operationResult, byte[] screenshot, Screenshot.When when) {
-		if (screenshot==null) {
+		if (screenshot==null || screenshotsDir==null) {
 			return null;
 		}
         ScreenshotEntry ret = new ScreenshotEntry(

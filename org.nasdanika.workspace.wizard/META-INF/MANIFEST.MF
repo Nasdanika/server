@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Workspace Wizard
+Bundle-Name: Nasdanika Application Workspace Wizard
 Bundle-SymbolicName: org.nasdanika.workspace.wizard;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Nasdanika LLC

@@ -31,7 +31,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 	protected Collector<WebDriver> createCollector(final TestResultCollector testResultCollector) throws Exception {
 		final IdGenerator idGenerator = testResultCollector==null ? new IdGenerator() : testResultCollector.getIdGenerator();
 		final File outputDir = testResultCollector == null ? configOutputDir(getTestClass().getJavaClass()) : testResultCollector.getOutputDir();	
-		final File screenshotsDir = new File(outputDir, "screenshots");
+		final File screenshotsDir = outputDir==null ? null : new File(outputDir, "screenshots");
 		final Executor screenshotExecutor = testResultCollector==null ? Executors.newSingleThreadExecutor() : testResultCollector.getScreenshotExecutor();
 		
 		TestClassResult testClassResult = new TestClassResult(getTestClass().getJavaClass(), idGenerator, getIndex(), screenshotsDir, screenshotExecutor) {
@@ -75,10 +75,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 	
 	static File configOutputDir(Class<?> klass) throws IOException {
 		Report reportAnnotation = klass.getAnnotation(Report.class);
-		if (reportAnnotation==null) {
-			return null;
-		}
-		String outputDirTemplate = reportAnnotation.outputDir();
+		String outputDirTemplate = reportAnnotation==null ? "target/nasdanika-web-tests/{2}" : reportAnnotation.outputDir();
 		String className = klass.getName();
 		String shortClassName = className.substring(className.lastIndexOf('.')+1);
 		String outputDirName = MessageFormat.format(outputDirTemplate.replace('/', File.separatorChar), new Object[] {shortClassName, className, className.replace('.', File.separatorChar)});

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.nasdanika.workspace.wizard.feature"
-      label="Nasdanika Workspace Wizard"
+      label="Nasdanika Application Workspace Wizard"
       version="0.1.0.qualifier"
       provider-name="Nasdanika LLC">
 
