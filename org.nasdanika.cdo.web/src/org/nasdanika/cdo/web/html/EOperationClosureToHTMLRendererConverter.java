@@ -52,7 +52,6 @@ public class EOperationClosureToHTMLRendererConverter implements Converter<EOper
 				
 				form.formInputGroup(
 						null, 
-						null, 
 						htmlFactory.button("Invoke").style(Style.PRIMARY), 
 						"Invoke EOperation");
 				
