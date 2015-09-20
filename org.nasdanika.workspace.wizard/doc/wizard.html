@@ -130,8 +130,39 @@
 			<img alt="Built product" border="0" src="built-product.png"/>
 		</p>
 		<p>Double-click 
-			<code>eclipse.exe</code>. A console window will open. Give the application several seconds to start and open a web browser. Navigate to the application route and documentation route and then shut down the application as described in the "Start application from Eclipse" above. 
+			<code>eclipse.exe</code>. A console window will open. Give the application several seconds to start and open a web browser. Navigate to the application route and documentation route and then shut down the application as described in the "Start application from Eclipse" above.
 		</p>
+		<h1 id="generated-workspace-projects">Generated workspace projects</h1>
+		<p>
+			<img alt="workspace projects" border="0" src="workspace-projects.png"/>
+		</p>
+		<ul>
+			<li>Model project - contains ECore/CDO model(s). </li>
+			<li>Aggregator - use this project's pom to build the product.</li>
+			<li>Application project - contains OGSi components, session initializer, servlet extensions.</li>
+			<li>Feature - feature project.</li>
+			<li>Parent - contains parent pom.</li>
+			<li>Repository - repository project.</li>
+			<li>Target - target definition, used only by Eclipse IDE.</li>
+			<li>Tests - JUnit tests. </li>
+			<li>Tests feature - Tests feature.</li>
+		</ul>
+		<h2 id="ui-driver">UI Driver</h2>
+		<ul>
+			<li>Actors</li>
+			<li>Actors impl</li>
+			<li>Pages</li>
+			<li>Pages impl</li>
+		</ul>
+		<p>See also: </p>
+		<ul>
+			<li>
+				<a href="http://www.vogella.com/tutorials/EclipseTycho/article.html">Eclipse Tycho for building Eclipse Plug-ins and RCP applications</a>.
+			</li>
+			<li>
+				<a href="https://github.com/Nasdanika/server/wiki/webtest">WebTest</a>. 
+			</li>
+		</ul>
 		<h1 id="summary">Summary</h1>
 		<p>After completing the steps described above you will have a functional Nasdanika Foundation Server (OSGi/CDO) web application:</p>
 		<ul>

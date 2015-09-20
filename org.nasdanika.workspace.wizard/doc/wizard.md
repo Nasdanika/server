@@ -83,7 +83,30 @@ Refresh the repository product and then open ``target/products/.../x86_64`` (or 
 
 ![Built product](built-product.png)
 
-Double-click ``eclipse.exe``. A console window will open. Give the application several seconds to start and open a web browser. Navigate to the application route and documentation route and then shut down the application as described in the "Start application from Eclipse" above. 
+Double-click ``eclipse.exe``. A console window will open. Give the application several seconds to start and open a web browser. Navigate to the application route and documentation route and then shut down the application as described in the "Start application from Eclipse" above.
+
+# Generated workspace projects
+![workspace projects](workspace-projects.png)
+
+* Model project - contains ECore/CDO model(s). 
+* Aggregator - use this project's pom to build the product.
+* Application project - contains OGSi components, session initializer, servlet extensions.
+* Feature - feature project.
+* Parent - contains parent pom.
+* Repository - repository project.
+* Target - target definition, used only by Eclipse IDE.
+* Tests - JUnit tests. 
+* Tests feature - Tests feature.
+
+## UI Driver
+* Actors
+* Actors impl
+* Pages
+* Pages impl
+ 
+See also: 
+* [Eclipse Tycho for building Eclipse Plug-ins and RCP applications](http://www.vogella.com/tutorials/EclipseTycho/article.html).
+* [WebTest](https://github.com/Nasdanika/server/wiki/webtest). 
 
 # Summary
 After completing the steps described above you will have a functional Nasdanika Foundation Server (OSGi/CDO) web application:
