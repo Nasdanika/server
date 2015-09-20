@@ -24,13 +24,13 @@ public class <%=wizard.getJavaName()%>DocAppRoute implements Route {
 		ApplicationPanel appPanel = htmlFactory.applicationPanel()
 				.style(Style.INFO) 
 				.header("<%=wizard.getName()%> Information Center")
-				.headerLink(context.getRequest().getContextPath()+"/<%=wizard.getRoutingServletAlias()%>/doc.html")
+				.headerLink(context.getRequest().getContextPath()+"<%=wizard.getRoutingServletAlias()%>/<%=wizard.getDocAppRoutePath()%>")
 				.style("margin-bottom", "0px")
 				.id("docAppPanel");
 		
 		Table table = htmlFactory.table().style("margin-bottom", "0px");
 		Row row = table.row();
-		DocumentationPanelFactory documentationPanelFactory = new DocumentationPanelFactory(htmlFactory, context.getContextURL()+"/doc") {
+		DocumentationPanelFactory documentationPanelFactory = new DocumentationPanelFactory(htmlFactory, context.getContextURL()+"/<%=wizard.getDocRoutePath()%>") {
 
 			@Override
 			protected Tag tocDiv() {
@@ -61,15 +61,15 @@ public class <%=wizard.getJavaName()%>DocAppRoute implements Route {
 				htmlFactory.fragment(
 						htmlFactory.tag(TagName.link)
 							.attribute("rel", "stylesheet")
-							.attribute("href", context.getContextURL()+"/doc/resources/highlight/styles/github.css"),							
+							.attribute("href", context.getContextURL()+"/<%=wizard.getDocRoutePath()%>/resources/highlight/styles/github.css"),							
 						htmlFactory.tag(TagName.link)
 							.attribute("rel", "stylesheet")
-							.attribute("href", context.getContextURL()+"/doc/resources/css/github-markdown.css"),							
+							.attribute("href", context.getContextURL()+"/<%=wizard.getDocRoutePath()%>/resources/css/github-markdown.css"),							
 						htmlFactory.tag(TagName.link)
 							.attribute("rel", "stylesheet")
-							.attribute("href", context.getContextURL()+"/doc/resources/jstree/themes/default/style.min.css"),
+							.attribute("href", context.getContextURL()+"/<%=wizard.getDocRoutePath()%>/resources/jstree/themes/default/style.min.css"),
 						htmlFactory.tag(TagName.script, "")
-							.attribute("src", context.getContextURL()+"/doc/resources/highlight/highlight.pack.js")), 
+							.attribute("src", context.getContextURL()+"/<%=wizard.getDocRoutePath()%>/resources/highlight/highlight.pack.js")), 
 				appPanel);
 		
 		return new Action() {

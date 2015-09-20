@@ -112,30 +112,30 @@
    <% if (wizard.getWebContentAlias()!=null && wizard.getRoutingServletAlias()!=null) { %>
    <extension point="org.nasdanika.web.html_factory">
       <default_html_factory
-            bootstrapCssContainer="/bootstrap/css">
+            bootstrapCssContainer="<%=wizard.getWebContentAlias()%>bootstrap/css">
             <script>
-               /js/jquery-1.11.3.min.js
+               <%=wizard.getWebContentAlias()%>js/jquery-1.11.3.min.js
             </script>
             <script>
-               /js/underscore-min.js
+               <%=wizard.getWebContentAlias()%>js/underscore-min.js
             </script>
-            <script>/js/backbone-min.js</script>
-            <script>/bootstrap/js/bootstrap.min.js</script>
-            <script>/js/knockout-3.3.0.js</script>
+            <script><%=wizard.getWebContentAlias()%>js/backbone-min.js</script>
+            <script><%=wizard.getWebContentAlias()%>bootstrap/js/bootstrap.min.js</script>
+            <script><%=wizard.getWebContentAlias()%>js/knockout-3.3.0.js</script>
             <script>
-               /js/require.js
+               <%=wizard.getWebContentAlias()%>js/require.js
             </script>            
             <script>
-               /js/require-config.js
+               <%=wizard.getWebContentAlias()%>js/require-config.js
             </script>
             <stylesheet>
-               /font-awesome-4.4.0/css/font-awesome.min.css
+               <%=wizard.getWebContentAlias()%>font-awesome-4.4.0/css/font-awesome.min.css
             </stylesheet>      
             <script>
-               /js/lightbox.min.js
+               <%=wizard.getWebContentAlias()%>js/lightbox.min.js
             </script>
             <stylesheet>
-               /css/lightbox.css
+               <%=wizard.getWebContentAlias()%>css/lightbox.css
             </stylesheet>                  
       </default_html_factory>
    </extension>

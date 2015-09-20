@@ -56,13 +56,31 @@ public class ApplicationPluginRenderer {
   protected final String TEXT_41 = "\"" + NL + "            base-name=\"";
   protected final String TEXT_42 = "\">" + NL + "      </resource>" + NL + "   </extension>";
   protected final String TEXT_43 = NL + "      ";
-  protected final String TEXT_44 = NL + "   <extension point=\"org.nasdanika.web.html_factory\">" + NL + "      <default_html_factory" + NL + "            bootstrapCssContainer=\"/bootstrap/css\">" + NL + "            <script>" + NL + "               /js/jquery-1.11.3.min.js" + NL + "            </script>" + NL + "            <script>" + NL + "               /js/underscore-min.js" + NL + "            </script>" + NL + "            <script>/js/backbone-min.js</script>" + NL + "            <script>/bootstrap/js/bootstrap.min.js</script>" + NL + "            <script>/js/knockout-3.3.0.js</script>" + NL + "            <script>" + NL + "               /js/require.js" + NL + "            </script>            " + NL + "            <script>" + NL + "               /js/require-config.js" + NL + "            </script>" + NL + "            <stylesheet>" + NL + "               /font-awesome-4.4.0/css/font-awesome.min.css" + NL + "            </stylesheet>      " + NL + "            <script>" + NL + "               /js/lightbox.min.js" + NL + "            </script>" + NL + "            <stylesheet>" + NL + "               /css/lightbox.css" + NL + "            </stylesheet>                  " + NL + "      </default_html_factory>" + NL + "   </extension>";
-  protected final String TEXT_45 = NL + "   <extension point=\"org.nasdanika.cdo.security.security_policy\">" + NL + "      <policy_resource" + NL + "            resource=\"";
-  protected final String TEXT_46 = ".nasdanika_cdo_security\">" + NL + "      </policy_resource>" + NL + "   </extension>";
-  protected final String TEXT_47 = " " + NL + "   <extension" + NL + "         point=\"org.eclipse.equinox.http.registry.httpcontexts\">" + NL + "      <httpcontext" + NL + "            id=\"";
-  protected final String TEXT_48 = "\">" + NL + "      </httpcontext>" + NL + "   </extension>   ";
-  protected final String TEXT_49 = NL + "</plugin>";
-  protected final String TEXT_50 = NL;
+  protected final String TEXT_44 = NL + "   <extension point=\"org.nasdanika.web.html_factory\">" + NL + "      <default_html_factory" + NL + "            bootstrapCssContainer=\"";
+  protected final String TEXT_45 = "bootstrap/css\">" + NL + "            <script>";
+  protected final String TEXT_46 = NL + "               ";
+  protected final String TEXT_47 = "js/jquery-1.11.3.min.js" + NL + "            </script>" + NL + "            <script>";
+  protected final String TEXT_48 = NL + "               ";
+  protected final String TEXT_49 = "js/underscore-min.js" + NL + "            </script>" + NL + "            <script>";
+  protected final String TEXT_50 = "js/backbone-min.js</script>" + NL + "            <script>";
+  protected final String TEXT_51 = "bootstrap/js/bootstrap.min.js</script>" + NL + "            <script>";
+  protected final String TEXT_52 = "js/knockout-3.3.0.js</script>" + NL + "            <script>";
+  protected final String TEXT_53 = NL + "               ";
+  protected final String TEXT_54 = "js/require.js" + NL + "            </script>            " + NL + "            <script>";
+  protected final String TEXT_55 = NL + "               ";
+  protected final String TEXT_56 = "js/require-config.js" + NL + "            </script>" + NL + "            <stylesheet>";
+  protected final String TEXT_57 = NL + "               ";
+  protected final String TEXT_58 = "font-awesome-4.4.0/css/font-awesome.min.css" + NL + "            </stylesheet>      " + NL + "            <script>";
+  protected final String TEXT_59 = NL + "               ";
+  protected final String TEXT_60 = "js/lightbox.min.js" + NL + "            </script>" + NL + "            <stylesheet>";
+  protected final String TEXT_61 = NL + "               ";
+  protected final String TEXT_62 = "css/lightbox.css" + NL + "            </stylesheet>                  " + NL + "      </default_html_factory>" + NL + "   </extension>";
+  protected final String TEXT_63 = NL + "   <extension point=\"org.nasdanika.cdo.security.security_policy\">" + NL + "      <policy_resource" + NL + "            resource=\"";
+  protected final String TEXT_64 = ".nasdanika_cdo_security\">" + NL + "      </policy_resource>" + NL + "   </extension>";
+  protected final String TEXT_65 = " " + NL + "   <extension" + NL + "         point=\"org.eclipse.equinox.http.registry.httpcontexts\">" + NL + "      <httpcontext" + NL + "            id=\"";
+  protected final String TEXT_66 = "\">" + NL + "      </httpcontext>" + NL + "   </extension>   ";
+  protected final String TEXT_67 = NL + "</plugin>";
+  protected final String TEXT_68 = NL;
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
@@ -154,17 +172,46 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_43);
      if (wizard.getWebContentAlias()!=null && wizard.getRoutingServletAlias()!=null) { 
     stringBuffer.append(TEXT_44);
-     } 
+    stringBuffer.append(wizard.getWebContentAlias());
     stringBuffer.append(TEXT_45);
-    stringBuffer.append(wizard.getDashedName());
     stringBuffer.append(TEXT_46);
-     if (wizard.getHttpContextId()!=null) { 
+    stringBuffer.append(wizard.getWebContentAlias());
     stringBuffer.append(TEXT_47);
-    stringBuffer.append(wizard.getHttpContextId());
     stringBuffer.append(TEXT_48);
-     } 
+    stringBuffer.append(wizard.getWebContentAlias());
     stringBuffer.append(TEXT_49);
+    stringBuffer.append(wizard.getWebContentAlias());
     stringBuffer.append(TEXT_50);
+    stringBuffer.append(wizard.getWebContentAlias());
+    stringBuffer.append(TEXT_51);
+    stringBuffer.append(wizard.getWebContentAlias());
+    stringBuffer.append(TEXT_52);
+    stringBuffer.append(TEXT_53);
+    stringBuffer.append(wizard.getWebContentAlias());
+    stringBuffer.append(TEXT_54);
+    stringBuffer.append(TEXT_55);
+    stringBuffer.append(wizard.getWebContentAlias());
+    stringBuffer.append(TEXT_56);
+    stringBuffer.append(TEXT_57);
+    stringBuffer.append(wizard.getWebContentAlias());
+    stringBuffer.append(TEXT_58);
+    stringBuffer.append(TEXT_59);
+    stringBuffer.append(wizard.getWebContentAlias());
+    stringBuffer.append(TEXT_60);
+    stringBuffer.append(TEXT_61);
+    stringBuffer.append(wizard.getWebContentAlias());
+    stringBuffer.append(TEXT_62);
+     } 
+    stringBuffer.append(TEXT_63);
+    stringBuffer.append(wizard.getDashedName());
+    stringBuffer.append(TEXT_64);
+     if (wizard.getHttpContextId()!=null) { 
+    stringBuffer.append(TEXT_65);
+    stringBuffer.append(wizard.getHttpContextId());
+    stringBuffer.append(TEXT_66);
+     } 
+    stringBuffer.append(TEXT_67);
+    stringBuffer.append(TEXT_68);
     return stringBuffer.toString();
   }
 }

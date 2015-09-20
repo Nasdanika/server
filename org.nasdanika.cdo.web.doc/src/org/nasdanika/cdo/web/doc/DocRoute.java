@@ -340,6 +340,17 @@ public class DocRoute implements Route {
     		baseURL+=":"+port;
     	}
     	urlPrefix = baseURL;
+    	
+    	String docRoutePathPrp = (String) properties.get("doc-route-path");
+    	if (docRoutePathPrp!=null) {
+    		docRoutePath = docRoutePathPrp; 
+    	}
+    	
+    	String docAppPathPrp = (String) properties.get("doc-app-path");
+    	if (docAppPathPrp!=null) {
+    		docAppPath = docAppPathPrp; 
+    	}
+    	
     	String contextPath = System.getProperty("org.eclipse.equinox.http.jetty.context.path");
     	if (contextPath!=null) {
     		docRoutePath = contextPath + docRoutePath;

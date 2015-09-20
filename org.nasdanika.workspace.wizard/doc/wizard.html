@@ -4,6 +4,145 @@
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	</head>
 	<body>
-		<h3 id="nasdanika-workspace-wizard">Nasdanika Workspace Wizard</h3>
+		<h1 id="nasdanika-application-workspace-wizard">Nasdanika Application Workspace Wizard</h1>
+		<p>Nasdanika Application Workspace Wizard generates a set of projects which constitute Nasdanika Foundation Server Application.</p>
+		<h2 id="pre-requisites">Pre-requisites</h2>
+		<ul>
+			<li>Maven integration for Eclipse (
+				<code>M2E</code>) - generation will fail if M2E is not installed. To install go to 
+				<code>Help &gt; Eclipse Marketplace</code>.
+			</li>
+			<li>Tycho configurator. 
+				<code>pom.xml</code> files will show errors if not installed. To install go to 
+				<code>Preferences &gt; Maven &gt; Discovery</code>, click 
+				<code>Open Catalog</code>. 
+			</li>
+		</ul>
+		<h2 id="generate-application-workspace">Generate application workspace</h2>
+		<p>To start the wizard click 
+			<code>File &gt; New &gt; Other</code> or click 
+			<code>Ctrl-N</code> and then select "Nasdanika Application Workspace":
+		</p>
+		<p>
+			<img alt="Wizard selection" border="0" src="wizard-selection.png"/>
+		</p>
+		<p>The wizard opens the general information page where you can enter application name, group ID, specify location and select a working set to add newly generated project to:</p>
+		<p>
+			<img alt="General information" border="0" src="general-information.png"/>
+		</p>
+		<p>Group ID is used in 
+			<code>pom.xml</code> files and as a base name for projects. Click 
+			<code>Next</code> to navigate to the projects page:
+		</p>
+		<p>
+			<img alt="Projects" border="0" src="projects-page.png"/>
+		</p>
+		<p>Projects:</p>
+		<ul>
+			<li>Model - an empty EMF project</li>
+			<li>Application - contains web content, OSGi components, router servlet registration, documentation and application routes.</li>
+			<li>Tests and UI driver - 
+				<a href="https://github.com/Nasdanika/server/wiki/webtest">Nasdanika WebTest</a> projects with initial tests to automatically test the Web UI of the generated application.
+			</li>
+		</ul>
+		<p>Uncheck projects which you don't need, modify default suffixes, if needed, and click 
+			<code>Next</code>. If application project was selected, then the application page will open:
+		</p>
+		<p>
+			<img alt="Application" border="0" src="application-page.png"/>
+		</p>
+		<p>Modify default selections and values if needed:</p>
+		<ul>
+			<li>Context path - web application context path.</li>
+			<li>HTTP Context ID - used by the router and session servlets.</li>
+			<li>Router servlet - dispatches requests to routes and repository objects.</li>
+			<li>Session servlet - 
+				<a href="https://en.wikipedia.org/wiki/WebSocket">WebSocket</a> servlet used by the CDO JavaScript API (see the bundled documentation)
+			</li>
+			<li>Web Content - location and alias.</li>
+		</ul>
+		<h4 id="osgi-components">OSGi components:</h4>
+		<ul>
+			<li>H2 Repository - generates an H2 repository component.</li>
+			<li>Server - CDO server.</li>
+			<li>TransactionContextProvider - used by CDO web routes.</li>
+			<li>Documentation route - integrated documentation.</li>
+			<li>Documentation application route - integrated documentation.</li>
+			<li>Session initializer - registers packages with CDO session and creates initial repository content.</li>
+		</ul>
+		<p>Click 
+			<code>Finish</code>. After several seconds the wizard will generate workspace projects and Eclipse will build them. There will be errors:
+		</p>
+		<p>
+			<img alt="workspace with errors" border="0" src="workspace-with-errors.png"/>
+		</p>
+		<p>Open the target definition file in the target project. Wait until the target is resolved and then click "Set as Target Platform", after workspace re-build errors shall disappear.</p>
+		<p>
+			<img alt="target definition" border="0" src="target-definition.png"/>
+		</p>
+		<h2 id="start-the-application-from-eclipse">Start the application from Eclipse</h2>
+		<p>Open the product file in the repository project and click 
+			<code>Launch an Eclipse Application</code>. 
+		</p>
+		<p>
+			<img alt="Launch An Eclipse Application" border="0" src="launch-an-eclipse-application.png"/> 
+		</p>
+		<p>Once you see 
+			<code>Indexed X pages</code> in the OSGi console open a web browser and navigate to the application route, e.g. 
+			<code>http://localhost:8080/demo-app/router/demo-app.html</code>. Then open the documentation application, e.g. 
+			<code>http://localhost:8080/demo-app/router/doc.html</code>.
+		</p>
+		<p>Issue 
+			<code>shutdown</code> command in the OSGi console to stop the application. If the application doesn't terminate after a couple of seconds, issue another command, e.g. 
+			<code>ss</code>.
+		</p>
+		<h2 id="build-eclipse-product">Build Eclipse Product</h2>
+		<p>Right-click on the 
+			<code>pom.xml</code> file in the aggregator project and select 
+			<code>Run as &gt; Maven Build</code>, enter 
+			<code>clean verify</code> to the goals input:
+		</p>
+		<p>
+			<img alt="Maven Build From Eclipse" border="0" src="maven-build-from-eclipse.png"/>
+		</p>
+		<p>Click 
+			<code>Run</code>. Maven will build projects, execute UI tests, and build the Eclipse product for the application. By default UI tests use 
+			<a href="https://www.mozilla.org/en-US/firefox/new/">Firefox Web browser</a>. If Firefox is not available, modify tests code to use a different driver. When build finishes you should see console output similar to the one shown below:
+		</p>
+		<p>
+			<img alt="Maven Build Result" border="0" src="maven-build-result.png"/>
+		</p>
+		<h2 id="execute-eclipse-product">Execute Eclipse Product</h2>
+		<p>Refresh the repository product and then open 
+			<code>target/products/.../x86_64</code> (or another folder depending on your OS):
+		</p>
+		<p>
+			<img alt="Built product" border="0" src="built-product.png"/>
+		</p>
+		<p>Double-click 
+			<code>eclipse.exe</code>. A console window will open. Give the application several seconds to start and open a web browser. Navigate to the application route and documentation route and then shut down the application as described in the "Start application from Eclipse" above. 
+		</p>
+		<h1 id="summary">Summary</h1>
+		<p>After completing the steps described above you will have a functional Nasdanika Foundation Server (OSGi/CDO) web application:</p>
+		<ul>
+			<li>Minimal initial functionality</li>
+			<li>Hosts its own documentation</li>
+			<li>Runnable/debuggable from Eclipse</li>
+			<li>Has automated UI tests</li>
+			<li>Buildable/testable with Maven/Tycho</li>
+			<li>Build produces a deployable binary</li>
+		</ul>
+		<h1 id="next-steps">Next steps</h1>
+		<ul>
+			<li>Check-in code to a version control system</li>
+			<li>Set up an automated build job</li>
+			<li>Create a model in the model project</li>
+			<li>Document the model - see the integrated help for details</li>
+			<li>Publish the model documentation - it will serve as the basis of the application's 
+				<a href="http://martinfowler.com/bliki/UbiquitousLanguage.html">Ubiquitous Language</a>.
+			</li>
+			<li>Add web functionality by creating route operations</li>
+			<li>Add more bundles to the project as required</li>
+		</ul>
 	</body>
 </html>

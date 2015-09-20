@@ -6,6 +6,8 @@
       <provide interface="org.nasdanika.web.Route"/>
    </service>
    <property name="pattern" type="String" value="<%=wizard.getDocRoutePath()%>/.+"/>
+   <property name="doc-route-path" type="String" value="<%=wizard.getRoutingServletAlias()%>/<%=wizard.getDocRoutePath()%>"/>
+   <property name="doc-app-path" type="String" value="<%=wizard.getRoutingServletAlias()%>/<%=wizard.getDocAppRoutePath()%>"/>
    
    <% if (wizard.isCdoTransactionContextProvider()) { %>
    		<reference bind="setCdoSessionProvider" cardinality="1..1" interface="org.eclipse.emf.cdo.session.CDOSessionProvider" name="CDOSessionProvider" policy="static"/>

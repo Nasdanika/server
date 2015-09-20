@@ -1464,7 +1464,8 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	}
 
 	public String getWebContentAlias() {
-		return applicationConfigurationPage.btnWebContent.getSelection() ? applicationConfigurationPage.webContentAlias.getText() : null;
+		String ret = applicationConfigurationPage.btnWebContent.getSelection() ? applicationConfigurationPage.webContentAlias.getText() : null;
+		return ret==null || ret.endsWith("/") ? ret : ret+"/";
 	}
 
 	public String getWebContentBaseName() {
@@ -1491,6 +1492,11 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	
 	public String getDocAppRoutePattern() {
 		return applicationConfigurationPage.btnDocumentationApplicationRoute.getSelection() ? applicationConfigurationPage.docAppRoutePatternText.getText() : null;
+	}
+
+	public String getDocAppRoutePath() {
+		String pattern = getDocAppRoutePattern();
+		return pattern==null ? pattern : pattern.replace("\\.", ".");
 	}
 	
 }
