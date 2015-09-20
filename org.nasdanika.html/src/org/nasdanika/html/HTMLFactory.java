@@ -36,6 +36,8 @@ public interface HTMLFactory {
 	
 	Tag span(Object... content);
 	
+	Tag badge(Object... content);
+	
 	enum InputType { 
 		button,
 		checkbox,

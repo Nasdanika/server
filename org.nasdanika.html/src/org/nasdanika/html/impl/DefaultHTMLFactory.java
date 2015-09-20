@@ -528,6 +528,11 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 	
 	@Override
+	public Tag badge(Object... content) {
+		return span(content).addClass("badge");
+	}
+	
+	@Override
 	public Tag stackModal() {
 		return tag(TagName.script, getClass().getResource("StackedModal.js"));
 	}
