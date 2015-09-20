@@ -2,11 +2,19 @@
 
 Nasdanika Application Workspace Wizard generates a set of projects which constitute Nasdanika Foundation Server Application.
 
+This [6 minutes video](https://www.youtube.com/watch?v=Gg4CNgqoHR4) demonstrates how to:
+* Generate application projects with default settings
+* Resolve and set target platform
+* Run the application in Eclipse
+* Build and test with Maven
+* Start the Eclipse product 
+
 ## Pre-requisites
 * Maven integration for Eclipse (``M2E``) - generation will fail if M2E is not installed. To install go to ``Help > Eclipse Marketplace``.
 * Tycho configurator. ``pom.xml`` files will show errors if not installed. To install go to ``Preferences > Maven > Discovery``, click ``Open Catalog``. 
 
 ## Generate application workspace
+
 To start the wizard click ``File > New > Other`` or click ``Ctrl-N`` and then select "Nasdanika Application Workspace":
 
 ![Wizard selection](wizard-selection.png)
