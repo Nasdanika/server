@@ -87,7 +87,7 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 			return renderContent(((URL) content).openStream());
 		}
 
-		return content;
+		return content==null ? "" : content; // Treat nulls as blanks.
 	}
 
 }
