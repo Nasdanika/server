@@ -19,6 +19,8 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
 		super(factory);
 		this.tagName = tagName;
 		this.toggle = toggle;
+		this.toggle.addClass("dropdown-toggle").attribute("data-toggle", "dropdown");
+		addClass("dropdown");
 	}
 	
 	private class Header implements AutoCloseable {
@@ -48,10 +50,9 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
 	
 	@Override
 	public String toString() {
-		Tag dropdownTag = factory.tag(tagName).addClass("dropdown");
-		dropdownTag.content(toggle.addClass("dropdown-toggle").attribute("data-toggle", "dropdown"));
+		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
+		sb.append(toggle);
 		Tag ul = factory.tag("ul").addClass("dropdown-menu");
-		dropdownTag.content(ul);
         for (Object item: items) {
         	if (item==DIVIDER) {
         		ul.content(factory.tag("li", "").addClass("divider"));
@@ -61,7 +62,8 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
         		ul.content(factory.tag("li", item));
         	}
         }
-		return dropdownTag.toString()+genLoadRemoteContentScript();
+        sb.append(ul);
+		return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override

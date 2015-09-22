@@ -6,6 +6,7 @@ import java.util.List;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class SelectImpl extends InputBaseImpl<Select> implements Select {
 	
@@ -45,32 +46,44 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 			public OptionGroup disabled() {
 				return disabled(true);
 			}
-
+			
 			@Override
-			public OptionGroup option(String value, String label, boolean selected, boolean disabled) {
-				Tag option = factory.tag("option", label).attribute("value", value);
+			public Tag option(String value, boolean selected, boolean disabled, Object... content) {
+				Tag option = factory.tag(TagName.option, content).attribute("value", value);
 				if (selected) {
 					option.attribute("selected", "selected");
 				} else if (disabled) {
 					option.attribute("disabled", "disabled");
 				}
 				options.add(option);
+				return option;
+			}
+
+			@Override
+			public OptionGroup option(String value, String label, boolean selected, boolean disabled) {
+				option(value, selected, disabled, label);
 				return this;
 			}
 		};
 		items.add(ret);
 		return ret;
 	}
-
+	
 	@Override
-	public Select option(String value, String label, boolean selected, boolean disabled) {
-		Tag option = factory.tag("option", label).attribute("value", value);
+	public Tag option(String value, boolean selected, boolean disabled, Object... content) {
+		Tag option = factory.tag(TagName.option, content).attribute("value", value);
 		if (selected) {
 			option.attribute("selected", "selected");
 		} else if (disabled) {
 			option.attribute("disabled", "disabled");
 		}
 		items.add(option);
+		return option;
+	}
+
+	@Override
+	public Select option(String value, String label, boolean selected, boolean disabled) {
+		option(value, selected, disabled, label);
 		return this;
 	}
 	
