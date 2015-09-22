@@ -1,13 +1,13 @@
 ## Route operations
-EOperations can be annotated with ``org.nasdanika.cdo.web:route`` and ``org.nasdanika.cdo.web:home-route`` to instruct the framework to route requests to annotated operations. These annotations support the following details:
+[[classifier>EOperation@http://www.eclipse.org/emf/2002/Ecore|EOperations]] can be annotated with ``org.nasdanika.cdo.web:route`` and ``org.nasdanika.cdo.web:home-route`` to instruct the framework to route requests to annotated operations. These annotations support the following details:
 
   * ``action`` - security action for authorization check, defaults to HTTP method name.
-  * ``qualifier`` - sequrity qualifier for authorization check, defaults to operation name.
+  * ``qualifier`` - security qualifier for authorization check, defaults to operation name.
   * ``method`` - a comma separated list of HTTP methods to match, matches any method if omitted.
   * ``path`` - path to match, can contain path parameters in ``{}``, e.g. ``statement/{year}/{month}``. Path takes precedence over ``pattern``.
   * ``pattern`` - regex pattern to match request path. Not applicable to the home route annotation. If omitted, path length shall be 1 and equal to the operation name.
   * ``produces`` - response content type. Optional.
-  * ``consumes`` - request content type. Optional, used to match request to method. 
+  * ``consumes`` - request content type. Optional, used to match request to operation. 
   
 Home route matches the object path with ``.html`` extension, e.g. ``L3.html``.
 
