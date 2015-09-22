@@ -305,26 +305,26 @@ public class DocRoute implements Route {
 		
 	public void activate(ComponentContext context) throws Exception {
 		Dictionary<String, Object> properties = context.getProperties();
-		Object pathOffsetProp = properties.get("pathOffset");
+		Object pathOffsetProp = properties.get("path-offset");
 		if (pathOffsetProp instanceof Number) {
 			pathOffset = ((Number) pathOffsetProp).intValue();
 		}
 		bundleContext = context.getBundleContext();
 		
-		Object sessionRegistry = properties.get("sessionRegistry");
+		Object sessionRegistry = properties.get("session-registry");
 		if (sessionRegistry instanceof Boolean) {
 			includeSessionRegistry = (Boolean) sessionRegistry;
 		}
 		
-		Object packageRegistry = properties.get("globalRegistry");
+		Object packageRegistry = properties.get("global-registry");
 		if (packageRegistry instanceof Boolean) {
 			includeGlobalRegistry = (Boolean) packageRegistry;
 		}
 		
-		patternProperty(properties.get("bundleExcludes"), bundleExcludes);
-		patternProperty(properties.get("bundleIncludes"), bundleIncludes);
-		patternProperty(properties.get("packageExcludes"), packageExcludes);
-		patternProperty(properties.get("packageIncludes"), packageIncludes);
+		patternProperty(properties.get("bundle-excludes"), bundleExcludes);
+		patternProperty(properties.get("bundle-includes"), bundleIncludes);
+		patternProperty(properties.get("package-excludes"), packageExcludes);
+		patternProperty(properties.get("package-includes"), packageIncludes);
 		
 		File searchIndexDir = context.getBundleContext().getBundle().getDataFile("searchIndex");
 		if (searchIndexDir==null) {
@@ -643,11 +643,11 @@ public class DocRoute implements Route {
 			// TOC
 			tocRoot = new TocNode(null, null, null);
 			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null);
-			if (includeGlobalRegistry==null ? cdoSessionProvider==null : includeGlobalRegistry) {
+			if (isGlobalRegistry()) {
 				createPackageRegistryToc(EPackage.Registry.INSTANCE, packagesToc.createChild("Global", null, null, null), "/packages/global");
 			}
 			
-			if (includeSessionRegistry && cdoSessionProvider!=null) {
+			if (isSessionRegistry()) {
 				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), packagesToc.createChild("Session", null, null, null), "/packages/session");				
 			}
 			
@@ -808,6 +808,14 @@ public class DocRoute implements Route {
 		} finally {
 			lock.writeLock().unlock();
 		}
+	}
+
+	public boolean isSessionRegistry() {
+		return includeSessionRegistry && cdoSessionProvider!=null;
+	}
+
+	public boolean isGlobalRegistry() {
+		return includeGlobalRegistry==null ? cdoSessionProvider==null : includeGlobalRegistry;
 	}
 	
 	private void createPackageRegistryToc(Registry registry, TocNode owner, String prefix) {

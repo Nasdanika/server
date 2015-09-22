@@ -87,9 +87,28 @@ Examples:
             class="org.nasdanika.cdo.web.doc.EClassifierResolver"
             name="classifier">
             <description><![CDATA[
-            This resolver can be used in EClassifier and EPackage documentation and TOC entries mounted to EClassifiers or EPackages to reference classifiers from different packages in the same registry (session or global). Format: ``[[classifier>EClassifier name@EPackage NS URI]]``. Example: ``[[classifier>EString@http://www.eclipse.org/emf/2002/Ecore]]``. 
+            Resolves [[classifier>EClassifier@http://www.eclipse.org/emf/2002/Ecore]] reference. In EClassifier and [[classifier>EPackage@http://www.eclipse.org/emf/2002/Ecore]] documentation and TOC entries mounted to EClassifiers or EPackages the reference is resolved in the same registry (session or global). In documentation not mounted to registry elements the reference is resolved 
+            in the session registry if it is available with a fallback to the global registry, if it is available. 
+            
+Format: ``[[classifier>EClassifier name@EPackage NS URI]]``. 
+            
+Example: ``[[classifier>EString@http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[classifier>EString@http://www.eclipse.org/emf/2002/Ecore]]. 
 
 In EClassifier or EPackage documentation EClassifiers in the same package can be referenced simply by their name, e.g. ``[[MyOtherClass]]`` or with ``classifier`` resolver, e.g. ``[[classifier>MyOtherClass]]``. In mounted TOC entries the latter form shall be used. 
+
+This resolver doesn't work for TOC's/topics with embedded content, i.e. with text, markdown, or html nested elements. 
+            ]]></description>
+      </wiki-link-resolver>
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.EPackageResolver"
+            name="package">
+            <description><![CDATA[
+            Resolves [[classifier>EPackage@http://www.eclipse.org/emf/2002/Ecore]] reference. In [[classifier>EClassifier@http://www.eclipse.org/emf/2002/Ecore]] and EPackage documentation and TOC entries mounted to EClassifiers or EPackages the reference is resolved in the same registry (session or global). In documentation not mounted to registry elements the reference is resolved 
+            in the session registry if it is available with a fallback to the global registry, if it is available. 
+            
+Format: ``[[package>EPackage NS URI]]``. 
+            
+Example: ``[[package>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[package>http://www.eclipse.org/emf/2002/Ecore]]. 
 
 This resolver doesn't work for TOC's/topics with embedded content, i.e. with text, markdown, or html nested elements. 
             ]]></description>
