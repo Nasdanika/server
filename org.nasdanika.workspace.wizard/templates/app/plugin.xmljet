@@ -153,4 +153,29 @@
       </httpcontext>
    </extension>   
    <% } %>
+   <extension
+         point="org.nasdanika.cdo.web.doc.extensions">
+       <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.JavadocWikiLinkResolver"
+            name="javadoc">
+         <property
+		        name="packageMap.org.nasdanika.*"
+                value="http://www.nasdanika.org/server/apidocs/">
+         </property>
+         <property
+               name="packageMap.java.*"
+               value="http://docs.oracle.com/javase/8/docs/api">
+         </property>
+         <property
+               name="packageMap.javax.*"
+               value="http://docs.oracle.com/javase/8/docs/api">
+         </property>
+         <description>
+            Resolves JavaDoc URL from the class/package name. Usage: ``[[javadoc&gt;fully qualified class name|text]]``. Text is optional. Examples: 
+
+* ``[[javadoc&gt;java.lang.String]]`` is rendered as [[javadoc&gt;java.lang.String]]
+* ``[[javadoc&gt;java.lang.String|java.lang.String]]`` is rendered as [[javadoc&gt;java.lang.String|java.lang.String]]
+         </description>
+      </wiki-link-resolver>
+   </extension>
 </plugin>
