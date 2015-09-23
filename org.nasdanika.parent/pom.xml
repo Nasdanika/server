@@ -15,7 +15,6 @@
 
 	<properties>
 		<tycho-version>0.23.0</tycho-version>
-		<luna-repo.url>http://download.eclipse.org/releases/luna</luna-repo.url>
 		<mars-repo.url>http://download.eclipse.org/releases/mars</mars-repo.url>
 	</properties>
 
