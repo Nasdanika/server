@@ -43,14 +43,14 @@ class WellImpl extends UIElementImpl<Well> implements Well {
 	}
 	
 	@Override
-	public String toHTML() {		
+	public String produce() {		
 		List<Object> theContent = getContent();
 		if (theContent.isEmpty()) {
 			return renderComment()+"<div"+attributes()+"/>";
 		}
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		for (Object c: theContent) {
-			sb.append(toHTML(c));
+			sb.append(stringify(c));
 		}
 		return sb.append("</div>").append(genLoadRemoteContentScript()).toString();
 	}

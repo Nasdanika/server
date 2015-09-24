@@ -94,7 +94,7 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 	}
 	
 	@Override
-	public String toHTML() {		
+	public String produce() {		
 		if (getId()==null) {
 			id(factory.nextId());
 		}
@@ -116,7 +116,7 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 			
 			ol.content(li);
 		}
-		sb.append(ol.toHTML());
+		sb.append(stringify(ol));
 		
 		Tag innerDiv = factory.div().addClass("carousel-inner");
 		for (int i=0; i<slides.size(); ++i) {

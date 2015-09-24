@@ -163,7 +163,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	}
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		// Simple button - no items
 		if (items.isEmpty()) {
 			StringBuilder sb = new StringBuilder(renderComment()).append("<button type=\"");
@@ -184,7 +184,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 			sb.append(attributes("class", "type", "disabled"));
 			sb.append(">");
 			for (Object c: content) {
-				sb.append(toHTML(c));
+				sb.append(stringify(c));
 			}
 			sb.append("</button>");
 			
@@ -232,7 +232,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		sb.append(attributes("class", "type", "disabled", "data-toggle"));
 		sb.append(">");
 		for (Object c: content) {
-			sb.append(toHTML(c));
+			sb.append(stringify(c));
 		}
 		if (!split) {
 			sb.append(" <span class=\"caret\"></span>");
@@ -257,13 +257,13 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		for (DropdownItem item: items) {
 			if (item instanceof Item) {
 				sb.append("<li>");
-				sb.append(toHTML(((Item) item).content));
+				sb.append(stringify(((Item) item).content));
 				sb.append("</li>");
 			} else if (item instanceof Divider) {
 				sb.append("<li class=\"divider\"></li>");
 			} else {
 				sb.append("<li class=\"dropdown-header\">");
-				sb.append(toHTML(((Header) item).content));
+				sb.append(stringify(((Header) item).content));
 				sb.append("</li>");
 			}
 		}

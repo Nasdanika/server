@@ -62,7 +62,7 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 		
 		// sections?
 		
-		return ret.toHTML();		
+		return ret.toString();		
 		
 	}
 

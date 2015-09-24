@@ -34,11 +34,11 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 		}		
 		
 		@Override
-		public String toHTML() {
+		public String produce() {
 			if (active) {
 				return "<li class=\"active\">"+item+"</li>";
 			}
-			return "<li>"+NavbarImpl.this.toHTML(item)+"</li>";
+			return "<li>"+NavbarImpl.this.stringify(item)+"</li>";
 		}
 		
 		/**
@@ -46,7 +46,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 		 */
 		@Override
 		public String toString() {
-			return toHTML();
+			return produce();
 		}
 	}
 
@@ -67,7 +67,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	private FormImpl form;
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		
 		final String collapseTargetId = factory.nextId()+"_collapse";
 
@@ -90,7 +90,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 				}
 				StringBuilder ret = new StringBuilder();
 				for (Object item: leftItems) {
-					ret.append(toHTML(item));
+					ret.append(stringify(item));
 				}
 				return ret.toString();
 			}
@@ -102,7 +102,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 				}
 				StringBuilder ret = new StringBuilder();
 				for (Object item: rightItems) {
-					ret.append(toHTML(item));
+					ret.append(stringify(item));
 				}
 				return ret.toString();
 			}

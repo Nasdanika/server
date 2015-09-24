@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.Function;
 import org.nasdanika.html.HTMLFactory;
@@ -27,15 +28,26 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	
 	private static AtomicLong idCounter = new AtomicLong();
 	
-	private Producer.Adapter adapter;
+	private Producer.Adapter producerAdapter;
 	
-	public Producer.Adapter getAdapter() {
-		return adapter;
+	public Producer.Adapter getProducerAdapter() {
+		return producerAdapter;
 	}
 	
-	public void setAdapter(Producer.Adapter adapter) {
-		this.adapter = adapter;
+	public void setProducerAdapter(Producer.Adapter adapter) {
+		this.producerAdapter = adapter;
 	}
+	
+	private FactoryProducer.Adapter factoryProducerAdapter;
+	
+	public FactoryProducer.Adapter getFactoryProducerAdapter() {
+		return factoryProducerAdapter;
+	}
+	
+	public void setFactoryProducerAdapter(FactoryProducer.Adapter adapter) {
+		this.factoryProducerAdapter = adapter;
+	}
+	
 	
 	@Override
 	public String nextId() {

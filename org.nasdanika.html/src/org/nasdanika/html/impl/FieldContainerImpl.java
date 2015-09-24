@@ -56,18 +56,18 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		content.add(new Producer() {
 			
 			@Override
-			public String toHTML() {
+			public String produce() {
 				StringBuilder sb = new StringBuilder();
 				if (inline) {
 					sb.append("<label class=\"checkbox-inline\">")
-							.append(FieldContainerImpl.this.toHTML(checkboxControl))
-							.append(FieldContainerImpl.this.toHTML(label)) 
+							.append(FieldContainerImpl.this.stringify(checkboxControl))
+							.append(FieldContainerImpl.this.stringify(label)) 
 							.append("</label>");
 				} else {
 					sb.append("<div class=\"checkbox\">") 
 							.append("<label>") 
-							.append(FieldContainerImpl.this.toHTML(checkboxControl))
-							.append(FieldContainerImpl.this.toHTML(label)) 
+							.append(FieldContainerImpl.this.stringify(checkboxControl))
+							.append(FieldContainerImpl.this.stringify(label)) 
 							.append("</label>")
 							.append("</div>");
 				}
@@ -75,7 +75,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 					UIElement<?> controlDiv = form.factory.div(sb);
 					controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
 					controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
-					return controlDiv.toHTML();
+					return stringify(controlDiv);
 				}
 				return sb.toString();				
 			}
@@ -85,7 +85,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 			 */
 			@Override
 			public String toString() {
-				return toHTML();
+				return stringify(produce());
 			}
 			
 		});
@@ -98,18 +98,18 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		content.add(new Producer() {
 			
 			@Override
-			public String toHTML() {
+			public String produce() {
 				StringBuilder sb = new StringBuilder();
 				if (inline) {
 					sb.append("<label class=\"radio-inline\">")
-							.append(FieldContainerImpl.this.toHTML(radioControl))
-							.append(FieldContainerImpl.this.toHTML(label)) 
+							.append(FieldContainerImpl.this.stringify(radioControl))
+							.append(FieldContainerImpl.this.stringify(label)) 
 							.append("</label>");
 				} else {
 					sb.append("<div class=\"radio\">") 
 							.append("<label>") 
-							.append(FieldContainerImpl.this.toHTML(radioControl))
-							.append(FieldContainerImpl.this.toHTML(label)) 
+							.append(FieldContainerImpl.this.stringify(radioControl))
+							.append(FieldContainerImpl.this.stringify(label)) 
 							.append("</label>")
 							.append("</div>");
 				}
@@ -117,7 +117,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 					UIElement<?> controlDiv = form.factory.div(sb.toString());
 					controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
 					controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
-					return controlDiv.toHTML();
+					return stringify(controlDiv);
 				}
 				return sb.toString();				
 			}
@@ -127,7 +127,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 			 */
 			@Override
 			public String toString() {
-				return toHTML();
+				return stringify(produce());
 			}
 			
 		});
@@ -181,10 +181,10 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	}
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		StringBuilder sb = new StringBuilder();
 		for (Object o: content) {
-			sb.append(toHTML(o));
+			sb.append(stringify(o));
 		}
 		return sb.toString();
 	}
@@ -198,8 +198,8 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		}
 	}
 	
-	protected String toHTML(Object content) {
-		return UIElementImpl.toHTML(content, factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getAdapter() : null);
+	protected String stringify(Object content) {
+		return UIElementImpl.stringify(content, factory);
 	}
 	
 	/**
@@ -207,7 +207,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	 */
 	@Override
 	public String toString() {
-		return toHTML();
+		return stringify(produce());
 	}
 	
 }

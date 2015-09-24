@@ -42,10 +42,10 @@ class ButtonToolbarImpl extends UIElementImpl<ButtonToolbar> implements ButtonTo
 	}
 		
 	@Override
-	public String toHTML() {		
+	public String produce() {		
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		for (ButtonGroup g: buttonGroups) {
-			sb.append(g.toHTML());
+			sb.append(stringify(g));
 		}
 		return sb.append("</").append("div").append(">").append(genLoadRemoteContentScript()).toString();
 	}

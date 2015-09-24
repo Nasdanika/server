@@ -34,11 +34,11 @@ class FragmentImpl implements Fragment {
 	}
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		StringBuilder sb = new StringBuilder();
 		for (Object c: content) {
 			try {
-				sb.append(UIElementImpl.toHTML(c, factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getAdapter() : null));
+				sb.append(UIElementImpl.stringify(c, factory));
 			} catch (Exception e) {
 				sb.append(e);
 			}
@@ -61,7 +61,7 @@ class FragmentImpl implements Fragment {
 	 */
 	@Override
 	public String toString() {
-		return toHTML();
+		return produce();
 	}
 
 }

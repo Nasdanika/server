@@ -116,17 +116,17 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 					
 					@Override
 					public String getTitle() {
-						return title==null ? null : UIElementImpl.toHTML(title, getAdapter());
+						return title==null ? null : UIElementImpl.stringify(title, DefaultHTMLFactory.this);
 					}
 					
 					@Override
 					public String getInitialRoute() {
-						return initialRoute == null ? null : UIElementImpl.toHTML(initialRoute, getAdapter());
+						return initialRoute == null ? null : UIElementImpl.stringify(initialRoute, DefaultHTMLFactory.this);
 					}
 					
 					@Override
 					public String getHead() {
-						return head == null ? "" : UIElementImpl.toHTML(head, getAdapter());
+						return head == null ? "" : UIElementImpl.stringify(head, DefaultHTMLFactory.this);
 					}
 					
 					@Override
@@ -134,7 +134,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 						StringBuilder bodyBuilder = new StringBuilder();
 						for (Object b: body) {
 							if (b!=null) {
-								bodyBuilder.append(UIElementImpl.toHTML(b, getAdapter()));
+								bodyBuilder.append(UIElementImpl.stringify(b, DefaultHTMLFactory.this));
 							}
 						}
 						return bodyBuilder.toString();

@@ -44,14 +44,14 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 			}
 			
 			@Override
-			public String toHTML() {
+			public String produce() {
 				String tagName = isHeader ? "th" : "td";
 				if (content.isEmpty()) {
 					return renderComment()+"<"+tagName+" "+attributes()+"/>";
 				}				
 				StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 				for (Object c: content) {
-					sb.append(toHTML(c));
+					sb.append(stringify(c));
 				}
 				return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 			}
@@ -96,11 +96,11 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 		}
 		
 		@Override
-		public String toHTML() {
+		public String produce() {
 			StringBuilder ret = new StringBuilder(renderComment()).append("<tr"+attributes()+">");
 			for (Object c: content) {
 				if (c!=null) {
-					ret.append(toHTML(c));
+					ret.append(stringify(c));
 				}
 			}
 			ret.append("</tr>");
@@ -146,13 +146,13 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 	}
 	
 	@Override
-	public String toHTML() {		
+	public String produce() {		
 		if (content.isEmpty()) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 		for (Object c: content) {
-			sb.append(toHTML(c));
+			sb.append(stringify(c));
 		}
 		return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 	}

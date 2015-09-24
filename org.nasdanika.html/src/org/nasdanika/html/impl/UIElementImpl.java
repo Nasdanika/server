@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Angular;
+import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.Grid;
 import org.nasdanika.html.HTMLFactory;
@@ -81,7 +82,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 					// boolean attributes
 					attributeBuilder.append(a.getKey());					
 				} else {
-					attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(toHTML(value))+"\"");
+					attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(stringify(value))+"\"");
 				}
 			}
 		}
@@ -89,13 +90,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		if (!Arrays.asList(excluded).contains(STYLE)) {
 			StringBuilder styleBuilder = new StringBuilder();
 			if (attributes.containsKey(STYLE)) {
-				styleBuilder.append(toHTML(attributes.get(STYLE)));
+				styleBuilder.append(stringify(attributes.get(STYLE)));
 			}
 			for (Entry<String, Object> se: styles.entrySet()) {
 				if (styleBuilder.length()>0 && !styleBuilder.toString().trim().endsWith(";")) {
 					styleBuilder.append(";");
 				}
-				styleBuilder.append(se.getKey()+":"+toHTML(se.getValue()));
+				styleBuilder.append(se.getKey()+":"+stringify(se.getValue()));
 			}
 			if (styleBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
@@ -108,13 +109,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		if (!Arrays.asList(excluded).contains(DATA_BIND)) {
 			StringBuilder dataBindBuilder = new StringBuilder();
 			if (attributes.containsKey(DATA_BIND)) {
-				dataBindBuilder.append(toHTML(attributes.get(DATA_BIND)));
+				dataBindBuilder.append(stringify(attributes.get(DATA_BIND)));
 			}
 			for (Entry<String, Object> se: koDataBindEntries.entrySet()) {
 				if (dataBindBuilder.length()>0 && !dataBindBuilder.toString().trim().endsWith(",")) {
 					dataBindBuilder.append(",");
 				}
-				dataBindBuilder.append(se.getKey()+":"+toHTML(se.getValue()));
+				dataBindBuilder.append(se.getKey()+":"+stringify(se.getValue()));
 			}
 			if (dataBindBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
@@ -130,13 +131,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 				if (classBuilder.length()>0) {
 					classBuilder.append(" ");
 				}
-				classBuilder.append(toHTML(cls));
+				classBuilder.append(stringify(cls));
 			}
 			if (attributes.containsKey(CLASS)) {
 				if (classBuilder.length()>0) {
 					classBuilder.append(" ");
 				}
-				classBuilder.append(toHTML(attributes.get(CLASS)));
+				classBuilder.append(stringify(attributes.get(CLASS)));
 			}
 			if (classBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
@@ -158,13 +159,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		if (STYLE.equals(attribute)) {
 			StringBuilder styleBuilder = new StringBuilder();
 			if (attributes.containsKey(STYLE)) {
-				styleBuilder.append(toHTML(attributes.get(STYLE)));
+				styleBuilder.append(stringify(attributes.get(STYLE)));
 			}
 			for (Entry<String, Object> se: styles.entrySet()) {
 				if (styleBuilder.length()>0 && !styleBuilder.toString().endsWith(";")) {
 					styleBuilder.append(";");
 				}
-				styleBuilder.append(se.getKey()+":"+toHTML(se.getValue()));
+				styleBuilder.append(se.getKey()+":"+stringify(se.getValue()));
 			}
 			return styleBuilder.toString();
 		}
@@ -883,7 +884,11 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	 * @param content
 	 * @return
 	 */
-	public static String toHTML(Object content, Producer.Adapter adapter) {
+	public static String stringify(
+			Object content, 
+			HTMLFactory factory,
+			Producer.Adapter producerAdapter, 
+			FactoryProducer.Adapter factoryProducerAdapter) {
 		try {
 			if (content == null) {
 				return "";
@@ -894,18 +899,29 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 			
 			if (content instanceof Producer) {
-				return ((Producer) content).toHTML();
+				return stringify(((Producer) content).produce(), factory, producerAdapter, factoryProducerAdapter);
 			}
 			
-			if (content!=null && adapter!=null) {
-				Producer producer = adapter.asProducer(content);
+			if (content instanceof FactoryProducer) {
+				return stringify(((FactoryProducer) content).produce(factory), factory, producerAdapter, factoryProducerAdapter);
+			}
+			
+			if (content!=null && producerAdapter!=null) {
+				Producer producer = producerAdapter.asProducer(content);
 				if (producer!=null) {
-					return producer.toHTML();
+					return stringify(producer, factory, producerAdapter, factoryProducerAdapter);
+				}
+			}
+			
+			if (content!=null && factoryProducerAdapter!=null) {
+				FactoryProducer factoryProducer = factoryProducerAdapter.asFactoryProducer(content);
+				if (factoryProducer!=null) {
+					return stringify(factoryProducer, factory, producerAdapter, factoryProducerAdapter);
 				}
 			}
 			
 			if (content instanceof InputStream) {
-				return toHTML(new InputStreamReader((InputStream) content), adapter);
+				return stringify(new InputStreamReader((InputStream) content), factory, producerAdapter, factoryProducerAdapter);
 			}
 			if (content instanceof Reader) {
 				StringWriter sw = new StringWriter();
@@ -918,7 +934,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 			
 			if (content instanceof URL) {
-				return toHTML(((URL) content).openStream(), adapter);
+				return stringify(((URL) content).openStream(), factory, producerAdapter, factoryProducerAdapter);
 			}
 	
 			return content.toString();
@@ -929,8 +945,16 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		}
 	}
 	
-	protected String toHTML(Object content) {
-		return toHTML(content, factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getAdapter() : null);
+	public static String stringify(Object content, HTMLFactory factory) {
+		return stringify(
+				content,
+				factory,
+				factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getProducerAdapter() : null,
+				factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getFactoryProducerAdapter() : null);
+	}
+	
+	protected String stringify(Object content) {
+		return stringify(content, factory);
 	}
 	
 	/**
@@ -938,7 +962,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	 */
 	@Override
 	public String toString() {
-		return toHTML();
+		return stringify(produce());
 	}
 	
 }

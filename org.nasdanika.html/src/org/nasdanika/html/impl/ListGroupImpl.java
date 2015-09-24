@@ -28,12 +28,12 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 	}
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		StringBuilder ret = new StringBuilder(renderComment()).append("<ul");
 		ret.append(attributes());
 		ret.append(">");
 		for (Tag item: items) {
-			ret.append(item.toHTML());
+			ret.append(stringify(item));
 		}
 		ret.append("</ul>");
 		return ret.append(genLoadRemoteContentScript()).toString();

@@ -23,6 +23,7 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.InstanceMethodCommand;
 import org.nasdanika.core.MethodCommand;
 import org.nasdanika.core.NasdanikaException;
+import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Producer;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
@@ -130,12 +131,24 @@ public class ExtensionManager extends AdapterManager {
 						}
 						defaultHTMLFactory.getStylesheets().add(stylesheetPath);
 					}
-					defaultHTMLFactory.setAdapter(new Producer.Adapter() {
+					defaultHTMLFactory.setProducerAdapter(new Producer.Adapter() {
 						
 						@Override
 						public Producer asProducer(Object obj) {							
 							try {
 								return adapt(Producer.class);
+							} catch (Exception e) {
+								throw new NasdanikaException(e);
+							}
+						}
+						
+					});
+					defaultHTMLFactory.setFactoryProducerAdapter(new FactoryProducer.Adapter() {
+						
+						@Override
+						public FactoryProducer asFactoryProducer(Object obj) {							
+							try {
+								return adapt(FactoryProducer.class);
 							} catch (Exception e) {
 								throw new NasdanikaException(e);
 							}

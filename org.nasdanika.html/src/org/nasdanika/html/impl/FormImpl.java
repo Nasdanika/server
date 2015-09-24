@@ -111,12 +111,12 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	}
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		return new StringBuilder(renderComment())
 			.append("<form")
 			.append(attributes())
 			.append(">")
-			.append(toHTML(container))
+			.append(stringify(container))
 			.append("</form>")
 			.append(genLoadRemoteContentScript())
 			.toString();

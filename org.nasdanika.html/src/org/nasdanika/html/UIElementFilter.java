@@ -106,8 +106,8 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 	}
 
 	@Override
-	public String toHTML() {
-		return target.toHTML();
+	public Object produce() {
+		return target.produce();
 	}
 
 }

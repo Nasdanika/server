@@ -70,26 +70,26 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 	}
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div");
 		sb.append(attributes());
 		sb.append(">");
 		if (leftAddOn instanceof Button) {
-			sb.append(((Button) leftAddOn).toHTML());
+			sb.append(stringify(leftAddOn));
 		} else if (leftAddOn!=null) {
-			sb.append(factory.span(leftAddOn).addClass("input-group-addon"));
+			sb.append(stringify(factory.span(leftAddOn).addClass("input-group-addon")));
 		}
 		
-		sb.append(toHTML(control));
+		sb.append(stringify(control));
 
 		if (rightAddOn instanceof Button) {
-			sb.append(((Button) rightAddOn).toHTML());
+			sb.append(stringify(rightAddOn));
 		} else if (rightAddOn!=null) {
-			sb.append(factory.span(rightAddOn).addClass("input-group-addon"));
+			sb.append(stringify(factory.span(rightAddOn).addClass("input-group-addon")));
 		} 	
 		sb.append("</div>");
 		if (initScript.length()>0) {
-			sb.append(factory.tag(TagName.script, initScript));
+			sb.append(stringify(factory.tag(TagName.script, initScript)));
 		}
 		return sb.append(genLoadRemoteContentScript()).toString();
 		

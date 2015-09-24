@@ -24,14 +24,14 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 			private boolean disabled;
 
 			@Override
-			public String toHTML() {
+			public String produce() {
 				StringBuilder sb = new StringBuilder("<optgroup label=\"").append(label).append("\"");
 				if (disabled) {
 					sb.append(" disabled=\"disabled\"");
 				}
 				sb.append(">");
 				for (Tag option: options) {
-					sb.append(option.toHTML());
+					sb.append(stringify(option));
 				}
 				return sb.append("</optgroup>").toString();
 			}
@@ -41,7 +41,7 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 			 */
 			@Override
 			public String toString() {
-				return toHTML();
+				return produce();
 			}			
 
 			@Override
@@ -96,10 +96,10 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 	}
 	
 	@Override
-	public String toHTML() {
+	public String produce() {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<select").append(attributes()).append(">");
 		for (Object item: items) {
-			sb.append(toHTML(item));
+			sb.append(stringify(item));
 		}
 		return sb.append("</select>").append(genLoadRemoteContentScript()).toString();
 	}

@@ -33,7 +33,7 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 	}
 	
 	@Override
-	public String toHTML() {		
+	public String produce() {		
 		List<Object> theContent = getContent();
 		if (theContent.isEmpty()) {
 			return renderComment()+"<"+tagName+attributes()+"/>";
@@ -41,7 +41,7 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 		for (Object c: theContent) {
 			try {
-				sb.append(toHTML(c));
+				sb.append(stringify(c));
 			} catch (Exception e) {
 				sb.append(e.toString());
 			}

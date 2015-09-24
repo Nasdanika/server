@@ -5,7 +5,7 @@ package org.nasdanika.html;
  * @author Pavel Vlasov
  *
  */
-public interface Producer {
+public interface FactoryProducer {
 	
 	/**
 	 * Adapter to Producer. 
@@ -14,7 +14,7 @@ public interface Producer {
 	 */
 	interface Adapter {
 		
-		Producer asProducer(Object obj);
+		FactoryProducer asFactoryProducer(Object obj);
 		
 	}
 	
@@ -22,6 +22,6 @@ public interface Producer {
 	 * Produces content.
 	 * @return Content.
 	 */
-	Object produce();
+	Object produce(HTMLFactory factory);
 
 }

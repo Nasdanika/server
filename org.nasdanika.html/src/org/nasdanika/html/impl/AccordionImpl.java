@@ -45,7 +45,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 				ret.append("<div class=\"panel-heading\">");
 					ret.append("<h4 class=\"panel-title\">");
 						ret.append("<a data-toggle=\"collapse\" data-parent=\"#"+AccordionImpl.this.getId()+"\" href=\"#"+id+"\">");
-							ret.append(AccordionImpl.this.toHTML(title));
+							ret.append(AccordionImpl.this.stringify(title));
 						ret.append("</a>");
 					ret.append("</h4>");
 				ret.append("</div>");
@@ -60,7 +60,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 						if (content!=null) {
 							for (Object o: content) {
 								if (o!=null) {
-									ret.append(AccordionImpl.this.toHTML(o));
+									ret.append(AccordionImpl.this.stringify(o));
 								}
 							}
 						} 
@@ -98,10 +98,10 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 	
 	@Override
-	public String toHTML() {
+	public Object produce() {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		for (Item item: items) {
-			sb.append(toHTML(item));
+			sb.append(stringify(item));
 		}
 		sb.append("</div>");
 		return sb.append(genLoadRemoteContentScript()).toString();
