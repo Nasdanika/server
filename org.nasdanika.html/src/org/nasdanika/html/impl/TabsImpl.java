@@ -143,7 +143,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	
 	private TabAjaxDataToggleScriptRenderer tabAjaxDataToggleScriptRenderer = new TabAjaxDataToggleScriptRenderer();
 	
-	public String toString() {
+	public String toHTML() {
 		if (isEmpty()) {
 			return "";
 		}
@@ -159,8 +159,8 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 			contentDiv.content(tab.div());
 		}
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");		
-		sb.append(navUL);
-		sb.append(contentDiv);
+		sb.append(navUL.toHTML());
+		sb.append(contentDiv.toHTML());
 		if (hasAjaxTabs) {
 			sb.append(tabAjaxDataToggleScriptRenderer.generate(null));
 		}		

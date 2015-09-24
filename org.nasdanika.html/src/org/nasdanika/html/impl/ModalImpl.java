@@ -83,7 +83,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 	}
 	
 	@Override
-	public String toString() {		
+	public String toHTML() {		
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		Tag dialogDiv = factory.div(contentDiv).addClass("modal-dialog");
 		if (large) {
@@ -91,7 +91,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 		} else if (small) {
 			dialogDiv.addClass("modal-sm");
 		}
-		sb.append(dialogDiv);
+		sb.append(dialogDiv.toHTML());
 		return sb.append("</").append("div").append(">").append(genLoadRemoteContentScript()).toString();
 	}
 

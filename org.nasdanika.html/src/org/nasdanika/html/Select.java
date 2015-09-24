@@ -2,7 +2,7 @@ package org.nasdanika.html;
 
 public interface Select extends InputBase<Select> {
 	
-	interface OptionGroup {
+	interface OptionGroup extends Producer {
 		
 		OptionGroup disabled(boolean disabled);
 		

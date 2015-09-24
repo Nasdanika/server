@@ -4,7 +4,6 @@ import static org.pegdown.FastEncoder.encode;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
-import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo.Registry;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.core.CoreUtil;
@@ -19,7 +18,8 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 
 	private URLRewriter urlRewriter;
 	private WikiLinkProcessor wikiLinkProcessor;
-	private Registry linkRegistry;
+	private org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo.Registry linkRegistry;
+	private org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver.Registry resolverRegistry;
 
 	public MarkdownLinkRenderer(
 			Renderer.Registry rendererRegistry, 
@@ -42,10 +42,23 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 				linkRegistry, 
 				urlRewriter);
 		
+		this.resolverRegistry = resolverRegistry;
 		this.linkRegistry = linkRegistry;
 	}
 	
-	protected Rendering createRendering(String href, String text, String title) {
+	protected Rendering createRendering(String href, String text, String title, boolean rewriteURL) {
+		if (href!=null && resolverRegistry!=null) {
+			int idx = href.indexOf('>');
+			if (idx!=-1) {
+				Resolver resolver = resolverRegistry.getResolver(href.substring(0, idx));
+				if (resolver!=null) {
+					String newHref = resolver.resolve(href.substring(idx+1));
+					if (newHref!=null) {
+						href = newHref;
+					}
+				}
+			}
+		}
 		LinkInfo linkInfo = linkRegistry==null || href==null ? null : linkRegistry.getLinkInfo(href);
 		if (CoreUtil.isBlank(text)) {
 			if (linkInfo!=null) {
@@ -63,9 +76,9 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 				}
 				text = text.replace('_', ' ');				
 			}
-		}
+		}				
 
-		if (urlRewriter!=null && href!=null) {
+		if (rewriteURL && urlRewriter!=null && href!=null) {
 			href = urlRewriter.rewrite(href);
 		}
 		
@@ -92,19 +105,19 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 	}
 		
     public Rendering render(ExpLinkNode node, String text) {
-    	return createRendering(node.url, text, node.title);
+    	return createRendering(node.url, text, node.title, true);
     }
 
     public Rendering render(ExpImageNode node, String text) {
-    	return createRendering(node.url, text, node.title);
+    	return createRendering(node.url, text, node.title, false);
     }
 
     public Rendering render(RefLinkNode node, String url, String title, String text) {
-    	return createRendering(url, text, title);
+    	return createRendering(url, text, title, true);
     }
 
     public Rendering render(RefImageNode node, String url, String title, String alt) {
-    	return createRendering(url, alt, title);
+    	return createRendering(url, alt, title, false);
     }
 
     public Rendering render(WikiLinkNode node) {

@@ -22,7 +22,9 @@ import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.InstanceMethodCommand;
 import org.nasdanika.core.MethodCommand;
+import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Producer;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.web.RouteDescriptor.RouteType;
 import org.nasdanika.web.html.UIPart;
@@ -128,7 +130,20 @@ public class ExtensionManager extends AdapterManager {
 						}
 						defaultHTMLFactory.getStylesheets().add(stylesheetPath);
 					}
+					defaultHTMLFactory.setAdapter(new Producer.Adapter() {
+						
+						@Override
+						public Producer asProducer(Object obj) {							
+							try {
+								return adapt(Producer.class);
+							} catch (Exception e) {
+								throw new NasdanikaException(e);
+							}
+						}
+						
+					});
 					this.htmlFactory = defaultHTMLFactory;
+					
 					break;
 				}
 			} else if ("html_factory".equals(ce.getName())) {

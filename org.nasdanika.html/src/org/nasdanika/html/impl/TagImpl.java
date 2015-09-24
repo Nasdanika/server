@@ -1,10 +1,5 @@
 package org.nasdanika.html.impl;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.StringWriter;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,7 +33,7 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 	}
 	
 	@Override
-	public String toString() {		
+	public String toHTML() {		
 		List<Object> theContent = getContent();
 		if (theContent.isEmpty()) {
 			return renderComment()+"<"+tagName+attributes()+"/>";
@@ -46,7 +41,7 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 		for (Object c: theContent) {
 			try {
-				sb.append(renderContent(c));
+				sb.append(toHTML(c));
 			} catch (Exception e) {
 				sb.append(e.toString());
 			}
@@ -62,32 +57,6 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 				((AutoCloseable) c).close();
 			}
 		}
-	}
-	
-	/**
-	 * Special handling for input streams, readers, and URL's.
-	 * @param content
-	 * @return
-	 */
-	static Object renderContent(Object content) throws Exception {
-		if (content instanceof InputStream) {
-			return renderContent(new InputStreamReader((InputStream) content));
-		}
-		if (content instanceof Reader) {
-			StringWriter sw = new StringWriter();
-			for (int ch = ((Reader) content).read(); ch!=-1; ch = ((Reader) content).read()) {
-				sw.write(ch);
-			}
-			((Reader) content).close();
-			sw.close();
-			return sw.toString();
-		}
-		
-		if (content instanceof URL) {
-			return renderContent(((URL) content).openStream());
-		}
-
-		return content==null ? "" : content; // Treat nulls as blanks.
 	}
 
 }

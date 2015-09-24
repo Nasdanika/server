@@ -7,6 +7,7 @@ import org.nasdanika.html.Dropdown;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Navbar;
+import org.nasdanika.html.Producer;
 
 class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	
@@ -22,7 +23,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	private List<Object> leftItems = new ArrayList<>();
 	private List<Object> rightItems = new ArrayList<>();
 	
-	private class ItemEntry {
+	private class ItemEntry implements Producer {
 		Object item;
 		boolean active;
 		
@@ -33,11 +34,11 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 		}		
 		
 		@Override
-		public String toString() {
+		public String toHTML() {
 			if (active) {
 				return "<li class=\"active\">"+item+"</li>";
 			}
-			return "<li>"+item+"</li>";
+			return "<li>"+NavbarImpl.this.toHTML(item)+"</li>";
 		}
 	}
 
@@ -58,7 +59,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	private FormImpl form;
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		
 		final String collapseTargetId = factory.nextId()+"_collapse";
 
@@ -81,7 +82,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 				}
 				StringBuilder ret = new StringBuilder();
 				for (Object item: leftItems) {
-					ret.append(item.toString());
+					ret.append(toHTML(item));
 				}
 				return ret.toString();
 			}
@@ -93,7 +94,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 				}
 				StringBuilder ret = new StringBuilder();
 				for (Object item: rightItems) {
-					ret.append(item.toString());
+					ret.append(toHTML(item));
 				}
 				return ret.toString();
 			}

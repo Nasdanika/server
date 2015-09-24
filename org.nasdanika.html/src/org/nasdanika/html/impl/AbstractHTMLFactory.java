@@ -10,6 +10,7 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.Function;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.Producer;
 import org.nasdanika.html.Require;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.Tag;
@@ -25,6 +26,16 @@ import org.nasdanika.html.TextArea;
 public abstract class AbstractHTMLFactory implements HTMLFactory {
 	
 	private static AtomicLong idCounter = new AtomicLong();
+	
+	private Producer.Adapter adapter;
+	
+	public Producer.Adapter getAdapter() {
+		return adapter;
+	}
+	
+	public void setAdapter(Producer.Adapter adapter) {
+		this.adapter = adapter;
+	}
 	
 	@Override
 	public String nextId() {
@@ -118,7 +129,7 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	
 	@Override
 	public Fragment fragment(Object... content) {
-		return new FragmentImpl(content);
+		return new FragmentImpl(this, content);
 	}
 
 

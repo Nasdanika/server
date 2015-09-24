@@ -71,7 +71,7 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		Tag div = factory.div();
 		((UIElementImpl<?>) div).merge(this);
 		if (vertical) {
@@ -90,7 +90,7 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 			div.content(justified && button.isDropdownEmpty() ? factory.div(button).addClass("btn-group") : button); // Role menu - will it hurt?
 		}
 
-		return div.toString();
+		return div.toHTML();
 	}
 
 }

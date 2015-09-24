@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.Fragment;
+import org.nasdanika.html.HTMLFactory;
 
 class FragmentImpl implements Fragment {
 	
-	private List<Object> content = new ArrayList<>(); 
+	private List<Object> content = new ArrayList<>();
+	private HTMLFactory factory; 
 	
-	FragmentImpl(Object... content) {
+	FragmentImpl(HTMLFactory factory, Object... content) {
+		this.factory = factory;
 		content(content);
 	}
 
@@ -31,13 +34,13 @@ class FragmentImpl implements Fragment {
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		StringBuilder sb = new StringBuilder();
 		for (Object c: content) {
 			try {
-				sb.append(TagImpl.renderContent(c));
+				sb.append(UIElementImpl.toHTML(c, factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getAdapter() : null));
 			} catch (Exception e) {
-				sb.append(e.toString());
+				sb.append(e);
 			}
 		}
 		return sb.toString();

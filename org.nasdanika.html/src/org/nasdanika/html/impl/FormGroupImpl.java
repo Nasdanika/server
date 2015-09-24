@@ -51,7 +51,7 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		if (status!=null) {
 			addClass("has-"+status.name().toLowerCase());
 		}
@@ -68,18 +68,18 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 				labelTag.addClass("col-"+form.deviceSize.code+"-"+form.labelWidth);
 				labelTag.addClass("control-label");
 			}
-			sb.append(labelTag);
+			sb.append(labelTag.toHTML());
 			sb.append(" ");
 		}
 		if (form.horizontal) {
-			UIElement<?> controlDiv = form.factory.div(control.toString());
+			UIElement<?> controlDiv = form.factory.div(toHTML(control));
 			controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
 			if (label==null) {
 				controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
 			}
-			sb.append(controlDiv);
+			sb.append(controlDiv.toHTML());
 		} else {
-			sb.append(control);
+			sb.append(toHTML(control));
 		}
 		if (feedback && status!=null) {
 			Tag feedbackSpan = null;
@@ -98,7 +98,7 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 			}
 			if (feedbackSpan!=null) {
 				feedbackSpan.addClass("form-control-feedback");
-				sb.append(feedbackSpan);
+				sb.append(feedbackSpan.toHTML());
 			}
 		}
 		if (helpText!=null && !form.horizontal && !form.inline) {

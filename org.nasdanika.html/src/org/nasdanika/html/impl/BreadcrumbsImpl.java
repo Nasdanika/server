@@ -34,10 +34,10 @@ class BreadcrumbsImpl extends UIElementImpl<Breadcrumbs> implements Breadcrumbs 
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<ol").append(attributes()).append(">");
 		for (Tag item: items) {
-			sb.append(item);
+			sb.append(toHTML(item));
 		}
 		return sb.append("</ol>").append(genLoadRemoteContentScript()).toString();
 	}

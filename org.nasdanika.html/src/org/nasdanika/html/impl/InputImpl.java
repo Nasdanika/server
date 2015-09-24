@@ -30,14 +30,14 @@ class InputImpl extends InputBaseImpl<Input> implements Input {
 	}
 	
 	@Override
-	public String toString() {		
+	public String toHTML() {		
 		List<Object> theContent = getContent();
 		if (theContent.isEmpty()) {
 			return renderComment()+"<input"+attributes()+"/>";
 		}
 		StringBuilder sb = new StringBuilder(renderComment()).append("<input").append(attributes()).append(">");
 		for (Object c: theContent) {
-			sb.append(c);
+			sb.append(toHTML(c));
 		}
 		return sb.append("</input>").append(genLoadRemoteContentScript()).toString();
 	}

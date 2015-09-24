@@ -49,9 +49,9 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
-		sb.append(toggle);
+		sb.append(toggle.toHTML());
 		Tag ul = factory.tag("ul").addClass("dropdown-menu");
         for (Object item: items) {
         	if (item==DIVIDER) {

@@ -82,7 +82,7 @@ class TableImpl extends RowContainerImpl<Table> implements Table {
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		StringBuilder ret = new StringBuilder();
 		if (responsive) {
 			ret.append(renderComment()).append("<div class=\"table-responsive\">");
@@ -111,7 +111,7 @@ class TableImpl extends RowContainerImpl<Table> implements Table {
 		ret.append(">");
 		for (Object c: content) {
 			if (c!=null) {
-				ret.append(c);
+				ret.append(toHTML(c));
 			}
 		}
 		ret.append("</table>");

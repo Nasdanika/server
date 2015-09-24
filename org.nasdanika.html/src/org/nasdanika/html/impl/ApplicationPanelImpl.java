@@ -66,7 +66,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 		}
 		
 		@Override
-		public String toString() {
+		public String toHTML() {
 			StringBuilder ret = new StringBuilder(renderComment()).append("<div");
 			if (sizeMap.isEmpty()) {
 				// plain div
@@ -82,7 +82,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			ret.append(">");			
 
 			for (Object c: content) {
-				ret.append(c);
+				ret.append(toHTML(c));
 			}
 			
 			return ret.append("</div>").append(genLoadRemoteContentScript()).toString();
@@ -143,7 +143,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	private ApplicationPanelRenderer applicationPanelRenderer = new ApplicationPanelRenderer();
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		return renderComment()+applicationPanelRenderer.generate(new ApplicationPanelConfig() {
 			
 			@Override
@@ -160,7 +160,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public String getNavigation() {
 				StringBuilder sb = new StringBuilder();
 				for (Object o: navigation) {
-					sb.append(o);
+					sb.append(toHTML(o));
 				}
 				return sb.toString();
 			}
@@ -179,7 +179,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public String getHeader() {
 				StringBuilder sb = new StringBuilder();
 				for (Object o: header) {
-					sb.append(o);
+					sb.append(toHTML(o));
 				}
 				return sb.toString();
 			}
@@ -188,7 +188,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public String getFooter() {
 				StringBuilder sb = new StringBuilder();
 				for (Object o: footer) {
-					sb.append(o);
+					sb.append(toHTML(o));
 				}
 				return sb.toString();
 			}

@@ -105,4 +105,9 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.comment(comment);
 	}
 
+	@Override
+	public String toHTML() {
+		return target.toHTML();
+	}
+
 }

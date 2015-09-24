@@ -27,11 +27,11 @@ class TextAreaImpl extends InputBaseImpl<TextArea> implements TextArea {
 	}
 	
 	@Override
-	public String toString() {		
+	public String toHTML() {		
 		List<Object> theContent = getContent();
 		StringBuilder sb = new StringBuilder(renderComment()).append("<textarea").append(attributes()).append(">");
 		for (Object c: theContent) {
-			sb.append(c);
+			sb.append(toHTML(c));
 		}
 		return sb.append("</textarea>").append(genLoadRemoteContentScript()).toString();
 	}

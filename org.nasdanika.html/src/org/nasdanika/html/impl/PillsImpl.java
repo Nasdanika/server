@@ -165,7 +165,7 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 		return this;
 	}
 	
-	public String toString() {
+	public String toHTML() {
 		if (isEmpty()) {
 			return "";
 		}
@@ -188,16 +188,16 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
 		
 		if (pillsWidth.isEmpty()) {
-			sb.append(navUL);
+			sb.append(navUL.toHTML());
 		} else {
 			Tag ulContainer = factory.div(navUL);
 			for (Entry<UIElement.DeviceSize, Integer> pwe: pillsWidth.entrySet()) {
 				ulContainer.grid().col(pwe.getKey(), pwe.getValue());
 				contentDiv.grid().col(pwe.getKey(), 12 - pwe.getValue());
 			}
-			sb.append(ulContainer);
+			sb.append(ulContainer.toHTML());
 		}
-		sb.append(contentDiv);
+		sb.append(contentDiv.toHTML());
 
 		if (hasAjaxPills) {
 			sb.append(pillAjaxDataToggleScriptRenderer.generate(null));

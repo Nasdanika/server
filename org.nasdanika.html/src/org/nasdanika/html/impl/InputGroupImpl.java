@@ -38,7 +38,7 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 		if (leftAddOn!=null) {
 			throw new IllegalStateException("Left add-on has already been set");
 		}
-		this.leftAddOn = new FragmentImpl(addOn);
+		this.leftAddOn = new FragmentImpl(factory, addOn);
 		return this;
 	}
 
@@ -56,7 +56,7 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 		if (rightAddOn!=null) {
 			throw new IllegalStateException("Right add-on has already been set");
 		}
-		this.rightAddOn = new FragmentImpl(addOn);
+		this.rightAddOn = new FragmentImpl(factory, addOn);
 		return this;
 	}
 
@@ -70,20 +70,20 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		StringBuilder sb = new StringBuilder(renderComment()).append("<div");
 		sb.append(attributes());
 		sb.append(">");
 		if (leftAddOn instanceof Button) {
-			sb.append(leftAddOn);
+			sb.append(((Button) leftAddOn).toHTML());
 		} else if (leftAddOn!=null) {
 			sb.append(factory.span(leftAddOn).addClass("input-group-addon"));
 		}
 		
-		sb.append(control);
+		sb.append(toHTML(control));
 
 		if (rightAddOn instanceof Button) {
-			sb.append(rightAddOn);
+			sb.append(((Button) rightAddOn).toHTML());
 		} else if (rightAddOn!=null) {
 			sb.append(factory.span(rightAddOn).addClass("input-group-addon"));
 		} 	

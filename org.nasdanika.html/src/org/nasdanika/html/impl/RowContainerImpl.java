@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer;
-import org.nasdanika.html.Table;
 
 class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> implements RowContainer<T> {
 	
@@ -45,14 +44,14 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 			}
 			
 			@Override
-			public String toString() {
+			public String toHTML() {
 				String tagName = isHeader ? "th" : "td";
 				if (content.isEmpty()) {
 					return renderComment()+"<"+tagName+" "+attributes()+"/>";
 				}				
 				StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 				for (Object c: content) {
-					sb.append(c);
+					sb.append(toHTML(c));
 				}
 				return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 			}
@@ -97,11 +96,11 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 		}
 		
 		@Override
-		public String toString() {
+		public String toHTML() {
 			StringBuilder ret = new StringBuilder(renderComment()).append("<tr"+attributes()+">");
 			for (Object c: content) {
 				if (c!=null) {
-					ret.append(c);
+					ret.append(toHTML(c));
 				}
 			}
 			ret.append("</tr>");
@@ -147,17 +146,13 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 	}
 	
 	@Override
-	public String toString() {		
+	public String toHTML() {		
 		if (content.isEmpty()) {
 			return "";
 		}
 		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 		for (Object c: content) {
-			try {
-				sb.append(TagImpl.renderContent(c));
-			} catch (Exception e) {
-				sb.append(e.toString());
-			}
+			sb.append(toHTML(c));
 		}
 		return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 	}

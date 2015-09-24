@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
@@ -18,6 +19,8 @@ import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.Grid;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Knockout;
+import org.nasdanika.html.Producer;
+import org.nasdanika.html.ProducerException;
 import org.nasdanika.html.UIElement;
 
 /**
@@ -78,7 +81,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 					// boolean attributes
 					attributeBuilder.append(a.getKey());					
 				} else {
-					attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(String.valueOf(value))+"\"");
+					attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(toHTML(value))+"\"");
 				}
 			}
 		}
@@ -86,13 +89,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		if (!Arrays.asList(excluded).contains(STYLE)) {
 			StringBuilder styleBuilder = new StringBuilder();
 			if (attributes.containsKey(STYLE)) {
-				styleBuilder.append(attributes.get(STYLE));
+				styleBuilder.append(toHTML(attributes.get(STYLE)));
 			}
 			for (Entry<String, Object> se: styles.entrySet()) {
 				if (styleBuilder.length()>0 && !styleBuilder.toString().trim().endsWith(";")) {
 					styleBuilder.append(";");
 				}
-				styleBuilder.append(se.getKey()+":"+se.getValue());
+				styleBuilder.append(se.getKey()+":"+toHTML(se.getValue()));
 			}
 			if (styleBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
@@ -105,13 +108,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		if (!Arrays.asList(excluded).contains(DATA_BIND)) {
 			StringBuilder dataBindBuilder = new StringBuilder();
 			if (attributes.containsKey(DATA_BIND)) {
-				dataBindBuilder.append(attributes.get(DATA_BIND));
+				dataBindBuilder.append(toHTML(attributes.get(DATA_BIND)));
 			}
 			for (Entry<String, Object> se: koDataBindEntries.entrySet()) {
 				if (dataBindBuilder.length()>0 && !dataBindBuilder.toString().trim().endsWith(",")) {
 					dataBindBuilder.append(",");
 				}
-				dataBindBuilder.append(se.getKey()+":"+se.getValue());
+				dataBindBuilder.append(se.getKey()+":"+toHTML(se.getValue()));
 			}
 			if (dataBindBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
@@ -127,13 +130,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 				if (classBuilder.length()>0) {
 					classBuilder.append(" ");
 				}
-				classBuilder.append(cls);
+				classBuilder.append(toHTML(cls));
 			}
 			if (attributes.containsKey(CLASS)) {
 				if (classBuilder.length()>0) {
 					classBuilder.append(" ");
 				}
-				classBuilder.append(attributes.get(CLASS));
+				classBuilder.append(toHTML(attributes.get(CLASS)));
 			}
 			if (classBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
@@ -155,13 +158,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		if (STYLE.equals(attribute)) {
 			StringBuilder styleBuilder = new StringBuilder();
 			if (attributes.containsKey(STYLE)) {
-				styleBuilder.append(attributes.get(STYLE));
+				styleBuilder.append(toHTML(attributes.get(STYLE)));
 			}
 			for (Entry<String, Object> se: styles.entrySet()) {
 				if (styleBuilder.length()>0 && !styleBuilder.toString().endsWith(";")) {
 					styleBuilder.append(";");
 				}
-				styleBuilder.append(se.getKey()+":"+se.getValue());
+				styleBuilder.append(se.getKey()+":"+toHTML(se.getValue()));
 			}
 			return styleBuilder.toString();
 		}
@@ -874,7 +877,61 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 		};
 	}
+		
+	/**
+	 * Special handling for input streams, readers, producers and URL's.
+	 * @param content
+	 * @return
+	 */
+	public static String toHTML(Object content, Producer.Adapter adapter) {
+		try {
+			if (content instanceof InputStream) {
+				return toHTML(new InputStreamReader((InputStream) content), adapter);
+			}
+			if (content instanceof Reader) {
+				StringWriter sw = new StringWriter();
+				for (int ch = ((Reader) content).read(); ch!=-1; ch = ((Reader) content).read()) {
+					sw.write(ch);
+				}
+				((Reader) content).close();
+				sw.close();
+				return sw.toString();
+			}
+			
+			if (content instanceof URL) {
+				return toHTML(((URL) content).openStream(), adapter);
+			}
+			
+			if (content instanceof Producer) {
+				return ((Producer) content).toHTML();
+			}
+			
+			if (content!=null && adapter!=null) {
+				Producer producer = adapter.asProducer(content);
+				if (producer!=null) {
+					return producer.toHTML();
+				}
+			}
 	
+			return content==null ? "" : content.toString(); // Treat nulls as blanks.
+		} catch (RuntimeException e) {
+			throw e;
+		} catch (Exception e) {
+			throw new ProducerException(e);
+		}
+	}
+	
+	protected String toHTML(Object content) {
+		return toHTML(content, factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getAdapter() : null);
+	}
+	
+	/**
+	 * Fallback for situations with missed refactorings of append().
+	 */
+	@Override
+	public String toString() {
+		return toHTML();
+	}
 	
 }
 

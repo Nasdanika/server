@@ -11,9 +11,10 @@ import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
+import org.nasdanika.html.Producer;
 import org.nasdanika.html.UIElement;
 
-class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<T> {
+class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<T>, Producer {
 	
 	private FormImpl form;
 	private T master;
@@ -52,29 +53,29 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 
 	@Override
 	public T checkbox(final Object label, final Object checkboxControl, final boolean inline) {
-		content.add(new Object() {
+		content.add(new Producer() {
 			
 			@Override
-			public String toString() {
+			public String toHTML() {
 				StringBuilder sb = new StringBuilder();
 				if (inline) {
 					sb.append("<label class=\"checkbox-inline\">")
-							.append(checkboxControl)
-							.append(label) 
+							.append(FieldContainerImpl.this.toHTML(checkboxControl))
+							.append(FieldContainerImpl.this.toHTML(label)) 
 							.append("</label>");
 				} else {
 					sb.append("<div class=\"checkbox\">") 
 							.append("<label>") 
-							.append(checkboxControl)
-							.append(label) 
+							.append(FieldContainerImpl.this.toHTML(checkboxControl))
+							.append(FieldContainerImpl.this.toHTML(label)) 
 							.append("</label>")
 							.append("</div>");
 				}
 				if (form.horizontal) {
-					UIElement<?> controlDiv = form.factory.div(sb.toString());
+					UIElement<?> controlDiv = form.factory.div(sb);
 					controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
 					controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
-					return controlDiv.toString();
+					return controlDiv.toHTML();
 				}
 				return sb.toString();				
 			}
@@ -85,21 +86,21 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 
 	@Override
 	public T radio(final Object label, final Object radioControl, final boolean inline) {
-		content.add(new Object() {
+		content.add(new Producer() {
 			
 			@Override
-			public String toString() {
+			public String toHTML() {
 				StringBuilder sb = new StringBuilder();
 				if (inline) {
 					sb.append("<label class=\"radio-inline\">")
-							.append(radioControl)
-							.append(label) 
+							.append(FieldContainerImpl.this.toHTML(radioControl))
+							.append(FieldContainerImpl.this.toHTML(label)) 
 							.append("</label>");
 				} else {
 					sb.append("<div class=\"radio\">") 
 							.append("<label>") 
-							.append(radioControl)
-							.append(label) 
+							.append(FieldContainerImpl.this.toHTML(radioControl))
+							.append(FieldContainerImpl.this.toHTML(label)) 
 							.append("</label>")
 							.append("</div>");
 				}
@@ -107,7 +108,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 					UIElement<?> controlDiv = form.factory.div(sb.toString());
 					controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
 					controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
-					return controlDiv.toString();
+					return controlDiv.toHTML();
 				}
 				return sb.toString();				
 			}
@@ -162,10 +163,10 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	}
 	
 	@Override
-	public String toString() {
+	public String toHTML() {
 		StringBuilder sb = new StringBuilder();
 		for (Object o: content) {
-			sb.append(o.toString());
+			sb.append(toHTML(o));
 		}
 		return sb.toString();
 	}
@@ -178,5 +179,9 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 			}
 		}
 	}
-
+	
+	protected String toHTML(Object content) {
+		return UIElementImpl.toHTML(content, factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getAdapter() : null);
+	}
+	
 }
