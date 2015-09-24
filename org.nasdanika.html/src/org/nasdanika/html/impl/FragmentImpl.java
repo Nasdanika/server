@@ -55,5 +55,13 @@ class FragmentImpl implements Fragment {
 	public List<Object> getContent() {
 		return content;
 	}
+	
+	/**
+	 * Fall-back to mitigate misses during refactoring.
+	 */
+	@Override
+	public String toString() {
+		return toHTML();
+	}
 
 }

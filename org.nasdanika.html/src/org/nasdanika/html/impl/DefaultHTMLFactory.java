@@ -115,26 +115,26 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 				return routerApplicationRenderer.generate(new RouterApplicationConfig() {
 					
 					@Override
-					public Object getTitle() {
-						return title;
+					public String getTitle() {
+						return title==null ? null : UIElementImpl.toHTML(title, getAdapter());
 					}
 					
 					@Override
-					public Object getInitialRoute() {
-						return initialRoute;
+					public String getInitialRoute() {
+						return initialRoute == null ? null : UIElementImpl.toHTML(initialRoute, getAdapter());
 					}
 					
 					@Override
-					public Object getHead() {
-						return head == null ? "" : head;
+					public String getHead() {
+						return head == null ? "" : UIElementImpl.toHTML(head, getAdapter());
 					}
 					
 					@Override
-					public Object getBody() {
+					public String getBody() {
 						StringBuilder bodyBuilder = new StringBuilder();
 						for (Object b: body) {
 							if (b!=null) {
-								bodyBuilder.append(b);
+								bodyBuilder.append(UIElementImpl.toHTML(b, getAdapter()));
 							}
 						}
 						return bodyBuilder.toString();

@@ -1162,7 +1162,7 @@ public class DocRoute implements Route {
 				} else {
 					fragment.content(toc.getContent());
 				}
-				return new ValueAction(navWrap(context.adapt(HTMLFactory.class), toc, fragment.toString(), prefix));
+				return new ValueAction(navWrap(context.adapt(HTMLFactory.class), toc, fragment.toHTML(), prefix));
 			}
 			
 			if (path.length>2 && "resources".equals(path[0])) {

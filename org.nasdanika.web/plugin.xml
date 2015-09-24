@@ -59,6 +59,10 @@
             linkTo="org.nasdanika.core/server"
             name="Nasdanika Foundation Server">
          <topic
+               location="doc/html.md"
+               name="HTML">
+         </topic>
+         <topic
                id="web"
                name="Web">
          </topic>

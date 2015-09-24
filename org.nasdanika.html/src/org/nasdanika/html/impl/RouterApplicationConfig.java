@@ -4,16 +4,16 @@ import java.util.List;
 
 interface RouterApplicationConfig {
 
-	Object getTitle();
+	String getTitle();
 
 	List<String> getScripts();
 	
 	List<String> getStylesheets();
 
-	Object getHead();
+	String getHead();
 
-	Object getInitialRoute();
+	String getInitialRoute();
 
-	Object getBody();
+	String getBody();
 
 }

@@ -40,6 +40,14 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 			}
 			return "<li>"+NavbarImpl.this.toHTML(item)+"</li>";
 		}
+		
+		/**
+		 * Fall-back to mitigate misses during refactoring.
+		 */
+		@Override
+		public String toString() {
+			return toHTML();
+		}
 	}
 
 	@Override

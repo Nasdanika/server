@@ -193,7 +193,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			tabs.item(tabName, sectionFragment);
 		}		
 		
-		return ret.toString();		
+		return ret.toHTML();		
 		
 	}
 

@@ -885,6 +885,25 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	 */
 	public static String toHTML(Object content, Producer.Adapter adapter) {
 		try {
+			if (content == null) {
+				return "";
+			}
+			
+			if (content instanceof String) {
+				return (String) content;
+			}
+			
+			if (content instanceof Producer) {
+				return ((Producer) content).toHTML();
+			}
+			
+			if (content!=null && adapter!=null) {
+				Producer producer = adapter.asProducer(content);
+				if (producer!=null) {
+					return producer.toHTML();
+				}
+			}
+			
 			if (content instanceof InputStream) {
 				return toHTML(new InputStreamReader((InputStream) content), adapter);
 			}
@@ -901,19 +920,8 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			if (content instanceof URL) {
 				return toHTML(((URL) content).openStream(), adapter);
 			}
-			
-			if (content instanceof Producer) {
-				return ((Producer) content).toHTML();
-			}
-			
-			if (content!=null && adapter!=null) {
-				Producer producer = adapter.asProducer(content);
-				if (producer!=null) {
-					return producer.toHTML();
-				}
-			}
 	
-			return content==null ? "" : content.toString(); // Treat nulls as blanks.
+			return content.toString();
 		} catch (RuntimeException e) {
 			throw e;
 		} catch (Exception e) {

@@ -137,7 +137,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		
 		sections(eClass, docRoutePath, htmlFactory, tabs);
 								
-		return ret.toString();		
+		return ret.toHTML();		
 		
 	}
 

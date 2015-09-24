@@ -35,6 +35,14 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 				}
 				return sb.append("</optgroup>").toString();
 			}
+						
+			/**
+			 * Fall-back to mitigate misses during refactoring.
+			 */
+			@Override
+			public String toString() {
+				return toHTML();
+			}			
 
 			@Override
 			public OptionGroup disabled(boolean disabled) {

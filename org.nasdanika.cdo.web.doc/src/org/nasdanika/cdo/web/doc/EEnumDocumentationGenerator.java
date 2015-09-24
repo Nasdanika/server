@@ -78,7 +78,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		
 		// sections ?
 		
-		return ret.toString();		
+		return ret.toHTML();		
 		
 	}
 
