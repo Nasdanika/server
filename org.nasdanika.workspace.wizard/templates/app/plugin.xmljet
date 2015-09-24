@@ -153,6 +153,7 @@
       </httpcontext>
    </extension>   
    <% } %>
+   <% if (wizard.getDocRoutePath()!=null) { %>
    <extension
          point="org.nasdanika.cdo.web.doc.extensions">
        <wiki-link-resolver
@@ -178,4 +179,5 @@
          </description>
       </wiki-link-resolver>
    </extension>
+   <% } %>
 </plugin>
