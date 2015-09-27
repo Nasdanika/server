@@ -48,7 +48,7 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 	
 	protected Rendering createRendering(String href, String text, String title, boolean rewriteURL) {
 		if (href!=null && resolverRegistry!=null) {
-			int idx = href.indexOf('>');
+			int idx = href.indexOf(':');
 			if (idx!=-1) {
 				Resolver resolver = resolverRegistry.getResolver(href.substring(0, idx));
 				if (resolver!=null) {
