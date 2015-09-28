@@ -19,12 +19,12 @@ public class ApplicationPluginRenderer {
   protected final String TEXT_4 = "\"" + NL + "            class=\"org.nasdanika.cdo.web.CDOTransactionRoutingServlet\"";
   protected final String TEXT_5 = " httpcontextId=\"";
   protected final String TEXT_6 = "\"";
-  protected final String TEXT_7 = ">" + NL + "         <init-param" + NL + "               name=\"json-pretty-print\"" + NL + "               value=\"true\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"default-access-decision\"" + NL + "               value=\"deny\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"ws-session-path\"" + NL + "               value=\"";
+  protected final String TEXT_7 = ">" + NL + "         <init-param" + NL + "               name=\"json-pretty-print\"" + NL + "               value=\"true\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"default-access-decision\"" + NL + "               value=\"allow\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"ws-session-path\"" + NL + "               value=\"";
   protected final String TEXT_8 = "\">" + NL + "         </init-param>" + NL + "      </servlet>" + NL + "      <!-- NTLM Authentication " + NL + "      <servlet" + NL + "            alias=\"/ntlm";
   protected final String TEXT_9 = "\"" + NL + "            class=\"org.nasdanika.cdo.web.CDOTransactionRoutingServlet\"";
   protected final String TEXT_10 = " httpcontextId=\"";
   protected final String TEXT_11 = "\"";
-  protected final String TEXT_12 = ">" + NL + "         <init-param" + NL + "               name=\"json-pretty-print\"" + NL + "               value=\"true\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"default-access-decision\"" + NL + "               value=\"deny\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"ws-session-path\"" + NL + "               value=\"/ntlm";
+  protected final String TEXT_12 = ">" + NL + "         <init-param" + NL + "               name=\"json-pretty-print\"" + NL + "               value=\"true\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"default-access-decision\"" + NL + "               value=\"allow\">" + NL + "         </init-param>" + NL + "         <init-param" + NL + "               name=\"ws-session-path\"" + NL + "               value=\"/ntlm";
   protected final String TEXT_13 = "\">" + NL + "         </init-param>" + NL + "      </servlet>" + NL + "\t   \t";
   protected final String TEXT_14 = NL + "\t      <servlet" + NL + "\t            alias=\"";
   protected final String TEXT_15 = "\"" + NL + "\t            class=\"org.nasdanika.cdo.web.SessionWebSocketServlet\"" + NL + "\t            ";

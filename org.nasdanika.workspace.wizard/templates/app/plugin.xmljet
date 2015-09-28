@@ -16,7 +16,7 @@
          </init-param>
          <init-param
                name="default-access-decision"
-               value="deny">
+               value="allow">
          </init-param>
          <init-param
                name="ws-session-path"
@@ -34,7 +34,7 @@
          </init-param>
          <init-param
                name="default-access-decision"
-               value="deny">
+               value="allow">
          </init-param>
          <init-param
                name="ws-session-path"
