@@ -1,9 +1,5 @@
 package org.nasdanika.cdo.web;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.cdo.common.id.CDOID;
@@ -44,10 +40,14 @@ private static final String PRINCIPAL_ID_KEY = Principal.class.getName()+":id";
 	}
 	
 	@Override
-	public Principal getPrincipal(CDOViewContext<V, CR> context) {
+	public Principal getPrincipal(CDOViewContext<V, CR> context) {		
 		Object idAttr = getPrincipalID();
 		if (idAttr instanceof CDOID) {
 			return (Principal) context.getView().getObject((CDOID) idAttr);
+		}
+		
+		if (context.getProtectionDomain()==null) {
+			return null;
 		}
 		
 		if (principalName != null) {
