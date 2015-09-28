@@ -44,6 +44,13 @@ public class DocumentationPanelFactory {
 		Tag tocDIV = tocDiv();
 		leftTabs.item(htmlFactory.glyphicon(Glyphicon.book)+"&nbsp;Content", tocDIV);
 		
+		Tag searchContainer = searchDiv();	
+		Tag searchModule = htmlFactory.tag(TagName.script, "require(['"+docRoutePath+"/resources/js/left-panel.js'], function(tocTree) { /* NOP */ })");
+		leftTabs.item(htmlFactory.glyphicon(Glyphicon.search)+"&nbsp;Search", searchContainer, searchModule);
+		return leftTabs;
+	}
+
+	protected Tag searchDiv() {
 		Form searchForm = htmlFactory.form().style("padding-top", "3px");
 		searchForm.inline();
 		Input searchInput = htmlFactory.input(InputType.text)
@@ -60,6 +67,17 @@ public class DocumentationPanelFactory {
 		searchGroup.style("width", "100%");
 		searchGroup.getInputGroup().style("width", "100%");
 		
+		Tag searchResultError = htmlFactory.alert(Style.DANGER, false)
+				.knockout().text("error")
+				.knockout().visible("error")
+				.style("margin-right", "5px")
+				.style("margin-top", "5px");
+		
+		Tag searchContainer = htmlFactory.div(searchForm, searchResultError, searchResultsList()).id("search-container");
+		return searchContainer;
+	}
+
+	protected Tag searchResultsList() {
 		Tag searchResultIcon = htmlFactory.tag("img")
 				.style("margin-right", "3px")
 				.knockout().attr("{ src: icon }")
@@ -69,19 +87,9 @@ public class DocumentationPanelFactory {
 				.knockout().text("name")
 				.knockout().attr("{ href: href }");
 		
-		Tag searchResultError = htmlFactory.alert(Style.DANGER, false)
-				.knockout().text("error")
-				.knockout().visible("error")
-				.style("margin-right", "5px")
-				.style("margin-top", "5px");
-		
 		Tag searchResult = htmlFactory.tag(TagName.li, searchResultIcon, searchResultLink);					
 		Tag searchResults = htmlFactory.tag(TagName.ol, searchResult).knockout().foreach("results");
-		Tag searchContainer = htmlFactory.div(searchForm, searchResultError, searchResults).id("search-container");
-		
-		Tag searchModule = htmlFactory.tag(TagName.script, "require(['"+docRoutePath+"/resources/js/left-panel.js'], function(tocTree) { /* NOP */ })");
-		leftTabs.item(htmlFactory.glyphicon(Glyphicon.search)+"&nbsp;Search", searchContainer, searchModule);
-		return leftTabs;
+		return searchResults;
 	}
 
 	protected Tag tocDiv() {

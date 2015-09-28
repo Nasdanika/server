@@ -36,6 +36,12 @@ public class <%=wizard.getJavaName()%>DocAppRoute implements Route {
 			protected Tag tocDiv() {
 				return super.tocDiv().style("overflow-y", "scroll");
 			}
+			
+			@Override
+			protected Tag searchResultsList() {
+				return super.searchResultsList().style("overflow-y", "scroll");
+			}
+			
 		};
 		row.cell(documentationPanelFactory.leftPanel()).id("left-panel").style("min-width", "17em");
 		row.cell("")
