@@ -1499,4 +1499,10 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		return pattern==null ? pattern : pattern.replace("\\.", ".");
 	}
 	
+	@Override
+	public boolean canFinish() {		
+		// Got to go to the end of the wizard.
+		return !getContainer().getCurrentPage().canFlipToNextPage();
+	}
+	
 }
