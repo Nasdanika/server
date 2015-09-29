@@ -938,7 +938,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		IFile pom = project.getFile("pom.xml");	
 		pom.create(new ByteArrayInputStream(new TargetPomRenderer().generate(this).getBytes()), false, progressMonitor);
 		
-		IFile targetFile = project.getFile(getGroupId()+".target.target");	
+		IFile targetFile = project.getFile(getGroupId()+".target");	
 //		target.create(new ByteArrayInputStream(new TargetRenderer().generate(this).getBytes()), false, progressMonitor);
 		
 		org.eclipse.pde.core.target.ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
