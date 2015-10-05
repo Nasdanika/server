@@ -499,4 +499,7 @@ public interface HTMLFactory {
 	 * @return
 	 */
 	Dropdown<?> caretDropdown();
+	
+	KnockoutVirtualElement knockoutVirtualElement(Object... content);
+	
 }

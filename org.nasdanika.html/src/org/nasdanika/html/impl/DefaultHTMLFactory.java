@@ -20,6 +20,7 @@ import org.nasdanika.html.FontAwesome.Stack;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
+import org.nasdanika.html.KnockoutVirtualElement;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
@@ -545,5 +546,10 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Dropdown<?> caretDropdown() {
 		return dropdown(link("#", fontAwesome().directional(Directional.caret_down)));
+	}
+
+	@Override
+	public KnockoutVirtualElement knockoutVirtualElement(Object... content) {
+		return new KnockoutVirtualElementImpl(this, content);
 	}
 }

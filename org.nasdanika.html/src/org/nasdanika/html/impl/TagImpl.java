@@ -40,11 +40,7 @@ class TagImpl extends UIElementImpl<Tag> implements Tag {
 		}
 		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
 		for (Object c: theContent) {
-			try {
-				sb.append(stringify(c));
-			} catch (Exception e) {
-				sb.append(e.toString());
-			}
+			sb.append(stringify(c));
 		}
 		return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
 	}

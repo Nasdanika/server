@@ -5,7 +5,7 @@ package org.nasdanika.html;
  * @author Pavel Vlasov
  *
  */
-public interface Knockout<T> extends AutoCloseable {
+public interface Knockout<T> extends KnockoutControlFlow<T>, AutoCloseable{
 	
 	T visible(Object expression);
 	T text(Object expression);
@@ -13,11 +13,6 @@ public interface Knockout<T> extends AutoCloseable {
 	T css(Object expression);
 	T style(Object expression);
 	T attr(Object expression);
-	T foreach(Object expression);
-	T if_(Object expression);
-	T ifnot(Object expression);
-	T with(Object expression);
-	T component(Object expression);
 	T click(Object expression);
 	T event(Object expression);
 	T submit(Object expression);
@@ -32,11 +27,4 @@ public interface Knockout<T> extends AutoCloseable {
 	T uniqueName(Object expression);
 	T template(Object expression);
 
-	/**
-	 * Custom binding
-	 * @param binding
-	 * @param expression
-	 * @return
-	 */
-	T bind(String binding, Object expression);
 }
