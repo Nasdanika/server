@@ -158,8 +158,7 @@ public class EObjectRoute extends ObjectRoute {
 							cookies.add(cookie);
 						}
 					}
-					arg = convert(context, cookies, parameterType);
-					
+					arg = convert(context, cookies, parameterType);					
 				} else if (p.getEAnnotation(CDOWebUtil.ANNOTATION_QUERY_PARAMETER)!=null) {
 					EAnnotation queryParameterAnnotation = p.getEAnnotation(CDOWebUtil.ANNOTATION_QUERY_PARAMETER);
 					String parameterName = queryParameterAnnotation.getDetails().get("name");
@@ -184,6 +183,8 @@ public class EObjectRoute extends ObjectRoute {
 					} else {					
 						arg = convert(context, pathParameter, parameterType);
 					}
+				} else {
+					throw new ServerException("Unassigned parameter "+p.getName()+" in route operation "+op.getEContainingClass().getName()+"."+op.getName()); // More detailed message, op signature?
 				}
 				opArgs.add(arg);
 				if (arg!=null) {
