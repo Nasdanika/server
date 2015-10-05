@@ -7,7 +7,7 @@
   * ``path`` - path to match, can contain path parameters in ``{}``, e.g. ``statement/{year}/{month}``. Path takes precedence over ``pattern``.
   * ``pattern`` - regex pattern to match request path. Not applicable to the home route annotation. If omitted, path length shall be 1 and equal to the operation name.
   * ``produces`` - response content type. Optional, used to match request ``Accept`` header values to the operation if present.
-  * ``consumes`` - request content type. Optional, used to match request content type to the operation if present. 
+  * ``consumes`` - request content type(s) - comma-separated values, can contain wildcards, e.g. ``*/*`` or ``text/*``. Optional, used to match request content type to the operation if present. 
   
 Home route matches the object path with ``.html`` extension, e.g. ``L3.html``.
 
