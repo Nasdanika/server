@@ -94,7 +94,7 @@ Similarly to AngularJS directives, [Knockout](http://knockoutjs.com/index.html) 
 myButton.knockout().click("doCoolStuff()")
 ```
 
-Knockout virtual elements are not yet supported and shall be explicitly output as strings.
+[[javadoc>org.nasdanika.html.KnockoutVirtualElement|Knockout virtual elements]] can be created with the factory's ``knockoutVirtualElement(Object... content)`` method.
 
 ## Application
 
