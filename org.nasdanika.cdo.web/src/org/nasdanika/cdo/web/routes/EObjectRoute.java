@@ -45,7 +45,7 @@ public class EObjectRoute extends ObjectRoute {
 		final EObject eObject = (EObject) context.getTarget();
 		String[] path = context.getPath();
 		
-		Z: for (EOperation op: eObject.eClass().getEAllOperations()) {
+		Z: for (EOperation op: eObject.eClass().getEAllOperations()) {						
 			EAnnotation routeAnnotation = op.getEAnnotation(CDOWebUtil.ANNOTATION_HOME_ROUTE); 
 			boolean isHomeRoute = routeAnnotation!=null && eObject instanceof CDOObject;
 			if (!isHomeRoute) {
@@ -55,9 +55,58 @@ public class EObjectRoute extends ObjectRoute {
 				continue;
 			}
 			
-			String consumes = routeAnnotation.getDetails().get("consumes");
-			if (consumes!=null && !consumes.trim().equals(context.getRequest().getContentType())) {
-				continue;
+			// Match content type to consumes
+			String consumes = routeAnnotation.getDetails().get("consumes");			
+			if (consumes!=null) {
+				String contentType = context.getRequest().getContentType();
+				if (contentType==null) {
+					continue;
+				}
+				boolean consumeMatches = false;
+				for (String consumesEntry: consumes.split(",")) {
+					String contentTypeLowerCase = contentType.trim().toLowerCase();
+					String ceLowerCase = consumesEntry.trim().toLowerCase();
+					if (ceLowerCase.equals("*/*") || ceLowerCase.equals(contentTypeLowerCase)) {
+						 consumeMatches = true;
+						 break;
+					 }
+					 if (consumesEntry.endsWith("/*") && contentTypeLowerCase.startsWith(ceLowerCase.substring(0, ceLowerCase.length()-1))) {
+						 consumeMatches = true;
+						 break;						 
+					 }
+				}					
+				
+				if (!consumeMatches) {
+					continue;
+				}
+			}
+			
+			// Match accept to produces
+			String produces = routeAnnotation.getDetails().get("produces");			
+			String accept = context.getRequest().getHeader("Accept");
+			if (produces!=null && accept!=null) {
+				String plc = produces.toLowerCase().trim();
+				boolean producesMatches = false;
+				for (String acceptEntry: accept.split(",")) {
+					String acceptEntryLowerCase = acceptEntry.trim().toLowerCase();
+					int idx = acceptEntryLowerCase.indexOf(";");
+					if (idx!=-1) {
+						acceptEntryLowerCase = acceptEntryLowerCase.substring(0, idx).trim();
+					}
+					// Ignoring q and level for now or forever
+					if (acceptEntryLowerCase.equals("*/*") || acceptEntryLowerCase.equals(plc)) {
+						 producesMatches = true;
+						 break;
+					 }
+					 if (acceptEntryLowerCase.endsWith("/*") && plc.startsWith(acceptEntryLowerCase.substring(0, acceptEntryLowerCase.length()-1))) {
+						 producesMatches = true;
+						 break;						 
+					 }
+				}					
+				
+				if (!producesMatches) {
+					continue;
+				}
 			}
 			
 			String pathStr = routeAnnotation.getDetails().get("path");
@@ -206,7 +255,6 @@ public class EObjectRoute extends ObjectRoute {
 					return Action.FORBIDDEN;
 				}
 				
-				String produces = routeAnnotation.getDetails().get("produces");
 				if (produces!=null) {
 					context.getResponse().setContentType(produces);
 				}
