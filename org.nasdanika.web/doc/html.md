@@ -324,5 +324,5 @@ Screenshots:
 * [[image:demo-app-slate-theme.png|Slate theme]]
 
 ## Code formatting
-The library does not format output code - the code produced by the library is compact, but not readable. An HTML parser like [jsoup](http://jsoup.org/) can be used for output formatting. 
+The library does not format output code - the code produced by the library is compact, but not easily readable. An HTML parser like [jsoup](http://jsoup.org/) can be used for output formatting. 
 
