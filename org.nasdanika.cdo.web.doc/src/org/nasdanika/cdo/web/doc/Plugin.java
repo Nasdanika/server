@@ -27,7 +27,7 @@ public interface Plugin {
 	}
 	
 	
-	Object process(String config, String content, URL baseURL, Filter filter, DocRoute docRoute);
+	Object process(String config, String content, URL baseURL, String urlPrefix, Filter filter, DocRoute docRoute);
 	
 
 }

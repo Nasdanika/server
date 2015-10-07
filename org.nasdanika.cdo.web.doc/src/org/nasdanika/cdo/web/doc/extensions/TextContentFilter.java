@@ -1,8 +1,10 @@
-package org.nasdanika.cdo.web.doc;
+package org.nasdanika.cdo.web.doc.extensions;
 
 import java.net.URL;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.nasdanika.cdo.web.doc.ContentFilter;
+import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.core.CoreUtil;
 
 public class TextContentFilter implements ContentFilter {

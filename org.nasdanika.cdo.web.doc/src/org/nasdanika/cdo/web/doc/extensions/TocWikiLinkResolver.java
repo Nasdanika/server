@@ -1,6 +1,10 @@
-package org.nasdanika.cdo.web.doc;
+package org.nasdanika.cdo.web.doc.extensions;
 
 import java.util.Map;
+
+import org.nasdanika.cdo.web.doc.DocRoute;
+import org.nasdanika.cdo.web.doc.TocNode;
+import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 
 public class TocWikiLinkResolver implements WikiLinkResolver {
 	

@@ -1,9 +1,11 @@
-package org.nasdanika.cdo.web.doc;
+package org.nasdanika.cdo.web.doc.extensions;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.nasdanika.cdo.web.doc.ConfigurableExtension;
+import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;

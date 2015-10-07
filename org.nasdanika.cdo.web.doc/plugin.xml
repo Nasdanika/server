@@ -5,7 +5,7 @@
    <extension
          point="org.nasdanika.cdo.web.doc.extensions">
       <wiki-link-renderer
-            class="org.nasdanika.cdo.web.doc.LightboxWikiLinkRenderer"
+            class="org.nasdanika.cdo.web.doc.extensions.LightboxWikiLinkRenderer"
             name="image">
          <description><![CDATA[
             Renders a [lightbox](http://lokeshdhakar.com/projects/lightbox2/) image link. 
@@ -16,7 +16,7 @@ Example:
          ]]></description>
       </wiki-link-renderer>
       <content-filter
-            class="org.nasdanika.cdo.web.doc.TextContentFilter"
+            class="org.nasdanika.cdo.web.doc.extensions.TextContentFilter"
             source-type="text/plain"
             target-type="text/html">
             <description><![CDATA[
@@ -24,7 +24,7 @@ Example:
             ]]></description>
       </content-filter>
       <content-filter
-            class="org.nasdanika.cdo.web.doc.MarkdownContentFilter"
+            class="org.nasdanika.cdo.web.doc.extensions.MarkdownContentFilter"
             source-type="text/markdown"
             target-type="text/html">
             <description><![CDATA[
@@ -39,7 +39,7 @@ Uses wiki link resolvers and renderers. Wiki link is a link enclosed in double b
             ]]></description>
       </content-filter>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.ECoreGlobalResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.ECoreGlobalResolver"
             name="global">
             <description><![CDATA[
             Resolves a package or classifier URL from the global registry. Format: ``[[global>EClassifier name@EPackage NS URI]]``. EClassifier name with @ can be omitted to address the package.
@@ -51,7 +51,7 @@ Examples:
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.ECoreSessionResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.ECoreSessionResolver"
             name="session">
             <description><![CDATA[
             Resolves a package or classifier URL from the session registry. Format: ``[[session>EClassifier name@EPackage NS URI]]``. EClassifier name with @ can be omitted to address the package.
@@ -63,28 +63,28 @@ Examples:
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.BundleResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.BundleResolver"
             name="bundle">
             <description><![CDATA[
             Resolves resource from a bundle. Format: ``[[bundle>resource path in bundle]]``. Example: ``[[bundle>org.nasdanika.cdo.web/doc/forms.md]]`` is rendered as [[bundle>org.nasdanika.cdo.web/doc/forms.md]].
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.TocWikiLinkResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.TocWikiLinkResolver"
             name="toc">
             <description><![CDATA[
             Resolves TOC URL from TOC ID. Format: ``[[toc>bundle/id]]``. Example: ``[[toc>org.nasdanika.core/credits]]`` is rendered as [[toc>org.nasdanika.core/credits]].
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.WikipediaResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.WikipediaResolver"
             name="wp">
             <description><![CDATA[
             Resolves Wikipedia URL from the article name, renders wikipedia icon before the link. Replaces spaces with underscores in the article name. Format: ``[[wp>article name|text]]``. Example: ``[[wp>Domain-driven design]]`` is rendered as [[wp>Domain-driven design]].
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.EClassifierResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.EClassifierResolver"
             name="classifier">
             <description><![CDATA[
             Resolves [[classifier>EClassifier@http://www.eclipse.org/emf/2002/Ecore]] reference. In EClassifier and [[classifier>EPackage@http://www.eclipse.org/emf/2002/Ecore]] documentation and TOC entries mounted to EClassifiers or EPackages the reference is resolved in the same registry (session or global). In documentation not mounted to registry elements the reference is resolved 
@@ -100,7 +100,7 @@ This resolver doesn't work for TOC's/topics with embedded content, i.e. with tex
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.EPackageResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.EPackageResolver"
             name="package">
             <description><![CDATA[
             Resolves [[classifier>EPackage@http://www.eclipse.org/emf/2002/Ecore]] reference. In [[classifier>EClassifier@http://www.eclipse.org/emf/2002/Ecore]] and EPackage documentation and TOC entries mounted to EClassifiers or EPackages the reference is resolved in the same registry (session or global). In documentation not mounted to registry elements the reference is resolved 
@@ -113,6 +113,13 @@ Example: ``[[package>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[
 This resolver doesn't work for TOC's/topics with embedded content, i.e. with text, markdown, or html nested elements. 
             ]]></description>
       </wiki-link-resolver>
+      <plugin
+            class="org.nasdanika.cdo.web.doc.extensions.IncludePlugin"
+            name="include">
+         <description>
+            Includes content of another documentation resource into this resource. Format ``{{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki link resolvers, e.g. ``bundle`` schema.
+         </description>
+      </plugin>
    </extension>
    <extension
          point="org.nasdanika.toc">

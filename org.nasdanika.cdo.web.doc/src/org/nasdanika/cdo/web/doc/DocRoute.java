@@ -111,7 +111,7 @@ public class DocRoute implements Route {
 	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
 	private static final String TOC_PATH = "/toc/";
 	
-	static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
+	public static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
 
 	private int pathOffset = 1;
 	private BundleContext bundleContext;
@@ -1245,7 +1245,7 @@ public class DocRoute implements Route {
 					Row rRow = pluginTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<Plugin> extensionEntry = pluginMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1264,7 +1264,7 @@ public class DocRoute implements Route {
 					Row rRow = resolverTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<WikiLinkResolver> extensionEntry = wikiLinkResolverMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1283,7 +1283,7 @@ public class DocRoute implements Route {
 					Row rRow = rendererTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<Renderer> extensionEntry = wikiLinkRendererMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1310,7 +1310,7 @@ public class DocRoute implements Route {
 						}
 						filterRow.cell(toType);
 						ExtensionEntry<ContentFilter> extensionEntry = toFilters.get(toType);
-						filterRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL), mlr));
+						filterRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
 						if (extensionEntry.extension instanceof ConfigurableExtension) {
 							filterRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 						} else {
@@ -1332,7 +1332,7 @@ public class DocRoute implements Route {
 					Row rRow = rendererTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<EAnnotationRenderer> extensionEntry = eAnnotationRenderers.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1582,13 +1582,13 @@ public class DocRoute implements Route {
 	 * @param path
 	 * @return
 	 */
-	public String expand(String content, final URL baseURL) {
+	public String expand(String content, final URL baseURL, final String urlPrefix) {
 		
 		Plugin.Filter filter = new Plugin.Filter() {
 			
 			@Override
 			public String filter(Object filterContent) {
-				return expand(CoreUtil.stringify(filterContent), baseURL);
+				return expand(CoreUtil.stringify(filterContent), baseURL, urlPrefix);
 			}
 			
 		};
@@ -1644,9 +1644,9 @@ public class DocRoute implements Route {
 					continue O;						
 				}
 				
-				String pluginContent = gtIdx==-1 || gtIdx>closeTagIdx ? null : expand(content.substring(gtIdx+1, closeTagIdx), baseURL);  
+				String pluginContent = gtIdx==-1 || gtIdx>closeTagIdx ? null : expand(content.substring(gtIdx+1, closeTagIdx), baseURL, urlPrefix);  
 				
-				Object processed = pluginExtension.extension.process(pluginConfig, pluginContent, baseURL, filter, this);
+				Object processed = pluginExtension.extension.process(pluginConfig, pluginContent, baseURL, urlPrefix, filter, this);
 				if (processed == null) {
 					out.append(content.substring(pos, openTagIdx+2));
 					pos = openTagIdx+2;
@@ -1660,6 +1660,59 @@ public class DocRoute implements Route {
 		}
 		out.append(content.substring(pos));
 		return out.toString();
+	}
+	
+	public Resolver.Registry getResolverRegistry(URL baseURL, String urlPrefix) {
+		final String absDocRoutePath = urlPrefix+docRoutePath;	
+		final Map<Object, Object> env = new HashMap<>();
+		String baseURLStr = baseURL.toString();
+		if (baseURLStr.startsWith(absDocRoutePath)) {
+			String relPath = baseURLStr.substring(absDocRoutePath.length());
+			for (TocNode toc = tocRoot==null ? null : tocRoot.find(relPath); toc!=null; toc = toc.getParent()) {
+				if (toc.getHref()!=null && toc.getHref().startsWith(PACKAGES_PATH)) {
+					env.put(CONTEXT_MODEL_ELEMENT_PATH_KEY, docRoutePath+toc.getHref());
+				}
+			}
+		}
+		env.put(DocRoute.class, this);
+		return new Resolver.Registry() {
+			
+			@Override
+			public Resolver getResolver(String name) {
+				ExtensionEntry<WikiLinkResolver> resolverExtensionEntry = wikiLinkResolverMap.get(name);
+				final WikiLinkResolver toWrap = resolverExtensionEntry==null ? null : resolverExtensionEntry.extension;
+				if (toWrap==null) {
+					return null;
+				}
+				if (toWrap instanceof Renderer) {
+					class JackOfTwoTrades implements Renderer, Resolver {
+
+						@Override
+						public String resolve(String href) {
+							return toWrap.resolve(href, absDocRoutePath, env);
+						}
+
+						@Override
+						public Rendering render(String href, String content, String config, boolean isMissing) {
+							return ((Renderer) toWrap).render(href, content, config, isMissing);
+						}
+						
+					}
+					
+					return new JackOfTwoTrades();
+				}
+				
+				return new Resolver() {
+
+					@Override
+					public String resolve(String href) {
+						return toWrap.resolve(href, absDocRoutePath, env);
+					}
+					
+				};
+			}
+		};
+		
 	}
 	
 }

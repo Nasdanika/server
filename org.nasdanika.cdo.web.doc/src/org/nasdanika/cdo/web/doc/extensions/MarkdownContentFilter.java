@@ -1,7 +1,9 @@
-package org.nasdanika.cdo.web.doc;
+package org.nasdanika.cdo.web.doc.extensions;
 
 import java.net.URL;
 
+import org.nasdanika.cdo.web.doc.ContentFilter;
+import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.core.CoreUtil;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
@@ -23,7 +25,7 @@ public class MarkdownContentFilter implements ContentFilter {
 		}
 		String markdown = CoreUtil.stringify(content);
 		// TODO - expand markdown
-		return "<div class=\"markdown-body\">"+pegDownProcessor.markdownToHtml(docRoute.expand(markdown, baseURL), linkRenderer)+"</div>";
+		return "<div class=\"markdown-body\">"+pegDownProcessor.markdownToHtml(docRoute.expand(markdown, baseURL, urlPrefix), linkRenderer)+"</div>";
 	}
 
 }

@@ -1,8 +1,10 @@
-package org.nasdanika.cdo.web.doc;
+package org.nasdanika.cdo.web.doc.extensions;
 
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Hex;
+import org.nasdanika.cdo.web.doc.DocRoute;
+import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 
 public class EPackageResolver implements WikiLinkResolver {
 

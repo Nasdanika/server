@@ -157,7 +157,7 @@
    <extension
          point="org.nasdanika.cdo.web.doc.extensions">
        <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.JavadocWikiLinkResolver"
+            class="org.nasdanika.cdo.web.doc.extensions.JavadocWikiLinkResolver"
             name="javadoc">
          <property
 		        name="packageMap.org.nasdanika.*"
