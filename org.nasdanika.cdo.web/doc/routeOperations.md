@@ -5,7 +5,7 @@
   * ``qualifier`` - security qualifier for authorization check, defaults to operation name.
   * ``method`` - a comma separated list of HTTP methods to match, matches any method if omitted.
   * ``path`` - path to match, can contain path parameters in ``{}``, e.g. ``statement/{year}/{month}``. Path takes precedence over ``pattern``.
-  * ``pattern`` - regex pattern to match request path. Not applicable to the home route annotation. If omitted, path length shall be 1 and equal to the operation name.
+  * ``pattern`` - regex pattern to match request path. Not applicable to the home route annotation. If path and pattern are omitted, operation name is used as path. If the operation name starts with a lower-case name of one of HTTP methods and method detail entry is not present, then the method name prefix is used to match the method, and decapitalized suffix to match the path, e.g. ``getInventoryTable`` would match ``GET`` method and ``inventoryTable`` path.  
   * ``produces`` - response content type. Optional, used to match request ``Accept`` header values to the operation if present.
   * ``consumes`` - request content type(s) - comma-separated values, can contain wildcards, e.g. ``*/*`` or ``text/*``. Optional, used to match request content type to the operation if present. 
   

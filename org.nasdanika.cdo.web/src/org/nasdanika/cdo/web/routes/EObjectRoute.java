@@ -12,6 +12,8 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringEscapeUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
@@ -28,6 +30,7 @@ import org.nasdanika.cdo.EReferenceClosure;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.ServerException;
 import org.nasdanika.web.ValueAction;
 import org.nasdanika.web.routes.ObjectRoute;
@@ -109,6 +112,7 @@ public class EObjectRoute extends ObjectRoute {
 				}
 			}
 			
+			String methods = routeAnnotation.getDetails().get("method");
 			String pathStr = routeAnnotation.getDetails().get("path");
 			Map<String, Object> pathParameters = new HashMap<>();
 			if (isHomeRoute) {
@@ -129,7 +133,29 @@ public class EObjectRoute extends ObjectRoute {
 						continue;
 					}
 					
-					if (!op.getName().equals(path[1])) {
+					if (methods==null) {
+						boolean isRequestMethodPrefix = false;
+						String[] opCamelCase = StringUtils.splitByCharacterTypeCamelCase(op.getName());
+						if (opCamelCase.length>1) {
+							for (RequestMethod rm: RequestMethod.values()) {
+								if (rm.name().toLowerCase().equals(opCamelCase[0])) {
+									isRequestMethodPrefix = true;
+									break;
+								}
+							}
+							if (isRequestMethodPrefix) {
+								if (!opCamelCase[0].equalsIgnoreCase(context.getRequest().getMethod())) {
+									continue;
+								}
+								String opName = StringUtils.uncapitalize(op.getName().substring(opCamelCase[0].length()));
+								if (!opName.equals(path[1])) {
+									continue;
+								}
+							} else if (!op.getName().equals(path[1])) {
+								continue;
+							}							
+						}
+					} else if (!op.getName().equals(path[1])) {
 						continue;
 					}
 				} else {
@@ -166,7 +192,6 @@ public class EObjectRoute extends ObjectRoute {
 				}
 			}
 			
-			String methods = routeAnnotation.getDetails().get("method");
 			if (methods!=null) {
 				boolean methodMatch = false;
 				for (String method: methods.split(",")) {
