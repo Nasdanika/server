@@ -117,7 +117,12 @@ This resolver doesn't work for TOC's/topics with embedded content, i.e. with tex
             class="org.nasdanika.cdo.web.doc.extensions.IncludePlugin"
             name="include">
          <description>
-            Includes content of another documentation resource into this resource. Format ``{{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki link resolvers, e.g. ``bundle`` schema.
+Includes content of another documentation resource into this resource.
+ 
+Format ``{\{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki link resolvers, e.g. ``bundle`` schema.
+
+Curly brackets and greater signs can be escaped by prepending them with backslash. The opening tag shall be escaped by placing the backslash between the first and the second opening
+curly brackets.
          </description>
       </plugin>
    </extension>

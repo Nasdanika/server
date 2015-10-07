@@ -1603,12 +1603,17 @@ public class DocRoute implements Route {
 			
 			if (openTagIdx==content.length()-1) {
 				break;
-			}			
-			
+			}
+						
 			// No second {
 			if (content.charAt(openTagIdx+1)!='{') {
-				out.append(content.substring(pos, openTagIdx+1));
-				pos = openTagIdx+1;
+				if (content.length()>openTagIdx+2 && content.substring(openTagIdx+1, openTagIdx+3).equals("\\{")) {
+					out.append(content.substring(pos, openTagIdx+1)).append("{");					
+					pos = openTagIdx+3;					
+				} else {
+					out.append(content.substring(pos, openTagIdx+1));
+					pos = openTagIdx+1;
+				}
 				continue;
 			}
 			
