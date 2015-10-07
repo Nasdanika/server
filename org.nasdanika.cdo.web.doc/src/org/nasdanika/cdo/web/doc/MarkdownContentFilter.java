@@ -23,7 +23,7 @@ public class MarkdownContentFilter implements ContentFilter {
 		}
 		String markdown = CoreUtil.stringify(content);
 		// TODO - expand markdown
-		return "<div class=\"markdown-body\">"+pegDownProcessor.markdownToHtml(markdown, linkRenderer)+"</div>";
+		return "<div class=\"markdown-body\">"+pegDownProcessor.markdownToHtml(docRoute.expand(markdown, baseURL), linkRenderer)+"</div>";
 	}
 
 }

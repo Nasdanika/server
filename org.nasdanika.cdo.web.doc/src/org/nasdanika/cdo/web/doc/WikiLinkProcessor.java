@@ -87,17 +87,17 @@ public class WikiLinkProcessor {
 	public Rendering wikiLinkToRendering(String wikiLink) {
 		Renderer renderer = null;
 		String rendererConfig = null;
-		int colonIdx = indexOf(wikiLink, 0, ':');
+		int colonIdx = DocUtil.indexOf(wikiLink, 0, ':');
 		if (colonIdx!=-1) {
 			String rendererSpec = wikiLink.substring(0, colonIdx);
-			int lParIdx = indexOf(rendererSpec, 0, '(');
+			int lParIdx = DocUtil.indexOf(rendererSpec, 0, '(');
 			if (lParIdx==-1) {
-				renderer = rendererRegistry.getRenderer(unescape(rendererSpec));
+				renderer = rendererRegistry.getRenderer(DocUtil.unescape(rendererSpec));
 			} else {
-				int rParIdx = indexOf(rendererSpec, lParIdx, ')');
+				int rParIdx = DocUtil.indexOf(rendererSpec, lParIdx, ')');
 				if (rParIdx!=-1) {
-					rendererConfig = unescape(rendererSpec.substring(lParIdx+1, rParIdx));
-					renderer = rendererRegistry==null ? null : rendererRegistry.getRenderer(unescape(rendererSpec.substring(0, lParIdx)));					
+					rendererConfig = DocUtil.unescape(rendererSpec.substring(lParIdx+1, rParIdx));
+					renderer = rendererRegistry==null ? null : rendererRegistry.getRenderer(DocUtil.unescape(rendererSpec.substring(0, lParIdx)));					
 				}
 			}
 			if (renderer==null) {
@@ -106,9 +106,9 @@ public class WikiLinkProcessor {
 		}
 		
 		Resolver resolver = null;
-		int gtIdx = indexOf(wikiLink, colonIdx+1, '>');
+		int gtIdx = DocUtil.indexOf(wikiLink, colonIdx+1, '>');
 		if (gtIdx!=-1) {			
-			resolver = resolverRegistry==null ? null : resolverRegistry.getResolver(unescape(wikiLink.substring(colonIdx+1, gtIdx)));
+			resolver = resolverRegistry==null ? null : resolverRegistry.getResolver(DocUtil.unescape(wikiLink.substring(colonIdx+1, gtIdx)));
 			if (resolver==null) {
 				gtIdx = -1;
 			}
@@ -119,11 +119,11 @@ public class WikiLinkProcessor {
 		
 		String href;
 		String text = null;
-		int pipeIdx = indexOf(wikiLink, gtIdx+1, '|');
+		int pipeIdx = DocUtil.indexOf(wikiLink, gtIdx+1, '|');
 		if (pipeIdx==-1) {
-			href = unescape(wikiLink.substring(gtIdx+1));	
+			href = DocUtil.unescape(wikiLink.substring(gtIdx+1));	
 		} else {
-			href = unescape(wikiLink.substring(gtIdx+1, pipeIdx));
+			href = DocUtil.unescape(wikiLink.substring(gtIdx+1, pipeIdx));
 			text = wikiLink.substring(pipeIdx+1);
 		}
 		if (resolver!=null) {
@@ -173,42 +173,6 @@ public class WikiLinkProcessor {
 		}
 		
 		return renderer.render(href, linkContent, rendererConfig, isMissing);
-	}
-	
-	private String unescape(String str) {
-		StringBuilder sb = new StringBuilder();
-		boolean inEscape = false;
-		for (int i=0; i<str.length(); ++i) {
-			if (inEscape) {
-				inEscape = false;
-				sb.append(str.charAt(i));
-			} else {
-				if (str.charAt(i) == '\\') {
-					inEscape = true;
-				} else {
-					sb.append(str.charAt(i));
-				}
-			}				
-		}
-		return sb.toString();
-	}
-	
-	private int indexOf(String str, int from, char ch) {
-		boolean inEscape = false;
-		for (int i=from; i<str.length(); ++i) {
-			if (inEscape) {
-				inEscape = false;
-			} else {
-				if (str.charAt(i)=='\\') {
-					inEscape = true;
-				} else {
-					if (str.charAt(i)==ch) {
-						return i;
-					}
-				}
-			}
-		}
-		return -1;
 	}
 	
 }

@@ -127,7 +127,7 @@ public class CoreUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static String stringify(Object content) throws IOException {
+	public static String stringify(Object content) {
 		if (content==null) {
 			return null;
 		}
@@ -135,22 +135,32 @@ public class CoreUtil {
 			return (String) content;
 		}
 		if (content instanceof Reader) {
-			StringWriter sw = new StringWriter();
-			try (Reader reader = (Reader) content) {
-				for (int ch = reader.read(); ch!=-1; ch = reader.read()) {
-					sw.write(ch);
-				}
-			} 
-			sw.close();
-			return stringify(sw.toString());
+			try {
+				StringWriter sw = new StringWriter();
+				try (Reader reader = (Reader) content) {
+					for (int ch = reader.read(); ch!=-1; ch = reader.read()) {
+						sw.write(ch);
+					}
+				} 
+				sw.close();
+				return stringify(sw.toString());
+			} catch (IOException e) {
+				throw new NasdanikaException(e);
+			}
 		}
 		if (content instanceof InputStream) {
 			try (InputStream in = (InputStream) content) {
 				return stringify(new InputStreamReader(in));
+			} catch (IOException e) {
+				throw new NasdanikaException(e);
 			}
 		}
 		if (content instanceof URL) {
-			return stringify(((URL) content).openStream());
+			try {
+				return stringify(((URL) content).openStream());
+			} catch (IOException e) {
+				throw new NasdanikaException(e);
+			}				
 		}
 		throw new IllegalArgumentException("Cannot stringify: "+content);
 	}
