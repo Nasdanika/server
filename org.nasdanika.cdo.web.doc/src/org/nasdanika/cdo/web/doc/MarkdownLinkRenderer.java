@@ -2,6 +2,9 @@ package org.nasdanika.cdo.web.doc;
 
 import static org.pegdown.FastEncoder.encode;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
@@ -20,12 +23,15 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 	private WikiLinkProcessor wikiLinkProcessor;
 	private org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo.Registry linkRegistry;
 	private org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver.Registry resolverRegistry;
+	private URL baseURL;
 
 	public MarkdownLinkRenderer(
+			URL baseURL, 
 			Renderer.Registry rendererRegistry, 
 			Resolver.Registry resolverRegistry, 
 			LinkInfo.Registry linkRegistry,
 			URLRewriter urlRewriter) {
+		this.baseURL = baseURL;
 		this.urlRewriter = urlRewriter;
 		if (this.urlRewriter==null) {
 			this.urlRewriter = new URLRewriter() {
@@ -78,8 +84,16 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 			}
 		}				
 
-		if (rewriteURL && urlRewriter!=null && href!=null) {
-			href = urlRewriter.rewrite(href);
+		if (href!=null) {
+			if (rewriteURL && urlRewriter!=null) {
+				href = urlRewriter.rewrite(href);
+			} else if (baseURL != null) {
+				try {
+					href = new URL(baseURL, href).toString();
+				} catch (MalformedURLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		
 		boolean isMissing = href==null || (linkInfo!=null && linkInfo.isMissing());

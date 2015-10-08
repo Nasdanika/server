@@ -17,4 +17,4 @@ Home route matches the object path with ``.html`` extension, e.g. ``L3.html``.
   * ``org.nasdanika.cdo:query-parameter`` - argument is taken from a query parameter(s) with the name taken from ``name`` data entry. If there is no such query parameter, argument value is taken from ``defaultValue`` annotation data entry.    
   * ``org.nasdanika.cdo:path-parameter`` - argument is taken from a named path segment with the name taken from ``name`` data entry. If there is no such path segment, argument value is taken from ``defaultValue`` annotation data entry.    
   * ``org.nasdanika.cdo:cookie-parameter`` - argument is taken from a request cookies(s). An optional ``name`` data entry can be used to filter cookies by name.   
-  
+

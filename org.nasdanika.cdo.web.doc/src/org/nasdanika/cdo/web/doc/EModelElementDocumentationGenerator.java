@@ -254,6 +254,7 @@ public class EModelElementDocumentationGenerator {
 		
 		String content = section.getContent();
 		if (content==null) {
+			// TODO - inclusion instead of AJAX
 			String sectionId = "section_"+htmlFactory.nextId();
 			String script = htmlFactory.tag(TagName.script, "nsdLoad('#"+sectionId+"','"+docRoutePath+section.getHref()+"');").toString();
 			sectionFragment.content(htmlFactory.div("").id(sectionId), script); 

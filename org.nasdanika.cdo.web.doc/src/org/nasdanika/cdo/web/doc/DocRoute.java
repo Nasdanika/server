@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -953,10 +954,15 @@ public class DocRoute implements Route {
 		// TODO - from extensions
 	}
 	
-	private Object getContent(URL baseURL, String urlPrefix, String path) throws Exception {
+	public Object getContent(URL baseURL, String urlPrefix, String path) {
 		if (path.startsWith(PACKAGES_GLOBAL_PATH)) {
 			String[] subPath = path.substring(PACKAGES_GLOBAL_PATH.length()).split("/");
-			EPackage ePackage = EPackage.Registry.INSTANCE.getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
+			EPackage ePackage;
+			try {
+				ePackage = EPackage.Registry.INSTANCE.getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
+			} catch (DecoderException e) {
+				throw new NasdanikaException(e);
+			}
 			if (ePackage==null) {
 				return null;
 			}
@@ -972,7 +978,12 @@ public class DocRoute implements Route {
 				return null;
 			}
 			String[] subPath = path.substring(PACKAGES_SESSION_PATH.length()).split("/");
-			EPackage ePackage = cdoSessionProvider.getSession().getPackageRegistry().getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
+			EPackage ePackage;
+			try {
+				ePackage = cdoSessionProvider.getSession().getPackageRegistry().getEPackage(new String(Hex.decodeHex(subPath[0].toCharArray())));
+			} catch (DecoderException e) {
+				throw new NasdanikaException(e);
+			}
 			if (ePackage==null) {
 				return null;
 			}
@@ -1527,10 +1538,8 @@ public class DocRoute implements Route {
 						};
 					}
 				} catch (MalformedURLException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
-				// TODO Auto-generated method stub
 				return null;
 			}
 		};
@@ -1572,7 +1581,7 @@ public class DocRoute implements Route {
 			}
 		};
 		
-		return new MarkdownLinkRenderer(rendererRegistry, resolverRegistry, linkRegistry, urlRewriter);				
+		return new MarkdownLinkRenderer(baseURL, rendererRegistry, resolverRegistry, linkRegistry, urlRewriter);				
 	}
 	
 	/**

@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.web.doc.extensions;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.nasdanika.cdo.web.doc.DocRoute;
@@ -14,19 +15,28 @@ public class IncludePlugin implements Plugin {
 			return null;
 		}
 		
-//		int idx = content.indexOf(':');
-//		if (idx==-1) {
-//			Resolver resolver = resolverRegistry.getResolver(href.substring(0, idx));
-//			if (resolver!=null) {
-//				String newHref = resolver.resolve(href.substring(idx+1));
-//				if (newHref!=null) {
-//					href = newHref;
-//				}
-//			}
-//		}
+		int idx = content.indexOf(':');
+		if (idx!=-1) {
+			Resolver resolver = docRoute.getResolverRegistry(baseURL, urlPrefix).getResolver(content.substring(0, idx));
+			if (resolver!=null) {
+				String href = resolver.resolve(content.substring(idx+1));
+				if (href!=null) {
+					content = href;
+				}
+			}
+		}
 		
-		// TODO Auto-generated method stub
-		return "I'm the include plugin under testing, config: "+config+", content: "+content;
+		try {
+			URL contentURL = new URL(baseURL, content);
+			String contentURLStr = contentURL.toString();
+			String absDocRoutePath = urlPrefix+docRoute.getDocRoutePath();	
+			if (contentURLStr.startsWith(absDocRoutePath)) {
+				return docRoute.getContent(contentURL, urlPrefix, contentURLStr.substring(absDocRoutePath.length()));
+			}
+			return contentURL;
+		} catch (MalformedURLException e) {
+			return "(Include exception: "+e+")";
+		}
 	}
 
 }
