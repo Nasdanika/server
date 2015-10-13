@@ -92,8 +92,8 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 	
 	@Override
-	public Accordion item(Object title, Style style, Object... content) {
-		items.add(new Item(title, content, null, style, items.isEmpty()));
+	public Accordion item(Object title, Style style, boolean initial, Object content) {
+		items.add(new Item(title, new Object[] {content}, null, style, initial));
 		return this;
 	}
 	
@@ -123,7 +123,8 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
 	@Override
 	public Accordion item(Object name, Object... content) {
-		return item(name, null, content);
+		items.add(new Item(name, content, null, style, items.isEmpty()));
+		return this;
 	}
 
 	@Override

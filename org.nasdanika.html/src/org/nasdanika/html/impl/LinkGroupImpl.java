@@ -18,9 +18,8 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 	}
 
 	@Override
-	public LinkGroup item(Object content, Object href, Style style, boolean active) {
-		item(content, style, active).attribute("href", href);
-		return this;
+	public Tag item(Object content, Object href, Style style, boolean active) {
+		return item(content, style, active).attribute("href", href);
 	}
 	
 	@Override

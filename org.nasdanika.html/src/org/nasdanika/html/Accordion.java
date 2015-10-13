@@ -2,7 +2,7 @@ package org.nasdanika.html;
 
 public interface Accordion extends UIElement<Accordion>, NamedItemsContainer<Accordion> {
 	
-	Accordion item(Object title, Style style, Object... content);
+	Accordion item(Object title, Style style, boolean initial, Object content);
 	
 	Accordion ajaxItem(Object title, Style style, Object location);	
 	

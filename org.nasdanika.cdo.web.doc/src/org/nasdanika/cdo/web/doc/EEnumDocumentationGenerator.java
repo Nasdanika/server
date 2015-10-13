@@ -72,7 +72,9 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 			}
 			String firstDocSentence = getFirstDocSentence(baseURL, urlPrefix, literal);
 			literalsAccordion.item(
-					"<b>"+literal.getName()+"</b> "+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
+					"<b>"+literal.getName()+"</b> "+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
+					null,
+					false,
 					accordionFragment);
 		}
 		

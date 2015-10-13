@@ -224,6 +224,8 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				
 				attributesAccordion.item(
 						"<b>"+attr.getName()+"</b> : "+attr.getEType().getName()+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
+						null,
+						false,
 						accordionFragment);
 			}
 			tabs.item(attributeIcon+" Attributes", attributesAccordion);			
@@ -337,7 +339,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				}
 								
 				referencesAccordion.item(
-						"<b>"+ref.getName()+"</b> : "+ref.getEType().getName()+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
+						"<b>"+ref.getName()+"</b> : "+ref.getEType().getName()+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
+						null,
+						false,
 						accordionFragment);
 			}
 			tabs.item(referenceIcon+" References", referencesAccordion);			
@@ -404,7 +408,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				}				
 				
 				operationsAccordion.item(
-						"<b>"+operation.getName()+"</b> : "+(operation.getEType()==null ? "void" : operation.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
+						"<b>"+operation.getName()+"</b> : "+(operation.getEType()==null ? "void" : operation.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
+						null,
+						false,
 						accordionFragment);
 			}
 			
@@ -601,7 +607,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				}				
 				
 				routesAccordion.item(
-						(isHome ? htmlFactory.glyphicon(Glyphicon.home).style("margin-right", "5px") : "")+"<b>"+route.getName()+"</b> : "+(route.getEType()==null ? "void" : route.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
+						(isHome ? htmlFactory.glyphicon(Glyphicon.home).style("margin-right", "5px") : "")+"<b>"+route.getName()+"</b> : "+(route.getEType()==null ? "void" : route.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
+						null,
+						false,
 						accordionFragment);
 			}
 
@@ -846,7 +854,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				}				
 								
 				formsAccordion.item(
-						"<b>"+form.getName()+"</b> : "+(form.getEType()==null ? "void" : form.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
+						"<b>"+form.getName()+"</b> : "+(form.getEType()==null ? "void" : form.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
+						null,
+						false,
 						accordionFragment);
 			}
 			

@@ -18,13 +18,13 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 	}
 
 	@Override
-	public ListGroup item(Object content, Style style) {
+	public Tag item(Object content, Style style) {
 		Tag li = factory.tag(TagName.li, content).addClass("list-group-item");
 		if (style!=null && Style.DEFAULT!=style) {
 			li.addClass("list-group-item-"+style.name().toLowerCase());
 		}
 		items.add(li);
-		return this;
+		return li;
 	}
 	
 	@Override
