@@ -12,7 +12,7 @@
 Home route matches the object path with ``.html`` extension, e.g. ``L3.html``.
 
 ### Parameter annotations
-  * ``org.nasdanika.cdo:context-parameter`` - argument is computed by adapting the context to the parameter type. To get "raw" context use [[javadoc>org.nasdanika.web.HttpServletRequestContext|org.nasdanika.web.HttpServletRequestContext]] as parameter type.
+  * ``org.nasdanika.cdo:context-parameter`` - argument is computed by adapting the context to the parameter type. To get "raw" context use [[javadoc>org.nasdanika.web.HttpServletRequestContext|org.nasdanika.web.HttpServletRequestContext]] or [[javadoc>org.nasdanika.cdo.web.CDOTransactionHttpServletRequestContext|org.nasdanika.cdo.web.CDOTransactionHttpServletRequestContext<CR>]] as parameter type.
   * ``org.nasdanika.cdo:service-parameter`` - argument is computed by looking up an OSGi service with parameter's type, an optional ``filter`` data entry can be used to specify service filter.
   * ``org.nasdanika.cdo:query-parameter`` - argument is taken from a query parameter(s) with the name taken from ``name`` data entry. If there is no such query parameter, argument value is taken from ``defaultValue`` annotation data entry.    
   * ``org.nasdanika.cdo:path-parameter`` - argument is taken from a named path segment with the name taken from ``name`` data entry. If there is no such path segment, argument value is taken from ``defaultValue`` annotation data entry.    
