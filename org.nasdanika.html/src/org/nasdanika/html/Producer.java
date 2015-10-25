@@ -20,8 +20,9 @@ public interface Producer {
 	
 	/**
 	 * Produces content.
-	 * @return Content.
+	 * @param indent Indent. 
+	 * @return Content. 
 	 */
-	Object produce();
+	Object produce(int indent);
 
 }

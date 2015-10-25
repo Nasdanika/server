@@ -1,5 +1,7 @@
 package org.nasdanika.html;
 
+import java.util.Map;
+
 import org.nasdanika.html.UIElement.Style;
 
 
@@ -501,5 +503,34 @@ public interface HTMLFactory {
 	Dropdown<?> caretDropdown();
 	
 	KnockoutVirtualElement knockoutVirtualElement(Object... content);
+	
+	/**
+	 * Source of token values for interpolation.
+	 * @author Pavel Vlasov.
+	 *
+	 */
+	interface TokenSource {
+		
+		Object get(String token);
+		
+	}
+
+	/**
+	 * Expands tokens in the form of <code>{{token name}}</code> to their values.
+	 * If a token is not found expansion is not processed.
+	 * @param input
+	 * @param tokenSource
+	 * @return
+	 */
+	String interpolate(Object input, TokenSource tokenSource);
+	
+	/**
+	 * Expands tokens in the form of <code>{{token name}}</code> to their values.
+	 * If a token is not found expansion is not processed.
+	 * @param input
+	 * @param env
+	 * @return
+	 */
+	String interpolate(Object input, final Map<String, Object> env);	
 	
 }

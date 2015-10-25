@@ -6,13 +6,14 @@ import java.util.List;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 
 	private String tabId;
 
 	TabsImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, TagName.div);
 		tabId = factory.nextId()+"_tab";
 	}
 	
@@ -143,11 +144,9 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	
 	private TabAjaxDataToggleScriptRenderer tabAjaxDataToggleScriptRenderer = new TabAjaxDataToggleScriptRenderer();
 	
-	public String produce() {
-		if (isEmpty()) {
-			return "";
-		}
-				
+	@Override
+	protected List<Object> getContent() {
+		List<Object> ret = new ArrayList<>();
 		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-tabs");		
 		boolean hasAjaxTabs = false;
 		for (Tab tab: tabs) {
@@ -158,13 +157,12 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		for (Tab tab: tabs) {
 			contentDiv.content(tab.div());
 		}
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");		
-		sb.append(stringify(navUL));
-		sb.append(stringify(contentDiv));
+		ret.add(navUL);
+		ret.add(contentDiv);
 		if (hasAjaxTabs) {
-			sb.append(tabAjaxDataToggleScriptRenderer.generate(null));
+			ret.add(tabAjaxDataToggleScriptRenderer.generate(null));
 		}		
-		return sb.append("</div>").append(genLoadRemoteContentScript()).toString();
+		return ret;
 	};
 
 	@Override

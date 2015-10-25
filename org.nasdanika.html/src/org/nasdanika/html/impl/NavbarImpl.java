@@ -8,6 +8,8 @@ import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Navbar;
 import org.nasdanika.html.Producer;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	
@@ -15,7 +17,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	private Object brandRef;
 
 	NavbarImpl(HTMLFactory factory, Object brand, Object brandRef) {
-		super(factory);
+		super(factory, (String) null);
 		this.brand = brand;
 		this.brandRef = brandRef;
 	}
@@ -34,11 +36,12 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 		}		
 		
 		@Override
-		public String produce() {
+		public Object produce(int indent) {
+			Tag li = factory.tag(TagName.li, item);
 			if (active) {
-				return "<li class=\"active\">"+item+"</li>";
+				li.addClass("active");
 			}
-			return "<li>"+NavbarImpl.this.stringify(item)+"</li>";
+			return li.produce(indent);
 		}
 		
 		/**
@@ -46,7 +49,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 		 */
 		@Override
 		public String toString() {
-			return produce();
+			return stringify(produce(0), 0);
 		}
 	}
 
@@ -67,11 +70,11 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 	private FormImpl form;
 	
 	@Override
-	public String produce() {
+	public String produce(final int indent) {
 		
 		final String collapseTargetId = factory.nextId()+"_collapse";
 
-		return renderComment()+navbarRenderer.generate(new NavbarConfig() {
+		return renderComment(indent)+navbarRenderer.generate(new NavbarConfig() {
 			
 			@Override
 			public Object getBrand() {
@@ -90,7 +93,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 				}
 				StringBuilder ret = new StringBuilder();
 				for (Object item: leftItems) {
-					ret.append(stringify(item));
+					ret.append(stringify(item, indent));
 				}
 				return ret.toString();
 			}
@@ -102,7 +105,7 @@ class NavbarImpl extends UIElementImpl<Navbar> implements Navbar {
 				}
 				StringBuilder ret = new StringBuilder();
 				for (Object item: rightItems) {
-					ret.append(stringify(item));
+					ret.append(stringify(item, indent));
 				}
 				return ret.toString();
 			}

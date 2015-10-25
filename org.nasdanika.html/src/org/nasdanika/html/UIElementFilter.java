@@ -106,8 +106,8 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 	}
 
 	@Override
-	public Object produce() {
-		return target.produce();
+	public Object produce(int indent) {
+		return target.produce(indent);
 	}
 
 }

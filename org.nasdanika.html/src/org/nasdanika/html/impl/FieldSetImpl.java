@@ -1,5 +1,8 @@
 package org.nasdanika.html.impl;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FormFragment;
@@ -14,11 +17,11 @@ import org.nasdanika.html.Tag.TagName;
 class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 	
 	private FieldContainerImpl<FieldSet> container;
-	private boolean disabled;
 
 	FieldSetImpl(HTMLFactory factory, FormImpl form) {
-		super(factory);
-		container = new FieldContainerImpl<FieldSet>(factory, this, form);				
+		super(factory, "fieldset");
+		container = new FieldContainerImpl<FieldSet>(factory, this, form);	
+		this.content.add(container);
 	}
 
 	@Override
@@ -75,25 +78,13 @@ class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 
 	@Override
 	public FieldSet disabled(boolean disabled) {
-		this.disabled = disabled;		
+		attribute("disabled", disabled ? "disabled" : null);	
 		return this;
 	}
 
 	@Override
 	public FieldSet disabled() {
 		return disabled(true);
-	}
-	
-	@Override
-	public String produce() {
-		StringBuilder sb = new StringBuilder(renderComment()).append("<fieldset").append(attributes("disabled"));
-		if (disabled) {
-			sb.append(" disabled=\"disabled\"");
-		}
-		sb.append(">");
-		sb.append(stringify(container));
-		sb.append("</fieldset>");
-		return sb.append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override

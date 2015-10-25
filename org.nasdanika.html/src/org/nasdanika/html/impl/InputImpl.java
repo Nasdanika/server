@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.nasdanika.html.Form.EncType;
 import org.nasdanika.html.Form.Method;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Input;
 
@@ -17,7 +18,7 @@ class InputImpl extends InputBaseImpl<Input> implements Input {
 	}
 	
 	InputImpl(HTMLFactory factory, HTMLFactory.InputType type) {
-		super(factory);
+		super(factory, TagName.input);
 		attribute("type", type);
 	}
 	
@@ -27,19 +28,6 @@ class InputImpl extends InputBaseImpl<Input> implements Input {
 			this.content.add(c);
 		}
 		return this;
-	}
-	
-	@Override
-	public String produce() {		
-		List<Object> theContent = getContent();
-		if (theContent.isEmpty()) {
-			return renderComment()+"<input"+attributes()+"/>";
-		}
-		StringBuilder sb = new StringBuilder(renderComment()).append("<input").append(attributes()).append(">");
-		for (Object c: theContent) {
-			sb.append(stringify(c));
-		}
-		return sb.append("</input>").append(genLoadRemoteContentScript()).toString();
 	}
 
 	@Override

@@ -1,5 +1,5 @@
 package org.nasdanika.html;
 
-public interface Tabs extends UIElement<Tabs>, NamedItemsContainer<Tabs> {
+public interface Tabs extends UIElement<Tabs>, NamedItemsContainer<UIElement<?>, Tabs> {
 	
 }

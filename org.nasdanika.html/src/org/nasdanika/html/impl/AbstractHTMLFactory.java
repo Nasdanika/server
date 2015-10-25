@@ -1,10 +1,14 @@
 package org.nasdanika.html.impl;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.Fragment;
@@ -97,6 +101,7 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 		};
 	}
 	
+	@SuppressWarnings("resource")
 	@Override
 	public Tag link(Object href, final Object... content) {
 		return new TagImpl(this, "a", content).attribute("href", href);
@@ -303,5 +308,68 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 			
 		};
 	}
+		
+	private static final Pattern EXPANDER_PATTERN = Pattern.compile("\\{\\{(.+?)\\}\\}");	
+	
+	/**
+	 * Expands tokens in the form of <code>${token name}</code> to their values.
+	 * If a token is not found expansion is not processed.
+	 * @param input
+	 * @param env
+	 * @return
+	 */
+	public static String interpolate(String input, TokenSource tokenSource) {
+		if (tokenSource==null) {
+			return input;
+		}
+		Matcher matcher = EXPANDER_PATTERN.matcher(input);
+		StringBuilder output = new StringBuilder();
+		int i = 0;
+		while (matcher.find()) {
+		    String token = matcher.group();
+			Object replacement = tokenSource.get(token.substring(2, token.length()-1));
+		    if (replacement != null) {
+			    output.append(input.substring(i, matcher.start())).append(replacement);			    
+			    i = matcher.end();
+		    }
+		}
+		output.append(input.substring(i, input.length()));
+		return output.toString();
+	}
+	
+	public static String interpolate(String input, final Map<String, Object> env) {
+		return interpolate(input, new TokenSource() {
+	
+			@Override
+			public Object get(String token) {
+				return env==null ? null : env.get(token);
+			}
+			
+		});
+	}
+	
+	/**
+	 * Expands tokens found in URL, InputStream, Reader or String. 
+	 * @param input URL, InputStream, Reader or String.
+	 * @param tokenSource Source of tokens.
+	 * @return String with expanded tokens.
+	 * @throws IOException
+	 */
+	@Override
+	public String interpolate(Object input, TokenSource tokenSource) {
+		return interpolate(UIElementImpl.stringify(input, 0, this), tokenSource);
+	}
+	
+	/**
+	 * Expands tokens found in URL, InputStream, Reader or String. 
+	 * @param input URL, InputStream, Reader or String.
+	 * @param env token to value map.
+	 * @return String with expanded tokens.
+	 * @throws IOException
+	 */
+	@Override
+	public String interpolate(Object input, Map<String, Object> env) {
+		return interpolate(UIElementImpl.stringify(input, 0, this), env);
+	}	
 	
 }

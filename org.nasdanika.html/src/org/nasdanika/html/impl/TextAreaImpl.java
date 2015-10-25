@@ -9,46 +9,17 @@ import org.nasdanika.html.TextArea;
 class TextAreaImpl extends InputBaseImpl<TextArea> implements TextArea {
 	
 	public TextAreaImpl(HTMLFactory factory) {
-		super(factory);
-	}
-	
-	private List<Object> content = new ArrayList<>();
-	
-	protected List<Object> getContent() {
-		return content;
+		super(factory, "textarea");
 	}
 	
 	@Override
 	public TextArea content(Object... content) {
-		for (Object c: content) {
-			this.content.add(c);
-		}
-		return this;
-	}
-	
-	@Override
-	public String produce() {		
-		List<Object> theContent = getContent();
-		StringBuilder sb = new StringBuilder(renderComment()).append("<textarea").append(attributes()).append(">");
-		for (Object c: theContent) {
-			sb.append(stringify(c));
-		}
-		return sb.append("</textarea>").append(genLoadRemoteContentScript()).toString();
+		return super.content(content);
 	}
 
 	@Override
 	public TextArea placeholder(Object placeholder) {
 		return attribute("placeholder", placeholder);
-	}
-
-	@Override
-	public void close() throws Exception {
-		super.close();
-		for (Object c: getContent()) {
-			if (c instanceof AutoCloseable) {
-				((AutoCloseable) c).close();
-			}
-		}
 	}
 
 	@Override

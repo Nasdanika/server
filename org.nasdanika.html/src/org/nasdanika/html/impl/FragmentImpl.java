@@ -34,11 +34,11 @@ class FragmentImpl implements Fragment {
 	}
 	
 	@Override
-	public String produce() {
+	public String produce(int indent) {
 		StringBuilder sb = new StringBuilder();
 		for (Object c: content) {
 			try {
-				sb.append(UIElementImpl.stringify(c, factory));
+				sb.append(UIElementImpl.stringify(c, indent, factory));
 			} catch (Exception e) {
 				sb.append(e);
 			}
@@ -61,7 +61,7 @@ class FragmentImpl implements Fragment {
 	 */
 	@Override
 	public String toString() {
-		return produce();
+		return produce(0);
 	}
 
 }

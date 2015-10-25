@@ -3,11 +3,16 @@ package org.nasdanika.html.impl;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputBase;
+import org.nasdanika.html.Tag;
 
 abstract class InputBaseImpl<T extends InputBase<T>> extends UIElementImpl<T> implements InputBase<T> {
 	
-	InputBaseImpl(HTMLFactory factory) {
-		super(factory);
+	InputBaseImpl(HTMLFactory factory, String tagName) {
+		super(factory, tagName);
+	}
+
+	InputBaseImpl(HTMLFactory factory, Tag.TagName tagName) {
+		this(factory, tagName.name());
 	}
 
 	@Override

@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Pills;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
 
 class PillsImpl extends UIElementImpl<Pills> implements Pills {
@@ -16,7 +17,7 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 	private String pillsId;
 
 	PillsImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, TagName.div);
 		pillsId = factory.nextId()+"_pills";
 	}
 	
@@ -35,7 +36,7 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 			this.idx = idx;
 		}	
 		
-		Object li() {
+		Tag li() {
 			Tag ret = factory.tag("li");
 			if (idx==0) {
 				ret.addClass("active");
@@ -165,10 +166,9 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 		return this;
 	}
 	
-	public String produce() {
-		if (isEmpty()) {
-			return "";
-		}
+	@Override
+	protected List<Object> getContent() {
+		List<Object> ret = new ArrayList<>();
 		
 		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-pills");
 		if (stacked) {
@@ -180,30 +180,29 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 			navUL.content(pill.li());
 			hasAjaxPills = hasAjaxPills || pill instanceof AjaxPill;
 		}
+		
 		Tag contentDiv = factory.div().addClass("tab-content");
 		for (Pill pill: pills) {
 			contentDiv.content(pill.div());
 		}
 		
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
-		
 		if (pillsWidth.isEmpty()) {
-			sb.append(stringify(navUL));
+			ret.add(navUL);
 		} else {
 			Tag ulContainer = factory.div(navUL);
 			for (Entry<UIElement.DeviceSize, Integer> pwe: pillsWidth.entrySet()) {
 				ulContainer.grid().col(pwe.getKey(), pwe.getValue());
 				contentDiv.grid().col(pwe.getKey(), 12 - pwe.getValue());
 			}
-			sb.append(stringify(ulContainer));
+			ret.add(ulContainer);
 		}
-		sb.append(stringify(contentDiv));
+		ret.add(contentDiv);
 
 		if (hasAjaxPills) {
-			sb.append(pillAjaxDataToggleScriptRenderer.generate(null));
+			ret.add(pillAjaxDataToggleScriptRenderer.generate(null));
 		}		
 		
-		return sb.append("</div>").append(genLoadRemoteContentScript()).toString();
+		return ret;
 	};
 
 	@Override

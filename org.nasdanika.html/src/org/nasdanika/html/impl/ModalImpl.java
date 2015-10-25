@@ -1,6 +1,7 @@
 package org.nasdanika.html.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.json.JSONException;
@@ -9,6 +10,7 @@ import org.nasdanika.html.Button;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class ModalImpl extends UIElementImpl<Modal> implements Modal {
 
@@ -39,7 +41,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 	private Object[] footer;
 	
 	ModalImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, TagName.div);
 		addClass("modal", "fade");
 		id(factory.nextId());
 	}
@@ -83,16 +85,14 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 	}
 	
 	@Override
-	public String produce() {		
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
+	protected List<Object> getContent() {
 		Tag dialogDiv = factory.div(contentDiv).addClass("modal-dialog");
 		if (large) {
 			dialogDiv.addClass("modal-lg");
 		} else if (small) {
 			dialogDiv.addClass("modal-sm");
 		}
-		sb.append(stringify(dialogDiv));
-		return sb.append("</").append("div").append(">").append(genLoadRemoteContentScript()).toString();
+		return Collections.<Object>singletonList(dialogDiv);
 	}
 
 	@Override

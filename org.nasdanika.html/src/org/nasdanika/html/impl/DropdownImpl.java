@@ -16,8 +16,7 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
 	private String tagName;
 
 	DropdownImpl(HTMLFactory factory, String tagName, UIElement<?> toggle) {
-		super(factory);
-		this.tagName = tagName;
+		super(factory, tagName);
 		this.toggle = toggle;
 		this.toggle.addClass("dropdown-toggle").attribute("data-toggle", "dropdown");
 		addClass("dropdown");
@@ -49,9 +48,9 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
 	}
 	
 	@Override
-	public String produce() {
-		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
-		sb.append(stringify(toggle));
+	protected List<Object> getContent() {
+		List<Object> ret = new ArrayList<>();
+		ret.add(toggle);
 		Tag ul = factory.tag("ul").addClass("dropdown-menu");
         for (Object item: items) {
         	if (item==DIVIDER) {
@@ -62,8 +61,8 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
         		ul.content(factory.tag("li", item));
         	}
         }
-        sb.append(ul);
-		return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
+        ret.add(ul);
+		return ret;
 	}
 
 	@Override

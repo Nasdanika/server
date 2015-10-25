@@ -7,30 +7,22 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer;
 
 class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> implements RowContainer<T> {
-	
-	private String tagName;
 
 	RowContainerImpl(HTMLFactory factory, String tagName) {
-		super(factory);
-		this.tagName = tagName;
+		super(factory, tagName);
 	}
 
 	class RowImpl extends UIElementImpl<Row> implements Row {
 		
 		RowImpl() {
-			super(RowContainerImpl.this.factory);
+			super(RowContainerImpl.this.factory, "tr");
 		}
-		
-		private List<Object> content = new ArrayList<>();
 		
 		class CellImpl extends UIElementImpl<Cell> implements Cell {
 			
-			private boolean isHeader;
-
 			CellImpl(boolean isHeader, Object... content) {
-				super(RowContainerImpl.this.factory);
+				super(RowContainerImpl.this.factory, isHeader ? "th" : "td");
 				content(content);
-				this.isHeader = isHeader;
 			}
 
 			@Override
@@ -41,29 +33,6 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 			@Override
 			public Cell rowspan(int rowspan) {
 				return attribute("rowspan", String.valueOf(rowspan));
-			}
-			
-			@Override
-			public String produce() {
-				String tagName = isHeader ? "th" : "td";
-				if (content.isEmpty()) {
-					return renderComment()+"<"+tagName+" "+attributes()+"/>";
-				}				
-				StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
-				for (Object c: content) {
-					sb.append(stringify(c));
-				}
-				return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
-			}
-			
-			private List<Object> content = new ArrayList<>();
-
-			@Override
-			public void close() throws Exception {
-				super.close();
-				for (Object c: content) {
-					close(c);
-				}
 			}
 
 			@Override
@@ -96,18 +65,6 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 		}
 		
 		@Override
-		public String produce() {
-			StringBuilder ret = new StringBuilder(renderComment()).append("<tr"+attributes()+">");
-			for (Object c: content) {
-				if (c!=null) {
-					ret.append(stringify(c));
-				}
-			}
-			ret.append("</tr>");
-			return ret.append(genLoadRemoteContentScript()).toString();
-		}
-		
-		@Override
 		public void close() throws Exception {
 			super.close();
 			for (Object c: content) {
@@ -135,34 +92,12 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 		}
 		
 	}
-	
-	protected List<Object> content = new ArrayList<>();
 
 	@Override
 	public Row row() {
 		Row row = new RowImpl();
 		content.add(row);
 		return row;
-	}
-	
-	@Override
-	public String produce() {		
-		if (content.isEmpty()) {
-			return "";
-		}
-		StringBuilder sb = new StringBuilder(renderComment()).append("<").append(tagName).append(attributes()).append(">");
-		for (Object c: content) {
-			sb.append(stringify(c));
-		}
-		return sb.append("</").append(tagName).append(">").append(genLoadRemoteContentScript()).toString();
-	}
-		
-	@Override
-	public void close() throws Exception {
-		super.close();
-		for (Object c: content) {
-			close(c);
-		}		
 	}
 
 	@Override

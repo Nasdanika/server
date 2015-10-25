@@ -9,6 +9,7 @@ import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
 
 class FormImpl extends UIElementImpl<Form> implements Form {
@@ -20,8 +21,7 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	private FieldContainer<Form> container;
 
 	FormImpl(HTMLFactory factory, boolean nav, boolean navRight) {
-		super(factory);
-		container = new FieldContainerImpl<Form>(factory, this, this);
+		super(factory, TagName.form);
 		if (nav) {
 			addClass("navbar-form");
 			if (navRight) {
@@ -32,6 +32,9 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 		} 
 		
 		attribute("role", "form");
+		
+		container = new FieldContainerImpl<Form>(factory, this, this);
+		this.content.add(container);
 	}
 	
 	@Override
@@ -108,18 +111,6 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	@Override
 	public FormInputGroup formInputGroup(Object label, UIElement<?> control, Object helpText) {
 		return formInputGroup(label, UIElementImpl.autoId(factory, control), control, helpText);
-	}
-	
-	@Override
-	public String produce() {
-		return new StringBuilder(renderComment())
-			.append("<form")
-			.append(attributes())
-			.append(">")
-			.append(stringify(container))
-			.append("</form>")
-			.append(genLoadRemoteContentScript())
-			.toString();
 	}
 	
 	@Override

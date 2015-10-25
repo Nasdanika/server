@@ -15,6 +15,7 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Angular;
+import org.nasdanika.html.Button;
 import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.Grid;
@@ -22,6 +23,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Knockout;
 import org.nasdanika.html.Producer;
 import org.nasdanika.html.ProducerException;
+import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement;
 
 /**
@@ -52,8 +54,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 
 	protected HTMLFactory factory;
 	
-	public UIElementImpl(HTMLFactory factory) {
+	public UIElementImpl(HTMLFactory factory, Tag.TagName tagName) {
+		this(factory, tagName.name());
+	}
+	
+	public UIElementImpl(HTMLFactory factory, String tagName) {
 		this.factory = factory;
+		this.tagName = tagName;
 	}
 	
 	@Override
@@ -82,22 +89,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 					// boolean attributes
 					attributeBuilder.append(a.getKey());					
 				} else {
-					attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(stringify(value))+"\"");
+					attributeBuilder.append(a.getKey()+"=\""+StringEscapeUtils.escapeHtml4(stringify(value, 0))+"\"");
 				}
 			}
 		}
 		
 		if (!Arrays.asList(excluded).contains(STYLE)) {
-			StringBuilder styleBuilder = new StringBuilder();
-			if (attributes.containsKey(STYLE)) {
-				styleBuilder.append(stringify(attributes.get(STYLE)));
-			}
-			for (Entry<String, Object> se: styles.entrySet()) {
-				if (styleBuilder.length()>0 && !styleBuilder.toString().trim().endsWith(";")) {
-					styleBuilder.append(";");
-				}
-				styleBuilder.append(se.getKey()+":"+stringify(se.getValue()));
-			}
+			StringBuilder styleBuilder = styles();
 			if (styleBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
 					attributeBuilder.append(" ");
@@ -107,16 +105,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		}
 		
 		if (!Arrays.asList(excluded).contains(DATA_BIND)) {
-			StringBuilder dataBindBuilder = new StringBuilder();
-			if (attributes.containsKey(DATA_BIND)) {
-				dataBindBuilder.append(stringify(attributes.get(DATA_BIND)));
-			}
-			for (Entry<String, Object> se: koDataBindEntries.entrySet()) {
-				if (dataBindBuilder.length()>0 && !dataBindBuilder.toString().trim().endsWith(",")) {
-					dataBindBuilder.append(",");
-				}
-				dataBindBuilder.append(se.getKey()+":"+stringify(se.getValue()));
-			}
+			StringBuilder dataBindBuilder = dataBinds();
 			if (dataBindBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
 					attributeBuilder.append(" ");
@@ -126,19 +115,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		}
 		
 		if (!Arrays.asList(excluded).contains(CLASS)) {
-			StringBuilder classBuilder = new StringBuilder();
-			for (Object cls: classes) {
-				if (classBuilder.length()>0) {
-					classBuilder.append(" ");
-				}
-				classBuilder.append(stringify(cls));
-			}
-			if (attributes.containsKey(CLASS)) {
-				if (classBuilder.length()>0) {
-					classBuilder.append(" ");
-				}
-				classBuilder.append(stringify(attributes.get(CLASS)));
-			}
+			StringBuilder classBuilder = classes();
 			if (classBuilder.length()>0) {
 				if (attributeBuilder.length()>0) {
 					attributeBuilder.append(" ");
@@ -148,6 +125,51 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		}
 		
 		return attributeBuilder.length()==0 ? "" : " "+attributeBuilder.toString();
+	}
+
+	protected StringBuilder classes() {
+		StringBuilder classBuilder = new StringBuilder();
+		for (Object cls: classes) {
+			if (classBuilder.length()>0) {
+				classBuilder.append(" ");
+			}
+			classBuilder.append(stringify(cls, 0));
+		}
+		if (attributes.containsKey(CLASS)) {
+			if (classBuilder.length()>0) {
+				classBuilder.append(" ");
+			}
+			classBuilder.append(stringify(attributes.get(CLASS), 0));
+		}
+		return classBuilder;
+	}
+
+	protected StringBuilder dataBinds() {
+		StringBuilder dataBindBuilder = new StringBuilder();
+		if (attributes.containsKey(DATA_BIND)) {
+			dataBindBuilder.append(stringify(attributes.get(DATA_BIND), 0));
+		}
+		for (Entry<String, Object> se: koDataBindEntries.entrySet()) {
+			if (dataBindBuilder.length()>0 && !dataBindBuilder.toString().trim().endsWith(",")) {
+				dataBindBuilder.append(",");
+			}
+			dataBindBuilder.append(se.getKey()+":"+stringify(se.getValue(), 0));
+		}
+		return dataBindBuilder;
+	}
+
+	protected StringBuilder styles() {
+		StringBuilder styleBuilder = new StringBuilder();
+		if (attributes.containsKey(STYLE)) {
+			styleBuilder.append(stringify(attributes.get(STYLE), 0));
+		}
+		for (Entry<String, Object> se: styles.entrySet()) {
+			if (styleBuilder.length()>0 && !styleBuilder.toString().trim().endsWith(";")) {
+				styleBuilder.append(";");
+			}
+			styleBuilder.append(se.getKey()+":"+stringify(se.getValue(), 0));
+		}
+		return styleBuilder;
 	}
 	
 	/**
@@ -159,13 +181,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		if (STYLE.equals(attribute)) {
 			StringBuilder styleBuilder = new StringBuilder();
 			if (attributes.containsKey(STYLE)) {
-				styleBuilder.append(stringify(attributes.get(STYLE)));
+				styleBuilder.append(stringify(attributes.get(STYLE), 0));
 			}
 			for (Entry<String, Object> se: styles.entrySet()) {
 				if (styleBuilder.length()>0 && !styleBuilder.toString().endsWith(";")) {
 					styleBuilder.append(";");
 				}
-				styleBuilder.append(se.getKey()+":"+stringify(se.getValue()));
+				styleBuilder.append(se.getKey()+":"+stringify(se.getValue(), 0));
 			}
 			return styleBuilder.toString();
 		}
@@ -230,8 +252,11 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 
 	private String comment;
 	
-	protected String renderComment() {
-		return comment==null || comment.trim().length()==0 ? "" : "<!-- "+comment+" -->";
+	protected StringBuilder renderComment(int indent) {
+		if (comment==null || comment.trim().length()==0) {
+			return new StringBuilder();
+		}
+		return indent(indent).append("<!-- "+comment+" -->");
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -243,6 +268,12 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 		}
 		return (T) this;
+	}
+	
+	protected void removeClass(Object... clazz) {
+		for (Object clz: clazz) {
+			classes.remove(clz);
+		}
 	}
 	
 	/**
@@ -276,6 +307,10 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			close(style);
 		}	
 		close(remoteContent);
+		
+		for (Object c: getContent()) {
+			close(c);
+		}
 	}
 
 	@Override
@@ -886,6 +921,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	 */
 	public static String stringify(
 			Object content, 
+			int indent,
 			HTMLFactory factory,
 			Producer.Adapter producerAdapter, 
 			FactoryProducer.Adapter factoryProducerAdapter) {
@@ -899,29 +935,29 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 			
 			if (content instanceof Producer) {
-				return stringify(((Producer) content).produce(), factory, producerAdapter, factoryProducerAdapter);
+				return stringify(((Producer) content).produce(indent), indent, factory, producerAdapter, factoryProducerAdapter);
 			}
 			
 			if (content instanceof FactoryProducer) {
-				return stringify(((FactoryProducer) content).produce(factory), factory, producerAdapter, factoryProducerAdapter);
+				return stringify(((FactoryProducer) content).produce(factory, indent), indent, factory, producerAdapter, factoryProducerAdapter);
 			}
 			
 			if (content!=null && producerAdapter!=null) {
 				Producer producer = producerAdapter.asProducer(content);
 				if (producer!=null) {
-					return stringify(producer, factory, producerAdapter, factoryProducerAdapter);
+					return stringify(producer, indent, factory, producerAdapter, factoryProducerAdapter);
 				}
 			}
 			
 			if (content!=null && factoryProducerAdapter!=null) {
 				FactoryProducer factoryProducer = factoryProducerAdapter.asFactoryProducer(content);
 				if (factoryProducer!=null) {
-					return stringify(factoryProducer, factory, producerAdapter, factoryProducerAdapter);
+					return stringify(factoryProducer, indent, factory, producerAdapter, factoryProducerAdapter);
 				}
 			}
 			
 			if (content instanceof InputStream) {
-				return stringify(new InputStreamReader((InputStream) content), factory, producerAdapter, factoryProducerAdapter);
+				return stringify(new InputStreamReader((InputStream) content), indent, factory, producerAdapter, factoryProducerAdapter);
 			}
 			if (content instanceof Reader) {
 				StringWriter sw = new StringWriter();
@@ -934,7 +970,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 			
 			if (content instanceof URL) {
-				return stringify(((URL) content).openStream(), factory, producerAdapter, factoryProducerAdapter);
+				return stringify(((URL) content).openStream(), indent, factory, producerAdapter, factoryProducerAdapter);
 			}
 	
 			return content.toString();
@@ -945,16 +981,17 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		}
 	}
 	
-	public static String stringify(Object content, HTMLFactory factory) {
+	public static String stringify(Object content, int indent, HTMLFactory factory) {
 		return stringify(
 				content,
+				indent,
 				factory,
 				factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getProducerAdapter() : null,
 				factory instanceof AbstractHTMLFactory ? ((AbstractHTMLFactory) factory).getFactoryProducerAdapter() : null);
 	}
 	
-	protected String stringify(Object content) {
-		return stringify(content, factory);
+	protected String stringify(Object content, int indent) {
+		return stringify(content, indent, factory);
 	}
 	
 	/**
@@ -962,8 +999,66 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	 */
 	@Override
 	public String toString() {
-		return stringify(produce());
+		return stringify(produce(0), 0);
 	}
+	
+	public static StringBuilder indent(StringBuilder stringBuilder, int indent) {
+		stringBuilder.append(System.lineSeparator());
+		for (int i=0; i<indent; ++i) {
+			stringBuilder.append("  ");
+		}
+		return stringBuilder;
+	}
+	
+	public static StringBuilder indent(int indent) {
+		return indent(new StringBuilder(), indent);
+	}
+	
+	protected List<Object> content = new ArrayList<>();	
+	
+	protected List<Object> getContent() {
+		return content;
+	}
+	
+	protected String tagName;
+	
+	protected String getTagName() {
+		return tagName;
+	}
+	
+	@Override
+	public String produce(int indent) {		
+		List<Object> theContent = getContent();
+		if (theContent.isEmpty()) {
+			return indent(renderComment(indent), indent).append("<"+getTagName()+attributes()+"/>").toString();
+		}
+		StringBuilder sb = indent(renderComment(indent), indent).append("<").append(getTagName()).append(attributes()).append(">");
+		boolean hasNonUIElementContent = false;
+		for (Object c: theContent) {
+			sb.append(stringify(c, indent+1));
+			if (!(c instanceof UIElement)) {
+				hasNonUIElementContent = true;
+			}
+		}
+		if (!hasNonUIElementContent) {
+			indent(sb, indent);
+		}
+		return sb.append("</").append(getTagName()).append(">").append(genLoadRemoteContentScript()).toString();
+	}
+
+	/**
+	 * Method to add content, make public in container elements.
+	 * @param content
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected T content(Object... content) {
+		for (Object c: content) {
+			this.content.add(c);
+		}
+		return (T) this;
+	}
+	
 	
 }
 

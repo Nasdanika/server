@@ -1,31 +1,50 @@
 package org.nasdanika.html.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement;
 
 class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
-	private class Item implements AutoCloseable {
-		Object title;
-		Object[] content;
-		Style style;
-		private boolean initial;
-		private Object location;
+	private class Item extends UIElementImpl<Item> {
 		
-		Item(Object title, Object[] content, Object location, Style style, boolean initial) {
-			super();
-			this.title = title;
-			this.content = content;
-			this.location = location;
-			this.style = style;
-			this.initial = initial;
+		Item(Object title, Object[] itemContent, Object location, Style style, boolean initial) {
+			super(AccordionImpl.this.factory, "div");
+			addClass("panel");
+			addClass("panel-"+effectiveStyle(style).name().toLowerCase());
+			String id = factory.nextId()+"_collapse";
+			
+			Tag titleLink = factory.tag(TagName.a, title)
+					.attribute("data-toggle", "collapse")
+					.attribute("data-parent", "#"+AccordionImpl.this.getId())
+					.attribute("href", "#"+id+"_collapse")
+					.attribute("aria-expanded", initial)
+					.attribute("aria-controls", id+"_collapse");
+			
+			Tag titleHeader = factory.tag(TagName.h4, titleLink).addClass("panel-title");
+			this.content.add(factory.div(titleHeader).addClass("panel-heading").attribute("role", "tab").id(id+"_heading"));
+			
+			Tag body = factory.div(itemContent)
+					.id(id+"_panel_body")
+					.addClass("panel-body");
+			
+			Tag contentDiv = factory.div(body)
+					.id(id+"_collapse")
+					.addClass("panel-collapse")
+					.addClass("collapse");
+			
+			if (initial) {
+				contentDiv.addClass("in");
+			}
+			
+			if (location!=null) {
+				content.add(factory.tag(TagName.script, "nsdLoad(\"#"+id+"_panel_body\", \""+location+"\");"));
+			}					
 		}
 		
-		private Style getStyle() {
+		private Style effectiveStyle(Style style) {
 			if (style!=null) {
 				return style;
 			}
@@ -37,84 +56,24 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 			return Style.DEFAULT;
 		}
 		
-		@Override
-		public String toString() {
-			String id = factory.nextId()+"_collapse";
-			StringBuilder ret = new StringBuilder();
-			ret.append("<div class=\"panel panel-"+getStyle().name().toLowerCase()+"\">");
-				ret.append("<div class=\"panel-heading\">");
-					ret.append("<h4 class=\"panel-title\">");
-						ret.append("<a data-toggle=\"collapse\" data-parent=\"#"+AccordionImpl.this.getId()+"\" href=\"#"+id+"\">");
-							ret.append(AccordionImpl.this.stringify(title));
-						ret.append("</a>");
-					ret.append("</h4>");
-				ret.append("</div>");
-			
-				ret.append("<div id=\""+id+"\" class=\"panel-collapse collapse");
-				if (initial) {
-					ret.append(" in");
-				}
-				ret.append("\">");
-					String bodyId = factory.nextId()+"_panel_body";
-					ret.append("<div class=\"panel-body\">");
-						if (content!=null) {
-							for (Object o: content) {
-								if (o!=null) {
-									ret.append(AccordionImpl.this.stringify(o));
-								}
-							}
-						} 
-					ret.append("</div>");
-					if (location!=null) {
-						ret.append(factory.tag(TagName.script, "nsdLoad(\"#"+bodyId+"\", \""+location+"\");"));
-					}					
-				ret.append("</div>");												
-			ret.append("</div>");				
-			return ret.toString();
-		}
-
-		@Override
-		public void close() throws Exception {
-			UIElementImpl.close(title);
-			UIElementImpl.close(content);
-			UIElementImpl.close(location);
-		}
-		
 	}
 	
-	private List<Item> items = new ArrayList<>();
 	private Style style;
 
 	public AccordionImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, "div");
 		id(factory.nextId()+"_accordion");
 		addClass("panel-group");
+		attribute("role", "tablist");
 	}
 	
 	@Override
-	public Accordion item(Object title, Style style, boolean initial, Object content) {
-		items.add(new Item(title, new Object[] {content}, null, style, initial));
-		return this;
+	public UIElement<?> item(Object title, Style style, boolean initial, Object itemContent) {
+		Item item = new Item(title, new Object[] {itemContent}, null, style, initial);
+		this.content.add(item);
+		return item;
 	}
-	
-	@Override
-	public Object produce() {
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
-		for (Item item: items) {
-			sb.append(stringify(item));
-		}
-		sb.append("</div>");
-		return sb.append(genLoadRemoteContentScript()).toString();
-	}
-
-	@Override
-	public void close() throws Exception {
-		super.close();
-		for (Item item: items) {
-			item.close();
-		}		
-	}
-	
+		
 	@Override
 	public Accordion style(org.nasdanika.html.UIElement.Style style) {
 		this.style = style;
@@ -122,25 +81,27 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 
 	@Override
-	public Accordion item(Object name, Object... content) {
-		items.add(new Item(name, content, null, style, items.isEmpty()));
-		return this;
+	public UIElement<?> item(Object name, Object... itemContent) {
+		Item item = new Item(name, itemContent, null, style, this.content.isEmpty());
+		this.content.add(item);
+		return item;
 	}
 
 	@Override
-	public Accordion ajaxItem(Object name, Object location) {
+	public UIElement<?> ajaxItem(Object name, Object location) {
 		return ajaxItem(name, null, location);
 	}
 
 	@Override
 	public boolean isEmpty() {
-		return items.isEmpty();
+		return content.isEmpty();
 	}
 
 	@Override
-	public Accordion ajaxItem(Object title,	Style style, Object location) {
-		items.add(new Item(title, null, location, style, items.isEmpty()));
-		return this;
+	public UIElement<?> ajaxItem(Object title,	Style style, Object location) {
+		Item item = new Item(title, null, location, style, this.content.isEmpty());
+		this.content.add(item);
+		return item;
 	}
 
 }

@@ -5,16 +5,22 @@ import java.util.List;
 
 import org.nasdanika.html.Button;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class ButtonImpl extends UIElementImpl<Button> implements Button {
 	
-	private List<Object> content = new ArrayList<>();
 	private boolean isInputGroupButton;
 	private Object forEachExpresion;
 
 	ButtonImpl(HTMLFactory factory, boolean isInputGroupButton, Object... content) {
-		super(factory);
-		content(content);
+		super(factory, TagName.button);
+		addClass("btn");
+		for (Object c: content) {
+			if (c!=null) {
+				this.content.add(c);
+			}
+		}
 		this.isInputGroupButton = isInputGroupButton;
 	}
 	
@@ -28,9 +34,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 
 		@Override
 		public void close() throws Exception {
-			if (content instanceof AutoCloseable) {
-				((AutoCloseable) content).close();
-			}			
+			UIElementImpl.close(content);
 		}
 		
 	}
@@ -60,14 +64,6 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	}
 	
 	private List<DropdownItem> items = new ArrayList<>();
-	private Style style = Style.DEFAULT;
-	private Size size = Size.DEFAULT;
-	private boolean block;
-	private boolean active;
-	private boolean disabled;
-	private boolean split;
-	private boolean dropup;
-	private Type type = Type.BUTTON;
 	
 	@Override
 	public Button item(Object... item) {
@@ -88,21 +84,46 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		items.add(new Header(header));
 		return this;
 	}
+		
+	private Style style = Style.DEFAULT;
+	private Size size = Size.DEFAULT;
+	private boolean split;
+	private boolean dropup;
+	private boolean active;
+	private boolean block;	
+	
 
 	@Override
 	public Button style(Style style) {
+		if (this.style!=null) {
+			removeClass("btn-"+this.style.name().toLowerCase());
+		}
 		this.style = style;
+		if (style!=null) {
+			addClass("btn-"+style.name().toLowerCase());
+		}
 		return this;
 	}
 
 	@Override
 	public Button size(Size size) {
+		if (this.size!=null && this.size!=Size.DEFAULT) {
+			removeClass("btn-"+this.size.code);
+		}
 		this.size = size;
+		if (size!=null && size!=Size.DEFAULT) {
+			addClass("btn-"+this.size.code);
+		}		
 		return this;
 	}
 
 	@Override
 	public Button block(boolean block) {
+		if (block) {
+			addClass("btn-block");
+		} else {
+			removeClass("btn-block");
+		}
 		this.block = block;
 		return this;
 	}
@@ -114,6 +135,11 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 
 	@Override
 	public Button active(boolean active) {
+		if (active) {
+			addClass("active");
+		} else {
+			removeClass("active");
+		}
 		this.active = active;
 		return this;
 	}
@@ -125,7 +151,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 
 	@Override
 	public Button disabled(boolean disabled) {
-		this.disabled = disabled;
+		attribute("disabled", disabled ? "disabled" : null);
 		return this;
 	}
 
@@ -158,149 +184,96 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	
 	@Override
 	public Button type(Type type) {
-		this.type = type;
+		attribute("type", type.name().toLowerCase());
 		return this;
 	}
 	
+	private boolean splitAugmented;
+	
 	@Override
-	public String produce() {
+	public String produce(int indent) {
 		// Simple button - no items
 		if (items.isEmpty()) {
-			StringBuilder sb = new StringBuilder(renderComment()).append("<button type=\"");
-			sb.append(type.name().toLowerCase());
-			sb.append("\" class=\"btn");
-			buttonClasses(sb);
-			
-			String classMerge = merge("class");
-			if (classMerge.length()>0) {
-				sb.append(" ");
-				sb.append(classMerge);
-			}
-			
-			sb.append("\"");
-			if (disabled) {
-				sb.append(" disabled=\"disabled\"");
-			}
-			sb.append(attributes("class", "type", "disabled"));
-			sb.append(">");
-			for (Object c: content) {
-				sb.append(stringify(c));
-			}
-			sb.append("</button>");
-			
 			if (isInputGroupButton) {
-				return "<span class=\"input-group-btn\">"+sb+"</span>";
+				return stringify(factory.span(this).addClass("input-group-btn"), indent);
 			}
-			
-			return sb.append(genLoadRemoteContentScript()).toString();
-		}				
+			return super.produce(indent);
+		}		
+		
+		Tag wrapperDiv = factory.div();
 						
-		// Dropdown button 
-		StringBuilder sb = new StringBuilder("<div class=\"");
 		if (isInputGroupButton) {
-			sb.append("input-group-btn");
+			wrapperDiv.addClass("input-group-btn");
 		} else {
-			sb.append("btn-group");
+			wrapperDiv.addClass("btn-group");
 		}
 		if (dropup) {
-			sb.append(" dropup");
+			wrapperDiv.addClass("dropup");
 		}
-		sb.append("\">");
-		sb.append("<button type=\"");
-		sb.append(type.name().toLowerCase());
-		sb.append("\" class=\"btn");
-		buttonClasses(sb);
-		if (!split) {
-			sb.append(" dropdown-toggle");
+		wrapperDiv.content(this);
+		if (!split && !splitAugmented) {
+			splitAugmented = true;
+			addClass("dropdown-toggle");
+			attribute("data-toggle", "dropdown");
+			content(factory.span("").addClass("caret"));
 		}
-		
-		String classMerge = merge("class");
-		if (classMerge.length()>0) {
-			sb.append(" ");
-			sb.append(classMerge);
-		}
-		
-		sb.append("\"");
-		if (disabled) {
-			sb.append(" disabled=\"disabled\"");
-		}
-		
-		if (!split) {
-			sb.append("data-toggle=\"dropdown\"");
-		}
-		
-		sb.append(attributes("class", "type", "disabled", "data-toggle"));
-		sb.append(">");
-		for (Object c: content) {
-			sb.append(stringify(c));
-		}
-		if (!split) {
-			sb.append(" <span class=\"caret\"></span>");
-		}
-		sb.append("</button>");
 		
 		if (split) {
-			sb.append("<button type=\"button\" class=\"btn");
-			buttonClasses(sb);
-			sb.append(" dropdown-toggle\" data-toggle=\"dropdown\">");
-			
-			sb.append("<span class=\"caret\"></span>");
-			sb.append("<span class=\"sr-only\">Toggle Dropdown</span>");
-			sb.append("</button>");
+			Tag dropDownButton = factory.tag(TagName.button, 
+					factory.span("").addClass("caret"),
+					factory.span("Toggle Dropdown").addClass("sr-only"))
+					.attribute("type", "button")
+					.attribute("data-toggle", "dropdown")
+					.addClass("btn")
+					.addClass("dropdown-toggle");
+			buttonClasses(dropDownButton);
+			wrapperDiv.content(dropDownButton);
 		}
 		
-		sb.append("<ul class=\"dropdown-menu\" role=\"menu\"");
+		Tag list = factory.tag(TagName.ul).addClass("dropdown-menu").attribute("role", "menu");
+		
 		if (forEachExpresion!=null && forEachExpresion.toString().trim().length()>0) {
-			sb.append(" data-bind=\"foreach: "+forEachExpresion+"\"");
+			list.knockout().foreach(forEachExpresion);
 		}
-		sb.append(">");
+		
 		for (DropdownItem item: items) {
 			if (item instanceof Item) {
-				sb.append("<li>");
-				sb.append(stringify(((Item) item).content));
-				sb.append("</li>");
+				list.content(factory.tag(TagName.li, item.content));
 			} else if (item instanceof Divider) {
-				sb.append("<li class=\"divider\"></li>");
+				list.content(factory.tag(TagName.li).addClass("divider"));
 			} else {
-				sb.append("<li class=\"dropdown-header\">");
-				sb.append(stringify(((Header) item).content));
-				sb.append("</li>");
+				list.content(factory.tag(TagName.li, item.content).addClass("dropdown-header"));
 			}
 		}
-		sb.append("</ul>");
-		sb.append("</div>");		
 		
-		return sb.toString();
+		return stringify(wrapperDiv, indent);
 	}
-
-	private void buttonClasses(StringBuilder sb) {
-		sb.append(" btn-"+style.name().toLowerCase());
+	
+	private void buttonClasses(Tag button) {
+		button.addClass("btn-"+style.name().toLowerCase());
 		if (size!=Size.DEFAULT) {
-			sb.append(" btn-"+size.code);
+			button.addClass("btn-"+size.code);
 		}
 		if (block) {
-			sb.append(" btn-block");
+			button.addClass("btn-block");
 		}
 		
 		if (active) {
-			sb.append(" active");
+			button.addClass("active");
 		}
 	}
+
 	
 	@Override
 	public void close() throws Exception {
 		super.close();
-		close(content);
 		close(items);
 		close(forEachExpresion);
 	}
 	
 	@Override
 	public Button content(Object... content) {
-		for (Object c: content) {
-			this.content.add(c);
-		}
-		return this;
+		return super.content(content);
 	}
 
 	@Override

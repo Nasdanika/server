@@ -6,24 +6,22 @@ import java.util.List;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup {
 	
-	private List<Button> buttons = new ArrayList<>();
-	private boolean vertical;
-	private boolean justified;
 	private org.nasdanika.html.UIElement.Size size;
+	private boolean justified;
 
 	ButtonGroupImpl(HTMLFactory factory, Button... buttons) {
-		super(factory);
+		super(factory, TagName.div);
 		add(buttons);
 	}
 
 	@Override
-	public Button button(Object... content) {
-		Button ret = factory.button(content);
-		buttons.add(ret);
+	public Button button(Object... buttonContent) {
+		Button ret = factory.button(buttonContent);
+		this.content.add(ret);
 		return ret;
 	}
 
@@ -31,7 +29,7 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 	public ButtonGroup add(Button... buttons) {
 		for (Button button: buttons) {
 			if (button!=null) {
-				this.buttons.add(button);
+				this.content.add(button);
 			}
 		}
 		return this;
@@ -39,12 +37,18 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 
 	@Override
 	public boolean isEmpty() {
-		return buttons.isEmpty();
+		return content.isEmpty();
 	}
 
 	@Override
 	public ButtonGroup size(org.nasdanika.html.UIElement.Size size) {
+		if (this.size!=null && !Size.DEFAULT.equals(this.size)) {
+			removeClass("btn-group-"+this.size.code);
+		}
 		this.size = size;
+		if (size!=null && !Size.DEFAULT.equals(size)) {
+			addClass("btn-group-"+size.code);
+		}
 		return this;
 	}
 
@@ -55,7 +59,13 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 
 	@Override
 	public ButtonGroup vertical(boolean vertical) {
-		this.vertical = vertical;
+		if (vertical) {
+			removeClass("btn-group");
+			addClass("btn-group-vertical");
+		} else {
+			removeClass("btn-group-vertical");
+			addClass("btn-group");
+		}
 		return this;
 	}
 
@@ -67,30 +77,27 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 	@Override
 	public ButtonGroup justified(boolean justified) {
 		this.justified = justified;
+		if (justified) {
+			addClass("btn-group-justified");
+		} else {
+			removeClass("btn-group-justified");			
+		}
 		return this;
 	}
-	
-	@Override
-	public String produce() {
-		Tag div = factory.div();
-		((UIElementImpl<?>) div).merge(this);
-		if (vertical) {
-			div.addClass("btn-group-vertical");
-		} else {
-			div.addClass("btn-group");
-		}
-		if (justified) {
-			div.addClass("btn-group-justified");
-		}
-		if (size!=null && !Size.DEFAULT.equals(size)) {
-			div.addClass("btn-group-"+size.code);
-		}
-		
-		for (Button button: buttons) {
-			div.content(justified && button.isDropdownEmpty() ? factory.div(button).addClass("btn-group") : button); // Role menu - will it hurt?
-		}
 
-		return stringify(div.produce());
+	@Override
+	protected List<Object> getContent() {
+		if (justified) {
+			List<Object> ret = new ArrayList<>();
+			for (Object c: super.getContent()) {
+				if (c instanceof Button && ((Button) c).isDropdownEmpty()) {
+					ret.add(factory.div(c).addClass("btn-group"));
+				} else {
+					ret.add(c);
+				}
+			}
+		}
+		return super.getContent();
 	}
 
 }

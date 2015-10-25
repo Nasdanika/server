@@ -11,10 +11,8 @@ import org.nasdanika.html.Tag.TagName;
 class SelectImpl extends InputBaseImpl<Select> implements Select {
 	
 	public SelectImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, TagName.select);
 	}
-	
-	private List<Object> items = new ArrayList<>();
 
 	@Override
 	public OptionGroup optionGroup(final String label) {
@@ -24,16 +22,15 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 			private boolean disabled;
 
 			@Override
-			public String produce() {
-				StringBuilder sb = new StringBuilder("<optgroup label=\"").append(label).append("\"");
+			public Object produce(int indent) {
+				Tag optGroup = factory.tag(TagName.optgroup).attribute("label", label);
 				if (disabled) {
-					sb.append(" disabled=\"disabled\"");
+					optGroup.attribute("disabled", "disabled");
 				}
-				sb.append(">");
 				for (Tag option: options) {
-					sb.append(stringify(option));
+					optGroup.content(option);
 				}
-				return sb.append("</optgroup>").toString();
+				return optGroup.produce(indent);
 			}
 						
 			/**
@@ -41,7 +38,7 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 			 */
 			@Override
 			public String toString() {
-				return produce();
+				return stringify(this, 0);
 			}			
 
 			@Override
@@ -73,19 +70,19 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 				return this;
 			}
 		};
-		items.add(ret);
+		this.content.add(ret);
 		return ret;
 	}
 	
 	@Override
-	public Tag option(String value, boolean selected, boolean disabled, Object... content) {
-		Tag option = factory.tag(TagName.option, content).attribute("value", value);
+	public Tag option(String value, boolean selected, boolean disabled, Object... optionContent) {
+		Tag option = factory.tag(TagName.option, optionContent).attribute("value", value);
 		if (selected) {
 			option.attribute("selected", "selected");
 		} else if (disabled) {
 			option.attribute("disabled", "disabled");
 		}
-		items.add(option);
+		this.content.add(option);
 		return option;
 	}
 
@@ -95,21 +92,6 @@ class SelectImpl extends InputBaseImpl<Select> implements Select {
 		return this;
 	}
 	
-	@Override
-	public String produce() {
-		StringBuilder sb = new StringBuilder(renderComment()).append("<select").append(attributes()).append(">");
-		for (Object item: items) {
-			sb.append(stringify(item));
-		}
-		return sb.append("</select>").append(genLoadRemoteContentScript()).toString();
-	}
-
-	@Override
-	public void close() throws Exception {
-		super.close();
-		close(items);	
-	}
-
 	@Override
 	public Select multiple() {
 		return multiple(true);

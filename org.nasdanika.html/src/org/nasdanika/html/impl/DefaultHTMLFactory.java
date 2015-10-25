@@ -17,7 +17,6 @@ import org.nasdanika.html.FontAwesome.Directional;
 import org.nasdanika.html.FontAwesome.Size;
 import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.FontAwesome.Stack;
-import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.KnockoutVirtualElement;
@@ -29,6 +28,7 @@ import org.nasdanika.html.Pills;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.BootstrapColor;
@@ -117,17 +117,17 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 					
 					@Override
 					public String getTitle() {
-						return title==null ? null : UIElementImpl.stringify(title, DefaultHTMLFactory.this);
+						return title==null ? null : UIElementImpl.stringify(title, 0, DefaultHTMLFactory.this);
 					}
 					
 					@Override
 					public String getInitialRoute() {
-						return initialRoute == null ? null : UIElementImpl.stringify(initialRoute, DefaultHTMLFactory.this);
+						return initialRoute == null ? null : UIElementImpl.stringify(initialRoute, 0, DefaultHTMLFactory.this);
 					}
 					
 					@Override
 					public String getHead() {
-						return head == null ? "" : UIElementImpl.stringify(head, DefaultHTMLFactory.this);
+						return head == null ? "" : UIElementImpl.stringify(head, 0, DefaultHTMLFactory.this);
 					}
 					
 					@Override
@@ -135,7 +135,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 						StringBuilder bodyBuilder = new StringBuilder();
 						for (Object b: body) {
 							if (b!=null) {
-								bodyBuilder.append(UIElementImpl.stringify(b, DefaultHTMLFactory.this));
+								bodyBuilder.append(UIElementImpl.stringify(b, 0, DefaultHTMLFactory.this));
 							}
 						}
 						return bodyBuilder.toString();
@@ -552,4 +552,5 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	public KnockoutVirtualElement knockoutVirtualElement(Object... content) {
 		return new KnockoutVirtualElementImpl(this, content);
 	}
+	
 }

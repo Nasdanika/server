@@ -1,5 +1,7 @@
 package org.nasdanika.html.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -19,7 +21,7 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 	private StringBuilder initScript = new StringBuilder();
 
 	InputGroupImpl(HTMLFactory factory, Object control) {
-		super(factory);
+		super(factory, TagName.div);
 		this.control = control;
 		if (control instanceof InputBase) {
 			((InputBase<?>) control).addClass("form-control");
@@ -70,29 +72,30 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 	}
 	
 	@Override
-	public String produce() {
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div");
-		sb.append(attributes());
-		sb.append(">");
+	protected List<Object> getContent() {
+		List<Object> ret = new ArrayList<>();
 		if (leftAddOn instanceof Button) {
-			sb.append(stringify(leftAddOn));
+			ret.add(leftAddOn);
 		} else if (leftAddOn!=null) {
-			sb.append(stringify(factory.span(leftAddOn).addClass("input-group-addon")));
+			ret.add(factory.span(leftAddOn).addClass("input-group-addon"));
 		}
 		
-		sb.append(stringify(control));
+		ret.add(control);
 
 		if (rightAddOn instanceof Button) {
-			sb.append(stringify(rightAddOn));
+			ret.add(rightAddOn);
 		} else if (rightAddOn!=null) {
-			sb.append(stringify(factory.span(rightAddOn).addClass("input-group-addon")));
+			ret.add(factory.span(rightAddOn).addClass("input-group-addon"));
 		} 	
-		sb.append("</div>");
-		if (initScript.length()>0) {
-			sb.append(stringify(factory.tag(TagName.script, initScript)));
+		return ret;		
+	}
+	
+	@Override
+	public String produce(int indent) {
+		if (initScript.length()==0) {
+			return super.produce(indent);
 		}
-		return sb.append(genLoadRemoteContentScript()).toString();
-		
+		return super.produce(indent) + stringify(factory.tag(TagName.script, initScript), indent);
 	}
 
 	@Override

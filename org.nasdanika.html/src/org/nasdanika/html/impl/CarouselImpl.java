@@ -68,7 +68,8 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 	}
 
 	public CarouselImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, "div");
+		id(factory.nextId()+"_carousel");
 		addClass("carousel", "slide");
 	}
 
@@ -94,11 +95,9 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 	}
 	
 	@Override
-	public String produce() {		
-		if (getId()==null) {
-			id(factory.nextId());
-		}
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
+	protected List<Object> getContent() {
+		List<Object> ret = new ArrayList<>();
+		
 		Tag ol = factory.tag(TagName.ol).addClass("carousel-indicators");
 		if (indicatorsBootstrapBackground!=null) {
 			ol.style("background", indicatorsBootstrapBackground.code);
@@ -116,7 +115,7 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 			
 			ol.content(li);
 		}
-		sb.append(stringify(ol));
+		ret.add(ol);
 		
 		Tag innerDiv = factory.div().addClass("carousel-inner");
 		for (int i=0; i<slides.size(); ++i) {
@@ -136,21 +135,21 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 			}
 			innerDiv.content(item);
 		}
-		sb.append(innerDiv);
+		ret.add(innerDiv);
 		
-		sb.append(factory.tag(TagName.a, factory.span("").addClass("glyphicon", "glyphicon-chevron-left"))
+		ret.add(factory.tag(TagName.a, factory.span("").addClass("glyphicon", "glyphicon-chevron-left"))
 				.addClass("left", "carousel-control")
 				.attribute("href", "#"+getId())
 				.attribute("role", "button")
 				.attribute("data-slide", "prev"));
 		
-		sb.append(factory.tag(TagName.a, factory.span("").addClass("glyphicon", "glyphicon-chevron-right"))
+		ret.add(factory.tag(TagName.a, factory.span("").addClass("glyphicon", "glyphicon-chevron-right"))
 				.addClass("right", "carousel-control")
 				.attribute("href", "#"+getId())
 				.attribute("role", "button")
 				.attribute("data-slide", "next"));
 		
-		return sb.append("</div>").toString();
+		return ret;
 	}
 
 	@Override

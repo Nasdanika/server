@@ -1,6 +1,6 @@
 package org.nasdanika.html;
 
-public interface Pills extends UIElement<Pills>, NamedItemsContainer<Pills> {
+public interface Pills extends UIElement<Pills>, NamedItemsContainer<UIElement<?>, Pills> {
 	
 	Pills stacked();
 	

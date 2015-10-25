@@ -1,8 +1,5 @@
 package org.nasdanika.html.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nasdanika.html.Button;
 import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.ButtonToolbar;
@@ -10,10 +7,8 @@ import org.nasdanika.html.HTMLFactory;
 
 class ButtonToolbarImpl extends UIElementImpl<ButtonToolbar> implements ButtonToolbar {
 	
-	private List<ButtonGroup> buttonGroups = new ArrayList<>();
-	
 	ButtonToolbarImpl(HTMLFactory factory, ButtonGroup... buttonGroups) {
-		super(factory);
+		super(factory, "div");
 		addClass("btn-toolbar");
 		attribute("role", "toolbar");
 		add(buttonGroups);
@@ -22,7 +17,7 @@ class ButtonToolbarImpl extends UIElementImpl<ButtonToolbar> implements ButtonTo
 	@Override
 	public ButtonGroup buttonGroup(Button... buttons) {
 		ButtonGroup ret = factory.buttonGroup(buttons);
-		buttonGroups.add(ret);
+		content.add(ret);
 		return ret;
 	}
 
@@ -30,7 +25,7 @@ class ButtonToolbarImpl extends UIElementImpl<ButtonToolbar> implements ButtonTo
 	public ButtonToolbar add(ButtonGroup... buttonGroups) {
 		for (ButtonGroup g: buttonGroups) {
 			if (g!=null) {
-				this.buttonGroups.add(g);
+				content.add(g);
 			}
 		}
 		return this;
@@ -38,17 +33,7 @@ class ButtonToolbarImpl extends UIElementImpl<ButtonToolbar> implements ButtonTo
 
 	@Override
 	public boolean isEmpty() {
-		return buttonGroups.isEmpty();
+		return content.isEmpty();
 	}
-		
-	@Override
-	public String produce() {		
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
-		for (ButtonGroup g: buttonGroups) {
-			sb.append(stringify(g));
-		}
-		return sb.append("</").append("div").append(">").append(genLoadRemoteContentScript()).toString();
-	}
-	
 
 }

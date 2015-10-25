@@ -8,11 +8,12 @@ import java.util.Map.Entry;
 
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag.TagName;
 
 class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements ApplicationPanel {
 
 	ApplicationPanelImpl(HTMLFactory factory) {
-		super(factory);
+		super(factory, (String) null);
 	}
 
 	private List<Object> navigation = new ArrayList<>();
@@ -53,7 +54,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 		private List<Object> content = new ArrayList<>();
 		
 		ContentPanelImpl(HTMLFactory factory, Object... content) {
-			super(factory);
+			super(factory, TagName.div);
 			for (Object c: content) {
 				this.content.add(c);
 			}
@@ -66,34 +67,20 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 		}
 		
 		@Override
-		public Object produce() {
-			StringBuilder ret = new StringBuilder(renderComment()).append("<div");
-			if (sizeMap.isEmpty()) {
-				// plain div
-				ret.append(attributes());
-			} else {
-				ret.append(" class=\"");
-				for (Entry<DeviceSize, Integer> se: sizeMap.entrySet()) {
-					ret.append("col-"+se.getKey().code+"-"+se.getValue()).append(" ");
+		protected StringBuilder classes() {
+			StringBuilder ret = super.classes();
+			for (Entry<DeviceSize, Integer> se: sizeMap.entrySet()) {
+				if (ret.length()>0) {
+					ret.append(" ");
 				}
-				ret.append(merge("class")).append("\"").append(attributes("class"));
-			}
-			
-			ret.append(">");			
-
-			for (Object c: content) {
-				ret.append(stringify(c));
-			}
-			
-			return ret.append("</div>").append(genLoadRemoteContentScript()).toString();
+				ret.append("col-"+se.getKey().code+"-"+se.getValue());
+			}			
+			return ret;
 		}
 
 		@Override
 		public ContentPanel content(Object... content) {
-			for (Object c: content) {
-				this.content.add(c);
-			}
-			return this;
+			return super.content(content);
 		}
 
 		@Override
@@ -143,8 +130,8 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	private ApplicationPanelRenderer applicationPanelRenderer = new ApplicationPanelRenderer();
 	
 	@Override
-	public Object produce() {
-		return renderComment()+applicationPanelRenderer.generate(new ApplicationPanelConfig() {
+	public String produce(final int indent) {
+		return renderComment(indent)+applicationPanelRenderer.generate(new ApplicationPanelConfig() {
 			
 			@Override
 			public int getWidth() {
@@ -160,7 +147,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public String getNavigation() {
 				StringBuilder sb = new StringBuilder();
 				for (Object o: navigation) {
-					sb.append(stringify(o));
+					sb.append(stringify(o, indent+1));
 				}
 				return sb.toString();
 			}
@@ -179,7 +166,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public String getHeader() {
 				StringBuilder sb = new StringBuilder();
 				for (Object o: header) {
-					sb.append(stringify(o));
+					sb.append(stringify(o, indent+1));
 				}
 				return sb.toString();
 			}
@@ -188,7 +175,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 			public String getFooter() {
 				StringBuilder sb = new StringBuilder();
 				for (Object o: footer) {
-					sb.append(stringify(o));
+					sb.append(stringify(o, indent+1));
 				}
 				return sb.toString();
 			}

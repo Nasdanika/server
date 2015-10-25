@@ -1,5 +1,8 @@
 package org.nasdanika.html.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
@@ -13,13 +16,13 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 	private Object label;
 	private Object controlId;
 	protected C control;
-	private boolean feedback;
 	private Status status;
 	private FormImpl form;
 	private Object helpText;
+	private boolean feedback;
 
 	FormGroupImpl(HTMLFactory factory, FormImpl form, Object label, Object controlId, C control, Object helpText) {
-		super(factory);
+		super(factory, TagName.div);
 		this.form = form;
 		this.label = label;
 		this.controlId = controlId;
@@ -35,6 +38,11 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 	@Override
 	public T feedback(boolean feedback) {
 		this.feedback = feedback;
+		if (feedback) {
+			addClass("has-feedback");
+		} else {
+			removeClass("has-feedback");
+		}
 		return (T) this;
 	}
 
@@ -46,19 +54,20 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public T status(Status status) {
+		if (this.status!=null) {
+			removeClass("has-"+this.status.name().toLowerCase());
+		}
 		this.status = status;
+		if (status!=null) {
+			addClass("has-"+status.name().toLowerCase());
+		}
+
 		return (T) this;
 	}
 	
 	@Override
-	public String produce() {
-		if (status!=null) {
-			addClass("has-"+status.name().toLowerCase());
-		}
-		if (feedback) {
-			addClass("has-feedback");
-		}
-		StringBuilder sb = new StringBuilder(renderComment()).append("<div").append(attributes()).append(">");
+	protected List<Object> getContent() {
+		List<Object> ret = new ArrayList<>();
 		if (label!=null) {
 			UIElement<?> labelTag = form.factory.tag(TagName.label, label).attribute("for", String.valueOf(controlId));
 			if (form.inline) {
@@ -68,18 +77,17 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 				labelTag.addClass("col-"+form.deviceSize.code+"-"+form.labelWidth);
 				labelTag.addClass("control-label");
 			}
-			sb.append(stringify(labelTag));
-			sb.append(" ");
+			ret.add(labelTag);
 		}
 		if (form.horizontal) {
-			UIElement<?> controlDiv = form.factory.div(stringify(control));
+			UIElement<?> controlDiv = form.factory.div(control);
 			controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
 			if (label==null) {
 				controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
 			}
-			sb.append(stringify(controlDiv));
+			ret.add(controlDiv);
 		} else {
-			sb.append(stringify(control));
+			ret.add(control);
 		}
 		if (feedback && status!=null) {
 			Tag feedbackSpan = null;
@@ -98,14 +106,13 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 			}
 			if (feedbackSpan!=null) {
 				feedbackSpan.addClass("form-control-feedback");
-				sb.append(stringify(feedbackSpan));
+				ret.add(feedbackSpan);
 			}
 		}
 		if (helpText!=null && !form.horizontal && !form.inline) {
-			sb.append(form.factory.tag(TagName.p, helpText).addClass("help-block"));			
+			ret.add(form.factory.tag(TagName.p, helpText).addClass("help-block"));			
 		}
-		sb.append("</div>");
-		return sb.append(genLoadRemoteContentScript()).toString();
+		return ret;
 	}
 
 	@Override

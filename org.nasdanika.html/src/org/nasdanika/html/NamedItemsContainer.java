@@ -1,10 +1,10 @@
 package org.nasdanika.html;
 
-public interface NamedItemsContainer<T extends NamedItemsContainer<?>> {
+public interface NamedItemsContainer<I, T extends NamedItemsContainer<I, ?>> {
 
-	T item(Object name, Object... content);
+	I item(Object name, Object... content);
 	
-	T ajaxItem(Object name, Object location);
+	I ajaxItem(Object name, Object location);
 	
 	boolean isEmpty();
 	

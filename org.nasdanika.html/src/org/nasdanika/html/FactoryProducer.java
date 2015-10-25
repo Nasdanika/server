@@ -22,6 +22,6 @@ public interface FactoryProducer {
 	 * Produces content.
 	 * @return Content.
 	 */
-	Object produce(HTMLFactory factory);
+	Object produce(HTMLFactory factory, int indent);
 
 }

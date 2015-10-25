@@ -12,6 +12,8 @@ import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.Producer;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
 
 class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<T>, Producer {
@@ -56,28 +58,21 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		content.add(new Producer() {
 			
 			@Override
-			public String produce() {
-				StringBuilder sb = new StringBuilder();
+			public Object produce(int indent) {
+				Tag tag;
 				if (inline) {
-					sb.append("<label class=\"checkbox-inline\">")
-							.append(FieldContainerImpl.this.stringify(checkboxControl))
-							.append(FieldContainerImpl.this.stringify(label)) 
-							.append("</label>");
+					tag = factory.tag(TagName.label, checkboxControl, label).addClass("checkbox-inline");
 				} else {
-					sb.append("<div class=\"checkbox\">") 
-							.append("<label>") 
-							.append(FieldContainerImpl.this.stringify(checkboxControl))
-							.append(FieldContainerImpl.this.stringify(label)) 
-							.append("</label>")
-							.append("</div>");
+					tag = factory.div(factory.tag(TagName.label, checkboxControl, label)).addClass("checkbox");
 				}
-				if (form.horizontal) {
-					UIElement<?> controlDiv = form.factory.div(sb);
-					controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
-					controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
-					return stringify(controlDiv);
+				if (!form.horizontal) {
+					return tag.produce(indent);				
 				}
-				return sb.toString();				
+				
+				UIElement<?> controlDiv = form.factory.div(tag);
+				controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
+				controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
+				return controlDiv.produce(indent);
 			}
 						
 			/**
@@ -85,7 +80,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 			 */
 			@Override
 			public String toString() {
-				return stringify(produce());
+				return stringify(produce(0), 0);
 			}
 			
 		});
@@ -98,28 +93,21 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		content.add(new Producer() {
 			
 			@Override
-			public String produce() {
-				StringBuilder sb = new StringBuilder();
+			public Object produce(int indent) {
+				Tag tag;
 				if (inline) {
-					sb.append("<label class=\"radio-inline\">")
-							.append(FieldContainerImpl.this.stringify(radioControl))
-							.append(FieldContainerImpl.this.stringify(label)) 
-							.append("</label>");
+					tag = factory.tag(TagName.label, radioControl, label).addClass("radio-inline");
 				} else {
-					sb.append("<div class=\"radio\">") 
-							.append("<label>") 
-							.append(FieldContainerImpl.this.stringify(radioControl))
-							.append(FieldContainerImpl.this.stringify(label)) 
-							.append("</label>")
-							.append("</div>");
+					tag = factory.div(factory.tag(TagName.label, radioControl, label)).addClass("radio");
 				}
-				if (form.horizontal) {
-					UIElement<?> controlDiv = form.factory.div(sb.toString());
-					controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
-					controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
-					return stringify(controlDiv);
+				if (!form.horizontal) {
+					return tag.produce(indent);
 				}
-				return sb.toString();				
+				
+				UIElement<?> controlDiv = form.factory.div(tag);
+				controlDiv.addClass("col-"+form.deviceSize.code+"-"+(12-form.labelWidth));
+				controlDiv.addClass("col-"+form.deviceSize.code+"-offset-"+form.labelWidth);
+				return controlDiv.produce(indent);
 			}
 						
 			/**
@@ -127,7 +115,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 			 */
 			@Override
 			public String toString() {
-				return stringify(produce());
+				return stringify(produce(0), 0);
 			}
 			
 		});
@@ -181,10 +169,10 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	}
 	
 	@Override
-	public String produce() {
+	public String produce(int indent) {
 		StringBuilder sb = new StringBuilder();
 		for (Object o: content) {
-			sb.append(stringify(o));
+			sb.append(stringify(o, indent));
 		}
 		return sb.toString();
 	}
@@ -198,8 +186,8 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		}
 	}
 	
-	protected String stringify(Object content) {
-		return UIElementImpl.stringify(content, factory);
+	protected String stringify(Object content, int indent) {
+		return UIElementImpl.stringify(content, indent, factory);
 	}
 	
 	/**
@@ -207,7 +195,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	 */
 	@Override
 	public String toString() {
-		return stringify(produce());
+		return produce(0);
 	}
 	
 }

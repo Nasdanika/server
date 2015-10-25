@@ -11,12 +11,9 @@ class TableImpl extends RowContainerImpl<Table> implements Table {
 	
 	TableImpl(HTMLFactory factory) {
 		super(factory, "table");
+		addClass("table");
 	}
 
-	private boolean bordered;
-	private boolean hover;
-	private boolean striped;
-	private boolean condensed;
 	private boolean responsive;
 
 	@Override
@@ -28,25 +25,41 @@ class TableImpl extends RowContainerImpl<Table> implements Table {
 
 	@Override
 	public Table bordered(boolean bordered) {
-		this.bordered = bordered;
+		if (bordered) {
+			addClass("table-bordered");
+		} else {
+			removeClass("table-bordered");
+		}
 		return this;
 	}
 
 	@Override
 	public Table hover(boolean hover) {
-		this.hover = hover;
+		if (hover) {
+			addClass("table-hover");
+		} else {
+			removeClass("table-hover");
+		}
 		return this;
 	}
 
 	@Override
 	public Table striped(boolean striped) {
-		this.striped = striped;
+		if (striped) {
+			addClass("table-striped");
+		} else {
+			removeClass("table-striped");
+		}
 		return this;
 	}
 
 	@Override
 	public Table condensed(boolean condensed) {
-		this.condensed = condensed;
+		if (condensed) {
+			addClass("table-condensed");
+		} else {
+			removeClass("table-condensed");
+		}
 		return this;
 	}
 
@@ -82,51 +95,11 @@ class TableImpl extends RowContainerImpl<Table> implements Table {
 	}
 	
 	@Override
-	public String produce() {
-		StringBuilder ret = new StringBuilder();
+	public String produce(int indent) {
 		if (responsive) {
-			ret.append(renderComment()).append("<div class=\"table-responsive\">");
+			return stringify(factory.div(super.produce(indent+1)), indent);
 		}
-		
-		ret.append("<table class=\"table");
-		if (bordered) {
-			ret.append(" table-bordered");
-		}
-		if (striped) {
-			ret.append(" table-striped");
-		}
-		if (hover) {
-			ret.append(" table-hover");
-		}
-		if (condensed) {
-			ret.append(" table-condensed");
-		}
-		String mClass = merge("class");
-		if (mClass.length()>0) {
-			ret.append(" ");
-			ret.append(mClass);
-		}
-		ret.append("\"");
-		ret.append(attributes("class"));
-		ret.append(">");
-		for (Object c: content) {
-			if (c!=null) {
-				ret.append(stringify(c));
-			}
-		}
-		ret.append("</table>");
-		if (responsive) {
-			ret.append("</div>");
-		}
-		return ret.append(genLoadRemoteContentScript()).toString();
-	}
-	
-	@Override
-	public void close() throws Exception {
-		super.close();
-		for (Object c: content) {
-			close(c);
-		}		
+		return super.produce(indent);
 	}
 
 	@Override

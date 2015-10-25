@@ -78,20 +78,20 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 	}
 		
 	@Override
-	public String produce() {		
+	public String produce(int indent) {		
 		List<Object> theContent = getContent();
 		
-		StringBuilder sb = new StringBuilder("<!-- ko ")
+		StringBuilder sb = UIElementImpl.indent(indent).append("<!-- ko ")
 				.append(binding)
 				.append(": ")
-				.append(UIElementImpl.stringify(expression, factory))
+				.append(UIElementImpl.stringify(expression, 0, factory))
 				.append(" -->")
 				.append(System.lineSeparator());
 		
 		for (Object c: theContent) {
-			sb.append(UIElementImpl.stringify(c, factory));
+			sb.append(UIElementImpl.stringify(c, indent+1, factory));
 		}
-		return sb.append(System.lineSeparator()).append("<!-- /ko -->").toString();
+		return UIElementImpl.indent(sb, indent).append("<!-- /ko -->").toString();
 	}
 	
 	/**
@@ -99,7 +99,7 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 	 */
 	@Override
 	public String toString() {
-		return UIElementImpl.stringify(produce(), factory);
+		return produce(0);
 	}	
 
 }
