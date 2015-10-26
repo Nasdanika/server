@@ -7,7 +7,6 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.KnockoutVirtualElement;
 
 class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
-
 	
 	private List<Object> content = new ArrayList<>();
 	private HTMLFactory factory;

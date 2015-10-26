@@ -195,7 +195,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		// Simple button - no items
 		if (items.isEmpty()) {
 			if (isInputGroupButton) {
-				return stringify(factory.span(this).addClass("input-group-btn"), indent);
+				return stringify(factory.span(super.produce(indent)).addClass("input-group-btn"), indent);
 			}
 			return super.produce(indent);
 		}		

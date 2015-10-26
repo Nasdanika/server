@@ -51,7 +51,6 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	private class ContentPanelImpl extends UIElementImpl<ContentPanel> implements ContentPanel {
 		
 		private Map<DeviceSize, Integer> sizeMap = new HashMap<>();
-		private List<Object> content = new ArrayList<>();
 		
 		ContentPanelImpl(HTMLFactory factory, Object... content) {
 			super(factory, TagName.div);
@@ -81,15 +80,6 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 		@Override
 		public ContentPanel content(Object... content) {
 			return super.content(content);
-		}
-
-		@Override
-		public void close() throws Exception {
-			for (Object c: content) {
-				if (c instanceof AutoCloseable) {
-					((AutoCloseable) c).close();
-				}
-			}		
 		}
 		
 	}

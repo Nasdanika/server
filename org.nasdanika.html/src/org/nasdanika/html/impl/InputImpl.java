@@ -1,22 +1,13 @@
 package org.nasdanika.html.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.nasdanika.html.Form.EncType;
 import org.nasdanika.html.Form.Method;
-import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.Tag.TagName;
 
 class InputImpl extends InputBaseImpl<Input> implements Input {
-	
-	private List<Object> content = new ArrayList<>();
-	
-	protected List<Object> getContent() {
-		return content;
-	}
-	
+		
 	InputImpl(HTMLFactory factory, HTMLFactory.InputType type) {
 		super(factory, TagName.input);
 		attribute("type", type);
@@ -24,20 +15,7 @@ class InputImpl extends InputBaseImpl<Input> implements Input {
 	
 	@Override
 	public Input content(Object... content) {
-		for (Object c: content) {
-			this.content.add(c);
-		}
-		return this;
-	}
-
-	@Override
-	public void close() throws Exception {
-		super.close();
-		for (Object c: getContent()) {
-			if (c instanceof AutoCloseable) {
-				((AutoCloseable) c).close();
-			}
-		}
+		return super.content(content);
 	}
 
 	@Override
