@@ -33,6 +33,18 @@ class FragmentImpl implements Fragment {
 		}
 	}
 	
+	List<Object> getAllContent() {
+		List<Object> ret = new ArrayList<>();
+		for (Object c: content) {
+			if (c instanceof FragmentImpl) {
+				ret.addAll(((FragmentImpl) c).getAllContent());
+			} else if (c!=null) {
+				ret.add(c);
+			}
+		}
+		return ret;
+	}
+	
 	@Override
 	public String produce(int indent) {
 		StringBuilder sb = new StringBuilder();

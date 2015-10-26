@@ -15,7 +15,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Angular;
-import org.nasdanika.html.Button;
 import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.Grid;
@@ -1028,8 +1027,15 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	
 	@Override
 	public String produce(int indent) {		
-		List<Object> theContent = getContent();
-		if (theContent.isEmpty()) {
+		List<Object> theContent = new ArrayList<>();
+		for (Object c: getContent()) {
+			if (c instanceof FragmentImpl) {
+				theContent.addAll(((FragmentImpl) c).getAllContent());
+			} else if (c!=null) {
+				theContent.add(c);
+			}			
+		}
+		if (theContent.isEmpty() && !forceEndTag()) {
 			return indent(renderComment(indent), indent).append("<"+getTagName()+attributes()+"/>").toString();
 		}
 		StringBuilder sb = indent(renderComment(indent), indent).append("<").append(getTagName()).append(attributes()).append(">");
@@ -1040,10 +1046,19 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 				hasNonUIElementContent = true;
 			}
 		}
-		if (!hasNonUIElementContent) {
+		if (!theContent.isEmpty() && !hasNonUIElementContent) {
 			indent(sb, indent);
 		}
 		return sb.append("</").append(getTagName()).append(">").append(genLoadRemoteContentScript()).toString();
+	}
+
+	private boolean forceEndTag() {
+		for (Tag.TagName tagName: Tag.TagName.values()) {
+			if (tagName.name().equalsIgnoreCase(this.tagName)) {
+				return tagName.isForceEndTag();
+			}
+		}
+		return false;
 	}
 
 	/**

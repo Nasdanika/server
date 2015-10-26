@@ -327,7 +327,7 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 		int i = 0;
 		while (matcher.find()) {
 		    String token = matcher.group();
-			Object replacement = tokenSource.get(token.substring(2, token.length()-1));
+			Object replacement = tokenSource.get(token.substring(2, token.length()-2));
 		    if (replacement != null) {
 			    output.append(input.substring(i, matcher.start())).append(replacement);			    
 			    i = matcher.end();
