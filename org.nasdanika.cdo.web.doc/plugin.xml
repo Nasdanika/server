@@ -4,17 +4,6 @@
    <extension-point id="extensions" name="Documentation extensions" schema="schema/extensions.exsd"/>
    <extension
          point="org.nasdanika.cdo.web.doc.extensions">
-      <wiki-link-renderer
-            class="org.nasdanika.cdo.web.doc.extensions.LightboxWikiLinkRenderer"
-            name="image">
-         <description><![CDATA[
-            Renders a [lightbox](http://lokeshdhakar.com/projects/lightbox2/) image link. 
-
-Example:
-
-* ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` is rendered as [[image:https://github.com/Nasdanika/server/wiki/webtest.png]]
-         ]]></description>
-      </wiki-link-renderer>
       <content-filter
             class="org.nasdanika.cdo.web.doc.extensions.TextContentFilter"
             source-type="text/plain"
@@ -77,13 +66,6 @@ Examples:
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
-            class="org.nasdanika.cdo.web.doc.extensions.WikipediaResolver"
-            name="wp">
-            <description><![CDATA[
-            Resolves Wikipedia URL from the article name, renders wikipedia icon before the link. Replaces spaces with underscores in the article name. Format: ``[[wp>article name|text]]``. Example: ``[[wp>Domain-driven design]]`` is rendered as [[wp>Domain-driven design]].
-            ]]></description>
-      </wiki-link-resolver>
-      <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.extensions.EClassifierResolver"
             name="classifier">
             <description><![CDATA[
@@ -113,18 +95,6 @@ Example: ``[[package>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[
 This resolver doesn't work for TOC's/topics with embedded content, i.e. with text, markdown, or html nested elements. 
             ]]></description>
       </wiki-link-resolver>
-      <plugin
-            class="org.nasdanika.cdo.web.doc.extensions.IncludePlugin"
-            name="include">
-         <description>
-Includes content of another documentation resource into this resource.
- 
-Format ``{\{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki link resolvers, e.g. ``bundle`` schema.
-
-Curly brackets and greater signs can be escaped by prepending them with backslash. The opening tag shall be escaped by placing the backslash between the first and the second opening
-curly brackets.
-         </description>
-      </plugin>
    </extension>
    <extension
          point="org.nasdanika.toc">
@@ -135,8 +105,23 @@ curly brackets.
                id="documentation-authoring"
                name="Documentation Authoring">
             <topic
-                  location="extensions.html"
                   name="Extensions">
+               <topic
+                     location="extensions.html"
+                     name="Installed">
+               </topic>
+               <topic
+                     location="doc/bundled-extensions.md"
+                     name="Bundled">
+               </topic>
+               <topic
+                     location="doc/custom-extensions.md"
+                     name="Custom">
+               </topic>
+            </topic>
+            <topic
+                  location="doc/doc-route-configuration.md"
+                  name="Documentation route configuration">
             </topic>
          </topic>
       </toc>

@@ -156,6 +156,38 @@
    <% if (wizard.getDocRoutePath()!=null) { %>
    <extension
          point="org.nasdanika.cdo.web.doc.extensions">
+      <wiki-link-renderer
+            class="org.nasdanika.cdo.web.doc.extensions.LightboxWikiLinkRenderer"
+            name="image">
+         <description><![CDATA[
+            Renders a [lightbox](http://lokeshdhakar.com/projects/lightbox2/) image link. 
+
+Example:
+
+* ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` is rendered as [[image:https://github.com/Nasdanika/server/wiki/webtest.png]]
+         ]]></description>
+      </wiki-link-renderer>
+      <plugin
+            class="org.nasdanika.cdo.web.doc.extensions.IncludePlugin"
+            name="include">
+         <description>
+Includes content of another documentation resource into this resource.
+ 
+Format ``{\{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki link resolvers, e.g. ``bundle`` schema.
+
+Curly brackets and greater signs can be escaped by prepending them with backslash. The opening tag shall be escaped by placing the backslash between the first and the second opening
+curly brackets.
+         </description>
+      </plugin>
+      
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.extensions.WikipediaResolver"
+            name="wp">
+            <description><![CDATA[
+            Resolves Wikipedia URL from the article name, renders wikipedia icon before the link. Replaces spaces with underscores in the article name. Format: ``[[wp>article name|text]]``. Example: ``[[wp>Domain-driven design]]`` is rendered as [[wp>Domain-driven design]].
+            ]]></description>
+      </wiki-link-resolver>
+         
        <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.extensions.JavadocWikiLinkResolver"
             name="javadoc">

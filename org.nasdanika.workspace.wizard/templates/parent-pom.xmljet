@@ -28,12 +28,12 @@
 		</repository>
 		<repository>
 			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository</url>
+			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>jetty</id>
-			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.2.9.v20150224</url>
+			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.5.v20151012</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>

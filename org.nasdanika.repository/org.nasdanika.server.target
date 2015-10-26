@@ -1,28 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="70">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="76">
 <locations>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.apache.lucene.analyzers-common" version="5.1.0"/>
-<unit id="com.github.dblock.waffle.jetty" version="1.7.3"/>
-<unit id="com.google.guava" version="18.0.0"/>
-<unit id="org.apache.lucene.core" version="5.1.0"/>
-<unit id="org.apache.lucene.queries" version="5.1.0"/>
-<unit id="com.sun.jna" version="4.1.0"/>
-<unit id="org.jsoup" version="1.8.3"/>
-<unit id="org.apache.commons.lang3" version="3.3.2"/>
-<unit id="org.mozilla.rhino" version="1.0.0.7R5"/>
-<unit id="com.github.dblock.waffle.jna" version="1.7.3"/>
-<unit id="org.apache.lucene.queryparser" version="5.1.0"/>
-<unit id="slf4j.simple" version="1.7.6"/>
-<unit id="org.apache.commons.codec" version="1.10.0"/>
-<unit id="com.sun.jna.platform" version="4.1.0"/>
-<repository location="http://www.nasdanika.org/maven-osgi"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.json" version="1.0.0.v201011060100"/>
-<unit id="javax.transaction" version="1.1.1.v201105210645"/>
-<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150519210750/repository"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.simple" version="1.7.6"/>
 <unit id="slf4j.api" version="1.7.6"/>
@@ -34,9 +12,40 @@
 </location>
 <location path="${eclipse_home}" type="Profile"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.2.9.201502242121"/>
-<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.2.9.201502242121"/>
-<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.2.9.v20150224/"/>
+<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.3.5.201510142109"/>
+<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.3.5.201510142109"/>
+<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.5.v20151012"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.eclipse.emf.cdo.sdk.feature.group" version="4.4.1.v20150916-0832"/>
+<unit id="org.eclipse.emf.cdo.epp.feature.group" version="4.4.1.v20150916-0832"/>
+<repository location="http://download.eclipse.org/releases/mars"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.json" version="1.0.0.v201011060100"/>
+<unit id="javax.transaction" version="1.1.1.v201105210645"/>
+<repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository/"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.objectweb.asm.all.debug" version="5.0.3"/>
+<unit id="org.apache.lucene.sandbox" version="5.1.0"/>
+<unit id="org.apache.lucene.analyzers-common" version="5.1.0"/>
+<unit id="com.github.dblock.waffle.jetty" version="1.7.3"/>
+<unit id="com.google.guava" version="18.0.0"/>
+<unit id="org.apache.lucene.queries" version="5.1.0"/>
+<unit id="org.apache.lucene.core" version="5.1.0"/>
+<unit id="com.sun.jna" version="4.1.0"/>
+<unit id="org.jsoup" version="1.8.3"/>
+<unit id="org.apache.aries.spifly.dynamic.bundle" version="1.0.4"/>
+<unit id="org.apache.commons.lang3" version="3.3.2"/>
+<unit id="org.apache.aries.util" version="1.0.0"/>
+<unit id="org.mozilla.rhino" version="1.0.0.7R5"/>
+<unit id="com.github.dblock.waffle.jna" version="1.7.3"/>
+<unit id="org.apache.lucene.queryparser" version="5.1.0"/>
+<unit id="slf4j.simple" version="1.7.6"/>
+<unit id="org.apache.commons.codec" version="1.10.0"/>
+<unit id="com.sun.jna.platform" version="4.1.0"/>
+<repository location="http://www.nasdanika.org/maven-osgi"/>
 </location>
 </locations>
 </target>

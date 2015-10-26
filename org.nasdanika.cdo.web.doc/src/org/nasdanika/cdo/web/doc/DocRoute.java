@@ -294,6 +294,7 @@ public class DocRoute implements Route {
 	}
 	
 	private MimetypesFileTypeMap mimeTypesMap;
+	private boolean expandContent = true;
 	
 	private static void patternProperty(Object value, List<Pattern> accumulator) {
 		if (value instanceof String[]) {
@@ -314,6 +315,11 @@ public class DocRoute implements Route {
 			pathOffset = ((Number) pathOffsetProp).intValue();
 		}
 		bundleContext = context.getBundleContext();
+		
+		Object expandContentProperty = properties.get("expand-content");
+		if (expandContentProperty instanceof Boolean) {
+			expandContent = (Boolean) expandContentProperty;
+		}
 		
 		Object sessionRegistry = properties.get("session-registry");
 		if (sessionRegistry instanceof Boolean) {
@@ -1241,7 +1247,7 @@ public class DocRoute implements Route {
 		return null;
 	}
 	
-	private String generateExtensionsDocumentation(URL baseURL, String urlPrefix, String path) {		
+	public String generateExtensionsDocumentation(URL baseURL, String urlPrefix, String path) {		
 		try {
 			Tabs ret = htmlFactory.tabs();
 			PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
@@ -1591,7 +1597,10 @@ public class DocRoute implements Route {
 	 * @param path
 	 * @return
 	 */
-	public String expand(String content, final URL baseURL, final String urlPrefix) {
+	public String expand(String content, final URL baseURL, final String urlPrefix) {		
+		if (!expandContent || content == null || content.length()==0) {
+			return "";			
+		}
 		
 		Plugin.Filter filter = new Plugin.Filter() {
 			
@@ -1600,11 +1609,7 @@ public class DocRoute implements Route {
 				return expand(CoreUtil.stringify(filterContent), baseURL, urlPrefix);
 			}
 			
-		};
-		
-		if (content == null || content.length()==0) {
-			return "";			
-		}
+		};				
 	
 		StringBuilder out = new StringBuilder();
 		int pos = 0;

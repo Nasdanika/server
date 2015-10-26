@@ -326,5 +326,5 @@ Screenshots:
 
 ## Code formatting
 
-The library does not format output code - the code produced by the library is compact, but not easily readable. An HTML parser like [jsoup](http://jsoup.org/) can be used for output formatting. 
+The library does format output code. If, for some reason, formatting performed by the library is not sufficient, an HTML parser like [jsoup](http://jsoup.org/) can be used for output formatting. 
 

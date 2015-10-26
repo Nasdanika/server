@@ -16,5 +16,5 @@ Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore.edit;visibility:=reexport,
  org.nasdanika.cdo.sca;visibility:=reexport,
  org.nasdanika.cdo.sca.edit;visibility:=reexport,
- org.eclipse.emf.cdo.edit;bundle-version="4.3.0";visibility:=reexport
+ org.eclipse.emf.cdo.edit;bundle-version="4.4.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
