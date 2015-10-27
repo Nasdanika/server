@@ -10,19 +10,19 @@ package org.nasdanika.html;
 public interface Tag extends UIElement<Tag>, Container<Tag> {
 
 	enum TagName {
-		a(true), abbr, acronym, address, area, article, aside, audio, b, base, bdi, bdo, blockquote, body, br, button, canvas, caption, cite, code, col, colgroup, datalist, dd, del, details, dfn, dialog, div(true), dl, dt, em, embed, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, head, header, hgroup, hr, html, i, iframe, img, input, ins, kbd, keygen, label, legend, li, link, main, map, mark, menu, menuitem, meta, meter, nav, noscript, object, ol, optgroup, option, output, p, param, pre, progress, q, rp, rt, ruby, s, samp, script, section, select, small, source, span(true), strong, style, sub, summary, sup, table, tbody, td(true), textarea(true), tfoot, th(true), thead, time, title, tr, track, u, ul, var, video, wbr;
+		a(true), abbr, acronym, address, area, article, aside, audio, b, base, bdi, bdo, blockquote, body, br, button, canvas, caption, cite, code, col, colgroup, datalist, dd, del, details, dfn, dialog, div(true), dl, dt, em, embed, fieldset, figcaption, figure, footer, form, h1, h2, h3, h4, h5, h6, head, header, hgroup, hr, html, i, iframe(true), img, input, ins, kbd, keygen, label, legend, li, link, main, map, mark, menu, menuitem, meta, meter, nav, noscript, object, ol, optgroup, option, output, p, param, pre, progress, q, rp, rt, ruby, s, samp, script(true), section, select, small, source, span(true), strong, style, sub, summary, sup, table, tbody, td(true), textarea(true), tfoot, th(true), thead, time, title, tr, track, u, ul, var, video, wbr;
 		
-		private boolean forceEndTag;
+		private boolean paired;
 		
-		public boolean isForceEndTag() {
-			return forceEndTag;
+		public boolean isPaired() {
+			return paired;
 		}
 		
 		private TagName() {
 		}
 		
-		private TagName(boolean forceEndTag) {
-			this.forceEndTag = forceEndTag;
+		private TagName(boolean paired) {
+			this.paired = paired;
 		}
 		
 	}

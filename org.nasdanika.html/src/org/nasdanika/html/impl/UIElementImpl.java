@@ -1055,7 +1055,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	private boolean forceEndTag() {
 		for (Tag.TagName tagName: Tag.TagName.values()) {
 			if (tagName.name().equalsIgnoreCase(this.tagName)) {
-				return tagName.isForceEndTag();
+				return tagName.isPaired();
 			}
 		}
 		return false;

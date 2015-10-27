@@ -2,13 +2,13 @@ package org.nasdanika.html;
 
 public interface Select extends InputBase<Select> {
 	
-	interface OptionGroup extends Producer {
+	interface OptionGroup extends UIElement<OptionGroup> {
 		
 		OptionGroup disabled(boolean disabled);
 		
 		OptionGroup disabled();
 		
-		OptionGroup option(String value, String label, boolean selected, boolean disabled);
+		Tag option(String value, String label, boolean selected, boolean disabled);
 
 		/**
 		 * Advanced option creation
@@ -22,7 +22,7 @@ public interface Select extends InputBase<Select> {
 		
 	}
 	
-	OptionGroup optionGroup(String label);
+	OptionGroup optionGroup(Object label);
 	
 	/**
 	 * Simple option creation
@@ -32,7 +32,7 @@ public interface Select extends InputBase<Select> {
 	 * @param disabled
 	 * @return Select input
 	 */
-	Select option(String value, String label, boolean selected, boolean disabled);
+	Tag option(String value, String label, boolean selected, boolean disabled);
 
 	/**
 	 * Advanced option creation
