@@ -54,6 +54,17 @@
 	</repositories>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
+		<!-- 
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.eclipse.tycho.extras</groupId>
+					<artifactId>tycho-document-bundle-plugin</artifactId>
+					<version>${tycho-version}</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		-->
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -61,8 +72,14 @@
 				<version>2.10.3</version>
 				<configuration>
 					<linksource>true</linksource>
+					<failOnError>false</failOnError>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.eclipse.tycho.extras</groupId>
+				<artifactId>tycho-document-bundle-plugin</artifactId>
+				<version>${tycho-version}</version>
+			</plugin>			
 			<plugin>
 				<!-- enable tycho build extension -->
 				<groupId>org.eclipse.tycho</groupId>
