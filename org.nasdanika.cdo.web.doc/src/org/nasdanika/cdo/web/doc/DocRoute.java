@@ -321,6 +321,11 @@ public class DocRoute implements Route {
 			expandContent = (Boolean) expandContentProperty;
 		}
 		
+		Object reloadDelayProperty = properties.get("reload-delay");
+		if (reloadDelayProperty instanceof Number) {
+			reloadDelay = ((Number) reloadDelayProperty).longValue();
+		}
+		
 		Object sessionRegistry = properties.get("session-registry");
 		if (sessionRegistry instanceof Boolean) {
 			includeSessionRegistry = (Boolean) sessionRegistry;
