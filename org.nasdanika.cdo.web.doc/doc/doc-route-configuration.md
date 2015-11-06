@@ -1,57 +1,26 @@
 ## DocRoute configuration
 
-expand-content
+### Properties
 
-		Dictionary<String, Object> properties = context.getProperties();
-		Object pathOffsetProp = properties.get("path-offset");
-		if (pathOffsetProp instanceof Number) {
-			pathOffset = ((Number) pathOffsetProp).intValue();
-		}
-		bundleContext = context.getBundleContext();
-		
-		Object sessionRegistry = properties.get("session-registry");
-		if (sessionRegistry instanceof Boolean) {
-			includeSessionRegistry = (Boolean) sessionRegistry;
-		}
-		
-		Object packageRegistry = properties.get("global-registry");
-		if (packageRegistry instanceof Boolean) {
-			includeGlobalRegistry = (Boolean) packageRegistry;
-		}
-		
-		patternProperty(properties.get("bundle-excludes"), bundleExcludes);
-		patternProperty(properties.get("bundle-includes"), bundleIncludes);
-		patternProperty(properties.get("package-excludes"), packageExcludes);
-		patternProperty(properties.get("package-includes"), packageIncludes);
-		
-		File searchIndexDir = context.getBundleContext().getBundle().getDataFile("searchIndex");
-		if (searchIndexDir==null) {
-			searchIndexDirectory = new RAMDirectory();
-		} else {
-			searchIndexDirectory = new NIOFSDirectory(searchIndexDir.toPath());
-		}
-    	analyzer = new StandardAnalyzer();
-    	
-    	baseURL = "http://localhost";
-    	String port = System.getProperty("org.osgi.service.http.port");
-    	if (port!=null) {
-    		baseURL+=":"+port;
-    	}
-    	urlPrefix = baseURL;
-    	
-    	String docRoutePathPrp = (String) properties.get("doc-route-path");
-    	if (docRoutePathPrp!=null) {
-    		docRoutePath = docRoutePathPrp; 
-    	}
-    	
-    	String docAppPathPrp = (String) properties.get("doc-app-path");
-    	if (docAppPathPrp!=null) {
-    		docAppPath = docAppPathPrp; 
-    	}
-    	
-    	String contextPath = System.getProperty("org.eclipse.equinox.http.jetty.context.path");
-    	if (contextPath!=null) {
-    		docRoutePath = contextPath + docRoutePath;
-    		docAppPath = contextPath + docAppPath;
-    	}
-    	baseURL+=docAppPath;
+Documentation route can be configured with the following properties:
+
+Name           | Type     | Default value | Description 
+---------------|:--------:|:-------------:|-------------
+doc-app-path      | String | /router/doc.html | Path of the documentation application route.
+doc-route-path    | String | /router/doc | Path of the documentation route.
+bundle-excludes  | String - single or multi-value |  | [[javadoc>java.util.regex.Pattern|Regex pattern(s)]]. TOC entries from bundles with symbolic names matching the patterns are not included into the TOC tree.
+bundle-includes  | String - single or multi-value |  | Regex patterns(s). If this property is set, then only TOC entries from bundles with symbolic names matching includes patterns and not matching excludes patterns are mounted to the TOC tree.
+expand-content | Boolean  | true          | If true, content enclosed into double curly brackets is expanded with plugins.
+global-registry  | Boolean | false        | If true or if a session registry is not available and this property is not set, packages from the global registry are mounted to the documentation table of content tree.
+package-excludes  | String - single or multi-value |  | Regex pattern(s). ECore packages with NsURI's matching the patterns are not included into the TOC tree.
+package-includes  | String - single or multi-value |  | Regex patterns(s). If this property is set, then only ECore packages with NsURI's matching includes patterns and not matching excludes patterns are mounted to the TOC tree.
+path-offset    | Number   | 1             | Length of the path of the documentation route counting from the context path. E.g. if the documentation route pattern is ``doc/.+`` pattern, then the path offset is 1, for ``something/doc/.+`` pattern the offset is 2.
+pattern        | String   |               | Regular expression to match route to the request path. The application workspace wizard generates a documentation route component with ``doc/.+`` pattern.
+reload-delay     | Number  | 30000        | Delay in milliseconds between a notification from the extension tracker about change in registered extensions and reloading of the TOC tree and the search index.
+session-registry | Boolean | true         | If true and the CDO Session Provider reference is set, packages from the CDO session registry are mounted to the documentation table of contents tree.     
+
+### References    	
+
+Type | Policy | Bind | Description
+-----|--------|------|------------
+org.eclipse.emf.cdo.session.CDOSessionProvider | static | setCdoSessionProvider | An optional reference to CDOSessionProvider is used to generate documentation for packages in the session registry.
