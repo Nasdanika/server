@@ -1,7 +1,9 @@
-package org.nasdanika.cdo.web.doc;
+package org.nasdanika.cdo.web.doc.extensions;
 
 import java.util.Map;
 
+import org.nasdanika.cdo.web.doc.WikiLinkProcessor;
+import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.pegdown.LinkRenderer.Rendering;
 

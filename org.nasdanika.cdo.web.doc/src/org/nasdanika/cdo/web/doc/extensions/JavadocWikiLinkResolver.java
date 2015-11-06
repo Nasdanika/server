@@ -27,7 +27,7 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 				return value+spec.replace('.', '/')+"/package-summary.html";
 			}
 			
-			if ((key.endsWith(".*") && spec.startsWith(key.substring(0, key.length()-1))) // Class
+			if ((spec.startsWith(key+".")) // Class
 					|| spec.startsWith(key+".")) {
 				
 				return value+spec.replace('.', '/').replace('$', '.')+".html";				
