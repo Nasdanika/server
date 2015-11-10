@@ -165,6 +165,46 @@ public class CoreUtil {
 		throw new IllegalArgumentException("Cannot stringify: "+content);
 	}
 
+	/**
+	 * Injects properties from <code>property</code> elements into the target. 
+	 * Property name may be a path separated by dots, e.g. <code>packageMap.org.nasdanika.core</code>. 
+	 * If property path length is 1, e.g. <code>myProperty</code>, then value of the property is injected into the target through 
+	 * a setter method, e.g. <code>setMyProperty()</code>, or through a field, e.g. <code>myProperty</code>. If method argument or field type is 
+	 * not String, then constructor conversion is attempted. E.g. for <code>setMyProperty(int)</code> the method will attempt to construct <code>Integer</code>
+	 * from the value string and then pass it to the setter.
+	 * 
+	 * <P/>
+	 * 
+	 * If property path length is more than 1, then a property is retrieved from the target through a getter or a field and then injection is performed recursively to the
+	 * retrieved property. For example, <code>config.myProperty</code> property would be injected by reading <code>config</code> property of the target by invoking
+	 * <code>getConfig()</code> method or reading <code>config</code> field. Then <code>myProperty</code> would be injected to the <code>config</code> property value.
+	 * 
+	 * <P/>
+	 * 
+	 * There is a special case for maps. If target property type is {@link Map}, then property value is put to them map with remaining property path as a key, e.g.
+	 * 
+	 * Given java code:
+	 * <pre><code><span class="hljs-keyword">private</span> Map&lt;String, String&gt; packageMap = <span class="hljs-keyword">new</span> LinkedHashMap&lt;String, String&gt;();
+	
+public Map&lt;String, String&gt; getPackageMap() {
+	return packageMap;
+}
+</code></pre>
+
+<p>The property definition below puts <code>java</code> -&gt; <code>http://docs.oracle.com/javase/8/docs/api</code> entry to the <code>pacakgeMap</code>.</p>  
+ 
+<pre><code>&lt;property
+      name="packageMap.java"
+      value="http://docs.oracle.com/javase/8/docs/api"&gt;
+&lt;/property&gt;
+</code></pre>  
+	 * 
+	 * 
+	 * @param ce Configuration element
+	 * @param target Target object, typically the return value of <code>createExecutableExtension()</code> method. 
+	 * @return
+	 * @throws Exception
+	 */
 	public static <T> T injectProperties(IConfigurationElement ce, final T target) throws Exception {
 		for (IConfigurationElement cce: ce.getChildren()) {
 			if ("property".equals(cce.getName())) {

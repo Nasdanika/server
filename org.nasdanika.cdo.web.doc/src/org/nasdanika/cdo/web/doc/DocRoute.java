@@ -608,6 +608,18 @@ public class DocRoute implements Route {
 		
 		mimeTypesMap = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));		
 		mimeTypesMap.addMimeTypes("text/markdown md");
+		Object mimeTypeProperty = properties.get("mime-types");
+		if (mimeTypeProperty instanceof String[]) {
+			for (String p: (String[]) mimeTypeProperty) {
+				if (!CoreUtil.isBlank(p)) {
+					mimeTypesMap.addMimeTypes(p);
+				}
+			}
+		} else if (mimeTypeProperty instanceof String) {
+			if (!CoreUtil.isBlank((String) mimeTypeProperty)) {
+				mimeTypesMap.addMimeTypes((String) mimeTypeProperty);
+			}			
+		}
 		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
     			

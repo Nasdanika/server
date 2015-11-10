@@ -12,8 +12,6 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.UIElement.Style;
 
 public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableExtension {
-	
-	private Map<String, String> packageMap = new LinkedHashMap<String, String>();
 
 	@Override
 	public String resolve(String spec, String docRoutePath, Map<Object, Object> environment) {
@@ -35,6 +33,8 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 		}
 		return null;
 	}
+	
+	private Map<String, String> packageMap = new LinkedHashMap<String, String>();
 	
 	public Map<String, String> getPackageMap() {
 		return packageMap;

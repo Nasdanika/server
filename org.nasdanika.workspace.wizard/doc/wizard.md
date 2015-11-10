@@ -126,6 +126,12 @@ After completing the steps described above you will have a functional Nasdanika 
 * Add web functionality by creating route operations
 * Add more bundles to the project as required
 
+## Videos
+* [Create and document a model](http://www.youtube.com/watch?v=qfvr6HWo_Ok) - 11 minutes.
+* [Add web functionality by creating a route operation](http://www.youtube.com/watch?v=SdVgV-iE0Zs) - 10 minutes.
+* [Convert the application into a single page Bootstrap/Backbone router application with 3 route operations](http://www.youtube.com/watch?v=hwcMSwHS7Ew) - 11 minutes.
+
+
 
  
 
