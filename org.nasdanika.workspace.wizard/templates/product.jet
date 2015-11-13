@@ -42,7 +42,14 @@
       <plugin id="org.eclipse.equinox.http.jetty" autoStart="true" startLevel="0" />
       <plugin id="org.eclipse.equinox.http.registry" autoStart="true" startLevel="0" />
       <% } %>
-      <% if (wizard.getApplicationPlugin()!=null) { %>
+      <% if (wizard.getApplicationPlugin()==null) { %>
+	      <% if (wizard.getPageImplArtifactId()!=null) { %>
+	      <plugin id="<%=wizard.getPageImplArtifactId()%>" autoStart="true" startLevel="0" />
+	      <% } %>
+	      <% if (wizard.getActorImplArtifactId()!=null) { %>
+	      <plugin id="<%=wizard.getActorImplArtifactId()%>" autoStart="true" startLevel="0" />
+	      <% } %>      
+      <% } else { %>
       <plugin id="org.nasdanika.cdo.web" autoStart="true" startLevel="0" />
       <plugin id="<%=wizard.getApplicationPlugin()%>" autoStart="true" startLevel="0" />
       <% } %>

@@ -30,10 +30,17 @@ public class ProductRenderer {
   protected final String TEXT_15 = ".qualifier\"/>" + NL + "   </features>" + NL + "" + NL + "   <configurations>";
   protected final String TEXT_16 = NL + "      <plugin id=\"org.eclipse.core.runtime\" autoStart=\"true\" startLevel=\"0\" />" + NL + "      <plugin id=\"org.eclipse.equinox.common\" autoStart=\"true\" startLevel=\"2\" />" + NL + "      <plugin id=\"org.eclipse.equinox.ds\" autoStart=\"true\" startLevel=\"1\" />" + NL + "      <plugin id=\"org.eclipse.osgi\" autoStart=\"true\" startLevel=\"-1\" />";
   protected final String TEXT_17 = NL + "      <plugin id=\"org.eclipse.equinox.http.jetty\" autoStart=\"true\" startLevel=\"0\" />" + NL + "      <plugin id=\"org.eclipse.equinox.http.registry\" autoStart=\"true\" startLevel=\"0\" />";
-  protected final String TEXT_18 = NL + "      <plugin id=\"org.nasdanika.cdo.web\" autoStart=\"true\" startLevel=\"0\" />" + NL + "      <plugin id=\"";
-  protected final String TEXT_19 = "\" autoStart=\"true\" startLevel=\"0\" />";
-  protected final String TEXT_20 = NL + "   </configurations>" + NL + "</product>";
-  protected final String TEXT_21 = NL;
+  protected final String TEXT_18 = NL + "\t      ";
+  protected final String TEXT_19 = NL + "\t      <plugin id=\"";
+  protected final String TEXT_20 = "\" autoStart=\"true\" startLevel=\"0\" />" + NL + "\t      ";
+  protected final String TEXT_21 = NL + "\t      ";
+  protected final String TEXT_22 = NL + "\t      <plugin id=\"";
+  protected final String TEXT_23 = "\" autoStart=\"true\" startLevel=\"0\" />" + NL + "\t      ";
+  protected final String TEXT_24 = "      ";
+  protected final String TEXT_25 = NL + "      <plugin id=\"org.nasdanika.cdo.web\" autoStart=\"true\" startLevel=\"0\" />" + NL + "      <plugin id=\"";
+  protected final String TEXT_26 = "\" autoStart=\"true\" startLevel=\"0\" />";
+  protected final String TEXT_27 = NL + "   </configurations>" + NL + "</product>";
+  protected final String TEXT_28 = NL;
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
@@ -74,13 +81,27 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
      if (wizard.isIncludeJetty()) { 
     stringBuffer.append(TEXT_17);
      } 
-     if (wizard.getApplicationPlugin()!=null) { 
+     if (wizard.getApplicationPlugin()==null) { 
     stringBuffer.append(TEXT_18);
-    stringBuffer.append(wizard.getApplicationPlugin());
+     if (wizard.getPageImplArtifactId()!=null) { 
     stringBuffer.append(TEXT_19);
-     } 
+    stringBuffer.append(wizard.getPageImplArtifactId());
     stringBuffer.append(TEXT_20);
+     } 
     stringBuffer.append(TEXT_21);
+     if (wizard.getActorImplArtifactId()!=null) { 
+    stringBuffer.append(TEXT_22);
+    stringBuffer.append(wizard.getActorImplArtifactId());
+    stringBuffer.append(TEXT_23);
+     } 
+    stringBuffer.append(TEXT_24);
+     } else { 
+    stringBuffer.append(TEXT_25);
+    stringBuffer.append(wizard.getApplicationPlugin());
+    stringBuffer.append(TEXT_26);
+     } 
+    stringBuffer.append(TEXT_27);
+    stringBuffer.append(TEXT_28);
     return stringBuffer.toString();
   }
 }
