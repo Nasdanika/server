@@ -541,11 +541,6 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 
 			@Override
-			public T col(DeviceSize deviceSize, int width) {
-				return addClass("col-"+deviceSize.code+"-"+width);
-			}
-
-			@Override
 			public void close() throws Exception {
 				UIElementImpl.this.close();
 			}
@@ -553,6 +548,62 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			@Override
 			public String toString() {
 				return UIElementImpl.this.toString();
+			}
+
+			@Override
+			public T col(DeviceSize deviceSize, int width) {
+				return addClass("col-"+deviceSize.code+"-"+width);
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T col(int width) {
+				for (DeviceSize ds: DeviceSize.values()) {
+					col(ds, width);
+				}
+				return (T) UIElementImpl.this;
+			}
+
+			@Override
+			public T colOffset(DeviceSize deviceSize, int width) {
+				return addClass("col-"+deviceSize.code+"-offset-"+width);
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T colOffset(int width) {
+				for (DeviceSize ds: DeviceSize.values()) {
+					colOffset(ds, width);
+				}
+				return (T) UIElementImpl.this;
+			}
+
+			@Override
+			public T colPush(DeviceSize deviceSize, int width) {
+				return addClass("col-"+deviceSize.code+"-push-"+width);
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T colPush(int width) {
+				for (DeviceSize ds: DeviceSize.values()) {
+					colPush(ds, width);
+				}
+				return (T) UIElementImpl.this;
+			}
+
+			@Override
+			public T colPull(DeviceSize deviceSize, int width) {
+				return addClass("col-"+deviceSize.code+"-pull-"+width);
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T colPull(int width) {
+				for (DeviceSize ds: DeviceSize.values()) {
+					colPull(ds, width);
+				}
+				return (T) UIElementImpl.this;
 			}
 			
 		};

@@ -19,8 +19,13 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 			this.content.add(c);
 		}
 	}
+	
+	@Override
+	public boolean isEmpty() {
+		return content.isEmpty();
+	}
 		
-	protected List<Object> getContent() {
+	public List<Object> getContent() {
 		return content;
 	}
 	
