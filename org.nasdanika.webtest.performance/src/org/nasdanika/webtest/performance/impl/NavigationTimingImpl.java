@@ -21,7 +21,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.webtest.performance.DocumentTiming;

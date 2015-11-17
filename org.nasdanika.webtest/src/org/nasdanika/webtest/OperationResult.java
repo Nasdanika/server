@@ -29,9 +29,9 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement.BootstrapColor;
+import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.UIElement.Event;
-import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.html.Bootstrap.Style;
 import org.openqa.selenium.WebDriverException;
 
 /**
@@ -250,7 +250,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 						htmlFactory.glyphicon(Glyphicon.time), 
 						"&nbsp;", 
 						name);				
-				return doStyle ? routeLink.style("color", BootstrapColor.GRAY.code) : routeLink;
+				return doStyle ? routeLink.style("color", Color.GRAY.code) : routeLink;
 				
 			}
 			
@@ -260,7 +260,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 					htmlFactory.glyphicon(Glyphicon.ok), 
 					"&nbsp;", 
 					name);
-			return doStyle ? routeLink.style("color", BootstrapColor.SUCCESS.code) : routeLink;
+			return doStyle ? routeLink.style("color", Color.SUCCESS.code) : routeLink;
 		}
 		
 		if (isFailure()) {
@@ -271,7 +271,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 					"&nbsp;", 
 					name);
 			
-			return doStyle ? routeLink.style("color", BootstrapColor.DANGER.code) : routeLink;
+			return doStyle ? routeLink.style("color", Color.DANGER.code) : routeLink;
 		}
 		
 		Tag routeLink = htmlFactory.routeLink(
@@ -280,7 +280,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 					htmlFactory.glyphicon(Glyphicon.warning_sign), 
 					"&nbsp;", 
 					name);
-		return doStyle ? routeLink.style("color", BootstrapColor.WARNING.code) : routeLink;
+		return doStyle ? routeLink.style("color", Color.WARNING.code) : routeLink;
 	}
 
 	public boolean isPending() {
