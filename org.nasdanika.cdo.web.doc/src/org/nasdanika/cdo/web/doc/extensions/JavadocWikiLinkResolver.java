@@ -6,10 +6,11 @@ import java.util.Map.Entry;
 
 import org.nasdanika.cdo.web.doc.ConfigurableExtension;
 import org.nasdanika.cdo.web.doc.WikiLinkResolver;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
-import org.nasdanika.html.UIElement.Style;
 
 public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableExtension {
 
@@ -52,7 +53,7 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 			pRow.cell(htmlFactory.link(pe.getValue(), pe.getValue()));
 		}
 		
-		return htmlFactory.panel(Style.INFO, "Package map", packageMapTable, null);
+		return htmlFactory.panel(Bootstrap.Style.INFO, "Package map", packageMapTable, null);
 	}
 
 }

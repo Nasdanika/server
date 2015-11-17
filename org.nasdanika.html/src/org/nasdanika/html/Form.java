@@ -9,7 +9,7 @@ public interface Form extends UIElement<Form>, FieldContainer<Form> {
 	 * @param labelWidth Label column width.
 	 * @return
 	 */
-	Form horizontal(DeviceSize deviceSize, int labelWidth);
+	Form horizontal(Bootstrap.DeviceSize deviceSize, int labelWidth);
 	
 	Form inline(boolean inline);
 	

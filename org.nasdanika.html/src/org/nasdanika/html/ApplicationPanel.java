@@ -16,7 +16,7 @@ public interface ApplicationPanel extends UIElement<ApplicationPanel> {
 		 * @param width
 		 * @return
 		 */
-		ContentPanel width(DeviceSize deviceSize, int width);
+		ContentPanel width(Bootstrap.DeviceSize deviceSize, int width);
 		
 	}
 	
@@ -40,7 +40,7 @@ public interface ApplicationPanel extends UIElement<ApplicationPanel> {
 	
 	ApplicationPanel footer(Object... footer);
 	
-	ApplicationPanel style(Style style);
+	ApplicationPanel style(Bootstrap.Style style);
 	
 	/**
 	 * Sets panel width. If not set the width is 100%

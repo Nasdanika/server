@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
@@ -30,7 +31,7 @@ class InputGroupImpl extends UIElementImpl<InputGroupImpl> implements InputGroup
 	}
 	
 	@Override
-	public InputGroupImpl size(Size size) {
+	public InputGroupImpl size(Bootstrap.Size size) {
 		addClass("input-group-"+size.code);
 		return this;
 	}

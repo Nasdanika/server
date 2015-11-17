@@ -6,6 +6,9 @@ import java.util.List;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.ButtonGroup;
@@ -31,8 +34,6 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.UIElement.BootstrapColor;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.html.Well;
 
 /**
@@ -194,7 +195,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public Tag panel(Style style, final Object header, final Object body, final Object footer) {
+	public Tag panel(Bootstrap.Style style, final Object header, final Object body, final Object footer) {
 		Tag panel = div().addClass("panel").addClass("panel-"+style.name().toLowerCase());
 		if (header!=null) {
 			panel.content(div(tag("h3", header).addClass("panel-title")).addClass("panel-heading"));
@@ -219,14 +220,14 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public Tag label(Style style, Object... content) {
+	public Tag label(Bootstrap.Style style, Object... content) {
 		return span(content).addClass("label").addClass("label-"+style.name().toLowerCase());
 	}
 	
 	private static final String ALERT_CLOSE_BUTTON = "<button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">&times;</button>";
 	
 	@Override
-	public Tag alert(Style style, boolean dismissable, Object... content) {
+	public Tag alert(Bootstrap.Style style, boolean dismissable, Object... content) {
 		if (dismissable) {
 			return div(ALERT_CLOSE_BUTTON)
 					.content(content)
@@ -361,7 +362,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public Object collapsible(final Style style, final Object title, final boolean collapsed, final Object... content) {
+	public Object collapsible(final Bootstrap.Style style, final Object title, final boolean collapsed, final Object... content) {
 		return new AutoCloseable() {
 			
 			private void panelBody(int start, int end, StringBuilder sb) {
@@ -504,7 +505,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 				.style("position", "absolute")
 				.style("width", "100%")
 				.style("height", "100%")
-				.background(BootstrapColor.GRAY_LIGHT)
+				.background(Bootstrap.Color.GRAY_LIGHT)
 				.style("opacity", 0.7)
 				.style("z-index", 10)
 				.style("display", "block");
@@ -513,7 +514,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Tag spinnerOverlay(Spinner spinner) {
 		Tag spinnerTag = fontAwesome().spinner(spinner).size(Size.x5).spin().getTarget();
-		Table table = table().style("height", "100%").background(BootstrapColor.GRAY_LIGHT);
+		Table table = table().style("height", "100%").background(Bootstrap.Color.GRAY_LIGHT);
 		table.row().cell(spinnerTag).style("text-align", "center").style("vertical-align", "middle");
 		return overlay(table);
 	}

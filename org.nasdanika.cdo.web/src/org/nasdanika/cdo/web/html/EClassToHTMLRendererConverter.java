@@ -13,6 +13,9 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -20,8 +23,6 @@ import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement.BootstrapColor;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -68,7 +69,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 				
 				if (!source.getESuperTypes().isEmpty()) {
 					Table scTable = htmlFactory.table().bordered();
-					Row hRow = scTable.row().background(BootstrapColor.GRAY_LIGHTER);
+					Row hRow = scTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Description");
 					for (EClass st: source.getESuperTypes()) {
@@ -77,7 +78,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 						row.cell(st.isAbstract() ? htmlFactory.tag("i", classifierLink) : classifierLink);						
 						row.cell(NasdanikaCDOUtil.getSummary(st));						
 					}
-					body.content(htmlFactory.panel(Style.DEFAULT, "Supertypes", scTable, null));
+					body.content(htmlFactory.panel(Bootstrap.Style.DEFAULT, "Supertypes", scTable, null));
 				}
 				
 				// Known subtypes - scan package registry, name, package (rowspan with success highlighting), current package first
@@ -85,7 +86,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 				// attributes
 				if (!source.getEAttributes().isEmpty()) {
 					Table aTable = htmlFactory.table().bordered();
-					Row hRow = aTable.row().background(BootstrapColor.GRAY_LIGHTER);
+					Row hRow = aTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Type");
 					hRow.header("Many");
@@ -101,13 +102,13 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 						row.cell(a.isMany() ? htmlFactory.glyphicon(Glyphicon.ok) : "&nbsp;").attribute("align", "center");
 						row.cell(NasdanikaCDOUtil.getSummary(a));
 					}
-					body.content(htmlFactory.panel(Style.DEFAULT, "Attributes", aTable, null));
+					body.content(htmlFactory.panel(Bootstrap.Style.DEFAULT, "Attributes", aTable, null));
 				}
 				
 				// references
 				if (!source.getEReferences().isEmpty()) {
 					Table rTable = htmlFactory.table().bordered();
-					Row hRow = rTable.row().background(BootstrapColor.GRAY_LIGHTER);
+					Row hRow = rTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Type");
 					hRow.header("Many");
@@ -136,13 +137,13 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 						}
 						row.cell(NasdanikaCDOUtil.getSummary(r));
 					}
-					body.content("<p/>", htmlFactory.panel(Style.DEFAULT, "References", rTable, null));
+					body.content("<p/>", htmlFactory.panel(Bootstrap.Style.DEFAULT, "References", rTable, null));
 				}
 				
 				// operations
 				if (!source.getEOperations().isEmpty()) {
 					Table oTable = htmlFactory.table().bordered();
-					Row hRow = oTable.row().background(BootstrapColor.GRAY_LIGHTER);
+					Row hRow = oTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
 					hRow.header("Name");
 					hRow.header("Return type");
 					hRow.header("Many");
@@ -177,7 +178,7 @@ public class EClassToHTMLRendererConverter implements Converter<EClass, HTMLRend
 						
 						row.cell(NasdanikaCDOUtil.getSummary(op));
 					}
-					body.content("<p/>", htmlFactory.panel(Style.DEFAULT, "Operations", oTable, null));
+					body.content("<p/>", htmlFactory.panel(Bootstrap.Style.DEFAULT, "Operations", oTable, null));
 				}
 				
 				return body.toString();

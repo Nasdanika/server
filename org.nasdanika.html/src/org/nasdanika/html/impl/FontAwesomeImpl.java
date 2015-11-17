@@ -1,8 +1,9 @@
 package org.nasdanika.html.impl;
 
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.UIElement.Style;
 
 class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoCloseable {
 	/**
@@ -236,7 +237,7 @@ class FontAwesomeImpl<T extends UIElement<?>> implements FontAwesome<T>, AutoClo
 	}
 
 	@Override
-	public FontAwesome<T> style(Style style) {
+	public FontAwesome<T> style(Bootstrap.Style style) {
 		target.addClass("text-"+style.name().toLowerCase());
 		return this;
 	}

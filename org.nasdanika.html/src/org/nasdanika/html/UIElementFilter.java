@@ -34,7 +34,7 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.on(event, handler);
 	}
 
-	public T background(org.nasdanika.html.UIElement.BootstrapColor backgroundColor) {
+	public T background(org.nasdanika.html.Bootstrap.Color backgroundColor) {
 		return target.background(backgroundColor);
 	}
 
@@ -94,10 +94,10 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 	public String toString() {
 		return target.toString();
 	}
-
+	
 	@Override
-	public Grid<T> grid() {
-		return target.grid();
+	public Bootstrap<T> bootstrap() {
+		return target.bootstrap();
 	}
 
 	@Override

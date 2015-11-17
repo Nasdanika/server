@@ -6,11 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Pills;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement;
 
 class PillsImpl extends UIElementImpl<Pills> implements Pills {
 
@@ -146,6 +146,7 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 	
 	private PillAjaxDataToggleScriptRenderer pillAjaxDataToggleScriptRenderer = new PillAjaxDataToggleScriptRenderer();
 	private boolean stacked;
+	private boolean justified;
 	
 	@Override
 	public Pills stacked() {
@@ -157,11 +158,22 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 		this.stacked = stacked;
 		return this;
 	}
-			
-	private Map<UIElement.DeviceSize, Integer> pillsWidth = new HashMap<>();
 	
 	@Override
-	public Pills pillsWidth(UIElement.DeviceSize deviceSize, int width) {
+	public Pills justified() {
+		return justified(true);
+	}
+	
+	@Override
+	public Pills justified(boolean justified) {
+		this.justified = justified;
+		return this;
+	}
+			
+	private Map<Bootstrap.DeviceSize, Integer> pillsWidth = new HashMap<>();
+	
+	@Override
+	public Pills pillsWidth(Bootstrap.DeviceSize deviceSize, int width) {
 		pillsWidth.put(deviceSize, width);
 		return this;
 	}
@@ -173,6 +185,10 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-pills");
 		if (stacked) {
 			navUL.addClass("nav-stacked");
+		}
+		
+		if (justified) {
+			navUL.addClass("nav-justified");
 		}
 		
 		boolean hasAjaxPills = false;
@@ -190,9 +206,9 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 			ret.add(navUL);
 		} else {
 			Tag ulContainer = factory.div(navUL);
-			for (Entry<UIElement.DeviceSize, Integer> pwe: pillsWidth.entrySet()) {
-				ulContainer.grid().col(pwe.getKey(), pwe.getValue());
-				contentDiv.grid().col(pwe.getKey(), 12 - pwe.getValue());
+			for (Entry<Bootstrap.DeviceSize, Integer> pwe: pillsWidth.entrySet()) {
+				ulContainer.bootstrap().grid().col(pwe.getKey(), pwe.getValue());
+				contentDiv.bootstrap().grid().col(pwe.getKey(), 12 - pwe.getValue());
 			}
 			ret.add(ulContainer);
 		}

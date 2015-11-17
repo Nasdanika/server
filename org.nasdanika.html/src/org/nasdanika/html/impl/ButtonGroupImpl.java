@@ -3,6 +3,7 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.ButtonGroup;
 import org.nasdanika.html.HTMLFactory;
@@ -10,7 +11,7 @@ import org.nasdanika.html.Tag.TagName;
 
 class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup {
 	
-	private org.nasdanika.html.UIElement.Size size;
+	private org.nasdanika.html.Bootstrap.Size size;
 	private boolean justified;
 
 	ButtonGroupImpl(HTMLFactory factory, Button... buttons) {
@@ -41,12 +42,12 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 	}
 
 	@Override
-	public ButtonGroup size(org.nasdanika.html.UIElement.Size size) {
-		if (this.size!=null && !Size.DEFAULT.equals(this.size)) {
+	public ButtonGroup size(org.nasdanika.html.Bootstrap.Size size) {
+		if (this.size!=null && !Bootstrap.Size.DEFAULT.equals(this.size)) {
 			removeClass("btn-group-"+this.size.code);
 		}
 		this.size = size;
-		if (size!=null && !Size.DEFAULT.equals(size)) {
+		if (size!=null && !Bootstrap.Size.DEFAULT.equals(size)) {
 			addClass("btn-group-"+size.code);
 		}
 		return this;

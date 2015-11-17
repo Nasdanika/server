@@ -11,46 +11,6 @@ import java.io.Reader;
  */
 public interface UIElement<T extends UIElement<T>> extends AutoCloseable, Producer {
 	
-	enum Style { DEFAULT, PRIMARY, SUCCESS, INFO, WARNING, DANGER }
-	
-	enum Size { 
-		EXTRA_SMALL("xs"), 
-		SMALL("sm"), 
-		DEFAULT(null), 
-		LARGE("lg");
-	
-		public final String code;
-		Size(String code) {
-			this.code = code;
-		}
-		
-	}
-	
-	/**
-	 * Bootstrap colors
-	 * @author Pavel
-	 *
-	 */
-	enum BootstrapColor { 
-		
-		GRAY_DARKER("#222"),
-		GRAY_DARK("#333"),
-		GRAY("#555"),
-		GRAY_LIGHT("#999"),
-		GRAY_LIGHTER("#eee"),
-
-		PRIMARY("#428bca"),
-		SUCCESS("#5cb85c"),
-		INFO("#5bc0de"),
-		WARNING("#f0ad4e"),
-		DANGER("#d9534f");
-		
-		public final String code;
-		BootstrapColor(String code) {
-			this.code = code;
-		}
-	}
-	
 	/**
 	 * HTML Color codes.
 	 * @author Pavel
@@ -198,19 +158,6 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable, Produc
 		Yellow,                   
 		YellowGreen		
 	}
-	
-	enum DeviceSize { 
-		EXTRA_SMALL("xs"), 
-		SMALL("sm"), 
-		MEDIUM("md"), 
-		LARGE("lg"); 
-		
-		public final String code;
-	
-		private DeviceSize(String code) {
-			this.code = code;
-		}
-	}	
 	
 	/**
 	 * Enumeration for frequently used HTML events
@@ -370,7 +317,7 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable, Produc
 	 * @param backgroundColor
 	 * @return
 	 */
-	T background(BootstrapColor backgroundColor);
+	T background(Bootstrap.Color backgroundColor);
 
 	/**
 	 * Sets background color.
@@ -432,8 +379,10 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable, Produc
 	 */
 	Knockout<T> knockout();
 	
-	Grid<T> grid();
+	// Grid<T> grid();
 	
 	T comment(String comment);
+	
+	Bootstrap<T> bootstrap();
 	
 }

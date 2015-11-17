@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag.TagName;
 
@@ -45,12 +46,12 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	private List<ContentPanel> contentPanels = new ArrayList<>();
 	private int minHeight;
 	private int width;
-	private org.nasdanika.html.UIElement.Style style = Style.DEFAULT;
+	private org.nasdanika.html.Bootstrap.Style style = Bootstrap.Style.DEFAULT;
 	private List<Object> footer = new ArrayList<>();
 	
 	private class ContentPanelImpl extends UIElementImpl<ContentPanel> implements ContentPanel {
 		
-		private Map<DeviceSize, Integer> sizeMap = new HashMap<>();
+		private Map<Bootstrap.DeviceSize, Integer> sizeMap = new HashMap<>();
 		
 		ContentPanelImpl(HTMLFactory factory, Object... content) {
 			super(factory, TagName.div);
@@ -60,7 +61,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 		}
 
 		@Override
-		public ContentPanel width(DeviceSize deviceSize, int width) {
+		public ContentPanel width(Bootstrap.DeviceSize deviceSize, int width) {
 			sizeMap.put(deviceSize, width);
 			return this;
 		}
@@ -68,7 +69,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 		@Override
 		protected StringBuilder classes() {
 			StringBuilder ret = super.classes();
-			for (Entry<DeviceSize, Integer> se: sizeMap.entrySet()) {
+			for (Entry<Bootstrap.DeviceSize, Integer> se: sizeMap.entrySet()) {
 				if (ret.length()>0) {
 					ret.append(" ");
 				}
@@ -100,7 +101,7 @@ class ApplicationPanelImpl extends UIElementImpl<ApplicationPanel> implements Ap
 	}
 
 	@Override
-	public ApplicationPanel style(org.nasdanika.html.UIElement.Style style) {
+	public ApplicationPanel style(org.nasdanika.html.Bootstrap.Style style) {
 		this.style = style;
 		return this;
 	}

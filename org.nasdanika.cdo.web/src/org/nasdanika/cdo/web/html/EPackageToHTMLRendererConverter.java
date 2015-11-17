@@ -13,12 +13,13 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.TraceEntry;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -65,7 +66,7 @@ public class EPackageToHTMLRendererConverter implements Converter<EPackage, HTML
 				});
 				
 				if (!classifiers.isEmpty()) {
-					Row headerRow = classifiersTable.row().background(BootstrapColor.GRAY_LIGHTER);
+					Row headerRow = classifiersTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
 					headerRow.header("Name");
 					headerRow.header("Type");
 					headerRow.header("Description");

@@ -13,7 +13,7 @@ public interface ButtonGroup extends UIElement<ButtonGroup> {
 	
 	boolean isEmpty();
 		
-	ButtonGroup size(Size size);
+	ButtonGroup size(Bootstrap.Size size);
 	
 	ButtonGroup vertical();
 	

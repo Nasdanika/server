@@ -70,6 +70,8 @@ import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -78,7 +80,6 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
@@ -1271,7 +1272,7 @@ public class DocRoute implements Route {
 			LinkRenderer mlr = createMarkdownLinkRenderer(new URL(baseURL, path), urlPrefix);
 			if (!pluginMap.isEmpty()) {
 				Table pluginTable = htmlFactory.table().bordered();
-				Row hRow = pluginTable.row().style(Style.INFO);
+				Row hRow = pluginTable.row().style(Bootstrap.Style.INFO);
 				hRow.header("Name");
 				hRow.header("Description");
 				hRow.header("Configuration");
@@ -1290,7 +1291,7 @@ public class DocRoute implements Route {
 			}
 			if (!wikiLinkResolverMap.isEmpty()) {
 				Table resolverTable = htmlFactory.table().bordered();
-				Row hRow = resolverTable.row().style(Style.INFO);
+				Row hRow = resolverTable.row().style(Bootstrap.Style.INFO);
 				hRow.header("Name");
 				hRow.header("Description");
 				hRow.header("Configuration");
@@ -1309,7 +1310,7 @@ public class DocRoute implements Route {
 			}
 			if (!wikiLinkRendererMap.isEmpty()) {
 				Table rendererTable = htmlFactory.table().bordered();
-				Row hRow = rendererTable.row().style(Style.INFO);
+				Row hRow = rendererTable.row().style(Bootstrap.Style.INFO);
 				hRow.header("Name");
 				hRow.header("Description");
 				hRow.header("Configuration");
@@ -1328,7 +1329,7 @@ public class DocRoute implements Route {
 			}
 			if (!contentFilters.isEmpty()) {
 				Table contentFiltersTable = htmlFactory.table().bordered();
-				Row hRow = contentFiltersTable.row().style(Style.INFO);
+				Row hRow = contentFiltersTable.row().style(Bootstrap.Style.INFO);
 				hRow.header("From");
 				hRow.header("To");
 				hRow.header("Description");
@@ -1358,7 +1359,7 @@ public class DocRoute implements Route {
 			
 			if (!eAnnotationRenderers.isEmpty()) {
 				Table rendererTable = htmlFactory.table().bordered();
-				Row hRow = rendererTable.row().style(Style.INFO);
+				Row hRow = rendererTable.row().style(Bootstrap.Style.INFO);
 				hRow.header("Name");
 				hRow.header("Description");
 				hRow.header("Configuration");

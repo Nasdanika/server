@@ -3,6 +3,7 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
@@ -12,7 +13,7 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 	
 	private int activeSlide;
 	private List<SlideImpl> slides = new ArrayList<>();
-	private org.nasdanika.html.UIElement.BootstrapColor indicatorsBootstrapBackground;
+	private org.nasdanika.html.Bootstrap.Color indicatorsBootstrapBackground;
 	private org.nasdanika.html.UIElement.HTMLColor indicatorsHTMLBackground;
 	
 	private class SlideImpl implements Slide, AutoCloseable {
@@ -153,7 +154,7 @@ class CarouselImpl extends UIElementImpl<Carousel> implements Carousel {
 	}
 
 	@Override
-	public Carousel indicatorsBackground(BootstrapColor background) {
+	public Carousel indicatorsBackground(Bootstrap.Color background) {
 		indicatorsBootstrapBackground = background;
 		indicatorsHTMLBackground = null;
 		return this;

@@ -20,6 +20,8 @@ import org.eclipse.emf.ecore.ETypedElement;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
@@ -27,7 +29,6 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.UIElement.Style;
 import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
 
@@ -157,7 +158,7 @@ public class EModelElementDocumentationGenerator {
 			row.cell(StringEscapeUtils.escapeHtml4(key));
 			row.cell(StringEscapeUtils.escapeHtml4(eAnnotation.getDetails().get(key))).style("white-space", "pre-wrap").style("font-family", "monospace");
 		}
-		return htmlFactory.panel(Style.INFO, "Annotation " + StringEscapeUtils.escapeHtml4(eAnnotation.getSource()), detailsTable, null).toString();		
+		return htmlFactory.panel(Bootstrap.Style.INFO, "Annotation " + StringEscapeUtils.escapeHtml4(eAnnotation.getSource()), detailsTable, null).toString();		
 	}
 	
 	protected String eClassifierLink(

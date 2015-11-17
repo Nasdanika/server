@@ -1,5 +1,6 @@
 package org.nasdanika.html.impl;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
@@ -16,7 +17,7 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	
 	boolean horizontal;
 	boolean inline;
-	DeviceSize deviceSize;
+	Bootstrap.DeviceSize deviceSize;
 	int labelWidth;
 	private FieldContainer<Form> container;
 
@@ -38,7 +39,7 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	}
 	
 	@Override
-	public Form horizontal(DeviceSize deviceSize, int labelWidth) {
+	public Form horizontal(Bootstrap.DeviceSize deviceSize, int labelWidth) {
 		horizontal = true;
 		this.deviceSize = deviceSize;
 		this.labelWidth = labelWidth;

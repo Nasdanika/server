@@ -2,6 +2,7 @@ package org.nasdanika.html.impl;
 
 import java.util.Map;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
@@ -21,7 +22,7 @@ class FormInputGroupImpl extends FormGroupImpl<FormInputGroup, InputGroupImpl> i
 	}
 
 	@Override
-	public FormInputGroup size(Size size) {
+	public FormInputGroup size(Bootstrap.Size size) {
 		control.size(size);
 		return this;
 	}

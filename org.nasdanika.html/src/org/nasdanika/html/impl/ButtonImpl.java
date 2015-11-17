@@ -3,6 +3,7 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
@@ -85,8 +86,8 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		return this;
 	}
 		
-	private Style style = Style.DEFAULT;
-	private Size size = Size.DEFAULT;
+	private Bootstrap.Style style = Bootstrap.Style.DEFAULT;
+	private Bootstrap.Size size = Bootstrap.Size.DEFAULT;
 	private boolean split;
 	private boolean dropup;
 	private boolean active;
@@ -94,7 +95,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	
 
 	@Override
-	public Button style(Style style) {
+	public Button style(Bootstrap.Style style) {
 		if (this.style!=null) {
 			removeClass("btn-"+this.style.name().toLowerCase());
 		}
@@ -106,12 +107,12 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	}
 
 	@Override
-	public Button size(Size size) {
-		if (this.size!=null && this.size!=Size.DEFAULT) {
+	public Button size(Bootstrap.Size size) {
+		if (this.size!=null && this.size!=Bootstrap.Size.DEFAULT) {
 			removeClass("btn-"+this.size.code);
 		}
 		this.size = size;
-		if (size!=null && size!=Size.DEFAULT) {
+		if (size!=null && size!=Bootstrap.Size.DEFAULT) {
 			addClass("btn-"+this.size.code);
 		}		
 		return this;
@@ -251,7 +252,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 	
 	private void buttonClasses(Tag button) {
 		button.addClass("btn-"+style.name().toLowerCase());
-		if (size!=Size.DEFAULT) {
+		if (size!=Bootstrap.Size.DEFAULT) {
 			button.addClass("btn-"+size.code);
 		}
 		if (block) {

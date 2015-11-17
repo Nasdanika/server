@@ -1,5 +1,6 @@
 package org.nasdanika.html.impl;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Tag;
@@ -13,9 +14,9 @@ class ListGroupImpl extends UIElementImpl<ListGroup> implements ListGroup {
 	}
 
 	@Override
-	public Tag item(Object itemContent, Style style) {
+	public Tag item(Object itemContent, Bootstrap.Style style) {
 		Tag li = factory.tag(TagName.li, itemContent).addClass("list-group-item");
-		if (style!=null && Style.DEFAULT!=style) {
+		if (style!=null && Bootstrap.Style.DEFAULT!=style) {
 			li.addClass("list-group-item-"+style.name().toLowerCase());
 		}
 		this.content.add(li);

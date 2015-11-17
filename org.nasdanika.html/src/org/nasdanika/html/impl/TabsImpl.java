@@ -143,11 +143,16 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	}
 	
 	private TabAjaxDataToggleScriptRenderer tabAjaxDataToggleScriptRenderer = new TabAjaxDataToggleScriptRenderer();
+	private boolean justified;
 	
 	@Override
 	protected List<Object> getContent() {
 		List<Object> ret = new ArrayList<>();
-		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-tabs");		
+		Tag navUL = factory.tag("ul").addClass("nav").addClass("nav-tabs");	
+		if (justified) {
+			navUL.addClass("nav-justified");
+		}
+			
 		boolean hasAjaxTabs = false;
 		for (Tab tab: tabs) {
 			navUL.content(tab.li());
@@ -169,6 +174,18 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	public boolean isEmpty() {
 		return tabs.isEmpty();
 	}
+		
+	@Override
+	public Tabs justified() {
+		return justified(true);
+	}
+	
+	@Override
+	public Tabs justified(boolean justified) {
+		this.justified = justified;
+		return this;
+	}
+	
 
 }
 

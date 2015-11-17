@@ -13,12 +13,13 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.html.HTMLRenderer;
@@ -75,7 +76,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 				});
 				
 				Table packageTable = htmlFactory.table().bordered();
-				Row headerRow = packageTable.row().background(BootstrapColor.GRAY_LIGHTER);
+				Row headerRow = packageTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
 				headerRow.header("Name");
 				headerRow.header("Namespace URI");
 				headerRow.header("Documentation");

@@ -15,9 +15,10 @@ import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Angular;
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.FontAwesome;
-import org.nasdanika.html.Grid;
+import org.nasdanika.html.Bootstrap.Grid;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Knockout;
 import org.nasdanika.html.Producer;
@@ -236,7 +237,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	}
 	
 	@Override
-	public T background(BootstrapColor backgroundColor) {
+	public T background(Bootstrap.Color backgroundColor) {
 		return style("background-color", backgroundColor.code);
 	}
 	
@@ -522,7 +523,97 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	}
 			
 	@Override
-	public Grid<T> grid() {
+	public Bootstrap<T> bootstrap() {		
+		return new Bootstrap<T>() {
+
+			@Override
+			public Grid<T> grid() {
+				return UIElementImpl.this.grid();
+			}
+
+			@SuppressWarnings("unchecked")
+			@Override
+			public T background(org.nasdanika.html.Bootstrap.Style style) {
+				return style==null ? (T) UIElementImpl.this : addClass("bg-"+style.name().toLowerCase());
+			}
+
+			@Override
+			public T pullLeft() {
+				return addClass("pull-left");
+			}
+
+			@Override
+			public T pullRight() {
+				return addClass("pull-right");
+			}
+
+			@Override
+			public T centerBlock() {
+				return addClass("center-block");
+			}
+
+			@Override
+			public T clearfix() {
+				return addClass("clearfix");
+			}
+
+			@Override
+			public Text<T> text() {
+				return new Text<T>() {
+
+					@SuppressWarnings("unchecked")
+					@Override
+					public T color(Style style) {
+						return style==null ? (T) UIElementImpl.this : addClass("text-"+style.name().toLowerCase());
+					}
+
+					@Override
+					public T left() {
+						return addClass("text-left");
+					}
+
+					@Override
+					public T center() {
+						return addClass("text-center");
+					}
+
+					@Override
+					public T right() {
+						return addClass("text-right");
+					}
+
+					@Override
+					public T justify() {
+						return addClass("text-justify");
+					}
+
+					@Override
+					public T nowrap() {
+						return addClass("text-nowrap");
+					}
+
+					@Override
+					public T lowercase() {
+						return addClass("text-lowercase");
+					}
+
+					@Override
+					public T uppercase() {
+						return addClass("text-uppercase");
+					}
+
+					@Override
+					public T capitalize() {
+						return addClass("text-capitalize");
+					}
+					
+				};
+			}
+			
+		};
+	}
+	
+	private Grid<T> grid() {
 		return new Grid<T>() {
 
 			@Override
@@ -551,56 +642,56 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			}
 
 			@Override
-			public T col(DeviceSize deviceSize, int width) {
+			public T col(Bootstrap.DeviceSize deviceSize, int width) {
 				return addClass("col-"+deviceSize.code+"-"+width);
 			}
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public T col(int width) {
-				for (DeviceSize ds: DeviceSize.values()) {
+				for (Bootstrap.DeviceSize ds: Bootstrap.DeviceSize.values()) {
 					col(ds, width);
 				}
 				return (T) UIElementImpl.this;
 			}
 
 			@Override
-			public T colOffset(DeviceSize deviceSize, int width) {
+			public T colOffset(Bootstrap.DeviceSize deviceSize, int width) {
 				return addClass("col-"+deviceSize.code+"-offset-"+width);
 			}
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public T colOffset(int width) {
-				for (DeviceSize ds: DeviceSize.values()) {
+				for (Bootstrap.DeviceSize ds: Bootstrap.DeviceSize.values()) {
 					colOffset(ds, width);
 				}
 				return (T) UIElementImpl.this;
 			}
 
 			@Override
-			public T colPush(DeviceSize deviceSize, int width) {
+			public T colPush(Bootstrap.DeviceSize deviceSize, int width) {
 				return addClass("col-"+deviceSize.code+"-push-"+width);
 			}
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public T colPush(int width) {
-				for (DeviceSize ds: DeviceSize.values()) {
+				for (Bootstrap.DeviceSize ds: Bootstrap.DeviceSize.values()) {
 					colPush(ds, width);
 				}
 				return (T) UIElementImpl.this;
 			}
 
 			@Override
-			public T colPull(DeviceSize deviceSize, int width) {
+			public T colPull(Bootstrap.DeviceSize deviceSize, int width) {
 				return addClass("col-"+deviceSize.code+"-pull-"+width);
 			}
 
 			@SuppressWarnings("unchecked")
 			@Override
 			public T colPull(int width) {
-				for (DeviceSize ds: DeviceSize.values()) {
+				for (Bootstrap.DeviceSize ds: Bootstrap.DeviceSize.values()) {
 					colPull(ds, width);
 				}
 				return (T) UIElementImpl.this;

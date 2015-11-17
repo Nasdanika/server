@@ -6,9 +6,9 @@ public interface Button extends UIElement<Button>, Dropdown<Button>, Container<B
 	
 	Button type(Type type);
 	
-	Button style(Style style);
+	Button style(Bootstrap.Style style);
 	
-	Button size(Size size);
+	Button size(Bootstrap.Size size);
 	
 	Button block(boolean block);
 	

@@ -2,7 +2,7 @@ package org.nasdanika.html;
 
 public interface LinkGroup extends UIElement<LinkGroup> {
 	
-	Tag item(Object content, Object href, Style style, boolean active);
+	Tag item(Object content, Object href, Bootstrap.Style style, boolean active);
 	
 	/**
 	 * Creates an item and returns it for further configuration.
@@ -11,7 +11,7 @@ public interface LinkGroup extends UIElement<LinkGroup> {
 	 * @param active
 	 * @return
 	 */
-	Tag item(Object content, Style style, boolean active);
+	Tag item(Object content, Bootstrap.Style style, boolean active);
 	
 	int length();
 

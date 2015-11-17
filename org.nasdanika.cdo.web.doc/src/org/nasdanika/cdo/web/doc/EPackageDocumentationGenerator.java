@@ -16,6 +16,8 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
@@ -23,7 +25,6 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.Style;
 
 public class EPackageDocumentationGenerator extends EModelElementDocumentationGenerator {
 
@@ -89,7 +90,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		ret.content(tabs);		
 
 		Table subPackageTable = htmlFactory.table().bordered();
-		Row subPackageTableHeaderRow = subPackageTable.row().style(Style.INFO);
+		Row subPackageTableHeaderRow = subPackageTable.row().style(Bootstrap.Style.INFO);
 		subPackageTableHeaderRow.header("Name");
 		subPackageTableHeaderRow.header("Description");
 		for (EPackage subPackage: ePackage.getESubpackages()) {
@@ -114,18 +115,18 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		});
 		
 		Table classTable = htmlFactory.table().bordered();
-		Row classTableHeaderRow = classTable.row().style(Style.INFO);
+		Row classTableHeaderRow = classTable.row().style(Bootstrap.Style.INFO);
 		classTableHeaderRow.header("Name");
 		classTableHeaderRow.header("Description");
 		
 		Table dataTypeTable = htmlFactory.table().bordered();
-		Row dataTypeTableHeaderRow = dataTypeTable.row().style(Style.INFO);
+		Row dataTypeTableHeaderRow = dataTypeTable.row().style(Bootstrap.Style.INFO);
 		dataTypeTableHeaderRow.header("Name");
 		dataTypeTableHeaderRow.header("Instance Type Name");
 		dataTypeTableHeaderRow.header("Description");
 		
 		Table enumTable = htmlFactory.table().bordered();
-		Row enumTableHeaderRow = enumTable.row().style(Style.INFO);
+		Row enumTableHeaderRow = enumTable.row().style(Bootstrap.Style.INFO);
 		enumTableHeaderRow.header("Name");
 		enumTableHeaderRow.header("Description");
 		

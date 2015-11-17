@@ -25,6 +25,8 @@ import org.nasdanika.cdo.web.html.FormGeneratorBase;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Accordion;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.Fragment;
@@ -35,7 +37,6 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.Style;
 
 public class EClassDocumentationGenerator extends EModelElementDocumentationGenerator {
 
@@ -109,7 +110,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		
 		if (!eClass.getESuperTypes().isEmpty()) {
 			Table stTable = htmlFactory.table().bordered();
-			Row hr = stTable.row().style(Style.INFO);
+			Row hr = stTable.row().style(Bootstrap.Style.INFO);
 			hr.header("Name");
 			hr.header("Description");
 			for (EClass st: eClass.getESuperTypes()) {
@@ -123,7 +124,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		Set<EClassKey> subTypes = docRoute.getInheritanceMap().get(new EClassKey(eClass));
 		if (subTypes!=null && !subTypes.isEmpty()) {
 			Table stTable = htmlFactory.table().bordered();
-			Row hr = stTable.row().style(Style.INFO);
+			Row hr = stTable.row().style(Bootstrap.Style.INFO);
 			hr.header("Name");
 			hr.header("Description");
 			for (EClassKey st: subTypes) {
@@ -653,9 +654,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					
 				};
 				try {
-					accordionFragment.content(htmlFactory.panel(Style.INFO, "Preview", formGenerator.generateForm(htmlFactory), null));
+					accordionFragment.content(htmlFactory.panel(Bootstrap.Style.INFO, "Preview", formGenerator.generateForm(htmlFactory), null));
 				} catch (Exception e) {
-					accordionFragment.content(htmlFactory.alert(Style.WARNING, false, "Failed to generate form preview: "+e));
+					accordionFragment.content(htmlFactory.alert(Bootstrap.Style.WARNING, false, "Failed to generate form preview: "+e));
 				}
 				
 				Table propTable = htmlFactory.table().bordered();
@@ -818,7 +819,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								attrRow.header(StringEscapeUtils.escapeHtml4(ae.getKey())).style("align", "left");
 								preStyle(attrRow.cell(StringEscapeUtils.escapeHtml4(ae.getValue())));								
 							}
-							accordionFragment.content(htmlFactory.panel(Style.INFO, "Attributes", attrTable, null));
+							accordionFragment.content(htmlFactory.panel(Bootstrap.Style.INFO, "Attributes", attrTable, null));
 						}
 						
 						if (!styles.isEmpty()) {
@@ -828,7 +829,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								styleRow.header(StringEscapeUtils.escapeHtml4(se.getKey())).style("align", "left");
 								preStyle(styleRow.cell(StringEscapeUtils.escapeHtml4(se.getValue())));								
 							}
-							accordionFragment.content(htmlFactory.panel(Style.INFO, "Styles", styleTable, null));
+							accordionFragment.content(htmlFactory.panel(Bootstrap.Style.INFO, "Styles", styleTable, null));
 						}
 						
 						if (!groupAttributes.isEmpty()) {
@@ -838,7 +839,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								attrRow.header(StringEscapeUtils.escapeHtml4(ae.getKey())).style("align", "left");
 								preStyle(attrRow.cell(StringEscapeUtils.escapeHtml4(ae.getValue())));								
 							}
-							accordionFragment.content(htmlFactory.panel(Style.INFO, "Attributes", attrTable, null));
+							accordionFragment.content(htmlFactory.panel(Bootstrap.Style.INFO, "Attributes", attrTable, null));
 						}
 						
 						if (!groupStyles.isEmpty()) {
@@ -848,7 +849,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								styleRow.header(StringEscapeUtils.escapeHtml4(se.getKey())).style("align", "left");
 								preStyle(styleRow.cell(StringEscapeUtils.escapeHtml4(se.getValue())));								
 							}
-							accordionFragment.content(htmlFactory.panel(Style.INFO, "Styles", styleTable, null));
+							accordionFragment.content(htmlFactory.panel(Bootstrap.Style.INFO, "Styles", styleTable, null));
 						}
 					}
 				}				

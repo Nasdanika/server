@@ -148,6 +148,6 @@ public interface FontAwesome<T extends UIElement<?>> {
 		
 	}
 	
-	FontAwesome<T> style(UIElement.Style style);
+	FontAwesome<T> style(Bootstrap.Style style);
 
 }

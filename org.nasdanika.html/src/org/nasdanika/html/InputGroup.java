@@ -14,7 +14,7 @@ public interface InputGroup<T extends InputGroup<T>> extends UIElement<T> {
 	 */
 	T leftAddOn(Object... addOn);
 	
-	T size(Size size);
+	T size(Bootstrap.Size size);
 	
 	/**
 	 * Creates left button.

@@ -18,7 +18,7 @@ public interface RowContainer<T extends RowContainer<T>> extends Container<T>, U
 		
 		Cell header(Object... content);
 		
-		Row style(Style style);
+		Row style(Bootstrap.Style style);
 		
 		List<Cell> cells();
 		

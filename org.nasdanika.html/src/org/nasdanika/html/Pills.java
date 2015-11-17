@@ -5,6 +5,10 @@ public interface Pills extends UIElement<Pills>, NamedItemsContainer<UIElement<?
 	Pills stacked();
 	
 	Pills stacked(boolean stacked);
+		
+	Pills justified();
+	
+	Pills justified(boolean justified);	
 	
 	/**
 	 * Width of the pills column.
@@ -12,7 +16,6 @@ public interface Pills extends UIElement<Pills>, NamedItemsContainer<UIElement<?
 	 * @param width
 	 * @return
 	 */
-	Pills pillsWidth(UIElement.DeviceSize deviceSize, int width);
-	
+	Pills pillsWidth(Bootstrap.DeviceSize deviceSize, int width);	
 	
 }

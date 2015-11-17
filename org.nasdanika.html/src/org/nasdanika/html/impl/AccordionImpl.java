@@ -1,6 +1,7 @@
 package org.nasdanika.html.impl;
 
 import org.nasdanika.html.Accordion;
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -10,7 +11,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
 	private class Item extends UIElementImpl<Item> {
 		
-		Item(Object title, Object[] itemContent, Object location, Style style, boolean initial) {
+		Item(Object title, Object[] itemContent, Object location, Bootstrap.Style style, boolean initial) {
 			super(AccordionImpl.this.factory, "div");
 			addClass("panel");
 			addClass("panel-"+effectiveStyle(style).name().toLowerCase());
@@ -44,7 +45,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 			}					
 		}
 		
-		private Style effectiveStyle(Style style) {
+		private Bootstrap.Style effectiveStyle(Bootstrap.Style style) {
 			if (style!=null) {
 				return style;
 			}
@@ -53,12 +54,12 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 				return AccordionImpl.this.style;
 			}
 			
-			return Style.DEFAULT;
+			return Bootstrap.Style.DEFAULT;
 		}
 		
 	}
 	
-	private Style style;
+	private Bootstrap.Style style;
 
 	public AccordionImpl(HTMLFactory factory) {
 		super(factory, "div");
@@ -68,14 +69,14 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 	
 	@Override
-	public UIElement<?> item(Object title, Style style, boolean initial, Object itemContent) {
+	public UIElement<?> item(Object title, Bootstrap.Style style, boolean initial, Object itemContent) {
 		Item item = new Item(title, new Object[] {itemContent}, null, style, initial);
 		this.content.add(item);
 		return item;
 	}
 		
 	@Override
-	public Accordion style(org.nasdanika.html.UIElement.Style style) {
+	public Accordion style(org.nasdanika.html.Bootstrap.Style style) {
 		this.style = style;
 		return this;
 	}
@@ -98,7 +99,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 
 	@Override
-	public UIElement<?> ajaxItem(Object title,	Style style, Object location) {
+	public UIElement<?> ajaxItem(Object title,	Bootstrap.Style style, Object location) {
 		Item item = new Item(title, null, location, style, this.content.isEmpty());
 		this.content.add(item);
 		return item;

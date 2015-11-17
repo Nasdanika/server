@@ -7,11 +7,12 @@ import org.eclipse.emf.ecore.EParameter;
 import org.nasdanika.cdo.EOperationClosure;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
@@ -52,7 +53,7 @@ public class EOperationClosureToHTMLRendererConverter implements Converter<EOper
 				
 				form.formInputGroup(
 						null, 
-						htmlFactory.button("Invoke").style(Style.PRIMARY), 
+						htmlFactory.button("Invoke").style(Bootstrap.Style.PRIMARY), 
 						"Invoke EOperation");
 				
 				return htmlFactory.fragment(

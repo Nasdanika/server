@@ -1,5 +1,6 @@
 package org.nasdanika.html.impl;
 
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.Tag;
@@ -13,14 +14,14 @@ class LinkGroupImpl extends UIElementImpl<LinkGroup> implements LinkGroup {
 	}
 
 	@Override
-	public Tag item(Object content, Object href, Style style, boolean active) {
+	public Tag item(Object content, Object href, Bootstrap.Style style, boolean active) {
 		return item(content, style, active).attribute("href", href);
 	}
 	
 	@Override
-	public Tag item(Object itemContent, Style style, boolean active) {
+	public Tag item(Object itemContent, Bootstrap.Style style, boolean active) {
 		Tag a = factory.tag(TagName.a, itemContent).addClass("list-group-item");
-		if (style!=null && Style.DEFAULT!=style) {
+		if (style!=null && Bootstrap.Style.DEFAULT!=style) {
 			a.addClass("list-group-item-"+style.name().toLowerCase());
 		}
 		if (active) {

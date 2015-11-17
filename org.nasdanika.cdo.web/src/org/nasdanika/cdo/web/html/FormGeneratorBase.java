@@ -10,6 +10,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.DeviceSize;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Button.Type;
 import org.nasdanika.html.Form;
@@ -21,8 +24,6 @@ import org.nasdanika.html.InputBase;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.TextArea;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.UIElement.DeviceSize;
-import org.nasdanika.html.UIElement.Style;
 
 public abstract class FormGeneratorBase<T extends ETypedElement> {
 
@@ -68,7 +69,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 				for (String def: horizontal.split(";")) {
 					int idx = def.indexOf("=");
 					if (idx!=-1) {
-						form.horizontal(DeviceSize.valueOf(def.substring(0, idx).trim().toUpperCase()), Integer.parseInt(def.substring(idx+1).trim()));
+						form.horizontal(Bootstrap.DeviceSize.valueOf(def.substring(0, idx).trim().toUpperCase()), Integer.parseInt(def.substring(idx+1).trim()));
 					}
 				}
 			}
@@ -83,7 +84,7 @@ public abstract class FormGeneratorBase<T extends ETypedElement> {
 	protected abstract EAnnotation getFormAnnotation(); 
 	
 	protected Button createSubmitButton(HTMLFactory htmlFactory, Form form) {
-		return form.button(getSubmitButtonLabel()).type(Type.SUBMIT).style(Style.PRIMARY);
+		return form.button(getSubmitButtonLabel()).type(Type.SUBMIT).style(Bootstrap.Style.PRIMARY);
 	}
 
 	protected String getSubmitButtonLabel() {

@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.web.doc;
 
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormInputGroup;
@@ -10,7 +12,6 @@ import org.nasdanika.html.Input;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.Style;
 
 /**
  * This class generates documentation panel HTML.
@@ -67,7 +68,7 @@ public class DocumentationPanelFactory {
 		searchGroup.style("width", "100%");
 		searchGroup.getInputGroup().style("width", "100%");
 		
-		Tag searchResultError = htmlFactory.alert(Style.DANGER, false)
+		Tag searchResultError = htmlFactory.alert(Bootstrap.Style.DANGER, false)
 				.knockout().text("error")
 				.knockout().visible("error")
 				.style("margin-right", "5px")

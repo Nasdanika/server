@@ -2,7 +2,7 @@ package org.nasdanika.html;
 
 import java.util.Map;
 
-import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.html.Bootstrap.Style;
 
 
 /**
@@ -97,7 +97,7 @@ public interface HTMLFactory {
 	
 	Pills pills();
 	
-	Tag panel(UIElement.Style style, Object header, Object body, Object footer);
+	Tag panel(Bootstrap.Style style, Object header, Object body, Object footer);
 	
 	/**
 	 * Builds a router reference in a form <code>#router/&lt;targetElement&gt;/&lt;path&gt;</code>
@@ -146,9 +146,9 @@ public interface HTMLFactory {
 			Object head, 
 			Object... body);
 
-	Tag label(Style style, Object... content);
+	Tag label(Bootstrap.Style style, Object... content);
 	
-	Tag alert(Style style, boolean dismissable, Object... content);
+	Tag alert(Bootstrap.Style style, boolean dismissable, Object... content);
 	
 	// TODO - code from InputStream/Reader, e.g. from class loader resource, escape for putting to attributes, e.g. onclick() 
 	// String code(InputStream in, boolean escape);
@@ -175,7 +175,7 @@ public interface HTMLFactory {
 
 	Accordion accordion();
 	
-	Object collapsible(Style style, Object title, boolean collapsed, Object... content);
+	Object collapsible(Bootstrap.Style style, Object title, boolean collapsed, Object... content);
 	
 	enum Placement { LEFT, TOP, RIGHT, BOTTOM }
 	
