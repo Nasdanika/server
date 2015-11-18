@@ -5,7 +5,7 @@ package org.nasdanika.html;
  * @author Pavel Vlasov
  *
  */
-public interface Angular<T> extends AutoCloseable {
+public interface Angular<T> {
 
 	/**
 	 * Custom directive

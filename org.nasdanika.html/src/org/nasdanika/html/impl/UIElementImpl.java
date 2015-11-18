@@ -380,16 +380,6 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		return new Knockout<T>() {
 
 			@Override
-			public void close() throws Exception {
-				UIElementImpl.this.close();
-			}
-			
-			@Override
-			public String toString() {
-				return UIElementImpl.this.toString();
-			}
-
-			@Override
 			public T visible(Object expression) {
 				return bind("visible", expression);
 			}
@@ -762,16 +752,6 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			@Override
 			public T directive(String directive, Object expr) {
 				return attribute("ng-"+directive, expr);
-			}
-
-			@Override
-			public void close() throws Exception {
-				UIElementImpl.this.close();
-			}
-			
-			@Override
-			public String toString() {
-				return UIElementImpl.this.toString();
 			}
 
 			@Override
