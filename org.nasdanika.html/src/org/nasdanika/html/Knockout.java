@@ -5,7 +5,7 @@ package org.nasdanika.html;
  * @author Pavel Vlasov
  *
  */
-public interface Knockout<T> extends KnockoutControlFlow<T>, AutoCloseable{
+public interface Knockout<T> extends KnockoutControlFlow<T> {
 	
 	T visible(Object expression);
 	T text(Object expression);

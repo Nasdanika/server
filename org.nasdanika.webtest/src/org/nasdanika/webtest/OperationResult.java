@@ -581,7 +581,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 	
 	/**
 	 * A method for subclasses add 
-	 * @param data
+	 * @param data 
 	 */
 	protected void extraPublishInfo(JSONObject data) throws Exception {
 		

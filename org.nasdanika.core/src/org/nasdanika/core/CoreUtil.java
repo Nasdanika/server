@@ -181,9 +181,9 @@ public class CoreUtil {
 	 * 
 	 * <P/>
 	 * 
-	 * There is a special case for maps. If target property type is {@link Map}, then property value is put to them map with remaining property path as a key, e.g.
+	 * There is a special case for maps. If the target property type is {@link Map}, then property value is put to the map with remaining property path as a key, e.g.
 	 * 
-	 * Given java code:
+	 * given java code:
 	 * <pre><code><span class="hljs-keyword">private</span> Map&lt;String, String&gt; packageMap = <span class="hljs-keyword">new</span> LinkedHashMap&lt;String, String&gt;();
 	
 public Map&lt;String, String&gt; getPackageMap() {

@@ -49,6 +49,22 @@ public interface Modal extends UIElement<Modal> {
 	Modal small();
 	
 	/**
+	 * Sets display of the close X in the header, if the header is present.
+	 * @param closeButton True (default) to display the button, false to hide.
+	 * @return
+	 */
+	Modal closeButton(boolean closeButton);	
+	
+	/**
+	 * Centers the modal vertically
+	 * @return
+	 */
+	Modal centerVertial();
+		
+	Modal centerVertial(boolean centerVertical);
+	
+	
+	/**
 	 * Configures a button to toggle this dialog.
 	 * @param button
 	 * @return
