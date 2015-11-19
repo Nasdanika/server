@@ -7,11 +7,12 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.ecore.EClass;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.webtest.performance.PerformancePackage;
@@ -129,7 +130,7 @@ public class ResourceTimingImpl extends TimingBaseImpl implements ResourceTiming
 	public String home(HttpServletRequestContext context) throws Exception {
 		HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 		if (!context.authorize(this, "read", null, null)) {
-			return htmlFactory.alert(Style.DANGER, false, "Access Denied!").toString(); 
+			return htmlFactory.alert(Bootstrap.Style.DANGER, false, "Access Denied!").toString(); 
 		}
 		
 		Fragment content = htmlFactory.fragment(htmlFactory.tag("h3", StringEscapeUtils.escapeHtml4(getName())));	
@@ -141,7 +142,7 @@ public class ResourceTimingImpl extends TimingBaseImpl implements ResourceTiming
 				Table timingsTable = htmlFactory.table().bordered();
 				content.content(timingsTable);
 				
-				Row hRow = timingsTable.row().style(Style.INFO);
+				Row hRow = timingsTable.row().style(Bootstrap.Style.INFO);
 				hRow.header("Interval");
 				hRow.header("Time (ms)");
 				
@@ -158,7 +159,7 @@ public class ResourceTimingImpl extends TimingBaseImpl implements ResourceTiming
 				readLock.unlock();
 			}
 		} else {
-			return htmlFactory.alert(Style.WARNING, false, "The system is overloaded, please try again later.").toString(); 			
+			return htmlFactory.alert(Bootstrap.Style.WARNING, false, "The system is overloaded, please try again later.").toString(); 			
 		}
 						
 		return content.toString();
