@@ -18,6 +18,7 @@ import java.util.Map;
 
 import javax.imageio.ImageIO;
 
+import org.json.JSONObject;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 
 /**
@@ -25,7 +26,7 @@ import org.nasdanika.html.impl.DefaultHTMLFactory;
  * @author Pavel Vlasov
  *
  */
-public class ScreenshotEntry implements Runnable, HttpPublisher {
+public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublisher {
 	
 	private String id;
 	
@@ -191,6 +192,31 @@ public class ScreenshotEntry implements Runnable, HttpPublisher {
 	@Override
 	public int publishSize() {
 		return master==null ? 1 : 0;
-	}				
+	}	
+	
+	@Override
+	public String publish(
+			Directory directory, 
+			boolean publishPerformance, 
+			Map<Object, String> idMap,
+			DirectoryPublishMonitor monitor) throws Exception {
+		
+		if (master==null && !idMap.containsKey(this)) {
+			String path = "screenshots/"+getScreenshotFile().getName();
+			if (monitor!=null) {
+				monitor.onPublishing("Screenshot"+getTextCaption(), path);
+			}
+			idMap.put(this, path);
+			JSONObject info = new JSONObject();
+			info.put("height", getHeight());
+			info.put("width", getWidth());
+			info.put("type", "image/png");
+			directory.store(info, path+".json");
+			directory.store(getScreenshotFile(), path+".png");
+			return path;
+		}
+		
+		return null;
+	}
 		
 }

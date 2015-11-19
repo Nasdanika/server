@@ -18,7 +18,7 @@ import org.json.JSONObject;
  * @author Pavel Vlasov
  *
  */
-class TestSession implements HttpPublisher {
+class TestSession implements HttpPublisher, DirectoryPublisher {
 
 	private Class<?> klass;
 	private List<? extends TestResult> testResults;

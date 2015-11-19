@@ -8,7 +8,7 @@ import java.util.Map;
  * @author Pavel Vlasov
  *
  */
-public interface TestResult extends HttpPublisher {
+public interface TestResult extends HttpPublisher, DirectoryPublisher {
 	
 	Class<?> getTestClass();
 	

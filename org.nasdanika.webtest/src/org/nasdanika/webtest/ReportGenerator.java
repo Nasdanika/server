@@ -31,6 +31,10 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.junit.runners.Parameterized.Parameter;
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.ApplicationPanel.ContentPanel;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
+import org.nasdanika.html.Bootstrap.DeviceSize;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.Container;
 import org.nasdanika.html.HTMLFactory;
@@ -42,9 +46,6 @@ import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.UIElement.BootstrapColor;
-import org.nasdanika.html.UIElement.DeviceSize;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.webtest.TestResult.TestStatus;
 import org.openqa.selenium.WebDriver;
@@ -201,7 +202,7 @@ class ReportGenerator {
 		
 		int width = (int) ((slideWidth+32)*12.0/9.0);
 		ApplicationPanel reportPanel = htmlFactory.applicationPanel()
-				.style(Style.INFO) 
+				.style(Bootstrap.Style.INFO) 
 				.header(title)
 				.headerLink("index.html")
 				.footer("Generated "+new Date())
@@ -211,7 +212,7 @@ class ReportGenerator {
 		
 		int leftPanelWidth = (int) Math.round(250.0*12.0/width);
 
-		ContentPanel leftPanel = reportPanel.contentPanel().width(DeviceSize.LARGE, leftPanelWidth);
+		ContentPanel leftPanel = reportPanel.contentPanel().width(Bootstrap.DeviceSize.LARGE, leftPanelWidth);
 		
 		leftPanel.content(htmlFactory.routeLink("main", "content/summary.html", "<b>Summary</b>"), htmlFactory.tag("p"));
 		
@@ -220,17 +221,17 @@ class ReportGenerator {
 		contentDir.mkdir();
 		
 		// TODO - test class methods threshold 
-		leftPanel.content(htmlFactory.collapsible(Style.INFO, htmlFactory.glyphicon(Glyphicon.search)+" Tests", false, generateTestsLeftPanel(htmlFactory, contentDir, true), null));
+		leftPanel.content(htmlFactory.collapsible(Bootstrap.Style.INFO, htmlFactory.glyphicon(Glyphicon.search)+" Tests", false, generateTestsLeftPanel(htmlFactory, contentDir, true), null));
 		if (!actorResults.isEmpty()) {
-			leftPanel.content(htmlFactory.collapsible(Style.INFO, htmlFactory.glyphicon(Glyphicon.user)+" Actors", false, generateActorsLeftPanel(htmlFactory, contentDir), null));
+			leftPanel.content(htmlFactory.collapsible(Bootstrap.Style.INFO, htmlFactory.glyphicon(Glyphicon.user)+" Actors", false, generateActorsLeftPanel(htmlFactory, contentDir), null));
 		}
 		if (!pageResults.isEmpty()) {
-			leftPanel.content(htmlFactory.collapsible(Style.INFO, htmlFactory.glyphicon(Glyphicon.list_alt)+" Pages", false, generatePagesLeftPanel(htmlFactory, contentDir), null));
+			leftPanel.content(htmlFactory.collapsible(Bootstrap.Style.INFO, htmlFactory.glyphicon(Glyphicon.list_alt)+" Pages", false, generatePagesLeftPanel(htmlFactory, contentDir), null));
 		}
 		
 		// TODO - Actors, pages.
 		
-		reportPanel.contentPanel().id("main").width(DeviceSize.LARGE, 12 - leftPanelWidth);
+		reportPanel.contentPanel().id("main").width(Bootstrap.DeviceSize.LARGE, 12 - leftPanelWidth);
 		
 		try (FileWriter indexWriter = new FileWriter(new File(outputDir, "index.html"))) {
 			indexWriter.write(htmlFactory.routerApplication(
@@ -307,7 +308,7 @@ class ReportGenerator {
 			int slideWidth) throws IOException {
 		
 		Table methodTable = htmlFactory.table().bordered();
-		Row headerRow = methodTable.row().style(Style.INFO);
+		Row headerRow = methodTable.row().style(Bootstrap.Style.INFO);
 		headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
 		headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
 		headerRow.header(htmlFactory.glyphicon(Glyphicon.time), " Duration");
@@ -373,7 +374,7 @@ class ReportGenerator {
 			StringBuilder initScript = new StringBuilder();
 			Carousel screenshotCarousel = htmlFactory.carousel()
 					.ride(false)
-					.indicatorsBackground(BootstrapColor.GRAY)
+					.indicatorsBackground(Bootstrap.Color.GRAY)
 					.attribute("data-interval", "false")
 					.id(htmlFactory.nextId()+"_screenshotCarousel");
 			List<ScreenshotEntry> allScreenshots = testMethodResult.allScreenshots();
@@ -397,13 +398,13 @@ class ReportGenerator {
 				}
 				screenshotCarousel.slide()
 					.content(link)
-					.caption(htmlFactory.label(Style.INFO, caption).style("opacity", "0.7"));
+					.caption(htmlFactory.label(Bootstrap.Style.INFO, caption).style("opacity", "0.7"));
 			}
 			testMethodResultWriter.write("<a name='carousel_"+screenshotCarousel.getId()+"'/>");
 			testMethodResultWriter.write(screenshotCarousel.toString());
 			
 			Table methodTable = htmlFactory.table().bordered();
-			Row headerRow = methodTable.row().style(Style.INFO);
+			Row headerRow = methodTable.row().style(Bootstrap.Style.INFO);
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.time), " Duration");
@@ -525,7 +526,7 @@ class ReportGenerator {
 
 	private Table genTestResultTable(HTMLFactory htmlFactory, Collection<? extends TestResult> testResults) {
 		Table classTable = htmlFactory.table().bordered();
-		Row header = classTable.row().style(Style.INFO);
+		Row header = classTable.row().style(Bootstrap.Style.INFO);
 		int[] totals = {0, 0, 0, 0};
 		header.header(htmlFactory.glyphicon(Glyphicon.search), "&nbsp;Test class");
 		header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
@@ -564,7 +565,7 @@ class ReportGenerator {
 				totals[i]+=stats.get(TestStatus.values()[i]);
 			}
 		}
-		Row totalsRow = classTable.row().style(Style.INFO);
+		Row totalsRow = classTable.row().style(Bootstrap.Style.INFO);
 		totalsRow.cell("Total").colspan(2);
 		totalsRow.cell(totals[0]).attribute("align", "center");
 		totalsRow.cell(totals[1]).attribute("align", "center");
@@ -586,7 +587,7 @@ class ReportGenerator {
 	
 	private Object genParameterizedTestResultTable(HTMLFactory htmlFactory, TestSuiteResult testSuiteResult) {
 		Table classTable = htmlFactory.table().bordered();
-		Row header = classTable.row().style(Style.INFO);
+		Row header = classTable.row().style(Bootstrap.Style.INFO);
 		int[] totals = {0, 0, 0, 0};
 		
 		List<Field> paramFields = new ArrayList<>();
@@ -632,7 +633,7 @@ class ReportGenerator {
 		
 		StringBuilder tooltipInitializers = new StringBuilder();
 		
-		Row paramNamesRow = classTable.row().style(Style.INFO);
+		Row paramNamesRow = classTable.row().style(Bootstrap.Style.INFO);
 		for (String[] pi: paramInfo) {
 			Object prmHeader = pi[0];
 			if (pi[1] != null && pi[1].trim().length()!=0) {
@@ -671,7 +672,7 @@ class ReportGenerator {
 				}
 			}
 		}
-		Row totalsRow = classTable.row().style(Style.INFO);
+		Row totalsRow = classTable.row().style(Bootstrap.Style.INFO);
 		totalsRow.cell("Total").colspan(paramInfo.size()+1);
 		totalsRow.cell(totals[0]).attribute("align", "center");
 		totalsRow.cell(totals[1]).attribute("align", "center");
@@ -790,7 +791,7 @@ class ReportGenerator {
 			}
 			
 			Table methodTable = htmlFactory.table().bordered();
-			Row headerRow = methodTable.row().style(Style.INFO);
+			Row headerRow = methodTable.row().style(Bootstrap.Style.INFO);
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Calls");
@@ -880,7 +881,7 @@ class ReportGenerator {
 			}
 			
 			Table methodTable = htmlFactory.table().bordered();
-			Row headerRow = methodTable.row().style(Style.INFO);
+			Row headerRow = methodTable.row().style(Bootstrap.Style.INFO);
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.cog), " Method");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Description");
 			headerRow.header(htmlFactory.glyphicon(Glyphicon.file), " Calls");
@@ -915,7 +916,7 @@ class ReportGenerator {
 	
 	private Table genPageTable(HTMLFactory htmlFactory) {
 		Table pageTable = htmlFactory.table().bordered();
-		Row header = pageTable.row().style(Style.INFO);
+		Row header = pageTable.row().style(Bootstrap.Style.INFO);
 		int[] totals = {0, 0, 0, 0};
 		header.header(htmlFactory.glyphicon(Glyphicon.list_alt), "&nbsp;Page class");
 		header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
@@ -963,7 +964,7 @@ class ReportGenerator {
 			totals[2]+=calls;
 			totals[3]+=covered;
 		}
-		Row totalsRow = pageTable.row().style(Style.INFO);
+		Row totalsRow = pageTable.row().style(Bootstrap.Style.INFO);
 		totalsRow.cell("Total").colspan(2);
 		totalsRow.cell(totals[0]).attribute("align", "center");
 		totalsRow.cell(totals[1]).attribute("align", "center");
@@ -974,7 +975,7 @@ class ReportGenerator {
 
 	private Table genActorTable(HTMLFactory htmlFactory) {
 		Table actorTable = htmlFactory.table().bordered();
-		Row header = actorTable.row().style(Style.INFO);
+		Row header = actorTable.row().style(Bootstrap.Style.INFO);
 		int[] totals = {0, 0, 0};
 		header.header(htmlFactory.glyphicon(Glyphicon.user), "&nbsp;Actor class");
 		header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
@@ -1019,7 +1020,7 @@ class ReportGenerator {
 			totals[1]+=calls;
 			totals[2]+=covered;
 		}
-		Row totalsRow = actorTable.row().style(Style.INFO);
+		Row totalsRow = actorTable.row().style(Bootstrap.Style.INFO);
 		totalsRow.cell("Total").colspan(2);
 		totalsRow.cell(totals[0]).attribute("align", "center");
 		totalsRow.cell(totals[1]).attribute("align", "center");

@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
@@ -25,7 +26,7 @@ import org.openqa.selenium.support.How;
  * @author Pavel Vlasov
  *
  */
-public class PageResult implements HttpPublisher {
+public class PageResult implements HttpPublisher, DirectoryPublisher {
 
 	private final Class<? extends Page<WebDriver>> pageClass;
 	
@@ -144,6 +145,19 @@ public class PageResult implements HttpPublisher {
 		pConnection.setRequestMethod("POST");
 		pConnection.setDoOutput(true);
 		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
+			toJSON(idMap).write(w);
+		}
+		int responseCode = pConnection.getResponseCode();
+		if (responseCode==HttpURLConnection.HTTP_OK) {
+			id = pConnection.getHeaderField("ID");
+			idMap.put(this, id);
+		} else {
+			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
+		}
+	}
+
+	private JSONObject toJSON(Map<Object, String> idMap) throws JSONException {
 		JSONObject data = new JSONObject();
 		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getPageInterface(), data);
 		if (getTitle()!=null) {
@@ -287,21 +301,29 @@ public class PageResult implements HttpPublisher {
 			coverageEntry.put("qualifiedName", ce.getKey().toString());
 			coverageEntry.put("invocations", ce.getValue());
 		}
-		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
-			data.write(w);
-		}
-		int responseCode = pConnection.getResponseCode();
-		if (responseCode==HttpURLConnection.HTTP_OK) {
-			id = pConnection.getHeaderField("ID");
-			idMap.put(this, id);
-		} else {
-			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
-		}
+		return data;
 	}			
 
 	@Override
 	public int publishSize() {
 		return 1;
-	}				
+	}
+	
+	@Override
+	public String publish(
+			Directory directory, 
+			boolean publishPerformance, 
+			Map<Object, String> idMap,
+			DirectoryPublishMonitor monitor) throws Exception {
+
+		String path = "pages/"+getPageInterface().getName().replace('.', '/')+".json";
+		
+		if (monitor!=null) {
+			monitor.onPublishing("Page result "+getPageInterface().getName(), path);
+		}
+		idMap.put(this, path);
+		directory.store(toJSON(idMap), path);
+		return path;
+	}	
 		
 }
