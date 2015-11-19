@@ -22,16 +22,18 @@ import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement.BootstrapColor;
 import org.nasdanika.html.UIElement.Event;
-import org.nasdanika.html.UIElement.Style;
 import org.openqa.selenium.WebDriverException;
 
 /**
@@ -39,7 +41,7 @@ import org.openqa.selenium.WebDriverException;
  * @author Pavel Vlasov
  *
  */
-public class OperationResult<O extends AnnotatedElement> implements HttpPublisher {
+public class OperationResult<O extends AnnotatedElement> implements HttpPublisher, DirectoryPublisher {
 
 	final O operation;
 	
@@ -218,13 +220,13 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 	void genRow(HTMLFactory htmlFactory, Table methodTable) {
 		Row row = methodTable.row();
 		if (isFailure()) {
-			row.style(Style.DANGER);
+			row.style(Bootstrap.Style.DANGER);
 		} else if (failure!=null) {
-			row.style(Style.WARNING);
+			row.style(Bootstrap.Style.WARNING);
 		} else if (isPending()) {
-			row.style(Style.DEFAULT);
+			row.style(Bootstrap.Style.DEFAULT);
 		} else {
-			row.style(Style.SUCCESS);
+			row.style(Bootstrap.Style.SUCCESS);
 		}
 		row.cell(routeLink(htmlFactory, false));
 		genDescriptionAndDurationCells(htmlFactory, row);
@@ -250,7 +252,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 						htmlFactory.glyphicon(Glyphicon.time), 
 						"&nbsp;", 
 						name);				
-				return doStyle ? routeLink.style("color", BootstrapColor.GRAY.code) : routeLink;
+				return doStyle ? routeLink.style("color", Bootstrap.Color.GRAY.code) : routeLink;
 				
 			}
 			
@@ -260,7 +262,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 					htmlFactory.glyphicon(Glyphicon.ok), 
 					"&nbsp;", 
 					name);
-			return doStyle ? routeLink.style("color", BootstrapColor.SUCCESS.code) : routeLink;
+			return doStyle ? routeLink.style("color", Bootstrap.Color.SUCCESS.code) : routeLink;
 		}
 		
 		if (isFailure()) {
@@ -271,7 +273,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 					"&nbsp;", 
 					name);
 			
-			return doStyle ? routeLink.style("color", BootstrapColor.DANGER.code) : routeLink;
+			return doStyle ? routeLink.style("color", Bootstrap.Color.DANGER.code) : routeLink;
 		}
 		
 		Tag routeLink = htmlFactory.routeLink(
@@ -280,7 +282,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 					htmlFactory.glyphicon(Glyphicon.warning_sign), 
 					"&nbsp;", 
 					name);
-		return doStyle ? routeLink.style("color", BootstrapColor.WARNING.code) : routeLink;
+		return doStyle ? routeLink.style("color", Bootstrap.Color.WARNING.code) : routeLink;
 	}
 
 	public boolean isPending() {
@@ -292,9 +294,9 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 	void genRows(HTMLFactory htmlFactory, Table methodTable, Object carouselId, List<ScreenshotEntry> screenshots, int indent) {
 		Row row = methodTable.row();
 		if (isFailure()) {
-			row.style(Style.DANGER);
+			row.style(Bootstrap.Style.DANGER);
 		} else if (failure!=null) {
-			row.style(Style.WARNING);
+			row.style(Bootstrap.Style.WARNING);
 		}
 		
 		Object caption = getHTMLCaption(htmlFactory);
@@ -369,7 +371,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			rootCause.printStackTrace(new PrintWriter(sw));
 			try {
 				sw.close();
-				descriptionCell.content(htmlFactory.collapsible(isFailure() ? Style.DANGER : Style.WARNING, "<pre>"+StringEscapeUtils.escapeHtml4(rootCause.toString())+"</pre>", true, "<pre style='color:red'>", sw, "</pre>"));
+				descriptionCell.content(htmlFactory.collapsible(isFailure() ? Bootstrap.Style.DANGER : Bootstrap.Style.WARNING, "<pre>"+StringEscapeUtils.escapeHtml4(rootCause.toString())+"</pre>", true, "<pre style='color:red'>", sw, "</pre>"));
 			} catch (IOException e) {
 				// Should never happen.
 				e.printStackTrace();
@@ -430,6 +432,62 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		pConnection.setRequestMethod("POST");
 		pConnection.setDoOutput(true);
 		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+		try (Writer w = new OutputStreamWriter(new GZIPOutputStream(pConnection.getOutputStream()))) {
+			toJSON(publishPerformance, idMap).write(w);
+		}
+		int responseCode = pConnection.getResponseCode();
+		if (responseCode==HttpURLConnection.HTTP_OK) {
+			id = pConnection.getHeaderField("ID");
+			idMap.put(this, id);
+			String location = pConnection.getHeaderField("Location");
+	
+			if (parent==null) {
+				URL methodResultsURL= new URL(location+"/screenshots");
+				for (ScreenshotEntry se: allScreenshots()) {
+					se.publish(methodResultsURL, securityToken, publishPerformance, idMap, monitor);				
+				}
+			}
+	
+			URL childrenURL= new URL(location+"/children");
+			for (OperationResult<?> child: getChildren()) {
+				child.publish(childrenURL, securityToken, publishPerformance, idMap, monitor);				
+			}
+			
+			// --- Update non-containing references ---
+			if (parent==null && (afterScreenshot!=null || beforeScreenshot!=null)) {
+				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
+				uConnection.setRequestMethod("PUT");
+				uConnection.setDoOutput(true);
+				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+				JSONObject uData = new JSONObject();
+				if (afterScreenshot!=null) {
+					String sid = idMap.get(afterScreenshot.getMaster());
+					if (sid==null) {
+						throw new IllegalStateException("Screenshot ID not found in ID map");
+					}
+					uData.put("afterScreenshot", sid);
+				}
+				if (beforeScreenshot!=null) {
+					String sid = idMap.get(beforeScreenshot.getMaster());
+					if (sid==null) {
+						throw new IllegalStateException("Screenshot ID not found in ID map");
+					}
+					uData.put("beforeScreenshot", sid);
+				}
+				try (Writer w = new OutputStreamWriter(uConnection.getOutputStream())) {
+					uData.write(w);
+				}
+				if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
+					throw new PublishException(uConnection.getURL()+" error: "+uConnection.getResponseCode()+" "+uConnection.getResponseMessage());
+				}				
+			}					
+			// ---
+		} else {
+			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
+		}
+	}
+
+	private JSONObject toJSON(boolean publishPerformance, Map<Object, String> idMap) throws JSONException, Exception {
 		JSONObject data = new JSONObject();
 		WebTestUtil.titleAndDescriptionToJSON(getOperation(), data);
 		data.put("operationName", getOperationName());
@@ -492,8 +550,76 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			}
 		}		
 		extraPublishInfo(data);
+		return data;
+	}	
+	
+	private static JSONObject toJSON(Throwable th) throws Exception {
+		JSONObject ret = new JSONObject();
+		ret.put("type", th.getClass().getName());
+		if (th.getMessage()!=null) {
+			ret.put("message", th.getMessage());
+		}
+		JSONArray stackTrace = new JSONArray();
+		ret.put("stackTrace", stackTrace);
+		for (StackTraceElement ste: th.getStackTrace()) {
+			JSONObject el = new JSONObject();
+			stackTrace.put(el);
+			el.put("className", ste.getClassName());
+			if (ste.getFileName()!=null) {
+				el.put("fileName", ste.getFileName());
+			}
+			if (ste.getLineNumber()>=0) {
+				el.put("lineNumber", ste.getLineNumber());
+			}
+			el.put("methodName", ste.getMethodName());
+			if (ste.isNativeMethod()) {
+				el.put("native", true);
+			}			
+		}
+		return ret;
+	}
+	
+	/**
+	 * A method for subclasses add 
+	 * @param data
+	 */
+	protected void extraPublishInfo(JSONObject data) throws Exception {
+		
+	}
+	
+	@Override
+	public int publishSize() {
+		int ret = 1;
+		for (OperationResult<?> or: getChildren()) {
+			ret+=or.publishSize();	
+		}
+	
+		if (parent==null) {
+			for (ScreenshotEntry ss: allScreenshots()) {
+				ret+=ss.publishSize();	
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public String publish(
+			Directory directory, 
+			boolean publishPerformance, 
+			Map<Object, String> idMap,
+			DirectoryPublishMonitor monitor) throws Exception {
+		
+		String path = "operations/"+"TODO - operation class, . to /, then method name with ___ and parameter types separated by _";
+		
+		if (monitor!=null) {
+			monitor.onPublishing("Operation Result "+getOperationName(), path);
+		}
+		HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
+		pConnection.setRequestMethod("POST");
+		pConnection.setDoOutput(true);
+		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 		try (Writer w = new OutputStreamWriter(new GZIPOutputStream(pConnection.getOutputStream()))) {
-			data.write(w);
+			toJSON(publishPerformance, idMap).write(w);
 		}
 		int responseCode = pConnection.getResponseCode();
 		if (responseCode==HttpURLConnection.HTTP_OK) {
@@ -545,55 +671,6 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		} else {
 			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
 		}
-	}	
-	
-	private static JSONObject toJSON(Throwable th) throws Exception {
-		JSONObject ret = new JSONObject();
-		ret.put("type", th.getClass().getName());
-		if (th.getMessage()!=null) {
-			ret.put("message", th.getMessage());
-		}
-		JSONArray stackTrace = new JSONArray();
-		ret.put("stackTrace", stackTrace);
-		for (StackTraceElement ste: th.getStackTrace()) {
-			JSONObject el = new JSONObject();
-			stackTrace.put(el);
-			el.put("className", ste.getClassName());
-			if (ste.getFileName()!=null) {
-				el.put("fileName", ste.getFileName());
-			}
-			if (ste.getLineNumber()>=0) {
-				el.put("lineNumber", ste.getLineNumber());
-			}
-			el.put("methodName", ste.getMethodName());
-			if (ste.isNativeMethod()) {
-				el.put("native", true);
-			}			
-		}
-		return ret;
-	}
-	
-	/**
-	 * A method for subclasses add 
-	 * @param data
-	 */
-	protected void extraPublishInfo(JSONObject data) throws Exception {
-		
-	}
-	
-	@Override
-	public int publishSize() {
-		int ret = 1;
-		for (OperationResult<?> or: getChildren()) {
-			ret+=or.publishSize();	
-		}
-	
-		if (parent==null) {
-			for (ScreenshotEntry ss: allScreenshots()) {
-				ret+=ss.publishSize();	
-			}
-		}
-		return ret;
 	}				
 		
 }
