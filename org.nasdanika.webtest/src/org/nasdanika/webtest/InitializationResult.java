@@ -1,6 +1,6 @@
 package org.nasdanika.webtest;
 
-import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 
 /**
  * Contains results of page class initialization.

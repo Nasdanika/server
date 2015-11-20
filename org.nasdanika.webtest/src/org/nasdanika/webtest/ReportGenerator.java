@@ -38,7 +38,7 @@ import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.Container;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.HTMLFactory.Placement;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;

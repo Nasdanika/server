@@ -14,13 +14,11 @@ import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Color;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.html.HTMLRenderer;
 

@@ -5,7 +5,7 @@ import java.text.MessageFormat;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 
 public class TestMethodResult extends MethodResult {
 

@@ -15,6 +15,14 @@ An instance of [[javadoc>org.nasdanika.html.HTMLFactory]] is used to create inst
 
 Many HTML interfaces extend [[javadoc>org.nasdanika.html.Producer]] and [[javadoc>java.lang.AutoCloseable]]. Many API methods take objects as arguments to build a composite HTML object from parts.
 
+The simplest way to produce HTML from an object created by HTMLFactory is to invoke it's ``toString()`` method. In classes which implement ``Producer`` ``toString()`` invokes ``produce()`` and then stringifies its return value:
+
+```java
+public String toString() {
+	return stringify(produce(0), 0);
+}
+```
+
 Objects are converted to HTML string (stringified) using the following algorithm (see. [UIElementImpl.stringify()](http://www.nasdanika.org/server/apidocs/org.nasdanika.html/target/site/apidocs/src-html/org/nasdanika/html/impl/UIElementImpl.html#line.1063) source code):  
 
 * If object is ``null`` then it is treated as a blank string.

@@ -48,7 +48,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 	private boolean small;
 	private Object[] footer;
 
-	private boolean closeButton;
+	private boolean closeButton = true;
 
 	private boolean centerVertical;
 	

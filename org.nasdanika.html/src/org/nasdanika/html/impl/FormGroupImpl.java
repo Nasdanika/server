@@ -3,9 +3,9 @@ package org.nasdanika.html.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.InputBase;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;

@@ -15,7 +15,7 @@ For example, a simple banking application could be structured as follows:
 
 If communication is performed through [[javascriptApi.md|JavaScript API]], then KnockoutJS is a better choice because:
 * The JavaScript API is asynchronous and leverages promises. Asynchronous communication may interfere with AngularJS' digest cycle if not coded correctly. 
-* In this case only a tiny part of AngularJS functionality will be leveraged.
+* In this case only a part of AngularJS functionality will be leveraged.
 * JavaScript API is implemented as [AMD](https://github.com/amdjs/amdjs-api/blob/master/AMD.md)/[RequireJS](http://requirejs.org/) modules, KnockoutJS also supports [AMD with RequireJS](http://knockoutjs.com/documentation/amd-loading.html). As such, application code can declare dependencies on repository objects and KnockoutJS (ko) with ``requirejs([dependencies], function() {...})``. AngularJS has its own module system and marrying the JavaScript API with AngularJS is a bit more involved.  
 * KnockoutJS is better at reporting binding problems, so troubleshooting might be a bit easier.
 
@@ -23,7 +23,7 @@ In the case of use of operation routes which produce/consume JSON, AngularJS and
 
 Choice between JavaScript API and route operations depends on the following factors:
 
-* Can the domain model act as a view model? If the view model is very different from the domain model, then it is better to use route operations producing the view model.
+* Can the domain model act as a view model? If the view model is very different from the domain model, then it is better to use route operations producing the view model. Initial view model can be retrieved from a read (GET) operation. Update (PUT, POST, DELETE) operations can take input data, modify the server-side model, and then return an updated view model, possibly invoking the read operation internally. 
 * Progress notifications. The JavaScript API provides support for progress notifications for long-running operations. If this functionality is important, then JavaScript API shall be used. If the view model is different from the domain model, then view-model producing operations can be invoked through the JavaScript API.
 
         

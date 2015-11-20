@@ -300,7 +300,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	}
 
 	@Override
-	public Tag glyphicon(Glyphicon glyphicon) {		
+	public Tag glyphicon(Bootstrap.Glyphicon glyphicon) {		
 		return span("").addClass("glyphicon").addClass("glyphicon-"+glyphicon.code());
 	}
 	

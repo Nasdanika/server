@@ -2,7 +2,7 @@ package org.nasdanika.webtest;
 
 import java.lang.reflect.Method;
 
-import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 
 /**
  * Contains results of actor method execution.

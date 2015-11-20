@@ -25,13 +25,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Color;
-import org.nasdanika.html.Bootstrap.Style;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
-import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Event;
 import org.openqa.selenium.WebDriverException;
@@ -214,7 +212,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 	};
 	
 	Glyphicon getGlyphicon() {
-		return HTMLFactory.Glyphicon.asterisk;
+		return Glyphicon.asterisk;
 	}
 	
 	void genRow(HTMLFactory htmlFactory, Table methodTable) {

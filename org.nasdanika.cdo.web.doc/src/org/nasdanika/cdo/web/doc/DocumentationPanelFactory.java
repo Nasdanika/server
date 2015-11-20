@@ -1,12 +1,11 @@
 package org.nasdanika.cdo.web.doc;
 
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Style;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.Tabs;

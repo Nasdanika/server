@@ -6,9 +6,9 @@ import java.util.Map;
 
 import org.json.JSONObject;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
 import org.nasdanika.html.HTMLFactory.Placement;
 import org.nasdanika.html.InputBase;
 import org.nasdanika.html.InputGroup;
