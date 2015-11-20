@@ -275,6 +275,16 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 					ret+=ar.publishSize();	
 				}
 				return ret;
+			}
+
+			@Override
+			public String publish(
+					Directory directory, 
+					boolean publishPerformance, 
+					Map<Object, String> idMap,
+					DirectoryPublishMonitor monitor) throws Exception {
+				
+				throw new UnsupportedOperationException("TODO!");
 			}				
 			
 		});

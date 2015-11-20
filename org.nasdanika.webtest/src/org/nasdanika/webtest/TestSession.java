@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.json.JSONObject;
+import org.nasdanika.webtest.DirectoryPublisher.DirectoryPublishMonitor;
 
 /**
  * Publishes test results to HTTP report server.
@@ -117,6 +118,16 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 			ret+=tr.publishSize();				
 		}
 		return ret;
-	}				
+	}
 	
+	@Override
+	public String publish(
+			Directory directory, 
+			boolean publishPerformance, 
+			Map<Object, String> idMap,
+			DirectoryPublishMonitor monitor) throws Exception {
+		
+		throw new UnsupportedOperationException("TODO!");
+	}				
+		
 }

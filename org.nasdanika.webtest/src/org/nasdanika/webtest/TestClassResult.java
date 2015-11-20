@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Executor;
 
 import org.json.JSONObject;
+import org.nasdanika.webtest.DirectoryPublisher.DirectoryPublishMonitor;
 import org.openqa.selenium.WebDriver;
 
 public class TestClassResult implements Collector<WebDriver>, TestResult {
@@ -379,6 +380,17 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			ret+=ar.publishSize();	
 		}
 		return ret;
+	}
+
+
+	@Override
+	public String publish(
+			Directory directory, 
+			boolean publishPerformance, 
+			Map<Object, String> idMap,
+			DirectoryPublishMonitor monitor) throws Exception {
+		
+		throw new UnsupportedOperationException("TODO!");
 	}				
 	
 }

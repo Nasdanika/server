@@ -609,68 +609,69 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			Map<Object, String> idMap,
 			DirectoryPublishMonitor monitor) throws Exception {
 		
-		String path = "operations/"+"TODO - operation class, . to /, then method name with ___ and parameter types separated by _";
-		
-		if (monitor!=null) {
-			monitor.onPublishing("Operation Result "+getOperationName(), path);
-		}
-		HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
-		pConnection.setRequestMethod("POST");
-		pConnection.setDoOutput(true);
-		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
-		try (Writer w = new OutputStreamWriter(new GZIPOutputStream(pConnection.getOutputStream()))) {
-			toJSON(publishPerformance, idMap).write(w);
-		}
-		int responseCode = pConnection.getResponseCode();
-		if (responseCode==HttpURLConnection.HTTP_OK) {
-			id = pConnection.getHeaderField("ID");
-			idMap.put(this, id);
-			String location = pConnection.getHeaderField("Location");
-	
-			if (parent==null) {
-				URL methodResultsURL= new URL(location+"/screenshots");
-				for (ScreenshotEntry se: allScreenshots()) {
-					se.publish(methodResultsURL, securityToken, publishPerformance, idMap, monitor);				
-				}
-			}
-	
-			URL childrenURL= new URL(location+"/children");
-			for (OperationResult<?> child: getChildren()) {
-				child.publish(childrenURL, securityToken, publishPerformance, idMap, monitor);				
-			}
-			
-			// --- Update non-containing references ---
-			if (parent==null && (afterScreenshot!=null || beforeScreenshot!=null)) {
-				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
-				uConnection.setRequestMethod("PUT");
-				uConnection.setDoOutput(true);
-				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
-				JSONObject uData = new JSONObject();
-				if (afterScreenshot!=null) {
-					String sid = idMap.get(afterScreenshot.getMaster());
-					if (sid==null) {
-						throw new IllegalStateException("Screenshot ID not found in ID map");
-					}
-					uData.put("afterScreenshot", sid);
-				}
-				if (beforeScreenshot!=null) {
-					String sid = idMap.get(beforeScreenshot.getMaster());
-					if (sid==null) {
-						throw new IllegalStateException("Screenshot ID not found in ID map");
-					}
-					uData.put("beforeScreenshot", sid);
-				}
-				try (Writer w = new OutputStreamWriter(uConnection.getOutputStream())) {
-					uData.write(w);
-				}
-				if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
-					throw new PublishException(uConnection.getURL()+" error: "+uConnection.getResponseCode()+" "+uConnection.getResponseMessage());
-				}				
-			}					
-			// ---
-		} else {
-			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
-		}
+//		String path = "operations/"+"TODO - operation class, . to /, then method name with ___ and parameter types separated by _";
+//		
+//		if (monitor!=null) {
+//			monitor.onPublishing("Operation Result "+getOperationName(), path);
+//		}
+//		HttpURLConnection pConnection = (HttpURLConnection) url.openConnection();
+//		pConnection.setRequestMethod("POST");
+//		pConnection.setDoOutput(true);
+//		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+//		try (Writer w = new OutputStreamWriter(new GZIPOutputStream(pConnection.getOutputStream()))) {
+//			toJSON(publishPerformance, idMap).write(w);
+//		}
+//		int responseCode = pConnection.getResponseCode();
+//		if (responseCode==HttpURLConnection.HTTP_OK) {
+//			id = pConnection.getHeaderField("ID");
+//			idMap.put(this, id);
+//			String location = pConnection.getHeaderField("Location");
+//	
+//			if (parent==null) {
+//				URL methodResultsURL= new URL(location+"/screenshots");
+//				for (ScreenshotEntry se: allScreenshots()) {
+//					se.publish(methodResultsURL, securityToken, publishPerformance, idMap, monitor);				
+//				}
+//			}
+//	
+//			URL childrenURL= new URL(location+"/children");
+//			for (OperationResult<?> child: getChildren()) {
+//				child.publish(childrenURL, securityToken, publishPerformance, idMap, monitor);				
+//			}
+//			
+//			// --- Update non-containing references ---
+//			if (parent==null && (afterScreenshot!=null || beforeScreenshot!=null)) {
+//				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
+//				uConnection.setRequestMethod("PUT");
+//				uConnection.setDoOutput(true);
+//				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+//				JSONObject uData = new JSONObject();
+//				if (afterScreenshot!=null) {
+//					String sid = idMap.get(afterScreenshot.getMaster());
+//					if (sid==null) {
+//						throw new IllegalStateException("Screenshot ID not found in ID map");
+//					}
+//					uData.put("afterScreenshot", sid);
+//				}
+//				if (beforeScreenshot!=null) {
+//					String sid = idMap.get(beforeScreenshot.getMaster());
+//					if (sid==null) {
+//						throw new IllegalStateException("Screenshot ID not found in ID map");
+//					}
+//					uData.put("beforeScreenshot", sid);
+//				}
+//				try (Writer w = new OutputStreamWriter(uConnection.getOutputStream())) {
+//					uData.write(w);
+//				}
+//				if (uConnection.getResponseCode()!=HttpURLConnection.HTTP_OK) {
+//					throw new PublishException(uConnection.getURL()+" error: "+uConnection.getResponseCode()+" "+uConnection.getResponseMessage());
+//				}				
+//			}					
+//			// ---
+//		} else {
+//			throw new PublishException(url+" error: "+responseCode+" "+pConnection.getResponseMessage());
+//		}
+		throw new UnsupportedOperationException("TODO!");
 	}				
 		
 }
