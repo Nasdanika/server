@@ -33,7 +33,7 @@ Example - loading script from a classloader resource:
 htmlFactory.tag(TagName.script, getClass().getResource("Script.js"));
 ```
 
-When ``close()`` method is invoked on HTML object, the object invokes ``close`` on all its parts. It allows to build complex HTML composites from parts which hold system resources such as OSGi services or database connections and release the resource by invoking ``close`` on the top object.
+When ``close()`` method is invoked on HTML object, the object invokes ``close`` on all its parts. It allows to build complex HTML composites from parts which hold system resources such as OSGi services or database connections and release the resources by invoking ``close`` on the top object.
 
 ``Producer`` and ``FactoryProducer`` are functional interfaces. It allows to assemble HTML objects from lambdas and method references.
 
@@ -50,14 +50,21 @@ Low level HTML API provide means to construct HTML elements and manipulate their
 
 Some other low-level factory methods include ``link(Object, Object...)``, ``ol(Iterable<?>)``, and ``ul(Iterable<?>)``.
 
+## CSS Styles
+
+CSS styles can be set with ``style(String,Object)`` method or with UIElement ``style()`` method which returns [[javadoc>org.nasdanika.html.Style]] interface providing bindings for frequently used styles, e.g.
+
+```java
+Tag tag = htmlFactory.div(content).style().text().size("150%");
+```
+
 ## Bootstrap
 The HTML bundle API provides interfaces and methods for the majority of [Bootstrap](http://getbootstrap.com/) elements. The API attempts to follow Bootstrap documentation as close as possible - interface and method names shall be self-descriptive after getting familiar with Bootstrap.
 
-### Grid
-Bootstrap grid classes can be set on any UIElement by invoking ``grid()`` method and then one of [[javadoc>org.nasdanika.html.Grid]] methods, e.g.:
+Bootstrap classes can be set on any UIElement by invoking ``bootstrap()`` method and then one of [[javadoc>org.nasdanika.html.Boostrap]] interface methods, e.g.:
 
 ```java
-Tag tag = htmlFactory.div(content).grid().container();
+Tag tag = htmlFactory.div(content).bootstrap().grid().container();
 ```
 
 ### Forms
