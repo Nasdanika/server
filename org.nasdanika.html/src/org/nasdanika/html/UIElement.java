@@ -355,6 +355,8 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable, Produc
 	 */
 	T style(String name, Object value);
 	
+	Style<T> style();
+	
 	/**
 	 * Adds class definition.
 	 * @param clazz

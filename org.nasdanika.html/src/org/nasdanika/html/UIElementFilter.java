@@ -110,4 +110,9 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.produce(indent);
 	}
 
+	@Override
+	public Style<T> style() {
+		return target.style();
+	}
+
 }

@@ -133,5 +133,16 @@ public interface Bootstrap<T> {
 	
 	Text<T> text();
 	
+	T show();
+	
+	T hidden();
+	
+	T visibleBlock(DeviceSize deviceSize);
+	
+	T visibleInline(DeviceSize deviceSize);
+	
+	T visibleInlineBlock(DeviceSize deviceSize);
+	
+	T hidden(DeviceSize deviceSize);
 
 }

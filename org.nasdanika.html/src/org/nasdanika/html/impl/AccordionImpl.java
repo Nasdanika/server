@@ -11,11 +11,13 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
 	private class Item extends UIElementImpl<Item> {
 		
-		Item(Object title, Object[] itemContent, Object location, Bootstrap.Style style, boolean initial) {
+		Item(Object title, Object[] itemContent, Object location, Bootstrap.Style style, boolean initial, Object id) {
 			super(AccordionImpl.this.factory, "div");
 			addClass("panel");
 			addClass("panel-"+effectiveStyle(style).name().toLowerCase());
-			String id = factory.nextId()+"_collapse";
+			if (id==null) {
+				id = factory.nextId()+"_collapse";
+			}
 			
 			Tag titleLink = factory.tag(TagName.a, title)
 					.attribute("data-toggle", "collapse")
@@ -39,6 +41,7 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 			if (initial) {
 				contentDiv.addClass("in");
 			}
+			this.content.add(contentDiv);
 			
 			if (location!=null) {
 				content.add(factory.tag(TagName.script, "nsdLoad(\"#"+id+"_panel_body\", \""+location+"\");"));
@@ -69,8 +72,8 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 	
 	@Override
-	public UIElement<?> item(Object title, Bootstrap.Style style, boolean initial, Object itemContent) {
-		Item item = new Item(title, new Object[] {itemContent}, null, style, initial);
+	public UIElement<?> item(Object title, Bootstrap.Style style, boolean initial, Object id, Object itemContent) {
+		Item item = new Item(title, new Object[] {itemContent}, null, style, initial, id);
 		this.content.add(item);
 		return item;
 	}
@@ -83,14 +86,14 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 
 	@Override
 	public UIElement<?> item(Object name, Object... itemContent) {
-		Item item = new Item(name, itemContent, null, style, this.content.isEmpty());
+		Item item = new Item(name, itemContent, null, style, this.content.isEmpty(), null);
 		this.content.add(item);
 		return item;
 	}
 
 	@Override
 	public UIElement<?> ajaxItem(Object name, Object location) {
-		return ajaxItem(name, null, location);
+		return ajaxItem(name, null, null, location);
 	}
 
 	@Override
@@ -99,8 +102,8 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 
 	@Override
-	public UIElement<?> ajaxItem(Object title,	Bootstrap.Style style, Object location) {
-		Item item = new Item(title, null, location, style, this.content.isEmpty());
+	public UIElement<?> ajaxItem(Object title,	Bootstrap.Style style, Object id, Object location) {
+		Item item = new Item(title, null, location, style, this.content.isEmpty(), id);
 		this.content.add(item);
 		return item;
 	}

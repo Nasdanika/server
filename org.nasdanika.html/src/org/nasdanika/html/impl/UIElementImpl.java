@@ -16,13 +16,14 @@ import java.util.Map.Entry;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Angular;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Grid;
 import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.FontAwesome;
-import org.nasdanika.html.Bootstrap.Grid;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Knockout;
 import org.nasdanika.html.Producer;
 import org.nasdanika.html.ProducerException;
+import org.nasdanika.html.Style;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement;
 
@@ -598,6 +599,36 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 					}
 					
 				};
+			}
+
+			@Override
+			public T show() {
+				return addClass("show");
+			}
+
+			@Override
+			public T hidden() {
+				return addClass("hidden");
+			}
+
+			@Override
+			public T visibleBlock(DeviceSize deviceSize) {
+				return addClass("visible-"+deviceSize.code+"-block");
+			}
+
+			@Override
+			public T visibleInline(DeviceSize deviceSize) {
+				return addClass("visible-"+deviceSize.code+"-inline");
+			}
+
+			@Override
+			public T visibleInlineBlock(org.nasdanika.html.Bootstrap.DeviceSize deviceSize) {
+				return addClass("visible-"+deviceSize.code+"-inline-block");
+			}
+
+			@Override
+			public T hidden(org.nasdanika.html.Bootstrap.DeviceSize deviceSize) {
+				return addClass("hidden-"+deviceSize.code);
 			}
 			
 		};
@@ -1196,6 +1227,13 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		return (T) this;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private Style<T> style = new StyleImpl<T>((T) this);
+
+	@Override
+	public org.nasdanika.html.Style<T> style() {
+		return style;
+	}
 	
 }
 
