@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: HTML/Bootstrap bundle
+Bundle-Name: HTML/Bootstrap/Angular/Knockout/Font Awesome bundle
 Bundle-SymbolicName: org.nasdanika.html
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Nasdanika LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.nasdanika.html,
