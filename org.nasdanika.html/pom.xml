@@ -10,5 +10,4 @@
   <packaging>eclipse-plugin</packaging>
   <name>Nasdanika HTML</name>
   <description>Classes for generating HTML UI.</description>  
-  <version>1.2.0-SNAPSHOT</version>
 </project>
