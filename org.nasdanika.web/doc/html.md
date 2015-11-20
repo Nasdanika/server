@@ -13,9 +13,9 @@ The goal of the bundle is to provide a Java developer a set of API's to build mo
 
 An instance of [[javadoc>org.nasdanika.html.HTMLFactory]] is used to create instances of API interfaces, which are then combined together. In applications where HTML API is used not in the context of a web request [[javadoc>org.nasdanika.html.impl.DefaultHTMLFactory]] class can be directly instantiated and used as HTMLFactory implementation. In the context of a web request, e.g. in routes or route operations, and instance of HTMLFactory can be obtained either by adapting [[javadoc>org.nasdanika.web.HttpServletRequestContext]] or by specifying a context parameter - in this case the framework will adapt the context to HTMLFactory.
 
-Many HTML interfaces extend [[javadoc>org.nasdanika.html.Producer]] and [[javadoc>java.lang.Autocloseable]]. Many API methods take objects as arguments to build a composite HTML object from parts.
+Many HTML interfaces extend [[javadoc>org.nasdanika.html.Producer]] and [[javadoc>java.lang.AutoCloseable]]. Many API methods take objects as arguments to build a composite HTML object from parts.
 
-Objects are converted to HTML string (stringified) using the following algorithm (see. [UIElementImpl.toHTML()](http://www.nasdanika.org/server/apidocs/src-html/org/nasdanika/html/impl/UIElementImpl.html#line.866) source code):  
+Objects are converted to HTML string (stringified) using the following algorithm (see. [UIElementImpl.stringify()](http://www.nasdanika.org/server/apidocs/org.nasdanika.html/target/site/apidocs/src-html/org/nasdanika/html/impl/UIElementImpl.html#line.1063) source code):  
 
 * If object is ``null`` then it is treated as a blank string.
 * If object is [[javadoc>java.lang.String]], then it is used as-is. 
@@ -46,7 +46,7 @@ Low level HTML API provide means to construct HTML elements and manipulate their
 
 ``input(InputType)`` method can be used to create [[javadoc>org.nasdanika.html.Input|input]] elements. [[javadoc>org.nasdanika.html.HTMLFactory$InputType]] is an enumeration of input types. [[javadoc>org.nasdanika.html.TextArea]] and [[javadoc>org.nasdanika.html.Select]] are created by ``textArea()`` and ``select()`` methods respectively.
 
-``fragment(Object...)`` method creates a [[javadoc>org.nasdanika.html.Fragment]], which is a collection of HTML elements which can operated on as single unit.
+``fragment(Object...)`` method creates a [[javadoc>org.nasdanika.html.Fragment]], which is a collection of HTML elements which can be operated on as single unit.
 
 Some other low-level factory methods include ``link(Object, Object...)``, ``ol(Iterable<?>)``, and ``ul(Iterable<?>)``.
 
@@ -72,7 +72,7 @@ Bootstrap forms functionality is available through [[javadoc>org.nasdanika.html.
 HTMLFactory and then added to [[javadoc>org.nasdanika.html.FormGroup]], [[javadoc>org.nasdanika.html.FormInputGroup]] or [[javadoc>org.nasdanika.html.InputGroup]] by invoking respective Form methods.
 
 ### Glyphicons
-[[javadoc>org.nasdanika.html.HTMLFactory$Glyphicons]] enumeration contains a list of Bootstrap glyphs and ``glyphicon(Glyphicon)`` factory method can be used to create a glyph:
+[[javadoc>org.nasdanika.html.Bootstrap$Glyphicon]] enumeration contains a list of [Bootstrap glyphs](http://getbootstrap.com/components/#glyphicons) and ``glyphicon(Glyphicon)`` method can be used to create a glyph:
 
 ```java
 Tag searchGlyph = htmlFactory.glyphicon(Glyphicon.search);
@@ -88,7 +88,7 @@ Tag searchGlyph = htmlFactory.glyphicon(Glyphicon.search);
 mySpan.fontAwesome().webApplication(WebApplication.desktop)
 ```
 
-``fontAwesome()`` factory method is a shortcut for ``span("").fontAwesome()``. [[javadoc>org.nasdanika.html.FontAwesome;Stack]] interface is used for creating [stacked icons](https://fortawesome.github.io/Font-Awesome/examples/#stacked), it can be created with the factory method ``fontAwesomeStack()``.
+``fontAwesome()`` factory method is a shortcut for ``span().fontAwesome()``. [[javadoc>org.nasdanika.html.FontAwesome$Stack]] interface is used for creating [stacked icons](https://fortawesome.github.io/Font-Awesome/examples/#stacked), it can be created with the factory method ``fontAwesomeStack()``.
 
 ## AngularJS
 [AngularJS](https://angularjs.org/) directives can be added to UIElement's by invoking ``angular()`` method and then one of methods of returned [[javadoc>org.nasdanika.html.Angular]] instance:
@@ -106,9 +106,23 @@ myButton.knockout().click("doCoolStuff()")
 
 [[javadoc>org.nasdanika.html.KnockoutVirtualElement|Knockout virtual elements]] can be created with the factory's ``knockoutVirtualElement(Object... content)`` method.
 
+## Templates and interpolation
+HTMLFactory supports simple templating two [interpolate](http://www.nasdanika.org/server/apidocs/org.nasdanika.html/target/site/apidocs/org/nasdanika/html/HTMLFactory.html#interpolate-java.lang.Object-org.nasdanika.html.HTMLFactory.TokenSource-) methods which expand ``{{token name}}`` tokens in the source. Source is stringified before expansion using the algorithm explained above.
+
+If simple interpolation is not enough, you can use [JET](https://eclipse.org/modeling/m2t/?project=jet) templates, [Mustache for Java](https://github.com/spullara/mustache.java) or any other template engine you like.
+
+### Example
+
+The code below reads ``Module.js`` resource, replaces ``{{dependencies}}`` token with its value, and creates a script tag.
+
+```java
+Tag script = htmlFactory.tag(TagName.script, htmlFactory.interpolate(getClass().getResource("MyModule.js", Collections.singletonMap("dependencies", "..."))));
+```
+
+
 ## Application
 
-``applicationPanel()`` factory methods creates an instance of [[javadoc>org.nasdanika.html.ApplicationPanel]], which provides a convenient way to create web pages with a header, navigation bar, several conent panels and a footer.
+``applicationPanel()`` factory methods creates an instance of [[javadoc>org.nasdanika.html.ApplicationPanel]], which provides a convenient way to create web pages with a header, navigation bar, several content panels and a footer.
 
 ``routerApplication()`` factory method generates a single-page application with a [Backbone route](http://backbonejs.org/#Router) which loads server-side content using [[wp>Ajax_(programming)|AJAX]] to an HTML element with ``id`` specified in the route path. In this page's URL from the information center ``http://localhost:8080/information-center/router/doc.html#router/doc-content//information-center/router/doc/bundle/org.nasdanika.web/doc/html.md``:
 
