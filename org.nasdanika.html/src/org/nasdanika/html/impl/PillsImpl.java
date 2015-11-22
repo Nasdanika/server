@@ -55,25 +55,23 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 		
 		protected abstract Tag link();
 		
-		protected abstract Object[] pillContent();
+		protected abstract Object pillContent();
 		
 	}
 	
 	private class ContentPill extends Pill {
 		
-		ContentPill(Object name, int idx, Object[] content) {
+		ContentPill(Object name, int idx, Object content) {
 			super(name, idx);
 			this.content = content;
 		}
 
-		Object[] content;
+		Object content;
 		
 		@Override
 		public void close() throws Exception {
 			super.close();
-			for (Object c: content) {
-				UIElementImpl.close(c);
-			}
+			UIElementImpl.close(content);
 		}
 
 		@Override
@@ -83,7 +81,7 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 		}
 		
 		@Override
-		protected Object[] pillContent() {
+		protected Object pillContent() {
 			return content;
 		}
 	}
@@ -133,7 +131,7 @@ class PillsImpl extends UIElementImpl<Pills> implements Pills {
 	}
 
 	@Override
-	public Pills item(Object name, Object... content) {
+	public Pills item(Object name, Object content) {
 		pills.add(new ContentPill(name, pills.size(), content));
 		return this;
 	}

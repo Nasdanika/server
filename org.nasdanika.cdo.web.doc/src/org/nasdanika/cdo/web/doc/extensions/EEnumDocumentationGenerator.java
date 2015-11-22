@@ -74,6 +74,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 					"<b>"+literal.getName()+"</b> "+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 					null,
 					false,
+					null,
 					accordionFragment);
 		}
 		

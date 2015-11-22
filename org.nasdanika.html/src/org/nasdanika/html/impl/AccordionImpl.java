@@ -85,8 +85,8 @@ class AccordionImpl extends UIElementImpl<Accordion> implements	Accordion {
 	}
 
 	@Override
-	public UIElement<?> item(Object name, Object... itemContent) {
-		Item item = new Item(name, itemContent, null, style, this.content.isEmpty(), null);
+	public UIElement<?> item(Object name, Object itemContent) {
+		Item item = new Item(name, new Object[] {itemContent}, null, style, this.content.isEmpty(), null);
 		this.content.add(item);
 		return item;
 	}

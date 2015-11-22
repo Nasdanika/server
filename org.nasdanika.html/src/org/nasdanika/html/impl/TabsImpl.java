@@ -51,25 +51,23 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		
 		protected abstract Tag link();
 		
-		protected abstract Object[] tabContent();
+		protected abstract Object tabContent();
 		
 	}
 	
 	private class ContentTab extends Tab {
 		
-		ContentTab(Object name, int idx, Object[] content) {
+		ContentTab(Object name, int idx, Object content) {
 			super(name, idx);
 			this.content = content;
 		}
 
-		Object[] content;
+		Object content;
 		
 		@Override
 		public void close() throws Exception {
 			super.close();
-			for (Object c: content) {
-				UIElementImpl.close(c);
-			}
+			UIElementImpl.close(content);
 		}
 
 		@Override
@@ -79,7 +77,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 		}
 		
 		@Override
-		protected Object[] tabContent() {
+		protected Object tabContent() {
 			return content;
 		}
 	}
@@ -131,7 +129,7 @@ class TabsImpl extends UIElementImpl<Tabs> implements Tabs {
 	}
 
 	@Override
-	public Tabs item(Object name, Object... content) {
+	public Tabs item(Object name, Object content) {
 		tabs.add(new ContentTab(name, tabs.size(), content));
 		return this;
 	}

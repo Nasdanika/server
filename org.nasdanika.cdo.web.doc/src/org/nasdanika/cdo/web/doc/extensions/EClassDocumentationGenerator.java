@@ -227,6 +227,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 						"<b>"+attr.getName()+"</b> : "+attr.getEType().getName()+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"), 
 						null,
 						false,
+						null,
 						accordionFragment);
 			}
 			tabs.item(attributeIcon+" Attributes", attributesAccordion);			
@@ -344,6 +345,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 						"<b>"+ref.getName()+"</b> : "+ref.getEType().getName()+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 						null,
 						false,
+						null,
 						accordionFragment);
 			}
 			tabs.item(referenceIcon+" References", referencesAccordion);			
@@ -414,6 +416,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 						"<b>"+operation.getName()+"</b> : "+(operation.getEType()==null ? "void" : operation.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 						null,
 						false,
+						null,
 						accordionFragment);
 			}
 			
@@ -614,6 +617,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 						(isHome ? htmlFactory.glyphicon(Glyphicon.home).style("margin-right", "5px") : "")+"<b>"+route.getName()+"</b> : "+(route.getEType()==null ? "void" : route.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 						null,
 						false,
+						null,
 						accordionFragment);
 			}
 
@@ -861,6 +865,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 						"<b>"+form.getName()+"</b> : "+(form.getEType()==null ? "void" : form.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 						null,
 						false,
+						null,
 						accordionFragment);
 			}
 			

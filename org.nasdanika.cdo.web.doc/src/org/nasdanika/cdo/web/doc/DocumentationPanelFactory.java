@@ -46,7 +46,7 @@ public class DocumentationPanelFactory {
 		
 		Tag searchContainer = searchDiv();	
 		Tag searchModule = htmlFactory.tag(TagName.script, "require(['"+docRoutePath+"/resources/js/left-panel.js'], function(tocTree) { /* NOP */ })");
-		leftTabs.item(htmlFactory.glyphicon(Glyphicon.search)+"&nbsp;Search", searchContainer, searchModule);
+		leftTabs.item(htmlFactory.glyphicon(Glyphicon.search)+"&nbsp;Search", htmlFactory.fragment(searchContainer, searchModule));
 		return leftTabs;
 	}
 
