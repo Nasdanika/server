@@ -54,7 +54,6 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
-import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -68,6 +67,10 @@ import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
+import org.nasdanika.cdo.web.doc.extensions.EClassDocumentationGenerator;
+import org.nasdanika.cdo.web.doc.extensions.EDataTypeDocumentationGenerator;
+import org.nasdanika.cdo.web.doc.extensions.EEnumDocumentationGenerator;
+import org.nasdanika.cdo.web.doc.extensions.EPackageDocumentationGenerator;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
@@ -201,91 +204,17 @@ public class DocRoute implements Route {
 	private Map<String, ExtensionEntry<Plugin>> pluginMap = new ConcurrentHashMap<>();
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 	
-	static class EClassKey implements Comparable<EClassKey> {
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + ((name == null) ? 0 : name.hashCode());
-			result = prime * result + ((nsURI == null) ? 0 : nsURI.hashCode());
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			EClassKey other = (EClassKey) obj;
-			if (name == null) {
-				if (other.name != null)
-					return false;
-			} else if (!name.equals(other.name))
-				return false;
-			if (nsURI == null) {
-				if (other.nsURI != null)
-					return false;
-			} else if (!nsURI.equals(other.nsURI))
-				return false;
-			return true;
-		}
-
-		public String getNsURI() {
-			return nsURI;
-		}
-
-		public String getName() {
-			return name;
-		}
-		
-		public String getDocumentation() {
-			return documentation;
-		}
-
-		String nsURI;
-		String name;
-		String documentation;
-		
-		public EClassKey(EClass eClass) {
-			nsURI = eClass.getEPackage().getNsURI();
-			name = eClass.getName();
-			EAnnotation docAnn = eClass.getEAnnotation(EModelElementDocumentationGenerator.ECORE_DOC_ANNOTATION_SOURCE);
-			if (docAnn==null) {
-				documentation = "";
-			} else {
-				documentation = docAnn.getDetails().get("documentation");
-			}
-		}
-
-		@Override
-		public int compareTo(EClassKey o) {
-			if (o==this) {
-				return 0;
-			}
-			
-			if (o.nsURI.equals(nsURI)) {
-				return name.compareTo(o.getName());
-			}
-			
-			return nsURI.compareTo(o.nsURI);
-		}
-		
-	}
-	
 	private Map<EClassKey,Set<EClassKey>> inheritanceMap = new ConcurrentHashMap<>(); 
 	
 	public Map<EClassKey, Set<EClassKey>> getInheritanceMap() {
 		return inheritanceMap;
 	}
 	
-	static class PackageTocNodeFactoryEntry {
+	public static class PackageTocNodeFactoryEntry {
 
-		List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
+		public final List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 		
-		Map<String, List<TocNodeFactory>> classifierTocNodeFactories = new HashMap<>();
+		public final Map<String, List<TocNodeFactory>> classifierTocNodeFactories = new HashMap<>();
 		
 	}
 
@@ -625,11 +554,12 @@ public class DocRoute implements Route {
 		};
 		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
-    			
-		eClassDocumentationGenerator = new EClassDocumentationGenerator(this);	
-		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator(this);	
-		eEnumDocumentationGenerator = new EEnumDocumentationGenerator(this);			
-		ePackageDocumentationGenerator = new EPackageDocumentationGenerator(this);				
+    		
+		// TODO - from extensions
+		eClassDocumentationGenerator = new EClassDocumentationGenerator();	
+		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator();	
+		eEnumDocumentationGenerator = new EEnumDocumentationGenerator();			
+		ePackageDocumentationGenerator = new EPackageDocumentationGenerator();				
 		
 		loadTimer = new Timer();
 		doLoad.set(false);
@@ -1061,26 +991,27 @@ public class DocRoute implements Route {
 		return null; // Not found
 	}
 	
+	// TODO - from extensions
 	private EClassDocumentationGenerator eClassDocumentationGenerator;	
 	private EDataTypeDocumentationGenerator eDataTypeDocumentationGenerator;	
 	private EEnumDocumentationGenerator eEnumDocumentationGenerator;	
 	
 	private Object getEClassifierContent(URL baseURL, String urlPrefix, EClassifier eClassifier, String registryPath) {
 		if (eClassifier instanceof EClass) {
-			return eClassDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, (EClass) eClassifier);
+			return eClassDocumentationGenerator.generate(this, baseURL, urlPrefix, registryPath, (EClass) eClassifier);
 		} 
 		
 		if (eClassifier instanceof EEnum) {
-			return eEnumDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, (EEnum) eClassifier);			
+			return eEnumDocumentationGenerator.generate(this, baseURL, urlPrefix,  registryPath, (EEnum) eClassifier);			
 		}
 		
-		return eDataTypeDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, (EDataType) eClassifier);			
+		return eDataTypeDocumentationGenerator.generate(this, baseURL, urlPrefix, registryPath, (EDataType) eClassifier);			
 	}
 	
 	private EPackageDocumentationGenerator ePackageDocumentationGenerator;
 
 	private Object getEPackageContent(URL baseURL, String urlPrefix, EPackage ePackage, String registryPath) {
-		return ePackageDocumentationGenerator.generate(baseURL, urlPrefix, htmlFactory, docRoutePath, registryPath, ePackage);
+		return ePackageDocumentationGenerator.generate(this, baseURL, urlPrefix, registryPath, ePackage);
 	}
 
 	public void deactivate(ComponentContext context) throws Exception {

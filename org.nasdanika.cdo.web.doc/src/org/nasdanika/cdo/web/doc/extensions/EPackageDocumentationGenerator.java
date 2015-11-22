@@ -1,4 +1,4 @@
-package org.nasdanika.cdo.web.doc;
+package org.nasdanika.cdo.web.doc.extensions;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,42 +14,42 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
+import org.nasdanika.cdo.web.doc.DocRoute;
+import org.nasdanika.cdo.web.doc.TocNode;
+import org.nasdanika.cdo.web.doc.TocNodeFactory;
 import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 
-public class EPackageDocumentationGenerator extends EModelElementDocumentationGenerator {
+public class EPackageDocumentationGenerator extends EModelElementDocumentationGeneratorImpl<EPackage> {
 
-	public EPackageDocumentationGenerator(DocRoute docRoute) {
-		super(docRoute);
-	}
-
+	@Override
 	public String generate(
+			DocRoute docRoute, 
 			URL baseURL,
 			String urlPrefix,
-			HTMLFactory htmlFactory,
-			String docRoutePath,
 			String registryPath,
 			EPackage ePackage) {
 		
+		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
+		
 		// TODO - path?
 		Tag packageIcon = htmlFactory.tag(TagName.img)
-				.attribute("src", docRoutePath+"/resources/images/EPackage.gif")
+				.attribute("src", docRoute.getDocRoutePath()+"/resources/images/EPackage.gif")
 				.style("margin-right", "5px");
 		
 				
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EPackage "+ePackage.getName()));
 		ret.content(htmlFactory.tag(TagName.h2, packageIcon, ePackage.getName()));
 		ret.content(htmlFactory.div("<B>Namespace URI:</B> "+ePackage.getNsURI()));
-		String doc = getModelDocumentation(baseURL, urlPrefix, ePackage);
+		String doc = getModelDocumentation(docRoute, baseURL, urlPrefix, ePackage);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")
@@ -74,7 +74,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		}		
 		
 		for (TocNode eDoc: elementDoc.getChildren()) {
-			section(eDoc, -1, htmlFactory, docRoutePath, ret);
+			section(docRoute, eDoc, -1,  ret);
 		}		
 						
 		EPackage eSuperPackage = ePackage.getESuperPackage();
@@ -83,7 +83,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		}
 		
 		for (EAnnotation eAnnotation: ePackage.getEAnnotations()) {
-			ret.content(documentAnnotation(htmlFactory, eAnnotation));
+			ret.content(documentAnnotation(docRoute, eAnnotation));
 		}
 		
 		Tabs tabs = htmlFactory.tabs();
@@ -96,7 +96,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		for (EPackage subPackage: ePackage.getESubpackages()) {
 			Row row = subPackageTable.row();
 			row.cell(htmlFactory.link("#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */)), subPackage.getName()));
-			row.cell(getFirstDocSentence(baseURL, urlPrefix, subPackage));			
+			row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, subPackage));			
 		}
 		
 		if (subPackageTable.rows().size()>1) {
@@ -134,36 +134,36 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			if (eClassifier instanceof EClass) {
 				Row row = classTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
-				row.cell(getFirstDocSentence(baseURL, urlPrefix, eClassifier));
+				row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, eClassifier));
 			} else if (eClassifier instanceof EEnum) {
 				Row row = enumTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
-				row.cell(getFirstDocSentence(baseURL, urlPrefix, eClassifier));
+				row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, eClassifier));
 			} else {
 				Row row = dataTypeTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
 				row.cell(eClassifier.getInstanceTypeName());
-				row.cell(getFirstDocSentence(baseURL, urlPrefix, eClassifier));
+				row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, eClassifier));
 			}
 		}
 		
 		if (classTable.rows().size()>1) {
 			Tag classIcon = htmlFactory.tag(TagName.img)
-					.attribute("src", docRoutePath+"/resources/images/EClass.gif")
+					.attribute("src", docRoute.getDocRoutePath()+"/resources/images/EClass.gif")
 					.style("margin-right", "5px");
 			
 			tabs.item(classIcon+" Classes", classTable);
 		}
 		if (dataTypeTable.rows().size()>1) {
 			Tag dataTypeIcon = htmlFactory.tag(TagName.img)
-					.attribute("src", docRoutePath+"/resources/images/EDataType.gif")
+					.attribute("src", docRoute.getDocRoutePath()+"/resources/images/EDataType.gif")
 					.style("margin-right", "5px");
 					
 			tabs.item(dataTypeIcon+" Data types", dataTypeTable);			
 		}
 		if (enumTable.rows().size()>1) {
 			Tag enumIcon = htmlFactory.tag(TagName.img)
-					.attribute("src", docRoutePath+"/resources/images/EEnum.gif")
+					.attribute("src", docRoute.getDocRoutePath()+"/resources/images/EEnum.gif")
 					.style("margin-right", "5px");
 			
 			tabs.item(enumIcon+" Enumerations", enumTable);
@@ -187,10 +187,10 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		for (TocNode section: sections.getChildren()) {
 			String tabName = StringEscapeUtils.escapeHtml4(section.getText().substring(1));
 			if (section.getIcon()!=null) {
-				tabName = htmlFactory.tag(TagName.img).attribute("src", docRoutePath+section.getIcon()).style("margin-right", "5px") + tabName;
+				tabName = htmlFactory.tag(TagName.img).attribute("src", docRoute.getDocRoutePath()+section.getIcon()).style("margin-right", "5px") + tabName;
 			}
 			Fragment sectionFragment = htmlFactory.fragment();
-			section(section, -1, htmlFactory, docRoutePath, sectionFragment);
+			section(docRoute, section, -1, sectionFragment);
 			tabs.item(tabName, sectionFragment);
 		}		
 		
