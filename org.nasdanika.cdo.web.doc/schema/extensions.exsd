@@ -23,6 +23,7 @@
             <element ref="content-filter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="eannotation-renderer" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="plugin" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="mime-type" minOccurs="0" maxOccurs="unbounded"/>
          </choice>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -198,6 +199,9 @@
 
    <element name="property">
       <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
@@ -213,6 +217,25 @@
             </annotation>
          </attribute>
       </complexType>
+   </element>
+
+   <element name="mime-type">
+      <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <element ref="mime-type-extension" minOccurs="1" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="type" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="mime-type-extension" type="string">
    </element>
 
    <annotation>

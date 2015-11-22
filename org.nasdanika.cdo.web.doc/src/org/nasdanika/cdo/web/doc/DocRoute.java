@@ -71,7 +71,6 @@ import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -102,6 +101,7 @@ public class DocRoute implements Route {
 	private static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
+	private static final String MIME_TYPE = "mime-type";
 	private static final String PLUGIN = "plugin";
 	private static final String EANNOTATION_RENDERER = "eannotation-renderer";
 	private static final String CONTENT_FILTER = "content-filter";
@@ -197,6 +197,7 @@ public class DocRoute implements Route {
 	
 	private Map<String, ExtensionEntry<WikiLinkProcessor.Renderer>> wikiLinkRendererMap = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<WikiLinkResolver>> wikiLinkResolverMap = new ConcurrentHashMap<>();
+	private Map<String, ExtensionEntry<List<String>>> mimeTypeMap = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<Plugin>> pluginMap = new ConcurrentHashMap<>();
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 	
@@ -294,7 +295,7 @@ public class DocRoute implements Route {
 		return packageTocNodeFactories;
 	}
 	
-	private MimetypesFileTypeMap mimeTypesMap;
+	//private MimetypesFileTypeMap mimeTypesMap;
 	private boolean expandContent = true;
 	
 	private static void patternProperty(Object value, List<Pattern> accumulator) {
@@ -454,6 +455,20 @@ public class DocRoute implements Route {
 	    				}
     					
     					break;
+    				case MIME_TYPE: 
+	    				String mimeType = ce.getAttribute("type");
+	    				List<String> extensionsList = new ArrayList<>();
+	    				for (IConfigurationElement ext: ce.getChildren("mime-type-extension")) {
+	    					extensionsList.add(ext.getValue().trim());
+	    				}
+    					try {
+							mimeTypeMap.put(mimeType, new ExtensionEntry<List<String>>(extensionsList, ce));
+							tracker.registerObject(extension, MIME_TYPE+":"+mimeType, IExtensionTracker.REF_WEAK);
+						} catch (Exception e) {
+							// TODO - proper logging
+							e.printStackTrace();
+						}
+    					break;
     				default:
     					System.err.println("Unrecognized extension: "+ce.getName());
     				}
@@ -471,6 +486,8 @@ public class DocRoute implements Route {
 							wikiLinkResolverMap.remove(((String) obj).substring(WIKI_LINK_RESOLVER.length()+1));
 						} else if (((String) obj).startsWith(PLUGIN+":")) {
 							pluginMap.remove(((String) obj).substring(PLUGIN.length()+1));
+						} else if (((String) obj).startsWith(MIME_TYPE+":")) {
+							mimeTypeMap.remove(((String) obj).substring(MIME_TYPE.length()+1));
 						} else if (((String) obj).startsWith(EANNOTATION_RENDERER+":")) {
 							eAnnotationRenderers.remove(((String) obj).substring(EANNOTATION_RENDERER.length()+1));
 						} 						
@@ -607,21 +624,6 @@ public class DocRoute implements Route {
 			
 		};
 		
-		mimeTypesMap = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));		
-		mimeTypesMap.addMimeTypes("text/markdown md");
-		Object mimeTypeProperty = properties.get("mime-types");
-		if (mimeTypeProperty instanceof String[]) {
-			for (String p: (String[]) mimeTypeProperty) {
-				if (!CoreUtil.isBlank(p)) {
-					mimeTypesMap.addMimeTypes(p);
-				}
-			}
-		} else if (mimeTypeProperty instanceof String) {
-			if (!CoreUtil.isBlank((String) mimeTypeProperty)) {
-				mimeTypesMap.addMimeTypes((String) mimeTypeProperty);
-			}			
-		}
-		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
     			
 		eClassDocumentationGenerator = new EClassDocumentationGenerator(this);	
@@ -632,6 +634,18 @@ public class DocRoute implements Route {
 		loadTimer = new Timer();
 		doLoad.set(false);
 		loadTimer.schedule(loadTask, 500);
+	}
+	
+	public String getContentType(String filename) {
+		MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));
+		for (Entry<String, ExtensionEntry<List<String>>> mtx: mimeTypeMap.entrySet()) {
+			StringBuilder mteb = new StringBuilder(mtx.getKey());
+			for (String ext: mtx.getValue().extension) {
+				mteb.append(" ").append(ext);
+			}
+			mimeTypesMap.addMimeTypes(mteb.toString());			
+		}
+		return mimeTypesMap.getContentType(filename);
 	}
 		
 	private TocNode tocRoot;
@@ -760,7 +774,7 @@ public class DocRoute implements Route {
 							
 							int idx = path.lastIndexOf('/');
 							String fn = idx==-1 ? path : path.substring(idx+1);
-							String contentType = mimeTypesMap.getContentType(fn);
+							String contentType = getContentType(fn);
 							if (contentType!=null) {
 								if (MIME_TYPE_HTML.equals(contentType)) {
 									final String content = CoreUtil.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
@@ -1164,7 +1178,7 @@ public class DocRoute implements Route {
 			Object content = getContent(new URL(requestURL), urlPrefix, pathStr);
 			if (content!=null) {
 				if (path.length>0) {
-					String contentType = "packages".equals(path[0]) ? "text/html" : mimeTypesMap.getContentType(path[path.length-1]);
+					String contentType = "packages".equals(path[0]) ? "text/html" : getContentType(path[path.length-1]);
 					if (contentType!=null) {
 						Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
 						if (tm!=null) {
@@ -1326,6 +1340,30 @@ public class DocRoute implements Route {
 					}
 				}
 				ret.item("Wiki Link Renderers", rendererTable);				
+			}
+			if (!mimeTypeMap.isEmpty()) {
+				Table mimeTypesTable = htmlFactory.table().bordered();
+				Row hRow = mimeTypesTable.row().style(Bootstrap.Style.INFO);
+				hRow.header("Type");
+				hRow.header("Extensions");
+				hRow.header("Description");
+				for (String mimeType: new TreeSet<String>(mimeTypeMap.keySet())) {
+					Row typeRow = mimeTypesTable.row();
+					ExtensionEntry<List<String>> extensionEntry = mimeTypeMap.get(mimeType);
+					typeRow.cell(StringEscapeUtils.escapeHtml4(mimeType)).rowspan(extensionEntry.extension.size());
+					boolean isFirst = true;
+					for (String extension: new TreeSet<String>(extensionEntry.extension)) {
+						if (!isFirst) {
+							typeRow = mimeTypesTable.row();
+						}
+						typeRow.cell(extension);
+						if (isFirst) {
+							typeRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
+						}
+						isFirst = false;
+					}
+				}
+				ret.item("MIME Types", mimeTypesTable);				
 			}
 			if (!contentFilters.isEmpty()) {
 				Table contentFiltersTable = htmlFactory.table().bordered();
@@ -1583,7 +1621,7 @@ public class DocRoute implements Route {
 							}
 							int idx = relURL.lastIndexOf('/');
 							String fn = idx==-1 ? relURL : relURL.substring(idx+1);
-							String contentType = mimeTypesMap.getContentType(fn);
+							String contentType = getContentType(fn);
 							if (contentType!=null) {
 								if (!MIME_TYPE_HTML.equals(contentType)) {
 									Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);

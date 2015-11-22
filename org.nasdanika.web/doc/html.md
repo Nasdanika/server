@@ -11,11 +11,22 @@
 
 The goal of the bundle is to provide a Java developer a set of API's to build modern Web UI (Bootstrap, Font Awesome) and Single-Page Applications (AngularJS, KnockoutJS) without having to switch contexts (Java -> HTML, Bootstrap, ...) and without having to remember all the minutia of the underlying frameworks - API's, enumerations, and IDE code completion reduce mental load.   
 
-An instance of [[javadoc>org.nasdanika.html.HTMLFactory]] is used to create instances of API interfaces, which are then combined together. In applications where HTML API is used not in the context of a web request [[javadoc>org.nasdanika.html.impl.DefaultHTMLFactory]] class can be directly instantiated and used as HTMLFactory implementation. In the context of a web request, e.g. in routes or route operations, and instance of HTMLFactory can be obtained either by adapting [[javadoc>org.nasdanika.web.HttpServletRequestContext]] or by specifying a context parameter - in this case the framework will adapt the context to HTMLFactory.
+The library uses [[wp>Factory_(object-oriented_programming)|Factory]]/[[wp>Builder_pattern)]] patterns, similar to [Java DOM XML API](https://docs.oracle.com/javase/tutorial/jaxp/dom/index.html):
+* An instance of [[javadoc>org.nasdanika.html.HTMLFactory]] is used to create instances of API interfaces.
+* Instances created by the factory act as builders. 
+* HTML markup is produced by invoking ``toString()`` or ``produce()`` methods of API interfaces.
+
+Example:
+
+```java
+String scriptTag = htmlFactory.tag(TagName.script, getClass().getResource("Script.js")).toString();
+```
+
+In applications where HTML API is used out of a context of a web request [[javadoc>org.nasdanika.html.impl.DefaultHTMLFactory]] class can be directly instantiated and used as HTMLFactory implementation. In a context of a web request, e.g. in routes or route operations, and instance of HTMLFactory can be obtained either by adapting [[javadoc>org.nasdanika.web.HttpServletRequestContext]] or by specifying a context parameter - in this case the framework will adapt the context to HTMLFactory.
 
 Many HTML interfaces extend [[javadoc>org.nasdanika.html.Producer]] and [[javadoc>java.lang.AutoCloseable]]. Many API methods take objects as arguments to build a composite HTML object from parts.
 
-The simplest way to produce HTML from an object created by HTMLFactory is to invoke it's ``toString()`` method. In classes which implement ``Producer`` ``toString()`` invokes ``produce()`` and then stringifies its return value:
+The simplest way to produce HTML from an object created by HTMLFactory is to invoke its ``toString()`` method. In classes which implement ``Producer`` ``toString()`` invokes ``produce()`` and then stringifies its return value:
 
 ```java
 public String toString() {

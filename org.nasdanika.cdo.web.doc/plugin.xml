@@ -95,6 +95,12 @@ Example: ``[[package>http://www.eclipse.org/emf/2002/Ecore]]`` is rendered as [[
 This resolver doesn't work for TOC's/topics with embedded content, i.e. with text, markdown, or html nested elements. 
             ]]></description>
       </wiki-link-resolver>
+      <mime-type
+            type="text/markdown">
+         <mime-type-extension>
+            md
+         </mime-type-extension>
+      </mime-type>
    </extension>
    <extension
          point="org.nasdanika.toc">

@@ -33,6 +33,11 @@ class StyleImpl<T extends UIElement<T>> implements Style<T> {
 			public T size(Object size) {
 				return style("font-size", size);
 			}
+
+			@Override
+			public T family(Object family) {
+				return style("font-family", family);
+			}
 			
 		};
 	};

@@ -14,6 +14,8 @@ public interface Style<T extends UIElement<T>> {
 		
 		T size(Object size);
 		
+		T family(Object family);
+		
 	};
 	
 	Font<T> font();
