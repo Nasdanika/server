@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
@@ -20,6 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
@@ -67,10 +69,6 @@ import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
-import org.nasdanika.cdo.web.doc.extensions.EClassDocumentationGenerator;
-import org.nasdanika.cdo.web.doc.extensions.EDataTypeDocumentationGenerator;
-import org.nasdanika.cdo.web.doc.extensions.EEnumDocumentationGenerator;
-import org.nasdanika.cdo.web.doc.extensions.EPackageDocumentationGenerator;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
@@ -104,6 +102,10 @@ public class DocRoute implements Route {
 	private static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
+	private static final String EPACKAGE_DOCUMENTATION_GENERATOR = "epackage-documentation-generator";
+	private static final String ECLASS_DOCUMENTATION_GENERATOR = "eclass-documentation-generator";
+	private static final String EDATATYPE_DOCUMENTATION_GENERATOR = "edatatype-documentation-generator";
+	private static final String EENUM_DOCUMENTATION_GENERATOR = "eenum-documentation-generator";
 	private static final String MIME_TYPE = "mime-type";
 	private static final String PLUGIN = "plugin";
 	private static final String EANNOTATION_RENDERER = "eannotation-renderer";
@@ -198,15 +200,110 @@ public class DocRoute implements Route {
 		
 	}
 	
+	static class EModelElementDocumentationGeneratorKey implements Comparable<EModelElementDocumentationGeneratorKey> {
+		
+		private String type;
+		private int priority;
+		private String nsURI;
+		private String name;
+
+		EModelElementDocumentationGeneratorKey(IConfigurationElement ce) {
+			type = ce.getName();
+			priority = Integer.parseInt(ce.getAttribute("priority").trim());
+			nsURI = ce.getAttribute("ns-uri");
+			if (nsURI==null) {
+				nsURI = "";
+			} else {
+				nsURI = nsURI.trim();
+			}
+			name = ce.getAttribute("name");
+			if (name==null) {
+				name = "";
+			} else {
+				name = name.trim();
+			}
+		}
+		
+		boolean match(EPackage ePackage) {
+			return CoreUtil.isBlank(nsURI) || nsURI.equals(ePackage.getNsURI());
+		}
+		
+		boolean match(EClassifier eClassifier) {
+			return match(eClassifier.getEPackage()) && (CoreUtil.isBlank(name) || name.equals(eClassifier.getName()));
+		}
+
+		@Override
+		public int compareTo(EModelElementDocumentationGeneratorKey o) {
+			if (o.priority!=priority) {
+				return o.priority - priority;
+			}
+			
+			if (o.nsURI.length()!=nsURI.length()) {
+				return o.nsURI.length()-nsURI.length();
+			}
+			
+			if (!o.nsURI.equals(nsURI)) {
+				return nsURI.compareTo(o.nsURI);
+			}
+			
+			if (o.name.length()!=name.length()) {
+				return o.name.length()-name.length();
+			}
+			
+			return name.compareTo(o.name);
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((name == null) ? 0 : name.hashCode());
+			result = prime * result + ((nsURI == null) ? 0 : nsURI.hashCode());
+			result = prime * result + priority;
+			result = prime * result + ((type == null) ? 0 : type.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			EModelElementDocumentationGeneratorKey other = (EModelElementDocumentationGeneratorKey) obj;
+			if (name == null) {
+				if (other.name != null)
+					return false;
+			} else if (!name.equals(other.name))
+				return false;
+			if (nsURI == null) {
+				if (other.nsURI != null)
+					return false;
+			} else if (!nsURI.equals(other.nsURI))
+				return false;
+			if (priority != other.priority)
+				return false;
+			if (type == null) {
+				if (other.type != null)
+					return false;
+			} else if (!type.equals(other.type))
+				return false;
+			return true;
+		}	
+
+	}
+	
 	private Map<String, ExtensionEntry<WikiLinkProcessor.Renderer>> wikiLinkRendererMap = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<WikiLinkResolver>> wikiLinkResolverMap = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<List<String>>> mimeTypeMap = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<Plugin>> pluginMap = new ConcurrentHashMap<>();
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 	
-	private Map<EClassKey,Set<EClassKey>> inheritanceMap = new ConcurrentHashMap<>(); 
+	private Map<EClassifierKey,Set<EClassifierKey>> inheritanceMap = new ConcurrentHashMap<>(); 
 	
-	public Map<EClassKey, Set<EClassKey>> getInheritanceMap() {
+	public Map<EClassifierKey, Set<EClassifierKey>> getInheritanceMap() {
 		return inheritanceMap;
 	}
 	
@@ -364,6 +461,46 @@ public class DocRoute implements Route {
 							}
 	    				}
 						break;
+    				case EPACKAGE_DOCUMENTATION_GENERATOR:
+    					try {
+							EModelElementDocumentationGeneratorKey key = new EModelElementDocumentationGeneratorKey(ce);
+							ePackageDocumentationGenerators.put(key, new ExtensionEntry<EModelElementDocumentationGenerator<EPackage>>((EModelElementDocumentationGenerator<EPackage>) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
+							tracker.registerObject(extension, key, IExtensionTracker.REF_WEAK);
+						} catch (Exception e) {
+							// TODO - proper logging
+							e.printStackTrace();
+						}
+						break;
+    				case ECLASS_DOCUMENTATION_GENERATOR:
+    					try {
+							EModelElementDocumentationGeneratorKey key = new EModelElementDocumentationGeneratorKey(ce);
+							eClassDocumentationGenerators.put(key, new ExtensionEntry<EModelElementDocumentationGenerator<EClass>>((EModelElementDocumentationGenerator<EClass>) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
+							tracker.registerObject(extension, key, IExtensionTracker.REF_WEAK);
+						} catch (Exception e) {
+							// TODO - proper logging
+							e.printStackTrace();
+						}
+						break;
+    				case EDATATYPE_DOCUMENTATION_GENERATOR:
+    					try {
+							EModelElementDocumentationGeneratorKey key = new EModelElementDocumentationGeneratorKey(ce);
+							eDataTypeDocumentationGenerators.put(key, new ExtensionEntry<EModelElementDocumentationGenerator<EDataType>>((EModelElementDocumentationGenerator<EDataType>) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
+							tracker.registerObject(extension, key, IExtensionTracker.REF_WEAK);
+						} catch (Exception e) {
+							// TODO - proper logging
+							e.printStackTrace();
+						}
+						break;
+    				case EENUM_DOCUMENTATION_GENERATOR:
+    					try {
+							EModelElementDocumentationGeneratorKey key = new EModelElementDocumentationGeneratorKey(ce);
+							eEnumDocumentationGenerators.put(key, new ExtensionEntry<EModelElementDocumentationGenerator<EEnum>>((EModelElementDocumentationGenerator<EEnum>) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
+							tracker.registerObject(extension, key, IExtensionTracker.REF_WEAK);
+						} catch (Exception e) {
+							// TODO - proper logging
+							e.printStackTrace();
+						}
+						break;
     				case CONTENT_FILTER: 
 	    				String sourceType = ce.getAttribute("source-type");
 	    				Map<String, ExtensionEntry<ContentFilter>> targetMap = contentFilters.get(sourceType);
@@ -430,6 +567,11 @@ public class DocRoute implements Route {
 								}
 							}
 						}
+					} else if (obj instanceof EModelElementDocumentationGeneratorKey) {
+						ePackageDocumentationGenerators.remove(obj);
+						eClassDocumentationGenerators.remove(obj);
+						eDataTypeDocumentationGenerators.remove(obj);
+						eEnumDocumentationGenerators.remove(obj);
 					}
 				}
     			scheduleReloading();				
@@ -554,13 +696,7 @@ public class DocRoute implements Route {
 		};
 		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
-    		
-		// TODO - from extensions
-		eClassDocumentationGenerator = new EClassDocumentationGenerator();	
-		eDataTypeDocumentationGenerator = new EDataTypeDocumentationGenerator();	
-		eEnumDocumentationGenerator = new EEnumDocumentationGenerator();			
-		ePackageDocumentationGenerator = new EPackageDocumentationGenerator();				
-		
+    				
 		loadTimer = new Timer();
 		doLoad.set(false);
 		loadTimer.schedule(loadTask, 500);
@@ -889,10 +1025,10 @@ public class DocRoute implements Route {
 		TocNode cToc;
 		if (eClassifier instanceof EClass) {
 			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EClass.gif", null);
-			EClassKey subTypeKey = new EClassKey((EClass) eClassifier);
+			EClassifierKey subTypeKey = new EClassifierKey((EClass) eClassifier);
 			for (EClass sc: ((EClass) eClassifier).getESuperTypes()) {
-				EClassKey superTypeKey = new EClassKey(sc);
-				Set<EClassKey> subTypes = inheritanceMap.get(superTypeKey);
+				EClassifierKey superTypeKey = new EClassifierKey(sc);
+				Set<EClassifierKey> subTypes = inheritanceMap.get(superTypeKey);
 				if (subTypes==null) {
 					subTypes = new TreeSet<>();
 					inheritanceMap.put(superTypeKey, subTypes);
@@ -991,27 +1127,82 @@ public class DocRoute implements Route {
 		return null; // Not found
 	}
 	
-	// TODO - from extensions
-	private EClassDocumentationGenerator eClassDocumentationGenerator;	
-	private EDataTypeDocumentationGenerator eDataTypeDocumentationGenerator;	
-	private EEnumDocumentationGenerator eEnumDocumentationGenerator;	
+	// Not thread-safe - there is a chance of concurrent modification exception if documentation is rendered when a new generator gets registered/unregistered.
+	private Map<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EClass>>> eClassDocumentationGenerators = new TreeMap<>();	
+	private Map<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EPackage>>> ePackageDocumentationGenerators = new TreeMap<>();	
+	private Map<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EDataType>>> eDataTypeDocumentationGenerators = new TreeMap<>();	
+	private Map<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EEnum>>> eEnumDocumentationGenerators = new TreeMap<>();	
+	
+	private static class EClassInheritanceElement implements Comparable<EClassInheritanceElement> {
+		
+		private EClass eClass;
+		private int distance;
+		private int depth;
+
+
+		public EClassInheritanceElement(EClass eClass, int distance, int depth) {
+			this.eClass = eClass;
+			this.distance = distance;
+			this.depth = depth;
+		}
+		
+
+		@Override
+		public int compareTo(EClassInheritanceElement o) {
+			if (o.depth == depth) {
+				return distance - o.distance;
+			}
+			return depth - o.depth;
+		}
+		
+	}
+	
+	private Collection<EClassInheritanceElement> traverseEClassHierarchy(EClass eClass, int distance, int depth, Collection<EClassInheritanceElement> collector) {
+		collector.add(new EClassInheritanceElement(eClass, distance, depth));
+		int scDistance = 0;
+		for (EClass sc: eClass.getESuperTypes()) {
+			traverseEClassHierarchy(sc, scDistance++, depth+1, collector);
+		}
+		return collector;
+	}
 	
 	private Object getEClassifierContent(URL baseURL, String urlPrefix, EClassifier eClassifier, String registryPath) {
 		if (eClassifier instanceof EClass) {
-			return eClassDocumentationGenerator.generate(this, baseURL, urlPrefix, registryPath, (EClass) eClassifier);
+			for (EClassInheritanceElement cie: traverseEClassHierarchy((EClass) eClassifier, 0, 0, new TreeSet<EClassInheritanceElement>())) {
+				for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EClass>>> e: eClassDocumentationGenerators.entrySet()) {
+					if (e.getKey().match(cie.eClass)) {
+						return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, (EClass) eClassifier);						
+					}
+				}
+			}
+			
+			return "No matching generator";
 		} 
 		
 		if (eClassifier instanceof EEnum) {
-			return eEnumDocumentationGenerator.generate(this, baseURL, urlPrefix,  registryPath, (EEnum) eClassifier);			
+			for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EEnum>>> e: eEnumDocumentationGenerators.entrySet()) {
+				if (e.getKey().match(eClassifier)) {
+					return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, (EEnum) eClassifier);						
+				}
+			}
+			return "No matching generator";
 		}
 		
-		return eDataTypeDocumentationGenerator.generate(this, baseURL, urlPrefix, registryPath, (EDataType) eClassifier);			
+		for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EDataType>>> e: eDataTypeDocumentationGenerators.entrySet()) {
+			if (e.getKey().match(eClassifier)) {
+				return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, (EDataType) eClassifier);						
+			}
+		}
+		return "No matching generator";
 	}
-	
-	private EPackageDocumentationGenerator ePackageDocumentationGenerator;
 
 	private Object getEPackageContent(URL baseURL, String urlPrefix, EPackage ePackage, String registryPath) {
-		return ePackageDocumentationGenerator.generate(this, baseURL, urlPrefix, registryPath, ePackage);
+		for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EPackage>>> e: ePackageDocumentationGenerators.entrySet()) {
+			if (e.getKey().match(ePackage)) {
+				return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, ePackage);						
+			}
+		}
+		return "No matching generator";
 	}
 
 	public void deactivate(ComponentContext context) throws Exception {
@@ -1345,6 +1536,8 @@ public class DocRoute implements Route {
 				}
 				ret.item("Annotation Renderers", rendererTable);				
 			}
+			
+			// TODO - Documentation generators - one tab with sub-sections or a row showing type - epackage, ...
 					
 			return ret.toString();
 		} catch (Exception e) {

@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.nasdanika.cdo.web.doc.DocRoute;
-import org.nasdanika.cdo.web.doc.EClassKey;
+import org.nasdanika.cdo.web.doc.EClassifierKey;
 import org.nasdanika.cdo.web.html.EOperationFormGenerator;
 import org.nasdanika.cdo.web.html.FormGeneratorBase;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
@@ -119,13 +119,13 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			tabs.item("Supertypes", stTable);
 		}
 		
-		Set<EClassKey> subTypes = docRoute.getInheritanceMap().get(new EClassKey(eClass));
+		Set<EClassifierKey> subTypes = docRoute.getInheritanceMap().get(new EClassifierKey(eClass));
 		if (subTypes!=null && !subTypes.isEmpty()) {
 			Table stTable = htmlFactory.table().bordered();
 			Row hr = stTable.row().style(Bootstrap.Style.INFO);
 			hr.header("Name");
 			hr.header("Description");
-			for (EClassKey st: subTypes) {
+			for (EClassifierKey st: subTypes) {
 				Row stRow = stTable.row();
 				String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(st.getNsURI().getBytes(/* UTF-8? */));
 				stRow.cell(htmlFactory.link(packagePath+"/"+st.getName(), st.getName()));

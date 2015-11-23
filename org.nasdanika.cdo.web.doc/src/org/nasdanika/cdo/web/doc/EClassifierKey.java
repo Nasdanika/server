@@ -1,9 +1,9 @@
 package org.nasdanika.cdo.web.doc;
 
 import org.eclipse.emf.ecore.EAnnotation;
-import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 
-public class EClassKey implements Comparable<EClassKey> {
+public class EClassifierKey implements Comparable<EClassifierKey> {
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -21,7 +21,7 @@ public class EClassKey implements Comparable<EClassKey> {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		EClassKey other = (EClassKey) obj;
+		EClassifierKey other = (EClassifierKey) obj;
 		if (name == null) {
 			if (other.name != null)
 				return false;
@@ -51,10 +51,10 @@ public class EClassKey implements Comparable<EClassKey> {
 	String name;
 	String documentation;
 	
-	public EClassKey(EClass eClass) {
-		nsURI = eClass.getEPackage().getNsURI();
-		name = eClass.getName();
-		EAnnotation docAnn = eClass.getEAnnotation(EModelElementDocumentationGenerator.ECORE_DOC_ANNOTATION_SOURCE);
+	public EClassifierKey(EClassifier eClassifier) {
+		nsURI = eClassifier.getEPackage().getNsURI();
+		name = eClassifier.getName();
+		EAnnotation docAnn = eClassifier.getEAnnotation(EModelElementDocumentationGenerator.ECORE_DOC_ANNOTATION_SOURCE);
 		if (docAnn==null) {
 			documentation = "";
 		} else {
@@ -63,7 +63,7 @@ public class EClassKey implements Comparable<EClassKey> {
 	}
 
 	@Override
-	public int compareTo(EClassKey o) {
+	public int compareTo(EClassifierKey o) {
 		if (o==this) {
 			return 0;
 		}

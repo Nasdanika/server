@@ -101,6 +101,22 @@ This resolver doesn't work for TOC's/topics with embedded content, i.e. with tex
             md
          </mime-type-extension>
       </mime-type>
+      <eclass-documentation-generator
+            class="org.nasdanika.cdo.web.doc.extensions.EClassDocumentationGenerator"
+            priority="0">
+      </eclass-documentation-generator>
+      <edatatype-documentation-generator
+            class="org.nasdanika.cdo.web.doc.extensions.EDataTypeDocumentationGenerator"
+            priority="0">
+      </edatatype-documentation-generator>
+      <eenum-documentation-generator
+            class="org.nasdanika.cdo.web.doc.extensions.EEnumDocumentationGenerator"
+            priority="0">
+      </eenum-documentation-generator>
+      <epackage-documentation-generator
+            class="org.nasdanika.cdo.web.doc.extensions.EPackageDocumentationGenerator"
+            priority="0">
+      </epackage-documentation-generator>
    </extension>
    <extension
          point="org.nasdanika.toc">
