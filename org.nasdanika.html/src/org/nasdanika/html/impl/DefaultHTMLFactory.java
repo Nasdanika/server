@@ -546,7 +546,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	
 	@Override
 	public Dropdown<?> caretDropdown() {
-		return dropdown(link("#", fontAwesome().directional(Directional.caret_down)));
+		return dropdown(fontAwesome().directional(Directional.caret_down).getTarget().style("cursor", "pointer"));
 	}
 
 	@Override
