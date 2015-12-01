@@ -483,7 +483,8 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		}			
 	}
 
-	public static void beforePageInitialization(WebDriver driver, Class<? extends Page<WebDriver>> pageClass) {
+	@SuppressWarnings("unchecked")
+	public static <D extends WebDriver> void beforePageInitialization(D driver, Class<? extends Page<D>> pageClass) {
 		Screenshot screenshotAnnotation = pageClass.getAnnotation(Screenshot.class);
 		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
 		Object test = testThreadLocal.get();
@@ -498,16 +499,17 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					e.printStackTrace();
 				}
 			}
-			collectorThreadLocal.get().beforePageInitialization(pageClass, takeScreenshot(driver), WebTestUtil.capturePerformance(driver));
+			((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeScreenshot(driver), WebTestUtil.capturePerformance(driver));
 		} else {
-			collectorThreadLocal.get().beforePageInitialization(pageClass, null, WebTestUtil.capturePerformance(driver));
+			((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, null, WebTestUtil.capturePerformance(driver));
 		}
 	}
 
-	public static void afterPageInitialization(
+	@SuppressWarnings("unchecked")
+	public static <D extends WebDriver> void afterPageInitialization(
 			WebDriver driver,
-			Class<? extends Page<WebDriver>> pageClass, 
-			Page<WebDriver> page,
+			Class<? extends Page<D>> pageClass, 
+			Page<D> page,
 			Throwable th) {
 		Screenshot screenshotAnnotation = pageClass.getAnnotation(Screenshot.class);
 		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
@@ -524,9 +526,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), null);
+				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), null);
 			} else {
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), null);
+				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), null);
 			}
 		} else {
 			if (shallTakeExceptionScreenshot(screenshotAnnotation)) {
@@ -537,9 +539,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), th);
+				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), th);
 			} else {
-				collectorThreadLocal.get().afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), th);
+				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), th);
 			}			
 		}
 	}

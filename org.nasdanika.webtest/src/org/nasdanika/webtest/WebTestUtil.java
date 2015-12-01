@@ -333,7 +333,7 @@ public class WebTestUtil {
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T extends Page<WebDriver>> T initElements(WebDriver driver, Class<T> pageClassToProxy, Object... args) {
+	public static <D extends WebDriver, T extends Page<D>> T initElements(D driver, Class<T> pageClassToProxy, Object... args) {
 		doWait(driver, pageClassToProxy);
 		AbstractNasdanikaWebTestRunner.beforePageInitialization(driver, pageClassToProxy);
 		try {
