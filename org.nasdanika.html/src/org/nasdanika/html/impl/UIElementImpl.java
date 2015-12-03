@@ -237,16 +237,6 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		return (T) this;
 	}
 	
-	@Override
-	public T background(Bootstrap.Color backgroundColor) {
-		return style("background-color", backgroundColor.code);
-	}
-	
-	@Override
-	public T background(HTMLColor backgroundColor) {
-		return style("background-color", backgroundColor.name());
-	}
-	
 	private List<Object> classes = new ArrayList<>();
 
 	private Object remoteContent;

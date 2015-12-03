@@ -74,7 +74,7 @@ public class CDOViewToHTMLRendererConverter implements Converter<CDOView, HTMLRe
 				});
 				
 				Table packageTable = htmlFactory.table().bordered();
-				Row headerRow = packageTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
+				Row headerRow = packageTable.row().style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHTER);
 				headerRow.header("Name");
 				headerRow.header("Namespace URI");
 				headerRow.header("Documentation");

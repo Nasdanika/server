@@ -313,20 +313,6 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable, Produc
 	T on(String event, InputStream handler) throws IOException;
 		
 	/**
-	 * Sets background color.
-	 * @param backgroundColor
-	 * @return
-	 */
-	T background(Bootstrap.Color backgroundColor);
-
-	/**
-	 * Sets background color.
-	 * @param backgroundColor
-	 * @return
-	 */
-	T background(HTMLColor backgroundColor);
-	
-	/**
 	 * Sets element id.
 	 * @param id
 	 * @return

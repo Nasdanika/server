@@ -10,7 +10,7 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		target.close();
 	}
 
-	public T on(org.nasdanika.html.UIElement.Event event, Object handler) {
+	public T on(Event event, Object handler) {
 		return target.on(event, handler);
 	}
 
@@ -18,7 +18,7 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.on(event, handler);
 	}
 
-	public T on(org.nasdanika.html.UIElement.Event event, Reader handler) throws IOException {
+	public T on(Event event, Reader handler) throws IOException {
 		return target.on(event, handler);
 	}
 
@@ -26,20 +26,12 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.on(event, handler);
 	}
 
-	public T on(org.nasdanika.html.UIElement.Event event, InputStream handler) throws IOException {
+	public T on(Event event, InputStream handler) throws IOException {
 		return target.on(event, handler);
 	}
 
 	public T on(String event, InputStream handler) throws IOException {
 		return target.on(event, handler);
-	}
-
-	public T background(org.nasdanika.html.Bootstrap.Color backgroundColor) {
-		return target.background(backgroundColor);
-	}
-
-	public T background(org.nasdanika.html.UIElement.HTMLColor backgroundColor) {
-		return target.background(backgroundColor);
 	}
 
 	public T id(Object id) {

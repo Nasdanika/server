@@ -185,12 +185,12 @@ public class EObjectToHTMLRendererConverter<T extends EObject> implements Conver
 		});
 										
 		Table operationsTable = htmlFactory.table().bordered();
-		Row hr1 = operationsTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
+		Row hr1 = operationsTable.row().style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHTER);
 		hr1.header("Name").rowspan(2);
 		hr1.header("Parameters").colspan(2).style("text-align", "center");
 		hr1.header("Return type").rowspan(2);
 		hr1.header("Description").rowspan(2);
-		Row hr2 = operationsTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
+		Row hr2 = operationsTable.row().style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHTER);
 		hr2.header("Name");
 		hr2.header("Type");
 		for (EOperation op: allOperations) {

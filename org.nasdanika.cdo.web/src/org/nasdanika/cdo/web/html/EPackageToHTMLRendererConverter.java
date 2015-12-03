@@ -66,7 +66,7 @@ public class EPackageToHTMLRendererConverter implements Converter<EPackage, HTML
 				});
 				
 				if (!classifiers.isEmpty()) {
-					Row headerRow = classifiersTable.row().background(Bootstrap.Color.GRAY_LIGHTER);
+					Row headerRow = classifiersTable.row().style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHTER);
 					headerRow.header("Name");
 					headerRow.header("Type");
 					headerRow.header("Description");
