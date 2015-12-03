@@ -6,13 +6,13 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * This annotation instructs the test runner to mask argument value.
- * The annotation shall be placed on the Page/Actor interface method parameter, not
+ * This annotation instructs the test runner to mask argument value or method return value.
+ * The annotation shall be placed on the Page/Actor interface method or method parameter, not
  * implementation.
  * @author Pavel Vlasov
  *
  */
-@Target({ElementType.PARAMETER})
+@Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Mask {
 		
