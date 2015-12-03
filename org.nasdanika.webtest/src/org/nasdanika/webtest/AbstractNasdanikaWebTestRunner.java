@@ -117,36 +117,50 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	
 	static byte[] takeScreenshot() {
 		Object test = testThreadLocal.get();
+		if (test instanceof TakesScreenshot) { // To customize screenshot taking in some advanced situations
+			takeScreenshot((TakesScreenshot) test);
+		}
 		if (test instanceof WebTest) {
-			return takeScreenshot(((WebTest<?>) test).getWebDriver());
+			WebDriver webDriver = ((WebTest<?>) test).getWebDriver();
+			if (webDriver instanceof TakesScreenshot) {
+				return takeScreenshot((TakesScreenshot) webDriver);
+			}
 		}
 		return null;
 	}
 	
-	private static byte[] takeScreenshot(WebDriver webDriver) {
-		if (webDriver instanceof TakesScreenshot) {
-			try {
-				for (int i=0; ; ++i) {
-					try {
-						return ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
-					} catch (WebDriverException wde) {
-						if (i<SCREENSHOT_ATTEMPTS && wde.getMessage()!=null && wde.getMessage().startsWith("Could not take screenshot of current page - Error: Page is not loaded yet, try later")) {							
-							try {
-								System.out.println("Retaking screenshot");
-								Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
-							} catch (InterruptedException e) {
-								return null; 
-							}
-						} else {
-							throw wde;
-						}
-					} 
-				}
-			} catch (Exception e) {
-				System.err.println("Error taking screenshot: "+e);
-				e.printStackTrace();
-			}
+	private static byte[] takeScreenshot(TakesScreenshot takesScreenshot) {
+		String takeScreenshots = System.getenv("NASDANIKA_WEBTEST_TAKE_SCREENSHOTS");
+		if ("no".equalsIgnoreCase(takeScreenshots) || "false".equalsIgnoreCase(takeScreenshots)) {
+			return null;
 		}
+		
+		if (takeScreenshots!=null && !"yes".equalsIgnoreCase(takeScreenshots) && !"true".equalsIgnoreCase(takeScreenshots)) {
+			System.err.println("Invalid value of NASDANIKA_WEBTEST_TAKE_SCREENSHOTS environment variable: "+takeScreenshots);
+		}
+		
+		try {
+			for (int i=0; ; ++i) {
+				try {
+					return takesScreenshot.getScreenshotAs(OutputType.BYTES);
+				} catch (WebDriverException wde) {
+					if (i<SCREENSHOT_ATTEMPTS && wde.getMessage()!=null && wde.getMessage().startsWith("Could not take screenshot of current page - Error: Page is not loaded yet, try later")) {							
+						try {
+							System.out.println("Retaking screenshot");
+							Thread.sleep(SCREENSHOT_RETAKE_WAIT_INTERVAL); // Wait and retry.
+						} catch (InterruptedException e) {
+							return null; 
+						}
+					} else {
+						throw wde;
+					}
+				} 
+			}
+		} catch (Exception e) {
+			System.err.println("Error taking screenshot: "+e);
+			e.printStackTrace();
+		}
+		
 		return null;
 	}
 	
@@ -498,8 +512,10 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
+			} 
+			if (driver instanceof TakesScreenshot) {
+				((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver));
 			}
-			((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeScreenshot(driver), WebTestUtil.capturePerformance(driver));
 		} else {
 			((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, null, WebTestUtil.capturePerformance(driver));
 		}
@@ -526,7 +542,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), null);
+				if (driver instanceof TakesScreenshot) {
+					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver), null);
+				}
 			} else {
 				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), null);
 			}
@@ -539,7 +557,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot(driver), WebTestUtil.capturePerformance(driver), th);
+				if (driver instanceof TakesScreenshot) {
+					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver), th);
+				}
 			} else {
 				((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, null, WebTestUtil.capturePerformance(driver), th);
 			}			
