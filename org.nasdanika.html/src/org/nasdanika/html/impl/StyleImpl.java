@@ -556,6 +556,39 @@ class StyleImpl<T extends UIElement<T>> implements Style<T> {
 		}
 		return new FloatImpl();
 	}
+	
+	@Override
+	public org.nasdanika.html.Style.WhiteSpace<T> whiteSpace() {
+		class WhiteSpaceImpl extends NormalNoneInitialInheritImpl implements WhiteSpace<T> {
+
+			WhiteSpaceImpl() {
+				super("white-space");
+			}
+
+			@Override
+			public T nowrap() {
+				return value("nowrap");
+			}
+
+			@Override
+			public T pre() {
+				return value("pre");
+			}
+
+			@Override
+			public T preLine() {
+				return value("pre-line");
+			}
+
+			@Override
+			public T preWrap() {
+				return value("pre-wrap");
+			}
+
+			
+		}
+		return new WhiteSpaceImpl();
+	}
 		
 
 }

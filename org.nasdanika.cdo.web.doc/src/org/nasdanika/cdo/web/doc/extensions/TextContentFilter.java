@@ -12,7 +12,7 @@ public class TextContentFilter implements ContentFilter {
 	@Override
 	public Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) throws Exception {
 		return docRoute.getHtmlFactory().div(StringEscapeUtils.escapeHtml4(CoreUtil.stringify(content)))
-				.style("white-space", "pre-wrap")
+				.style().whiteSpace().preWrap()
 				.style().font().family("monospace");
 	}
 

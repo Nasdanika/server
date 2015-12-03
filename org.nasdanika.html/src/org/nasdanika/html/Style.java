@@ -229,6 +229,14 @@ public interface Style<T extends UIElement<T>> {
 	
 	Text<T> text();
 	
+	interface WhiteSpace<T> extends NoneInitialInherit<T> {
+		T nowrap();
+		T pre();
+		T preLine();
+		T preWrap();		
+	}
+	
+	WhiteSpace<T> whiteSpace();
 	
 	/*
 	CSS Properties from W3Schools, prefixed with * are implemented, with ~ are partially implemented
@@ -406,7 +414,7 @@ public interface Style<T extends UIElement<T>> {
 	unicode-bidi
 	vertical-align
 	visibility
-	white-space
+	* white-space
 	* width
 	word-break
 	word-spacing

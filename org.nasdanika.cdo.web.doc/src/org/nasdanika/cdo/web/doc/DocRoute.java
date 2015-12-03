@@ -1537,7 +1537,129 @@ public class DocRoute implements Route {
 				ret.item("Annotation Renderers", rendererTable);				
 			}
 			
-			// TODO - Documentation generators - one tab with sub-sections or a row showing type - epackage, ...
+			Fragment modelGeneratorsFragment = htmlFactory.fragment();
+			if (!ePackageDocumentationGenerators.isEmpty()) {
+				modelGeneratorsFragment.content(htmlFactory.tag(TagName.h3, "EPackage"));
+				
+				Table pTable = htmlFactory.table().bordered();
+				Row hRow = pTable.row().style(Bootstrap.Style.INFO);
+				hRow.header("NsURI");
+				hRow.header("Priority");
+				hRow.header("Class");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				
+				for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EPackage>>> pe: ePackageDocumentationGenerators.entrySet()) {
+					Row pRow = pTable.row();
+					pRow.cell(StringEscapeUtils.escapeHtml4(pe.getKey().nsURI));					
+					pRow.cell(pe.getKey().priority).style().text().align().center();
+					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+pe.getValue().extension.getClass().getName()+"|"+pe.getValue().extension.getClass().getName()+"]]", mlr));					
+					pRow.cell(pegDownProcessor.markdownToHtml(expand(pe.getValue().description, baseURL, urlPrefix), mlr));
+					if (pe.getValue().extension instanceof ConfigurableExtension) {
+						pRow.cell(((ConfigurableExtension) pe.getValue().extension).generateConfigurationDocumentation(htmlFactory));
+					} else {
+						pRow.cell("");
+					}					
+				}
+				
+				modelGeneratorsFragment.content(pTable);
+			}
+			
+			if (!eClassDocumentationGenerators.isEmpty()) {
+				modelGeneratorsFragment.content(htmlFactory.tag(TagName.h3, "EClass"));
+				
+				Table pTable = htmlFactory.table().bordered();
+				Row hRow = pTable.row().style(Bootstrap.Style.INFO);
+				hRow.header("NsURI");
+				hRow.header("Name");
+				hRow.header("Priority");
+				hRow.header("Class");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				
+				for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EClass>>> ce: eClassDocumentationGenerators.entrySet()) {
+					Row pRow = pTable.row();
+					pRow.cell(StringEscapeUtils.escapeHtml4(ce.getKey().nsURI));					
+					pRow.cell(StringEscapeUtils.escapeHtml4(ce.getKey().name));					
+					pRow.cell(ce.getKey().priority).style().text().align().center();
+					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+ce.getValue().extension.getClass().getName()+"|"+ce.getValue().extension.getClass().getName()+"]]", mlr));					
+					pRow.cell(pegDownProcessor.markdownToHtml(expand(ce.getValue().description, baseURL, urlPrefix), mlr));
+					if (ce.getValue().extension instanceof ConfigurableExtension) {
+						pRow.cell(((ConfigurableExtension) ce.getValue().extension).generateConfigurationDocumentation(htmlFactory));
+					} else {
+						pRow.cell("");
+					}					
+				}
+				
+				modelGeneratorsFragment.content(pTable);
+			}
+
+			if (!eEnumDocumentationGenerators.isEmpty()) {
+				modelGeneratorsFragment.content(htmlFactory.tag(TagName.h3, "EEnum"));
+				
+				Table pTable = htmlFactory.table().bordered();
+				Row hRow = pTable.row().style(Bootstrap.Style.INFO);
+				hRow.header("NsURI");
+				hRow.header("Name");
+				hRow.header("Priority");
+				hRow.header("Class");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				
+				for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EEnum>>> ee: eEnumDocumentationGenerators.entrySet()) {
+					Row pRow = pTable.row();
+					pRow.cell(StringEscapeUtils.escapeHtml4(ee.getKey().nsURI));					
+					pRow.cell(StringEscapeUtils.escapeHtml4(ee.getKey().name));					
+					pRow.cell(ee.getKey().priority).style().text().align().center();
+					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+ee.getValue().extension.getClass().getName()+"|"+ee.getValue().extension.getClass().getName()+"]]", mlr));					
+					pRow.cell(pegDownProcessor.markdownToHtml(expand(ee.getValue().description, baseURL, urlPrefix), mlr));
+					if (ee.getValue().extension instanceof ConfigurableExtension) {
+						pRow.cell(((ConfigurableExtension) ee.getValue().extension).generateConfigurationDocumentation(htmlFactory));
+					} else {
+						pRow.cell("");
+					}					
+				}
+				
+				modelGeneratorsFragment.content(pTable);
+			}
+			
+			if (!eDataTypeDocumentationGenerators.isEmpty()) {
+				modelGeneratorsFragment.content(htmlFactory.tag(TagName.h3, "EDataType"));
+				
+				Table pTable = htmlFactory.table().bordered();
+				Row hRow = pTable.row().style(Bootstrap.Style.INFO);
+				hRow.header("NsURI");
+				hRow.header("Name");
+				hRow.header("Priority");
+				hRow.header("Class");
+				hRow.header("Description");
+				hRow.header("Configuration");
+				
+				for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EDataType>>> dte: eDataTypeDocumentationGenerators.entrySet()) {
+					Row pRow = pTable.row();
+					pRow.cell(StringEscapeUtils.escapeHtml4(dte.getKey().nsURI));					
+					pRow.cell(StringEscapeUtils.escapeHtml4(dte.getKey().name));					
+					pRow.cell(dte.getKey().priority).style().text().align().center();
+					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+dte.getValue().extension.getClass().getName()+"|"+dte.getValue().extension.getClass().getName()+"]]", mlr));					
+					pRow.cell(pegDownProcessor.markdownToHtml(expand(dte.getValue().description, baseURL, urlPrefix), mlr));
+					if (dte.getValue().extension instanceof ConfigurableExtension) {
+						pRow.cell(((ConfigurableExtension) dte.getValue().extension).generateConfigurationDocumentation(htmlFactory));
+					} else {
+						pRow.cell("");
+					}					
+				}
+				
+				modelGeneratorsFragment.content(pTable);
+			}
+			
+			
+//			if (!eClassDocumentationGenerators.isEmpty() || !ePackageDocumentationGenerators.isEmpty() || !eEnumDocumentationGenerators.isEmpty() || !eDataTypeDocumentationGenerators.isEmpty()) {
+
+
+			if (!modelGeneratorsFragment.isEmpty()) {
+				ret.item("ECore Documentation Generators", modelGeneratorsFragment);
+			}
+			
 					
 			return ret.toString();
 		} catch (Exception e) {

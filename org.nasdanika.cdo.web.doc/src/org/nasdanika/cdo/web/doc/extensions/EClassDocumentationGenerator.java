@@ -183,7 +183,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				String defaultValueLiteral = attr.getDefaultValueLiteral();
 				row = propTable.row();				
 				row.header("Default value").style("align", "left");
-				row.cell(htmlFactory.div(CoreUtil.isBlank(defaultValueLiteral) ? "" : StringEscapeUtils.escapeHtml4(defaultValueLiteral)).style("white-space", "pre").style("font-family", "monospace"));
+				row.cell(htmlFactory.div(CoreUtil.isBlank(defaultValueLiteral) ? "" : StringEscapeUtils.escapeHtml4(defaultValueLiteral))
+						.style().whiteSpace().pre()
+						.style().font().family("monospace"));
 
 				row = propTable.row();
 				row.header("Changeable").style("align", "left");
@@ -276,7 +278,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				
 				row = propTable.row();				
 				row.header("Default value").style("align", "left");
-				row.cell(htmlFactory.div(StringEscapeUtils.escapeHtml4(ref.getDefaultValueLiteral())).style("white-space", "pre").style("font-family", "monospace"));
+				row.cell(htmlFactory.div(StringEscapeUtils.escapeHtml4(ref.getDefaultValueLiteral()))
+						.style().whiteSpace().pre()
+						.style().font().family("monospace"));
 
 				row = propTable.row();
 				row.header("Changeable").style("align", "left");
@@ -555,7 +559,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								if (ann.getDetails().containsKey("filter")) {
 									prmRow = prmPropTable.row();
 									prmRow.header("Filter").style("align", "left");
-									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("filter"))).style("white-space", "pre-wrap").style("font-family", "monospace");									
+									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("filter")))
+										.style().whiteSpace().preWrap()
+										.style().font().family("monospace");									
 								}
 								break;
 							}
@@ -566,12 +572,16 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								if (ann.getDetails().containsKey("name")) {
 									prmRow = prmPropTable.row();
 									prmRow.header("Name").style("align", "left");
-									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("name"))).style("white-space", "pre-wrap").style("font-family", "monospace");									
+									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("name")))
+									.style().whiteSpace().preWrap()
+									.style().font().family("monospace");									
 								}
 								if (ann.getDetails().containsKey("defaultValue")) {
 									prmRow = prmPropTable.row();
 									prmRow.header("Default value").style("align", "left");
-									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("defaultValue"))).style("white-space", "pre-wrap").style("font-family", "monospace");									
+									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("defaultValue")))
+										.style().whiteSpace().preWrap()
+										.style().font().family("monospace");									
 								}
 								break;
 							}
@@ -582,12 +592,16 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								if (ann.getDetails().containsKey("name")) {
 									prmRow = prmPropTable.row();
 									prmRow.header("Name").style("align", "left");
-									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("name"))).style("white-space", "pre-wrap").style("font-family", "monospace");									
+									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("name")))
+										.style().whiteSpace().preWrap()
+										.style().font().family("monospace");									
 								}
 								if (ann.getDetails().containsKey("defaultValue")) {
 									prmRow = prmPropTable.row();
 									prmRow.header("Default value").style("align", "left");
-									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("defaultValue"))).style("white-space", "pre-wrap").style("font-family", "monospace");									
+									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("defaultValue")))
+										.style().whiteSpace().preWrap()
+										.style().font().family("monospace");									
 								}
 								break;
 							}
@@ -598,7 +612,9 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 								if (ann.getDetails().containsKey("name")) {
 									prmRow = prmPropTable.row();
 									prmRow.header("Name").style("align", "left");
-									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("name"))).style("white-space", "pre-wrap").style("font-family", "monospace");									
+									prmRow.cell(StringEscapeUtils.escapeHtml4(ann.getDetails().get("name")))
+										.style().whiteSpace().preWrap()
+										.style().font().family("monospace");									
 								}
 								break;
 							}							

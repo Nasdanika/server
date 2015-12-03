@@ -153,7 +153,9 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		for (String key: new TreeSet<String>(eAnnotation.getDetails().keySet())) {
 			Row row = detailsTable.row();
 			row.cell(StringEscapeUtils.escapeHtml4(key));
-			row.cell(StringEscapeUtils.escapeHtml4(eAnnotation.getDetails().get(key))).style("white-space", "pre-wrap").style().font().family("monospace");
+			row.cell(StringEscapeUtils.escapeHtml4(eAnnotation.getDetails().get(key)))
+				.style().whiteSpace().preWrap()
+				.style().font().family("monospace");
 		}
 		return docRoute.getHtmlFactory().panel(Bootstrap.Style.INFO, "Annotation " + StringEscapeUtils.escapeHtml4(eAnnotation.getSource()), detailsTable, null).toString();		
 	}
@@ -265,6 +267,6 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 	}
 
 	public static void preStyle(UIElement<?> uiElement) {
-		uiElement.style("white-space", "pre-wrap").style("font-family", "monospace");
+		uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
 	}
 }
