@@ -21,6 +21,6 @@ public @interface PageFactory {
 	 * an older Android device, and a regular Selenium implementation for testing in a browser.
 	 * @return
 	 */
-	String filter() default "";
+	String filter() default ""; 
 	
 }
