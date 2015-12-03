@@ -19,6 +19,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
+import org.openqa.selenium.ContextAware;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -71,8 +72,7 @@ public class WebTestUtil {
 	 * @return
 	 * @throws Exception
 	 */
-	public static <T> T injectProperties(IConfigurationElement ce,
-			final T target) throws Exception {
+	public static <T> T injectProperties(IConfigurationElement ce, final T target) throws Exception {
 		for (IConfigurationElement cce : ce.getChildren()) {
 			if ("property".equals(cce.getName())) {
 				injectProperty(target, cce.getAttribute("name").split("\\."),
@@ -82,8 +82,7 @@ public class WebTestUtil {
 		return target;
 	}
 
-	private static void injectProperty(Object target, String[] propertyPath,
-			String value) throws Exception {
+	private static void injectProperty(Object target, String[] propertyPath, String value) throws Exception {
 		if (propertyPath.length == 1) {
 			String mName = "set"
 					+ propertyPath[0].substring(0, 1).toUpperCase()
@@ -147,11 +146,9 @@ public class WebTestUtil {
 						&& mth.getName().equals(mName)) {
 					Object nextTarget = mth.invoke(target);
 					if (nextTarget == null) {
-						throw new NullPointerException("Cannot set property: "
-								+ mth + " returned null");
+						throw new NullPointerException("Cannot set property: "	+ mth + " returned null");
 					}
-					injectProperty(nextTarget, Arrays.copyOfRange(propertyPath,
-							1, propertyPath.length), value);
+					injectProperty(nextTarget, Arrays.copyOfRange(propertyPath,	1, propertyPath.length), value);
 					return;
 				}
 			}
@@ -336,7 +333,21 @@ public class WebTestUtil {
 	public static <D extends WebDriver, T extends Page<D>> T initElements(D driver, Class<T> pageClassToProxy, Object... args) {
 		doWait(driver, pageClassToProxy);
 		AbstractNasdanikaWebTestRunner.beforePageInitialization(driver, pageClassToProxy);
+		String originalContext = null;
 		try {
+			Context ctxAnn = pageClassToProxy.getAnnotation(Context.class);
+			for (Class<?> cls = pageClassToProxy.getSuperclass(); ctxAnn==null && cls!=null && Page.class.isAssignableFrom(cls); cls=cls.getSuperclass()) {
+				ctxAnn = cls.getAnnotation(Context.class);
+			}
+			
+			if (ctxAnn!=null && driver instanceof ContextAware) {
+				originalContext = ((ContextAware) driver).getContext();
+				if (ctxAnn.value().equals(originalContext)) {
+					originalContext = null; 
+				} else {
+					((ContextAware) driver).context(ctxAnn.value());
+				}
+			}
 			T page;
 			if (args.length==0) {
 				page = PageFactory.initElements(driver, pageClassToProxy);
@@ -367,6 +378,10 @@ public class WebTestUtil {
 		} catch (Throwable th) {
 			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, pageClassToProxy, null, th);
 			throw th;
+		} finally {
+			if (originalContext!=null && driver instanceof ContextAware) {
+				((ContextAware) driver).context(originalContext);
+			}			
 		}
 	}
 
@@ -446,9 +461,11 @@ public class WebTestUtil {
 	private static class WaitAnnotations extends Annotations {
 
 		private List<Wait> waitList = new ArrayList<>();
+		private Class<?> pageClass;
 
 		WaitAnnotations(Class<?> pageClass) {
 			super(null);
+			this.pageClass = pageClass;
 			
 			List<Class<?>> inheritanceChain = new ArrayList<Class<?>>();
 			for (Class<?> cls = pageClass; cls!=null && Page.class.isAssignableFrom(cls); cls = cls.getSuperclass()) {
@@ -555,38 +572,64 @@ public class WebTestUtil {
 		}
 
 		private void doWait(WebDriver driver, Wait wait) {
-			WebDriverWait wdw = new WebDriverWait(driver, wait.timeout());
-			By locator = buildBy(wait);
-			ExpectedCondition<?> condition;
-			switch (wait.condition()) {
-			case CLICKABLE:
-				condition = ExpectedConditions.elementToBeClickable(locator);
-			break;
-			case INVISIBLE:
-				condition = ExpectedConditions.invisibilityOfElementLocated(locator);
-				break;
-			case PRESENT:
-				if (wait.all()) {
-					condition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
-				} else {
-					condition = ExpectedConditions.presenceOfElementLocated(locator);
+			String originalContext = null;
+			try {
+				String waitContext = wait.context();
+				if (waitContext.length()==0) {
+					Context ctxAnn = pageClass.getAnnotation(Context.class);
+					for (Class<?> cls = pageClass.getSuperclass(); ctxAnn==null && cls!=null && Page.class.isAssignableFrom(cls); cls=cls.getSuperclass()) {
+						ctxAnn = cls.getAnnotation(Context.class);
+					}
+					if (ctxAnn!=null) {
+						waitContext = ctxAnn.value();
+					}
 				}
-				break;
-			case VISIBLE:
-				if (wait.all()) {
-					condition = ExpectedConditions.visibilityOfAllElementsLocatedBy(locator);
-				} else {
-					condition = ExpectedConditions.visibilityOfElementLocated(locator);
+				
+				if (waitContext.length()>0 && driver instanceof ContextAware) {
+					originalContext = ((ContextAware) driver).getContext();
+					if (waitContext.equals(originalContext)) {
+						originalContext = null;
+					} else {
+						((ContextAware) driver).context(waitContext);
+					}
 				}
+				WebDriverWait wdw = new WebDriverWait(driver, wait.timeout());
+				By locator = buildBy(wait);
+				ExpectedCondition<?> condition;
+				switch (wait.condition()) {
+				case CLICKABLE:
+					condition = ExpectedConditions.elementToBeClickable(locator);
 				break;
-			default:
-				throw new IllegalArgumentException("Unexpected condition: "+wait.condition());
-			
+				case INVISIBLE:
+					condition = ExpectedConditions.invisibilityOfElementLocated(locator);
+					break;
+				case PRESENT:
+					if (wait.all()) {
+						condition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
+					} else {
+						condition = ExpectedConditions.presenceOfElementLocated(locator);
+					}
+					break;
+				case VISIBLE:
+					if (wait.all()) {
+						condition = ExpectedConditions.visibilityOfAllElementsLocatedBy(locator);
+					} else {
+						condition = ExpectedConditions.visibilityOfElementLocated(locator);
+					}
+					break;
+				default:
+					throw new IllegalArgumentException("Unexpected condition: "+wait.condition());
+				
+				}
+				if (wait.not()) {
+					condition = ExpectedConditions.not(condition);
+				}
+				wdw.until(condition);
+			} finally {
+				if (originalContext!=null && driver instanceof ContextAware) {
+					((ContextAware) driver).context(originalContext);
+				}				
 			}
-			if (wait.not()) {
-				condition = ExpectedConditions.not(condition);
-			}
-			wdw.until(condition);			
 		}
 
 	}

@@ -19,7 +19,6 @@ import java.util.TreeMap;
 import java.util.concurrent.Executor;
 
 import org.json.JSONObject;
-import org.nasdanika.webtest.DirectoryPublisher.DirectoryPublishMonitor;
 import org.openqa.selenium.WebDriver;
 
 public class TestClassResult implements Collector<WebDriver>, TestResult {
@@ -391,6 +390,6 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			DirectoryPublishMonitor monitor) throws Exception {
 		
 		throw new UnsupportedOperationException("TODO!");
-	}				
+	}
 	
 }

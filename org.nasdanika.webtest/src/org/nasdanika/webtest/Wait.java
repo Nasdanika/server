@@ -45,6 +45,7 @@ public @interface Wait {
 	String partialLinkText() default "";
 
 	String xpath() default "";
+	
 
 	// Waiting attributes.
 	
@@ -70,4 +71,12 @@ public @interface Wait {
 	 * @return
 	 */
 	long timeout() default 30;
+	
+	/**
+	 * If not blank and web driver is context aware, then switches to the specified context.
+	 * If blank context value is taken from {@link Context} annotation on the page class and its superclasses, if any
+	 * @return
+	 */
+	String context() default "";
+	
 }

@@ -29,7 +29,7 @@ class MixInInvocationHandler<D, T> implements InvocationHandler {
 
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-		if (PageFragment.class.equals(method.getDeclaringClass())) {
+		if (Page.class.equals(method.getDeclaringClass())) {
 			if ((args==null || args.length==0) && method.getParameterTypes().length==0) {
 				if ("getWebDriver".equals(method.getName())) {
 					return webDriver;

@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.List;
 
+import org.openqa.selenium.ContextAware;
 import org.openqa.selenium.WebDriver;
 
 class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> {
@@ -16,14 +17,15 @@ class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> 
 		collector.onPageProxying(page);
 	}
 	
-	@SuppressWarnings("unchecked")
 	@Override
 	public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
 		if (isPageMethod(method)) {
 			Method pageImplMethod = target.getClass().getMethod(method.getName(), method.getParameterTypes());
+			WebDriver webDriver = null;
 			Object test = AbstractNasdanikaWebTestRunner.testThreadLocal.get();
     		if (test instanceof WebTest) {
-    			WebTestUtil.doWait(((WebTest<?>) test).getWebDriver(), pageImplMethod);
+    			webDriver = ((WebTest<?>) test).getWebDriver();
+    			WebTestUtil.doWait(webDriver, pageImplMethod);
     		}
 			Screenshot screenshotAnnotation = pageImplMethod.getAnnotation(Screenshot.class);
     		long delay = screenshotAnnotation==null ? 0 : screenshotAnnotation.delay();
@@ -38,7 +40,20 @@ class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> 
     		} else {
 				collector.beforePageMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args);
     		}
-			try {
+    		String originalContext = null;
+			try {				
+				Context ctxAnn = pageImplMethod.getAnnotation(Context.class);
+				for (Class<?> cls = target.getClass(); ctxAnn==null && cls!=null && Page.class.isAssignableFrom(cls); cls=cls.getSuperclass()) {
+					ctxAnn = cls.getAnnotation(Context.class);
+				}
+				if (ctxAnn!=null && webDriver instanceof ContextAware) {
+					originalContext = ((ContextAware) webDriver).getContext();
+					if (ctxAnn.value().equals(originalContext)) {
+						originalContext = null; // So no switching back
+					} else {
+						((ContextAware) webDriver).context(ctxAnn.value());
+					}
+				}
 				Object res = method.invoke(target, args);
 	    		if (AbstractNasdanikaWebTestRunner.shallTakeAfterScreenshot(screenshotAnnotation)) {
 	    			if (delay>0) {
@@ -59,6 +74,10 @@ class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> 
 	    			collector.afterPageMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, null, th);		    			
 	    		}
 				throw th;
+			} finally {
+				if (originalContext!=null && webDriver instanceof ContextAware) {
+					((ContextAware) webDriver).context(originalContext);
+				}				
 			}
 		}
 		

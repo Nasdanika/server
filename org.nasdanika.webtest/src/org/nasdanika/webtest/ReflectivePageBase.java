@@ -12,7 +12,7 @@ import org.openqa.selenium.WebElement;
 /**
  * Base class which calculates number of page fragment elements using reflection.
  */
-public abstract class ReflectivePageFragmentBase<D extends WebDriver> implements PageFragment<D> {
+public abstract class ReflectivePageBase<D extends WebDriver> implements Page<D> {
 	
 	@Override
 	public List<Field> webElements() {
@@ -21,10 +21,10 @@ public abstract class ReflectivePageFragmentBase<D extends WebDriver> implements
 			for (Field field: cls.getDeclaredFields()) {
 				if (WebElement.class.isAssignableFrom(field.getType())) {
 					ret.add(field);
-				} else if (PageFragment.class.isAssignableFrom(field.getType())) {
+				} else if (Page.class.isAssignableFrom(field.getType())) {
 					field.setAccessible(true);					
 					try {
-						PageFragment<?> pageFragment = (PageFragment<?>) field.get(this);
+						Page<?> pageFragment = (Page<?>) field.get(this);
 						if (pageFragment!=null) {
 							ret.addAll(pageFragment.webElements());
 						}
