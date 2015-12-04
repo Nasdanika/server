@@ -1,5 +1,5 @@
 ## Custom extensions
-Nasdanika documentation system can be extended by creating and registering wiki link renderers, wiki link resolvers, content filters, annotation renderers, and plugins. 
+Nasdanika documentation system can be extended by creating and registering wiki link renderers, wiki link resolvers, content filters, annotation renderers, plugins, and ECore model elements documentation generators. 
 
 ### Wiki Link Resolver
 Wiki link resolvers are extensions which resolve a Wiki link in format ``[[resolver name>resolver-specific location]]`` to a link URL. Wiki link resolvers shall implement [[javadoc>org.nasdanika.cdo.web.doc.WikiLinkResolver]] interface. Resolvers can also implement [[javadoc>org.nasdanika.cdo.web.doc.WikiLinkProcessor$Renderer]] interface. 
@@ -182,6 +182,54 @@ curly brackets.
 
 ### Annotation renderer
 Annotation renderers are used to customize rendering of EAnnotation's in the model documentation. Annotation renderers shall implements [[javadoc>org.nasdanika.cdo.web.doc.EAnnotationRenderer]] interface.
+
+### ECore Documentation Generators
+
+Generation of documentation for model elements can be customized with four extensions. Custom generators can be configured to match all or specific model elements.  
+
+#### EPackage
+
+EPackage documentation generators shall implement [[javadoc>org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator|org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator<EPackage>]] interface and be registered with ``epackage-documentation-generator`` extension point.
+
+Attributes:
+
+* ``class`` - Implementation class.
+* ``ns-uri`` - Namespace URI to match. If empty, matches any Namespace URI.
+* ``priority`` - Priority, generators with higher priority take precedence over generators with lower priority.  
+
+#### EClass
+
+EClass documentation generators shall implement [[javadoc>org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator|org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator<EClass>]] and be registered with ``eclass-documentation-generator`` extension point.
+
+Attributes:
+
+* ``class`` - Implementation class.
+* ``ns-uri`` - Namespace URI to match. If empty, matches any Namespace URI.
+* ``name`` - Class name to match. If empty, matches any name.
+* ``priority`` - Priority, generators with higher priority take precedence over generators with lower priority.  
+
+#### EDataType
+
+EDataType documentation generators shall implement [[javadoc>org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator|org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator<EDataType>]] and be registered with ``edatatype-documentation-generator`` extension point.
+
+Attributes:
+
+* ``class`` - Implementation class.
+* ``ns-uri`` - Namespace URI to match. If empty, matches any Namespace URI.
+* ``name`` - Data type name to match. If empty, matches any name.
+* ``priority`` - Priority, generators with higher priority take precedence over generators with lower priority.  
+
+#### EEnum
+
+EEnum documentation generators shall implement [[javadoc>org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator|org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator<EEnum>]] and be registered with ``eenum-documentation-generator`` extension point.
+
+Attributes:
+
+* ``class`` - Implementation class.
+* ``ns-uri`` - Namespace URI to match. If empty, matches any Namespace URI.
+* ``name`` - Enumeration name to match. If empty, matches any name.
+* ``priority`` - Priority, generators with higher priority take precedence over generators with lower priority.  
+
 
 ### Documentation
 All extensions support ``description`` sub-element. Markdown text from the description element is rendered by the documentation route and displayed in 

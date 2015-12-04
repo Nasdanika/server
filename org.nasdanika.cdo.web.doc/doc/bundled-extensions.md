@@ -151,3 +151,30 @@ This content filter is registered by the documentation bundle.
 Class: [[javadoc>org.nasdanika.cdo.web.doc.extensions.TextContentFilter|org.nasdanika.cdo.web.doc.extensions.TextContentFilter]]
 
 Renders plain text as pre-formatted HTML text, registered by the documentation bundle.
+
+### ECore Documentation Generators
+
+#### EPackage
+
+Class: [[javadoc>org.nasdanika.cdo.web.doc.extensions.EPackageDocumentationGenerator|org.nasdanika.cdo.web.doc.extensions.EPackageDocumentationGenerator]]
+
+Default documentation generator for EPackages - registered with empty NsURI and priority 0.
+
+#### EClass
+
+Class: [[javadoc>org.nasdanika.cdo.web.doc.extensions.EClassDocumentationGenerator|org.nasdanika.cdo.web.doc.extensions.EClassDocumentationGenerator]]
+
+Default documentation generator for EClasses - registered with empty NsURI and name, and priority 0.
+
+#### EDataType
+
+Class: [[javadoc>org.nasdanika.cdo.web.doc.extensions.EDataTypeDocumentationGenerator|org.nasdanika.cdo.web.doc.extensions.EDataTypeDocumentationGenerator]]
+
+Default documentation generator for EDataTypes - registered with empty NsURI and name, and priority 0.
+
+#### EEnum
+
+Class: [[javadoc>org.nasdanika.cdo.web.doc.extensions.EEnumDocumentationGenerator|org.nasdanika.cdo.web.doc.extensions.EEnumDocumentationGenerator]]
+
+Default documentation generator for EEnums - registered with empty NsURI and name, and priority 0.
+
