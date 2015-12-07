@@ -16,6 +16,8 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 
 	ButtonGroupImpl(HTMLFactory factory, Button... buttons) {
 		super(factory, TagName.div);
+		addClass("btn-group");
+		attribute("role", "group");
 		add(buttons);
 	}
 
@@ -97,6 +99,7 @@ class ButtonGroupImpl extends UIElementImpl<ButtonGroup> implements ButtonGroup 
 					ret.add(c);
 				}
 			}
+			return ret;
 		}
 		return super.getContent();
 	}

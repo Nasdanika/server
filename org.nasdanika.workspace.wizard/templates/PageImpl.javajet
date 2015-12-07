@@ -2,13 +2,13 @@
 package <%=wizard.getPageImplArtifactId()%>;
 
 import <%=wizard.getPageSpecArtifactId()%>.<%=wizard.getJavaName()%>Page;
-import org.nasdanika.webtest.ReflectivePageFragmentBase;
+import org.nasdanika.webtest.ReflectivePageBase;
 import org.nasdanika.webtest.Wait;
 import org.openqa.selenium.WebDriver;
 
 
 @Wait(id="button-groups")
-public class <%=wizard.getJavaName()%>PageImpl extends ReflectivePageFragmentBase<WebDriver> implements <%=wizard.getJavaName()%>Page {
+public class <%=wizard.getJavaName()%>PageImpl extends ReflectivePageBase<WebDriver> implements <%=wizard.getJavaName()%>Page {
 		
 	private <%=wizard.getJavaName()%>PageFactoryImpl factory;
 	private WebDriver webDriver;	
