@@ -124,8 +124,9 @@ This resolver doesn't work for TOC's/topics with embedded content, i.e. with tex
             linkTo="org.nasdanika.cdo.web/cdo"
             name="CDO">
          <topic
-               id="documentation-authoring"
-               name="Documentation Authoring">
+               id="documentation-system"
+               location="doc/documentation-system.md"
+               name="Documentation System">
             <topic
                   name="Extensions">
                <topic

@@ -211,13 +211,14 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		if (dropup) {
 			wrapperDiv.addClass("dropup");
 		}
-		wrapperDiv.content(this);
 		if (!split && !splitAugmented) {
 			splitAugmented = true;
 			addClass("dropdown-toggle");
 			attribute("data-toggle", "dropdown");
 			content(factory.span("").addClass("caret"));
 		}
+		
+		wrapperDiv.content(super.produce(indent+1));
 		
 		if (split) {
 			Tag dropDownButton = factory.tag(TagName.button, 
@@ -232,6 +233,7 @@ class ButtonImpl extends UIElementImpl<Button> implements Button {
 		}
 		
 		Tag list = factory.tag(TagName.ul).addClass("dropdown-menu").attribute("role", "menu");
+		wrapperDiv.content(list);
 		
 		if (forEachExpresion!=null && forEachExpresion.toString().trim().length()>0) {
 			list.knockout().foreach(forEachExpresion);

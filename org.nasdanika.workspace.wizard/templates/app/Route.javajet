@@ -3,16 +3,17 @@ package <%=wizard.getApplicationArtifactId()%>;
 
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
+import org.nasdanika.html.Bootstrap.DeviceSize;
+import org.nasdanika.html.Bootstrap.Glyphicon;
+import org.nasdanika.html.Bootstrap.Size;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.HTMLFactory.Glyphicon;
+import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.Navbar;
 import org.nasdanika.html.Theme;
-import org.nasdanika.html.UIElement.DeviceSize;
 import org.nasdanika.html.UIElement.Event;
-import org.nasdanika.html.UIElement.Size;
-import org.nasdanika.html.UIElement.Style;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.Route;
@@ -29,7 +30,7 @@ public class <%=wizard.getJavaName()%>Route implements Route {
 		final HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
 		
 		ApplicationPanel appPanel = htmlFactory.applicationPanel()
-				.header("<%=wizard.getName()%>")
+				.header("Demo App")
 				.headerLink("#")
 				.footer(
 						htmlFactory.link("#", "Contact us"), 
@@ -55,18 +56,18 @@ public class <%=wizard.getJavaName()%>Route implements Route {
 		
 		appPanel.navigation(navBar, breadcrumbs);
 		
-		appPanel.contentPanel(
-				htmlFactory.linkGroup()
-					.item("Item 1", "#", Style.DEFAULT, true)
-					.item("Item 2", "#", Style.DEFAULT, false)
-					.item("Item 3", "#", Style.SUCCESS, false))
-				.width(DeviceSize.LARGE, 2).id("side-panel");
+
+		LinkGroup linkGroup = htmlFactory.linkGroup();
+		appPanel.contentPanel(linkGroup).width(DeviceSize.LARGE, 2).id("side-panel");
+		linkGroup.item("Item 1", "#", Style.DEFAULT, true);
+		linkGroup.item("Item 2", "#", Style.DEFAULT, false);
+		linkGroup.item("Item 3", "#", Style.SUCCESS, false);	
 				
-		Accordion accordion = htmlFactory.accordion()
-				.item("Item 1", "Item 1 body")
-				.item("Item 2", Style.PRIMARY, "Item 2 body")
-				.item("Item 3", Style.WARNING, "Item 3 body")
-				.style(Style.SUCCESS);
+		Accordion accordion = htmlFactory.accordion();
+		accordion.item("Item 1", "Item 1 body");
+		accordion.item("Item 2", Style.PRIMARY, false, null, "Item 2 body");
+		accordion.item("Item 3", Style.WARNING, false, null, "Item 3 body");
+		accordion.style(Style.SUCCESS);
 		
 		Fragment body = htmlFactory.fragment(accordion);
 		
