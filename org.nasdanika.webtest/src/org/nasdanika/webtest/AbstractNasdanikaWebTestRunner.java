@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -175,94 +174,6 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	static boolean shallTakeExceptionScreenshot(Screenshot screenshotAnnotation) {
 		return screenshotAnnotation==null || Arrays.asList(screenshotAnnotation.value()).contains(Screenshot.When.EXCEPTION); 
 	}
-	
-	/**
-	 * Creates a proxy for a page factory which in turn proxies pages created by the factory.
-	 * Page proxies associate test executions and actor methods calls with invocations of page methods (steps). 
-	 * @param actorFactory
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T proxyPageFactory(T pageFactory) {
-		if (pageFactory == null) {
-			return null;
-		}
-		Class<? extends Object> pageFactoryClass = pageFactory.getClass();
-		return (T) Proxy.newProxyInstance(
-				pageFactoryClass.getClassLoader(), 
-				WebTestUtil.allInterfaces(pageFactoryClass).toArray(new Class[0]), 
-				new FilteringInvocationHandler<Object>(pageFactory) {
-					
-					@Override
-					protected Object filter(Object obj) {
-						if (obj instanceof Page) {
-							Class<? extends Object> retClass = obj.getClass();
-							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(obj))) {
-								return obj;
-							}
-							return WebTestUtil.proxyPage((Page<WebDriver>) obj);
-						}
-						return super.filter(obj);
-					}
-					
-				});
-	}		
-	
-	/**
-	 * Creates a proxy for an actor factory which in turn proxies actors created by the factory.
-	 * Actor proxies associate test executions with invocations of actor methods (steps). 
-	 * @param actorFactory
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T proxyActorFactory(T actorFactory) {
-		if (actorFactory==null) {
-			return null;
-		}
-		
-		Class<? extends Object> actorFactoryClass = actorFactory.getClass();
-		return (T) Proxy.newProxyInstance(
-				actorFactoryClass.getClassLoader(), 
-				WebTestUtil.allInterfaces(actorFactoryClass).toArray(new Class[0]),
-				new FilteringInvocationHandler<Object>(actorFactory) {
-					
-					@Override
-					protected Object filter(Object obj) {
-						if (obj instanceof Actor) {
-							Class<? extends Object> retClass = obj.getClass();
-							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(obj))) {
-								return obj;
-							}
-							Object proxy = Proxy.newProxyInstance(
-									retClass.getClassLoader(), 
-									WebTestUtil.allInterfaces(retClass).toArray(new Class[0]),  
-									new ActorInvocationHandler((Actor<WebDriver>) obj, collectorThreadLocal.get()));
-							
-							if (obj instanceof ProxyAware) {
-								((ProxyAware<Object>) obj).setProxy(proxy);
-							}
-							return proxy;
-						}
-						return super.filter(obj);
-					}
-					
-				});
-	}
-	
-//	static Method getOverridenInterfaceMethod(Method m, Class<?> interf) {
-//		Class<?>[] pt = m.getParameterTypes();
-//		for (Class<?> i: AbstractNasdanikaWebTestRunner.allInterfaces(m.getDeclaringClass())) {
-//			if (interf.isAssignableFrom(i) && !interf.equals(i)) {
-//				try {
-//					Method iMeth = i.getMethod(m.getName(), pt);
-//					return iMeth.getDeclaringClass().equals(interf) ? null : iMeth;
-//				} catch (NoSuchMethodException e) {
-//					// Nothing - continue.
-//				}
-//			}
-//		}
-//		return null;
-//	}	
 	
 	protected TestResultCollector testResultCollector;
 
@@ -450,13 +361,13 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
 						st.open();
 						serviceTrackersThreadLocal.get().add(st);
-						field.set(test, proxyActorFactory(st.waitForService(2000)));
+						field.set(test, WebTestUtil.proxyActorFactory(st.waitForService(2000)));
 					} else {
 						String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+MessageFormat.format(afa.filter(), getParameters())+")";
 						ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
 						st.open();
 						serviceTrackersThreadLocal.get().add(st);
-						field.set(test, proxyActorFactory(st.waitForService(2000)));
+						field.set(test, WebTestUtil.proxyActorFactory(st.waitForService(2000)));
 					}
 				} else {
 					PageFactory pfa = field.getAnnotation(PageFactory.class);
@@ -465,13 +376,13 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 							ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
 							st.open();
 							serviceTrackersThreadLocal.get().add(st);
-							field.set(test, proxyPageFactory(st.waitForService(2000)));
+							field.set(test, WebTestUtil.proxyPageFactory(st.waitForService(2000)));
 						} else {
 							String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+MessageFormat.format(pfa.filter(), getParameters())+")";
 							ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
 							st.open();
 							serviceTrackersThreadLocal.get().add(st);
-							field.set(test, proxyPageFactory(st.waitForService(2000)));
+							field.set(test, WebTestUtil.proxyPageFactory(st.waitForService(2000)));
 						}
 					} else {
 						Service sa = field.getAnnotation(Service.class);

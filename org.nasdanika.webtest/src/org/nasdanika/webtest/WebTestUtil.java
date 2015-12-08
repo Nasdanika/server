@@ -827,5 +827,78 @@ public class WebTestUtil {
 		}		
 		return proxy;
 	}
+
+	/**
+	 * Creates a proxy for a page factory which in turn proxies pages created by the factory.
+	 * Page proxies associate test executions and actor methods calls with invocations of page methods (steps). 
+	 * @param actorFactory
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T proxyPageFactory(T pageFactory) {
+		if (pageFactory == null) {
+			return null;
+		}
+		Class<? extends Object> pageFactoryClass = pageFactory.getClass();
+		return (T) Proxy.newProxyInstance(
+				pageFactoryClass.getClassLoader(), 
+				allInterfaces(pageFactoryClass).toArray(new Class[0]), 
+				new FilteringInvocationHandler<Object>(pageFactory) {
+					
+					@Override
+					protected Object filter(Object obj) {
+						if (obj instanceof Page) {
+							Class<? extends Object> retClass = obj.getClass();
+							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(obj))) {
+								return obj;
+							}
+							return proxyPage((Page<WebDriver>) obj);
+						}
+						return super.filter(obj);
+					}
+					
+				});
+	}
+
+	/**
+	 * Creates a proxy for an actor factory which in turn proxies actors created by the factory.
+	 * Actor proxies associate test executions with invocations of actor methods (steps). 
+	 * @param actorFactory
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T proxyActorFactory(T actorFactory) {
+		if (actorFactory==null) {
+			return null;
+		}
+		
+		Class<? extends Object> actorFactoryClass = actorFactory.getClass();
+		return (T) Proxy.newProxyInstance(
+				actorFactoryClass.getClassLoader(), 
+				allInterfaces(actorFactoryClass).toArray(new Class[0]),
+				new FilteringInvocationHandler<Object>(actorFactory) {
+					
+					@Override
+					protected Object filter(Object obj) {
+						if (obj instanceof Actor) {
+							Class<? extends Object> retClass = obj.getClass();
+							if (Proxy.isProxyClass(retClass) && this.equals(Proxy.getInvocationHandler(obj))) {
+								return obj;
+							}
+							Object proxy = Proxy.newProxyInstance(
+									retClass.getClassLoader(), 
+									allInterfaces(retClass).toArray(new Class[0]),  
+									new ActorInvocationHandler((Actor<WebDriver>) obj, AbstractNasdanikaWebTestRunner.collectorThreadLocal.get()));
+							
+							if (obj instanceof ProxyAware) {
+								((ProxyAware<Object>) obj).setProxy(proxy);
+							}
+							return proxy;
+						}
+						return super.filter(obj);
+					}
+					
+				});
+	}
 	
 }
