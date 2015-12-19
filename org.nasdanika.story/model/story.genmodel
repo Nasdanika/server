@@ -14,13 +14,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/testResultsURL"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//Protagonist">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Protagonist/linkTo"/>
-    </genClasses>
-    <genClasses ecoreClass="story.ecore#//StoryBase">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//StoryBase/protagonists"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//StoryBase/themes"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//Role">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Role/subRoles"/>
@@ -33,25 +30,47 @@
     </genClasses>
     <genClasses ecoreClass="story.ecore#//User"/>
     <genClasses ecoreClass="story.ecore#//System"/>
-    <genClasses ecoreClass="story.ecore#//Persona"/>
+    <genClasses ecoreClass="story.ecore#//Persona">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Persona/picture"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Persona/goals"/>
+    </genClasses>
     <genClasses ecoreClass="story.ecore#//Epic">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//StoryContainer/stories"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//Story">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Story/acceptancecriteria"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Story/depends"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Story/themes"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Story/protagonists"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Story/conditionalprotagonists"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Story/goal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Story/benefit"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Story/parameters"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//Theme">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Theme/children"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//AcceptanceCriterion">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/context"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/action"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/outcome"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//ConditionalProtagonist">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//ConditionalProtagonist/protagonist"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//ConditionalProtagonist/condition"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//StoryContainer">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//StoryContainer/stories"/>
+    </genClasses>
+    <genClasses ecoreClass="story.ecore#//Goal">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Goal/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Goal/details"/>
+    </genClasses>
+    <genClasses ecoreClass="story.ecore#//Parameter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Parameter/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Parameter/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Parameter/description"/>
     </genClasses>
   </genPackages>
   <genPackages prefix="Ecore" ecorePackage="../../org.eclipse.emf.ecore/model/Ecore.ecore#/">
