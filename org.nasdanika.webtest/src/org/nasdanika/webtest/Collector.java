@@ -31,6 +31,13 @@ public interface Collector<D extends WebDriver> extends AutoCloseable {
 	void beforeTestMethod(Method method, int index, Object[] parameters);
 	
 	/**
+	 * Invoked on explicit "DUING" screenshots.
+	 * @param screenshot
+	 * @param comment
+	 */
+	void onScreenshot(byte[] screenshot, String comment);
+	
+	/**
 	 * Sets a reference to test instance.
 	 * @param test
 	 */

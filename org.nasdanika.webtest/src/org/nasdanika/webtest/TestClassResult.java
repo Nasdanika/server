@@ -54,6 +54,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		}
         ScreenshotEntry ret = new ScreenshotEntry(
         		operationResult, 
+        		when,
         		currentScreenshot, 
         		screenshotsDir, 
         		idGenerator.genId(operationResult.getOperation().toString(), when.name()), 
@@ -144,15 +145,16 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				currentOperationResult);
 		actors.get(getObjectKey(actor)).results.add(amr);
 		currentOperationResult = amr;
-		amr.beforeScreenshot = createScreenshotEntry(amr, screenshot, Screenshot.When.BEFORE);
+		amr.screenshots.add(createScreenshotEntry(amr, screenshot, Screenshot.When.BEFORE));
 		amr.beforePerformance = performance;
 	}
+	
 	@Override
 	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performance, Method method, Object[] args,	Object result, Throwable th) {
 		if (currentOperationResult instanceof ActorMethodResult && method.equals(currentOperationResult.operation)) {
 			currentOperationResult.failure = th;
 			currentOperationResult.finish = System.currentTimeMillis();
-			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
@@ -169,7 +171,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				currentOperationResult);
 		pages.get(pageClass.getName()).results.add(pir);
 		currentOperationResult = pir;
-		pir.beforeScreenshot = createScreenshotEntry(pir, screenshot, Screenshot.When.BEFORE);
+		pir.screenshots.add(createScreenshotEntry(pir, screenshot, Screenshot.When.BEFORE));
 		pir.beforePerformance = performance;
 	}
 	@Override
@@ -182,7 +184,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		if (currentOperationResult instanceof InitializationResult && pageClass.equals(currentOperationResult.operation)) {
 			currentOperationResult.failure = th;
 			currentOperationResult.finish = System.currentTimeMillis();
-			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
@@ -198,7 +200,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 				currentOperationResult);
 		pages.get(getObjectKey(page)).results.add(pmr);
 		currentOperationResult = pmr;
-		pmr.beforeScreenshot = createScreenshotEntry(pmr, screenshot, Screenshot.When.BEFORE);
+		pmr.screenshots.add(createScreenshotEntry(pmr, screenshot, Screenshot.When.BEFORE));
 		pmr.beforePerformance = performance;
 	}
 	@Override
@@ -206,7 +208,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		if (currentOperationResult instanceof PageMethodResult && method.equals(currentOperationResult.operation)) {
 			currentOperationResult.failure = th;
 			currentOperationResult.finish = System.currentTimeMillis();
-			currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
@@ -228,7 +230,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	@Override
 	public void beforeTestMethodScreenshot(byte[] screenshot, JSONObject performance) {
-		currentOperationResult.beforeScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.BEFORE);	
+		currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.BEFORE));	
 		currentOperationResult.beforePerformance = performance;
 	}
 	
@@ -245,7 +247,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	@Override
 	public void afterTestMethodScreenshot(byte[] screenshot, JSONObject performance) {
-		currentOperationResult.afterScreenshot = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER);
+		currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 		currentOperationResult.afterPerformance = performance;
 	}
 		
@@ -390,6 +392,15 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			DirectoryPublishMonitor monitor) throws Exception {
 		
 		throw new UnsupportedOperationException("TODO!");
+	}
+
+	@Override
+	public void onScreenshot(byte[] screenshot, String comment) {
+		if (currentOperationResult!=null) {
+			ScreenshotEntry se = createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.DURING);
+			se.setComment(comment);
+			currentOperationResult.screenshots.add(se);
+		}
 	}
 	
 }

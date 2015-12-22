@@ -20,7 +20,7 @@ public @interface Screenshot {
 	 * @author Pavel Vlasov
 	 *
 	 */
-	enum When { BEFORE, AFTER, EXCEPTION }
+	enum When { BEFORE, DURING, AFTER, EXCEPTION }
 
 	When[] value() default {When.BEFORE, When.AFTER, When.EXCEPTION};
 	

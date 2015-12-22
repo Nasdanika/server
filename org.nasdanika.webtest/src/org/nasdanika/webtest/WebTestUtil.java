@@ -182,8 +182,7 @@ public class WebTestUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	@SafeVarargs
-	public static <D extends WebDriver> Collector<D> createCollector(
-			Collector<D>... chain) throws Exception {
+	public static <D extends WebDriver> Collector<D> createCollector(Collector<D>... chain) throws Exception {
 		final List<Collector<D>> collectors = new ArrayList<>();
 		for (Collector<D> c : chain) {
 			if (c != null) {
@@ -194,8 +193,7 @@ public class WebTestUtil {
 				.getExtensionRegistry()
 				.getConfigurationElementsFor("org.nasdanika.webtest.collectors")) {
 			if ("collector".equals(ce.getName())) {
-				collectors.add(injectProperties(ce,
-						(Collector<D>) ce.createExecutableExtension("class")));
+				collectors.add(injectProperties(ce,	(Collector<D>) ce.createExecutableExtension("class")));
 			}
 		}
 
@@ -315,6 +313,13 @@ public class WebTestUtil {
 			public void afterPageInitialization(Class<? extends Page<D>> pageClass, Page<D> page, byte[] screenshot, JSONObject performance, Throwable th) {
 				for (Collector<D> c : collectors) {
 					c.afterPageInitialization(pageClass, page, screenshot, performance, th);
+				}
+			}
+
+			@Override
+			public void onScreenshot(byte[] screenshot, String comment) {
+				for (Collector<D> c : collectors) {
+					c.onScreenshot(screenshot, comment);
 				}
 			}
 		};
@@ -826,6 +831,13 @@ public class WebTestUtil {
 			((ProxyAware<Object>) page).setProxy(proxy);
 		}		
 		return proxy;
+	}
+	
+	public static void takeScreenshot(String comment) {
+		byte[] ss = AbstractNasdanikaWebTestRunner.takeScreenshot();
+		if (ss!=null) {
+			AbstractNasdanikaWebTestRunner.collectorThreadLocal.get().onScreenshot(ss, comment);
+		}
 	}
 
 	/**

@@ -15,6 +15,7 @@ import java.net.URL;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -118,13 +119,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return start;
 	}
 	
-	ScreenshotEntry beforeScreenshot;
-	
 	JSONObject beforePerformance;
-	
-	public ScreenshotEntry getBeforeScreenshot() {
-		return beforeScreenshot;
-	}
 	
 	long finish;
 	
@@ -132,7 +127,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return finish;
 	}
 	
-	ScreenshotEntry afterScreenshot;
+	List<ScreenshotEntry> screenshots = new ArrayList<>();
 	
 	JSONObject afterPerformance;
 
@@ -182,8 +177,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		Throwable rootCause = getRootCause();
 		// Maybe need to refine which subclasses of WebDriverException shall be treated as failures,
 		// maybe make configurable through @Report annotation
-		return rootCause instanceof AssertionError 
-				|| rootCause instanceof WebDriverException; 
+		return rootCause instanceof AssertionError || rootCause instanceof WebDriverException; 
 	}
 	
 	List<OperationResult<?>> childResults = new ArrayList<>();
@@ -197,16 +191,14 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 	}
 	
 	private LinkedList<ScreenshotEntry> collectAllScreenshots(LinkedList<ScreenshotEntry> collector) {
-		if (beforeScreenshot!=null && (collector.isEmpty() || beforeScreenshot.getMaster()!=collector.getLast())) {
-			collector.add(beforeScreenshot.getMaster());
-		}
-		
-		for (OperationResult<?> or: childResults) {
-			or.collectAllScreenshots(collector);
-		}
-		
-		if (afterScreenshot!=null && (collector.isEmpty() || afterScreenshot.getMaster()!=collector.getLast())) {
-			collector.add(afterScreenshot.getMaster());
+		if (collector != null) {
+			collector.addAll(screenshots);
+			
+			for (OperationResult<?> or: childResults) {
+				or.collectAllScreenshots(collector);
+			}
+
+			Collections.sort(collector);
 		}
 		return collector;
 	};
@@ -299,11 +291,8 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		
 		Object caption = getHTMLCaption(htmlFactory);
 		int slideIdx = -1;
-		if (beforeScreenshot!=null) {
-			slideIdx = screenshots.indexOf(beforeScreenshot.getMaster()); 
-		}
-		if (slideIdx==-1 && afterScreenshot!=null) {
-			slideIdx = screenshots.indexOf(afterScreenshot.getMaster());
+		if (!screenshots.isEmpty()) {
+			slideIdx = screenshots.indexOf(screenshots.get(0).getMaster()); 
 		}
 		if (slideIdx!=-1) {
 			caption = htmlFactory.link("#carousel_"+carouselId, caption)
@@ -452,25 +441,21 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			}
 			
 			// --- Update non-containing references ---
-			if (parent==null && (afterScreenshot!=null || beforeScreenshot!=null)) {
+			if (parent==null && !screenshots.isEmpty()) {
 				HttpURLConnection uConnection = (HttpURLConnection) new URL(location).openConnection();
 				uConnection.setRequestMethod("PUT");
 				uConnection.setDoOutput(true);
 				uConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 				JSONObject uData = new JSONObject();
-				if (afterScreenshot!=null) {
-					String sid = idMap.get(afterScreenshot.getMaster());
+				JSONArray screenshotsArray = new JSONArray();
+				uData.put("screenshots", screenshotsArray);
+				for (ScreenshotEntry screenshot: screenshots) {
+					String sid = idMap.get(screenshot.getMaster());
 					if (sid==null) {
 						throw new IllegalStateException("Screenshot ID not found in ID map");
 					}
-					uData.put("afterScreenshot", sid);
-				}
-				if (beforeScreenshot!=null) {
-					String sid = idMap.get(beforeScreenshot.getMaster());
-					if (sid==null) {
-						throw new IllegalStateException("Screenshot ID not found in ID map");
-					}
-					uData.put("beforeScreenshot", sid);
+					// TODO - type and comment as well
+					screenshotsArray.put(sid);					
 				}
 				try (Writer w = new OutputStreamWriter(uConnection.getOutputStream())) {
 					uData.write(w);
@@ -531,20 +516,16 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		
 		data.put("finish", finish);
 		data.put("start", start);
-		if (parent!=null) {
-			if (afterScreenshot!=null) {
-				String sid = idMap.get(afterScreenshot.getMaster());
+		if (parent!=null && !screenshots.isEmpty()) {
+			JSONArray screenshotsArray = new JSONArray();
+			data.put("screenshots", screenshotsArray);
+			for (ScreenshotEntry se: screenshots) {
+				String sid = idMap.get(se.getMaster());
 				if (sid==null) {
 					throw new IllegalStateException("Screenshot ID not found in ID map");
 				}
-				data.put("afterScreenshot", sid);
-			}
-			if (beforeScreenshot!=null) {
-				String sid = idMap.get(beforeScreenshot.getMaster());
-				if (sid==null) {
-					throw new IllegalStateException("Screenshot ID not found in ID map");
-				}
-				data.put("beforeScreenshot", sid);
+				// TODO - type and comment as well
+				screenshotsArray.put(sid);				
 			}
 		}		
 		extraPublishInfo(data);

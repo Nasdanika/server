@@ -26,7 +26,23 @@ import org.nasdanika.html.impl.DefaultHTMLFactory;
  * @author Pavel Vlasov
  *
  */
-public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublisher {
+public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublisher, Comparable<ScreenshotEntry> {
+		
+	private Screenshot.When when;
+
+	public Screenshot.When getWhen() {
+		return when;
+	}
+	
+	private String comment;
+	
+	public void setComment(String comment) {
+		this.comment = comment;
+	}
+	
+	public String getComment() {
+		return comment;
+	}
 	
 	private String id;
 	
@@ -89,13 +105,52 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		return operationResult;
 	}
 
-	ScreenshotEntry(OperationResult<?> operationResult, ScreenshotEntry prev, File screenshotsDir, String id, byte[] bytes) {
+	ScreenshotEntry(
+			OperationResult<?> operationResult,
+			Screenshot.When when,
+			ScreenshotEntry prev, 
+			File screenshotsDir, 
+			String id, 
+			byte[] bytes) {
+		
 		this.operationResult = operationResult;
 		this.screenshotsDir = screenshotsDir;
 		this.id = id;
 		this.bytes = bytes;
 		this.bytesRef = new SoftReference<byte[]>(bytes);
 		this.prev = prev;
+		this.when = when;
+	}
+
+	/**
+	 * @param se
+	 * @return true if this screenshot entry is before the parameter screenshot entry. 
+	 */
+	public boolean isBefore(ScreenshotEntry se) {		
+		if (se.prev == null) {
+			return false;
+		}
+		if (se.prev == this) {
+			return true;
+		}
+		return isBefore(se.prev);
+	}
+	
+	@Override
+	public int compareTo(ScreenshotEntry o) {
+		if (o == this) {
+			return 0;
+		}
+		
+		if (isBefore(o)) {
+			return -1;
+		}
+		
+		if (o.isBefore(this)) {
+			return 1;
+		}
+		
+		return 0;
 	}
 
 	@Override

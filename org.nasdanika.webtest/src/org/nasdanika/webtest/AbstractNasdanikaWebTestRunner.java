@@ -92,6 +92,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						byte[] screenshot, 
 						JSONObject performanceData, 
 						Throwable th) {}
+
+				@Override
+				public void onScreenshot(byte[] screenshot, String comment) {}
 				
 			};
 		};
