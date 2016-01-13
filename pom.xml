@@ -34,6 +34,7 @@
 		<module>org.nasdanika.core.tests</module>
 		<module>org.nasdanika.web</module>
 		<module>org.nasdanika.webtest</module>
+		<module>org.nasdanika.webtest.model</module>
 		<module>org.nasdanika.webtest.performance</module>
 				
 		<module>org.nasdanika.workspace.wizard</module>
@@ -68,6 +69,11 @@
 		<module>org.nasdanika.sca.edit</module>
 		<module>org.nasdanika.sca.editor</module>
 		<module>org.nasdanika.sca.feature</module>
+
+		<module>org.nasdanika.story</module>
+		<module>org.nasdanika.story.edit</module>
+		<module>org.nasdanika.story.editor</module>
+		<module>org.nasdanika.story.feature</module>
 
 		<module>org.nasdanika.tools.design</module>
 		<module>org.nasdanika.tools.feature</module>

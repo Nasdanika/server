@@ -36,6 +36,7 @@
    <feature url="features/org.nasdanika.html.feature_0.1.0.qualifier.jar" id="org.nasdanika.html.feature" version="0.1.0.qualifier">
       <category name="org.nasdanika.category"/>
    </feature>
+   <feature url="features/org.nasdanika.story.feature_0.1.0.qualifier.jar" id="org.nasdanika.story.feature" version="0.1.0.qualifier"/>
    <category-def name="org.nasdanika.category" label="Nasdanika">
       <description>
          Nasdanika features.
