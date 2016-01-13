@@ -7,9 +7,9 @@ import java.lang.reflect.Method;
  * @author Pavel Vlasov
  *
  */
-public class MethodResult extends OperationResult<Method> {
+public abstract class MethodResult<M extends org.nasdanika.webtest.model.MethodResult> extends OperationResult<Method, M> {
 
-	MethodResult(String id, Method method, Object[] arguments, OperationResult<?> parent) {
+	MethodResult(String id, Method method, Object[] arguments, OperationResult<?,?> parent) {
 		super(id, method, arguments, parent);
 	}
 	

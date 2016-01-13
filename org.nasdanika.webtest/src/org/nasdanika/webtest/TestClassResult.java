@@ -19,6 +19,7 @@ import java.util.TreeMap;
 import java.util.concurrent.Executor;
 
 import org.json.JSONObject;
+import org.nasdanika.webtest.model.ModelFactory;
 import org.openqa.selenium.WebDriver;
 
 public class TestClassResult implements Collector<WebDriver>, TestResult {
@@ -48,7 +49,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	
 	private ScreenshotEntry currentScreenshot;
 		
-	private ScreenshotEntry createScreenshotEntry(OperationResult<?> operationResult, byte[] screenshot, Screenshot.When when) {
+	private ScreenshotEntry createScreenshotEntry(OperationResult<?,?> operationResult, byte[] screenshot, Screenshot.When when) {
 		if (screenshot==null || screenshotsDir==null) {
 			return null;
 		}
@@ -134,7 +135,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return testMethodResults;
 	}
 	
-	private OperationResult<?> currentOperationResult;
+	private OperationResult<?,?> currentOperationResult;
 	
 	@Override
 	public void beforeActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performance, Method method, Object[] args) {
@@ -401,6 +402,41 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			se.setComment(comment);
 			currentOperationResult.screenshots.add(se);
 		}
+	}
+
+	@Override
+	public org.nasdanika.webtest.model.TestResult toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {		
+		if (getTestMethodResults().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
+			return null; 
+		}
+		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
+		org.nasdanika.webtest.model.TestClassResult testResult = modelFactory.createTestClassResult();
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getTestClass(), testResult);
+		
+		for (Entry<TestStatus, Integer> ce: getStats().entrySet()) {
+			testResult.getStats().put(ce.getKey().toString(), ce.getValue());
+		}
+		objectMap.put(this, testResult);
+		for (TestMethodResult mr: getTestMethodResults()) {
+			org.nasdanika.webtest.model.TestMethodResult mrModel = mr.toModel(screenshotsCollector, screenshotsDir, objectMap);
+			if (mrModel!=null) {
+				testResult.getMethodResults().add(mrModel);
+			}				
+		}
+		for (PageResult pr: getPageResults()) {
+			org.nasdanika.webtest.model.PageResult prModel = pr.toModel(screenshotsDir, objectMap);
+			if (prModel!=null) {
+				testResult.getPageResults().add(prModel);
+			}
+		}
+
+		for (ActorResult ar: getActorResults()) {
+			org.nasdanika.webtest.model.ActorResult arModel = ar.toModel(screenshotsDir, objectMap);
+			if (arModel!=null) {
+				testResult.getActorResults().add(arModel);
+			}
+		}
+		return testResult;
 	}
 	
 }

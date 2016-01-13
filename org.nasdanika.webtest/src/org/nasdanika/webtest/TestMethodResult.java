@@ -7,12 +7,12 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.nasdanika.html.Bootstrap.Glyphicon;
 
-public class TestMethodResult extends MethodResult {
+public class TestMethodResult extends MethodResult<org.nasdanika.webtest.model.TestMethodResult> {
 
 	private Object[] parameters;
 	private int index;
 
-	TestMethodResult(String id, Method method, Object[] arguments, OperationResult<?> parent, int index, Object[] parameters) {
+	TestMethodResult(String id, Method method, Object[] arguments, OperationResult<?,?> parent, int index, Object[] parameters) {
 		super(id, method, arguments, parent);
 		this.index = index;
 		this.parameters = parameters;
@@ -50,6 +50,21 @@ public class TestMethodResult extends MethodResult {
 				prms.put(prm==null ? null : prm.toString());
 			}
 		}
+	}	
+	
+	@Override
+	protected void extraModelInfo(org.nasdanika.webtest.model.TestMethodResult model) {
+		super.extraModelInfo(model);
+		if (parameters!=null) {
+			for (Object prm: parameters) {
+				model.getParameters().add(prm==null ? null : prm.toString());
+			}
+		}
+	}
+	
+	@Override
+	protected org.nasdanika.webtest.model.TestMethodResult createModel() {
+		return org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestMethodResult();
 	}	
 
 }

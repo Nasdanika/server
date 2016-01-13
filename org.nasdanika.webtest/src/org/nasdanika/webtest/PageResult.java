@@ -1,5 +1,6 @@
 package org.nasdanika.webtest;
 
+import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Field;
@@ -16,6 +17,10 @@ import java.util.Map.Entry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.nasdanika.webtest.model.Locator;
+import org.nasdanika.webtest.model.ModelFactory;
+import org.nasdanika.webtest.model.PageMethodResult;
+import org.nasdanika.webtest.model.WebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.FindBys;
@@ -70,9 +75,9 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 		return webElements;
 	}
 	
-	List<OperationResult<?>> results = new ArrayList<>();
+	List<OperationResult<?,?>> results = new ArrayList<>();
 
-	public List<OperationResult<?>> getResults() {
+	public List<OperationResult<?,?>> getResults() {
 		return results;
 	}
 	
@@ -118,7 +123,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 		for (Method m: getPageInterface().getMethods()) {
 			if (!Page.class.equals(m.getDeclaringClass())) {
 				int counter = 0;
-				for (OperationResult<?> r: results) {
+				for (OperationResult<?,?> r: results) {
 					if (m.equals(r.getOperation())) {
 						++counter;
 					}
@@ -169,7 +174,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 		data.put("isProxy", isProxy());		
 		JSONArray resultIDs = new JSONArray();
 		data.put("results", resultIDs);
-		for (OperationResult<?> r: getResults()) {
+		for (OperationResult<?,?> r: getResults()) {
 			String rId = idMap.get(r);
 			if (rId==null) {
 				throw new IllegalStateException("Operation result is not yet published");
@@ -324,6 +329,116 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 		idMap.put(this, path);
 		directory.store(toJSON(idMap), path);
 		return path;
+	}
+
+	public org.nasdanika.webtest.model.PageResult toModel(File screenshotsDir, Map<Object, Object> objectMap) {
+		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
+		org.nasdanika.webtest.model.PageResult pageResult = modelFactory.createPageResult();
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getPageInterface(), pageResult);
+		if (getTitle()!=null) {
+			pageResult.setTitle(getTitle());
+		}
+		if (isProxy()) {
+			pageResult.setQualifiedName(getPageKey());
+		}
+		pageResult.setProxy(isProxy());		
+		for (OperationResult<?,?> r: getResults()) {
+			org.nasdanika.webtest.model.PageMethodResult modelResult = (PageMethodResult) objectMap.get(r);
+			if (modelResult == null) {
+				throw new IllegalStateException("Operation result is not yet published");
+			}
+			pageResult.getResults().add(modelResult);
+		}
+		
+		if (this.webElements!=null) {
+			for (Field we: this.webElements) {
+				WebElement webElement = modelFactory.createWebElement();
+				pageResult.getWebElements().add(webElement);
+				WebTestUtil.titleAndDescriptionToDescriptor(we, webElement);
+				if (WebTestUtil.isBlank(webElement.getTitle())) {
+					webElement.setTitle(WebTestUtil.title(we.getName()));
+				}
+				//webElement.put("name", we.getName());
+				//webElement.put("declaringClass", we.getDeclaringClass().getName());
+				webElement.setQualifiedName(we.getDeclaringClass().getName()+"."+we.getName());
+				List<FindBy> findByList = new ArrayList<>();
+				FindBy findBy = we.getAnnotation(FindBy.class);
+				if (findBy!=null) {
+					findByList.add(findBy);
+				}
+				FindBys findBys = we.getAnnotation(FindBys.class);
+				if (findBys!=null) {
+					for (FindBy fb: findBys.value()) {
+						findByList.add(fb);
+					}
+				}
+				if (findByList.isEmpty()) {
+					Locator locator = modelFactory.createLocator();
+					locator.setHow(How.ID.name());
+					locator.setUsing(we.getName());
+					webElement.getLocators().add(locator);
+				} else {
+					for (FindBy fb: findByList) {
+						Locator locator = modelFactory.createLocator();
+						webElement.getLocators().add(locator);
+						String className = fb.className();
+						if (!WebTestUtil.isBlank(className)) {
+							locator.setHow(How.CLASS_NAME.name());
+							locator.setUsing(className);
+						} else {
+							String css = fb.css();
+							if (!WebTestUtil.isBlank(css)) {
+								locator.setHow(How.CSS.name());
+								locator.setUsing(css);
+							} else {
+								String id = fb.id();
+								if (!WebTestUtil.isBlank(id)) {
+									locator.setHow(How.ID.name());
+									locator.setUsing(id);
+								} else {
+									String linkText = fb.linkText();
+									if (!WebTestUtil.isBlank(linkText)) {
+										locator.setHow(How.LINK_TEXT.name());
+										locator.setUsing(linkText);
+									} else {
+										String name = fb.name();
+										if (!WebTestUtil.isBlank(name)) {
+											locator.setHow(How.NAME.name());
+											locator.setUsing(name);
+										} else {
+											String plt = fb.partialLinkText();
+											if (!WebTestUtil.isBlank(plt)) {
+												locator.setHow(How.PARTIAL_LINK_TEXT.name());
+												locator.setUsing(plt);
+											} else {
+												String tagName = fb.tagName();
+												if (!WebTestUtil.isBlank(tagName)) {
+													locator.setHow(How.TAG_NAME.name());
+													locator.setUsing(tagName);
+												} else {
+													String xpath = fb.xpath();
+													if (!WebTestUtil.isBlank(xpath)) {
+														locator.setHow(How.XPATH.name());
+														locator.setUsing(xpath);
+													} else {
+														How how = fb.how();
+														if (how!=How.UNSET) {
+															locator.setHow(how.name());
+															locator.setUsing(fb.using());
+														}
+													}
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return pageResult;
 	}	
 		
 }

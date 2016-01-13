@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.Platform;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.nasdanika.webtest.model.Descriptor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ContextAware;
 import org.openqa.selenium.JavascriptExecutor;
@@ -685,6 +686,29 @@ public class WebTestUtil {
 			target.put("title", titleBuilder.toString());
 		}
 	}
+		
+	static void qualifiedNameAndTitleAndDescriptionToDescriptor(Class<?> klass, Descriptor target) {
+		target.setQualifiedName(klass.getName());
+		titleAndDescriptionToDescriptor(klass, target);
+		if (isBlank(target.getTitle())) {
+			String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
+			StringBuilder titleBuilder = new StringBuilder();
+			String[] scna = StringUtils.splitByCharacterTypeCamelCase(className);
+			for (int i=0; i<scna.length; ++i) {
+				if (i==0) {
+					titleBuilder.append(StringUtils.capitalize(scna[i]));
+				} else {
+					titleBuilder.append(" ");
+					if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
+						titleBuilder.append(scna[i]);
+					} else {
+						titleBuilder.append(StringUtils.uncapitalize(scna[i]));
+					}
+				}
+			}
+			target.setTitle(titleBuilder.toString());
+		}
+	}	
 	
 	static String title(String name) {
 		StringBuilder titleBuilder = new StringBuilder();
@@ -710,6 +734,12 @@ public class WebTestUtil {
 		toJSON(annotated.getAnnotation(Description.class), target);
 	}
 
+	static void titleAndDescriptionToDescriptor(AnnotatedElement annotated, Descriptor target) {
+		Title title = annotated.getAnnotation(Title.class);
+		toDescriptor(title, target);
+		toDescriptor(annotated.getAnnotation(Description.class), target);
+	}
+
 	static void toJSON(Title title, JSONObject target) throws JSONException {
 		if (title!=null) {
 			target.put("title", title.value());
@@ -720,10 +750,10 @@ public class WebTestUtil {
 		if (description!=null) {
 			JSONObject jd = new JSONObject();
 			target.put("description", jd);
-			if (description.url()!=null && description.url().trim().length()>0) {
+			if (!isBlank(description.url())) {
 				jd.put("url", description.url());
 			}
-			if (description.html()) {
+			if ("text/html".equalsIgnoreCase(description.contentType())) {
 				jd.put("html", true);
 			}
 			JSONArray jdv = new JSONArray();
@@ -731,6 +761,26 @@ public class WebTestUtil {
 			for (String v: description.value()) {
 				jdv.put(v);
 			}
+		}
+	}
+	
+	static void toDescriptor(Title title, Descriptor target) {
+		if (title!=null) {
+			target.setTitle(title.value());
+		}
+	}
+
+	static void toDescriptor(Description description, Descriptor target) {
+		if (description!=null) {
+			org.nasdanika.webtest.model.Description targetDescription = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createDescription();
+			for (String ve: description.value()) {
+				targetDescription.getValue().add(ve);
+			}
+			if (!isBlank(description.url())) {
+				targetDescription.setUrl(description.url());
+			}
+			targetDescription.setContentType(description.contentType());
+			target.setDescription(targetDescription);
 		}
 	}
 

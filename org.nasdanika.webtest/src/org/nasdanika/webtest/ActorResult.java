@@ -1,5 +1,6 @@
 package org.nasdanika.webtest;
 
+import java.io.File;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.lang.reflect.Method;
@@ -15,6 +16,8 @@ import java.util.Map.Entry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.nasdanika.webtest.model.Coverage;
+import org.nasdanika.webtest.model.ModelFactory;
 import org.openqa.selenium.WebDriver;
 
 /**
@@ -146,7 +149,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 		}
 		JSONArray resultIDs = new JSONArray();
 		data.put("results", resultIDs);
-		for (OperationResult<?> r: getResults()) {
+		for (OperationResult<?,?> r: getResults()) {
 			String rId = idMap.get(r);
 			if (rId==null) {
 				throw new IllegalStateException("Operation result is not yet published");
@@ -189,6 +192,38 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 		idMap.put(this, path);
 		directory.store(toJSON(idMap), path);
 		return path;
+	}
+
+	public org.nasdanika.webtest.model.ActorResult toModel(File screenshotsDir, Map<Object, Object> objectMap) {
+		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
+		org.nasdanika.webtest.model.ActorResult actorResult = modelFactory.createActorResult();
+		objectMap.put(this, actorResult);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getActorInterface(), actorResult);
+		if (getTitle()!=null) {
+			actorResult.setTitle(getTitle());
+		}
+		actorResult.setProxy(isProxy());
+		if (isProxy()) {
+			actorResult.setQualifiedName(getActorKey());
+		}
+		for (OperationResult<?,?> r: getResults()) {
+			org.nasdanika.webtest.model.ActorMethodResult amrModel = (org.nasdanika.webtest.model.ActorMethodResult) objectMap.get(r);
+			if (amrModel==null) {
+				throw new IllegalStateException("Actor method result model not found in the object map");
+			}
+			actorResult.getResults().add(amrModel);
+		}
+		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
+			Coverage coverage = modelFactory.createCoverage();
+			WebTestUtil.titleAndDescriptionToDescriptor(ce.getKey(), coverage);
+			if (WebTestUtil.isBlank(coverage.getTitle())) {
+				coverage.setTitle(WebTestUtil.title(ce.getKey().getName()));
+			}
+			coverage.setQualifiedName(ce.getKey().toString());
+			coverage.setInvocations(ce.getValue());
+			actorResult.getCoverage().add(coverage);
+		}		
+		return actorResult;
 	}				
 
 }

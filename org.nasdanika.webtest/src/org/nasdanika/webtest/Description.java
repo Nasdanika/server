@@ -27,10 +27,9 @@ public @interface Description {
 	String url() default "";
 	
 	/**
-	 * Description format. HTML by default. If set to false, report generator HTML-escapes the description,
-	 * adds new line characters between description strings and puts resulting text into PRE tag. 
+	 * Description content (MIME) type. Text by default. 
 	 * @return
 	 */
-	boolean html() default true;
+	String contentType() default "text";
 	
 }

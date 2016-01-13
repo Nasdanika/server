@@ -32,17 +32,14 @@ import org.junit.runners.Parameterized.Parameter;
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.ApplicationPanel.ContentPanel;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Color;
-import org.nasdanika.html.Bootstrap.DeviceSize;
-import org.nasdanika.html.Bootstrap.Style;
+import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.Container;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.HTMLFactory.Placement;
-import org.nasdanika.html.Table;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -338,7 +335,7 @@ class ReportGenerator {
 		
 		Description description = klass.getAnnotation(Description.class);
 		if (description!=null) {
-			if (description.html()) {
+			if ("text/html".equalsIgnoreCase(description.contentType())) {
 				for (String str: description.value()) {
 					testResultWriter.write(str);
 					testResultWriter.write(" ");
@@ -541,7 +538,7 @@ class ReportGenerator {
 			Description description = tr.getTestClass().getAnnotation(Description.class);
 			if (description==null) {
 				descriptionCell.content("&nbsp;");
-			} else if (description.html()) {
+			} else if ("text/html".equalsIgnoreCase(description.contentType())) {
 				for (String str: description.value()) {
 					descriptionCell.content(str, " ");
 				}
@@ -696,7 +693,7 @@ class ReportGenerator {
 		
 		if (description!=null) {
 			StringBuilder descriptionBuilder = new StringBuilder();
-			if (description.html()) {
+			if ("text/html".equalsIgnoreCase(description.contentType())) {
 				for (String str: description.value()) {
 					descriptionBuilder.append(str);
 					descriptionBuilder.append(" ");
@@ -732,7 +729,7 @@ class ReportGenerator {
 			
 			Description description = pageResult.getPageInterface().getAnnotation(Description.class);
 			if (description!=null) {
-				if (description.html()) {
+				if ("text/html".equalsIgnoreCase(description.contentType())) {
 					for (String str: description.value()) {
 						pageResultWriter.write(str);
 						pageResultWriter.write(" ");
@@ -757,7 +754,7 @@ class ReportGenerator {
 				if (mDescription==null) {
 					descr = "&nbsp;";
 				} else {
-					if (mDescription.html()) {
+					if ("text/html".equalsIgnoreCase(mDescription.contentType())) {
 						for (String str: mDescription.value()) {
 							descr+=str;
 							descr+=" ";
@@ -822,7 +819,7 @@ class ReportGenerator {
 			
 			Description description = actorResult.getActorInterface().getAnnotation(Description.class);
 			if (description!=null) {
-				if (description.html()) {
+				if ("text/html".equalsIgnoreCase(description.contentType())) {
 					for (String str: description.value()) {
 						actorResultWriter.write(str);
 						actorResultWriter.write(" ");
@@ -847,7 +844,7 @@ class ReportGenerator {
 				if (mDescription==null) {
 					descr = "&nbsp;";
 				} else {
-					if (mDescription.html()) {
+					if ("text/html".equalsIgnoreCase(mDescription.contentType())) {
 						for (String str: mDescription.value()) {
 							descr+=str;
 							descr+=" ";
@@ -931,7 +928,7 @@ class ReportGenerator {
 			Description description = pr.getPageInterface().getAnnotation(Description.class);
 			if (description==null) {
 				descriptionCell.content("&nbsp;");
-			} else if (description.html()) {
+			} else if ("text/html".equalsIgnoreCase(description.contentType())) {
 				for (String str: description.value()) {
 					descriptionCell.content(str, " ");
 				}
@@ -989,7 +986,7 @@ class ReportGenerator {
 			Description description = ar.getActorInterface().getAnnotation(Description.class);
 			if (description==null) {
 				descriptionCell.content("&nbsp;");
-			} else if (description.html()) {
+			} else if ("text/html".equalsIgnoreCase(description.contentType())) {
 				for (String str: description.value()) {
 					descriptionCell.content(str, " ");
 				}

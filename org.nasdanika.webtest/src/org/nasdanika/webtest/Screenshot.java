@@ -16,11 +16,33 @@ import java.lang.annotation.Target;
 public @interface Screenshot {
 	
 	/**
-	 * Indicates when to take a screenshot.
+	 * Indicates when to take a screenshot or when a screenshot was taken.
 	 * @author Pavel Vlasov
 	 *
 	 */
-	enum When { BEFORE, DURING, AFTER, EXCEPTION }
+	enum When { 
+		
+		/**
+		 * Before method execution.
+		 */
+		BEFORE, 
+		
+		/**
+		 * During method execution. This value shall not be used by clients - it is used internally by {@link WebTestUtil}.takeScreenshot(String) method.
+		 */
+		DURING, 
+		
+		/**
+		 * After method execution.
+		 */
+		AFTER, 
+		
+		/**
+		 * When method throws an exception.
+		 */
+		EXCEPTION 
+		
+	}
 
 	When[] value() default {When.BEFORE, When.AFTER, When.EXCEPTION};
 	
@@ -29,5 +51,5 @@ public @interface Screenshot {
 	 * @return
 	 */
 	long delay() default 0;
-	
+			
 }

@@ -1,5 +1,6 @@
 package org.nasdanika.webtest;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -33,6 +34,10 @@ import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.webtest.model.OperationArgument;
+import org.nasdanika.webtest.model.OperationStatus;
+import org.nasdanika.webtest.model.ScreenshotType;
+import org.nasdanika.webtest.model.StackTraceEntry;
 import org.openqa.selenium.WebDriverException;
 
 /**
@@ -40,7 +45,7 @@ import org.openqa.selenium.WebDriverException;
  * @author Pavel Vlasov
  *
  */
-public class OperationResult<O extends AnnotatedElement> implements HttpPublisher, DirectoryPublisher {
+public abstract class OperationResult<O extends AnnotatedElement, M extends org.nasdanika.webtest.model.OperationResult> implements HttpPublisher, DirectoryPublisher {
 
 	final O operation;
 	
@@ -54,7 +59,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return target;
 	}
 
-	final OperationResult<?> parent;
+	final OperationResult<?,?> parent;
 
 	private String id;
 	
@@ -68,7 +73,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return operation;
 	}
 	
-	public OperationResult<?> getParent() {
+	public OperationResult<?,?> getParent() {
 		return parent;
 	}
 	
@@ -76,7 +81,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return id;
 	}
 
-	OperationResult(String id, O operation, Object[] arguments, OperationResult<?> parent) {
+	OperationResult(String id, O operation, Object[] arguments, OperationResult<?,?> parent) {
 		this.id = id;
 		this.operation = operation;
 		if (arguments!=null) {
@@ -143,7 +148,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		}
 		
 		Throwable rootCause = getRootCause();
-		for (OperationResult<?> cor: childResults) {
+		for (OperationResult<?,?> cor: childResults) {
 			if (isSameRootCause(cor, rootCause)) {
 				return false;
 			}
@@ -152,11 +157,11 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return true;
 	}
 	
-	private static boolean isSameRootCause(OperationResult<?> or, Throwable rootCause) {
+	private static boolean isSameRootCause(OperationResult<?,?> or, Throwable rootCause) {
 		if (rootCause.equals(or.getRootCause())) {
 			return true;
 		}
-		for (OperationResult<?> cor: or.childResults) {
+		for (OperationResult<?,?> cor: or.childResults) {
 			if (isSameRootCause(cor, rootCause)) {
 				return true;
 			}
@@ -180,21 +185,21 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return rootCause instanceof AssertionError || rootCause instanceof WebDriverException; 
 	}
 	
-	List<OperationResult<?>> childResults = new ArrayList<>();
+	List<OperationResult<?,?>> childResults = new ArrayList<>();
 	
-	public List<OperationResult<?>> getChildren() {
+	public List<OperationResult<?,?>> getChildren() {
 		return childResults;
 	}
 	
 	public List<ScreenshotEntry> allScreenshots() {
-		return collectAllScreenshots( new LinkedList<ScreenshotEntry>()); 
+		return collectAllScreenshots(new LinkedList<ScreenshotEntry>()); 
 	}
 	
 	private LinkedList<ScreenshotEntry> collectAllScreenshots(LinkedList<ScreenshotEntry> collector) {
 		if (collector != null) {
 			collector.addAll(screenshots);
 			
-			for (OperationResult<?> or: childResults) {
+			for (OperationResult<?,?> or: childResults) {
 				or.collectAllScreenshots(collector);
 			}
 
@@ -302,7 +307,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		
 		genDescriptionAndDurationCells(htmlFactory, row);
 		
-		for (OperationResult<?> ch: childResults) {
+		for (OperationResult<?,?> ch: childResults) {
 			ch.genRows(htmlFactory, methodTable, carouselId, screenshots, indent+1);
 		}
 	}
@@ -315,7 +320,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		
 		StringBuilder ret = new StringBuilder();
 			
-		if (description.html()) {
+		if ("text/html".equalsIgnoreCase(description.contentType())) {
 			for (String str: description.value()) {
 				ret.append(format(str)).append(" ");
 			}
@@ -436,7 +441,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 			}
 	
 			URL childrenURL= new URL(location+"/children");
-			for (OperationResult<?> child: getChildren()) {
+			for (OperationResult<?,?> child: getChildren()) {
 				child.publish(childrenURL, securityToken, publishPerformance, idMap, monitor);				
 			}
 			
@@ -558,6 +563,29 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		return ret;
 	}
 	
+	private static org.nasdanika.webtest.model.Throwable toModel(Throwable th) {
+		org.nasdanika.webtest.model.Throwable ret = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createThrowable();
+		ret.setType(th.getClass().getName());
+		if (th.getMessage()!=null) {
+			ret.setMessage(th.getMessage());
+		}
+		for (StackTraceElement ste: th.getStackTrace()) {
+			StackTraceEntry stackTraceEntry = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createStackTraceEntry();
+			ret.getStackTrace().add(stackTraceEntry);
+			stackTraceEntry.setClassName(ste.getClassName());
+			if (ste.getFileName()!=null) {
+				stackTraceEntry.setFileName(ste.getFileName());
+			}
+			if (ste.getLineNumber()>=0) {
+				stackTraceEntry.setLineNumber(ste.getLineNumber());
+			}
+			stackTraceEntry.setMethodName(ste.getMethodName());
+			stackTraceEntry.setNative(ste.isNativeMethod());
+		}
+		return ret;
+	}
+	
+	
 	/**
 	 * A method for subclasses add 
 	 * @param data 
@@ -566,10 +594,19 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		
 	}
 	
+	/**
+	 * A method for subclasses add 
+	 * @param data 
+	 */
+	protected void extraModelInfo(M model) {
+		
+	}
+	
+	
 	@Override
 	public int publishSize() {
 		int ret = 1;
-		for (OperationResult<?> or: getChildren()) {
+		for (OperationResult<?,?> or: getChildren()) {
 			ret+=or.publishSize();	
 		}
 	
@@ -580,6 +617,74 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 		}
 		return ret;
 	}
+	
+	public M toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {
+		M model = createModel();		
+		WebTestUtil.titleAndDescriptionToDescriptor(getOperation(), model);
+		model.setOperationName(getOperationName());
+		if (WebTestUtil.isBlank(model.getTitle())) {
+			model.setTitle(WebTestUtil.title(getOperationName()));
+		}
+		model.setQualifiedName(operation.toString());
+		String cName = getClass().getName();
+		if (arguments!=null) {
+			// Simplistic approach for now
+			for (Object arg: arguments) {
+				OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
+				if (arg!=null) {
+					operationArgument.setType(arg.getClass().getName());
+					operationArgument.setValue(arg.toString());
+				}
+				model.getArguments().add(operationArgument);
+			}
+		}
+		if (hasOwnFailure()) {
+			if (isFailure()) {
+				model.setFailure(toModel(getRootCause()));
+			} else {
+				model.setError(toModel(getRootCause()));				
+			}
+		}
+		
+		if (isFailure()) {
+			model.setStatus(OperationStatus.FAIL);
+		} else if (failure!=null) {
+			model.setStatus(OperationStatus.ERROR);
+		} else if (isPending()) {
+			model.setStatus(OperationStatus.PENDING);
+		} else {
+			model.setStatus(OperationStatus.PASS);
+		}
+		
+		model.setStart(start);
+		model.setFinish(finish);
+		
+		// Root results write master screenshots to the collector
+		if (parent==null) {
+			for (ScreenshotEntry se: screenshots) {
+				if (se.getMaster()==null) {
+					screenshotsCollector.add(se.toScreenshotModel(screenshotsDir, objectMap));
+				}
+			}
+		}
+				
+		for (ScreenshotEntry se: screenshots) {
+			model.getScreenshots().add(se.toScreenshotEntryModel(objectMap));
+		}
+		
+		extraModelInfo(model);
+	
+		for (OperationResult<?,?> child: getChildren()) {
+			org.nasdanika.webtest.model.OperationResult childModel = child.toModel(screenshotsCollector, screenshotsDir, objectMap);
+			if (childModel!=null) {
+				model.getChildren().add(childModel);
+			}
+		}
+		
+		return model;
+	}
+	
+	protected abstract M createModel();
 
 	@Override
 	public String publish(
@@ -614,7 +719,7 @@ public class OperationResult<O extends AnnotatedElement> implements HttpPublishe
 //			}
 //	
 //			URL childrenURL= new URL(location+"/children");
-//			for (OperationResult<?> child: getChildren()) {
+//			for (OperationResult<?,?> child: getChildren()) {
 //				child.publish(childrenURL, securityToken, publishPerformance, idMap, monitor);				
 //			}
 //			

@@ -1,5 +1,7 @@
 package org.nasdanika.webtest;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
@@ -8,14 +10,26 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+import org.eclipse.emf.common.util.URI;
+
+import org.eclipse.emf.ecore.EObject;
+
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+
+import org.eclipse.emf.ecore.util.Diagnostician;
+
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 
 import org.json.JSONObject;
-import org.nasdanika.webtest.DirectoryPublisher.DirectoryPublishMonitor;
 
 /**
- * Publishes test results to HTTP report server.
+ * Publishes test results to HTTP report server, directory, or bundle.
  * @author Pavel Vlasov
  *
  */
@@ -128,6 +142,70 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 			DirectoryPublishMonitor monitor) throws Exception {
 		
 		throw new UnsupportedOperationException("TODO!");
-	}				
+	}	
+	
+	/**
+	 * Writes test results model and screenshots to the specified output directory. The results model is written into "test-results.xml" file, and 
+	 * screenshots are stored in the "screenshots" sub-directory. 
+	 * @param outputDir
+	 * @throws IOException 
+	 */
+	public void writeModel(File outputDir) throws IOException {		
+		org.nasdanika.webtest.model.TestSession testSession = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestSession();
+		testSession.setNode(InetAddress.getLocalHost().getHostName());
+		Map<String, ActorResult> actorResults = new HashMap<>();
+		Map<String, PageResult> pageResults = new HashMap<>();
+		File screenshotsDir = new File(outputDir, "screenshots");
+		if (screenshotsDir.exists()) {
+			for (File f: screenshotsDir.listFiles()) {
+				if (!f.delete()) {
+					throw new IOException("Could not clean up screenshots directory, could not delete "+f.getAbsolutePath());
+				}
+			}
+		} else {
+			if (!screenshotsDir.mkdirs()) {
+				throw new IOException("Could not create screenshots directory "+screenshotsDir.getAbsolutePath());
+			}
+		}
+		Map<Object, Object> objectMap = new IdentityHashMap<>();
+		// objectMap.put(this, testSession);
+		for (TestResult tr: testResults) {
+			org.nasdanika.webtest.model.TestResult trModel = tr.toModel(testSession.getScreenshots(), screenshotsDir, objectMap);
+			if (trModel!=null) {
+				testSession.getTestResults().add(trModel);
+				for (ActorResult car: tr.getActorResults()) {
+					ActorResult aar = actorResults.get(car.getActorKey());
+					if (aar==null) {
+						aar = new ActorResult(car.getActorInterface(), car.getTitle());
+						actorResults.put(car.getActorKey(), aar);
+					}
+					aar.merge(car);
+				}
+				for (PageResult cpr: tr.getPageResults()) {
+					PageResult apr = pageResults.get(cpr.getPageKey());
+					if (apr==null) {
+						apr = new PageResult(cpr.getPageInterface(), cpr.webElements(), cpr.getTitle());
+						pageResults.put(cpr.getPageKey(), apr);
+					}
+					apr.merge(cpr);
+				}
+			}
+		}
+		
+		for (PageResult pr: pageResults.values()) {
+			testSession.getPageResults().add(pr.toModel(screenshotsDir, objectMap));
+		}
+		
+		for (ActorResult ar: actorResults.values()) {
+			testSession.getActorResults().add(ar.toModel(screenshotsDir, objectMap));
+		}
+		
+		File modelFile = new File(outputDir, "test-results.xml");
+		ResourceSet resourceSet = new ResourceSetImpl();
+		URI uri = URI.createFileURI(modelFile.getAbsolutePath());
+		Resource resource = resourceSet.createResource(uri);		
+		resource.getContents().add(testSession);
+		resource.save(null);				
+	}
 		
 }

@@ -7,9 +7,9 @@ import org.nasdanika.html.Bootstrap.Glyphicon;
  * @author Pavel Vlasov
  *
  */
-public class InitializationResult extends OperationResult<Class<?>> {
+public class InitializationResult extends OperationResult<Class<?>, org.nasdanika.webtest.model.InitializationResult> {
 
-	InitializationResult(String id, Class<?> klass, OperationResult<?> parent) {
+	InitializationResult(String id, Class<?> klass, OperationResult<?,?> parent) {
 		super(id, klass, null, parent);
 	}
 	
@@ -22,5 +22,10 @@ public class InitializationResult extends OperationResult<Class<?>> {
 	Glyphicon getGlyphicon() {
 		return Glyphicon.asterisk;
 	}
+	
+	@Override
+	protected org.nasdanika.webtest.model.InitializationResult createModel() {
+		return org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createInitializationResult();
+	}	
 
 }

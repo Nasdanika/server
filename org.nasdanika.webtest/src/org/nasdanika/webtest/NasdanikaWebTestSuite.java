@@ -285,6 +285,38 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 					DirectoryPublishMonitor monitor) throws Exception {
 				
 				throw new UnsupportedOperationException("TODO!");
+			}
+
+			@Override
+			public org.nasdanika.webtest.model.TestResult toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {
+				if (getChildren().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
+					return null; 
+				}				
+				org.nasdanika.webtest.model.TestSuiteResult testResult = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestSuiteResult();
+				objectMap.put(this, testResult);
+				WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getTestClass(), testResult);
+
+				for (TestResult tr: getChildren()) {
+					org.nasdanika.webtest.model.TestResult trModel = tr.toModel(screenshotsCollector, screenshotsDir, objectMap);
+					if (trModel!=null) {
+						testResult.getChildren().add(trModel);
+					}
+				}
+
+				for (PageResult pr: getPageResults()) {
+					org.nasdanika.webtest.model.PageResult prModel = pr.toModel(screenshotsDir, objectMap);
+					if (prModel!=null) {
+						testResult.getPageResults().add(prModel);
+					}
+				}
+
+				for (ActorResult ar: getActorResults()) {
+					org.nasdanika.webtest.model.ActorResult arModel = ar.toModel(screenshotsDir, objectMap);
+					if (arModel!=null) {
+						testResult.getActorResults().add(arModel);
+					}
+				}
+				return testResult;
 			}				
 			
 		});

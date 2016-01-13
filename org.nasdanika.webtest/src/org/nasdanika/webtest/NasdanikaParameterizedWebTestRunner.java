@@ -37,6 +37,8 @@ import org.junit.runners.model.FrameworkField;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.nasdanika.webtest.model.Descriptor;
+import org.nasdanika.webtest.model.ModelFactory;
 
 /**
  * Adaptation of {@link Parameterized} runner to execute {@link NasdanikaWebTestRunner} children.
@@ -510,8 +512,98 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 					Map<Object, String> idMap,
 					DirectoryPublishMonitor monitor) throws Exception {
 				throw new UnsupportedOperationException("TODO!");
-			}				
-			
+			}
+
+			@Override
+			public org.nasdanika.webtest.model.TestResult toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {
+				if (getChildren().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
+					return null; // No reason to publish.
+				}
+				ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
+				org.nasdanika.webtest.model.ParameterizedTestResult testResult = modelFactory.createParameterizedTestResult();
+								
+				List<Field> paramFields = new ArrayList<>();
+				for (Field f: getTestClass().getFields()) {
+					if (f.getAnnotation(Parameter.class)!=null) {
+						paramFields.add(f);
+					}
+				}
+								
+				if (paramFields.isEmpty()) {
+					Constructor<?> constructor = getTestClass().getConstructors()[0];
+					Annotation[][] pann = constructor.getParameterAnnotations();
+					java.lang.reflect.Parameter[] parameters = constructor.getParameters();
+					for (int i=0; i<parameters.length; ++i) {
+						Descriptor parameterDescriptor = modelFactory.createDescriptor();
+						parameterDescriptor.setQualifiedName("constructor-arg-"+parameters[i].getName()+":"+parameters[i].getType().getName());
+						WebTestUtil.toDescriptor(ReportGenerator.getParameterAnnotation(pann[i], Title.class), parameterDescriptor);
+						WebTestUtil.toDescriptor(ReportGenerator.getParameterAnnotation(pann[i], Description.class), parameterDescriptor);
+						if (WebTestUtil.isBlank(parameterDescriptor.getTitle())) {
+							parameterDescriptor.setTitle(parameters[i].getName());
+						}						
+						testResult.getParameterDescriptors().add(parameterDescriptor);
+					}
+				} else {
+					Collections.sort(paramFields, new Comparator<Field>() {
+
+						@Override
+						public int compare(Field o1, Field o2) {
+							return o1.getAnnotation(Parameter.class).value() - o2.getAnnotation(Parameter.class).value();
+						}
+						
+					});
+					
+					for (Field f: paramFields) {
+						Descriptor parameterDescriptor = modelFactory.createDescriptor();
+						parameterDescriptor.setQualifiedName(f.getName()+":"+f.getType());
+						WebTestUtil.toDescriptor(f.getAnnotation(Title.class), parameterDescriptor);
+						WebTestUtil.toDescriptor(f.getAnnotation(Description.class), parameterDescriptor);
+						if (WebTestUtil.isBlank(parameterDescriptor.getTitle())) {
+							StringBuilder titleBuilder = new StringBuilder();
+							String[] scna = StringUtils.splitByCharacterTypeCamelCase(f.getName());
+							for (int i=0; i<scna.length; ++i) {
+								if (i==0) {
+									titleBuilder.append(StringUtils.capitalize(scna[i]));
+								} else {
+									titleBuilder.append(" ");
+									if (scna[i].length()>1 && Character.isUpperCase(scna[i].charAt(1))) {
+										titleBuilder.append(scna[i]);
+									} else {
+										titleBuilder.append(StringUtils.uncapitalize(scna[i]));
+									}
+								}
+							}
+							parameterDescriptor.setTitle(titleBuilder.toString());
+						}
+						testResult.getParameterDescriptors().add(parameterDescriptor);
+					}
+				}
+				
+				objectMap.put(this, testResult);
+				for (TestResult tr: getChildren()) {
+					org.nasdanika.webtest.model.TestResult trModel = tr.toModel(screenshotsCollector, screenshotsDir, objectMap);
+					if (trModel!=null) {
+						testResult.getChildren().add(trModel);
+					}
+				}
+
+				for (PageResult pr: getPageResults()) {
+					org.nasdanika.webtest.model.PageResult prModel = pr.toModel(screenshotsDir, objectMap);
+					if (prModel!=null) {
+						testResult.getPageResults().add(prModel);
+					}
+				}
+
+				for (ActorResult ar: getActorResults()) {
+					org.nasdanika.webtest.model.ActorResult arModel = ar.toModel(screenshotsDir, objectMap);
+					if (arModel!=null) {
+						testResult.getActorResults().add(arModel);
+					}
+				}
+				
+				return testResult;
+			}
+						
 		});
 	}
 	

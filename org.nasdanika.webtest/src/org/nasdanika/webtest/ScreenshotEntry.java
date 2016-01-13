@@ -8,6 +8,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
 import java.lang.reflect.Member;
@@ -20,6 +21,7 @@ import javax.imageio.ImageIO;
 
 import org.json.JSONObject;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
+import org.nasdanika.webtest.model.ScreenshotType;
 
 /**
  * Compares current screenshot with the previous, writes to file if different.
@@ -99,14 +101,14 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 
 	private ScreenshotEntry prev;
 
-	final OperationResult<?> operationResult;
+	final OperationResult<?,?> operationResult;
 	
-	public OperationResult<?> getOperationResult() {
+	public OperationResult<?,?> getOperationResult() {
 		return operationResult;
 	}
 
 	ScreenshotEntry(
-			OperationResult<?> operationResult,
+			OperationResult<?,?> operationResult,
 			Screenshot.When when,
 			ScreenshotEntry prev, 
 			File screenshotsDir, 
@@ -273,5 +275,41 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		
 		return null;
 	}
+
+	public org.nasdanika.webtest.model.Screenshot toScreenshotModel(File screenshotsDir, Map<Object, Object> objectMap) {
+		org.nasdanika.webtest.model.Screenshot screenshotModel = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createScreenshot();
+		screenshotModel.setContentType("image/png");
+		screenshotModel.setHeight(getHeight());
+		long counter = 0;
+		File screenshotFile = new File(screenshotsDir, "screenshot_"+Long.toString(counter, Character.MAX_RADIX));
+		while (screenshotFile.exists()) {
+			screenshotFile = new File(screenshotsDir, "screenshot_"+Long.toString(++counter, Character.MAX_RADIX));
+		}
+		try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(getScreenshotFile())); BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(screenshotFile))) {
+			for (int data = fis.read(); data!=-1; data = fis.read()) {
+				out.write(data);
+			}					
+		} catch (IOException e) {
+			throw new WebTestException("Error writing screenshot", e);
+		}
+		screenshotModel.setLocation(screenshotFile.getName());
+		screenshotModel.setWidth(getWidth());
+		
+		objectMap.put(this, screenshotModel);
+		return screenshotModel;
+	}
+	
+	public org.nasdanika.webtest.model.ScreenshotEntry toScreenshotEntryModel(Map<Object, Object> objectMap) {
+		org.nasdanika.webtest.model.Screenshot screenshot = (org.nasdanika.webtest.model.Screenshot) objectMap.get(getMaster());
+		if (screenshot==null) {
+			throw new IllegalStateException("Screenshot ID not found in ID map");
+		}
+		org.nasdanika.webtest.model.ScreenshotEntry modelScreenshotEntry = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createScreenshotEntry();
+		modelScreenshotEntry.setComment(getComment());
+		modelScreenshotEntry.setType(ScreenshotType.valueOf(getWhen().name()));				
+		modelScreenshotEntry.setScreenshot(screenshot);
+		return modelScreenshotEntry;
+	}
+	
 		
 }
