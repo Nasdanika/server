@@ -35,11 +35,6 @@
         <details key="documentation" value="Element description. Supports markdown. Some catalog elements may hide description attribute."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="testResultsURL" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Base URL for test results. It is used to compute URL's of test resutls for acceptance criteria&#xD;&#xA;in the form ``&lt;testResultsURL>/&lt;bundle containing the story model>/&lt;story model path in the bundle>/&lt;acceptance criterion ID>``.&#xD;&#xA;&#xD;&#xA;testResultsURL is inherited by contained/child elements and can be overriden by a child element."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StoryBase" abstract="true" interface="true"
       eSuperTypes="#//CatalogElement">
@@ -203,6 +198,8 @@
         <details key="documentation" value="Completed flag."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="realizes" upperBound="-1"
+        eType="#//Goal"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="AcceptanceCriterion">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -246,12 +243,6 @@
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="details" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="stories" upperBound="-1"
-        eType="#//StoryBase">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="A goal may reference zero or more stories which realize the goal."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parameter">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
