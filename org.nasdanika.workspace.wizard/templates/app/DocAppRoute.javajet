@@ -11,7 +11,7 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
-import org.nasdanika.html.UIElement.Style;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.Route;

@@ -1,5 +1,7 @@
 package org.nasdanika.webtest;
 
+import java.io.File;
+import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
@@ -11,6 +13,9 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -962,5 +967,76 @@ public class WebTestUtil {
 					
 				});
 	}
+	
+	
+	// Copied from CoreUtil, uses {...} token format.
+	private static final Pattern EXPANDER_PATTERN = Pattern.compile("\\{(.+?)\\}");	
+	
+	/**
+	 * Source of token values for interpolation.
+	 * @author Pavel Vlasov.
+	 *
+	 */
+	public interface TokenSource {
+		
+		Object get(String token);
+		
+	}
+
+	/**
+	 * Expands tokens in the form of <code>{token name}</code> to their values.
+	 * If a token is not found expansion is not processed.
+	 * @param input
+	 * @param env
+	 * @return
+	 */
+	public static String interpolate(String input, TokenSource tokenSource) {
+		if (tokenSource==null) {
+			return input;
+		}
+		Matcher matcher = EXPANDER_PATTERN.matcher(input);
+		StringBuilder output = new StringBuilder();
+		int i = 0;
+		while (matcher.find()) {
+		    String token = matcher.group();
+			Object replacement = tokenSource.get(token.substring(1, token.length()-1));
+		    if (replacement != null) {
+			    output.append(input.substring(i, matcher.start())).append(replacement);			    
+			    i = matcher.end();
+		    }
+		}
+		output.append(input.substring(i, input.length()));
+		return output.toString();
+	}
+	
+	public static String interpolate(String input, final Map<String, Object> env) {
+		return interpolate(input, new TokenSource() {
+
+			@Override
+			public Object get(String token) {
+				return env==null ? null : env.get(token);
+			}
+			
+		});
+	}
+
+	/**
+	 * Recursively deletes file or directory.
+	 * @param file
+	 * @throws IOException
+	 */
+	public static void delete(File file) throws IOException {
+		if (file.exists()) {
+			if (file.isDirectory()) {
+				for (File c: file.listFiles()) {
+					delete(c);
+				}
+			}
+			if (!file.delete()) {
+				throw new IOException("Could not delete "+file.getAbsolutePath());				
+			}
+		} 
+	}
+	
 	
 }

@@ -13,19 +13,11 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.eclipse.emf.common.util.URI;
-
-import org.eclipse.emf.ecore.EObject;
-
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-
-import org.eclipse.emf.ecore.util.Diagnostician;
-
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-
 import org.json.JSONObject;
 
 /**
@@ -145,17 +137,45 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 	}	
 	
 	/**
+	 * Takes configuration from {@link ResultsModel} annotation.
+	 * @throws IOException 
+	 */
+	public void writeModel() throws IOException {
+		ResultsModel resultsModel = klass.getAnnotation(ResultsModel.class);
+		if (resultsModel!=null) {
+			Map<String, Object> env = new HashMap<>();
+			String testClassQualifiedName = klass.getName();
+			env.put("classQualifiedName", testClassQualifiedName);
+			int lastDotIdx = testClassQualifiedName.lastIndexOf('.');
+			env.put("className", lastDotIdx==-1 ? testClassQualifiedName : testClassQualifiedName.substring(lastDotIdx+1));
+			env.put("packageName", lastDotIdx==-1 ? "" : testClassQualifiedName.substring(0, lastDotIdx));
+			env.put("packageHierarchy", lastDotIdx==-1 ? "" : testClassQualifiedName.substring(0, lastDotIdx).replace('.', '/'));
+			
+			File resultsOutputDir = new File(WebTestUtil.interpolate(resultsModel.outputDir(), env));
+			if (resultsOutputDir.exists()) {
+				for (File c: resultsOutputDir.listFiles()) {
+					WebTestUtil.delete(c);
+				}
+			} else if (!resultsOutputDir.mkdirs()) {
+				throw new IOException("Could not create results directory "+resultsOutputDir.getAbsolutePath());
+			}
+			writeModel(resultsOutputDir, WebTestUtil.interpolate(resultsModel.model(), env), WebTestUtil.interpolate(resultsModel.screenshotsDirectory(), env));
+		}
+		
+	}
+	
+	/**
 	 * Writes test results model and screenshots to the specified output directory. The results model is written into "test-results.xml" file, and 
 	 * screenshots are stored in the "screenshots" sub-directory. 
 	 * @param outputDir
 	 * @throws IOException 
 	 */
-	public void writeModel(File outputDir) throws IOException {		
+	public void writeModel(File outputDir, String modelFileName, String screenshotsDirName) throws IOException {		
 		org.nasdanika.webtest.model.TestSession testSession = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestSession();
 		testSession.setNode(InetAddress.getLocalHost().getHostName());
 		Map<String, ActorResult> actorResults = new HashMap<>();
 		Map<String, PageResult> pageResults = new HashMap<>();
-		File screenshotsDir = new File(outputDir, "screenshots");
+		File screenshotsDir = new File(outputDir, screenshotsDirName);
 		if (screenshotsDir.exists()) {
 			for (File f: screenshotsDir.listFiles()) {
 				if (!f.delete()) {
@@ -200,7 +220,7 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 			testSession.getActorResults().add(ar.toModel(screenshotsDir, objectMap));
 		}
 		
-		File modelFile = new File(outputDir, "test-results.xml");
+		File modelFile = new File(outputDir, modelFileName);
 		ResourceSet resourceSet = new ResourceSetImpl();
 		URI uri = URI.createFileURI(modelFile.getAbsolutePath());
 		Resource resource = resourceSet.createResource(uri);		

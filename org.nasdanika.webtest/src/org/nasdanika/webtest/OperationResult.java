@@ -197,7 +197,11 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	
 	private LinkedList<ScreenshotEntry> collectAllScreenshots(LinkedList<ScreenshotEntry> collector) {
 		if (collector != null) {
-			collector.addAll(screenshots);
+			for (ScreenshotEntry se: screenshots) {
+				if (se!=null) {
+					collector.add(se);
+				}
+			}
 			
 			for (OperationResult<?,?> or: childResults) {
 				or.collectAllScreenshots(collector);
@@ -661,15 +665,17 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		
 		// Root results write master screenshots to the collector
 		if (parent==null) {
-			for (ScreenshotEntry se: screenshots) {
-				if (se.getMaster()==null) {
+			for (ScreenshotEntry se: screenshots) {				
+				if (se!=null && se.isMaster()) {
 					screenshotsCollector.add(se.toScreenshotModel(screenshotsDir, objectMap));
 				}
 			}
 		}
 				
 		for (ScreenshotEntry se: screenshots) {
-			model.getScreenshots().add(se.toScreenshotEntryModel(objectMap));
+			if (se!=null) {
+				model.getScreenshots().add(se.toScreenshotEntryModel(objectMap));
+			}
 		}
 		
 		extraModelInfo(model);

@@ -1,6 +1,7 @@
 package org.nasdanika.webtest;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;
@@ -344,8 +345,11 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
 		}
 		WebTestUtil.publishTestResults(testResults);
+		
+		new TestSession(getTestClass().getJavaClass(), testResults).writeModel();
+		
 		if (getTestClass().getJavaClass().getAnnotation(Report.class)==null) {
-			AbstractNasdanikaWebTestRunner.delete(outputDir);
+			WebTestUtil.delete(outputDir);
 		}
 	}
 	

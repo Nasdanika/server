@@ -188,20 +188,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 	public void setTestResultCollector(TestResultCollector testResultCollector) {
 		this.testResultCollector = testResultCollector;		
 	}
-		
-	static void delete(File file) throws IOException {
-		if (file.exists()) {
-			if (file.isDirectory()) {
-				for (File c: file.listFiles()) {
-					delete(c);
-				}
-			}
-			if (!file.delete()) {
-				throw new IOException("Output directory cleanup failed - could not delete "+file.getAbsolutePath());				
-			}
-		} 
-	}	
-	
+			
 	protected abstract Collector<WebDriver> createCollector(TestResultCollector testResultCollector) throws Exception;
 			
 	@Override
@@ -230,7 +217,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		File outputDir = new File(outputDirName);						
 		if (outputDir.exists()) {
 			for (File c: outputDir.listFiles()) {
-				delete(c);
+				WebTestUtil.delete(c);
 			}
 		} else if (!outputDir.mkdirs()) {
 			throw new IOException("Could not create output directory "+outputDir.getAbsolutePath());

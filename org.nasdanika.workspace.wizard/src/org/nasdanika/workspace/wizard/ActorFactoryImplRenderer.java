@@ -20,11 +20,11 @@ public class ActorFactoryImplRenderer {
   protected final String TEXT_5 = ".";
   protected final String TEXT_6 = "ActorFactory;" + NL + "import ";
   protected final String TEXT_7 = ".";
-  protected final String TEXT_8 = "Actor;" + NL + "import org.nasdanika.webtest.AbstractNasdanikaWebTestRunner;" + NL + "import org.openqa.selenium.WebDriver;" + NL + "import org.osgi.service.component.ComponentContext;" + NL + "" + NL + "public class ";
+  protected final String TEXT_8 = "Actor;" + NL + "import org.nasdanika.webtest.WebTestUtil;" + NL + "import org.openqa.selenium.WebDriver;" + NL + "import org.osgi.service.component.ComponentContext;" + NL + "" + NL + "public class ";
   protected final String TEXT_9 = "ActorFactoryImpl implements ";
   protected final String TEXT_10 = "ActorFactory {" + NL + "" + NL + "\tprivate ";
   protected final String TEXT_11 = "PageFactory pageFactory;" + NL + "" + NL + "\tpublic void setPageFactory(";
-  protected final String TEXT_12 = "PageFactory pageFactory) {" + NL + "\t\tthis.pageFactory = AbstractNasdanikaWebTestRunner.proxyPageFactory(pageFactory);" + NL + "\t}" + NL + "" + NL + "\t@Override" + NL + "\tpublic ";
+  protected final String TEXT_12 = "PageFactory pageFactory) {" + NL + "\t\tthis.pageFactory = WebTestUtil.proxyPageFactory(pageFactory);" + NL + "\t}" + NL + "" + NL + "\t@Override" + NL + "\tpublic ";
   protected final String TEXT_13 = "Actor create";
   protected final String TEXT_14 = "Actor(WebDriver webDriver) {" + NL + "\t\treturn new ";
   protected final String TEXT_15 = "ActorImpl(this, webDriver);" + NL + "\t}" + NL + "\t" + NL + "\t// For troubleshooting" + NL + "\tpublic void activate(ComponentContext context) {" + NL + "\t\tSystem.out.println(\"";

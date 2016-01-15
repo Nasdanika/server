@@ -60,8 +60,11 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 						new ReportGenerator(getTestClass(), outputDir, idGenerator, Collections.singleton(this)).generate();
 					}
 					WebTestUtil.publishTestResults(Collections.singleton(this));		
+					
+					new TestSession(getTestClass(), Collections.singleton(this)).writeModel();
+					
 					if (getTestClass().getAnnotation(Report.class)==null) {
-						AbstractNasdanikaWebTestRunner.delete(outputDir);
+						WebTestUtil.delete(outputDir);
 					}
 				} else {
 					testResultCollector.addResult(this);
@@ -82,7 +85,7 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 		File outputDir = new File(outputDirName);						
 		if (outputDir.exists()) {
 			for (File c: outputDir.listFiles()) {
-				delete(c);
+				WebTestUtil.delete(c);
 			}
 		} else if (!outputDir.mkdirs()) {
 			throw new IOException("Could not create output directory "+outputDir.getAbsolutePath());
@@ -93,19 +96,6 @@ public class NasdanikaWebTestRunner extends AbstractNasdanikaWebTestRunner {
 		}
 		
 		return outputDir;
-	}
-		
-	static void delete(File file) throws IOException {
-		if (file.exists()) {
-			if (file.isDirectory()) {
-				for (File c: file.listFiles()) {
-					delete(c);
-				}
-			}
-			if (!file.delete()) {
-				throw new IOException("Output directory cleanup failed - could not delete "+file.getAbsolutePath());				
-			}
-		} 
 	}	
 	
 

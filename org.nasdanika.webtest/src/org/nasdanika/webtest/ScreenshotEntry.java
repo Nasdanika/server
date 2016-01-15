@@ -58,6 +58,10 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		return master==null ? this : master.getMaster();
 	}
 	
+	public boolean isMaster() {
+		return master==null;
+	}
+	
 	private byte[] bytes;
 	
 	private Reference<byte[]> bytesRef;
@@ -129,7 +133,7 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 	 * @return true if this screenshot entry is before the parameter screenshot entry. 
 	 */
 	public boolean isBefore(ScreenshotEntry se) {		
-		if (se.prev == null) {
+		if (se==null || se.prev == null) {
 			return false;
 		}
 		if (se.prev == this) {
@@ -281,9 +285,9 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		screenshotModel.setContentType("image/png");
 		screenshotModel.setHeight(getHeight());
 		long counter = 0;
-		File screenshotFile = new File(screenshotsDir, "screenshot_"+Long.toString(counter, Character.MAX_RADIX));
+		File screenshotFile = new File(screenshotsDir, "screenshot_"+Long.toString(counter, Character.MAX_RADIX)+".png");
 		while (screenshotFile.exists()) {
-			screenshotFile = new File(screenshotsDir, "screenshot_"+Long.toString(++counter, Character.MAX_RADIX));
+			screenshotFile = new File(screenshotsDir, "screenshot_"+Long.toString(++counter, Character.MAX_RADIX)+".png");
 		}
 		try (BufferedInputStream fis = new BufferedInputStream(new FileInputStream(getScreenshotFile())); BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(screenshotFile))) {
 			for (int data = fis.read(); data!=-1; data = fis.read()) {
@@ -292,7 +296,7 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		} catch (IOException e) {
 			throw new WebTestException("Error writing screenshot", e);
 		}
-		screenshotModel.setLocation(screenshotFile.getName());
+		screenshotModel.setLocation(screenshotsDir.getName()+"/"+screenshotFile.getName());
 		screenshotModel.setWidth(getWidth());
 		
 		objectMap.put(this, screenshotModel);
@@ -302,7 +306,7 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 	public org.nasdanika.webtest.model.ScreenshotEntry toScreenshotEntryModel(Map<Object, Object> objectMap) {
 		org.nasdanika.webtest.model.Screenshot screenshot = (org.nasdanika.webtest.model.Screenshot) objectMap.get(getMaster());
 		if (screenshot==null) {
-			throw new IllegalStateException("Screenshot ID not found in ID map");
+			throw new IllegalStateException("Screenshot not found in the object map");
 		}
 		org.nasdanika.webtest.model.ScreenshotEntry modelScreenshotEntry = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createScreenshotEntry();
 		modelScreenshotEntry.setComment(getComment());

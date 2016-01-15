@@ -4,7 +4,7 @@ package <%=wizard.getActorImplArtifactId()%>;
 import <%=wizard.getPageSpecArtifactId()%>.<%=wizard.getJavaName()%>PageFactory;
 import <%=wizard.getActorSpecArtifactId()%>.<%=wizard.getJavaName()%>ActorFactory;
 import <%=wizard.getActorSpecArtifactId()%>.<%=wizard.getJavaName()%>Actor;
-import org.nasdanika.webtest.AbstractNasdanikaWebTestRunner;
+import org.nasdanika.webtest.WebTestUtil;
 import org.openqa.selenium.WebDriver;
 import org.osgi.service.component.ComponentContext;
 
@@ -13,7 +13,7 @@ public class <%=wizard.getJavaName()%>ActorFactoryImpl implements <%=wizard.getJ
 	private <%=wizard.getJavaName()%>PageFactory pageFactory;
 
 	public void setPageFactory(<%=wizard.getJavaName()%>PageFactory pageFactory) {
-		this.pageFactory = AbstractNasdanikaWebTestRunner.proxyPageFactory(pageFactory);
+		this.pageFactory = WebTestUtil.proxyPageFactory(pageFactory);
 	}
 
 	@Override

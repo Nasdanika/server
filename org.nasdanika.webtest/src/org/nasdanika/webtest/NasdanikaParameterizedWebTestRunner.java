@@ -657,8 +657,11 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 			new ReportGenerator(getTestClass().getJavaClass(), outputDir, getIdGenerator(), testResults).generate();
 		} 
 		WebTestUtil.publishTestResults(testResults);	
+		
+		new TestSession(getTestClass().getJavaClass(), testResults).writeModel();
+		
 		if (getTestClass().getJavaClass().getAnnotation(Report.class)==null) {
-			AbstractNasdanikaWebTestRunner.delete(outputDir);
+			WebTestUtil.delete(outputDir);
 		}
 	}    
     
