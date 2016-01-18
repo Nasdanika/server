@@ -9,6 +9,10 @@ import org.eclipse.emf.ecore.EObject;
  * A representation of the model object '<em><b>Stack Trace Entry</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * 
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface StackTraceEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Class name.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Class Name</em>' attribute.
 	 * @see #setClassName(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getStackTraceEntry_ClassName()
@@ -59,6 +66,9 @@ public interface StackTraceEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * File name.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>File Name</em>' attribute.
 	 * @see #setFileName(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getStackTraceEntry_FileName()
@@ -85,6 +95,9 @@ public interface StackTraceEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Method name.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Method Name</em>' attribute.
 	 * @see #setMethodName(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getStackTraceEntry_MethodName()
@@ -111,6 +124,9 @@ public interface StackTraceEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Line number.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Line Number</em>' attribute.
 	 * @see #setLineNumber(int)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getStackTraceEntry_LineNumber()
@@ -137,6 +153,9 @@ public interface StackTraceEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * 'true' for native methods.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Native</em>' attribute.
 	 * @see #setNative(boolean)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getStackTraceEntry_Native()

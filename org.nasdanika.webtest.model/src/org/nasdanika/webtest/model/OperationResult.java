@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Operation Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Base class for operation results where operation is a method or a constructor.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -38,6 +42,12 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Each operation may contain multiple screenshot entries, e.g. 
+	 * a screenshot taken before operation invocation, screenshots taken explicitly during 
+	 * operation execution via WebTestUtil.TakeScreenshot(String comment) method,
+	 * and screenshots taken after operation invocation or if operation threw an exception.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Screenshots</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Screenshots()
 	 * @model containment="true"
@@ -54,6 +64,10 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Other operations invoked by this operation. E.g. test method result may contain
+	 * actor method results, which in turn may contain page method results.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Children</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Children()
 	 * @model containment="true"
@@ -69,6 +83,9 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Operation name. 
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Operation Name</em>' attribute.
 	 * @see #setOperationName(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_OperationName()
@@ -95,6 +112,9 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Root cause of the failure thrown by the operation.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Failure</em>' containment reference.
 	 * @see #setFailure(org.nasdanika.webtest.model.Throwable)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Failure()
@@ -121,6 +141,9 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Root cause of the error thrown by the operation.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Error</em>' containment reference.
 	 * @see #setError(org.nasdanika.webtest.model.Throwable)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Error()
@@ -147,6 +170,9 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Operation start time.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Start</em>' attribute.
 	 * @see #setStart(long)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Start()
@@ -173,6 +199,9 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Operation finish time.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Finish</em>' attribute.
 	 * @see #setFinish(long)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Finish()
@@ -200,6 +229,9 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Status of operation execution.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Status</em>' attribute.
 	 * @see org.nasdanika.webtest.model.OperationStatus
 	 * @see #setStatus(OperationStatus)
@@ -229,6 +261,9 @@ public interface OperationResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Operation arguments.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Arguments</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Arguments()
 	 * @model containment="true"

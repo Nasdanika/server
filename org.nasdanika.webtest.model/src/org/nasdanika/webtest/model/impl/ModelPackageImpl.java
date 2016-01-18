@@ -643,6 +643,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getOperationArgument_Masked() {
+		return (EAttribute)operationArgumentEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getScreenshotEntry() {
 		return screenshotEntryEClass;
 	}
@@ -1190,6 +1199,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		operationArgumentEClass = createEClass(OPERATION_ARGUMENT);
 		createEAttribute(operationArgumentEClass, OPERATION_ARGUMENT__VALUE);
 		createEAttribute(operationArgumentEClass, OPERATION_ARGUMENT__TYPE);
+		createEAttribute(operationArgumentEClass, OPERATION_ARGUMENT__MASKED);
 
 		screenshotEntryEClass = createEClass(SCREENSHOT_ENTRY);
 		createEAttribute(screenshotEntryEClass, SCREENSHOT_ENTRY__TYPE);
@@ -1354,6 +1364,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEClass(operationArgumentEClass, OperationArgument.class, "OperationArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getOperationArgument_Value(), ecorePackage.getEString(), "value", null, 0, 1, OperationArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getOperationArgument_Type(), ecorePackage.getEString(), "type", null, 0, 1, OperationArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOperationArgument_Masked(), ecorePackage.getEBoolean(), "masked", null, 0, 1, OperationArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(screenshotEntryEClass, ScreenshotEntry.class, "ScreenshotEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getScreenshotEntry_Type(), this.getScreenshotType(), "type", null, 0, 1, ScreenshotEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1438,24 +1449,617 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createResource(eNS_URI);
 
 		// Create annotations
-		// org.nasdanika.cdo.web.html.form-control
-		createOrgAnnotations();
+		// http://www.eclipse.org/emf/2002/GenModel
+		createGenModelAnnotations();
 	}
 
 	/**
-	 * Initializes the annotations for <b>org.nasdanika.cdo.web.html.form-control</b>.
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/GenModel</b>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void createOrgAnnotations() {
-		String source = "org.nasdanika.cdo.web.html.form-control";	
+	protected void createGenModelAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/GenModel";	
+		addAnnotation
+		  (this, 
+		   source, 
+		   new String[] {
+			 "documentation", "WebTest model is used to represent WebTest session results."
+		   });	
+		addAnnotation
+		  (descriptorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Base class for the majority of model elements."
+		   });	
+		addAnnotation
+		  (getDescriptor_QualifiedName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Fully qualified name of the element."
+		   });	
 		addAnnotation
 		  (getDescriptor_Title(), 
 		   source, 
 		   new String[] {
-			 "input-type", "f",
-			 "label", "lbl"
+			 "documentation", "Element title."
+		   });	
+		addAnnotation
+		  (getDescriptor_Description(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Element description."
+		   });	
+		addAnnotation
+		  (getDescriptor_Links(), 
+		   source, 
+		   new String[] {
+			 "documentation", "References (links) to external elements, e.g. user stories or acceptance criteria."
+		   });	
+		addAnnotation
+		  (descriptionEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Element description."
+		   });	
+		addAnnotation
+		  (getDescription_Url(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Description URL for external descriptions."
+		   });	
+		addAnnotation
+		  (getDescription_Value(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Description content. Each element represents a line for formats where line separators a significant, e.g. plain text."
+		   });	
+		addAnnotation
+		  (getDescription_ContentType(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Content (MIME) type, e.g. text/html, text/plain, text/markdown."
+		   });	
+		addAnnotation
+		  (testSessionEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Test session is the root of the test results model."
+		   });	
+		addAnnotation
+		  (getTestSession_TestResults(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Test session may contain one or more test results. Typically it contains one test\r\nresult and multiple tests are aggregated under a test suite."
+		   });	
+		addAnnotation
+		  (getTestSession_PageResults(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Page results, which aggregate page invocation iformation across all tests."
+		   });	
+		addAnnotation
+		  (getTestSession_ActorResults(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Actor results, which aggregate actor invocation information across all tests."
+		   });	
+		addAnnotation
+		  (getTestSession_Timestamp(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Test session creation time."
+		   });	
+		addAnnotation
+		  (getTestSession_Node(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Name of the computer (host name) on which tests were executed."
+		   });	
+		addAnnotation
+		  (getTestSession_Screenshots(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Collection of all screenshots taken during the test session."
+		   });	
+		addAnnotation
+		  (operationStatusEEnum.getELiterals().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Indicates successful test."
+		   });	
+		addAnnotation
+		  (operationStatusEEnum.getELiterals().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Indicates that the test has failed, e.g. assertions were not met or a web element was not found on a page."
+		   });	
+		addAnnotation
+		  (operationStatusEEnum.getELiterals().get(2), 
+		   source, 
+		   new String[] {
+			 "documentation", "Indicates an unexpected error thrown by a test, which might indicate an error in the test logic."
+		   });	
+		addAnnotation
+		  (operationStatusEEnum.getELiterals().get(3), 
+		   source, 
+		   new String[] {
+			 "documentation", "Indicates that the test is not implemented yet - either the test body is \r\nconsidered empty - no invocations to actor or page methods, or the method\r\nis annotated with @Pending annotation."
+		   });	
+		addAnnotation
+		  (testResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Base class for test results."
+		   });	
+		addAnnotation
+		  (getTestResult_PageResults(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Contains page results, which hold aggregated page invocation information."
+		   });	
+		addAnnotation
+		  (getTestResult_ActorResults(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Contains actor results, which hold aggregated actor invocation information."
+		   });	
+		addAnnotation
+		  (testClassResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Results collected from a JUnit test class."
+		   });	
+		addAnnotation
+		  (getTestClassResult_MethodResults(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Test class result contains test method results."
+		   });	
+		addAnnotation
+		  (getTestClassResult_Stats(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Test statistics."
+		   });	
+		addAnnotation
+		  (statsEntryEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Statistics entry, e.g. number of page method invocations."
+		   });	
+		addAnnotation
+		  (getStatsEntry_Key(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Statistics entry name, e.g. \'invocations\'."
+		   });	
+		addAnnotation
+		  (getStatsEntry_Value(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Statistics entry value."
+		   });	
+		addAnnotation
+		  (testSuiteResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Test suite result is a collection of test results which can include other test suite results."
+		   });	
+		addAnnotation
+		  (getTestSuiteResult_Children(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Test suite results."
+		   });	
+		addAnnotation
+		  (parameterizedTestResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Parameterized test result is a collection of test results with different arguments."
+		   });	
+		addAnnotation
+		  (getParameterizedTestResult_ParameterDescriptors(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Descriptors of test parameters."
+		   });	
+		addAnnotation
+		  (screenshotEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Screenshot taken during test execution. Screenshots are de-duplicated and one screenshot can be referenced by\r\nmultiple operation results through screenshot entries."
+		   });	
+		addAnnotation
+		  (getScreenshot_Location(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Location of the screenshot file relative to the model resource."
+		   });	
+		addAnnotation
+		  (getScreenshot_Height(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Screenshot height in pixels."
+		   });	
+		addAnnotation
+		  (getScreenshot_Width(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Screenshot width in pixels."
+		   });	
+		addAnnotation
+		  (getScreenshot_ContentType(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Content type, e.g. \"image/png\" for .png files."
+		   });	
+		addAnnotation
+		  (getScreenshot_Entries(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Screenshot entires referencing this screenshot."
+		   });	
+		addAnnotation
+		  (operationArgumentEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Captures operation argument value and type."
+		   });	
+		addAnnotation
+		  (getOperationArgument_Value(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Argument value converted to string. \'******\' for masked parameters."
+		   });	
+		addAnnotation
+		  (getOperationArgument_Type(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Argument type, java.lang.String for masked parameters."
+		   });	
+		addAnnotation
+		  (getOperationArgument_Masked(), 
+		   source, 
+		   new String[] {
+			 "documentation", "True for masked parameters."
+		   });	
+		addAnnotation
+		  (screenshotTypeEEnum, 
+		   source, 
+		   new String[] {
+			 "documentation", "Indicates when a screenshot was taken."
+		   });	
+		addAnnotation
+		  (screenshotTypeEEnum.getELiterals().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Before operation (method/constructor) invocation."
+		   });	
+		addAnnotation
+		  (screenshotTypeEEnum.getELiterals().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Screenshot was explicitly taken during invocation with WebTestUtil.takeScreenshot() method."
+		   });	
+		addAnnotation
+		  (screenshotTypeEEnum.getELiterals().get(2), 
+		   source, 
+		   new String[] {
+			 "documentation", "After operation invocation."
+		   });	
+		addAnnotation
+		  (screenshotTypeEEnum.getELiterals().get(3), 
+		   source, 
+		   new String[] {
+			 "documentation", "When operation threw an exception."
+		   });	
+		addAnnotation
+		  (screenshotEntryEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Screenshot entry is an association class between operation result and a screenshot."
+		   });	
+		addAnnotation
+		  (getScreenshotEntry_Type(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Indicates when screenshot was taken."
+		   });	
+		addAnnotation
+		  (getScreenshotEntry_Comment(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Comment for explicitly taken screenshots."
+		   });	
+		addAnnotation
+		  (getScreenshotEntry_Screenshot(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Reference to a screenshot."
+		   });	
+		addAnnotation
+		  (operationResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Base class for operation results where operation is a method or a constructor."
+		   });	
+		addAnnotation
+		  (getOperationResult_Screenshots(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Each operation may contain multiple screenshot entries, e.g. \r\na screenshot taken before operation invocation, screenshots taken explicitly during \r\noperation execution via WebTestUtil.TakeScreenshot(String comment) method,\r\nand screenshots taken after operation invocation or if operation threw an exception."
+		   });	
+		addAnnotation
+		  (getOperationResult_Children(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Other operations invoked by this operation. E.g. test method result may contain\r\nactor method results, which in turn may contain page method results."
+		   });	
+		addAnnotation
+		  (getOperationResult_OperationName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Operation name. "
+		   });	
+		addAnnotation
+		  (getOperationResult_Failure(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Root cause of the failure thrown by the operation."
+		   });	
+		addAnnotation
+		  (getOperationResult_Error(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Root cause of the error thrown by the operation."
+		   });	
+		addAnnotation
+		  (getOperationResult_Start(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Operation start time."
+		   });	
+		addAnnotation
+		  (getOperationResult_Finish(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Operation finish time."
+		   });	
+		addAnnotation
+		  (getOperationResult_Status(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Status of operation execution."
+		   });	
+		addAnnotation
+		  (getOperationResult_Arguments(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Operation arguments."
+		   });	
+		addAnnotation
+		  (throwableEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Models java.lang.Throwable."
+		   });	
+		addAnnotation
+		  (getThrowable_Type(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Throwable class name."
+		   });	
+		addAnnotation
+		  (getThrowable_Message(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Error message."
+		   });	
+		addAnnotation
+		  (getThrowable_StackTrace(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Stack trace."
+		   });	
+		addAnnotation
+		  (stackTraceEntryEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", ""
+		   });	
+		addAnnotation
+		  (getStackTraceEntry_ClassName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Class name."
+		   });	
+		addAnnotation
+		  (getStackTraceEntry_FileName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "File name."
+		   });	
+		addAnnotation
+		  (getStackTraceEntry_MethodName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Method name."
+		   });	
+		addAnnotation
+		  (getStackTraceEntry_LineNumber(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Line number."
+		   });	
+		addAnnotation
+		  (getStackTraceEntry_Native(), 
+		   source, 
+		   new String[] {
+			 "documentation", "\'true\' for native methods."
+		   });	
+		addAnnotation
+		  (initializationResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of page constructor invocation by WebTestUtil.initElements() methods \r\nwhich take class name as an argument."
+		   });	
+		addAnnotation
+		  (methodResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of method invocation."
+		   });	
+		addAnnotation
+		  (actorMethodResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of actor method invocation."
+		   });	
+		addAnnotation
+		  (getActorMethodResult_ActorResult(), 
+		   source, 
+		   new String[] {
+			 "documentation", "References actor result this invocation belongs to."
+		   });	
+		addAnnotation
+		  (pageMethodResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of page method invocation."
+		   });	
+		addAnnotation
+		  (getPageMethodResult_PageResult(), 
+		   source, 
+		   new String[] {
+			 "documentation", "References page result this invocation belongs to."
+		   });	
+		addAnnotation
+		  (testMethodResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of test method invocation."
+		   });	
+		addAnnotation
+		  (getTestMethodResult_Parameters(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Names of test parameters"
+		   });	
+		addAnnotation
+		  (coverageEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Operation coverage entry."
+		   });	
+		addAnnotation
+		  (getCoverage_Invocations(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Number of invocations."
+		   });	
+		addAnnotation
+		  (actorResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Results collected for actor invocations."
+		   });	
+		addAnnotation
+		  (getActorResult_Results(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Actor method invocations."
+		   });	
+		addAnnotation
+		  (getActorResult_Coverage(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Method coverage."
+		   });	
+		addAnnotation
+		  (getActorResult_Proxy(), 
+		   source, 
+		   new String[] {
+			 "documentation", "True if actor class is a proxy."
+		   });	
+		addAnnotation
+		  (pageResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of page class interactions."
+		   });	
+		addAnnotation
+		  (getPageResult_Results(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Page methods invocation results."
+		   });	
+		addAnnotation
+		  (getPageResult_Coverage(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Page methods coverage."
+		   });	
+		addAnnotation
+		  (getPageResult_WebElements(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Information about the page web elements."
+		   });	
+		addAnnotation
+		  (getPageResult_Proxy(), 
+		   source, 
+		   new String[] {
+			 "documentation", "\'true\' if page class is a proxy."
+		   });	
+		addAnnotation
+		  (webElementEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Information about an interactive page web element, e.g. a link or a button."
+		   });	
+		addAnnotation
+		  (getWebElement_Locators(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Web element locators."
+		   });	
+		addAnnotation
+		  (locatorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Web element locator."
+		   });	
+		addAnnotation
+		  (getLocator_How(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Indicates how web element should be located, e.g. by ID, by CSS, or by XPATH."
+		   });	
+		addAnnotation
+		  (getLocator_Using(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Locator value, e.g. CSS path if value of \'how\' is \'CSS\'."
+		   });	
+		addAnnotation
+		  (linkEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "A link to an external resource. For example Actor interfaces may link to Story Model\r\nActors, Users, Personas or Roles; test methods may link to acceptance criteria."
+		   });	
+		addAnnotation
+		  (getLink_Value(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Link value, e.g. URL."
+		   });	
+		addAnnotation
+		  (getLink_Type(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Optional link type to differentiate between links if there is more than one."
 		   });
 	}
 

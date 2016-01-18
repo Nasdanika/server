@@ -8,6 +8,10 @@ package org.nasdanika.webtest.model;
  * A representation of the model object '<em><b>Page Method Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Result of page method invocation.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -29,6 +33,9 @@ public interface PageMethodResult extends MethodResult {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * References page result this invocation belongs to.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Page Result</em>' reference.
 	 * @see #setPageResult(PageResult)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getPageMethodResult_PageResult()

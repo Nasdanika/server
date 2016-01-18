@@ -11,6 +11,10 @@ import org.eclipse.emf.ecore.EObject;
  * A representation of the model object '<em><b>Throwable</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Models java.lang.Throwable.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface Throwable extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Throwable class name.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type</em>' attribute.
 	 * @see #setType(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getThrowable_Type()
@@ -59,6 +66,9 @@ public interface Throwable extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Error message.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Message</em>' attribute.
 	 * @see #setMessage(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getThrowable_Message()
@@ -86,6 +96,9 @@ public interface Throwable extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Stack trace.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Stack Trace</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getThrowable_StackTrace()
 	 * @model containment="true"

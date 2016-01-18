@@ -818,13 +818,22 @@ public interface ModelPackage extends EPackage {
 	int OPERATION_ARGUMENT__TYPE = 1;
 
 	/**
+	 * The feature id for the '<em><b>Masked</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_ARGUMENT__MASKED = 2;
+
+	/**
 	 * The number of structural features of the '<em>Operation Argument</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPERATION_ARGUMENT_FEATURE_COUNT = 2;
+	int OPERATION_ARGUMENT_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Operation Argument</em>' class.
@@ -2785,6 +2794,17 @@ public interface ModelPackage extends EPackage {
 	EAttribute getOperationArgument_Type();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.OperationArgument#isMasked <em>Masked</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Masked</em>'.
+	 * @see org.nasdanika.webtest.model.OperationArgument#isMasked()
+	 * @see #getOperationArgument()
+	 * @generated
+	 */
+	EAttribute getOperationArgument_Masked();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.ScreenshotEntry <em>Screenshot Entry</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3696,6 +3716,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute OPERATION_ARGUMENT__TYPE = eINSTANCE.getOperationArgument_Type();
+
+		/**
+		 * The meta object literal for the '<em><b>Masked</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPERATION_ARGUMENT__MASKED = eINSTANCE.getOperationArgument_Masked();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.ScreenshotEntryImpl <em>Screenshot Entry</em>}' class.

@@ -188,7 +188,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 			for (Field we: this.webElements) {
 				JSONObject webElement = new JSONObject(); 
 				webElements.put(webElement);
-				WebTestUtil.titleAndDescriptionToJSON(we, webElement);
+				WebTestUtil.titleAndDescriptionAndLinksToJSON(we, webElement);
 				if (!webElement.has("title")) {
 					webElement.put("title", WebTestUtil.title(we.getName()));
 				}
@@ -299,7 +299,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
 			JSONObject coverageEntry = new JSONObject();
 			coverage.put(coverageEntry);
-			WebTestUtil.titleAndDescriptionToJSON(ce.getKey(), coverageEntry);
+			WebTestUtil.titleAndDescriptionAndLinksToJSON(ce.getKey(), coverageEntry);
 			if (!coverageEntry.has("title")) {
 				coverageEntry.put("title", WebTestUtil.title(ce.getKey().getName()));
 			}
@@ -354,7 +354,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 			for (Field we: this.webElements) {
 				WebElement webElement = modelFactory.createWebElement();
 				pageResult.getWebElements().add(webElement);
-				WebTestUtil.titleAndDescriptionToDescriptor(we, webElement);
+				WebTestUtil.titleAndDescriptionAndLinksToDescriptor(we, webElement);
 				if (WebTestUtil.isBlank(webElement.getTitle())) {
 					webElement.setTitle(WebTestUtil.title(we.getName()));
 				}

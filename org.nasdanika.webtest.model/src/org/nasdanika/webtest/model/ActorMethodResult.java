@@ -8,6 +8,10 @@ package org.nasdanika.webtest.model;
  * A representation of the model object '<em><b>Actor Method Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Result of actor method invocation.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -29,6 +33,9 @@ public interface ActorMethodResult extends MethodResult {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * References actor result this invocation belongs to.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Actor Result</em>' reference.
 	 * @see #setActorResult(ActorResult)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getActorMethodResult_ActorResult()

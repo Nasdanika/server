@@ -36,7 +36,6 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.webtest.model.OperationArgument;
 import org.nasdanika.webtest.model.OperationStatus;
-import org.nasdanika.webtest.model.ScreenshotType;
 import org.nasdanika.webtest.model.StackTraceEntry;
 import org.openqa.selenium.WebDriverException;
 
@@ -64,6 +63,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	private String id;
 	
 	private Object[] arguments;
+	private boolean[] maskedArguments;
 	
 	public Object[] getArguments() {
 		return arguments;
@@ -86,6 +86,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		this.operation = operation;
 		if (arguments!=null) {
 			this.arguments = Arrays.copyOf(arguments, arguments.length);	
+			this.maskedArguments = new boolean[arguments.length];
 			Annotation[][] pa = null;
 			if (operation instanceof Constructor) {
 				pa = ((Constructor<?>) operation).getParameterAnnotations();
@@ -97,6 +98,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 					for (int j=0; j<pa[i].length; ++j) {
 						if (pa[i][j] instanceof Mask) {
 							this.arguments[i] = "*****";
+							this.maskedArguments[i] = true;
 							break;
 						}
 					}
@@ -481,7 +483,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 
 	private JSONObject toJSON(boolean publishPerformance, Map<Object, String> idMap) throws JSONException, Exception {
 		JSONObject data = new JSONObject();
-		WebTestUtil.titleAndDescriptionToJSON(getOperation(), data);
+		WebTestUtil.titleAndDescriptionAndLinksToJSON(getOperation(), data);
 		data.put("operationName", getOperationName());
 		if (!data.has("title")) {
 			data.put("title", WebTestUtil.title(getOperationName()));
@@ -624,21 +626,21 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	
 	public M toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {
 		M model = createModel();		
-		WebTestUtil.titleAndDescriptionToDescriptor(getOperation(), model);
+		WebTestUtil.titleAndDescriptionAndLinksToDescriptor(getOperation(), model);
 		model.setOperationName(getOperationName());
 		if (WebTestUtil.isBlank(model.getTitle())) {
 			model.setTitle(WebTestUtil.title(getOperationName()));
 		}
 		model.setQualifiedName(operation.toString());
-		String cName = getClass().getName();
 		if (arguments!=null) {
 			// Simplistic approach for now
-			for (Object arg: arguments) {
+			for (int i=0; i<arguments.length; ++i) {
 				OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
-				if (arg!=null) {
-					operationArgument.setType(arg.getClass().getName());
-					operationArgument.setValue(arg.toString());
+				if (arguments[i]!=null) {
+					operationArgument.setType(arguments[i].getClass().getName());
+					operationArgument.setValue(arguments[i].toString());
 				}
+				operationArgument.setMasked(maskedArguments[i]);
 				model.getArguments().add(operationArgument);
 			}
 		}

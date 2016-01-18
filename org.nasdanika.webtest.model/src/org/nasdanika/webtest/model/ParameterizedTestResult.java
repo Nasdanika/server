@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Parameterized Test Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Parameterized test result is a collection of test results with different arguments.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -30,6 +34,9 @@ public interface ParameterizedTestResult extends TestSuiteResult {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Descriptors of test parameters.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parameter Descriptors</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getParameterizedTestResult_ParameterDescriptors()
 	 * @model containment="true"

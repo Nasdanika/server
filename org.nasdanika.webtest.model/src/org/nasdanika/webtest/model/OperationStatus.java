@@ -66,6 +66,9 @@ public enum OperationStatus implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Indicates successful test.
+	 * <!-- end-model-doc -->
 	 * @see #PASS
 	 * @model name="Pass"
 	 * @generated
@@ -81,6 +84,9 @@ public enum OperationStatus implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Indicates that the test has failed, e.g. assertions were not met or a web element was not found on a page.
+	 * <!-- end-model-doc -->
 	 * @see #FAIL
 	 * @model name="Fail"
 	 * @generated
@@ -96,6 +102,9 @@ public enum OperationStatus implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Indicates an unexpected error thrown by a test, which might indicate an error in the test logic.
+	 * <!-- end-model-doc -->
 	 * @see #ERROR
 	 * @model name="Error"
 	 * @generated
@@ -111,6 +120,11 @@ public enum OperationStatus implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Indicates that the test is not implemented yet - either the test body is 
+	 * considered empty - no invocations to actor or page methods, or the method
+	 * is annotated with @Pending annotation.
+	 * <!-- end-model-doc -->
 	 * @see #PENDING
 	 * @model name="Pending"
 	 * @generated

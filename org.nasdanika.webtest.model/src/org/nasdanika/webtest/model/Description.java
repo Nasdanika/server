@@ -11,6 +11,10 @@ import org.eclipse.emf.ecore.EObject;
  * A representation of the model object '<em><b>Description</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Element description.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface Description extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Description URL for external descriptions.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Url</em>' attribute.
 	 * @see #setUrl(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getDescription_Url()
@@ -60,6 +67,9 @@ public interface Description extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Description content. Each element represents a line for formats where line separators a significant, e.g. plain text.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Value</em>' attribute list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getDescription_Value()
 	 * @model
@@ -75,6 +85,9 @@ public interface Description extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Content (MIME) type, e.g. text/html, text/plain, text/markdown.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Content Type</em>' attribute.
 	 * @see #setContentType(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getDescription_ContentType()

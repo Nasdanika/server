@@ -11,6 +11,11 @@ import org.eclipse.emf.ecore.EObject;
  * A representation of the model object '<em><b>Screenshot</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Screenshot taken during test execution. Screenshots are de-duplicated and one screenshot can be referenced by
+ * multiple operation results through screenshot entries.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -35,6 +40,9 @@ public interface Screenshot extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Location of the screenshot file relative to the model resource.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Location</em>' attribute.
 	 * @see #setLocation(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshot_Location()
@@ -61,6 +69,9 @@ public interface Screenshot extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Screenshot height in pixels.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Height</em>' attribute.
 	 * @see #setHeight(int)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshot_Height()
@@ -87,6 +98,9 @@ public interface Screenshot extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Screenshot width in pixels.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Width</em>' attribute.
 	 * @see #setWidth(int)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshot_Width()
@@ -113,6 +127,9 @@ public interface Screenshot extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Content type, e.g. "image/png" for .png files.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Content Type</em>' attribute.
 	 * @see #setContentType(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshot_ContentType()
@@ -141,6 +158,9 @@ public interface Screenshot extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Screenshot entires referencing this screenshot.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Entries</em>' reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshot_Entries()
 	 * @see org.nasdanika.webtest.model.ScreenshotEntry#getScreenshot

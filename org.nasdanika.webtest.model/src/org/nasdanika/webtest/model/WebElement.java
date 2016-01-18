@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Web Element</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Information about an interactive page web element, e.g. a link or a button.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -30,6 +34,9 @@ public interface WebElement extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Web element locators.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Locators</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getWebElement_Locators()
 	 * @model containment="true"

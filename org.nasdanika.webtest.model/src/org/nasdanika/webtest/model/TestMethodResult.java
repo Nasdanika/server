@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Test Method Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Result of test method invocation.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -30,6 +34,9 @@ public interface TestMethodResult extends MethodResult {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Names of test parameters
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Parameters</em>' attribute list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestMethodResult_Parameters()
 	 * @model

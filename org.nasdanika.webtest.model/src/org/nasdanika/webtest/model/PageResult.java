@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Page Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Result of page class interactions.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -34,6 +38,9 @@ public interface PageResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Page methods invocation results.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Results</em>' reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getPageResult_Results()
 	 * @see org.nasdanika.webtest.model.PageMethodResult#getPageResult
@@ -51,6 +58,9 @@ public interface PageResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Page methods coverage.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Coverage</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getPageResult_Coverage()
 	 * @model containment="true"
@@ -67,6 +77,9 @@ public interface PageResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Information about the page web elements.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Web Elements</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getPageResult_WebElements()
 	 * @model containment="true"
@@ -82,6 +95,9 @@ public interface PageResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * 'true' if page class is a proxy.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Proxy</em>' attribute.
 	 * @see #setProxy(boolean)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getPageResult_Proxy()

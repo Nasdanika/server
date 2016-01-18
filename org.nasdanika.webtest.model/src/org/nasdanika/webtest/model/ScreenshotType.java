@@ -13,6 +13,9 @@ import org.eclipse.emf.common.util.Enumerator;
  * A representation of the literals of the enumeration '<em><b>Screenshot Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
+ * <!-- begin-model-doc -->
+ * Indicates when a screenshot was taken.
+ * <!-- end-model-doc -->
  * @see org.nasdanika.webtest.model.ModelPackage#getScreenshotType()
  * @model
  * @generated
@@ -66,6 +69,9 @@ public enum ScreenshotType implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Before operation (method/constructor) invocation.
+	 * <!-- end-model-doc -->
 	 * @see #BEFORE
 	 * @model
 	 * @generated
@@ -81,6 +87,9 @@ public enum ScreenshotType implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Screenshot was explicitly taken during invocation with WebTestUtil.takeScreenshot() method.
+	 * <!-- end-model-doc -->
 	 * @see #DURING
 	 * @model
 	 * @generated
@@ -96,6 +105,9 @@ public enum ScreenshotType implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * After operation invocation.
+	 * <!-- end-model-doc -->
 	 * @see #AFTER
 	 * @model
 	 * @generated
@@ -111,6 +123,9 @@ public enum ScreenshotType implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * When operation threw an exception.
+	 * <!-- end-model-doc -->
 	 * @see #EXCEPTION
 	 * @model
 	 * @generated

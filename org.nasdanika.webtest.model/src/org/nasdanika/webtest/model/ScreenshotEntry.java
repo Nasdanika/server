@@ -9,6 +9,10 @@ import org.eclipse.emf.ecore.EObject;
  * A representation of the model object '<em><b>Screenshot Entry</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Screenshot entry is an association class between operation result and a screenshot.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -32,6 +36,9 @@ public interface ScreenshotEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Indicates when screenshot was taken.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Type</em>' attribute.
 	 * @see org.nasdanika.webtest.model.ScreenshotType
 	 * @see #setType(ScreenshotType)
@@ -60,6 +67,9 @@ public interface ScreenshotEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Comment for explicitly taken screenshots.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Comment</em>' attribute.
 	 * @see #setComment(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshotEntry_Comment()
@@ -87,6 +97,9 @@ public interface ScreenshotEntry extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Reference to a screenshot.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Screenshot</em>' reference.
 	 * @see #setScreenshot(Screenshot)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshotEntry_Screenshot()

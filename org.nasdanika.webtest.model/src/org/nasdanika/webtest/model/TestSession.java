@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Test Session</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Test session is the root of the test results model.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -35,6 +39,10 @@ public interface TestSession extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Test session may contain one or more test results. Typically it contains one test
+	 * result and multiple tests are aggregated under a test suite.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Test Results</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestSession_TestResults()
 	 * @model containment="true"
@@ -51,6 +59,9 @@ public interface TestSession extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Page results, which aggregate page invocation iformation across all tests.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Page Results</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestSession_PageResults()
 	 * @model containment="true"
@@ -67,6 +78,9 @@ public interface TestSession extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Actor results, which aggregate actor invocation information across all tests.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Actor Results</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestSession_ActorResults()
 	 * @model containment="true"
@@ -82,6 +96,9 @@ public interface TestSession extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Test session creation time.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Timestamp</em>' attribute.
 	 * @see #setTimestamp(long)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestSession_Timestamp()
@@ -108,6 +125,9 @@ public interface TestSession extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Name of the computer (host name) on which tests were executed.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Node</em>' attribute.
 	 * @see #setNode(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestSession_Node()
@@ -135,6 +155,9 @@ public interface TestSession extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Collection of all screenshots taken during the test session.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Screenshots</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestSession_Screenshots()
 	 * @model containment="true"

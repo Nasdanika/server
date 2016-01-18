@@ -22,6 +22,7 @@ import org.nasdanika.webtest.model.OperationArgument;
  * <ul>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationArgumentImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationArgumentImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.OperationArgumentImpl#isMasked <em>Masked</em>}</li>
  * </ul>
  *
  * @generated
@@ -66,6 +67,26 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	 * @ordered
 	 */
 	protected String type = TYPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isMasked() <em>Masked</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMasked()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean MASKED_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isMasked() <em>Masked</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isMasked()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean masked = MASKED_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -133,6 +154,27 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isMasked() {
+		return masked;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setMasked(boolean newMasked) {
+		boolean oldMasked = masked;
+		masked = newMasked;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_ARGUMENT__MASKED, oldMasked, masked));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -140,6 +182,8 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 				return getValue();
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				return getType();
+			case ModelPackage.OPERATION_ARGUMENT__MASKED:
+				return isMasked();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -157,6 +201,9 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 				return;
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				setType((String)newValue);
+				return;
+			case ModelPackage.OPERATION_ARGUMENT__MASKED:
+				setMasked((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -176,6 +223,9 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				setType(TYPE_EDEFAULT);
 				return;
+			case ModelPackage.OPERATION_ARGUMENT__MASKED:
+				setMasked(MASKED_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -192,6 +242,8 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
+			case ModelPackage.OPERATION_ARGUMENT__MASKED:
+				return masked != MASKED_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -210,6 +262,8 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 		result.append(value);
 		result.append(", type: ");
 		result.append(type);
+		result.append(", masked: ");
+		result.append(masked);
 		result.append(')');
 		return result.toString();
 	}

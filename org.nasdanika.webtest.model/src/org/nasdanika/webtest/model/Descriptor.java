@@ -10,6 +10,10 @@ import org.eclipse.emf.ecore.EObject;
  * A representation of the model object '<em><b>Descriptor</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Base class for the majority of model elements.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface Descriptor extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Fully qualified name of the element.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Qualified Name</em>' attribute.
 	 * @see #setQualifiedName(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getDescriptor_QualifiedName()
@@ -59,10 +66,13 @@ public interface Descriptor extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Element title.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Title</em>' attribute.
 	 * @see #setTitle(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getDescriptor_Title()
-	 * @model annotation="org.nasdanika.cdo.web.html.form-control input-type='f' label='lbl'"
+	 * @model
 	 * @generated
 	 */
 	String getTitle();
@@ -85,6 +95,9 @@ public interface Descriptor extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Element description.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Description</em>' containment reference.
 	 * @see #setDescription(Description)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getDescriptor_Description()
@@ -112,6 +125,9 @@ public interface Descriptor extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * References (links) to external elements, e.g. user stories or acceptance criteria.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Links</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getDescriptor_Links()
 	 * @model containment="true"

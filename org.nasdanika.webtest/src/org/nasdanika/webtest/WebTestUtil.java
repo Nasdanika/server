@@ -671,7 +671,7 @@ public class WebTestUtil {
 		
 	static void qualifiedNameAndTitleAndDescriptionToJSON(Class<?> klass, JSONObject target) throws JSONException {
 		target.put("qualifiedName", klass.getName());
-		titleAndDescriptionToJSON(klass, target);
+		titleAndDescriptionAndLinksToJSON(klass, target);
 		if (!target.has("title")) {
 			String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
 			StringBuilder titleBuilder = new StringBuilder();
@@ -694,7 +694,7 @@ public class WebTestUtil {
 		
 	static void qualifiedNameAndTitleAndDescriptionToDescriptor(Class<?> klass, Descriptor target) {
 		target.setQualifiedName(klass.getName());
-		titleAndDescriptionToDescriptor(klass, target);
+		titleAndDescriptionAndLinksToDescriptor(klass, target);
 		if (isBlank(target.getTitle())) {
 			String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
 			StringBuilder titleBuilder = new StringBuilder();
@@ -733,16 +733,18 @@ public class WebTestUtil {
 		return titleBuilder.toString();
 	}
 
-	static void titleAndDescriptionToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
+	static void titleAndDescriptionAndLinksToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
 		Title title = annotated.getAnnotation(Title.class);
 		toJSON(title, target);
 		toJSON(annotated.getAnnotation(Description.class), target);
+		toJSON(annotated.getAnnotation(Links.class), target);
 	}
 
-	static void titleAndDescriptionToDescriptor(AnnotatedElement annotated, Descriptor target) {
+	static void titleAndDescriptionAndLinksToDescriptor(AnnotatedElement annotated, Descriptor target) {
 		Title title = annotated.getAnnotation(Title.class);
 		toDescriptor(title, target);
 		toDescriptor(annotated.getAnnotation(Description.class), target);
+		toDescriptor(annotated.getAnnotation(Links.class), target);
 	}
 
 	static void toJSON(Title title, JSONObject target) throws JSONException {
@@ -769,6 +771,19 @@ public class WebTestUtil {
 		}
 	}
 	
+	static void toJSON(Links links, JSONObject target) throws JSONException {
+		if (links!=null) {
+			JSONArray linksArray = new JSONArray();
+			target.put("links", linksArray);
+			for (Link link: links.value()) {
+				JSONObject linkObj = new JSONObject();
+				linkObj.put("value", link.value());
+				linkObj.put("type", link.type());
+				linksArray.put(linkObj);
+			}
+		}
+	}	
+	
 	static void toDescriptor(Title title, Descriptor target) {
 		if (title!=null) {
 			target.setTitle(title.value());
@@ -786,6 +801,17 @@ public class WebTestUtil {
 			}
 			targetDescription.setContentType(description.contentType());
 			target.setDescription(targetDescription);
+		}
+	}
+
+	static void toDescriptor(Links links, Descriptor target) {
+		if (links!=null) {
+			for (Link link: links.value()) {
+				org.nasdanika.webtest.model.Link linkModel = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createLink();
+				target.getLinks().add(linkModel);
+				linkModel.setType(link.type());
+				linkModel.setValue(link.value());
+			}
 		}
 	}
 

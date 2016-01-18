@@ -9,6 +9,10 @@ import org.eclipse.emf.ecore.EObject;
  * A representation of the model object '<em><b>Locator</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Web element locator.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -30,6 +34,9 @@ public interface Locator extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Indicates how web element should be located, e.g. by ID, by CSS, or by XPATH.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>How</em>' attribute.
 	 * @see #setHow(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getLocator_How()
@@ -56,6 +63,9 @@ public interface Locator extends EObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Locator value, e.g. CSS path if value of 'how' is 'CSS'.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Using</em>' attribute.
 	 * @see #setUsing(String)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getLocator_Using()

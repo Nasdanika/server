@@ -10,6 +10,10 @@ import org.eclipse.emf.common.util.EMap;
  * A representation of the model object '<em><b>Test Class Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Results collected from a JUnit test class.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -32,6 +36,9 @@ public interface TestClassResult extends TestResult {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Test class result contains test method results.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Method Results</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestClassResult_MethodResults()
 	 * @model containment="true"
@@ -49,6 +56,9 @@ public interface TestClassResult extends TestResult {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Test statistics.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Stats</em>' map.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestClassResult_Stats()
 	 * @model mapType="org.nasdanika.webtest.model.StatsEntry<org.eclipse.emf.ecore.EString, org.eclipse.emf.ecore.EIntegerObject>"

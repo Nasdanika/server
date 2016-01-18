@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Actor Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Results collected for actor invocations.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface ActorResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Actor method invocations.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Results</em>' reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getActorResult_Results()
 	 * @see org.nasdanika.webtest.model.ActorMethodResult#getActorResult
@@ -50,6 +57,9 @@ public interface ActorResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Method coverage.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Coverage</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getActorResult_Coverage()
 	 * @model containment="true"
@@ -65,6 +75,9 @@ public interface ActorResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * True if actor class is a proxy.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Proxy</em>' attribute.
 	 * @see #setProxy(boolean)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getActorResult_Proxy()

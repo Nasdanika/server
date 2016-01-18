@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Test Result</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Base class for test results.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -31,6 +35,9 @@ public interface TestResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Contains page results, which hold aggregated page invocation information.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Page Results</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestResult_PageResults()
 	 * @model containment="true"
@@ -47,6 +54,9 @@ public interface TestResult extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Contains actor results, which hold aggregated actor invocation information.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Actor Results</em>' containment reference list.
 	 * @see org.nasdanika.webtest.model.ModelPackage#getTestResult_ActorResults()
 	 * @model containment="true"

@@ -8,6 +8,10 @@ package org.nasdanika.webtest.model;
  * A representation of the model object '<em><b>Coverage</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Operation coverage entry.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -28,6 +32,9 @@ public interface Coverage extends Descriptor {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Number of invocations.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Invocations</em>' attribute.
 	 * @see #setInvocations(int)
 	 * @see org.nasdanika.webtest.model.ModelPackage#getCoverage_Invocations()
