@@ -920,7 +920,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		  (this, 
 		   source, 
 		   new String[] {
-			 "documentation", "Story model allows to capture agile (user) stories in the form of a model which can reference the domain model and be linked to the domain model, e.g. route operations may reference user stories they are used by. The story model can be used for documentation, to link test results to acceptance criteria (also as part of online documentation), and for story-based entitlements - operations reference stories, and users are granted entitlements execute stories, or users are granted roles, which in turn are linked to stories."
+			 "documentation", "Story model allows to capture agile (user) stories in the form of a model which can reference the domain model and be linked to the domain model, e.g. route operations may reference user stories they are used by. The story model can be used for documentation, to link test results to acceptance criteria (also as part of online documentation), and for story-based entitlements - operations reference stories, and users are granted entitlements execute stories, or users are granted roles, which in turn are linked to stories.\r\n\r\n![Class diagram](bundle:org.nasdanika.story/doc/story.png)"
 		   });	
 		addAnnotation
 		  (catalogEClass, 
