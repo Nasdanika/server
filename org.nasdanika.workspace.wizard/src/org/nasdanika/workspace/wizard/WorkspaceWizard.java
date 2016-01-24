@@ -10,21 +10,21 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -45,10 +45,8 @@ import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.pde.core.target.ITargetDefinition;
 import org.eclipse.pde.core.target.ITargetLocation;
 import org.eclipse.pde.core.target.ITargetPlatformService;
@@ -61,11 +59,9 @@ import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
 import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation;
 import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
-import org.eclipse.ui.INewWizard;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPluginRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderComponentRenderer;
@@ -87,35 +83,19 @@ import org.osgi.framework.FrameworkUtil;
  * Wizard to create projects for a Nasdanika Foundation Server based application.
  */
 
-public class WorkspaceWizard extends Wizard implements INewWizard {
-	private static final String MAVEN_2_BUILDER = "org.eclipse.m2e.core.maven2Builder";
-	private static final String MAVEN_2_NATURE_ID = "org.eclipse.m2e.core.maven2Nature";
-	protected GeneralInformationPage generalInformationPage;
+public class WorkspaceWizard extends AbstractWorkspaceWizard {
 	private ProjectsPage projectsPage;
 	private ApplicationConfigurationPage applicationConfigurationPage;
 	
-	protected IWorkbench workbench;
-//	protected IPath genProjectsLocation;
-//	protected IPath genModelContainerPath;
-//	protected IProject project;
-	protected String initialProjectName;
-	protected IStructuredSelection selection;
-
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
-		this.workbench = workbench;
-		this.selection = selection;
+		super.init(workbench, selection);
 		setDefaultPageImageDescriptor(ExtendedImageRegistry.INSTANCE.getImageDescriptor(GenModelEditPlugin.INSTANCE.getImage("full/wizban/NewEmptyEMFProject")));
 		setWindowTitle("New Nasdanika Application Workspace");
 	}
 
 	@Override
 	public void addPages() {
-		generalInformationPage = new GeneralInformationPage(selection, "GeneralInformation");
-
-		generalInformationPage.setInitialProjectName(initialProjectName);
-		generalInformationPage.setTitle("General information");
-		generalInformationPage.setDescription("Group Id (umbrella name), version, working set");
-		addPage(generalInformationPage);	
+		super.addPages();
 		
 		projectsPage = new ProjectsPage();
 		addPage(projectsPage);
@@ -123,66 +103,26 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		applicationConfigurationPage = new ApplicationConfigurationPage();
 		addPage(applicationConfigurationPage);
 	}
-
-	@Override
-	public boolean performFinish() {
-		WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
-			@Override
-			protected void execute(IProgressMonitor progressMonitor) {
-				try {
-					modifyWorkspace(progressMonitor);
-				} catch (CoreException exception) {
-					ErrorDialog.openError(getShell(), "Error generating workspace", exception.toString(), exception.getStatus());
-					GenModelEditPlugin.INSTANCE.log(exception);
-				} catch (Exception exception) {
-					MessageDialog.openError(getShell(), "Error generating workspace", exception.toString());
-					GenModelEditPlugin.INSTANCE.log(exception);
-				} finally {
-					progressMonitor.done();
-				}
-			}
-		};
-
-		try {
-			getContainer().run(false, false, operation);
-		} catch (Exception exception) {
-			MessageDialog.openError(getShell(), "Error generating workspace", exception.toString());
-			GenModelEditPlugin.INSTANCE.log(exception);
-			return false;
-		}
-
-//		if (project != null) {
-//			IWorkbenchPage page = workbench.getActiveWorkbenchWindow().getActivePage();
-//			final IWorkbenchPart activePart = page.getActivePart();
-//			if (activePart instanceof ISetSelectionTarget) {
-//				final ISelection targetSelection = new StructuredSelection(project);
-//				getShell().getDisplay().asyncExec(new Runnable() {
-//					public void run() {
-//						((ISetSelectionTarget) activePart).selectReveal(targetSelection);
-//					}
-//				});
-//			}
-//		}
-
-		return true;
-	}
 	public void modifyWorkspace(IProgressMonitor progressMonitor) throws Exception {
+		super.modifyWorkspace(progressMonitor);
+		
 		generateModelProject(progressMonitor);
+		
 		generateApplicationProject(progressMonitor);
-		generateTestsProject(progressMonitor);
+		
 		generateFeatureProject(progressMonitor);
+		
+		generateTestsProject(progressMonitor);
 		generateTestsFeatureProject(progressMonitor);
-		generateParentProject(progressMonitor);
-		generateRepositoryProject(progressMonitor);
-		generateAggregatorProject(progressMonitor);
+		
 		generateActorSpecProject(progressMonitor);
 		generateActorImplProject(progressMonitor);
+		
 		generatePageSpecProject(progressMonitor);
 		generatePageImplProject(progressMonitor);
-		generateTargetProject(progressMonitor);
 	}
 
-	private void generateActorSpecProject(IProgressMonitor progressMonitor) throws Exception {
+	protected void generateActorSpecProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnActorSpec.getSelection()) {
 			IJavaProject project = createPluginProject(
 					getActorSpecArtifactId(), 
@@ -191,7 +131,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singletonList(getActorSpecArtifactId()), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
-					false,
+					null,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -208,7 +148,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	private void generatePageSpecProject(IProgressMonitor progressMonitor) throws Exception {
+	protected void generatePageSpecProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnPageSpec.getSelection()) {
 			IJavaProject project = createPluginProject(
 					getPageSpecArtifactId(), 
@@ -217,7 +157,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singletonList(getPageSpecArtifactId()), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
-					false,
+					null,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
@@ -234,7 +174,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	private void generateActorImplProject(IProgressMonitor progressMonitor) throws Exception {
+	protected void generateActorImplProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnActorImpl.getSelection()) {
 			Set<String> requiredBundles = new HashSet<>();
 			requiredBundles.add("org.eclipse.osgi.services");
@@ -246,7 +186,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singleton(getActorImplArtifactId()), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
-					false,
+					null,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -269,7 +209,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	private void generatePageImplProject(IProgressMonitor progressMonitor) throws Exception {
+	protected void generatePageImplProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnPageImpl.getSelection()) {
 			Set<String> requiredBundles = new HashSet<>();
 			requiredBundles.add("org.eclipse.osgi.services");
@@ -281,7 +221,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.singleton(getPageImplArtifactId()), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
-					false,
+					null,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
@@ -304,7 +244,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		}
 	}
 
-	private void generateApplicationProject(IProgressMonitor progressMonitor) throws Exception {
+	protected void generateApplicationProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnApplication.getSelection()) {
 			Collection<String> requiredBundles = new HashSet<>();
 			
@@ -333,16 +273,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				requiredBundles.add("org.apache.commons.lang3;bundle-version=\"3.3.2\"");
 			}
 			
-//			Require-Bundle: org.eclipse.core.runtime;visibility:=reexport,
-//					 org.eclipse.emf.ecore.change;bundle-version="2.10.0";visibility:=reexport,
-//					 org.eclipse.emf.ecore.xmi;bundle-version="2.10.1";visibility:=reexport,
-//					 org.eclipse.net4j;bundle-version="4.3.0";visibility:=reexport,
-//					 org.eclipse.emf.cdo.net4j;bundle-version="4.1.200";visibility:=reexport,
-//					 org.eclipse.net4j.tcp;bundle-version="4.1.200";visibility:=reexport,
-//					 org.eclipse.osgi;bundle-version="3.10.0",
-//					 org.eclipse.jetty.util;bundle-version="8.1.14",
-//					 org.json;bundle-version="1.0.0",
-
 			Collection<String> binIncludes = new HashSet<String>();
 			Collection<String> components = new ArrayList<>();
 			if (applicationConfigurationPage.btnSessionInitializer.getSelection()) {
@@ -380,7 +310,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.<String>emptyList(), 
 					components, 
 					binIncludes,
-					false,
+					null,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
@@ -490,13 +420,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 				}
 				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-provider.xml").create(new ByteArrayInputStream(new CDOTransactionContextProviderComponentRenderer().generate(this).getBytes()), false, progressMonitor);										
 			}
-//			if (applicationConfigurationPage.btnTransactionRoute.getSelection()) {
-//				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
-//				if (!osgiInfFolder.exists()) {
-//					osgiInfFolder.create(false, true, progressMonitor);
-//				}
-//				osgiInfFolder.getFile(getDashedName()+"-cdo-transaction-context-route.xml").create(new ByteArrayInputStream(new CDOTransactionContextRouteRenderer().generate(this).getBytes()), false, progressMonitor);														
-//			}
 			if (applicationConfigurationPage.btnDocumentationRoute.getSelection()) {
 				IFolder osgiInfFolder = project.getProject().getFolder("OSGI-INF");
 				if (!osgiInfFolder.exists()) {
@@ -512,36 +435,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		return applicationConfigurationPage.btnRepository.getSelection();
 	}
 	
-	private IResource createResource(IProject project, String path, InputStream content, IProgressMonitor progressMonitor) throws CoreException {
-		while (path.endsWith("/")) {
-			path = path.substring(0, path.length()-1);
-		}
-		int idx = path.lastIndexOf('/');
-		IContainer container = idx==-1 ? project : (IContainer) createResource(project, path.substring(0, idx), null, progressMonitor);
-		if (content==null) {
-			IFolder ret = container.getFolder(new Path(path.substring(idx+1)));
-			if (!ret.exists()) {
-				ret.create(false, true, progressMonitor);
-			}
-			return ret;
-		}
-		IFile ret = container.getFile(new Path(path.substring(idx+1)));
-		ret.create(content, true, progressMonitor);
-		return ret;
-	}
-
-	public String getJavaName() {
-		String[] tokens = generalInformationPage.nameField.getText().split(" ");
-		for (int i=0; i<tokens.length; ++i) {
-			tokens[i] = StringUtils.capitalize(tokens[i]);
-		}
-		return StringUtils.join(tokens);
-	}
-
-	public String getDashedName() {
-		return generalInformationPage.nameField.getText().toLowerCase().replace(' ', '-');
-	}
-
 	private void generateTestsProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnTests.getSelection()) {
 			Collection<String> requiredBundles = new HashSet<>();
@@ -575,7 +468,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
 					binIncludes,
-					projectsPage.btnApplication.getSelection(),
+					projectsPage.btnApplication.getSelection() ? getActorImplArtifactId() : null,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
@@ -835,155 +728,63 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	private boolean shallGenerateTestsFeature() {
 		return projectsPage.btnTests.getSelection() && projectsPage.btnApplication.getSelection();
 	}
-
-	private void generateParentProject(IProgressMonitor progressMonitor) throws Exception {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
-		IPath locationPath = generalInformationPage.getLocationPath();
-		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getParentArtifactId()).toFile().toURI());
-		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
+	
+	@Override
+	public Map<String, String> getRepositories() {
+		Map<String, String> repoMap = new HashMap<>();
 		
-		final ICommand m2 = description.newCommand();
-        m2.setBuilderName(MAVEN_2_BUILDER);
-        description.setBuildSpec(new ICommand[] { m2 });
-
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(getParentArtifactId());
-		project.create(description, progressMonitor);
-		project.open(progressMonitor);
-		
-		IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
-		if (workingSets != null) {
-			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
-		}
-
-		project.getFile("pom.xml").create(new ByteArrayInputStream(new ParentPomRenderer().generate(this).getBytes()), false, progressMonitor);
+		// Kinda bad style, load from a properties file?
+//		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
+//		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository");
+//		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.5.v20151012");
+//		repoMap.put("maven-osgi", "http://www.nasdanika.org/maven-osgi");
+		repoMap.put("nasdanika-server", "http://www.nasdanika.org/server/repository");
+		return repoMap;
+	}
+	
+	@Override
+	public Collection<String> getCategorizedFeatures() {
+		return Collections.singleton(getGroupId()+".feature");
+	}
+	
+	@Override
+	public Collection<String> getProductsToMaterialize() {
+		return Collections.singleton(getGroupId()+".product");
 	}
 
-	private void generateAggregatorProject(IProgressMonitor progressMonitor) throws Exception {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
-		IPath locationPath = generalInformationPage.getLocationPath();
-		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getGroupId()+".aggregator").toFile().toURI());
-		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
+	protected IProject generateRepositoryProject(IProgressMonitor progressMonitor) throws Exception {
+		IProject project = super.generateRepositoryProject(progressMonitor);
 		
-		final ICommand m2 = description.newCommand();
-        m2.setBuilderName(MAVEN_2_BUILDER);
-        description.setBuildSpec(new ICommand[] { m2 });
-
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(getGroupId()+".aggregator");
-		project.create(description, progressMonitor);
-		project.open(progressMonitor);
-		
-		IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
-		if (workingSets != null) {
-			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
-		}
-
-		IFile pom = project.getFile("pom.xml");	
-		pom.create(new ByteArrayInputStream(new AggregatorPomRenderer().generate(this).getBytes()), false, progressMonitor);
-	}
-
-	private void generateRepositoryProject(IProgressMonitor progressMonitor) throws Exception {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
-		IPath locationPath = generalInformationPage.getLocationPath();
-		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getGroupId()+".repository").toFile().toURI());
-		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
-		
-		final ICommand m2 = description.newCommand();
-        m2.setBuilderName(MAVEN_2_BUILDER);
-        description.setBuildSpec(new ICommand[] { m2 });
-
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(getGroupId()+".repository");
-		project.create(description, progressMonitor);
-		project.open(progressMonitor);
-		
-		IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
-		if (workingSets != null) {
-			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
-		}
-
-		project.getFile("pom.xml").create(new ByteArrayInputStream(new RepositoryPomRenderer().generate(this).getBytes()), false, progressMonitor);
-		project.getFile("category.xml").create(new ByteArrayInputStream(new CategoryRenderer().generate(this).getBytes()), false, progressMonitor);
 		project.getFile(getGroupId()+".product").create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
 		if (shallGenerateTestsFeature()) {
 			project.getFile(getTestsArtifactId()+".product").create(new ByteArrayInputStream(new TestsProductRenderer().generate(this).getBytes()), false, progressMonitor);			
 		}
+		
+		return project;
 	}
 	
-	private void generateTargetProject(IProgressMonitor progressMonitor) throws Exception {
-		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
-		IPath locationPath = generalInformationPage.getLocationPath();
-		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getGroupId()+".target").toFile().toURI());
-		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
-		
-		final ICommand m2 = description.newCommand();
-        m2.setBuilderName(MAVEN_2_BUILDER);
-        description.setBuildSpec(new ICommand[] { m2 });
-
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(getGroupId()+".target");
-		project.create(description, progressMonitor);
-		project.open(progressMonitor);
-		
-		IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
-		if (workingSets != null) {
-			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
-		}
-
-		IFile pom = project.getFile("pom.xml");	
-		pom.create(new ByteArrayInputStream(new TargetPomRenderer().generate(this).getBytes()), false, progressMonitor);
-		
-		IFile targetFile = project.getFile(getGroupId()+".target");	
-//		target.create(new ByteArrayInputStream(new TargetRenderer().generate(this).getBytes()), false, progressMonitor);
-		
-		org.eclipse.pde.core.target.ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
-		
-		List<String> versions = new ArrayList<>();
-		List<String> unitIds = new ArrayList<>();
+	@Override
+	protected Collection<String[]> getTargetUnits() {
+		Collection<String[]> ret = new ArrayList<String[]>();
 		String version = FrameworkUtil.getBundle(this.getClass()).getVersion().toString();
-		if (isIncludeJetty()) { 
-			unitIds.add("org.nasdanika.server.jetty.feature.feature.group");
-			versions.add(version);
+		if (isIncludeJetty()) {
+			ret.add(new String[] {"org.nasdanika.server.jetty.feature.feature.group", version});
 		}
 		if (isIncludeNasdanika()) { 
-			unitIds.add("org.nasdanika.feature.feature.group");
-			versions.add(version);
+			ret.add(new String[] {"org.nasdanika.feature.feature.group", version});
 		}
 		if (isIncludeEquinox()) { 
-			unitIds.add("org.nasdanika.equinox.feature.feature.group");
-			versions.add(version);
+			ret.add(new String[] {"org.nasdanika.equinox.feature.feature.group", version});
 		}
 		if (isIncludeWebTest()) { 
-			unitIds.add("org.nasdanika.webtest.feature.feature.group");
-			versions.add(version);
+			ret.add(new String[] {"org.nasdanika.webtest.feature.feature.group", version});
 		}
 		if (isIncludeCdo()) { 
-			unitIds.add("org.nasdanika.cdo.feature.feature.group");
-			versions.add(version);
+			ret.add(new String[] {"org.nasdanika.cdo.feature.feature.group", version});
 		}
 		
-		java.net.URI[] repositories = { new java.net.URI("http://www.nasdanika.org/server/repository") };
-		int resolutionFlags = IUBundleContainer.INCLUDE_SOURCE; // | IUBundleContainer.INCLUDE_REQUIRED;		
-		
-		ITargetLocation targetLocation = service.newIULocation(unitIds.toArray(new String[unitIds.size()]), versions.toArray(new String[versions.size()]), repositories, resolutionFlags);			
-
-		ITargetDefinition targetDefinition = service.getTarget(targetFile).getTargetDefinition();
-		targetDefinition.setTargetLocations(new ITargetLocation[] { targetLocation });
-		targetDefinition.setName(getGroupId()+".target");
-		
-		service.saveTargetDefinition(targetDefinition);
-		//org.eclipse.pde.core.target.ITargetDefinition targetDefinition = service.getTarget(target).getTargetDefinition();
-//		for (ITargetLocation tl: targetDefinition.getTargetLocations()) {
-//			tl.resolve(targetDefinition, progressMonitor);
-//		}
-		IStatus rs = targetDefinition.resolve(progressMonitor);
-		System.out.println(rs);
-	}
+		return ret;
+	}	
 
 	private void generateModelProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnModel.getSelection()) {
@@ -1048,29 +849,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			
 			project.getFile("build.properties").create(new ByteArrayInputStream(new ModelBuildPropertiesRenderer().generate(this).getBytes()), false, progressMonitor);
 		}		
-	}
-
-	private void addMaven2NatureAndBuilder(IProgressMonitor progressMonitor, IProject project) throws CoreException {
-		IProjectDescription desc = project.getDescription();
-		String[] prevNatures = desc.getNatureIds();
-		String[] newNatures = new String[prevNatures.length + 1];
-		System.arraycopy(prevNatures, 0, newNatures, 0, prevNatures.length);
-		newNatures[prevNatures.length] = MAVEN_2_NATURE_ID;
-		desc.setNatureIds(newNatures);
-
-        ICommand [] oldBuilders = desc.getBuildSpec();
-        ICommand[] builders = new ICommand [oldBuilders.length + 1];
-        System.arraycopy(oldBuilders, 0, builders, 0, oldBuilders.length);
-        builders[oldBuilders.length] = desc.newCommand();
-        builders[oldBuilders.length].setBuilderName(MAVEN_2_BUILDER);
-        
-        // Generate preferences?
-		
-		project.setDescription(desc, progressMonitor);		
-	}
-
-	public void setInitialProjectName(String value) {
-		initialProjectName = value;
 	}
 
 	protected String[] getRequiredBundles() {
@@ -1163,21 +941,9 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 		return ret;
 	}
 
-	public String getGroupId() {
-		// TODO - variations depending on selections
-		return generalInformationPage.groupIdField.getText();
-	}
-
-	public String getParentArtifactId() {
-		return getGroupId()+".parent";
-	}
-
-	public String getVersion() {
-		return generalInformationPage.versionField.getText();
-	}
-
 	public List<String> getModules() {
-		List<String> ret = new ArrayList<>();		
+		List<String> ret = super.getModules();
+		
 		if (projectsPage.btnActorSpec.getSelection()) {
 			ret.add(getActorSpecArtifactId());
 		}
@@ -1210,204 +976,7 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 			ret.add(getTestsArtifactId()+".feature");			
 		}
 		
-		//ret.add(getGroupId()+".target");
-		ret.add(getGroupId()+".feature");
-		ret.add(getGroupId()+".repository");								
 		return ret;
-	}
-	
-	private IJavaProject createPluginProject(
-			final String name,
-			Iterable<String> requiredBundles,
-			Collection<String> importedPackages, 
-			Collection<String> exportedPackages, 
-			Collection<String> serviceComponents,
-			Collection<String> binIncludes,
-			boolean fragment,
-			IProgressMonitor progressMonitor) throws Exception {
-		
-		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		IProject project = workspace.getRoot().getProject(name);
-
-		// Clean up any old project information.
-		if (project.exists()) {
-			final boolean[] result = new boolean[1];
-			PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
-				public void run() {
-					result[0] = MessageDialog.openQuestion(getShell(), "Do you want to overwrite the project "
-							+ name, "Note that everything inside the project '" + name
-							+ "' will be deleted if you confirm this dialog.");
-				}
-			});
-			if (result[0]) {
-				project.delete(true, true, new SubProgressMonitor(progressMonitor, 1));
-			} else {
-				return null;
-			}
-		}
-
-		final IJavaProject javaProject = JavaCore.create(project);
-		final IProjectDescription description = workspace.newProjectDescription(name);
-		IPath locationPath = generalInformationPage.getLocationPath();
-		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(name).toFile().toURI());
-		project.create(description, progressMonitor);
-
-		description.setNatureIds(new String[] { JavaCore.NATURE_ID, "org.eclipse.pde.PluginNature" });
-
-		final ICommand java = description.newCommand();
-		java.setBuilderName(JavaCore.BUILDER_ID);
-
-		final ICommand manifest = description.newCommand();
-		manifest.setBuilderName("org.eclipse.pde.ManifestBuilder");
-
-		final ICommand schema = description.newCommand();
-		schema.setBuilderName("org.eclipse.pde.SchemaBuilder");
-
-		description.setBuildSpec(new ICommand[] { java, manifest, schema });
-				
-		project.open(new SubProgressMonitor(progressMonitor, 1));
-		project.setDescription(description, new SubProgressMonitor(progressMonitor, 1));
-
-		addMaven2NatureAndBuilder(progressMonitor, project);				
-
-		final IFolder srcContainer = project.getFolder("src");
-		if (!srcContainer.exists()) {
-			srcContainer.create(false, true, new SubProgressMonitor(progressMonitor, 1));
-		}
-		final List<IClasspathEntry> classpathEntries = new ArrayList<>();
-		final IClasspathEntry srcClasspathEntry = JavaCore.newSourceEntry(srcContainer.getFullPath());
-		classpathEntries.add(srcClasspathEntry);
-
-		classpathEntries.add(
-				JavaCore.newContainerEntry(
-						new Path("org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7")));
-		classpathEntries.add(
-				JavaCore.newContainerEntry(
-						new Path("org.eclipse.pde.core.requiredPlugins")));
-
-		javaProject.setRawClasspath(classpathEntries.toArray(new IClasspathEntry[classpathEntries.size()]),	new SubProgressMonitor(progressMonitor, 1));
-
-		javaProject.setOutputLocation(new Path("/" + name + "/bin"), new SubProgressMonitor(progressMonitor, 1));
-		createManifest(
-				name, 
-				requiredBundles, 
-				importedPackages, 
-				exportedPackages, 
-				serviceComponents,
-				fragment,
-				progressMonitor, 
-				project);
-		createBuildProps(progressMonitor, binIncludes, project);
-		return javaProject;
-	}
-
-	private static void createFile(
-			String name, 
-			IContainer container,
-			String content,
-			IProgressMonitor progressMonitor) throws Exception {
-		
-		IFile file = container.getFile(new Path(name));
-		try (InputStream stream = new ByteArrayInputStream(content.getBytes(file.getCharset()))) {
-			if (file.exists()) {
-				file.setContents(stream, true, true, progressMonitor);
-			} else {
-				file.create(stream, true, progressMonitor);
-			}
-		}
-		progressMonitor.worked(1);
-	}
-
-	private static void createBuildProps(
-			IProgressMonitor progressMonitor, 
-			Collection<String> binIncludes, 
-			IProject project) throws Exception {
-		StringBuilder bpContent = new StringBuilder("source.. = src")
-			.append(System.lineSeparator())
-			.append("bin.includes = ");
-		
-		if (binIncludes != null) {
-			for (String bi: binIncludes) {
-				bpContent.append(bi).append(",");
-			}
-		}
-
-		bpContent.append("META-INF/,.").append(System.lineSeparator());
-		createFile("build.properties", project, bpContent.toString(), progressMonitor);
-	}
-
-	private void createManifest(
-			String projectName, 
-			Iterable<String> requiredBundles,
-			Collection<String> importedPackages,
-			Collection<String> exportedPackages, 
-			Collection<String> serviceComponents,
-			boolean fragment,
-			IProgressMonitor progressMonitor, 
-			IProject project) throws Exception {
-		StringBuilder manifestBuilder = new StringBuilder("Manifest-Version: 1.0").append(System.lineSeparator());
-		manifestBuilder.append("Bundle-ManifestVersion: 2").append(System.lineSeparator());
-		manifestBuilder.append("Bundle-Name: " + projectName).append(System.lineSeparator());
-		manifestBuilder.append("Bundle-SymbolicName: " + projectName + "; singleton:=true").append(System.lineSeparator()); // TODO - Singleton?
-		manifestBuilder.append("Bundle-Version: ").append(getVersion()).append(".qualifier").append(System.lineSeparator());
-		if (fragment) {
-			manifestBuilder.append("Fragment-Host: ")
-				.append(getApplicationArtifactId())
-				.append(";bundle-version=\"")
-				.append(getVersion())
-				.append("\"")
-				.append(System.lineSeparator());
-		}
-		manifestBuilder.append("Bundle-RequiredExecutionEnvironment: JavaSE-1.7").append(System.lineSeparator());
-		manifestBuilder.append("Require-Bundle:");
-		Iterator<String> rit = requiredBundles.iterator();
-		while (rit.hasNext()) {
-			manifestBuilder.append(" ").append(rit.next());
-			if (rit.hasNext()) {
-				manifestBuilder.append(",");				
-			}
-			manifestBuilder.append(System.lineSeparator());
-		}
-
-		if (serviceComponents != null && !serviceComponents.isEmpty()) {
-			manifestBuilder.append("Service-Component:");
-			Iterator<String> scit = serviceComponents.iterator();
-			while (scit.hasNext()) {
-				manifestBuilder.append(" ").append(scit.next());
-				if (scit.hasNext()) {
-					manifestBuilder.append(",");				
-				}
-				manifestBuilder.append(System.lineSeparator());
-			}
-		}
-
-		if (exportedPackages != null && !exportedPackages.isEmpty()) {
-			manifestBuilder.append("Export-Package:");
-			Iterator<String> epit = exportedPackages.iterator();
-			while (epit.hasNext()) {
-				manifestBuilder.append(" ").append(epit.next());
-				if (epit.hasNext()) {
-					manifestBuilder.append(",");				
-				}
-				manifestBuilder.append(System.lineSeparator());
-			}
-		}
-
-		if (importedPackages != null && !importedPackages.isEmpty()) {
-			manifestBuilder.append("Import-Package:");
-			Iterator<String> ipit = importedPackages.iterator();
-			while (ipit.hasNext()) {
-				manifestBuilder.append(" ").append(ipit.next());
-				if (ipit.hasNext()) {
-					manifestBuilder.append(",");				
-				}
-				manifestBuilder.append(System.lineSeparator());
-			}
-		}
-
-		final IFolder metaInf = project.getFolder("META-INF");
-		metaInf.create(false, true, new SubProgressMonitor(progressMonitor, 1));
-		createFile("MANIFEST.MF", metaInf, manifestBuilder.toString(), progressMonitor);
 	}
 
 	public boolean isIncludeJetty() {
@@ -1443,10 +1012,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 						|| applicationConfigurationPage.btnServer.getSelection()
 						|| applicationConfigurationPage.btnSessionInitializer.getSelection()
 						|| applicationConfigurationPage.btnTransactionContextProvider.getSelection());
-	}
-
-	public String getName() {		
-		return generalInformationPage.nameField.getText();
 	}
 
 	public Object getApplicationPlugin() {
@@ -1503,6 +1068,6 @@ public class WorkspaceWizard extends Wizard implements INewWizard {
 	public boolean canFinish() {		
 		// Got to go to the end of the wizard.
 		return !getContainer().getCurrentPage().canFlipToNextPage();
-	}
+	}	
 	
 }
