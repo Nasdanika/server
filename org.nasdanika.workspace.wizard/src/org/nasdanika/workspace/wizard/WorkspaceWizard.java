@@ -10,58 +10,41 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.eclipse.core.resources.ICommand;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IProjectDescription;
-import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.codegen.ecore.Generator;
 import org.eclipse.emf.codegen.ecore.genmodel.provider.GenModelEditPlugin;
 import org.eclipse.emf.codegen.util.CodeGenUtil;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.edit.ui.provider.ExtendedImageRegistry;
-import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
-import org.eclipse.jdt.core.JavaCore;
-import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.pde.core.target.ITargetDefinition;
-import org.eclipse.pde.core.target.ITargetLocation;
-import org.eclipse.pde.core.target.ITargetPlatformService;
-import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.feature.FeatureChild;
 import org.eclipse.pde.internal.core.feature.FeaturePlugin;
 import org.eclipse.pde.internal.core.feature.WorkspaceFeatureModel;
 import org.eclipse.pde.internal.core.ifeature.IFeature;
 import org.eclipse.pde.internal.core.ifeature.IFeaturePlugin;
-import org.eclipse.pde.internal.core.target.IUBundleContainer;
 import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation;
 import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
-import org.eclipse.ui.PlatformUI;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPluginRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderComponentRenderer;
@@ -103,6 +86,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		applicationConfigurationPage = new ApplicationConfigurationPage();
 		addPage(applicationConfigurationPage);
 	}
+	
 	public void modifyWorkspace(IProgressMonitor progressMonitor) throws Exception {
 		super.modifyWorkspace(progressMonitor);
 		
@@ -136,7 +120,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
 			
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 			}
@@ -160,7 +144,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					null,
 					progressMonitor);
 			
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 			}
@@ -191,7 +175,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
 			
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 			}
@@ -224,7 +208,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					null,
 					progressMonitor);
 			
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 			}
@@ -313,7 +297,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					null,
 					progressMonitor);
 			
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 			}
@@ -471,7 +455,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					projectsPage.btnApplication.getSelection() ? getActorImplArtifactId() : null,
 					progressMonitor);
 			
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 			}
@@ -497,18 +481,18 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(getGroupId()+".feature");
 		
-		IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+		IWorkingSet[] workingSets = getSelectedWorkingSets();
 		if (workingSets != null) {
 			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
 		}
 		
-		IPath location = generalInformationPage.getLocationPath();
+		IPath location = getLocationPath();
 		if (!Platform.getLocation().equals(location)) {
 			location = location.append(getGroupId()+".feature");
 		}
 		FeatureData featureData = new FeatureData();
 		featureData.id = getGroupId()+".feature";
-		featureData.name = generalInformationPage.nameField.getText()+" feature";
+		featureData.name = getName()+" feature";
 		featureData.version = getVersion()+".qualifier";
 		new CreateFeatureProjectOperation(project, location, featureData, null, getShell()) {
 			
@@ -631,19 +615,19 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		if (shallGenerateTestsFeature()) {
 			IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 			IProject project = root.getProject(getTestsArtifactId()+".feature");
-			IPath location = generalInformationPage.getLocationPath();
+			IPath location = getLocationPath();
 			if (!Platform.getLocation().equals(location)) {
 				location = location.append(getTestsArtifactId()+".feature");
 			}
 			
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
 			}
 			
 			FeatureData featureData = new FeatureData();
 			featureData.id = getTestsArtifactId()+".feature";
-			featureData.name = generalInformationPage.nameField.getText()+" tests feature";
+			featureData.name = getName()+" tests feature";
 			featureData.version = getVersion()+".qualifier";
 			new CreateFeatureProjectOperation(project, location, featureData, null, getShell()) {
 				
@@ -731,15 +715,17 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 	
 	@Override
 	public Map<String, String> getRepositories() {
-		Map<String, String> repoMap = new HashMap<>();
+		return Collections.singletonMap("nasdanika-server", "http://www.nasdanika.org/server/repository");
+		
+//		Map<String, String> repoMap = new HashMap<>();
 		
 		// Kinda bad style, load from a properties file?
 //		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
 //		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository");
 //		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.5.v20151012");
 //		repoMap.put("maven-osgi", "http://www.nasdanika.org/maven-osgi");
-		repoMap.put("nasdanika-server", "http://www.nasdanika.org/server/repository");
-		return repoMap;
+//		repoMap.put("nasdanika-server", "http://www.nasdanika.org/server/repository");
+//		return repoMap;
 	}
 	
 	@Override
@@ -789,14 +775,14 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 	private void generateModelProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnModel.getSelection()) {
 			IPath genModelContainerPath = ResourcesPlugin.getWorkspace().getRoot().getProject(getModelArtifactId()).getFullPath().append("src");
-			IPath locationPath = generalInformationPage.getLocationPath();
+			IPath locationPath = getLocationPath();
 			IPath genModelProjectLocation = Platform.getLocation().equals(locationPath) ? null : locationPath.append(getModelArtifactId());
 			IProject project = Generator.createEMFProject(
 					new Path(genModelContainerPath.toString()),
 					genModelProjectLocation, Collections.<IProject> emptyList(),
 					progressMonitor, Generator.EMF_MODEL_PROJECT_STYLE| Generator.EMF_PLUGIN_PROJECT_STYLE);
 	
-			IWorkingSet[] workingSets = generalInformationPage.getSelectedWorkingSets();
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
 			if (workingSets != null) {
 				workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
 			}
@@ -857,14 +843,14 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 
 	public String getModelArtifactId() {		
 		return projectsPage.modelSuffix.getText().trim().length()==0 ? 
-				generalInformationPage.groupIdField.getText() 
-				: generalInformationPage.groupIdField.getText()+"."+projectsPage.modelSuffix.getText();
+				getGroupId() 
+				: getGroupId() + "."+projectsPage.modelSuffix.getText();
 	}
 
 	public String getApplicationArtifactId() {		
 		return projectsPage.applicationSuffix.getText().trim().length()==0 ? 
-				generalInformationPage.groupIdField.getText() 
-				: generalInformationPage.groupIdField.getText()+"."+projectsPage.applicationSuffix.getText();
+				getGroupId() 
+				: getGroupId()+"."+projectsPage.applicationSuffix.getText();
 	}
 	
 	public boolean isApplication() {
@@ -877,8 +863,8 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 
 	public String getTestsArtifactId() {		
 		return projectsPage.testsSuffix.getText().trim().length()==0 ? 
-				generalInformationPage.groupIdField.getText() 
-				: generalInformationPage.groupIdField.getText()+"."+projectsPage.testsSuffix.getText();
+				getGroupId() 
+				: getGroupId()+"."+projectsPage.testsSuffix.getText();
 	}
 	
 	public boolean isTests() {

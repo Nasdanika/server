@@ -53,7 +53,7 @@ import org.eclipse.ui.actions.WorkspaceModifyOperation;
 public abstract class AbstractWorkspaceWizard extends Wizard implements INewWizard {
 	protected static final String MAVEN_2_BUILDER = "org.eclipse.m2e.core.maven2Builder";
 	protected static final String MAVEN_2_NATURE_ID = "org.eclipse.m2e.core.maven2Nature";
-	protected GeneralInformationPage generalInformationPage;
+	private GeneralInformationPage generalInformationPage;
 	
 	protected IWorkbench workbench;
 	protected IStructuredSelection selection;
@@ -539,5 +539,12 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		return !getContainer().getCurrentPage().canFlipToNextPage();
 	}
 	
+	protected IWorkingSet[] getSelectedWorkingSets() {
+		return generalInformationPage.getSelectedWorkingSets();
+	}
+
+	protected IPath getLocationPath() {
+		return generalInformationPage.getLocationPath();
+	}
 
 }
