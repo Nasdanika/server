@@ -1,0 +1,7 @@
+public class CLASS {
+
+
+public String generate(org.nasdanika.workspace.wizard.AbstractWorkspaceWizard wizard) throws Exception {
+     return "";
+   }
+ }
