@@ -1,4 +1,4 @@
-<%@ jet package="org.nasdanika.workspace.wizard" class="ParentPomRenderer" skeleton="Renderer.skeleton" %>
+<%@ jet package="org.nasdanika.workspace.wizard" class="ParentPomRenderer" skeleton="AbstractWizardRenderer.skeleton" %>
 <?xml version="1.0" encoding="UTF-8"?>
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
@@ -15,37 +15,17 @@
 	</prerequisites>
 	
 	<properties>
-		<tycho-version>0.23.0</tycho-version>
-		<mars-repo.url>http://download.eclipse.org/releases/mars</mars-repo.url>
+		<tycho-version>0.24.0</tycho-version>
 	</properties>
 
 	<repositories>
-		<!-- configure p2 repository to resolve against -->
-		<repository>
-			<id>mars</id>
-			<url>${mars-repo.url}</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>orbit</id>
-			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>jetty</id>
-			<url>http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.5.v20151012</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>maven-osgi</id>
-			<url>http://www.nasdanika.org/maven-osgi</url>
-			<layout>p2</layout>
-		</repository>
-		<repository>
-			<id>nasdanika-server</id>
-			<url>http://www.nasdanika.org/server/repository</url>
-			<layout>p2</layout>
-		</repository>
+		<% for (java.util.Map.Entry<String,String> repoEntry: wizard.getRepositories().entrySet()) { %>
+			<repository>
+				<id><%=repoEntry.getKey()%></id>
+				<url><%=repoEntry.getValue()%></url>
+				<layout>p2</layout>
+			</repository>		
+		<% } %>
 	</repositories>
  	
  	<build>

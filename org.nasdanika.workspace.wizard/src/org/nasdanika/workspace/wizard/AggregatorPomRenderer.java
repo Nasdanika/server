@@ -22,7 +22,7 @@ public class AggregatorPomRenderer {
   protected final String TEXT_7 = NL + "\t</modules>" + NL + "</project>";
   protected final String TEXT_8 = NL;
 
-public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
+public String generate(org.nasdanika.workspace.wizard.AbstractWorkspaceWizard wizard) throws Exception
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);

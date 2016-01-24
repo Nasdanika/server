@@ -1,4 +1,4 @@
-<%@ jet package="org.nasdanika.workspace.wizard" class="RepositoryPomRenderer" skeleton="Renderer.skeleton" %>
+<%@ jet package="org.nasdanika.workspace.wizard" class="RepositoryPomRenderer" skeleton="AbstractWizardRenderer.skeleton" %>
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -22,6 +22,7 @@
 					<includeAllDependencies>true</includeAllDependencies>
 				</configuration>
 			</plugin>
+			<% if (!wizard.getProductsToMaterialize().isEmpty()) { %>
 			<plugin>
 				<groupId>org.eclipse.tycho</groupId>
 				<artifactId>tycho-p2-director-plugin</artifactId>
@@ -39,15 +40,18 @@
 				</executions>
 				<configuration>
 					<products>
+						<% for (String productId: wizard.getProductsToMaterialize()) { %>
 						<product>
-							<id><%=wizard.getGroupId()%>.product</id>
+							<id><%=productId%></id>
 						</product>
+						<% } %>
 					</products>
 					<!-- global optional parameters (with default values) -->
 					<installFeatures>true</installFeatures>
 					<profile>DefaultProfile</profile>
 				</configuration>
 			</plugin>
+			<% } %>
 		</plugins>
 	</build>
 </project>
