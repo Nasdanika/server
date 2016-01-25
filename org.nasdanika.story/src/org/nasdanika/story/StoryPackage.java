@@ -1155,14 +1155,14 @@ public interface StoryPackage extends EPackage {
 	int STORY_OPERATION_COUNT = STORY_BASE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.AcceptanceCriterionImpl <em>Acceptance Criterion</em>}' class.
+	 * The meta object id for the '{@link org.nasdanika.story.impl.ScenarioImpl <em>Scenario</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.AcceptanceCriterionImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getAcceptanceCriterion()
+	 * @see org.nasdanika.story.impl.ScenarioImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getScenario()
 	 * @generated
 	 */
-	int ACCEPTANCE_CRITERION = 13;
+	int SCENARIO = 13;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1171,7 +1171,25 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACCEPTANCE_CRITERION__ID = 0;
+	int SCENARIO__ID = CATALOG_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCENARIO__NAME = CATALOG_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCENARIO__DESCRIPTION = CATALOG_ELEMENT__DESCRIPTION;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -1180,7 +1198,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACCEPTANCE_CRITERION__CONTEXT = 1;
+	int SCENARIO__CONTEXT = CATALOG_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Action</b></em>' attribute.
@@ -1189,7 +1207,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACCEPTANCE_CRITERION__ACTION = 2;
+	int SCENARIO__ACTION = CATALOG_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Outcome</b></em>' attribute.
@@ -1198,25 +1216,25 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACCEPTANCE_CRITERION__OUTCOME = 3;
+	int SCENARIO__OUTCOME = CATALOG_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The number of structural features of the '<em>Acceptance Criterion</em>' class.
+	 * The number of structural features of the '<em>Scenario</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACCEPTANCE_CRITERION_FEATURE_COUNT = 4;
+	int SCENARIO_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The number of operations of the '<em>Acceptance Criterion</em>' class.
+	 * The number of operations of the '<em>Scenario</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACCEPTANCE_CRITERION_OPERATION_COUNT = 0;
+	int SCENARIO_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.story.impl.ConditionalProtagonistImpl <em>Conditional Protagonist</em>}' class.
@@ -1761,58 +1779,47 @@ public interface StoryPackage extends EPackage {
 	EReference getStory_Realizes();
 
 	/**
-	 * Returns the meta object for class '{@link org.nasdanika.story.AcceptanceCriterion <em>Acceptance Criterion</em>}'.
+	 * Returns the meta object for class '{@link org.nasdanika.story.Scenario <em>Scenario</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Acceptance Criterion</em>'.
-	 * @see org.nasdanika.story.AcceptanceCriterion
+	 * @return the meta object for class '<em>Scenario</em>'.
+	 * @see org.nasdanika.story.Scenario
 	 * @generated
 	 */
-	EClass getAcceptanceCriterion();
+	EClass getScenario();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.story.AcceptanceCriterion#getId <em>Id</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Id</em>'.
-	 * @see org.nasdanika.story.AcceptanceCriterion#getId()
-	 * @see #getAcceptanceCriterion()
-	 * @generated
-	 */
-	EAttribute getAcceptanceCriterion_Id();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.story.AcceptanceCriterion#getContext <em>Context</em>}'.
+	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Scenario#getContext <em>Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Context</em>'.
-	 * @see org.nasdanika.story.AcceptanceCriterion#getContext()
-	 * @see #getAcceptanceCriterion()
+	 * @see org.nasdanika.story.Scenario#getContext()
+	 * @see #getScenario()
 	 * @generated
 	 */
-	EAttribute getAcceptanceCriterion_Context();
+	EAttribute getScenario_Context();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.story.AcceptanceCriterion#getAction <em>Action</em>}'.
+	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Scenario#getAction <em>Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Action</em>'.
-	 * @see org.nasdanika.story.AcceptanceCriterion#getAction()
-	 * @see #getAcceptanceCriterion()
+	 * @see org.nasdanika.story.Scenario#getAction()
+	 * @see #getScenario()
 	 * @generated
 	 */
-	EAttribute getAcceptanceCriterion_Action();
+	EAttribute getScenario_Action();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.story.AcceptanceCriterion#getOutcome <em>Outcome</em>}'.
+	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Scenario#getOutcome <em>Outcome</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Outcome</em>'.
-	 * @see org.nasdanika.story.AcceptanceCriterion#getOutcome()
-	 * @see #getAcceptanceCriterion()
+	 * @see org.nasdanika.story.Scenario#getOutcome()
+	 * @see #getScenario()
 	 * @generated
 	 */
-	EAttribute getAcceptanceCriterion_Outcome();
+	EAttribute getScenario_Outcome();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.story.ConditionalProtagonist <em>Conditional Protagonist</em>}'.
@@ -2267,22 +2274,14 @@ public interface StoryPackage extends EPackage {
 		EReference STORY__REALIZES = eINSTANCE.getStory_Realizes();
 
 		/**
-		 * The meta object literal for the '{@link org.nasdanika.story.impl.AcceptanceCriterionImpl <em>Acceptance Criterion</em>}' class.
+		 * The meta object literal for the '{@link org.nasdanika.story.impl.ScenarioImpl <em>Scenario</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.story.impl.AcceptanceCriterionImpl
-		 * @see org.nasdanika.story.impl.StoryPackageImpl#getAcceptanceCriterion()
+		 * @see org.nasdanika.story.impl.ScenarioImpl
+		 * @see org.nasdanika.story.impl.StoryPackageImpl#getScenario()
 		 * @generated
 		 */
-		EClass ACCEPTANCE_CRITERION = eINSTANCE.getAcceptanceCriterion();
-
-		/**
-		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute ACCEPTANCE_CRITERION__ID = eINSTANCE.getAcceptanceCriterion_Id();
+		EClass SCENARIO = eINSTANCE.getScenario();
 
 		/**
 		 * The meta object literal for the '<em><b>Context</b></em>' attribute feature.
@@ -2290,7 +2289,7 @@ public interface StoryPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ACCEPTANCE_CRITERION__CONTEXT = eINSTANCE.getAcceptanceCriterion_Context();
+		EAttribute SCENARIO__CONTEXT = eINSTANCE.getScenario_Context();
 
 		/**
 		 * The meta object literal for the '<em><b>Action</b></em>' attribute feature.
@@ -2298,7 +2297,7 @@ public interface StoryPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ACCEPTANCE_CRITERION__ACTION = eINSTANCE.getAcceptanceCriterion_Action();
+		EAttribute SCENARIO__ACTION = eINSTANCE.getScenario_Action();
 
 		/**
 		 * The meta object literal for the '<em><b>Outcome</b></em>' attribute feature.
@@ -2306,7 +2305,7 @@ public interface StoryPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ACCEPTANCE_CRITERION__OUTCOME = eINSTANCE.getAcceptanceCriterion_Outcome();
+		EAttribute SCENARIO__OUTCOME = eINSTANCE.getScenario_Outcome();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.story.impl.ConditionalProtagonistImpl <em>Conditional Protagonist</em>}' class.

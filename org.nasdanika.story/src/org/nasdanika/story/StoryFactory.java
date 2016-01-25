@@ -94,13 +94,13 @@ public interface StoryFactory extends EFactory {
 	Story createStory();
 
 	/**
-	 * Returns a new object of class '<em>Acceptance Criterion</em>'.
+	 * Returns a new object of class '<em>Scenario</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Acceptance Criterion</em>'.
+	 * @return a new object of class '<em>Scenario</em>'.
 	 * @generated
 	 */
-	AcceptanceCriterion createAcceptanceCriterion();
+	Scenario createScenario();
 
 	/**
 	 * Returns a new object of class '<em>Conditional Protagonist</em>'.

@@ -9,26 +9,28 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.nasdanika.story.AcceptanceCriterion;
+import org.nasdanika.story.Scenario;
 import org.nasdanika.story.StoryPackage;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Acceptance Criterion</b></em>'.
+ * An implementation of the model object '<em><b>Scenario</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.story.impl.AcceptanceCriterionImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.nasdanika.story.impl.AcceptanceCriterionImpl#getContext <em>Context</em>}</li>
- *   <li>{@link org.nasdanika.story.impl.AcceptanceCriterionImpl#getAction <em>Action</em>}</li>
- *   <li>{@link org.nasdanika.story.impl.AcceptanceCriterionImpl#getOutcome <em>Outcome</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getContext <em>Context</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getAction <em>Action</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getOutcome <em>Outcome</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implements AcceptanceCriterion {
+public class ScenarioImpl extends MinimalEObjectImpl.Container implements Scenario {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -48,6 +50,46 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 	 * @ordered
 	 */
 	protected String id = ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String NAME_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getName()
+	 * @generated
+	 * @ordered
+	 */
+	protected String name = NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DESCRIPTION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected String description = DESCRIPTION_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -114,7 +156,7 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected AcceptanceCriterionImpl() {
+	protected ScenarioImpl() {
 		super();
 	}
 
@@ -125,7 +167,7 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return StoryPackage.Literals.ACCEPTANCE_CRITERION;
+		return StoryPackage.Literals.SCENARIO;
 	}
 
 	/**
@@ -146,7 +188,49 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 		String oldId = id;
 		id = newId;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.ACCEPTANCE_CRITERION__ID, oldId, id));
+			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.SCENARIO__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getName() {
+		return name;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setName(String newName) {
+		String oldName = name;
+		name = newName;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.SCENARIO__NAME, oldName, name));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		String oldDescription = description;
+		description = newDescription;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.SCENARIO__DESCRIPTION, oldDescription, description));
 	}
 
 	/**
@@ -167,7 +251,7 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 		String oldContext = context;
 		context = newContext;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.ACCEPTANCE_CRITERION__CONTEXT, oldContext, context));
+			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.SCENARIO__CONTEXT, oldContext, context));
 	}
 
 	/**
@@ -188,7 +272,7 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 		String oldAction = action;
 		action = newAction;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.ACCEPTANCE_CRITERION__ACTION, oldAction, action));
+			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.SCENARIO__ACTION, oldAction, action));
 	}
 
 	/**
@@ -209,7 +293,7 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 		String oldOutcome = outcome;
 		outcome = newOutcome;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.ACCEPTANCE_CRITERION__OUTCOME, oldOutcome, outcome));
+			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.SCENARIO__OUTCOME, oldOutcome, outcome));
 	}
 
 	/**
@@ -220,13 +304,17 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case StoryPackage.ACCEPTANCE_CRITERION__ID:
+			case StoryPackage.SCENARIO__ID:
 				return getId();
-			case StoryPackage.ACCEPTANCE_CRITERION__CONTEXT:
+			case StoryPackage.SCENARIO__NAME:
+				return getName();
+			case StoryPackage.SCENARIO__DESCRIPTION:
+				return getDescription();
+			case StoryPackage.SCENARIO__CONTEXT:
 				return getContext();
-			case StoryPackage.ACCEPTANCE_CRITERION__ACTION:
+			case StoryPackage.SCENARIO__ACTION:
 				return getAction();
-			case StoryPackage.ACCEPTANCE_CRITERION__OUTCOME:
+			case StoryPackage.SCENARIO__OUTCOME:
 				return getOutcome();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -240,16 +328,22 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case StoryPackage.ACCEPTANCE_CRITERION__ID:
+			case StoryPackage.SCENARIO__ID:
 				setId((String)newValue);
 				return;
-			case StoryPackage.ACCEPTANCE_CRITERION__CONTEXT:
+			case StoryPackage.SCENARIO__NAME:
+				setName((String)newValue);
+				return;
+			case StoryPackage.SCENARIO__DESCRIPTION:
+				setDescription((String)newValue);
+				return;
+			case StoryPackage.SCENARIO__CONTEXT:
 				setContext((String)newValue);
 				return;
-			case StoryPackage.ACCEPTANCE_CRITERION__ACTION:
+			case StoryPackage.SCENARIO__ACTION:
 				setAction((String)newValue);
 				return;
-			case StoryPackage.ACCEPTANCE_CRITERION__OUTCOME:
+			case StoryPackage.SCENARIO__OUTCOME:
 				setOutcome((String)newValue);
 				return;
 		}
@@ -264,16 +358,22 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case StoryPackage.ACCEPTANCE_CRITERION__ID:
+			case StoryPackage.SCENARIO__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case StoryPackage.ACCEPTANCE_CRITERION__CONTEXT:
+			case StoryPackage.SCENARIO__NAME:
+				setName(NAME_EDEFAULT);
+				return;
+			case StoryPackage.SCENARIO__DESCRIPTION:
+				setDescription(DESCRIPTION_EDEFAULT);
+				return;
+			case StoryPackage.SCENARIO__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
-			case StoryPackage.ACCEPTANCE_CRITERION__ACTION:
+			case StoryPackage.SCENARIO__ACTION:
 				setAction(ACTION_EDEFAULT);
 				return;
-			case StoryPackage.ACCEPTANCE_CRITERION__OUTCOME:
+			case StoryPackage.SCENARIO__OUTCOME:
 				setOutcome(OUTCOME_EDEFAULT);
 				return;
 		}
@@ -288,13 +388,17 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case StoryPackage.ACCEPTANCE_CRITERION__ID:
+			case StoryPackage.SCENARIO__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case StoryPackage.ACCEPTANCE_CRITERION__CONTEXT:
+			case StoryPackage.SCENARIO__NAME:
+				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case StoryPackage.SCENARIO__DESCRIPTION:
+				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+			case StoryPackage.SCENARIO__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
-			case StoryPackage.ACCEPTANCE_CRITERION__ACTION:
+			case StoryPackage.SCENARIO__ACTION:
 				return ACTION_EDEFAULT == null ? action != null : !ACTION_EDEFAULT.equals(action);
-			case StoryPackage.ACCEPTANCE_CRITERION__OUTCOME:
+			case StoryPackage.SCENARIO__OUTCOME:
 				return OUTCOME_EDEFAULT == null ? outcome != null : !OUTCOME_EDEFAULT.equals(outcome);
 		}
 		return super.eIsSet(featureID);
@@ -312,6 +416,10 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: ");
 		result.append(id);
+		result.append(", name: ");
+		result.append(name);
+		result.append(", description: ");
+		result.append(description);
 		result.append(", context: ");
 		result.append(context);
 		result.append(", action: ");
@@ -322,4 +430,4 @@ public class AcceptanceCriterionImpl extends MinimalEObjectImpl.Container implem
 		return result.toString();
 	}
 
-} //AcceptanceCriterionImpl
+} //ScenarioImpl

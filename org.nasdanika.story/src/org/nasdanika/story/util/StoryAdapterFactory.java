@@ -8,8 +8,6 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 
 import org.eclipse.emf.ecore.EObject;
-
-import org.nasdanika.story.AcceptanceCriterion;
 import org.nasdanika.story.Actor;
 import org.nasdanika.story.Catalog;
 import org.nasdanika.story.CatalogElement;
@@ -20,6 +18,7 @@ import org.nasdanika.story.Parameter;
 import org.nasdanika.story.Persona;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Role;
+import org.nasdanika.story.Scenario;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
@@ -136,8 +135,8 @@ public class StoryAdapterFactory extends AdapterFactoryImpl {
 				return createStoryAdapter();
 			}
 			@Override
-			public Adapter caseAcceptanceCriterion(AcceptanceCriterion object) {
-				return createAcceptanceCriterionAdapter();
+			public Adapter caseScenario(Scenario object) {
+				return createScenarioAdapter();
 			}
 			@Override
 			public Adapter caseConditionalProtagonist(ConditionalProtagonist object) {
@@ -354,16 +353,16 @@ public class StoryAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.story.AcceptanceCriterion <em>Acceptance Criterion</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.story.Scenario <em>Scenario</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.story.AcceptanceCriterion
+	 * @see org.nasdanika.story.Scenario
 	 * @generated
 	 */
-	public Adapter createAcceptanceCriterionAdapter() {
+	public Adapter createScenarioAdapter() {
 		return null;
 	}
 

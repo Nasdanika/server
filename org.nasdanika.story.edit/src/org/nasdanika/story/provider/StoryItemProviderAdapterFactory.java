@@ -256,26 +256,26 @@ public class StoryItemProviderAdapterFactory extends StoryAdapterFactory impleme
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.story.AcceptanceCriterion} instances.
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.story.Scenario} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected AcceptanceCriterionItemProvider acceptanceCriterionItemProvider;
+	protected ScenarioItemProvider scenarioItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.nasdanika.story.AcceptanceCriterion}.
+	 * This creates an adapter for a {@link org.nasdanika.story.Scenario}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createAcceptanceCriterionAdapter() {
-		if (acceptanceCriterionItemProvider == null) {
-			acceptanceCriterionItemProvider = new AcceptanceCriterionItemProvider(this);
+	public Adapter createScenarioAdapter() {
+		if (scenarioItemProvider == null) {
+			scenarioItemProvider = new ScenarioItemProvider(this);
 		}
 
-		return acceptanceCriterionItemProvider;
+		return scenarioItemProvider;
 	}
 
 	/**
@@ -454,7 +454,7 @@ public class StoryItemProviderAdapterFactory extends StoryAdapterFactory impleme
 		if (epicItemProvider != null) epicItemProvider.dispose();
 		if (themeItemProvider != null) themeItemProvider.dispose();
 		if (storyItemProvider != null) storyItemProvider.dispose();
-		if (acceptanceCriterionItemProvider != null) acceptanceCriterionItemProvider.dispose();
+		if (scenarioItemProvider != null) scenarioItemProvider.dispose();
 		if (conditionalProtagonistItemProvider != null) conditionalProtagonistItemProvider.dispose();
 		if (goalItemProvider != null) goalItemProvider.dispose();
 		if (parameterItemProvider != null) parameterItemProvider.dispose();

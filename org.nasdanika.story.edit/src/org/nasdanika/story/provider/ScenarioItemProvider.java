@@ -22,16 +22,16 @@ import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
-import org.nasdanika.story.AcceptanceCriterion;
+import org.nasdanika.story.Scenario;
 import org.nasdanika.story.StoryPackage;
 
 /**
- * This is the item provider adapter for a {@link org.nasdanika.story.AcceptanceCriterion} object.
+ * This is the item provider adapter for a {@link org.nasdanika.story.Scenario} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class AcceptanceCriterionItemProvider 
+public class ScenarioItemProvider 
 	extends ItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
@@ -45,7 +45,7 @@ public class AcceptanceCriterionItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AcceptanceCriterionItemProvider(AdapterFactory adapterFactory) {
+	public ScenarioItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -61,6 +61,8 @@ public class AcceptanceCriterionItemProvider
 			super.getPropertyDescriptors(object);
 
 			addIdPropertyDescriptor(object);
+			addNamePropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 			addContextPropertyDescriptor(object);
 			addActionPropertyDescriptor(object);
 			addOutcomePropertyDescriptor(object);
@@ -79,11 +81,55 @@ public class AcceptanceCriterionItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_AcceptanceCriterion_id_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_AcceptanceCriterion_id_feature", "_UI_AcceptanceCriterion_type"),
-				 StoryPackage.Literals.ACCEPTANCE_CRITERION__ID,
+				 getString("_UI_CatalogElement_id_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_CatalogElement_id_feature", "_UI_CatalogElement_type"),
+				 StoryPackage.Literals.CATALOG_ELEMENT__ID,
 				 false,
 				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Name feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addNamePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_CatalogElement_name_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_CatalogElement_name_feature", "_UI_CatalogElement_type"),
+				 StoryPackage.Literals.CATALOG_ELEMENT__NAME,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Description feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDescriptionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_CatalogElement_description_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_CatalogElement_description_feature", "_UI_CatalogElement_type"),
+				 StoryPackage.Literals.CATALOG_ELEMENT__DESCRIPTION,
+				 true,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -101,11 +147,11 @@ public class AcceptanceCriterionItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_AcceptanceCriterion_context_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_AcceptanceCriterion_context_feature", "_UI_AcceptanceCriterion_type"),
-				 StoryPackage.Literals.ACCEPTANCE_CRITERION__CONTEXT,
+				 getString("_UI_Scenario_context_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Scenario_context_feature", "_UI_Scenario_type"),
+				 StoryPackage.Literals.SCENARIO__CONTEXT,
 				 true,
-				 true,
+				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -123,11 +169,11 @@ public class AcceptanceCriterionItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_AcceptanceCriterion_action_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_AcceptanceCriterion_action_feature", "_UI_AcceptanceCriterion_type"),
-				 StoryPackage.Literals.ACCEPTANCE_CRITERION__ACTION,
+				 getString("_UI_Scenario_action_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Scenario_action_feature", "_UI_Scenario_type"),
+				 StoryPackage.Literals.SCENARIO__ACTION,
 				 true,
-				 true,
+				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -145,11 +191,11 @@ public class AcceptanceCriterionItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_AcceptanceCriterion_outcome_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_AcceptanceCriterion_outcome_feature", "_UI_AcceptanceCriterion_type"),
-				 StoryPackage.Literals.ACCEPTANCE_CRITERION__OUTCOME,
+				 getString("_UI_Scenario_outcome_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Scenario_outcome_feature", "_UI_Scenario_type"),
+				 StoryPackage.Literals.SCENARIO__OUTCOME,
 				 true,
-				 true,
+				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -157,14 +203,14 @@ public class AcceptanceCriterionItemProvider
 	}
 
 	/**
-	 * This returns AcceptanceCriterion.gif.
+	 * This returns Scenario.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/AcceptanceCriterion"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Scenario"));
 	}
 
 	/**
@@ -175,10 +221,10 @@ public class AcceptanceCriterionItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((AcceptanceCriterion)object).getId();
+		String label = ((Scenario)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_AcceptanceCriterion_type") :
-			getString("_UI_AcceptanceCriterion_type") + " " + label;
+			getString("_UI_Scenario_type") :
+			getString("_UI_Scenario_type") + " " + label;
 	}
 	
 
@@ -193,11 +239,13 @@ public class AcceptanceCriterionItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(AcceptanceCriterion.class)) {
-			case StoryPackage.ACCEPTANCE_CRITERION__ID:
-			case StoryPackage.ACCEPTANCE_CRITERION__CONTEXT:
-			case StoryPackage.ACCEPTANCE_CRITERION__ACTION:
-			case StoryPackage.ACCEPTANCE_CRITERION__OUTCOME:
+		switch (notification.getFeatureID(Scenario.class)) {
+			case StoryPackage.SCENARIO__ID:
+			case StoryPackage.SCENARIO__NAME:
+			case StoryPackage.SCENARIO__DESCRIPTION:
+			case StoryPackage.SCENARIO__CONTEXT:
+			case StoryPackage.SCENARIO__ACTION:
+			case StoryPackage.SCENARIO__OUTCOME:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

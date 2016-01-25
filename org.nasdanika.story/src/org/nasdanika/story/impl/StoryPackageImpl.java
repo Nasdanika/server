@@ -9,8 +9,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EcorePackage;
 
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
-import org.nasdanika.story.AcceptanceCriterion;
 import org.nasdanika.story.Actor;
 import org.nasdanika.story.Catalog;
 import org.nasdanika.story.CatalogElement;
@@ -21,6 +19,7 @@ import org.nasdanika.story.Parameter;
 import org.nasdanika.story.Persona;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Role;
+import org.nasdanika.story.Scenario;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
@@ -132,7 +131,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass acceptanceCriterionEClass = null;
+	private EClass scenarioEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -557,8 +556,8 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getAcceptanceCriterion() {
-		return acceptanceCriterionEClass;
+	public EClass getScenario() {
+		return scenarioEClass;
 	}
 
 	/**
@@ -566,8 +565,8 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAcceptanceCriterion_Id() {
-		return (EAttribute)acceptanceCriterionEClass.getEStructuralFeatures().get(0);
+	public EAttribute getScenario_Context() {
+		return (EAttribute)scenarioEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -575,8 +574,8 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAcceptanceCriterion_Context() {
-		return (EAttribute)acceptanceCriterionEClass.getEStructuralFeatures().get(1);
+	public EAttribute getScenario_Action() {
+		return (EAttribute)scenarioEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -584,17 +583,8 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAcceptanceCriterion_Action() {
-		return (EAttribute)acceptanceCriterionEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getAcceptanceCriterion_Outcome() {
-		return (EAttribute)acceptanceCriterionEClass.getEStructuralFeatures().get(3);
+	public EAttribute getScenario_Outcome() {
+		return (EAttribute)scenarioEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -765,11 +755,10 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		createEAttribute(storyEClass, STORY__COMPLETED);
 		createEReference(storyEClass, STORY__REALIZES);
 
-		acceptanceCriterionEClass = createEClass(ACCEPTANCE_CRITERION);
-		createEAttribute(acceptanceCriterionEClass, ACCEPTANCE_CRITERION__ID);
-		createEAttribute(acceptanceCriterionEClass, ACCEPTANCE_CRITERION__CONTEXT);
-		createEAttribute(acceptanceCriterionEClass, ACCEPTANCE_CRITERION__ACTION);
-		createEAttribute(acceptanceCriterionEClass, ACCEPTANCE_CRITERION__OUTCOME);
+		scenarioEClass = createEClass(SCENARIO);
+		createEAttribute(scenarioEClass, SCENARIO__CONTEXT);
+		createEAttribute(scenarioEClass, SCENARIO__ACTION);
+		createEAttribute(scenarioEClass, SCENARIO__OUTCOME);
 
 		conditionalProtagonistEClass = createEClass(CONDITIONAL_PROTAGONIST);
 		createEReference(conditionalProtagonistEClass, CONDITIONAL_PROTAGONIST__PROTAGONIST);
@@ -829,6 +818,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		epicEClass.getESuperTypes().add(this.getStoryBase());
 		themeEClass.getESuperTypes().add(this.getCatalogElement());
 		storyEClass.getESuperTypes().add(this.getStoryBase());
+		scenarioEClass.getESuperTypes().add(this.getCatalogElement());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(catalogEClass, Catalog.class, "Catalog", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -870,7 +860,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		initEReference(getTheme_Children(), this.getTheme(), null, "children", null, 0, -1, Theme.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(storyEClass, Story.class, "Story", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getStory_Acceptancecriteria(), this.getAcceptanceCriterion(), null, "acceptancecriteria", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStory_Acceptancecriteria(), this.getScenario(), null, "acceptancecriteria", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Depends(), this.getStory(), null, "depends", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Themes(), this.getTheme(), null, "themes", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Protagonists(), this.getProtagonist(), null, "protagonists", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -881,11 +871,10 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		initEAttribute(getStory_Completed(), theEcorePackage.getEBoolean(), "completed", null, 0, 1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Realizes(), this.getGoal(), null, "realizes", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(acceptanceCriterionEClass, AcceptanceCriterion.class, "AcceptanceCriterion", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAcceptanceCriterion_Id(), ecorePackage.getEString(), "id", null, 0, 1, AcceptanceCriterion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAcceptanceCriterion_Context(), theEcorePackage.getEString(), "context", null, 0, 1, AcceptanceCriterion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAcceptanceCriterion_Action(), theEcorePackage.getEString(), "action", null, 0, 1, AcceptanceCriterion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAcceptanceCriterion_Outcome(), theEcorePackage.getEString(), "outcome", null, 0, 1, AcceptanceCriterion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(scenarioEClass, Scenario.class, "Scenario", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getScenario_Context(), theEcorePackage.getEString(), "context", null, 0, 1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getScenario_Action(), theEcorePackage.getEString(), "action", null, 0, 1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getScenario_Outcome(), theEcorePackage.getEString(), "outcome", null, 0, 1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionalProtagonistEClass, ConditionalProtagonist.class, "ConditionalProtagonist", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getConditionalProtagonist_Protagonist(), this.getProtagonist(), null, "protagonist", null, 1, -1, ConditionalProtagonist.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1133,25 +1122,19 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 			 "documentation", "Completed flag."
 		   });	
 		addAnnotation
-		  (getAcceptanceCriterion_Id(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Acceptance criterion unique identifier (resource-wide). It is used to link tesst to acceptance criteria."
-		   });	
-		addAnnotation
-		  (getAcceptanceCriterion_Context(), 
+		  (getScenario_Context(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Context (Given)."
 		   });	
 		addAnnotation
-		  (getAcceptanceCriterion_Action(), 
+		  (getScenario_Action(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Action (when)."
 		   });	
 		addAnnotation
-		  (getAcceptanceCriterion_Outcome(), 
+		  (getScenario_Outcome(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Outcome (then)."

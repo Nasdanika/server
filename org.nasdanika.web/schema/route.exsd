@@ -24,6 +24,8 @@
             <element ref="root_route" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="root_resource_route" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="extension_route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="eobject_route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="eobject_resource_route" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -107,7 +109,210 @@
                </restriction>
             </simpleType>
          </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  Route path. If path ends with /, then route matches anything below the path. Path and pattern a mutually exclusive.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="pattern" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="object_resource_route">
+      <complexType>
+         <attribute name="resource" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Action&apos;s resource.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="target" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Object type to which this action applies.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  Route path. If path ends with /, then route matches anything below the path. Path and pattern a mutually exclusive.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pattern" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contentType" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="eobject_route">
+      <annotation>
+         <documentation>
+            Route whcich matches EObject by namespace and classifier name.
+         </documentation>
+      </annotation>
+      <complexType>
+         <sequence>
+            <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
+         <attribute name="class" type="string" use="required">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.web.Route"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="target_namespace_uri" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Namespace URI of the target object class package.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="target" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the target EClass.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="method" use="required">
+            <annotation>
+               <documentation>
+                  HTTP method for the action.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="DELETE">
+                  </enumeration>
+                  <enumeration value="GET">
+                  </enumeration>
+                  <enumeration value="PATCH">
+                  </enumeration>
+                  <enumeration value="POST">
+                  </enumeration>
+                  <enumeration value="PUT">
+                  </enumeration>
+                  <enumeration value="*">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  Route path. If path ends with /, then route matches anything below the path. Path and pattern a mutually exclusive.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pattern" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="eobject_resource_route">
+      <annotation>
+         <documentation>
+            Resource route matching EObject by namespace URI and classifier name.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="resource" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Action&apos;s resource.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="target_namespace_uri" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Namespace URI of the target object class package.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="target" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Name of the target EClass.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="priority" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  Route path. If path ends with /, then route matches anything below the path. Path and pattern a mutually exclusive.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="pattern" type="string">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="contentType" type="string">
             <annotation>
                <documentation>
                   
@@ -232,53 +437,14 @@
                </restriction>
             </simpleType>
          </attribute>
-         <attribute name="pattern" type="string">
+         <attribute name="path" type="string">
             <annotation>
                <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="object_resource_route">
-      <complexType>
-         <attribute name="resource" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Action&apos;s resource.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="resource"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="target" type="string" use="required">
-            <annotation>
-               <documentation>
-                  Object type to which this action applies.
-               </documentation>
-               <appinfo>
-                  <meta.attribute kind="java"/>
-               </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="priority" type="string">
-            <annotation>
-               <documentation>
-                  
+                  Route path. If path ends with /, then route matches anything below the path. Path and pattern a mutually exclusive.
                </documentation>
             </annotation>
          </attribute>
          <attribute name="pattern" type="string">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="contentType" type="string">
             <annotation>
                <documentation>
                   
@@ -304,6 +470,13 @@
             <annotation>
                <documentation>
                   
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="path" type="string">
+            <annotation>
+               <documentation>
+                  Route path. If path ends with /, then route matches anything below the path. Path and pattern a mutually exclusive.
                </documentation>
             </annotation>
          </attribute>

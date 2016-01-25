@@ -398,7 +398,7 @@ public class StoryItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(StoryPackage.Literals.STORY__ACCEPTANCECRITERIA,
-				 StoryFactory.eINSTANCE.createAcceptanceCriterion()));
+				 StoryFactory.eINSTANCE.createScenario()));
 
 		newChildDescriptors.add
 			(createChildParameter

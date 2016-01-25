@@ -9,8 +9,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
-import org.nasdanika.story.AcceptanceCriterion;
 import org.nasdanika.story.Catalog;
 import org.nasdanika.story.ConditionalProtagonist;
 import org.nasdanika.story.Epic;
@@ -18,6 +16,7 @@ import org.nasdanika.story.Goal;
 import org.nasdanika.story.Parameter;
 import org.nasdanika.story.Persona;
 import org.nasdanika.story.Role;
+import org.nasdanika.story.Scenario;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryFactory;
 import org.nasdanika.story.StoryPackage;
@@ -76,7 +75,7 @@ public class StoryFactoryImpl extends EFactoryImpl implements StoryFactory {
 			case StoryPackage.EPIC: return createEpic();
 			case StoryPackage.THEME: return createTheme();
 			case StoryPackage.STORY: return createStory();
-			case StoryPackage.ACCEPTANCE_CRITERION: return createAcceptanceCriterion();
+			case StoryPackage.SCENARIO: return createScenario();
 			case StoryPackage.CONDITIONAL_PROTAGONIST: return createConditionalProtagonist();
 			case StoryPackage.GOAL: return createGoal();
 			case StoryPackage.PARAMETER: return createParameter();
@@ -170,9 +169,9 @@ public class StoryFactoryImpl extends EFactoryImpl implements StoryFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public AcceptanceCriterion createAcceptanceCriterion() {
-		AcceptanceCriterionImpl acceptanceCriterion = new AcceptanceCriterionImpl();
-		return acceptanceCriterion;
+	public Scenario createScenario() {
+		ScenarioImpl scenario = new ScenarioImpl();
+		return scenario;
 	}
 
 	/**

@@ -6,8 +6,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.Switch;
-
-import org.nasdanika.story.AcceptanceCriterion;
 import org.nasdanika.story.Actor;
 import org.nasdanika.story.Catalog;
 import org.nasdanika.story.CatalogElement;
@@ -18,6 +16,7 @@ import org.nasdanika.story.Parameter;
 import org.nasdanika.story.Persona;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Role;
+import org.nasdanika.story.Scenario;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
@@ -190,9 +189,10 @@ public class StorySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case StoryPackage.ACCEPTANCE_CRITERION: {
-				AcceptanceCriterion acceptanceCriterion = (AcceptanceCriterion)theEObject;
-				T result = caseAcceptanceCriterion(acceptanceCriterion);
+			case StoryPackage.SCENARIO: {
+				Scenario scenario = (Scenario)theEObject;
+				T result = caseScenario(scenario);
+				if (result == null) result = caseCatalogElement(scenario);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -414,17 +414,17 @@ public class StorySwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Acceptance Criterion</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Scenario</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Acceptance Criterion</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Scenario</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseAcceptanceCriterion(AcceptanceCriterion object) {
+	public T caseScenario(Scenario object) {
 		return null;
 	}
 

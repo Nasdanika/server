@@ -32,7 +32,7 @@ import org.eclipse.emf.common.util.EList;
 public interface Story extends StoryBase {
 	/**
 	 * Returns the value of the '<em><b>Acceptancecriteria</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.story.AcceptanceCriterion}.
+	 * The list contents are of type {@link org.nasdanika.story.Scenario}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
@@ -43,7 +43,7 @@ public interface Story extends StoryBase {
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<AcceptanceCriterion> getAcceptancecriteria();
+	EList<Scenario> getAcceptancecriteria();
 
 	/**
 	 * Returns the value of the '<em><b>Depends</b></em>' reference list.

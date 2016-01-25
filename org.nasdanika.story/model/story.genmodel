@@ -55,11 +55,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Story/completed"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Story/realizes"/>
     </genClasses>
-    <genClasses ecoreClass="story.ecore#//AcceptanceCriterion">
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/id"/>
-      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/context"/>
-      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/action"/>
-      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//AcceptanceCriterion/outcome"/>
+    <genClasses ecoreClass="story.ecore#//Scenario">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Scenario/context"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Scenario/action"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Scenario/outcome"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//ConditionalProtagonist">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//ConditionalProtagonist/protagonist"/>

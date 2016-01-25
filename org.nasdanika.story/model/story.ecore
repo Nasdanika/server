@@ -148,7 +148,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Story" eSuperTypes="#//StoryBase">
     <eStructuralFeatures xsi:type="ecore:EReference" name="acceptancecriteria" upperBound="-1"
-        eType="#//AcceptanceCriterion" containment="true">
+        eType="#//Scenario" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="A story may contain zero or more acceptance criteria."/>
       </eAnnotations>
@@ -201,13 +201,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="realizes" upperBound="-1"
         eType="#//Goal"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="AcceptanceCriterion">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        iD="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Acceptance criterion unique identifier (resource-wide). It is used to link tesst to acceptance criteria."/>
-      </eAnnotations>
-    </eStructuralFeatures>
+  <eClassifiers xsi:type="ecore:EClass" name="Scenario" eSuperTypes="#//CatalogElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Context (Given)."/>

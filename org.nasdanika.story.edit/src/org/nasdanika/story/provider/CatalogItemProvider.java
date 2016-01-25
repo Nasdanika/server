@@ -266,6 +266,11 @@ public class CatalogItemProvider
 			(createChildParameter
 				(StoryPackage.Literals.CATALOG__ELEMENTS,
 				 StoryFactory.eINSTANCE.createStory()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(StoryPackage.Literals.CATALOG__ELEMENTS,
+				 StoryFactory.eINSTANCE.createScenario()));
 	}
 
 	/**

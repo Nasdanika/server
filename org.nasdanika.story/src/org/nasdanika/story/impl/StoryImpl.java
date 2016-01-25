@@ -18,12 +18,11 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
-
-import org.nasdanika.story.AcceptanceCriterion;
 import org.nasdanika.story.ConditionalProtagonist;
 import org.nasdanika.story.Goal;
 import org.nasdanika.story.Parameter;
 import org.nasdanika.story.Protagonist;
+import org.nasdanika.story.Scenario;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.Theme;
@@ -122,7 +121,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<AcceptanceCriterion> acceptancecriteria;
+	protected EList<Scenario> acceptancecriteria;
 
 	/**
 	 * The cached value of the '{@link #getDepends() <em>Depends</em>}' reference list.
@@ -331,9 +330,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<AcceptanceCriterion> getAcceptancecriteria() {
+	public EList<Scenario> getAcceptancecriteria() {
 		if (acceptancecriteria == null) {
-			acceptancecriteria = new EObjectContainmentEList<AcceptanceCriterion>(AcceptanceCriterion.class, this, StoryPackage.STORY__ACCEPTANCECRITERIA);
+			acceptancecriteria = new EObjectContainmentEList<Scenario>(Scenario.class, this, StoryPackage.STORY__ACCEPTANCECRITERIA);
 		}
 		return acceptancecriteria;
 	}
@@ -549,7 +548,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 				return;
 			case StoryPackage.STORY__ACCEPTANCECRITERIA:
 				getAcceptancecriteria().clear();
-				getAcceptancecriteria().addAll((Collection<? extends AcceptanceCriterion>)newValue);
+				getAcceptancecriteria().addAll((Collection<? extends Scenario>)newValue);
 				return;
 			case StoryPackage.STORY__DEPENDS:
 				getDepends().clear();
