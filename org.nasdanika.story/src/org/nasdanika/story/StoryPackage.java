@@ -1047,13 +1047,13 @@ public interface StoryPackage extends EPackage {
 	int STORY__DESCRIPTION = STORY_BASE__DESCRIPTION;
 
 	/**
-	 * The feature id for the '<em><b>Acceptancecriteria</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Scenarios</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STORY__ACCEPTANCECRITERIA = STORY_BASE_FEATURE_COUNT + 0;
+	int STORY__SCENARIOS = STORY_BASE_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Depends</b></em>' reference list.
@@ -1669,15 +1669,15 @@ public interface StoryPackage extends EPackage {
 	EClass getStory();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.story.Story#getAcceptancecriteria <em>Acceptancecriteria</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.story.Story#getScenarios <em>Scenarios</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Acceptancecriteria</em>'.
-	 * @see org.nasdanika.story.Story#getAcceptancecriteria()
+	 * @return the meta object for the containment reference list '<em>Scenarios</em>'.
+	 * @see org.nasdanika.story.Story#getScenarios()
 	 * @see #getStory()
 	 * @generated
 	 */
-	EReference getStory_Acceptancecriteria();
+	EReference getStory_Scenarios();
 
 	/**
 	 * Returns the meta object for the reference list '{@link org.nasdanika.story.Story#getDepends <em>Depends</em>}'.
@@ -2194,12 +2194,12 @@ public interface StoryPackage extends EPackage {
 		EClass STORY = eINSTANCE.getStory();
 
 		/**
-		 * The meta object literal for the '<em><b>Acceptancecriteria</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Scenarios</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference STORY__ACCEPTANCECRITERIA = eINSTANCE.getStory_Acceptancecriteria();
+		EReference STORY__SCENARIOS = eINSTANCE.getStory_Scenarios();
 
 		/**
 		 * The meta object literal for the '<em><b>Depends</b></em>' reference list feature.

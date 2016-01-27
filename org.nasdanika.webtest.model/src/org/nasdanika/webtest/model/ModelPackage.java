@@ -1027,13 +1027,31 @@ public interface ModelPackage extends EPackage {
 	int OPERATION_RESULT__ARGUMENTS = DESCRIPTOR_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_RESULT__RESULT = DESCRIPTOR_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_RESULT__INSTANCE_ALIAS = DESCRIPTOR_FEATURE_COUNT + 10;
+
+	/**
 	 * The number of structural features of the '<em>Operation Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPERATION_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 9;
+	int OPERATION_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 11;
 
 	/**
 	 * The number of operations of the '<em>Operation Result</em>' class.
@@ -1300,6 +1318,24 @@ public interface ModelPackage extends EPackage {
 	int METHOD_RESULT__ARGUMENTS = OPERATION_RESULT__ARGUMENTS;
 
 	/**
+	 * The feature id for the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_RESULT__RESULT = OPERATION_RESULT__RESULT;
+
+	/**
+	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_RESULT__INSTANCE_ALIAS = OPERATION_RESULT__INSTANCE_ALIAS;
+
+	/**
 	 * The number of structural features of the '<em>Method Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1443,6 +1479,24 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int PAGE_METHOD_RESULT__ARGUMENTS = METHOD_RESULT__ARGUMENTS;
+
+	/**
+	 * The feature id for the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE_METHOD_RESULT__RESULT = METHOD_RESULT__RESULT;
+
+	/**
+	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
 
 	/**
 	 * The feature id for the '<em><b>Page Result</b></em>' reference.
@@ -1599,6 +1653,24 @@ public interface ModelPackage extends EPackage {
 	int INITIALIZATION_RESULT__ARGUMENTS = PAGE_METHOD_RESULT__ARGUMENTS;
 
 	/**
+	 * The feature id for the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INITIALIZATION_RESULT__RESULT = PAGE_METHOD_RESULT__RESULT;
+
+	/**
+	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INITIALIZATION_RESULT__INSTANCE_ALIAS = PAGE_METHOD_RESULT__INSTANCE_ALIAS;
+
+	/**
 	 * The feature id for the '<em><b>Page Result</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1753,6 +1825,24 @@ public interface ModelPackage extends EPackage {
 	int ACTOR_METHOD_RESULT__ARGUMENTS = METHOD_RESULT__ARGUMENTS;
 
 	/**
+	 * The feature id for the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR_METHOD_RESULT__RESULT = METHOD_RESULT__RESULT;
+
+	/**
+	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
+
+	/**
 	 * The feature id for the '<em><b>Actor Result</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1905,6 +1995,24 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int TEST_METHOD_RESULT__ARGUMENTS = METHOD_RESULT__ARGUMENTS;
+
+	/**
+	 * The feature id for the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_METHOD_RESULT__RESULT = METHOD_RESULT__RESULT;
+
+	/**
+	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
 
 	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' attribute list.
@@ -2957,6 +3065,28 @@ public interface ModelPackage extends EPackage {
 	EReference getOperationResult_Arguments();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.webtest.model.OperationResult#getResult <em>Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Result</em>'.
+	 * @see org.nasdanika.webtest.model.OperationResult#getResult()
+	 * @see #getOperationResult()
+	 * @generated
+	 */
+	EReference getOperationResult_Result();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.OperationResult#getInstanceAlias <em>Instance Alias</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Instance Alias</em>'.
+	 * @see org.nasdanika.webtest.model.OperationResult#getInstanceAlias()
+	 * @see #getOperationResult()
+	 * @generated
+	 */
+	EAttribute getOperationResult_InstanceAlias();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.Throwable <em>Throwable</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3840,6 +3970,22 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EReference OPERATION_RESULT__ARGUMENTS = eINSTANCE.getOperationResult_Arguments();
+
+		/**
+		 * The meta object literal for the '<em><b>Result</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference OPERATION_RESULT__RESULT = eINSTANCE.getOperationResult_Result();
+
+		/**
+		 * The meta object literal for the '<em><b>Instance Alias</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute OPERATION_RESULT__INSTANCE_ALIAS = eINSTANCE.getOperationResult_InstanceAlias();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.ThrowableImpl <em>Throwable</em>}' class.

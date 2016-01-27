@@ -26,6 +26,8 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.nasdanika.webtest.model.OperationResult#getFinish <em>Finish</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.OperationResult#getStatus <em>Status</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.OperationResult#getArguments <em>Arguments</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.OperationResult#getResult <em>Result</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.OperationResult#getInstanceAlias <em>Instance Alias</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult()
@@ -270,5 +272,56 @@ public interface OperationResult extends Descriptor {
 	 * @generated
 	 */
 	EList<OperationArgument> getArguments();
+
+	/**
+	 * Returns the value of the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Operation return value, if any.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Result</em>' containment reference.
+	 * @see #setResult(OperationArgument)
+	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_Result()
+	 * @model containment="true"
+	 * @generated
+	 */
+	OperationArgument getResult();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.webtest.model.OperationResult#getResult <em>Result</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Result</em>' containment reference.
+	 * @see #getResult()
+	 * @generated
+	 */
+	void setResult(OperationArgument value);
+
+	/**
+	 * Returns the value of the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Instance alias can be used to differentiate between several instances of the same
+	 * type participating in a test.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Instance Alias</em>' attribute.
+	 * @see #setInstanceAlias(String)
+	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_InstanceAlias()
+	 * @model
+	 * @generated
+	 */
+	String getInstanceAlias();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.webtest.model.OperationResult#getInstanceAlias <em>Instance Alias</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Instance Alias</em>' attribute.
+	 * @see #getInstanceAlias()
+	 * @generated
+	 */
+	void setInstanceAlias(String value);
 
 } // OperationResult

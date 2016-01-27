@@ -147,7 +147,7 @@
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Story" eSuperTypes="#//StoryBase">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="acceptancecriteria" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EReference" name="scenarios" upperBound="-1"
         eType="#//Scenario" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="A story may contain zero or more acceptance criteria."/>

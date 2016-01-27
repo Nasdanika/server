@@ -778,6 +778,24 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getOperationResult_Result() {
+		return (EReference)operationResultEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getOperationResult_InstanceAlias() {
+		return (EAttribute)operationResultEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getThrowable() {
 		return throwableEClass;
 	}
@@ -1216,6 +1234,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(operationResultEClass, OPERATION_RESULT__FINISH);
 		createEAttribute(operationResultEClass, OPERATION_RESULT__STATUS);
 		createEReference(operationResultEClass, OPERATION_RESULT__ARGUMENTS);
+		createEReference(operationResultEClass, OPERATION_RESULT__RESULT);
+		createEAttribute(operationResultEClass, OPERATION_RESULT__INSTANCE_ALIAS);
 
 		throwableEClass = createEClass(THROWABLE);
 		createEAttribute(throwableEClass, THROWABLE__TYPE);
@@ -1381,6 +1401,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getOperationResult_Finish(), ecorePackage.getELong(), "finish", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getOperationResult_Status(), this.getOperationStatus(), "status", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOperationResult_Arguments(), this.getOperationArgument(), null, "arguments", null, 0, -1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getOperationResult_Result(), this.getOperationArgument(), null, "result", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOperationResult_InstanceAlias(), ecorePackage.getEString(), "instanceAlias", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(throwableEClass, org.nasdanika.webtest.model.Throwable.class, "Throwable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getThrowable_Type(), ecorePackage.getEString(), "type", null, 0, 1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1838,6 +1860,18 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Operation arguments."
+		   });	
+		addAnnotation
+		  (getOperationResult_Result(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Operation return value, if any."
+		   });	
+		addAnnotation
+		  (getOperationResult_InstanceAlias(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Instance alias can be used to differentiate between several instances of the same\r\ntype participating in a test."
 		   });	
 		addAnnotation
 		  (throwableEClass, 

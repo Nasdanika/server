@@ -10,7 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.nasdanika.story,
  org.nasdanika.story.impl,
  org.nasdanika.story.util
-Require-Bundle: org.eclipse.core.runtime,
+Require-Bundle: org.eclipse.core.runtime;resolution:=optional;x-installation:=greedy,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.cdo;visibility:=reexport
 Bundle-ActivationPolicy: lazy

@@ -466,7 +466,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getStory_Acceptancecriteria() {
+	public EReference getStory_Scenarios() {
 		return (EReference)storyEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -744,7 +744,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		createEReference(themeEClass, THEME__CHILDREN);
 
 		storyEClass = createEClass(STORY);
-		createEReference(storyEClass, STORY__ACCEPTANCECRITERIA);
+		createEReference(storyEClass, STORY__SCENARIOS);
 		createEReference(storyEClass, STORY__DEPENDS);
 		createEReference(storyEClass, STORY__THEMES);
 		createEReference(storyEClass, STORY__PROTAGONISTS);
@@ -860,7 +860,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		initEReference(getTheme_Children(), this.getTheme(), null, "children", null, 0, -1, Theme.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(storyEClass, Story.class, "Story", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getStory_Acceptancecriteria(), this.getScenario(), null, "acceptancecriteria", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStory_Scenarios(), this.getScenario(), null, "scenarios", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Depends(), this.getStory(), null, "depends", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Themes(), this.getTheme(), null, "themes", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Protagonists(), this.getProtagonist(), null, "protagonists", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1068,7 +1068,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 			 "documentation", "Themes can be organized into a hierarchy."
 		   });	
 		addAnnotation
-		  (getStory_Acceptancecriteria(), 
+		  (getStory_Scenarios(), 
 		   source, 
 		   new String[] {
 			 "documentation", "A story may contain zero or more acceptance criteria."

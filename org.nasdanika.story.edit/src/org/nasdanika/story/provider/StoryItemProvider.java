@@ -309,7 +309,7 @@ public class StoryItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(StoryPackage.Literals.STORY__ACCEPTANCECRITERIA);
+			childrenFeatures.add(StoryPackage.Literals.STORY__SCENARIOS);
 			childrenFeatures.add(StoryPackage.Literals.STORY__CONDITIONALPROTAGONISTS);
 			childrenFeatures.add(StoryPackage.Literals.STORY__PARAMETERS);
 		}
@@ -375,7 +375,7 @@ public class StoryItemProvider
 			case StoryPackage.STORY__COMPLETED:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case StoryPackage.STORY__ACCEPTANCECRITERIA:
+			case StoryPackage.STORY__SCENARIOS:
 			case StoryPackage.STORY__CONDITIONALPROTAGONISTS:
 			case StoryPackage.STORY__PARAMETERS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
@@ -397,7 +397,7 @@ public class StoryItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(StoryPackage.Literals.STORY__ACCEPTANCECRITERIA,
+				(StoryPackage.Literals.STORY__SCENARIOS,
 				 StoryFactory.eINSTANCE.createScenario()));
 
 		newChildDescriptors.add

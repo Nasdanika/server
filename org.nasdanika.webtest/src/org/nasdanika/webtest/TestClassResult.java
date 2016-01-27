@@ -151,9 +151,11 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 	
 	@Override
-	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performance, Method method, Object[] args,	Object result, Throwable th) {
+	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performance, Method method, Object[] args, Object result, Throwable th) {
 		if (currentOperationResult instanceof ActorMethodResult && method.equals(currentOperationResult.operation)) {
+			currentOperationResult.setInstance(actor);
 			currentOperationResult.failure = th;
+			currentOperationResult.result = result;			
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;
@@ -207,7 +209,9 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	@Override
 	public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, JSONObject performance, Method method, Object[] args, Object result, Throwable th) {
 		if (currentOperationResult instanceof PageMethodResult && method.equals(currentOperationResult.operation)) {
+			currentOperationResult.setInstance(page);
 			currentOperationResult.failure = th;
+			currentOperationResult.result = result;
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;

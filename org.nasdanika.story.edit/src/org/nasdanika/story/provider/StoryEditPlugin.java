@@ -7,6 +7,7 @@ import org.eclipse.emf.common.EMFPlugin;
 import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.ecore.provider.EcoreEditPlugin;
+import org.osgi.framework.BundleActivator;
 
 /**
  * This is the central singleton for the Story edit plugin.
@@ -86,6 +87,19 @@ public final class StoryEditPlugin extends EMFPlugin {
 			// Remember the static instance.
 			//
 			plugin = this;
+		}
+
+		/**
+		 * The actual implementation of the purely OSGi-compatible <b>Bundle Activator</b>.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public static final class Activator extends EMFPlugin.OSGiDelegatingBundleActivator {
+			@Override
+			protected BundleActivator createBundle() {
+				return new Implementation();
+			}
 		}
 	}
 

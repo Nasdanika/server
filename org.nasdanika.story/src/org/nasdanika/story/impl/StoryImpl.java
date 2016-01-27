@@ -38,7 +38,7 @@ import org.nasdanika.story.Theme;
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getDescription <em>Description</em>}</li>
- *   <li>{@link org.nasdanika.story.impl.StoryImpl#getAcceptancecriteria <em>Acceptancecriteria</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.StoryImpl#getScenarios <em>Scenarios</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getDepends <em>Depends</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getThemes <em>Themes</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getProtagonists <em>Protagonists</em>}</li>
@@ -114,14 +114,14 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	protected String description = DESCRIPTION_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getAcceptancecriteria() <em>Acceptancecriteria</em>}' containment reference list.
+	 * The cached value of the '{@link #getScenarios() <em>Scenarios</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getAcceptancecriteria()
+	 * @see #getScenarios()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<Scenario> acceptancecriteria;
+	protected EList<Scenario> scenarios;
 
 	/**
 	 * The cached value of the '{@link #getDepends() <em>Depends</em>}' reference list.
@@ -330,11 +330,11 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Scenario> getAcceptancecriteria() {
-		if (acceptancecriteria == null) {
-			acceptancecriteria = new EObjectContainmentEList<Scenario>(Scenario.class, this, StoryPackage.STORY__ACCEPTANCECRITERIA);
+	public EList<Scenario> getScenarios() {
+		if (scenarios == null) {
+			scenarios = new EObjectContainmentEList<Scenario>(Scenario.class, this, StoryPackage.STORY__SCENARIOS);
 		}
-		return acceptancecriteria;
+		return scenarios;
 	}
 
 	/**
@@ -480,8 +480,8 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case StoryPackage.STORY__ACCEPTANCECRITERIA:
-				return ((InternalEList<?>)getAcceptancecriteria()).basicRemove(otherEnd, msgs);
+			case StoryPackage.STORY__SCENARIOS:
+				return ((InternalEList<?>)getScenarios()).basicRemove(otherEnd, msgs);
 			case StoryPackage.STORY__CONDITIONALPROTAGONISTS:
 				return ((InternalEList<?>)getConditionalprotagonists()).basicRemove(otherEnd, msgs);
 			case StoryPackage.STORY__PARAMETERS:
@@ -504,8 +504,8 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 				return getName();
 			case StoryPackage.STORY__DESCRIPTION:
 				return getDescription();
-			case StoryPackage.STORY__ACCEPTANCECRITERIA:
-				return getAcceptancecriteria();
+			case StoryPackage.STORY__SCENARIOS:
+				return getScenarios();
 			case StoryPackage.STORY__DEPENDS:
 				return getDepends();
 			case StoryPackage.STORY__THEMES:
@@ -546,9 +546,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 			case StoryPackage.STORY__DESCRIPTION:
 				setDescription((String)newValue);
 				return;
-			case StoryPackage.STORY__ACCEPTANCECRITERIA:
-				getAcceptancecriteria().clear();
-				getAcceptancecriteria().addAll((Collection<? extends Scenario>)newValue);
+			case StoryPackage.STORY__SCENARIOS:
+				getScenarios().clear();
+				getScenarios().addAll((Collection<? extends Scenario>)newValue);
 				return;
 			case StoryPackage.STORY__DEPENDS:
 				getDepends().clear();
@@ -604,8 +604,8 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 			case StoryPackage.STORY__DESCRIPTION:
 				setDescription(DESCRIPTION_EDEFAULT);
 				return;
-			case StoryPackage.STORY__ACCEPTANCECRITERIA:
-				getAcceptancecriteria().clear();
+			case StoryPackage.STORY__SCENARIOS:
+				getScenarios().clear();
 				return;
 			case StoryPackage.STORY__DEPENDS:
 				getDepends().clear();
@@ -652,8 +652,8 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case StoryPackage.STORY__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
-			case StoryPackage.STORY__ACCEPTANCECRITERIA:
-				return acceptancecriteria != null && !acceptancecriteria.isEmpty();
+			case StoryPackage.STORY__SCENARIOS:
+				return scenarios != null && !scenarios.isEmpty();
 			case StoryPackage.STORY__DEPENDS:
 				return depends != null && !depends.isEmpty();
 			case StoryPackage.STORY__THEMES:

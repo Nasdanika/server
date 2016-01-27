@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.story.Story#getAcceptancecriteria <em>Acceptancecriteria</em>}</li>
+ *   <li>{@link org.nasdanika.story.Story#getScenarios <em>Scenarios</em>}</li>
  *   <li>{@link org.nasdanika.story.Story#getDepends <em>Depends</em>}</li>
  *   <li>{@link org.nasdanika.story.Story#getThemes <em>Themes</em>}</li>
  *   <li>{@link org.nasdanika.story.Story#getProtagonists <em>Protagonists</em>}</li>
@@ -31,19 +31,19 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface Story extends StoryBase {
 	/**
-	 * Returns the value of the '<em><b>Acceptancecriteria</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>Scenarios</b></em>' containment reference list.
 	 * The list contents are of type {@link org.nasdanika.story.Scenario}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * A story may contain zero or more acceptance criteria.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Acceptancecriteria</em>' containment reference list.
-	 * @see org.nasdanika.story.StoryPackage#getStory_Acceptancecriteria()
+	 * @return the value of the '<em>Scenarios</em>' containment reference list.
+	 * @see org.nasdanika.story.StoryPackage#getStory_Scenarios()
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<Scenario> getAcceptancecriteria();
+	EList<Scenario> getScenarios();
 
 	/**
 	 * Returns the value of the '<em><b>Depends</b></em>' reference list.

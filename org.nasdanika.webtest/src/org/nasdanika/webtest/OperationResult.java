@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -63,10 +64,56 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	private String id;
 	
 	private Object[] arguments;
-	private boolean[] maskedArguments;
+	private boolean[] maskedArguments;	
 	
 	public Object[] getArguments() {
 		return arguments;
+	}
+		
+	private String instanceAlias;
+	
+	private static long instanceCounter;
+	
+	private static ThreadLocal<Map<Class<?>,Map<Object,String>>> instanceAliasMapThreadLocal = new ThreadLocal<Map<Class<?>,Map<Object,String>>>() {
+		
+		protected Map<Class<?>,Map<Object,String>> initialValue() {
+			return new WeakHashMap<Class<?>,Map<Object,String>>();
+		}
+		
+	};
+	
+	
+	/**
+	 * Sets operation instance.
+	 * @param instance
+	 */
+	public void setInstance(Object instance) {
+		if (instance!=null) {
+			Map<Class<?>, Map<Object, String>> instanceAliasMap = instanceAliasMapThreadLocal.get();
+			Map<Object, String> instanceClassAliasMap = instanceAliasMap.get(instance.getClass());
+			if (instanceClassAliasMap == null) {
+				instanceClassAliasMap = new WeakHashMap<Object,String>();
+				instanceAliasMap.put(instance.getClass(), instanceClassAliasMap);
+			}
+			
+			instanceAlias = instanceClassAliasMap.get(instance);
+			if (instanceAlias==null) {
+				if (instance instanceof Aliased) {
+					instanceAlias = ((Aliased) instance).getAlias();
+				} else {
+					String cName = instance.getClass().getName();					
+					int lastDotIdx = cName.lastIndexOf('.');
+					instanceAlias = cName.substring(lastDotIdx+1, lastDotIdx+2)+Long.toString(instanceCounter++);
+				}
+				instanceClassAliasMap.put(instance, instanceAlias);
+			}
+		}
+	}
+	
+	Object result;
+	
+	public Object getResult() {
+		return result;
 	}
 	
 	public O getOperation() {
@@ -117,6 +164,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 				" [operation=" + operation + 
 				", start=" + start + 
 				", finish=" + finish + 
+				", result=" + result +
 				", failure=" + failure + "]";
 	}
 
@@ -643,6 +691,16 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 				operationArgument.setMasked(maskedArguments[i]);
 				model.getArguments().add(operationArgument);
 			}
+		}
+		if (result!=null) {
+			OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
+			operationArgument.setType(result.getClass().getName());
+			operationArgument.setValue(result.toString());
+			operationArgument.setMasked(operation.getAnnotation(Mask.class)!=null);
+			model.getArguments().add(operationArgument);
+		}
+		if (instanceAlias!=null) {
+			model.setInstanceAlias(instanceAlias);
 		}
 		if (hasOwnFailure()) {
 			if (isFailure()) {

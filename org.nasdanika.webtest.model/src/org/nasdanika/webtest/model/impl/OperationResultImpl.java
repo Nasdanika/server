@@ -40,6 +40,8 @@ import org.nasdanika.webtest.model.ScreenshotEntry;
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getFinish <em>Finish</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getStatus <em>Status</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getArguments <em>Arguments</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getResult <em>Result</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getInstanceAlias <em>Instance Alias</em>}</li>
  * </ul>
  *
  * @generated
@@ -174,6 +176,36 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 	 * @ordered
 	 */
 	protected EList<OperationArgument> arguments;
+
+	/**
+	 * The cached value of the '{@link #getResult() <em>Result</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getResult()
+	 * @generated
+	 * @ordered
+	 */
+	protected OperationArgument result;
+
+	/**
+	 * The default value of the '{@link #getInstanceAlias() <em>Instance Alias</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInstanceAlias()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String INSTANCE_ALIAS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getInstanceAlias() <em>Instance Alias</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInstanceAlias()
+	 * @generated
+	 * @ordered
+	 */
+	protected String instanceAlias = INSTANCE_ALIAS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -405,6 +437,70 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public OperationArgument getResult() {
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetResult(OperationArgument newResult, NotificationChain msgs) {
+		OperationArgument oldResult = result;
+		result = newResult;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_RESULT__RESULT, oldResult, newResult);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setResult(OperationArgument newResult) {
+		if (newResult != result) {
+			NotificationChain msgs = null;
+			if (result != null)
+				msgs = ((InternalEObject)result).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ModelPackage.OPERATION_RESULT__RESULT, null, msgs);
+			if (newResult != null)
+				msgs = ((InternalEObject)newResult).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ModelPackage.OPERATION_RESULT__RESULT, null, msgs);
+			msgs = basicSetResult(newResult, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_RESULT__RESULT, newResult, newResult));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getInstanceAlias() {
+		return instanceAlias;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setInstanceAlias(String newInstanceAlias) {
+		String oldInstanceAlias = instanceAlias;
+		instanceAlias = newInstanceAlias;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS, oldInstanceAlias, instanceAlias));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -418,6 +514,8 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 				return basicSetError(null, msgs);
 			case ModelPackage.OPERATION_RESULT__ARGUMENTS:
 				return ((InternalEList<?>)getArguments()).basicRemove(otherEnd, msgs);
+			case ModelPackage.OPERATION_RESULT__RESULT:
+				return basicSetResult(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -448,6 +546,10 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 				return getStatus();
 			case ModelPackage.OPERATION_RESULT__ARGUMENTS:
 				return getArguments();
+			case ModelPackage.OPERATION_RESULT__RESULT:
+				return getResult();
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				return getInstanceAlias();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -491,6 +593,12 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 				getArguments().clear();
 				getArguments().addAll((Collection<? extends OperationArgument>)newValue);
 				return;
+			case ModelPackage.OPERATION_RESULT__RESULT:
+				setResult((OperationArgument)newValue);
+				return;
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				setInstanceAlias((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -530,6 +638,12 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 			case ModelPackage.OPERATION_RESULT__ARGUMENTS:
 				getArguments().clear();
 				return;
+			case ModelPackage.OPERATION_RESULT__RESULT:
+				setResult((OperationArgument)null);
+				return;
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				setInstanceAlias(INSTANCE_ALIAS_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -560,6 +674,10 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 				return status != STATUS_EDEFAULT;
 			case ModelPackage.OPERATION_RESULT__ARGUMENTS:
 				return arguments != null && !arguments.isEmpty();
+			case ModelPackage.OPERATION_RESULT__RESULT:
+				return result != null;
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				return INSTANCE_ALIAS_EDEFAULT == null ? instanceAlias != null : !INSTANCE_ALIAS_EDEFAULT.equals(instanceAlias);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -582,6 +700,8 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 		result.append(finish);
 		result.append(", status: ");
 		result.append(status);
+		result.append(", instanceAlias: ");
+		result.append(instanceAlias);
 		result.append(')');
 		return result.toString();
 	}

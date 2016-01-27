@@ -12,7 +12,6 @@ import java.util.regex.Pattern;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.BasicEList;
