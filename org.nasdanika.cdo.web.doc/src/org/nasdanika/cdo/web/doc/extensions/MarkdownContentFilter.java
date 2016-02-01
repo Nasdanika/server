@@ -7,6 +7,7 @@ import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.core.CoreUtil;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
+import org.pegdown.Parser;
 import org.pegdown.PegDownProcessor;
 
 /**
@@ -15,8 +16,7 @@ import org.pegdown.PegDownProcessor;
  *
  */
 public class MarkdownContentFilter implements ContentFilter {
-	PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS);
-
+	
 	@Override
 	public Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) throws Exception {
 		LinkRenderer linkRenderer = docRoute.createMarkdownLinkRenderer(baseURL, urlPrefix);
@@ -25,7 +25,7 @@ public class MarkdownContentFilter implements ContentFilter {
 		}
 		String markdown = CoreUtil.stringify(content);
 		// TODO - expand markdown
-		return "<div class=\"markdown-body\">"+pegDownProcessor.markdownToHtml(docRoute.expand(markdown, baseURL, urlPrefix), linkRenderer)+"</div>";
+		return "<div class=\"markdown-body\">"+new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(docRoute.preProcessMarkdown(markdown, baseURL, urlPrefix), linkRenderer)+"</div>";
 	}
 
 }

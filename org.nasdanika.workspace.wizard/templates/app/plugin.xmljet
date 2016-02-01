@@ -342,6 +342,23 @@ curly brackets.
 * ``[[javadoc&gt;java.lang.String|java.lang.String]]`` is rendered as [[javadoc&gt;java.lang.String|java.lang.String]]
          </description>
       </wiki-link-resolver>
+      <markdown-pre-processor class="org.nasdanika.cdo.web.doc.extensions.PlantUmlMarkdownPreProcessor">
+         <description>
+             Generates UML diagrams from [PlantUML](http://plant) specifications enclosed between ``@startuml`` and ``@enduml`` tags. @startuml and @enduml tags shall be at the beginning of the line and be the only text on the line except whitespaces. @startuml shall be preceded by a blank line and @enduml shall be followed by a blank line. [GraphWiz](http://www.graphviz.org/) is required to render diagrams other than sequence diagrams. See PlantUML site for details.
+
+Example:
+```
+@startuml
+A -> B : Message
+@enduml
+```
+is rendered as 
+
+@startuml
+A -> B : Message
+@enduml
+         </description>
+      </markdown-pre-processor>      
    </extension>
    <% } %>
 </plugin>

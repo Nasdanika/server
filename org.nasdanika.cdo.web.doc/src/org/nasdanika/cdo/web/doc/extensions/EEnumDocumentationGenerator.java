@@ -79,6 +79,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		}
 		
 		// sections ?
+		//tabs(docRoute, eClass, tabs);
 		
 		return ret.toString();		
 		

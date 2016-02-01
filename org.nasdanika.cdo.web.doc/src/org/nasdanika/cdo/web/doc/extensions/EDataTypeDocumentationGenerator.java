@@ -60,6 +60,7 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 		}
 		
 		// sections?
+		//tabs(docRoute, eClass, tabs);
 		
 		return ret.toString();		
 		

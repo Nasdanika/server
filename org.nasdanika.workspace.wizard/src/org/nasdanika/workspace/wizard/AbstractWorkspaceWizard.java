@@ -337,7 +337,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 	
 	protected IJavaProject createPluginProject(
 			final String name,
-			Iterable<String> requiredBundles,
+			Collection<String> requiredBundles,
 			Collection<String> importedPackages, 
 			Collection<String> exportedPackages, 
 			Collection<String> serviceComponents,
@@ -457,7 +457,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 
 	protected void createManifest(
 			String projectName, 
-			Iterable<String> requiredBundles,
+			Collection<String> requiredBundles,
 			Collection<String> importedPackages,
 			Collection<String> exportedPackages, 
 			Collection<String> serviceComponents,
@@ -478,14 +478,16 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				.append(System.lineSeparator());
 		}
 		manifestBuilder.append("Bundle-RequiredExecutionEnvironment: JavaSE-1.7").append(System.lineSeparator());
-		manifestBuilder.append("Require-Bundle:");
-		Iterator<String> rit = requiredBundles.iterator();
-		while (rit.hasNext()) {
-			manifestBuilder.append(" ").append(rit.next());
-			if (rit.hasNext()) {
-				manifestBuilder.append(",");				
+		if (!requiredBundles.isEmpty()) {
+			manifestBuilder.append("Require-Bundle:");
+			Iterator<String> rit = requiredBundles.iterator();
+			while (rit.hasNext()) {
+				manifestBuilder.append(" ").append(rit.next());
+				if (rit.hasNext()) {
+					manifestBuilder.append(",");				
+				}
+				manifestBuilder.append(System.lineSeparator());
 			}
-			manifestBuilder.append(System.lineSeparator());
 		}
 
 		if (serviceComponents != null && !serviceComponents.isEmpty()) {

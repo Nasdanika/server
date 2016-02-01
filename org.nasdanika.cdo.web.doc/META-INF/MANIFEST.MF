@@ -17,4 +17,5 @@ Require-Bundle: org.nasdanika.cdo.web;bundle-version="0.1.0",
 Export-Package: org.nasdanika.cdo.web.doc,
  org.nasdanika.cdo.web.doc.extensions
 Import-Package: javax.servlet;version="2.6.0",
- javax.servlet.http;version="2.6.0"
+ javax.servlet.http;version="2.6.0",
+ net.sourceforge.plantuml

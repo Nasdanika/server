@@ -22,7 +22,7 @@
             <element ref="wiki-link-resolver" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="content-filter" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="eannotation-renderer" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="plugin" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="markdown-pre-processor" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="mime-type" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="epackage-documentation-generator" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="eclass-documentation-generator" minOccurs="0" maxOccurs="unbounded"/>
@@ -85,26 +85,24 @@
       </complexType>
    </element>
 
-   <element name="plugin">
+   <element name="markdown-pre-processor">
+      <annotation>
+         <documentation>
+            Pre-processes markdown pages before conversion to HTML.
+         </documentation>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="class" type="string" use="required">
             <annotation>
                <documentation>
                   
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java" basedOn=":org.nasdanika.cdo.web.doc.Plugin"/>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.cdo.web.doc.MarkdownPreProcessor"/>
                </appinfo>
             </annotation>
          </attribute>

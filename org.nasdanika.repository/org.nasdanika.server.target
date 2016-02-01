@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="77">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="81">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.simple" version="1.7.6"/>
 <unit id="slf4j.api" version="1.7.6"/>
 <repository location="http://www.nasdanika.org/slf4j"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201511100335"/>
-<repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
 </location>
 <location path="${eclipse_home}" type="Profile"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
@@ -32,8 +28,8 @@
 <unit id="org.apache.lucene.analyzers-common" version="5.1.0"/>
 <unit id="com.github.dblock.waffle.jetty" version="1.7.3"/>
 <unit id="com.google.guava" version="18.0.0"/>
-<unit id="org.apache.lucene.queries" version="5.1.0"/>
 <unit id="org.apache.lucene.core" version="5.1.0"/>
+<unit id="org.apache.lucene.queries" version="5.1.0"/>
 <unit id="com.sun.jna" version="4.1.0"/>
 <unit id="org.jsoup" version="1.8.3"/>
 <unit id="org.apache.aries.spifly.dynamic.bundle" version="1.0.4"/>
@@ -46,6 +42,10 @@
 <unit id="org.apache.commons.codec" version="1.10.0"/>
 <unit id="com.sun.jna.platform" version="4.1.0"/>
 <repository location="http://www.nasdanika.org/maven-osgi"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201601290538"/>
+<repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
 </location>
 </locations>
 </target>

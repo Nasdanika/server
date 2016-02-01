@@ -19,11 +19,11 @@ import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.web.doc.DocRoute;
+import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
 import org.nasdanika.cdo.web.doc.EAnnotationRenderer;
 import org.nasdanika.cdo.web.doc.EModelElementDocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.cdo.web.doc.TocNodeFactory;
-import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Fragment;
@@ -33,7 +33,6 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
-import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
 
 public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelElement> implements EModelElementDocumentationGenerator<T> {
@@ -62,8 +61,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 	}
 	
 	public String markdownToHtml(DocRoute docRoute, URL baseURL, String urlPrefix, String markdownSource) {
-		PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
-		return pegDownProcessor.markdownToHtml(docRoute.expand(markdownSource, baseURL, urlPrefix), docRoute.createMarkdownLinkRenderer(baseURL, urlPrefix));
+		return new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(docRoute.preProcessMarkdown(markdownSource, baseURL, urlPrefix), docRoute.createMarkdownLinkRenderer(baseURL, urlPrefix));
 	}
 	
 	public String getModelDocumentation(DocRoute docRoute, URL baseURL, String urlPrefix, EModelElement modelElement) {
@@ -234,7 +232,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 			section(docRoute, section, -1, sectionFragment);
 			tabs.item(tabName, sectionFragment);
 		}		
-	}
+	}		
 	
 	protected static void section(
 			DocRoute docRoute, 
@@ -264,9 +262,12 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 			section(docRoute, subSection, level==-1 ? 3 : Math.min(6, level+1), sectionFragment);
 		}
 		
-	}
+	}	
 
 	public static void preStyle(UIElement<?> uiElement) {
 		uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
 	}
+	
+	// Generation of PlantUML text 
+	
 }

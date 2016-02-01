@@ -103,10 +103,9 @@ public class GeneralInformationPage extends WizardPage {
 		createWorkingSetGroup((Composite) getControl(), selection,
 				new String[] { "org.eclipse.jdt.ui.JavaWorkingSetPage",
 						"org.eclipse.pde.ui.pluginWorkingSet",
-						"org.eclipse.ui.resourceWorkingSetPage" });
-		
+						"org.eclipse.ui.resourceWorkingSetPage" });		
 	}
-
+		
 	/**
 	 * Create a working set group for this page. This method can only be called
 	 * once.
@@ -412,7 +411,7 @@ public class GeneralInformationPage extends WizardPage {
 	public void setVisible(boolean visible) {
 		super.setVisible(visible);
 		if (visible) {
-			versionField.setFocus();
+			nameField.setFocus();
 		}
 	}
 

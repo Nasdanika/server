@@ -158,25 +158,15 @@ Content filtering is performed based on resource extension associated with a MIM
 </extension>
 ```
 
-### Plugin
-Plugins expand specification enclosed in double-curly brackets in a format ``{\{plugin name(config)>content}}``. Plugin name is mandatory, configuration and content are optional. Curly brackets in the plugin body can be escaped with a backslash. A backslash is also escaped with a backslash. To escape the opening tag place the backslash between the brackets. Plugins are used to expand markdown text before processing. Plugins shall implement [[javadoc>org.nasdanika.cdo.web.doc.Plugin]] interface.
+### Markdown Pre-Processor
+Markdown Pre-Processors are used to expand markdown text before converting to HTML. They shall implement [[javadoc>org.nasdanika.cdo.web.doc.MarkdownPreProcessor]] interface.
 
 #### Registration
 
 ```xml
 <extension point="org.nasdanika.cdo.web.doc.extensions">
-   <plugin
-         class="org.nasdanika.cdo.web.doc.extensions.IncludePlugin"
-         name="include">
-      <description>
-Includes content of another documentation resource into this resource.
- 
-Format ``{\{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki link resolvers, e.g. ``bundle`` schema.
-
-Curly brackets and greater signs can be escaped by prepending them with backslash. The opening tag shall be escaped by placing the backslash between the first and the second opening
-curly brackets.
-      </description>
-   </plugin>
+    <markdown-pre-processor class="org.nasdanika.cdo.web.doc.extensions.IncludeMarkdownPreProcessor">
+    </markdown-pre-processor>
 </extension>
 ```
 

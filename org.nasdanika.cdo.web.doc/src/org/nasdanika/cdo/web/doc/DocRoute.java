@@ -65,6 +65,7 @@ import org.eclipse.emf.ecore.EPackage.Registry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.nasdanika.cdo.web.doc.MarkdownPreProcessor.Region;
 import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
@@ -94,6 +95,7 @@ import org.osgi.service.component.ComponentContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.LinkRenderer.Rendering;
+import org.pegdown.Parser;
 import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route {
@@ -107,7 +109,7 @@ public class DocRoute implements Route {
 	private static final String EDATATYPE_DOCUMENTATION_GENERATOR = "edatatype-documentation-generator";
 	private static final String EENUM_DOCUMENTATION_GENERATOR = "eenum-documentation-generator";
 	private static final String MIME_TYPE = "mime-type";
-	private static final String PLUGIN = "plugin";
+	private static final String MARKDOWN_PRE_PROCESSOR = "markdown-pre-processor";
 	private static final String EANNOTATION_RENDERER = "eannotation-renderer";
 	private static final String CONTENT_FILTER = "content-filter";
 	private static final String TOC = "toc";
@@ -119,6 +121,7 @@ public class DocRoute implements Route {
 	private static final String TOC_PATH = "/toc/";
 	
 	public static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
+	public static final int MARKDOWN_OPTIONS = 	Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS ^ Extensions.SUPPRESS_ALL_HTML;
 
 	private int pathOffset = 1;
 	private BundleContext bundleContext;
@@ -298,7 +301,7 @@ public class DocRoute implements Route {
 	private Map<String, ExtensionEntry<WikiLinkProcessor.Renderer>> wikiLinkRendererMap = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<WikiLinkResolver>> wikiLinkResolverMap = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<List<String>>> mimeTypeMap = new ConcurrentHashMap<>();
-	private Map<String, ExtensionEntry<Plugin>> pluginMap = new ConcurrentHashMap<>();
+	private List<ExtensionEntry<MarkdownPreProcessor>> preProcessors = new ArrayList<>();
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 	
 	private Map<EClassifierKey,Set<EClassifierKey>> inheritanceMap = new ConcurrentHashMap<>(); 
@@ -322,7 +325,7 @@ public class DocRoute implements Route {
 	}
 	
 	//private MimetypesFileTypeMap mimeTypesMap;
-	private boolean expandContent = true;
+	private boolean preProcessMarkdown = true;
 	
 	private static void patternProperty(Object value, List<Pattern> accumulator) {
 		if (value instanceof String[]) {
@@ -344,9 +347,9 @@ public class DocRoute implements Route {
 		}
 		bundleContext = context.getBundleContext();
 		
-		Object expandContentProperty = properties.get("expand-content");
-		if (expandContentProperty instanceof Boolean) {
-			expandContent = (Boolean) expandContentProperty;
+		Object preProcessMarkdownProperty = properties.get("pre-process-markdown");
+		if (preProcessMarkdownProperty instanceof Boolean) {
+			preProcessMarkdown = (Boolean) preProcessMarkdownProperty;
 		}
 		
 		Object reloadDelayProperty = properties.get("reload-delay");
@@ -437,17 +440,17 @@ public class DocRoute implements Route {
 							}
 	    				}
 						break;
-    				case PLUGIN:
-	    				String pluginName = ce.getAttribute("name");
-						if (!pluginMap.containsKey(pluginName)) {
-	    					try {
-								pluginMap.put(pluginName, new ExtensionEntry<Plugin>((Plugin) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce));
-								tracker.registerObject(extension, PLUGIN+":"+pluginName, IExtensionTracker.REF_WEAK);
-							} catch (Exception e) {
-								// TODO - proper logging
-								e.printStackTrace();
+    				case MARKDOWN_PRE_PROCESSOR:
+    					try {
+							ExtensionEntry<MarkdownPreProcessor> markdownPreProcessor = new ExtensionEntry<MarkdownPreProcessor>((MarkdownPreProcessor) CoreUtil.injectProperties(ce, ce.createExecutableExtension("class")), ce);
+							synchronized (preProcessors) {
+								preProcessors.add(markdownPreProcessor);
 							}
-	    				}
+							tracker.registerObject(extension, markdownPreProcessor, IExtensionTracker.REF_WEAK);
+						} catch (Exception e) {
+							// TODO - proper logging
+							e.printStackTrace();
+						}
 						break;
     				case EANNOTATION_RENDERER:
 	    				String source = ce.getAttribute("source");
@@ -550,13 +553,18 @@ public class DocRoute implements Route {
 							wikiLinkRendererMap.remove(((String) obj).substring(WIKI_LINK_RENDERER.length()+1));
 						} else if (((String) obj).startsWith(WIKI_LINK_RESOLVER+":")) {
 							wikiLinkResolverMap.remove(((String) obj).substring(WIKI_LINK_RESOLVER.length()+1));
-						} else if (((String) obj).startsWith(PLUGIN+":")) {
-							pluginMap.remove(((String) obj).substring(PLUGIN.length()+1));
 						} else if (((String) obj).startsWith(MIME_TYPE+":")) {
 							mimeTypeMap.remove(((String) obj).substring(MIME_TYPE.length()+1));
 						} else if (((String) obj).startsWith(EANNOTATION_RENDERER+":")) {
 							eAnnotationRenderers.remove(((String) obj).substring(EANNOTATION_RENDERER.length()+1));
 						} 						
+					} else if (obj instanceof ExtensionEntry) {
+						Object ext = ((ExtensionEntry<?>) obj).extension;
+						if (ext instanceof MarkdownPreProcessor) {
+							synchronized (preProcessors) {
+								preProcessors.remove(obj);
+							}
+						}
 					} else if (obj instanceof ContentFilter) {
 						for (Map<String, ExtensionEntry<ContentFilter>> tm: contentFilters.values()) {
 							Iterator<ExtensionEntry<ContentFilter>> cfit = tm.values().iterator();
@@ -754,6 +762,17 @@ public class DocRoute implements Route {
 			} while (doLoad.getAndSet(false));
 		}
 	};	
+	
+	public EClassifier getEClassifier(EClassifierKey key) {
+		if (key==null) {
+			return null;
+		}
+		EPackage pkg = EPackage.Registry.INSTANCE.getEPackage(key.getNsURI());
+		if (pkg==null) {
+			return null;
+		}
+		return pkg.getEClassifier(key.getName());
+	}
 
 	/**
 	 * (Re)Builds TOC and index. 
@@ -1404,26 +1423,27 @@ public class DocRoute implements Route {
 	public String generateExtensionsDocumentation(URL baseURL, String urlPrefix, String path) {		
 		try {
 			Tabs ret = htmlFactory.tabs();
-			PegDownProcessor pegDownProcessor = new PegDownProcessor(Extensions.ALL ^ Extensions.HARDWRAPS);
+			PegDownProcessor pegDownProcessor = new PegDownProcessor(MARKDOWN_OPTIONS);
 			LinkRenderer mlr = createMarkdownLinkRenderer(new URL(baseURL, path), urlPrefix);
-			if (!pluginMap.isEmpty()) {
-				Table pluginTable = htmlFactory.table().bordered();
-				Row hRow = pluginTable.row().style(Bootstrap.Style.INFO);
-				hRow.header("Name");
-				hRow.header("Description");
-				hRow.header("Configuration");
-				for (String rName: new TreeSet<String>(pluginMap.keySet())) {
-					Row rRow = pluginTable.row();
-					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
-					ExtensionEntry<Plugin> extensionEntry = pluginMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
-					if (extensionEntry.extension instanceof ConfigurableExtension) {
-						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
-					} else {
-						rRow.cell("");
+			synchronized (preProcessors) {
+				if (!preProcessors.isEmpty()) {
+					Table pluginTable = htmlFactory.table().bordered();
+					Row hRow = pluginTable.row().style(Bootstrap.Style.INFO);
+					hRow.header("Type");
+					hRow.header("Description");
+					hRow.header("Configuration");
+					for (ExtensionEntry<MarkdownPreProcessor> extensionEntry: preProcessors) {
+						Row rRow = pluginTable.row();
+						rRow.cell(extensionEntry.extension.getClass().getName());					
+						rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
+						if (extensionEntry.extension instanceof ConfigurableExtension) {
+							rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
+						} else {
+							rRow.cell("");
+						}
 					}
+					ret.item("Pre-processors", pluginTable);
 				}
-				ret.item("Plugins", pluginTable);
 			}
 			if (!wikiLinkResolverMap.isEmpty()) {
 				Table resolverTable = htmlFactory.table().bordered();
@@ -1435,7 +1455,7 @@ public class DocRoute implements Route {
 					Row rRow = resolverTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<WikiLinkResolver> extensionEntry = wikiLinkResolverMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1454,7 +1474,7 @@ public class DocRoute implements Route {
 					Row rRow = rendererTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<Renderer> extensionEntry = wikiLinkRendererMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1480,7 +1500,7 @@ public class DocRoute implements Route {
 						}
 						typeRow.cell(extension);
 						if (isFirst) {
-							typeRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
+							typeRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
 						}
 						isFirst = false;
 					}
@@ -1505,7 +1525,7 @@ public class DocRoute implements Route {
 						}
 						filterRow.cell(toType);
 						ExtensionEntry<ContentFilter> extensionEntry = toFilters.get(toType);
-						filterRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
+						filterRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
 						if (extensionEntry.extension instanceof ConfigurableExtension) {
 							filterRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 						} else {
@@ -1527,7 +1547,7 @@ public class DocRoute implements Route {
 					Row rRow = rendererTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<EAnnotationRenderer> extensionEntry = eAnnotationRenderers.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(expand(extensionEntry.description, baseURL, urlPrefix), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1554,7 +1574,7 @@ public class DocRoute implements Route {
 					pRow.cell(StringEscapeUtils.escapeHtml4(pe.getKey().nsURI));					
 					pRow.cell(pe.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+pe.getValue().extension.getClass().getName()+"|"+pe.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(expand(pe.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(pe.getValue().description, baseURL, urlPrefix), mlr));
 					if (pe.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) pe.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1583,7 +1603,7 @@ public class DocRoute implements Route {
 					pRow.cell(StringEscapeUtils.escapeHtml4(ce.getKey().name));					
 					pRow.cell(ce.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+ce.getValue().extension.getClass().getName()+"|"+ce.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(expand(ce.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(ce.getValue().description, baseURL, urlPrefix), mlr));
 					if (ce.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) ce.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1612,7 +1632,7 @@ public class DocRoute implements Route {
 					pRow.cell(StringEscapeUtils.escapeHtml4(ee.getKey().name));					
 					pRow.cell(ee.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+ee.getValue().extension.getClass().getName()+"|"+ee.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(expand(ee.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(ee.getValue().description, baseURL, urlPrefix), mlr));
 					if (ee.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) ee.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1641,7 +1661,7 @@ public class DocRoute implements Route {
 					pRow.cell(StringEscapeUtils.escapeHtml4(dte.getKey().name));					
 					pRow.cell(dte.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+dte.getValue().extension.getClass().getName()+"|"+dte.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(expand(dte.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(dte.getValue().description, baseURL, urlPrefix), mlr));
 					if (dte.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) dte.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -1893,93 +1913,68 @@ public class DocRoute implements Route {
 	}
 	
 	/**
-	 * Expands {{plugin(config)&gt;content}} tokens. Example: <code>{{youtube(large)&gt;qfvr6HWo_Ok}}</code>.
-	 * Plugin name is mandatory, config and content are optional. <code>}}</code> in config and content can be escaped with <code>\</code>, e.g. <code>\}}</code>
+	 * Iterates over registered {@link MarkdownPreProcessor}s. Invokes <code>match</code> for each pre-processor.
+	 * Selects the matching preprocessor with the earliest match region and invokes its pre-process method. If pre-processor
+	 * returns null, goes to the next pre-processor in the list. Otherwise continues with pre-processors which matched regions
+	 * after the first pre-processor region. 
 	 * @param content
 	 * @param path
 	 * @return
 	 */
-	public String expand(String content, final URL baseURL, final String urlPrefix) {		
-		if (!expandContent || content == null || content.length()==0) {
+	public String preProcessMarkdown(String content, final URL baseURL, final String urlPrefix) {		
+		if (!preProcessMarkdown || content == null || content.length()==0) {
 			return "";			
 		}
 		
-		Plugin.Filter filter = new Plugin.Filter() {
+		MarkdownPreProcessor.Region.Chain chain = new MarkdownPreProcessor.Region.Chain() {
 			
 			@Override
-			public String filter(Object filterContent) {
-				return expand(CoreUtil.stringify(filterContent), baseURL, urlPrefix);
+			public String process(String content) {
+				return preProcessMarkdown(CoreUtil.stringify(content), baseURL, urlPrefix);
 			}
 			
-		};				
-	
-		StringBuilder out = new StringBuilder();
-		int pos = 0;
-		O: for (int openTagIdx = DocUtil.indexOf(content, pos, '{'); openTagIdx!=-1; openTagIdx = DocUtil.indexOf(content, pos, '{')) {
-			
-			if (openTagIdx==content.length()-1) {
-				break;
-			}
-						
-			// No second {
-			if (content.charAt(openTagIdx+1)!='{') {
-				if (content.length()>openTagIdx+2 && content.substring(openTagIdx+1, openTagIdx+3).equals("\\{")) {
-					out.append(content.substring(pos, openTagIdx+1)).append("{");					
-					pos = openTagIdx+3;					
-				} else {
-					out.append(content.substring(pos, openTagIdx+1));
-					pos = openTagIdx+1;
-				}
-				continue;
-			}
-			
-			for (int closeTagIdx = DocUtil.indexOf(content, openTagIdx+2, '}'); closeTagIdx!=-1; closeTagIdx = DocUtil.indexOf(content, closeTagIdx+1, '}')) {
-				
-				if (closeTagIdx==content.length()-1) {
-					break O;
-				}			
-				
-				// No second {
-				if (content.charAt(closeTagIdx+1)!='}') {
-					closeTagIdx++;
-					continue;
-				}
-												
-				int gtIdx = DocUtil.indexOf(content, openTagIdx+2, '>');
-				String pluginSpec = content.substring(openTagIdx+2, gtIdx==-1 || gtIdx>closeTagIdx ? closeTagIdx : gtIdx);
-				ExtensionEntry<Plugin> pluginExtension = null;
-				String pluginConfig = null;
-				int lParIdx = DocUtil.indexOf(pluginSpec, 0, '(');
-				if (lParIdx==-1) {
-					pluginExtension = pluginMap.get(DocUtil.unescape(pluginSpec));
-				} else {
-					int rParIdx = DocUtil.indexOf(pluginSpec, lParIdx, ')');
-					if (rParIdx!=-1) {
-						pluginConfig = DocUtil.unescape(pluginSpec.substring(lParIdx+1, rParIdx));
-						pluginExtension = pluginMap.get(DocUtil.unescape(pluginSpec.substring(0, lParIdx)));					
-					}
-				}
-				if (pluginExtension==null) {
-					out.append(content.substring(pos, openTagIdx+2));
-					pos = openTagIdx+2;
-					continue O;						
-				}
-				
-				String pluginContent = gtIdx==-1 || gtIdx>closeTagIdx ? null : expand(content.substring(gtIdx+1, closeTagIdx), baseURL, urlPrefix);  
-				
-				Object processed = pluginExtension.extension.process(pluginConfig, pluginContent, baseURL, urlPrefix, filter, this);
-				if (processed == null) {
-					out.append(content.substring(pos, openTagIdx+2));
-					pos = openTagIdx+2;
-				} else {					
-					out.append(content.substring(pos, openTagIdx));
-					out.append(CoreUtil.stringify(processed));
-					pos = closeTagIdx+2;
-				}
-				break;
+		};
+		
+		List<MarkdownPreProcessor.Region> matchedRegions = new ArrayList<>();
+		synchronized (preProcessors) {
+			for (ExtensionEntry<MarkdownPreProcessor> extensionEntry: preProcessors) {
+				matchedRegions.addAll(extensionEntry.extension.match(content));
 			}
 		}
-		out.append(content.substring(pos));
+		Collections.sort(matchedRegions, new Comparator<MarkdownPreProcessor.Region>() {
+
+			@Override
+			public int compare(Region r1, Region r2) {
+				if (r1.getStart() == r2.getStart()) {
+					if (r1.getEnd() == r2.getEnd()) {
+						return r1.hashCode() - r2.hashCode();
+					}
+					return r2.getEnd() - r1.getEnd(); // Larger regions get precedence
+				}
+				
+				return r1.getStart() - r2.getStart(); // Earlier regions get precedence
+			}
+		});
+		
+		StringBuilder out = new StringBuilder();
+		int start = 0;
+		for (MarkdownPreProcessor.Region region: matchedRegions) {
+			int regionStart = region.getStart();
+			if (regionStart>=start) {
+				if (regionStart>start) {
+					out.append(content.substring(start, regionStart));
+					start = regionStart;
+				}
+				String result = region.process(baseURL, urlPrefix, chain, this);
+				if (result != null) {
+					out.append(result);
+					start = region.getEnd();
+				}
+			}
+		}
+		if (start<content.length()) {
+			out.append(content.substring(start));
+		}
 		return out.toString();
 	}
 	
