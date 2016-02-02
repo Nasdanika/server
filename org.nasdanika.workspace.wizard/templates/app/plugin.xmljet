@@ -167,18 +167,14 @@ Example:
 * ``[[image:https://github.com/Nasdanika/server/wiki/webtest.png]]`` is rendered as [[image:https://github.com/Nasdanika/server/wiki/webtest.png]]
          ]]></description>
       </wiki-link-renderer>
-      <plugin
-            class="org.nasdanika.cdo.web.doc.extensions.IncludePlugin"
-            name="include">
+      <markdown-pre-processor class="org.nasdanika.cdo.web.doc.extensions.IncludeMarkdownPreProcessor">
          <description>
 Includes content of another documentation resource into this resource.
  
-Format ``{\{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki link resolvers, e.g. ``bundle`` schema.
-
-Curly brackets and greater signs can be escaped by prepending them with backslash. The opening tag shall be escaped by placing the backslash between the first and the second opening
-curly brackets.
+Format ``{{include>resource location}}``. Resource location URL supports custom schemes corresponding to the names of registered wiki
+link resolvers, e.g. ``bundle`` schema.
          </description>
-      </plugin>
+      </markdown-pre-processor>
       
       <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.extensions.WikipediaResolver"
