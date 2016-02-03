@@ -133,7 +133,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		sectionsTabs(docRoute, ePackage, tabs);						
 	}
 
-	private void sectionsTabs(DocRoute docRoute, EPackage ePackage, Tabs tabs) {
+	protected void sectionsTabs(DocRoute docRoute, EPackage ePackage, Tabs tabs) {
 		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
 		TocNode sections = new TocNode(null, null, null);
 		
