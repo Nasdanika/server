@@ -1,6 +1,5 @@
 package org.nasdanika.html.impl;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.nasdanika.html.HTMLFactory;

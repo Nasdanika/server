@@ -33,6 +33,14 @@ public interface HttpServletRequestContext extends Context, ExportingContext, Cl
 	 */
 	Action getAction(Object target, int pathOffset, Context[] contextChain, Object... args) throws Exception;
 	
+	/**
+	 * Creates a contexts with path shifted to <code>pathOffset</code> elements to the right
+	 * @param pathOffset
+	 * @return
+	 * @throws Exception 
+	 */
+	HttpServletRequestContext shift(int pathOffset) throws Exception;
+	
 	Action getExtensionAction(Object target, String extension) throws Exception;
 		
 	//Object getRequestData();

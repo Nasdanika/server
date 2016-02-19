@@ -254,6 +254,21 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 		return subContext;
 	}
 	
+	/**
+	 * Creates a contexts with path shifted to <code>pathOffset</code> elements to the right
+	 * @param pathOffset
+	 * @return
+	 * @throws Exception 
+	 */
+	public HttpServletRequestContext shift(int pathOffset) throws Exception {
+		String[] oldPath = getPath();
+		if (oldPath.length<pathOffset) {
+			throw new IllegalArgumentException("Offset is greater than path length");			
+		}
+		String[] newPath = pathOffset==0 ? oldPath : Arrays.copyOfRange(oldPath, pathOffset, oldPath.length);
+		return createSubContext(newPath, getTarget(), null);		
+	}
+	
 	protected String subContextURL(String[] subPath, boolean trimExtensions) {
 		StringBuilder urlBuilder = new StringBuilder(getContextURL());
 		for (String pe: subPath) {

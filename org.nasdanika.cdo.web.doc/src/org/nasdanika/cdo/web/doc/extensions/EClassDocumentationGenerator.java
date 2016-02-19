@@ -7,6 +7,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -23,12 +24,16 @@ import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
+import org.jsoup.Jsoup;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.EClassifierKey;
 import org.nasdanika.cdo.web.html.EOperationFormGenerator;
 import org.nasdanika.cdo.web.html.FormGeneratorBase;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
+import org.nasdanika.cdo.web.routes.EObjectRouteTracker;
+import org.nasdanika.cdo.web.routes.EObjectRouteTracker.RouteEntry;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Glyphicon;
@@ -41,13 +46,17 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.web.RequestMethod;
+import org.osgi.framework.InvalidSyntaxException;
 
 import net.sourceforge.plantuml.FileFormat;
 import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 
 public class EClassDocumentationGenerator extends EModelElementDocumentationGeneratorImpl<EClass> {
-
+	
+	private EObjectRouteTracker routeTracker;
+	
 	@Override
 	public String generate(
 			DocRoute docRoute,
@@ -57,6 +66,16 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			EClass eClass) {
 		
 		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
+
+		synchronized (this) {
+			if (routeTracker == null) {
+				try {
+					routeTracker = new EObjectRouteTracker(docRoute.getBundleContext());
+				} catch (InvalidSyntaxException e) {
+					throw new NasdanikaException(e);
+				}
+			}
+		}
 		
 		// TODO - path?
 		Tag classIcon = htmlFactory.tag(TagName.img)
@@ -494,21 +513,23 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			EClass eClass, 
 			Tabs tabs) {
 		
-		List<EOperation> routes = new ArrayList<>();
+		List<EOperation> routeOperations = new ArrayList<>();
 
 		for (EOperation op : eClass.getEAllOperations()) {
 			if (op.getEAnnotation(CDOWebUtil.ANNOTATION_ROUTE) != null || op.getEAnnotation(CDOWebUtil.ANNOTATION_HOME_ROUTE) != null) {
-				routes.add(op);
+				routeOperations.add(op);
 			}
 		}
+		
+		List<RouteEntry> routeEntries = routeTracker.match(eClass);
 				
 		// TODO - Routes from extensions.
-		if (!routes.isEmpty()) {
+		if (!routeOperations.isEmpty() || !routeEntries.isEmpty()) {
 			HTMLFactory htmlFactory = docRoute.getHtmlFactory();
 			
-			Collections.sort(routes, NAMED_ELEMENT_COMPARATOR);
+			Collections.sort(routeOperations, NAMED_ELEMENT_COMPARATOR);
 			Accordion routesAccordion = htmlFactory.accordion();
-			for (EOperation route: routes) {
+			for (EOperation route: routeOperations) {
 				EAnnotation rAnn = route.getEAnnotation(CDOWebUtil.ANNOTATION_HOME_ROUTE);
 				boolean isHome = rAnn!=null;
 				if (!isHome) {
@@ -697,7 +718,119 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				}				
 				
 				routesAccordion.item(
-						(isHome ? htmlFactory.glyphicon(Glyphicon.home).style("margin-right", "5px") : "")+"<b>"+route.getName()+"</b> : "+(route.getEType()==null ? "void" : route.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
+						htmlFactory.glyphicon(isHome ? Glyphicon.home : Glyphicon.cog).style("margin-right", "5px")+"<b>"+route.getName()+"</b> : "+(route.getEType()==null ? "void" : route.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
+						null,
+						false,
+						null,
+						accordionFragment);
+			}
+			
+			Collections.sort(routeEntries, new Comparator<RouteEntry>() {
+
+				@Override
+				public int compare(RouteEntry o1, RouteEntry o2) {
+					String p1 = CoreUtil.isBlank(o1.getPath()) ? o1.getPattern() : o1.getPath();
+					String p2 = CoreUtil.isBlank(o2.getPath()) ? o2.getPattern() : o2.getPath();
+					int cmp = p1.compareTo(p2);
+					if (cmp!=0) {
+						return cmp;
+					}
+					cmp = o2.getPriority() - o1.getPriority();
+					if (cmp!=0) {
+						return cmp;
+					}
+					cmp = o1.getDistance() - o2.getDistance();
+					if (cmp!=0) {
+						return cmp;
+					}
+					return o1.hashCode() - o2.hashCode();
+				}
+			});
+			
+			for (RouteEntry routeEntry: routeEntries) {
+				Fragment accordionFragment = htmlFactory.fragment();
+				String docText = "";
+				if (!CoreUtil.isBlank(routeEntry.getDescription())) {
+					if ("text/markdown".equalsIgnoreCase(routeEntry.getDescriptionContentType())) {
+						String html = markdownToHtml(docRoute, baseURL, urlPrefix, routeEntry.getDescription());
+						accordionFragment.content(html);
+						docText = Jsoup.parse(html).text();;
+					} else if ("text/html".equalsIgnoreCase(routeEntry.getDescriptionContentType())) {
+						docText = Jsoup.parse(routeEntry.getDescription()).text();
+						accordionFragment.content(routeEntry.getDescription());
+					} else {
+						docText = routeEntry.getDescription();
+						accordionFragment.content(preStyle(htmlFactory.div(docText)));
+					}
+				}
+				
+				String firstDocSentence = firstSentence(docText);
+				String declaringType = routeEntry.getEClass()==eClass ? "" : " ("+routeEntry.getEClass().getName()+") ";
+
+				Table propTable = htmlFactory.table().bordered();
+				accordionFragment.content(propTable);
+
+				if (routeEntry.getEClass()!=eClass) {
+					Row row = propTable.row();								
+					row.header("Declaring Type").style("align", "left");
+					row.cell(eClassifierLink(docRoute, routeEntry.getEClass(), registryPath, true));
+				}
+
+				RequestMethod[] methods = routeEntry.getMethods();
+				if (methods!=null) {
+					Row row = propTable.row();								
+					if (methods.length == 1) {
+						row.header("Method").style("align", "left");
+						row.cell(methods[0].name());
+					} else {
+						row.header("Methods").style("align", "left");
+						Tag ul = htmlFactory.tag(TagName.ul);
+						for (RequestMethod rm: methods) {
+							ul.content(htmlFactory.tag(TagName.li, rm.name()));
+						}
+						row.cell(ul);						
+					}
+				}
+				
+				String[] consumes = routeEntry.getConsumes();
+				if (consumes!=null) {
+					Row row = propTable.row();								
+					row.header("Consumes").style("align", "left");
+					if (consumes.length == 1) {
+						row.cell(consumes[0]);
+					} else {
+						Tag ul = htmlFactory.tag(TagName.ul);
+						for (String c: consumes) {
+							ul.content(htmlFactory.tag(TagName.li, c));
+						}
+						row.cell(ul);						
+					}					
+				}
+
+				if (!CoreUtil.isBlank(routeEntry.getContentType())) {
+					Row row = propTable.row();								
+					row.header("Produces content type").style("align", "left");
+					row.cell(routeEntry.getContentType());
+				}
+				
+				if (!CoreUtil.isBlank(routeEntry.getPath())) {
+					Row row = propTable.row();								
+					row.header("Path").style("align", "left");
+					row.cell(routeEntry.getPath());
+				} else if (!CoreUtil.isBlank(routeEntry.getPattern())) {
+					Row row = propTable.row();								
+					row.header("Pattern").style("align", "left");
+					row.cell(routeEntry.getPattern());
+				}
+				
+				if (routeEntry.getPriority()!=0) {
+					Row row = propTable.row();								
+					row.header("Priority").style("align", "left");
+					row.cell(routeEntry.getPriority());					
+				}
+
+				routesAccordion.item(
+						"<b>"+(CoreUtil.isBlank(routeEntry.getPath()) ? routeEntry.getPattern() : routeEntry.getPath())+"</b> "+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 						null,
 						false,
 						null,
@@ -1031,6 +1164,15 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	public void close() {
+		if (routeTracker!=null) {
+			routeTracker.close();
+			routeTracker = null;
+		}
+		
 	}
 
 }

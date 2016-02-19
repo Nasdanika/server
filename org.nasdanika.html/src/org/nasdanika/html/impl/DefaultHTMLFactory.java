@@ -7,8 +7,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Accordion;
 import org.nasdanika.html.ApplicationPanel;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Color;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.ButtonGroup;

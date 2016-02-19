@@ -3,77 +3,77 @@
 <plugin>
    <extension
          point="org.nasdanika.web.route">
-      <object_route
+      <object-route
             class="org.nasdanika.cdo.web.routes.CDOPackageRegistryRoute"
             method="GET"
             target="org.eclipse.emf.cdo.common.model.CDOPackageRegistry">
-      </object_route>
-      <object_route
+      </object-route>
+      <object-route
             class="org.nasdanika.cdo.web.routes.CDOResourceFolderRoute"
             method="*"
             target="org.eclipse.emf.cdo.eresource.CDOResourceFolder">
-      </object_route>
-      <object_route
+      </object-route>
+      <object-route
             class="org.nasdanika.cdo.web.routes.CDOResourceRoute"
             method="*"
             target="org.eclipse.emf.cdo.eresource.CDOResource">
-      </object_route>
-      <extension_route
+      </object-route>
+      <extension-route
             class="org.nasdanika.cdo.web.routes.CDOViewJsonExtensionRoute"
             extension="json"
             method="GET"
             target="org.eclipse.emf.cdo.view.CDOView">
-      </extension_route>
-      <extension_route
+      </extension-route>
+      <extension-route
             class="org.nasdanika.cdo.web.routes.HtmlExtensionGetRoute"
             extension="html"
             method="GET"
             target="java.lang.Object">
-      </extension_route>
-      <object_route
+      </extension-route>
+      <object-route
             class="org.nasdanika.cdo.web.routes.EObjectRoute"
             method="*"
             target="org.eclipse.emf.ecore.EObject">
-      </object_route>
-      <object_route
+      </object-route>
+      <object-route
             class="org.nasdanika.cdo.web.routes.EReferenceClosureRoute"
             method="*"
             target="org.nasdanika.cdo.EReferenceClosure">
-      </object_route>
-      <object_route
+      </object-route>
+      <object-route
             class="org.nasdanika.cdo.web.routes.EAttributeClosureRoute"
             method="*"
             target="org.nasdanika.cdo.EAttributeClosure">
-      </object_route>
-      <extension_route
+      </object-route>
+      <extension-route
             class="org.nasdanika.cdo.web.routes.EObjectXMIExportRoute"
             extension="xml"
             method="GET"
             target="org.eclipse.emf.ecore.EObject">
-      </extension_route>
-      <object_route
+      </extension-route>
+      <object-route
             class="org.nasdanika.cdo.web.routes.EOperationClosureRoute"
             method="*"
             target="org.nasdanika.cdo.EOperationClosure">
-      </object_route>
-      <extension_route
+      </object-route>
+      <extension-route
             class="org.nasdanika.cdo.web.routes.CDOResourceXMIExportRoute"
             extension="xml"
             method="GET"
             target="org.eclipse.emf.cdo.eresource.CDOResource">
-      </extension_route>
-      <extension_route
+      </extension-route>
+      <extension-route
             class="org.nasdanika.cdo.web.routes.CDOObjectJsExtensionRoute"
             extension="js"
             method="GET"
             target="org.eclipse.emf.cdo.CDOObject">
-      </extension_route>
-      <extension_route
+      </extension-route>
+      <extension-route
             class="org.nasdanika.cdo.web.routes.EReferenceClosureJsonExtensionRoute"
             extension="json"
             method="GET"
             target="org.nasdanika.cdo.EReferenceClosure">
-      </extension_route>
+      </extension-route>
       
    </extension>
    <extension
@@ -161,8 +161,24 @@
                   name="JavaScript API">
             </topic>
             <topic
-                  location="doc/routeOperations.md"
-                  name="Route operations">
+                  location="doc/routes.md"
+                  name="Routes">
+               <topic
+                     location="doc/routeExtensions.md"
+                     name="Extensions">
+                  <topic
+                        location="doc/resourceRouteExtensions.md"
+                        name="Resource routes">
+                  </topic>
+               </topic>
+               <topic
+                     location="doc/routeOperations.md"
+                     name="Operations">
+               </topic>
+               <topic
+                     location="doc/routeServices.md"
+                     name="Services">
+               </topic>
             </topic>
             <topic
                   location="doc/forms.md"

@@ -18,14 +18,14 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="route_provider" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="object_route" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="object_resource_route" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="root_route" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="root_resource_route" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="extension_route" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="eobject_route" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="eobject_resource_route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="route-provider" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="object-route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="object-resource-route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="root-route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="root-resource-route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="extension-route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="eobject-route" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="eobject-resource-route" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -54,7 +54,7 @@
       </complexType>
    </element>
 
-   <element name="object_route">
+   <element name="object-route">
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
@@ -126,7 +126,7 @@
       </complexType>
    </element>
 
-   <element name="object_resource_route">
+   <element name="object-resource-route">
       <complexType>
          <attribute name="resource" type="string" use="required">
             <annotation>
@@ -169,7 +169,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="contentType" type="string">
+         <attribute name="content-type" type="string">
             <annotation>
                <documentation>
                   
@@ -179,7 +179,7 @@
       </complexType>
    </element>
 
-   <element name="eobject_route">
+   <element name="eobject-route">
       <annotation>
          <documentation>
             Route whcich matches EObject by namespace and classifier name.
@@ -188,6 +188,7 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -199,7 +200,7 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="target_namespace_uri" type="string" use="required">
+         <attribute name="target-namespace-uri" type="string" use="required">
             <annotation>
                <documentation>
                   Namespace URI of the target object class package.
@@ -257,27 +258,44 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="consumes" type="string">
+            <annotation>
+               <documentation>
+                  Comma-separated list of MIME/content types which this route can consume. MIME/content types may contain wildcards, e.g. text/*
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="produces" type="string">
+            <annotation>
+               <documentation>
+                  Content type which this route produces.
+               </documentation>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
-   <element name="eobject_resource_route">
+   <element name="eobject-resource-route">
       <annotation>
          <documentation>
             Resource route matching EObject by namespace URI and classifier name.
          </documentation>
       </annotation>
       <complexType>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+         </sequence>
          <attribute name="resource" type="string" use="required">
             <annotation>
                <documentation>
-                  Action&apos;s resource.
+                  Route&apos;s (base) resource.
                </documentation>
                <appinfo>
                   <meta.attribute kind="resource"/>
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="target_namespace_uri" type="string" use="required">
+         <attribute name="target-namespace-uri" type="string" use="required">
             <annotation>
                <documentation>
                   Namespace URI of the target object class package.
@@ -312,7 +330,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="contentType" type="string">
+         <attribute name="content-type" type="string">
             <annotation>
                <documentation>
                   
@@ -322,7 +340,34 @@
       </complexType>
    </element>
 
-   <element name="extension_route">
+   <element name="description">
+      <annotation>
+         <documentation>
+            Description.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="content-type" use="default" value="Markdown">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="HTML">
+                  </enumeration>
+                  <enumeration value="Markdown">
+                  </enumeration>
+                  <enumeration value="Text">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="extension-route">
       <annotation>
          <documentation>
             Route which matches extension.
@@ -392,7 +437,7 @@
       </complexType>
    </element>
 
-   <element name="root_route">
+   <element name="root-route">
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
@@ -454,7 +499,7 @@
       </complexType>
    </element>
 
-   <element name="root_resource_route">
+   <element name="root-resource-route">
       <complexType>
          <attribute name="resource" type="string" use="required">
             <annotation>
@@ -487,7 +532,7 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="contentType" type="string">
+         <attribute name="content-type" type="string">
             <annotation>
                <documentation>
                   
@@ -497,7 +542,7 @@
       </complexType>
    </element>
 
-   <element name="route_provider">
+   <element name="route-provider">
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>

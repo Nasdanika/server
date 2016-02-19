@@ -64,6 +64,7 @@ public class ExtensionManager extends AdapterManager {
 	
 	private List<UIPartEntry> uiPartEntries = new ArrayList<>();
 	private AccessDecision defaultAccessDecision;
+	private BundleContext bundleContext;
 	
 	public AccessDecision getDefaultAccessDecision() {
 		return defaultAccessDecision;
@@ -72,39 +73,40 @@ public class ExtensionManager extends AdapterManager {
 	@SuppressWarnings("unchecked")
 	public ExtensionManager(
 			Object target,
-			BundleContext context, 
+			BundleContext bundleContext, 
 			String adapterServiceFilter,
 			String routeServiceFilter,
 			String uiPartServiceFilter,
 			String htmlFactoryName,
 			AccessDecision defaultAccessDecision,
 			String contextPath) throws Exception {
-		super(target, context, adapterServiceFilter);
+		super(target, bundleContext, adapterServiceFilter);
 		
 		// TODO - converter profiles map: class name -> profile.
-		if (context==null) {
-			context = FrameworkUtil.getBundle(target.getClass()).getBundleContext();
+		if (bundleContext==null) {
+			bundleContext = FrameworkUtil.getBundle(target.getClass()).getBundleContext();
 		}
-		if (context==null) {
-			context = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
+		if (bundleContext==null) {
+			bundleContext = FrameworkUtil.getBundle(ExtensionManager.class).getBundleContext();
 		}
-		if (context==null) {
+		if (bundleContext==null) {
 			throw new IllegalStateException("Bundle context is not available, make sure that bundle "+FrameworkUtil.getBundle(ExtensionManager.class).getSymbolicName()+" is activated");
 		}
+		this.bundleContext = bundleContext;
 		// TODO - bundle is still null???
 		if (routeServiceFilter==null || routeServiceFilter.trim().length()==0) {
-			routeServiceTracker = new ServiceTracker<>(context, Route.class.getName(), null);
+			routeServiceTracker = new ServiceTracker<>(bundleContext, Route.class.getName(), null);
 		} else {
 			String rootRouteServiceFilter = "(&(" + Constants.OBJECTCLASS + "=" + Route.class.getName() + ")"+routeServiceFilter+")";
-			routeServiceTracker = new ServiceTracker<>(context, context.createFilter(rootRouteServiceFilter), null);
+			routeServiceTracker = new ServiceTracker<>(bundleContext, bundleContext.createFilter(rootRouteServiceFilter), null);
 		}
 		routeServiceTracker.open();
 		
 		if (uiPartServiceFilter==null || uiPartServiceFilter.trim().length()==0) {
-			uiPartServiceTracker = new ServiceTracker<>(context, UIPart.class.getName(), null);
+			uiPartServiceTracker = new ServiceTracker<>(bundleContext, UIPart.class.getName(), null);
 		} else {
 			String uiPartRouteServiceFilter = "(&(" + Constants.OBJECTCLASS + "=" + UIPart.class.getName() + ")"+uiPartServiceFilter+")";
-			uiPartServiceTracker = new ServiceTracker<>(context, context.createFilter(uiPartRouteServiceFilter), null);
+			uiPartServiceTracker = new ServiceTracker<>(bundleContext, bundleContext.createFilter(uiPartRouteServiceFilter), null);
 		}
 		uiPartServiceTracker.open();
 		
@@ -234,7 +236,7 @@ public class ExtensionManager extends AdapterManager {
 		String qualifier;
 
 		protected MethodRoute(Object target, Method routeMethod) throws Exception {
-			super(target, new MethodCommand<HttpServletRequestContext, Action>(routeMethod));
+			super(target, new WebMethodCommand<HttpServletRequestContext, Action>(bundleContext, routeMethod));
 			RouteMethod rma = routeMethod.getAnnotation(RouteMethod.class);
 			this.action = rma.action();
 			this.qualifier = rma.qualifier().length()==0 ? routeMethod.getName() : rma.qualifier();
@@ -578,7 +580,7 @@ public class ExtensionManager extends AdapterManager {
 			}
 
 			for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(ExtensionManager.ROUTE_ID)) {
-				if ("object_route".equals(ce.getName())) {					
+				if ("object-route".equals(ce.getName())) {					
 					Route route = (Route) ce.createExecutableExtension("class");		
 					CoreUtil.injectProperties(ce, route);
 					String priorityStr = ce.getAttribute("priority");
@@ -605,7 +607,7 @@ public class ExtensionManager extends AdapterManager {
 						}
 						methodRoutes.add(routeEntry);
 					}
-				} else if ("extension_route".equals(ce.getName())) {					
+				} else if ("extension-route".equals(ce.getName())) {					
 						Route route = (Route) ce.createExecutableExtension("class");		
 						CoreUtil.injectProperties(ce, route);
 						String priorityStr = ce.getAttribute("priority");
@@ -626,7 +628,7 @@ public class ExtensionManager extends AdapterManager {
 							}
 							methodRoutes.add(routeEntry);
 						}
-				} else if ("object_resource_route".equals(ce.getName())) {					
+				} else if ("object-resource-route".equals(ce.getName())) {					
 					String priorityStr = ce.getAttribute("priority");
 					int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					String targetClassName = ce.getAttribute("target");					
@@ -637,7 +639,7 @@ public class ExtensionManager extends AdapterManager {
 					final String rName = ce.getAttribute("resource");			
 					final URL baseURL = bundle.getResource(rName);
 					
-					final String contentType = ce.getAttribute("contentType");					
+					final String contentType = ce.getAttribute("content-type");					
 					
 					Route route = new Route() {
 						
@@ -705,7 +707,7 @@ public class ExtensionManager extends AdapterManager {
 						routeMap.get(RouteType.OBJECT).put(RequestMethod.GET, methodRoutes);
 					}
 					methodRoutes.add(routeEntry);
-				} else if ("root_route".equals(ce.getName())) {					
+				} else if ("root-route".equals(ce.getName())) {					
 					Route route = (Route) ce.createExecutableExtension("class");			
 					CoreUtil.injectProperties(ce, route);
 					String priorityStr = ce.getAttribute("priority");
@@ -728,7 +730,7 @@ public class ExtensionManager extends AdapterManager {
 						}
 						methodRoutes.add(routeEntry);
 					}
-				} else if ("root_resource_route".equals(ce.getName())) {					
+				} else if ("root-resource-route".equals(ce.getName())) {					
 					String priorityStr = ce.getAttribute("priority");
 					int priority = CoreUtil.isBlank(priorityStr) ? 0 : Integer.parseInt(priorityStr);
 					IContributor contributor = ce.getContributor();		
@@ -737,7 +739,7 @@ public class ExtensionManager extends AdapterManager {
 					final String rName = ce.getAttribute("resource");			
 					final URL baseURL = bundle.getResource(rName);
 					
-					final String contentType = ce.getAttribute("contentType");					
+					final String contentType = ce.getAttribute("content-type");					
 					
 					final Route route = new Route() {
 						
@@ -805,7 +807,7 @@ public class ExtensionManager extends AdapterManager {
 						routeMap.get(RouteType.ROOT).put(RequestMethod.GET, methodRoutes);
 					}
 					methodRoutes.add(routeEntry);
-				} else if ("route_provider".equals(ce.getName())) {
+				} else if ("route-provider".equals(ce.getName())) {
 					RouteProvider routeProvider = (RouteProvider) ce.createExecutableExtension("class");
 					CoreUtil.injectProperties(ce, routeProvider);
 					for (final RouteDescriptor routeDescriptor: routeProvider.getRouteDescriptors()) {

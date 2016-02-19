@@ -95,7 +95,6 @@ import org.osgi.service.component.ComponentContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.LinkRenderer.Rendering;
-import org.pegdown.Parser;
 import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route {
@@ -338,6 +337,10 @@ public class DocRoute implements Route {
 			}			
 		}
 	}
+	
+	public BundleContext getBundleContext() {
+		return bundleContext;
+	}
 		
 	public void activate(ComponentContext context) throws Exception {
 		Dictionary<String, Object> properties = context.getProperties();
@@ -576,10 +579,22 @@ public class DocRoute implements Route {
 							}
 						}
 					} else if (obj instanceof EModelElementDocumentationGeneratorKey) {
-						ePackageDocumentationGenerators.remove(obj);
-						eClassDocumentationGenerators.remove(obj);
-						eDataTypeDocumentationGenerators.remove(obj);
-						eEnumDocumentationGenerators.remove(obj);
+						ExtensionEntry<EModelElementDocumentationGenerator<EPackage>> pExt = ePackageDocumentationGenerators.remove(obj);
+						if (pExt!=null) {
+							pExt.extension.close();
+						}
+						ExtensionEntry<EModelElementDocumentationGenerator<EClass>> cExt = eClassDocumentationGenerators.remove(obj);
+						if (cExt!=null) {
+							cExt.extension.close();
+						}
+						ExtensionEntry<EModelElementDocumentationGenerator<EDataType>> dtExt = eDataTypeDocumentationGenerators.remove(obj);
+						if (dtExt!=null) {
+							dtExt.extension.close();
+						}
+						ExtensionEntry<EModelElementDocumentationGenerator<EEnum>> eExt = eEnumDocumentationGenerators.remove(obj);
+						if (eExt!=null) {
+							eExt.extension.close();
+						}
 					}
 				}
     			scheduleReloading();				

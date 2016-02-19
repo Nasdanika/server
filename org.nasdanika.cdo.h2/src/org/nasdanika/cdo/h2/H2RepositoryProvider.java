@@ -45,6 +45,7 @@ public class H2RepositoryProvider implements RepositoryProvider {
 		boolean branches = Boolean.TRUE.equals(context.getProperties().get(BRANCHES_PROPERTY)); 
 				
 		IMappingStrategy mappingStrategy = CDODBUtil.createHorizontalMappingStrategy(audits, branches);
+		mappingStrategy.getProperties().put("qualifiedNames", "true");
 		IStore store = CDODBUtil.createStore(mappingStrategy, dbAdapter, dbConnectionProvider);
 
 		Map<String, String> props = new HashMap<String, String>();

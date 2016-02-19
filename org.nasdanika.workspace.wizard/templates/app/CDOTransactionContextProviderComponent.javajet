@@ -13,11 +13,14 @@ public class <%=wizard.getJavaName()%>CDOTransactionContextProviderComponent ext
 	@SuppressWarnings("unchecked")
 	@Override
 	protected ProtectionDomain<LoginPasswordCredentials> getProtectionDomain(CDOTransaction view) {
-		CDOResource res = view.getResource("<%=wizard.getJavaName()%>");
-		if (res!=null) {
-			for (EObject e: res.getContents()) {
-				if (e instanceof ProtectionDomain) {
-					return (ProtectionDomain<LoginPasswordCredentials>) e;
+		String resourcePath = "<%=wizard.getJavaName()%>";
+		if (view.hasResource(resourcePath)) {
+			CDOResource res = view.getResource(resourcePath);
+			if (res!=null) {
+				for (EObject e: res.getContents()) {
+					if (e instanceof ProtectionDomain) {
+						return (ProtectionDomain<LoginPasswordCredentials>) e;
+					}
 				}
 			}
 		}

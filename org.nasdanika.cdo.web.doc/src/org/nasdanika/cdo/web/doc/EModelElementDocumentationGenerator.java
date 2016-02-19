@@ -14,5 +14,7 @@ public interface EModelElementDocumentationGenerator<T extends EModelElement> {
 			String urlPrefix,
 			String registryPath,
 			T modelElement);	
+	
+	void close();
 
 }

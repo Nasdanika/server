@@ -4,6 +4,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +19,7 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
@@ -26,6 +28,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.nasdanika.cdo.EAttributeClosure;
 import org.nasdanika.cdo.EOperationClosure;
 import org.nasdanika.cdo.EReferenceClosure;
+import org.nasdanika.cdo.web.routes.EObjectRouteTracker.RouteEntry;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -35,9 +38,16 @@ import org.nasdanika.web.ValueAction;
 import org.nasdanika.web.routes.ObjectRoute;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 public class EObjectRoute extends ObjectRoute {
+	
+	private EObjectRouteTracker routeTracker;
+	
+	public EObjectRoute() throws InvalidSyntaxException {
+		routeTracker = new EObjectRouteTracker(FrameworkUtil.getBundle(EObjectRoute.class).getBundleContext());
+	}
 	
 	/**
 	 * EObject route. Has feature, operation, resource, and code sub-routes.
@@ -45,9 +55,101 @@ public class EObjectRoute extends ObjectRoute {
 	@Override
 	public Action execute(final HttpServletRequestContext context, Object... args) throws Exception {
 		final EObject eObject = (EObject) context.getTarget();
+		EClass eClass = eObject.eClass();
 		String[] path = context.getPath();
 		
-		Z: for (EOperation op: eObject.eClass().getEAllOperations()) {						
+		List<RouteEntry> routeEntries = routeTracker.match(eClass);
+		Collections.sort(routeEntries, new Comparator<RouteEntry>() {
+
+			@Override
+			public int compare(RouteEntry o1, RouteEntry o2) {
+				// The route with higher priority takes precedence.
+				int cmp = o2.getPriority() - o1.getPriority();
+				if (cmp!=0) {
+					return cmp;
+				}
+				
+				// If priorities are equal, then route defined in a sub-class or a class with shortest inheritance distance to the context model element’s EClass takes precedence.
+				cmp = o1.getDistance() - o2.getDistance();
+				if (cmp!=0) {
+					return cmp;
+				}
+				
+				// If the routes have the same inheritance distance then a route with path takes precedence over a route with pattern.
+				if (!CoreUtil.isBlank(o1.getPath())) {
+					if (CoreUtil.isBlank(o2.getPath())) {
+						return -1; 
+					}
+				}
+				
+				if (!CoreUtil.isBlank(o2.getPath())) {
+					if (CoreUtil.isBlank(o1.getPath())) {
+						return 1; 
+					}
+				}
+				
+				// A route with the longest path/pattern takes precedence over the other if both use path or pattern.				
+				String p1 = CoreUtil.isBlank(o1.getPath()) ? o1.getPattern() : o1.getPath();
+				String p2 = CoreUtil.isBlank(o2.getPath()) ? o2.getPattern() : o2.getPath();
+				cmp = p2.length() - p1.length();
+				if (cmp!=0) {
+					return cmp;
+				}
+				
+				return o1.hashCode() - o2.hashCode();
+			}
+		});
+				
+		for (RouteEntry re: routeEntries) {
+			
+			RequestMethod[] methods = re.getMethods();
+			if (methods!=null) {
+				boolean methodMatch = false;
+				for (RequestMethod method: methods) {
+					if (context.getMethod().equals(method)) {
+						methodMatch = true;
+						break;
+					}
+				}
+				if (!methodMatch) {
+					continue;
+				}
+			}
+			
+			if (!matchProduces(context, re.getContentType())) {
+				continue;
+			}
+			
+			if (!matchConsumes(context, re.getConsumes())) {
+				continue;
+			}
+			
+			String routePath = re.getPath();
+			if (!CoreUtil.isBlank(routePath)) {
+				// Extension route
+				if (path.length==1 && routePath.startsWith(".") && path[0].endsWith(routePath)) {
+					return re.getRoute().execute(context, args);
+				}
+
+				if (path.length>1) {
+					String jp = CoreUtil.join(path, "/", 1);
+					if (routePath.equals(jp) || (routePath.endsWith("/") && jp.startsWith(routePath))) {
+						int offset = routePath.split("/").length;
+						if (routePath.endsWith("/")) {
+							++offset;
+						}
+						return re.getRoute().execute(context.shift(offset), args);
+					}
+				}
+			} else if (path.length > 1) {			
+				String routePattern = re.getPattern();			
+				if (!CoreUtil.isBlank(routePattern) && Pattern.matches(routePattern, CoreUtil.join(path, "/", 1))) {
+					return re.getRoute().execute(context.shift(1), args);
+				}				
+			}
+		}		
+		
+		Z: for (EOperation op: eClass.getEAllOperations()) {						
 			EAnnotation routeAnnotation = op.getEAnnotation(CDOWebUtil.ANNOTATION_HOME_ROUTE); 
 			boolean isHomeRoute = routeAnnotation!=null && eObject instanceof CDOObject;
 			if (!isHomeRoute) {
@@ -58,57 +160,17 @@ public class EObjectRoute extends ObjectRoute {
 			}
 			
 			// Match content type to consumes
-			String consumes = routeAnnotation.getDetails().get("consumes");			
-			if (consumes!=null) {
-				String contentType = context.getRequest().getContentType();
-				if (contentType==null) {
-					continue;
-				}
-				boolean consumeMatches = false;
-				for (String consumesEntry: consumes.split(",")) {
-					String contentTypeLowerCase = contentType.trim().toLowerCase();
-					String ceLowerCase = consumesEntry.trim().toLowerCase();
-					if (ceLowerCase.equals("*/*") || ceLowerCase.equals(contentTypeLowerCase)) {
-						 consumeMatches = true;
-						 break;
-					 }
-					 if (consumesEntry.endsWith("/*") && contentTypeLowerCase.startsWith(ceLowerCase.substring(0, ceLowerCase.length()-1))) {
-						 consumeMatches = true;
-						 break;						 
-					 }
-				}					
-				
-				if (!consumeMatches) {
+			String consumes = routeAnnotation.getDetails().get("consumes");
+			if (!CoreUtil.isBlank(consumes)) {
+				if (!matchConsumes(context, consumes.split(","))) {
 					continue;
 				}
 			}
 			
 			// Match accept to produces
-			String produces = routeAnnotation.getDetails().get("produces");			
-			String accept = context.getRequest().getHeader("Accept");
-			if (produces!=null && accept!=null) {
-				String plc = produces.toLowerCase().trim();
-				boolean producesMatches = false;
-				for (String acceptEntry: accept.split(",")) {
-					String acceptEntryLowerCase = acceptEntry.trim().toLowerCase();
-					int idx = acceptEntryLowerCase.indexOf(";");
-					if (idx!=-1) {
-						acceptEntryLowerCase = acceptEntryLowerCase.substring(0, idx).trim();
-					}
-					// Ignoring q and level for now or forever
-					if (acceptEntryLowerCase.equals("*/*") || acceptEntryLowerCase.equals(plc)) {
-						 producesMatches = true;
-						 break;
-					 }
-					 if (acceptEntryLowerCase.endsWith("/*") && plc.startsWith(acceptEntryLowerCase.substring(0, acceptEntryLowerCase.length()-1))) {
-						 producesMatches = true;
-						 break;						 
-					 }
-				}					
-				
-				if (!producesMatches) {
-					continue;
-				}
+			String produces = routeAnnotation.getDetails().get("produces");
+			if (!matchProduces(context, produces)) {
+				continue;
 			}
 			
 			String methods = routeAnnotation.getDetails().get("method");
@@ -125,9 +187,9 @@ public class EObjectRoute extends ObjectRoute {
 				if (!path[0].equals(args[0])) {
 					continue; 
 				}
-			} else if (pathStr==null) {
+			} else if (CoreUtil.isBlank(pathStr)) {
 				String patternStr = routeAnnotation.getDetails().get("pattern");
-				if (patternStr==null) {
+				if (CoreUtil.isBlank(patternStr)) {
 					if (path.length!=2) {
 						continue;
 					}
@@ -304,7 +366,7 @@ public class EObjectRoute extends ObjectRoute {
 					featureName = featureName.substring(0, idx);
 				}
 		
-				EStructuralFeature feature = eObject.eClass().getEStructuralFeature(featureName);
+				EStructuralFeature feature = eClass.getEStructuralFeature(featureName);
 				if (feature instanceof EReference) {
 					return context.getAction(new EReferenceClosure<EObject>(eObject, (EReference) feature), 2, null);
 				}
@@ -314,7 +376,7 @@ public class EObjectRoute extends ObjectRoute {
 				return Action.NOT_FOUND;
 			case "operation":
 				String operationName = path[2];
-				for (EOperation op: eObject.eClass().getEAllOperations()) {
+				for (EOperation op: eClass.getEAllOperations()) {
 					if (operationName.equals(op.getName()) && op.getEParameters().size()<=path.length-3) {
 						return context.getAction(new EOperationClosure<EObject>(eObject, op), 2, null);
 					}
@@ -353,6 +415,12 @@ public class EObjectRoute extends ObjectRoute {
 			throw new IllegalArgumentException("Cannot convert "+obj+" to "+target);
 		}
 		return ret;
+	}
+	
+	@Override
+	public void close() throws Exception {
+		
+		super.close();
 	}
 
 }

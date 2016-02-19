@@ -2,7 +2,7 @@ package org.nasdanika.html;
 
 import java.util.Map;
 
-import org.nasdanika.html.Bootstrap.Style;
+import org.nasdanika.html.impl.DefaultHTMLFactory;
 
 
 /**
@@ -12,6 +12,8 @@ import org.nasdanika.html.Bootstrap.Style;
  *
  */
 public interface HTMLFactory {
+	
+	HTMLFactory INSTANCE = new DefaultHTMLFactory();
 	
 	/**
 	 * Generates element ID.

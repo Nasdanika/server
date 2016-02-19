@@ -302,4 +302,9 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		}
 	}
 
+	@Override
+	public void close() {
+		// NOP		
+	}
+
 }

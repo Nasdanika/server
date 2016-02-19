@@ -110,7 +110,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		return firstSentence(text);
 	}
 
-	private String firstSentence(String text) {
+	protected String firstSentence(String text) {
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
 		Z: while (matcher.find()) {
 			String group = matcher.group();
@@ -264,8 +264,8 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		
 	}	
 
-	public static void preStyle(UIElement<?> uiElement) {
-		uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
+	public static UIElement<?> preStyle(UIElement<?> uiElement) {
+		return uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
 	}
 	
 	// Generation of PlantUML text 

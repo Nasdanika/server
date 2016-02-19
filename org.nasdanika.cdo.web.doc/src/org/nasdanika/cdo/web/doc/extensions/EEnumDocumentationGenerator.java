@@ -85,4 +85,9 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		
 	}
 
+	@Override
+	public void close() {
+		// NOP		
+	}
+
 }

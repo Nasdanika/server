@@ -56,7 +56,7 @@ public class InstanceMethodCommand<C extends Context, R> implements Command<C, O
 
 	@Override
 	public boolean canExecute() {
-		return methodCommand.canExecute();
+		return true; // Not exactly.
 	}
 	
 	public Class<?>[] getParameterTypes() {

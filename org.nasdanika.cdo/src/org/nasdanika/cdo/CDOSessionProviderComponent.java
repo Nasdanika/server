@@ -3,6 +3,7 @@ package org.nasdanika.cdo;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.emf.cdo.net4j.CDONet4jSession;
 import org.eclipse.emf.cdo.net4j.CDONet4jSessionConfiguration;
 import org.eclipse.emf.cdo.net4j.CDONet4jUtil;
 import org.eclipse.emf.cdo.server.net4j.CDONet4jServerUtil;
@@ -22,11 +23,12 @@ public class CDOSessionProviderComponent implements CDOSessionProvider {
 	private static final String CONNECTOR_PROPERTY = ".connector";
 	private static final String TCP_PREFIX = "tcp:";
 	private static final String JVM_PREFIX = "jvm:";
-	private static final String REPO_NAME_PROPERTY = ".repositoryName";
+	private static final String REPO_NAME_PROPERTY = ".repositoryName";	
 
-	private CDOSession session;
+//	private CDOSession session;
 
 	private IManagedContainer container;
+	private CDONet4jSession session;
 
 	public void activate(ComponentContext context) {
 		container = ContainerUtil.createContainer();
@@ -57,6 +59,7 @@ public class CDOSessionProviderComponent implements CDOSessionProvider {
 				
 			    // Open session
 			    session = configuration.openNet4jSession();
+			    //session.options().getNet4jProtocol().setTimeout(200000); // Just for testing, configurable later 
 			    
 			    synchronized (sessionInitializers) {
 				    for (CDOSessionInitializer initializer: sessionInitializers) {

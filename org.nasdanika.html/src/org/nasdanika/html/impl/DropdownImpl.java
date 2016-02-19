@@ -13,7 +13,6 @@ class DropdownImpl extends UIElementImpl<DropdownImpl> implements Dropdown<Dropd
 	
 	private UIElement<?> toggle;
 	private List<Object> items = new ArrayList<>();
-	private String tagName;
 
 	DropdownImpl(HTMLFactory factory, String tagName, UIElement<?> toggle) {
 		super(factory, tagName);

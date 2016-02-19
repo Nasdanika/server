@@ -56,7 +56,26 @@
       </complexType>
    </element>
 
-   <element name="description" type="string">
+   <element name="description">
+      <complexType>
+         <attribute name="content-type" use="default" value="Markdown">
+            <annotation>
+               <documentation>
+                  
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="HTML">
+                  </enumeration>
+                  <enumeration value="Markdown">
+                  </enumeration>
+                  <enumeration value="Text">
+                  </enumeration>
+               </restriction>
+            </simpleType>
+         </attribute>
+      </complexType>
    </element>
 
    <element name="wiki-link-renderer">

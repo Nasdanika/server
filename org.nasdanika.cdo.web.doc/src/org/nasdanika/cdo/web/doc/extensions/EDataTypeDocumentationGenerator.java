@@ -66,4 +66,9 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 		
 	}
 
+	@Override
+	public void close() {
+		// NOP		
+	}
+
 }

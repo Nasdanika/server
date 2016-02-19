@@ -5,6 +5,7 @@ package org.nasdanika.html;
  * @author Pavel Vlasov
  *
  */
+@SuppressWarnings("serial")
 public class ProducerException extends RuntimeException {
 
 	public ProducerException(String message) {

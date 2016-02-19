@@ -223,5 +223,56 @@ public class ObjectRoute implements Route {
 		// NOP
 		
 	}
+	
+	public static boolean matchConsumes(HttpServletRequestContext context, String[] consumes) {
+		if (consumes==null || consumes.length==0) {
+			return true;
+		}
+		String contentType = context.getRequest().getContentType();
+		if (CoreUtil.isBlank(contentType)) {
+			return false;
+		}
+		for (String consumesEntry: consumes) {
+			String contentTypeLowerCase = contentType.trim().toLowerCase();
+			String ceLowerCase = consumesEntry.trim().toLowerCase();
+			if (ceLowerCase.equals("*/*") || ceLowerCase.equals(contentTypeLowerCase)) {
+				return true;
+			}
+			if (consumesEntry.endsWith("/*") && contentTypeLowerCase.startsWith(ceLowerCase.substring(0, ceLowerCase.length()-1))) {
+				return true;				 
+			}
+		}					
+		
+		return false;
+	}
+
+	public static boolean matchProduces(final HttpServletRequestContext context, String produces) {
+		if (CoreUtil.isBlank(produces)) {
+			return true;
+		}
+		String accept = context.getRequest().getHeader("Accept");
+		if (CoreUtil.isBlank(accept)) {
+			return true;
+		}
+		String plc = produces.toLowerCase().trim();
+		for (String acceptEntry: accept.split(",")) {
+			String acceptEntryLowerCase = acceptEntry.trim().toLowerCase();
+			int idx = acceptEntryLowerCase.indexOf(";");
+			if (idx!=-1) {
+				acceptEntryLowerCase = acceptEntryLowerCase.substring(0, idx).trim();
+			}
+			// Ignoring q and level for now or forever
+			if (acceptEntryLowerCase.equals("*/*") || acceptEntryLowerCase.equals(plc)) {
+				return true;
+			}
+			
+			if (acceptEntryLowerCase.endsWith("/*") && plc.startsWith(acceptEntryLowerCase.substring(0, acceptEntryLowerCase.length()-1))) {
+				return true;
+			}
+		}					
+			
+		return false;
+	}
+	
 
 }

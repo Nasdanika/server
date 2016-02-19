@@ -1,8 +1,5 @@
 package org.nasdanika.html.impl;
 
-import java.util.Collections;
-import java.util.List;
-
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FormFragment;
@@ -11,8 +8,8 @@ import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.UIElement;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement;
 
 class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 	

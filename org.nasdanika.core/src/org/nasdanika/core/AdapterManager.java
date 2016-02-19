@@ -32,7 +32,7 @@ public class AdapterManager implements AutoCloseable, Adaptable {
 			context = FrameworkUtil.getBundle(target.getClass()).getBundleContext();
 		}
 		if (context!=null) {
-			if (adapterProviderServiceFilter==null || adapterProviderServiceFilter.trim().length()==0) {
+			if (CoreUtil.isBlank(adapterProviderServiceFilter)) {
 				adapterProviderServiceTracker = new ServiceTracker<>(context, AdapterProvider.class.getName(), null);
 			} else {
 				String apServiceFilter = "(&(" + Constants.OBJECTCLASS + "=" + AdapterProvider.class.getName() + ")"+adapterProviderServiceFilter+")";

@@ -70,22 +70,22 @@
    
 	<% if (wizard.getRoutingServletAlias()!=null) { %>
    <extension point="org.nasdanika.web.route">
-      <root_route
+      <root-route
             class="<%=wizard.getApplicationArtifactId()%>.<%=wizard.getJavaName()%>Route"
             method="GET"
             pattern="<%=wizard.getDashedName()%>\.html">
-      </root_route>
+      </root-route>
       
       <% if (wizard.getDocAppRoutePattern()!=null) { %>
-      <root_route
+      <root-route
             class="<%=wizard.getApplicationArtifactId()%>.<%=wizard.getJavaName()%>DocAppRoute"
             method="GET"
             pattern="<%=wizard.getDocAppRoutePattern()%>">
-      </root_route>
+      </root-route>
       <% } %>
       
       <!--
-      <object_route
+      <object-route
             class="org.nasdanika.web.routes.ServiceRoute"
             method="*"
             pattern="[^/]+/services/.+"
@@ -94,7 +94,7 @@
                name="offset"
                value="2">
          </property>
-      </object_route>
+      </object-route>
       -->
    </extension>
    <% } %>

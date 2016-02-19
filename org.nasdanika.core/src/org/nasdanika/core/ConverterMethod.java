@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Mark method as a converter method. First method parameter is source, optional second is context.
- * Additional parameters with {@link Reference} annotation get injected with OGSi service instances. 
+ * Additional parameters with {@link ServiceParameter} annotation get injected with OGSi service instances. 
  * @author Pavel
  */
 @Retention(RetentionPolicy.RUNTIME)

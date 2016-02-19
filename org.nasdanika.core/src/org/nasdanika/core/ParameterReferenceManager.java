@@ -12,7 +12,7 @@ import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
 
 /**
- * Base class for classes which wrap methods with {@link Reference} annotations on parameters. This class tracks references and
+ * Base class for classes which wrap methods with {@link ServiceParameter} annotations on parameters. This class tracks references and
  * injects them into arguments.
  * @author Pavel
  *
@@ -79,7 +79,7 @@ public abstract class ParameterReferenceManager implements AutoCloseable {
 
 		ReferenceEntry(BundleContext context, ReferenceInfo info) throws Exception {			
 			this.info = info;
-			if (info.getFilter()==null || info.getFilter().trim().length()==0) {
+			if (CoreUtil.isBlank(info.getFilter())) {
 				this.serviceTracker = new ServiceTracker<Object, Object>(context, info.getType(), null);				
 			} else {
 				String filter = "(&(" + Constants.OBJECTCLASS + "=" + info.getType().getName() + ")"+info.getFilter()+")";
@@ -128,12 +128,12 @@ public abstract class ParameterReferenceManager implements AutoCloseable {
 		ReferenceInfo[] ret = new ReferenceInfo[pa.length];
 		Z: for (int i=0; i<pa.length; ++i) {
 			for (Annotation a: pa[i]) {
-				if (a instanceof Reference) {
+				if (a instanceof ServiceParameter) {
 					ret[i] = new ReferenceInfo(
 							(Class<Object>) (pt[i].isArray() ? pt[i].getComponentType() : pt[i]),
 							pt[i].isArray(), 
-							((Reference) a).mandatory(), 
-							((Reference) a).value());
+							((ServiceParameter) a).mandatory(), 
+							((ServiceParameter) a).value());
 					continue Z;
 				}
 			}
