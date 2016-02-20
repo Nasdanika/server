@@ -11,4 +11,9 @@ Web functionality can be associated with model elements using routes. There are 
     * Service routes may declare dependencies on other services and have activate/deactivate lifecycle methods.  
   
 All types of routes are reported in the ``Routes`` tab of model classes documentation pages.  
+
+### Micro web-applications
+Service and extension route implementation classes may extend [[javadoc>org.nasdanika.web.DispatchingRoute]] class in order to implement fine-grained dispatching to methods annotated with [[javadoc>org.nasdanika.web.RouteMethod]] annotations and serving class loaded and bundle resources as specified by [[javadoc>org.nasdanika.web.Resource]] annotations on the target's class.
+
+Such routes may be considered as micro web-applications operating in a context of a particular model element and performing a specific function and/or implementing a specific user story.
   

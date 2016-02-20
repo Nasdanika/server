@@ -55,6 +55,10 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 
 	protected HTMLFactory factory;
 	
+	public HTMLFactory getFactory() {
+		return factory;
+	}
+	
 	public UIElementImpl(HTMLFactory factory, Tag.TagName tagName) {
 		this(factory, tagName.name());
 	}

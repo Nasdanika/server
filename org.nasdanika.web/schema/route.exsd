@@ -188,7 +188,6 @@
       <complexType>
          <sequence>
             <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
          </sequence>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -272,6 +271,16 @@
                </documentation>
             </annotation>
          </attribute>
+         <attribute name="description" type="string">
+            <annotation>
+               <documentation>
+                  Location of description resource - Text (.txt), HTML (.html) or Markdown (.md)
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
       </complexType>
    </element>
 
@@ -282,9 +291,6 @@
          </documentation>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="description" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="resource" type="string" use="required">
             <annotation>
                <documentation>
@@ -337,32 +343,15 @@
                </documentation>
             </annotation>
          </attribute>
-      </complexType>
-   </element>
-
-   <element name="description">
-      <annotation>
-         <documentation>
-            Description.
-         </documentation>
-      </annotation>
-      <complexType>
-         <attribute name="content-type" use="default" value="Markdown">
+         <attribute name="description" type="string">
             <annotation>
                <documentation>
-                  
+                  Location of description resource - Text (.txt), HTML (.html) or Markdown (.md)
                </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
             </annotation>
-            <simpleType>
-               <restriction base="string">
-                  <enumeration value="HTML">
-                  </enumeration>
-                  <enumeration value="Markdown">
-                  </enumeration>
-                  <enumeration value="Text">
-                  </enumeration>
-               </restriction>
-            </simpleType>
          </attribute>
       </complexType>
    </element>

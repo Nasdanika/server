@@ -8,7 +8,7 @@ import java.lang.annotation.Target;
 /**
  * Command method parameters with this annotation are provided values from extensions. Extensions are configured
  * with {@link CoreUtil}.injectProperties() method.
- * Parameter type can be of extension type, array or collection. 
+ * Parameter type can be of extension type or array. 
  * @author Pavel
  *
  */

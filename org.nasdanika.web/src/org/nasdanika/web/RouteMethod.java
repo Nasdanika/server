@@ -30,6 +30,10 @@ public @interface RouteMethod {
 	
 	/**
 	 * Route method path. Takes precedence over pattern. May contain path parameter specs, e.g. <code>{something}</code>
+	 * When neither path nor pattern nor request method is specified then method name is split by camel-case and the first element
+	 * is treated as request method and remaining lowercased elements as path. E.g. <code>getTransactions</code> would be treated as GET for <code>transactions</code> path,
+	 * <code>getTransactionsList</code> would be treated as GET for <code>transactions/list</code> path.
+	 * If the first element does not correspond to an HTTP request method or a request method is specified, then method name is treated as path. If request method is not specified, then any method matches.  
 	 * @return
 	 */
 	String path() default "";
@@ -63,5 +67,11 @@ public @interface RouteMethod {
 	 * @return
 	 */
 	String qualifier() default "";
+		
+	/**
+	 * Comment to be shown in the dynamically generated API documentation.
+	 * @return
+	 */
+	String comment() default "";	
 
 }

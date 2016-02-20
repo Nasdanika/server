@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Route method parameters with this annotation are provided values from request parameter with a given name. 
- * Parameter type can be String, String[] or Collection. 
+ * Parameter type can be String or String[]. 
  * @author Pavel
  *
  */

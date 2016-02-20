@@ -1,9 +1,9 @@
 ## Resource route extensions
 
-Resource route is defined with ``eobject-resource-route`` element of ``org.nasdanika.web.route`` extension point. This element supports the following attributes and sub-elements:
+Resource route is defined with ``eobject-resource-route`` element of ``org.nasdanika.web.route`` extension point. This element supports the following attributes:
 
 * ``content-type`` - Response content type. If not set, then MIME types file is used to infer content file from resource extension.
-* ``description`` - optional route description.
+* ``description`` - optional route description in plain text (.txt), HTML (.htm or .html), or Markdown (.md)
 * ``path`` - Route path. If path ends with /, then the route's resource shall be a directory and route matches resource below the directory. Path and pattern a mutually exclusive. If path starts with a dot, the the route is treated as an extension route, i.e. it matches file extension, e.g. ``.png``.
 * ``pattern`` - [[javadoc>java.util.regex.Pattern|Java Regex Pattern]] to match request path.
 * ``priority`` - Route priority. 

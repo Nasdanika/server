@@ -107,4 +107,9 @@ public class UIElementFilter<T extends UIElement<T>> implements UIElement<T> {
 		return target.style();
 	}
 
+	@Override
+	public HTMLFactory getFactory() {
+		return target.getFactory();
+	}
+
 }

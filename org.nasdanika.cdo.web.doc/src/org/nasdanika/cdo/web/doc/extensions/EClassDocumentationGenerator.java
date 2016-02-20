@@ -752,7 +752,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				String docText = "";
 				if (!CoreUtil.isBlank(routeEntry.getDescription())) {
 					if ("text/markdown".equalsIgnoreCase(routeEntry.getDescriptionContentType())) {
-						String html = markdownToHtml(docRoute, baseURL, urlPrefix, routeEntry.getDescription());
+						String html = htmlFactory.div(markdownToHtml(docRoute, baseURL, urlPrefix, routeEntry.getDescription())).addClass("markdown-body").style().margin().bottom("5px").toString();
 						accordionFragment.content(html);
 						docText = Jsoup.parse(html).text();;
 					} else if ("text/html".equalsIgnoreCase(routeEntry.getDescriptionContentType())) {

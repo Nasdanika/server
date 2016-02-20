@@ -19,10 +19,16 @@ import java.lang.annotation.Target;
 public @interface Resource {
 	
 	/**
-	 * Resource URL path relative to the object path.
-	 * @return
+	 * Resource location in classloader or bundle. 
+	 * Classloader resources are resolved relative to the annotated class.
 	 */
 	String value();
+	
+	/**
+	 * If set to true then value is considered not as classloader/bundle resource, but as an absolute URL. 
+	 * @return
+	 */
+	boolean absolute() default false;
 	
 	/**
 	 * If this attribute is set resource(s) is loaded from 
@@ -32,19 +38,32 @@ public @interface Resource {
 	 */
 	String bundle() default "";
 	
-	/**
-	 * Optional version range. If the range has only one attribute, then
-	 * the bundle's version shall be greater or equal to the specified version, 
-	 * if two versions are provided, then it should be inclusive/exclusive [first version, second version)
-	 * @return
-	 */
-	String[] bundleVersion() default {};
+//	/**
+//	 * Optional version range. If the range has only one attribute, then
+//	 * the bundle's version shall be greater or equal to the specified version, 
+//	 * if two versions are provided, then it should be inclusive/exclusive [first version, second version)
+//	 * @return
+//	 */
+//	String[] bundleVersion() default {};
 	
 	/**
-	 * Resource classloader or bundle path. If not set, defaults to the URL path (value).
-	 * If path ends with / then resource is considered a directory.
-	 * Classloader resources are resolved relative to the annotated class.
+	 * Resource URL path relative to the object path.
+	 * If not set, defaults to the location (value).
+	 * If path ends with / then resource is considered a directory.	
+	 * @return
 	 */
 	String path() default "";
+	
+	/**
+	 * Resource matching priority.
+	 * @return
+	 */
+	int priority() default 0;
+	
+	/**
+	 * Comment to be shown in the dynamically generated API documentation.
+	 * @return
+	 */
+	String comment() default "";
 	
 }

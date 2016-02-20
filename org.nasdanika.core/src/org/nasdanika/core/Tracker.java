@@ -1,5 +1,6 @@
 package org.nasdanika.core;
 
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -100,23 +101,43 @@ public class Tracker<T> {
     			for (IConfigurationElement ce: extension.getConfigurationElements()) {
     				try {
 	    				if (ce.getName().equals(configurationElementName)) {
-	    					final StringBuilder descriptionBuilder = new StringBuilder();
+	    					final String[] description = {null};
 	    					final String[] descriptionContentType = {"text/markdown"};
-	    					for (IConfigurationElement de: ce.getChildren("description")) {
-	    						descriptionBuilder.append(de.getValue());
-	    						String dct = ce.getAttribute("content-type");
-	    						if (dct!=null) {
-		    						if ("HTML".equalsIgnoreCase(dct.trim())) {
-		    							descriptionContentType[0] = "text/html";
-		    						} else if ("Markdown".equalsIgnoreCase(dct.trim())) {
-		    							descriptionContentType[0] = "text/markdown";
-		    						} else if ("Text".equalsIgnoreCase(dct.trim())) {
-		    							descriptionContentType[0] = "text/plain";
-		    						}	    						
+	    					String descriptionAttribute = ce.getAttribute("description");
+							if (!CoreUtil.isBlank(descriptionAttribute)) {
+	    						URL descriptionResource = Platform.getBundle(ce.getContributor().getName()).getResource(descriptionAttribute);
+	    						if (descriptionResource!=null) {
+	    							description[0] = CoreUtil.stringify(descriptionResource);
+	    							if (descriptionAttribute.toLowerCase().endsWith(".txt")) {
+	    								descriptionContentType[0] = "text/plain";
+	    							} else if (descriptionAttribute.toLowerCase().endsWith(".html") || descriptionAttribute.toLowerCase().endsWith(".htm")) {
+	    								descriptionContentType[0] = "text/html";
+	    							}
 	    						}
 	    					}
+							
 	    					@SuppressWarnings("unchecked")
 							final T instance = (T) CoreUtil.injectProperties(ce, ce.createExecutableExtension(classAttribute));
+	    					
+	    					if (instance instanceof DocumentationProvider) {
+	    						DocumentationProvider dp = (DocumentationProvider) instance;
+	    						String[] sdf = dp.getSupportedDocumentationFormats();
+	    						if (sdf.length>0) {
+	    							if (description[0] == null) {
+	    								description[0] = dp.getDocumentation(sdf[0]);
+	    								descriptionContentType[0] = sdf[0];
+	    							} else {
+	    								for (String sf: sdf) {
+	    									if (sf.equals(descriptionContentType[0])) {
+	    										description[0] = description[0] + System.lineSeparator() + dp.getDocumentation(sf);
+	    										break;
+	    									}
+	    								}
+	    								
+	    							}
+	    						}	    						
+	    					}
+	    					
 	    					final Map<String, Object> properties = new HashMap<>();
 	    					for (String name: ce.getAttributeNames()) {
 	    						properties.put(name, ce.getAttribute(name));
@@ -125,7 +146,7 @@ public class Tracker<T> {
 	
 								@Override
 								public String getDescription() {
-									return descriptionBuilder.toString();
+									return description[0];
 								}
 	
 								@Override
@@ -181,15 +202,58 @@ public class Tracker<T> {
 		if (bundleContext!=null) {
 						
 			ServiceTrackerCustomizer<T, Entry<T>> customizer = new ServiceTrackerCustomizer<T, Entry<T>>() {
-
+							
 				@Override
 				public Entry<T> addingService(final ServiceReference<T> reference) {
+
+					final String[] description = {null};
+					final String[] descriptionContentType = {null};
+					Object instance = bundleContext.getService(reference);
+					
+					Object descr = reference.getProperty("description");
+					if (descr!=null) {
+						description[0] = descr.toString();
+					}
+					
+					Object descriptionContentTypeProp = reference.getProperty("description-content-type");
+					if (descriptionContentTypeProp instanceof String) {
+						if ("HTML".equalsIgnoreCase(((String) descriptionContentTypeProp).trim())) {
+							descriptionContentType[0] = "text/html";
+						} 
+						if ("Markdown".equalsIgnoreCase(((String) descriptionContentTypeProp).trim())) {
+							descriptionContentType[0] = "text/markdown";
+						}
+						if ("Text".equalsIgnoreCase(((String) descriptionContentTypeProp).trim())) {
+							descriptionContentType[0] = "text/plain";
+						}	    						
+					} else {
+						descriptionContentType[0] = "text/markdown";
+					}					
+					
+					if (instance instanceof DocumentationProvider) {
+						DocumentationProvider dp = (DocumentationProvider) instance;
+						String[] sdf = dp.getSupportedDocumentationFormats();
+						if (sdf.length>0) {
+							if (description[0] == null) {
+								description[0] = dp.getDocumentation(sdf[0]);
+								descriptionContentType[0] = sdf[0];
+							} else {
+								for (String sf: sdf) {
+									if (sf.equals(descriptionContentType[0])) {
+										description[0] = description[0] + System.lineSeparator() + dp.getDocumentation(sf);
+										break;
+									}
+								}
+								
+							}
+						}	    						
+					}
+					
 					Entry<T> entry = new Entry<T>() {
 
 						@Override
 						public String getDescription() {
-							Object descr = reference.getProperty("description");
-							return descr == null ? null : descr.toString();
+							return description[0];
 						}
 
 						@Override
@@ -204,19 +268,7 @@ public class Tracker<T> {
 
 						@Override
 						public String getDescriptionContentType() {
-	    					Object descriptionContentType = reference.getProperty("description-content-type");
-    						if (descriptionContentType instanceof String) {
-	    						if ("HTML".equalsIgnoreCase(((String) descriptionContentType).trim())) {
-	    							return "text/html";
-	    						} 
-	    						if ("Markdown".equalsIgnoreCase(((String) descriptionContentType).trim())) {
-	    							return "text/markdown";
-	    						}
-	    						if ("Text".equalsIgnoreCase(((String) descriptionContentType).trim())) {
-	    							return "text/plain";
-	    						}	    						
-    						}
-    						return "text/markdown";
+							return descriptionContentType[0];
 						}
 						
 					};

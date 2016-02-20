@@ -9,7 +9,7 @@ import javax.servlet.http.Cookie;
 
 /**
  * Route method parameters with this annotation are provided values from request cookie with a given name. 
- * Parameter type shall be String (cookie value) or {@link Cookie}. 
+ * Parameter type shall be String or String[] (cookie value), or {@link Cookie} or Cookie[] . 
  * @author Pavel
  *
  */

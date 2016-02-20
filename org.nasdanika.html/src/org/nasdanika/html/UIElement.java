@@ -373,4 +373,10 @@ public interface UIElement<T extends UIElement<T>> extends AutoCloseable, Produc
 	
 	Bootstrap<T> bootstrap();
 	
+	/**
+	 * 
+	 * @return Factory used to create this element.
+	 */
+	HTMLFactory getFactory();	
+	
 }

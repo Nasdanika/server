@@ -1,29 +1,51 @@
 package org.nasdanika.web;
 
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.Map;
+import java.util.Set;
 
+import org.eclipse.core.runtime.Platform;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.DocumentationProvider;
+import org.nasdanika.core.ExtensionParameter;
+import org.nasdanika.core.ServiceParameter;
+import org.nasdanika.html.Bootstrap.Style;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.RowContainer;
+import org.nasdanika.html.RowContainer.Row;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.routes.ObjectRoute;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 /**
- * Dispatches requests to target's methods with {@link RouteMethod} annotation.
+ * Dispatches requests to target's methods with {@link RouteMethod} annotation. Route methods parameters can be annotated with
+ * {@link ContextParameter}, {@link ServiceParameter}, {@link ExtensionParameter}, {@link PathParameter}, {@link QueryParameter}, 
+ * or {@link CookieParameter} annotations.
+ * 
+ * Also serves resources as instructed by {@link Resource} annotations on the target's class and its superclasses and interfaces.
+ * 
+ * This class can serve API documentation if <code>getApiDocPath()</code> method is overridden. 
  * @author Pavel Vlasov
  *
  */
-public class DispatchingRoute implements Route {
+public class DispatchingRoute implements Route, DocumentationProvider {
 	
 	private Object target;
-	private List<WebMethodCommand<HttpServletRequestContext, Object>> webMethodCommands = new ArrayList<>();
+	private List<RouteMethodCommand<HttpServletRequestContext, Object>> routeMethodCommands = new ArrayList<>();
 	
-	private Object getTarget() {
+	protected Object getTarget() {
 		return target==null ? this : target;
 	}
 	
@@ -32,87 +54,112 @@ public class DispatchingRoute implements Route {
 		for (Method method: (target==null ? getClass() : target.getClass()).getMethods()) {
 			final RouteMethod routeMethod = method.getAnnotation(RouteMethod.class);
 			if (routeMethod!=null) {
-				webMethodCommands.add(new WebMethodCommand<HttpServletRequestContext, Object>(bundleContext, method) {
-					
-					@Override
-					protected ArgumentResolver<HttpServletRequestContext> createArgumentResolver(final Class<?> parameterType, Annotation[] parameterAnnotations) throws Exception {
-						
-						// A trick to shift context passed as a method argument and still be able to get access to path parameters.
-						for (Annotation a: parameterAnnotations) {
-							// Context parameter
-							if (ContextParameter.class.isInstance(a) && !CoreUtil.isBlank(routeMethod.path())) {
-								return new ArgumentResolver<HttpServletRequestContext>() {
-									
-									@Override
-									public Object getValue(HttpServletRequestContext context, Object[] args) throws Exception {
-										HttpServletRequestContext shiftedContext = context.shift(routeMethod.path().split("/").length);
-										if (parameterType.isInstance(shiftedContext)) {
-											return shiftedContext;
-										}
-										
-										return shiftedContext.adapt(parameterType);
-									}
-									
-									@Override
-									public void close() {
-										// NOP						
-									}
-								};
-							}
-						}						
-						return super.createArgumentResolver(parameterType, parameterAnnotations);
-					}
-					
-				});
+				routeMethodCommands.add(new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method));
 			}
 		}
 		
-		Collections.sort(webMethodCommands, new Comparator<WebMethodCommand<HttpServletRequestContext, Object>>() {
-
-			@Override
-			public int compare(WebMethodCommand<HttpServletRequestContext, Object> o1, WebMethodCommand<HttpServletRequestContext, Object> o2) {
-				RouteMethod rm1 = o1.getMethod().getAnnotation(RouteMethod.class);
-				RouteMethod rm2 = o2.getMethod().getAnnotation(RouteMethod.class);
-				
-				// The route with higher priority takes precedence.
-				int cmp = rm2.priority() - rm1.priority();
-				if (cmp!=0) {
-					return cmp;
+		Collections.sort(routeMethodCommands);				
+		collectResourceEntries(target==null ? getClass() : target.getClass(), 0, new HashSet<Class<?>>());		
+	}
+	
+	private void collectResourceEntries(Class<?> clazz, int distance, Set<Class<?>> traversed) {
+		if (clazz!=null && traversed.add(clazz)) {
+			Resources resources = clazz.getAnnotation(Resources.class);
+			if (resources!=null) {
+				for (Resource res: resources.value()) {
+					resourceEntries.add(new ResourceEntry(clazz, res, distance));
 				}
-				
-				// If priorities are equal, then route defined in a sub-class or a class with shortest inheritance distance to the context model element’s EClass takes precedence.
-				Class<?> dc1 = o1.getMethod().getDeclaringClass();
-				Class<?> dc2 = o2.getMethod().getDeclaringClass();
-				if (dc1!=dc2) {
-					return dc1.isAssignableFrom(dc2) ? 1 : -1;
-				}
-				
-				// If the routes have the same inheritance distance then a route with path takes precedence over a route with pattern.
-				if (!CoreUtil.isBlank(rm1.path())) {
-					if (CoreUtil.isBlank(rm2.path())) {
-						return -1; 
-					}
-				}
-				
-				if (!CoreUtil.isBlank(rm2.path())) {
-					if (CoreUtil.isBlank(rm1.path())) {
-						return 1; 
-					}
-				}
-				
-				// A route with the longest path/pattern takes precedence over the other if both use path or pattern.				
-				String p1 = CoreUtil.isBlank(rm1.path()) ? rm1.pattern() : rm1.path();
-				String p2 = CoreUtil.isBlank(rm2.path()) ? rm2.pattern() : rm2.path();
-				cmp = p2.length() - p1.length();
-				if (cmp!=0) {
-					return cmp;
-				}
-				
-				return o1.hashCode() - o2.hashCode();
 			}
-		});
+			collectResourceEntries(clazz.getSuperclass(), distance+1, traversed);
+			for (Class<?> i: clazz.getInterfaces()) {
+				collectResourceEntries(i, distance+1, traversed);
+			}
+			
+			Collections.sort(resourceEntries);
+		}		
+	}
+	
+	private class ResourceEntry implements Comparable<ResourceEntry> {
+
+		private String path;
+		private int distance;
+		private int priority;
+		private String bundle;
+		private Class<?> clazz;
+		private String location;
+		private boolean absolute;
+		private String comment;
+
+		ResourceEntry(Class<?> clazz, Resource res, int distance) {
+			this.bundle = res.bundle();
+			this.clazz = clazz;
+			this.location = res.value();
+			this.priority = res.priority();
+			this.path = CoreUtil.isBlank(res.path()) ? res.value() : res.path();
+			this.distance = distance;
+			this.absolute = res.absolute();
+			this.comment = res.comment();
+			//this.bundleVersion = res.bundleVersion();
+		}
+		
+		URL resolve(String path) throws MalformedURLException {
+			if (absolute) {
+				if (CoreUtil.isBlank(path)) {
+					return new URL(location);
+				}
+				
+				return new URL(location+path);
+				
+			}
+			
+			if (CoreUtil.isBlank(bundle)) {
+				if (CoreUtil.isBlank(path)) {
+					return clazz.getResource(location);
+				}
+				
+				return clazz.getResource(location+path);
+			}
+			
+			
+			Bundle bundle = Platform.getBundle(this.bundle);
+			if (bundle!=null) {
+				if (CoreUtil.isBlank(path)) {
+					return bundle.getResource(location);
+				}
+				
+				return bundle.getResource(location+path);					
+			}
+			
+			return null;
+		}
+		
+		@Override
+		public int compareTo(ResourceEntry o) {
+			// The route with higher priority takes precedence.
+			int cmp = o.priority - priority;
+			if (cmp!=0) {
+				return cmp;
+			}
+			
+			// If priorities are equal, then route defined in a sub-class or a class with shortest inheritance distance to the target class.
+			cmp = distance - o.distance;
+			if (cmp!=0) {
+				return cmp;
+			}
+						
+			// A route with the longest path takes precedence over the other if both use path or pattern.				
+			cmp = o.path.length() - path.length();
+			if (cmp!=0) {
+				return cmp;
+			}
+			
+			return hashCode() - o.hashCode();
+		}
 		
 	}
+	
+	private List<ResourceEntry> resourceEntries = new ArrayList<>();
+
 	
 	/**
 	 * Dispatches to self 
@@ -123,15 +170,22 @@ public class DispatchingRoute implements Route {
 	}
 
 	@Override
-	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {						
 		String[] path = context.getPath();
-		W: for (WebMethodCommand<HttpServletRequestContext, Object> webMethodCommand: webMethodCommands) {
-			RouteMethod routeMethod = webMethodCommand.getMethod().getAnnotation(RouteMethod.class);
+		
+		if (!CoreUtil.isBlank(getApiDocPath())
+				&& context.getMethod() == RequestMethod.GET
+				&& getApiDocPath().equals(CoreUtil.join(path, "/"))) {
 			
-			RequestMethod[] methods = routeMethod.value();
-			if (methods.length>0) {
+			context.getResponse().setContentType("text/html");
+			return new ValueAction(generateApiDocumentation());
+		}
+		
+		W: for (RouteMethodCommand<HttpServletRequestContext, Object> routeMethodCommand: routeMethodCommands) {
+			
+			if (routeMethodCommand.getRequestMethods().length>0) {
 				boolean methodMatch = false;
-				for (RequestMethod method: methods) {
+				for (RequestMethod method: routeMethodCommand.getRequestMethods()) {
 					if (context.getMethod().equals(method)) {
 						methodMatch = true;
 						break;
@@ -142,18 +196,17 @@ public class DispatchingRoute implements Route {
 				}
 			}
 			
-			if (!ObjectRoute.matchProduces(context, routeMethod.produces())) {
+			if (!ObjectRoute.matchProduces(context, routeMethodCommand.getProduces())) {
 				continue;
 			}
 			
-			if (!ObjectRoute.matchConsumes(context, routeMethod.consumes())) {
+			if (!ObjectRoute.matchConsumes(context, routeMethodCommand.getConsumes())) {
 				continue;
 			}
-			
-			String routePath = routeMethod.path();
-			if (!CoreUtil.isBlank(routePath)) {
-				String[] splitRoutePath = routePath.split("/");
-				if (routePath.endsWith("/")) {
+						
+			if (!CoreUtil.isBlank(routeMethodCommand.getPath())) {
+				String[] splitRoutePath = routeMethodCommand.getPath().split("/");
+				if (routeMethodCommand.getPath().endsWith("/")) {
 					if (splitRoutePath.length>=path.length) {
 						continue;
 					}
@@ -170,21 +223,26 @@ public class DispatchingRoute implements Route {
 					}
 				}
 				
-				if (context.authorize(target, routeMethod.action().length()==0 ? context.getMethod().name() : routeMethod.action(), routeMethod.qualifier(), null)) {
-					Object result = webMethodCommand.execute(context, getTarget(), args);
-					if (result==null && webMethodCommand.getMethod().getReturnType() == void.class) {
+				if (context.authorize(getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
+					if (!CoreUtil.isBlank(routeMethodCommand.getProduces())) {
+						context.getResponse().setContentType(routeMethodCommand.getProduces());
+					}							
+					Object result = routeMethodCommand.execute(context, getTarget(), args);
+					if (result==null && routeMethodCommand.getMethod().getReturnType() == void.class) {
 						return Action.NOP;				
 					}
 					return ValueAction.wrap(result);
 				}
 				
 				return Action.FORBIDDEN;
-			} else if (path.length > 1) {			
-				String routePattern = routeMethod.pattern();			
-				if (!CoreUtil.isBlank(routePattern) && Pattern.matches(routePattern, CoreUtil.join(path, "/"))) {
-					if (context.authorize(target, routeMethod.action().length()==0 ? context.getMethod().name() : routeMethod.action(), routeMethod.qualifier(), null)) {
-						Object result = webMethodCommand.execute(context, getTarget(), args);
-						if (result==null && webMethodCommand.getMethod().getReturnType() == void.class) {
+			} else if (path.length > 1) {										
+				if (routeMethodCommand.getPattern()!=null && routeMethodCommand.getPattern().matcher(CoreUtil.join(path, "/")).matches()) {
+					if (context.authorize(getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
+						if (!CoreUtil.isBlank(routeMethodCommand.getProduces())) {
+							context.getResponse().setContentType(routeMethodCommand.getProduces());
+						}							
+						Object result = routeMethodCommand.execute(context, getTarget(), args);
+						if (result==null && routeMethodCommand.getMethod().getReturnType() == void.class) {
 							return Action.NOP;				
 						}
 						return ValueAction.wrap(result);
@@ -194,19 +252,334 @@ public class DispatchingRoute implements Route {
 				}				
 			}						
 		}		
+		
+		if (RequestMethod.GET == context.getMethod()) {
+			String jp = CoreUtil.join(path, "/");
+			for (ResourceEntry resEntry: resourceEntries) {
+				if (jp.equals(resEntry.path) || (resEntry.path.endsWith("/") && jp.startsWith(resEntry.path))) {
+					URL result = resEntry.resolve(jp.substring(resEntry.path.length()));					
+					if (result!=null) {
+						return new ValueAction(result);
+					}
+				}				
+			}
+		}
 		return Action.NOT_FOUND;
 	}
 
 	@Override
 	public boolean canExecute() {
-		return target!=null;
+		return true;
 	}
 
 	@Override
 	public void close() throws Exception {
-		for (WebMethodCommand<HttpServletRequestContext, Object> wmc: webMethodCommands) {
+		for (WebMethodCommand<HttpServletRequestContext, Object> wmc: routeMethodCommands) {
 			wmc.close();
 		}
 	}
+	
+	// --- Rendering of API docs
+	
+	/**
+	 * @return Location of bootstrap.css. This implementation returns MaxCDN location. 
+	 */
+	protected String getBootstrapCssLocation() {
+		return "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css";
+	}
 
+	/**
+	 * @return Location of bootstrap theme. This implementation returns MaxCDN location. 
+	 */
+	protected String getBootstrapThemeCssLocation() {
+		return "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css";
+	}
+	
+	/**
+	 * @return Location of jQuery script. This implementation returns MaxCDN location. 
+	 */
+	protected String getJQueryScriptLocation() {
+		return "//code.jquery.com/jquery-1.12.0.min.js";
+	}
+
+	/**
+	 * @return Location of bootstrap script. This implementation returns MaxCDN location. 
+	 */
+	protected String getBootstrapScriptLocation() {
+		return "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js";
+	}
+	
+	/**
+	 * If this method returns a non-blank string then it is used as a path to serve generated
+	 * API docs at for the GET method. 
+	 * @return
+	 */
+	protected String getApiDocPath() {
+		return null;
+	}
+	
+	/**
+	 * Helper class for sorting and presenting method and resource entries
+	 * @author Pavel Vlasov
+	 *
+	 */
+	private class ApiInfo implements Comparable<ApiInfo> {
+		private String path;
+		private String pattern;
+		private RequestMethod[] methods;
+		private String[] consumes;
+		private String produces;
+		private int priority;
+		private String comment;
+
+		
+		ApiInfo(RouteMethodCommand<HttpServletRequestContext, Object> rmc) {
+			path = rmc.getPath();
+			pattern = rmc.getMethod().getAnnotation(RouteMethod.class).pattern();
+			methods = rmc.getRequestMethods();
+			consumes = rmc.getConsumes();
+			produces = rmc.getProduces();
+			priority = rmc.getMethod().getAnnotation(RouteMethod.class).priority();
+			comment = rmc.getComment();
+		}
+
+		ApiInfo(ResourceEntry re) {
+			path = re.path;
+			pattern = "";
+			methods = new RequestMethod[] {RequestMethod.GET};
+			consumes = new String[] {};
+			produces = "";
+			priority = re.priority;
+			comment = re.comment;
+		}
+		
+		void generateRow(RowContainer<?> rowContainer) {
+			Row row = rowContainer.row();
+			row.cell(path);
+			row.cell(pattern);
+			if (methods.length==0 || Arrays.equals(RequestMethod.values(), methods)) {
+				row.cell("*").bootstrap().text().center();
+			} else if (methods.length==1) {
+				row.cell(methods[0].name()).bootstrap().text().center();
+				styleApiRow(row, methods[0]);
+			} else {
+				Tag ul = row.getFactory().tag(TagName.ul);
+				row.cell(ul).bootstrap().text().center();
+				for (RequestMethod rm: methods) {
+					ul.content(ul.getFactory().tag(TagName.li, rm.name()));
+				}
+			}
+			if (consumes == null || consumes.length==0) {
+				row.cell("");
+			} else if (consumes.length==1) {
+				row.cell(consumes[0]).bootstrap().text().center();
+			} else {
+				Tag ul = row.getFactory().tag(TagName.ul);
+				row.cell(ul).bootstrap().text().center();
+				for (String c: consumes) {
+					ul.content(ul.getFactory().tag(TagName.li, c));
+				}
+			}
+			row.cell(produces).bootstrap().text().center();
+			row.cell(priority).bootstrap().text().center();
+			row.cell(comment);
+		}
+		
+		void generateRow(StringBuilder tableBuilder) {
+			tableBuilder.append(" ").append(path).append(" | ");
+			tableBuilder.append(pattern).append(" | ");
+			if (methods.length==0 || Arrays.equals(RequestMethod.values(), methods)) {
+				tableBuilder.append("*").append(" | ");
+			} else if (methods.length==1) {
+				tableBuilder.append(methods[0].name()).append(" | ");
+			} else {
+				for (RequestMethod rm: methods) {
+					tableBuilder.append(rm.name()).append(" ");
+				}
+				tableBuilder.append("| ");
+			}
+			if (consumes == null || consumes.length==0) {
+				tableBuilder.append(" | ");
+			} else if (consumes.length==1) {
+				tableBuilder.append(consumes[0]).append(" | ");
+			} else {
+				for (String c: consumes) {
+					tableBuilder.append(c).append(" ");
+				}
+				tableBuilder.append("| ");
+			}
+			tableBuilder.append(produces).append(" | ");
+			tableBuilder.append(priority).append(" | ");
+			tableBuilder.append(comment).append(" | ");
+			
+			tableBuilder.append(System.lineSeparator());
+		}
+				
+		@Override
+		public int compareTo(ApiInfo o) {
+			String pop = CoreUtil.isBlank(path) ? pattern : path;
+			String opop = CoreUtil.isBlank(o.path) ? o.pattern : o.path;
+			int cmp = pop.compareTo(opop);
+			if (cmp!=0) {
+				return cmp;
+			}
+			if (methods.length==0) {
+				if (o.methods.length>0) {
+					return -1;
+				}
+			}
+			if (o.methods.length==0) {
+				if (methods.length>0) {
+					return 1;
+				}
+			}
+			
+			if (methods.length>0 && o.methods.length>0) {
+				cmp = methods[0].name().compareTo(o.methods[0].name());
+				if (cmp!=0) {
+					return cmp;
+				}
+			}
+			
+			cmp = produces.compareTo(o.produces);
+			if (cmp!=0) {
+				return cmp;
+			}
+			cmp = o.priority - priority;
+			if (cmp!=0) {
+				return cmp;
+			}
+			
+			return hashCode() - o.hashCode();
+		}
+		
+	}
+
+	/**
+	 * Generates API documentation.
+	 * @return
+	 */
+	protected String generateApiDocumentation() {
+		Map<String, Object> env = new HashMap<>();
+		env.put("bootstrap-css", getBootstrapCssLocation());
+		env.put("bootstrap-theme-css", getBootstrapThemeCssLocation());
+		env.put("jquery-js", getJQueryScriptLocation());
+		env.put("bootstrap-js", getBootstrapScriptLocation());
+		env.put("title", "Web API: "+getTarget().getClass().getName());
+		Table apiTable = generateApiHtmlTable();		
+		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;		
+		env.put("content", htmlFactory.panel(Style.PRIMARY, "<H4><B>Web API:</B> "+getTarget().getClass().getName()+"</H4>", apiTable, null).style().margin("10px"));
+		String apiDoc = htmlFactory.interpolate(getApiDocumentationPageTemplate(), env);
+		return apiDoc;
+	}
+
+	protected Table generateApiHtmlTable() {
+		Table apiTable = HTMLFactory.INSTANCE.table().bordered();
+		Row hRow = apiTable.header().row().style(Style.PRIMARY);
+		hRow.header("Path");
+		hRow.header("Pattern");
+		hRow.header("Method(s)").bootstrap().text().center();
+		hRow.header("Consumes").bootstrap().text().center();
+		hRow.header("Produces").bootstrap().text().center();
+		hRow.header("Priority").bootstrap().text().center();
+		hRow.header("Comment");
+		
+		List<ApiInfo> apiInfos = new ArrayList<>();
+		for (RouteMethodCommand<HttpServletRequestContext, Object> rmc: routeMethodCommands) {
+			apiInfos.add(new ApiInfo(rmc));
+		}
+		
+		for (ResourceEntry re: resourceEntries) {
+			apiInfos.add(new ApiInfo(re));
+		}
+		
+		Collections.sort(apiInfos);
+		
+		RowContainer<?> tableBody = apiTable.body();
+		for (ApiInfo ai: apiInfos) {
+			ai.generateRow(tableBody);
+		}
+		return apiTable;
+	}
+
+	/**
+	 * @return Page template resource - String, URL, Reader, or InputStream.
+	 */
+	protected Object getApiDocumentationPageTemplate() {
+		return DispatchingRoute.class.getResource("api-doc-template.html");
+	}
+	
+	/**
+	 * Styles API row based on request method.
+	 * @param row
+	 * @param requestMethod
+	 */
+	protected void styleApiRow(Row row, RequestMethod requestMethod) {
+		switch (requestMethod) {
+		case DELETE:
+			row.style(Style.DANGER);
+			break;
+		case GET:
+			row.style(Style.INFO);
+			break;
+		case POST:
+			row.style(Style.SUCCESS);
+			break;
+		case PUT:
+			row.style(Style.WARNING);
+			break;
+		case OPTIONS:
+			break;
+		case PATCH:
+			break;
+		case TRACE:
+			break;
+		default:
+			// Nothing
+			break;				
+		}
+	}
+
+	@Override
+	public String[] getSupportedDocumentationFormats() {
+		return new String[] { "text/html", "text/markdown" };
+	}
+
+	@Override
+	public String getDocumentation(String format) {
+		if ("text/html".equals(format)) {
+			return generateApiHtmlTable().toString();
+		}
+		if ("text/markdown".equals(format)) {
+			return generateApiMarkdownTable();			
+		}
+		throw new IllegalArgumentException("Unsupported format: "+format);
+	}
+
+	protected String generateApiMarkdownTable() {
+		StringBuilder tableBuilder = new StringBuilder(System.lineSeparator());
+		
+		tableBuilder.append("Path | Pattern     | Method(s) | Consumes | Produces | Priority | Comment").append(System.lineSeparator()); 
+		tableBuilder.append("-----|-------------|:---------:|:--------:|:--------:|:--------:|--------").append(System.lineSeparator());
+
+		List<ApiInfo> apiInfos = new ArrayList<>();
+		for (RouteMethodCommand<HttpServletRequestContext, Object> rmc: routeMethodCommands) {
+			apiInfos.add(new ApiInfo(rmc));
+		}
+		
+		for (ResourceEntry re: resourceEntries) {
+			apiInfos.add(new ApiInfo(re));
+		}
+		
+		Collections.sort(apiInfos);
+		
+		for (ApiInfo ai: apiInfos) {
+			ai.generateRow(tableBuilder);
+		}
+		
+		
+		tableBuilder.append(System.lineSeparator());
+		return tableBuilder.toString();
+	}
+	
 }

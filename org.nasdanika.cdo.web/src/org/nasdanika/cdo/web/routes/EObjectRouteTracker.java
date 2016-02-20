@@ -112,22 +112,21 @@ public class EObjectRouteTracker {
     			for (IConfigurationElement ce: extension.getConfigurationElements()) {
     				try {
 	    				if ("eobject-resource-route".equals(ce.getName())) {
-	    					final StringBuilder descriptionBuilder = new StringBuilder();
-	    					final String[] descriptionContentType = {"text/markdown"};
-	    					for (IConfigurationElement de: ce.getChildren("description")) {
-	    						descriptionBuilder.append(de.getValue());
-	    						String dct = ce.getAttribute("content-type");
-	    						if (dct!=null) {
-		    						if ("HTML".equalsIgnoreCase(dct.trim())) {
-		    							descriptionContentType[0] = "text/html";
-		    						} else if ("Markdown".equalsIgnoreCase(dct.trim())) {
-		    							descriptionContentType[0] = "text/markdown";
-		    						} else if ("Text".equalsIgnoreCase(dct.trim())) {
-		    							descriptionContentType[0] = "text/plain";
-		    						}	    						
+	    					String description = null;
+	    					String descriptionContentType = "text/markdown";
+	    					String descriptionAttribute = ce.getAttribute("description");
+							if (!CoreUtil.isBlank(descriptionAttribute)) {
+	    						URL descriptionResource = Platform.getBundle(ce.getContributor().getName()).getResource(descriptionAttribute);
+	    						if (descriptionResource!=null) {
+	    							description = CoreUtil.stringify(descriptionResource);
+	    							if (descriptionAttribute.toLowerCase().endsWith(".txt")) {
+	    								descriptionContentType = "text/plain";
+	    							} else if (descriptionAttribute.toLowerCase().endsWith(".html") || descriptionAttribute.toLowerCase().endsWith(".htm")) {
+	    								descriptionContentType = "text/html";
+	    							}
 	    						}
 	    					}
-	    					
+	    						    					
     						ResourceRouteEntry resourceEntry = new ResourceRouteEntry(
     								ce.getContributor().getName(), 
     								ce.getAttribute(RESOURCE_ATTRIBUTE), 
@@ -137,8 +136,8 @@ public class EObjectRouteTracker {
     								ce.getAttribute(PATH_ATTRIBUTE), 
     								ce.getAttribute(PATTERN_ATTRIBUTE), 
     								ce.getAttribute(CONTENT_TYPE_ATTRIBUTE),
-    								descriptionBuilder.toString(),
-    								descriptionContentType[0]);
+    								description,
+    								descriptionContentType);
     						
 	    					synchronized (resourceRoutes) {
 								resourceRoutes.add(resourceEntry);

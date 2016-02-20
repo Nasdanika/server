@@ -138,12 +138,18 @@ public class EObjectRoute extends ObjectRoute {
 						if (routePath.endsWith("/")) {
 							++offset;
 						}
+						if (!CoreUtil.isBlank(re.getContentType())) {
+							context.getResponse().setContentType(re.getContentType());
+						}							
 						return re.getRoute().execute(context.shift(offset), args);
 					}
 				}
 			} else if (path.length > 1) {			
 				String routePattern = re.getPattern();			
 				if (!CoreUtil.isBlank(routePattern) && Pattern.matches(routePattern, CoreUtil.join(path, "/", 1))) {
+					if (!CoreUtil.isBlank(re.getContentType())) {
+						context.getResponse().setContentType(re.getContentType());
+					}							
 					return re.getRoute().execute(context.shift(1), args);
 				}				
 			}

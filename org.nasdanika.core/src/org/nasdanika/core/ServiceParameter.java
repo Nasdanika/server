@@ -7,7 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Annotates command method parameter as service reference.
- * Reference type is taken from parameter type. 
+ * Reference type is taken from parameter type. If parameter type is array, then its component type is used as service type.
  * @author Pavel
  *
  */
