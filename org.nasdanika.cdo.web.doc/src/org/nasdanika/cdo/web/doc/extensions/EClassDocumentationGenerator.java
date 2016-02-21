@@ -1088,8 +1088,8 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 							accordionFragment.content(htmlFactory.panel(Bootstrap.Style.INFO, "Styles", styleTable, null));
 						}
 					}
-				}				
-								
+				}	
+				
 				formsAccordion.item(
 						"<b>"+form.getName()+"</b> : "+(form.getEType()==null ? "void" : form.getEType().getName())+declaringType+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 						null,

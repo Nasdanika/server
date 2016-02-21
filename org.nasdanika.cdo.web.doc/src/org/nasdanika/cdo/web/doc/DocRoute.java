@@ -1787,6 +1787,7 @@ public class DocRoute implements Route {
 			for (TocNode toc = tocRoot==null ? null : tocRoot.find(relPath); toc!=null; toc = toc.getParent()) {
 				if (toc.getHref()!=null && toc.getHref().startsWith(PACKAGES_PATH)) {
 					env.put(CONTEXT_MODEL_ELEMENT_PATH_KEY, docRoutePath+toc.getHref());
+					break;
 				}
 			}
 		}

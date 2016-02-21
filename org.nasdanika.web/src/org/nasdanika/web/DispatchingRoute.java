@@ -1,5 +1,6 @@
 package org.nasdanika.web;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,7 +33,7 @@ import org.osgi.framework.BundleContext;
 /**
  * Dispatches requests to target's methods with {@link RouteMethod} annotation. Route methods parameters can be annotated with
  * {@link ContextParameter}, {@link ServiceParameter}, {@link ExtensionParameter}, {@link PathParameter}, {@link QueryParameter}, 
- * or {@link CookieParameter} annotations.
+ * {@link BodyParameter}, or {@link CookieParameter} annotations.
  * 
  * Also serves resources as instructed by {@link Resource} annotations on the target's class and its superclasses and interfaces.
  * 
@@ -41,9 +42,9 @@ import org.osgi.framework.BundleContext;
  *
  */
 public class DispatchingRoute implements Route, DocumentationProvider {
-	
+		
 	private Object target;
-	private List<RouteMethodCommand<HttpServletRequestContext, Object>> routeMethodCommands = new ArrayList<>();
+	protected List<RouteMethodCommand<HttpServletRequestContext, Object>> routeMethodCommands = new ArrayList<>();
 	
 	protected Object getTarget() {
 		return target==null ? this : target;
@@ -54,12 +55,23 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		for (Method method: (target==null ? getClass() : target.getClass()).getMethods()) {
 			final RouteMethod routeMethod = method.getAnnotation(RouteMethod.class);
 			if (routeMethod!=null) {
-				routeMethodCommands.add(new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method));
+				routeMethodCommands.add(createRouteMethodCommand(bundleContext, method));
 			}
 		}
 		
 		Collections.sort(routeMethodCommands);				
 		collectResourceEntries(target==null ? getClass() : target.getClass(), 0, new HashSet<Class<?>>());		
+	}
+
+	/**
+	 * Subclasses may override this method to return customized route method commands 
+	 * @param bundleContext
+	 * @param method
+	 * @return
+	 * @throws Exception
+	 */
+	protected RouteMethodCommand<HttpServletRequestContext, Object> createRouteMethodCommand(BundleContext bundleContext, Method method) throws Exception {
+		return new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method);
 	}
 	
 	private void collectResourceEntries(Class<?> clazz, int distance, Set<Class<?>> traversed) {
@@ -317,6 +329,26 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 	protected String getApiDocPath() {
 		return null;
 	}
+		
+	protected String markdownModelName(Class<?> modelClass) {
+		if (void.class == modelClass || modelClass == null) {
+			return "";
+		}
+		if (modelClass.isPrimitive()) {
+			return modelClass.getName();
+		}
+		if (modelClass.isArray()) {
+			return "[[javadoc>"+modelClass.getComponentType().getName()+"]]*";
+		}
+		return "[[javadoc>"+modelClass.getName()+"]]";
+	}
+	
+	protected Object htmlModelName(Class<?> modelClass) {
+		if (void.class == modelClass || modelClass == null) {
+			return "";
+		}
+		return modelClass.getName();
+	}	
 	
 	/**
 	 * Helper class for sorting and presenting method and resource entries
@@ -332,6 +364,11 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		private int priority;
 		private String comment;
 
+		private Object htmlRequestModel = "";
+		private Object htmlResponseModel = "";
+
+		private String markdownRequestModel = "";
+		private String markdownResponseModel = "";
 		
 		ApiInfo(RouteMethodCommand<HttpServletRequestContext, Object> rmc) {
 			path = rmc.getPath();
@@ -341,6 +378,20 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			produces = rmc.getProduces();
 			priority = rmc.getMethod().getAnnotation(RouteMethod.class).priority();
 			comment = rmc.getComment();
+			
+			Class<?>[] pt = rmc.getMethod().getParameterTypes();
+			Annotation[][] pa = rmc.getMethod().getParameterAnnotations();
+			Z: for (int i=0; i<pt.length; ++i) {
+				for (Annotation a: pa[i]) {
+					if (a instanceof BodyParameter) {
+						htmlRequestModel = htmlModelName(pt[i]);
+						markdownRequestModel = markdownModelName(pt[i]);
+						break Z;
+					}
+				}
+			}
+			htmlResponseModel = htmlModelName(rmc.getMethod().getReturnType()); 
+			markdownResponseModel = markdownModelName(rmc.getMethod().getReturnType()); 
 		}
 
 		ApiInfo(ResourceEntry re) {
@@ -381,6 +432,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				}
 			}
 			row.cell(produces).bootstrap().text().center();
+			row.cell(htmlRequestModel).bootstrap().text().center();
+			row.cell(htmlResponseModel).bootstrap().text().center();
 			row.cell(priority).bootstrap().text().center();
 			row.cell(comment);
 		}
@@ -409,6 +462,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				tableBuilder.append("| ");
 			}
 			tableBuilder.append(produces).append(" | ");
+			tableBuilder.append(markdownRequestModel).append(" | ");
+			tableBuilder.append(markdownResponseModel).append(" | ");
 			tableBuilder.append(priority).append(" | ");
 			tableBuilder.append(comment).append(" | ");
 			
@@ -481,6 +536,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		hRow.header("Method(s)").bootstrap().text().center();
 		hRow.header("Consumes").bootstrap().text().center();
 		hRow.header("Produces").bootstrap().text().center();
+		hRow.header("Request").bootstrap().text().center();
+		hRow.header("Response").bootstrap().text().center();
 		hRow.header("Priority").bootstrap().text().center();
 		hRow.header("Comment");
 		
@@ -551,7 +608,10 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			return generateApiHtmlTable().toString();
 		}
 		if ("text/markdown".equals(format)) {
-			return generateApiMarkdownTable();			
+			return "Dispatching route [[javadoc>"+getClass().getName()+"]]"
+					+ System.lineSeparator()
+					+ System.lineSeparator()
+					+ generateApiMarkdownTable();			
 		}
 		throw new IllegalArgumentException("Unsupported format: "+format);
 	}
@@ -559,8 +619,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 	protected String generateApiMarkdownTable() {
 		StringBuilder tableBuilder = new StringBuilder(System.lineSeparator());
 		
-		tableBuilder.append("Path | Pattern     | Method(s) | Consumes | Produces | Priority | Comment").append(System.lineSeparator()); 
-		tableBuilder.append("-----|-------------|:---------:|:--------:|:--------:|:--------:|--------").append(System.lineSeparator());
+		tableBuilder.append("Path | Pattern     | Method(s) | Consumes | Produces | Request | Response | Priority | Comment").append(System.lineSeparator()); 
+		tableBuilder.append("-----|-------------|:---------:|:--------:|:--------:|:-------:|:--------:|:--------:|--------").append(System.lineSeparator());
 
 		List<ApiInfo> apiInfos = new ArrayList<>();
 		for (RouteMethodCommand<HttpServletRequestContext, Object> rmc: routeMethodCommands) {

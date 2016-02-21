@@ -8,18 +8,23 @@ import java.util.List;
 
 import javax.servlet.http.Cookie;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.MethodCommand;
 import org.osgi.framework.BundleContext;
 
 /**
- * Method command which handles {@link QueryParameter}, {@link CookieParameter}, and {@link PathParameter} annotated parameters.
+ * Method command which handles {@link QueryParameter}, {@link CookieParameter}, {@link BodyParameter}, and {@link PathParameter} annotated parameters.
  * @author Pavel Vlasov
  *
  * @param <C>
  * @param <R>
  */
 public class WebMethodCommand<C extends HttpServletRequestContext, R> extends MethodCommand<C, R> {
+	
+	public static final String JSON_CONTENT_TYPE = "application/json";
 
 	public WebMethodCommand(BundleContext bundleContext, Method method) throws Exception {
 		super(bundleContext, method);
@@ -45,6 +50,20 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 						}
 						
 						return context.getRequest().getParameter(queryParameter.value());
+					}
+					
+					@Override
+					public void close() {
+						// NOP						
+					}
+				};
+			}
+			if (BodyParameter.class.isInstance(a)) {
+				return new ArgumentResolver<C>() {
+					
+					@Override
+					public Object getValue(C context, Object[] arguments) throws Exception {
+						return processBodyParameter(context, parameterType);
 					}
 					
 					@Override
@@ -126,6 +145,28 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 		}
 		
 		return super.createArgumentResolver(parameterType, parameterAnnotations);
+	}
+	
+	/**
+	 * Converts request body to parameter type. This implementation delegates to the conversion framework.
+	 * @param context
+	 * @param parameterType
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object processBodyParameter(C context, Class<?> parameterType) throws Exception {
+		// Explicit JSON conversion
+		if (JSON_CONTENT_TYPE.equals(context.getResponse().getContentType())) {
+			if (parameterType == JSONArray.class) {
+				return new JSONArray(new JSONTokener(context.getRequest().getReader()));
+			}
+			
+			if (parameterType == JSONObject.class) {
+				return new JSONObject(new JSONTokener(context.getRequest().getReader()));
+			}			
+		}
+		
+		return context.convert(context.getRequest().getInputStream(), parameterType);
 	}
 
 }
