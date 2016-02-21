@@ -1,4 +1,4 @@
-package org.nasdanika.cdo.web;
+package org.nasdanika.cdo.web.routes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

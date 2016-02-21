@@ -1,4 +1,4 @@
-package org.nasdanika.cdo.web;
+package org.nasdanika.cdo.web.routes;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.nasdanika.cdo.web.CDOViewHttpServletRequestContext;
 import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.DispatchingRoute;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -167,7 +168,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 									break;							
 								}							
 							} else {
-								fa.put(toJSON((EAttribute) feature, obj)); 
+								fa.put(toJSON(context, (EAttribute) feature, obj)); 
 							}
 						}
 					}
@@ -198,7 +199,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 								break;							
 							}							
 						} else {
-							ret.put(feature.getName(), toJSON((EAttribute) feature, obj)); 
+							ret.put(feature.getName(), toJSON(context, (EAttribute) feature, obj)); 
 						}
 					}
 				}
@@ -222,22 +223,37 @@ public class EDispatchingRoute extends DispatchingRoute {
 	}
 	
 	/**
-	 * Allows to customize conversion to JSON in subclasses.
+	 * Allows to customize conversion to JSON in subclasses. This implementation simply returns value attribute.
 	 * @param attribute
 	 * @param value
 	 * @return
 	 */
-	protected Object toJSON(EAttribute attribute, Object value) throws Exception {
+	protected Object toJSON(HttpServletRequestContext context, EAttribute attribute, Object value) throws Exception {
 		return value;
 	}
 	
 	/**
-	 * Allows to customize conversion from JSON in subclasses.
+	 * Converts JSON value to attribute type. This implementation delegates to context.convert();
+	 * Override to customize conversion from JSON.
 	 * @param attribute
 	 * @param value
 	 * @return
 	 */
-	protected Object fromJSON(EAttribute attribute, Object value) throws Exception {
+	protected Object fromJSON(HttpServletRequestContext context, EAttribute attribute, Object value) throws Exception {
+		if (value==null) {
+			return null;
+		}
+		Class<?> instanceClass = attribute.getEType().getInstanceClass();
+		if (instanceClass!=null) {
+			if (instanceClass.isInstance(value)) {
+				return value;
+			}
+			Object convertedValue = context.convert(value, instanceClass);
+			if (convertedValue == null) {
+				throw new IllegalArgumentException("Cannot convert "+value+"("+value.getClass().getName()+") to "+instanceClass.getName());
+			}
+			return convertedValue;
+		}
 		return value;
 	}	
 
@@ -284,14 +300,14 @@ public class EDispatchingRoute extends DispatchingRoute {
 						if (feature instanceof EReference) {
 							featureValue.add(convert(context, ja.getJSONObject(i), ((EReference) feature).getEReferenceType()));
 						} else {
-							featureValue.add(fromJSON((EAttribute) feature, ja.get(i)));
+							featureValue.add(fromJSON(context, (EAttribute) feature, ja.get(i)));
 						}
 					}
 				} else {
 					if (feature instanceof EReference) {
 						ret.eSet(feature, convert(context, jsonObject.getJSONObject(feature.getName()), ((EReference) feature).getEReferenceType()));
 					} else {
-						ret.eSet(feature, fromJSON((EAttribute) feature, jsonObject.get(feature.getName())));
+						ret.eSet(feature, fromJSON(context, (EAttribute) feature, jsonObject.get(feature.getName())));
 					}					
 				}
 			}			
