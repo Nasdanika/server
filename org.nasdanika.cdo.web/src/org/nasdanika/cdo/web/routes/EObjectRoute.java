@@ -133,7 +133,7 @@ public class EObjectRoute extends ObjectRoute {
 
 				if (path.length>1) {
 					String jp = CoreUtil.join(path, "/", 1);
-					if (routePath.equals(jp) || (routePath.endsWith("/") && jp.startsWith(routePath))) {
+					if (routePath.equals(jp) || (routePath.endsWith("/") && jp.startsWith(routePath)) || "/".equals(routePath)) {
 						int offset = routePath.split("/").length;
 						if (routePath.endsWith("/")) {
 							++offset;
