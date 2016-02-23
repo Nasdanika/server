@@ -19,16 +19,11 @@ import java.lang.annotation.Target;
 public @interface Resource {
 	
 	/**
-	 * Resource location in classloader or bundle. 
+	 * Resource location - absolute, in classloader or bundle.
+	 * Location is considered absolute if it contains <code>://</code>. 
 	 * Classloader resources are resolved relative to the annotated class.
 	 */
 	String value();
-	
-	/**
-	 * If set to true then value is considered not as classloader/bundle resource, but as an absolute URL. 
-	 * @return
-	 */
-	boolean absolute() default false;
 	
 	/**
 	 * If this attribute is set resource(s) is loaded from 

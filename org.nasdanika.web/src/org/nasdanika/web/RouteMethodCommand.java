@@ -147,7 +147,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 			return cmp;
 		}
 		
-		// If priorities are equal, then route defined in a sub-class or a class with shortest inheritance distance to the context model element’s EClass takes precedence.
+		// If priorities are equal, then route defined in a sub-class takes precedence.
 		Class<?> dc1 = getMethod().getDeclaringClass();
 		Class<?> dc2 = o.getMethod().getDeclaringClass();
 		if (dc1!=dc2) {
