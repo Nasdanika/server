@@ -21,7 +21,6 @@ import org.nasdanika.core.AdapterManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.InstanceMethodCommand;
-import org.nasdanika.core.MethodCommand;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.HTMLFactory;

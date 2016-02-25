@@ -132,6 +132,10 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 					resourceEntries.add(new ResourceEntry(clazz, res, distance));
 				}
 			}
+			Resource resource = clazz.getAnnotation(Resource.class);
+			if (resource!=null) {
+				resourceEntries.add(new ResourceEntry(clazz, resource, distance));
+			}
 			collectResourceEntries(clazz.getSuperclass(), distance+1, traversed);
 			for (Class<?> i: clazz.getInterfaces()) {
 				collectResourceEntries(i, distance+1, traversed);

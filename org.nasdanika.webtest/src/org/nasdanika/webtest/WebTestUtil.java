@@ -738,6 +738,7 @@ public class WebTestUtil {
 		toJSON(title, target);
 		toJSON(annotated.getAnnotation(Description.class), target);
 		toJSON(annotated.getAnnotation(Links.class), target);
+		toJSON(annotated.getAnnotation(Link.class), target);
 	}
 
 	static void titleAndDescriptionAndLinksToDescriptor(AnnotatedElement annotated, Descriptor target) {
@@ -745,6 +746,7 @@ public class WebTestUtil {
 		toDescriptor(title, target);
 		toDescriptor(annotated.getAnnotation(Description.class), target);
 		toDescriptor(annotated.getAnnotation(Links.class), target);
+		toDescriptor(annotated.getAnnotation(Link.class), target);
 	}
 
 	static void toJSON(Title title, JSONObject target) throws JSONException {
@@ -784,6 +786,17 @@ public class WebTestUtil {
 		}
 	}	
 	
+	static void toJSON(Link link, JSONObject target) throws JSONException {
+		if (link!=null) {
+			JSONArray linksArray = new JSONArray();
+			target.put("links", linksArray);
+			JSONObject linkObj = new JSONObject();
+			linkObj.put("value", link.value());
+			linkObj.put("type", link.type());
+			linksArray.put(linkObj);
+		}
+	}	
+	
 	static void toDescriptor(Title title, Descriptor target) {
 		if (title!=null) {
 			target.setTitle(title.value());
@@ -812,6 +825,15 @@ public class WebTestUtil {
 				linkModel.setType(link.type());
 				linkModel.setValue(link.value());
 			}
+		}
+	}
+	
+	static void toDescriptor(Link link, Descriptor target) {
+		if (link!=null) {
+			org.nasdanika.webtest.model.Link linkModel = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createLink();
+			target.getLinks().add(linkModel);
+			linkModel.setType(link.type());
+			linkModel.setValue(link.value());
 		}
 	}
 
