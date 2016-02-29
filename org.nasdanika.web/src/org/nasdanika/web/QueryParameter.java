@@ -21,4 +21,9 @@ public @interface QueryParameter {
 	 */
 	String value();
 	
+	/**
+	 * @return Default value if query parameter is not present in the request.
+	 */
+	String[] defaultValue() default {};
+	
 }

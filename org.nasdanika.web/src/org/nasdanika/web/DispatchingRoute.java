@@ -110,7 +110,7 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		}
 		
 		Collections.sort(routeMethodCommands);				
-		collectResourceEntries(target==null ? getClass() : target.getClass(), 0, new HashSet<Class<?>>());		
+		collectResourceEntries(target==null ? getClass() : target.getClass(), 0, 0, new HashSet<Class<?>>());		
 	}
 
 	/**
@@ -124,21 +124,22 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		return new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method);
 	}
 	
-	private void collectResourceEntries(Class<?> clazz, int distance, Set<Class<?>> traversed) {
+	private void collectResourceEntries(Class<?> clazz, int distance, int position, Set<Class<?>> traversed) {
 		if (clazz!=null && traversed.add(clazz)) {
 			Resources resources = clazz.getAnnotation(Resources.class);
 			if (resources!=null) {
 				for (Resource res: resources.value()) {
-					resourceEntries.add(new ResourceEntry(clazz, res, distance));
+					resourceEntries.add(new ResourceEntry(clazz, res, distance, position));
 				}
 			}
 			Resource resource = clazz.getAnnotation(Resource.class);
 			if (resource!=null) {
-				resourceEntries.add(new ResourceEntry(clazz, resource, distance));
+				resourceEntries.add(new ResourceEntry(clazz, resource, distance, position));
 			}
-			collectResourceEntries(clazz.getSuperclass(), distance+1, traversed);
-			for (Class<?> i: clazz.getInterfaces()) {
-				collectResourceEntries(i, distance+1, traversed);
+			collectResourceEntries(clazz.getSuperclass(), distance+1, 0, traversed);
+			Class<?>[] implementedInterfaces = clazz.getInterfaces();
+			for (int i=0; i<implementedInterfaces.length; ++i) {
+				collectResourceEntries(implementedInterfaces[i], distance+1, i, traversed);
 			}
 			
 			Collections.sort(resourceEntries);
@@ -155,14 +156,16 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		private String location;
 		private boolean absolute;
 		private String comment;
+		private int position;
 
-		ResourceEntry(Class<?> clazz, Resource res, int distance) {
+		ResourceEntry(Class<?> clazz, Resource res, int distance, int position) {
 			this.bundle = res.bundle();
 			this.clazz = clazz;
 			this.location = res.value();
 			this.priority = res.priority();
 			this.path = CoreUtil.isBlank(res.path()) ? res.value() : res.path();
 			this.distance = distance;
+			this.position = position;
 			this.absolute = WEB_URL.matcher(location).matches(); // Overly simplistic - location.contains("://");
 			this.comment = res.comment();
 			//this.bundleVersion = res.bundleVersion();
@@ -212,6 +215,11 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			if (cmp!=0) {
 				return cmp;
 			}
+			
+			cmp = position - o.position;
+			if (cmp!=0) {
+				return cmp;
+			}
 						
 			// A route with the longest path takes precedence over the other if both use path or pattern.				
 			cmp = o.path.length() - path.length();
@@ -245,6 +253,18 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			
 			context.getResponse().setContentType("text/html");
 			return new ValueAction(generateApiDocumentation());
+		}
+		
+		if (RequestMethod.GET == context.getMethod()) {
+			String jp = CoreUtil.join(path, "/");
+			for (ResourceEntry resEntry: resourceEntries) {
+				if (jp.equals(resEntry.path) || (resEntry.path.endsWith("/") && jp.startsWith(resEntry.path))) {
+					URL result = resEntry.resolve(jp.substring(resEntry.path.length()));					
+					if (result!=null) {
+						return new ValueAction(result);
+					}
+				}				
+			}
 		}
 		
 		W: for (RouteMethodCommand<HttpServletRequestContext, Object> routeMethodCommand: routeMethodCommands) {
@@ -318,18 +338,6 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				}				
 			}						
 		}		
-		
-		if (RequestMethod.GET == context.getMethod()) {
-			String jp = CoreUtil.join(path, "/");
-			for (ResourceEntry resEntry: resourceEntries) {
-				if (jp.equals(resEntry.path) || (resEntry.path.endsWith("/") && jp.startsWith(resEntry.path))) {
-					URL result = resEntry.resolve(jp.substring(resEntry.path.length()));					
-					if (result!=null) {
-						return new ValueAction(result);
-					}
-				}				
-			}
-		}
 		return Action.NOT_FOUND;
 	}
 
@@ -662,7 +670,9 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			return generateApiHtmlTable().toString();
 		}
 		if ("text/markdown".equals(format)) {
-			return "Dispatching route [[javadoc>"+getClass().getName()+"]]"
+			return System.lineSeparator()
+					+ System.lineSeparator()
+					+ "Dispatching route [[javadoc>"+getClass().getName()+"]]"
 					+ System.lineSeparator()
 					+ System.lineSeparator()
 					+ generateApiMarkdownTable();			

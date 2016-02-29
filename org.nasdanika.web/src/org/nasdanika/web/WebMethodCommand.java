@@ -42,14 +42,21 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 						if (parameterType.isArray()) {
 							Object[] values = context.getRequest().getParameterValues(queryParameter.value());
 							if (String.class == parameterType.getComponentType()) {
-								return values;
+								return values==null ? queryParameter.defaultValue() : values;
+							}
+							if (values==null) {
+								values = queryParameter.defaultValue();
 							}
 							Object ret = Array.newInstance(parameterType.getComponentType(), values.length);
 							System.arraycopy(values, 0, ret, 0, values.length);
 							return ret;							
 						}
 						
-						return context.getRequest().getParameter(queryParameter.value());
+						String parameterValue = context.getRequest().getParameter(queryParameter.value());
+						if (parameterValue!=null) {
+							return parameterValue;
+						}
+						return queryParameter.defaultValue().length==0 ? null : queryParameter.defaultValue()[0];
 					}
 					
 					@Override
