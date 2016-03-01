@@ -11,8 +11,18 @@ public interface Form extends UIElement<Form>, FieldContainer<Form> {
 	 */
 	Form horizontal(Bootstrap.DeviceSize deviceSize, int labelWidth);
 	
-	Form inline(boolean inline);
+	/**
+	 * 
+	 * @param inline Inline form if true.
+	 * @param hideLabels Adds "sr-only" class to labels if true.
+	 * @return
+	 */
+	Form inline(boolean inline, boolean hideLabels);
 	
+	/**
+	 * Same as inline(true, true);
+	 * @return
+	 */
 	Form inline();	
 	
 	// Standard form attributes

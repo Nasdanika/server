@@ -17,6 +17,7 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	
 	boolean horizontal;
 	boolean inline;
+	boolean hideInlineLabels;
 	Bootstrap.DeviceSize deviceSize;
 	int labelWidth;
 	private FieldContainer<Form> container;
@@ -48,15 +49,16 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	}
 
 	@Override
-	public Form inline(boolean inline) {
+	public Form inline(boolean inline, boolean hideLabels) {
 		this.inline = inline;
+		this.hideInlineLabels = hideLabels;
 		addClass("form-inline");
 		return this;
 	}
 
 	@Override
 	public Form inline() {
-		return inline(true);
+		return inline(true, true);
 	}
 
 	@Override

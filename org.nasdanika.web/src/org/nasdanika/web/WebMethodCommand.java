@@ -65,6 +65,20 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 					}
 				};
 			}
+			if (TargetParameter.class.isInstance(a)) {
+				return new ArgumentResolver<C>() {
+					
+					@Override
+					public Object getValue(C context, Object[] arguments) throws Exception {
+						return context.getTarget();
+					}
+					
+					@Override
+					public void close() {
+						// NOP						
+					}
+				};
+			}
 			if (BodyParameter.class.isInstance(a)) {
 				return new ArgumentResolver<C>() {
 					

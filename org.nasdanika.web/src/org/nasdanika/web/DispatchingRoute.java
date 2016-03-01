@@ -110,7 +110,7 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		}
 		
 		Collections.sort(routeMethodCommands);				
-		collectResourceEntries(target==null ? getClass() : target.getClass(), 0, 0, new HashSet<Class<?>>());		
+		collectResourceEntries(target==null ? getClass() : target.getClass(), 0, 0, new HashSet<Class<?>>());
 	}
 
 	/**
@@ -126,15 +126,17 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 	
 	private void collectResourceEntries(Class<?> clazz, int distance, int position, Set<Class<?>> traversed) {
 		if (clazz!=null && traversed.add(clazz)) {
+			int idx = 0;
+			Resource resource = clazz.getAnnotation(Resource.class);
+			if (resource!=null) {
+				resourceEntries.add(new ResourceEntry(clazz, resource, distance, position, ++idx));
+			}
+
 			Resources resources = clazz.getAnnotation(Resources.class);
 			if (resources!=null) {
 				for (Resource res: resources.value()) {
-					resourceEntries.add(new ResourceEntry(clazz, res, distance, position));
+					resourceEntries.add(new ResourceEntry(clazz, res, distance, position, ++idx));
 				}
-			}
-			Resource resource = clazz.getAnnotation(Resource.class);
-			if (resource!=null) {
-				resourceEntries.add(new ResourceEntry(clazz, resource, distance, position));
 			}
 			collectResourceEntries(clazz.getSuperclass(), distance+1, 0, traversed);
 			Class<?>[] implementedInterfaces = clazz.getInterfaces();
@@ -157,8 +159,9 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		private boolean absolute;
 		private String comment;
 		private int position;
+		private int index;
 
-		ResourceEntry(Class<?> clazz, Resource res, int distance, int position) {
+		ResourceEntry(Class<?> clazz, Resource res, int distance, int position, int index) {
 			this.bundle = res.bundle();
 			this.clazz = clazz;
 			this.location = res.value();
@@ -166,6 +169,7 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			this.path = CoreUtil.isBlank(res.path()) ? res.value() : res.path();
 			this.distance = distance;
 			this.position = position;
+			this.index = index;
 			this.absolute = WEB_URL.matcher(location).matches(); // Overly simplistic - location.contains("://");
 			this.comment = res.comment();
 			//this.bundleVersion = res.bundleVersion();
@@ -210,6 +214,12 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				return cmp;
 			}
 			
+			// A route with the longest path takes precedence over the other.				
+			cmp = o.path.length() - path.length();
+			if (cmp!=0) {
+				return cmp;
+			}
+			
 			// If priorities are equal, then route defined in a sub-class or a class with shortest inheritance distance to the target class.
 			cmp = distance - o.distance;
 			if (cmp!=0) {
@@ -221,8 +231,7 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				return cmp;
 			}
 						
-			// A route with the longest path takes precedence over the other if both use path or pattern.				
-			cmp = o.path.length() - path.length();
+			cmp = index - o.index;
 			if (cmp!=0) {
 				return cmp;
 			}

@@ -70,7 +70,7 @@ class FormGroupImpl<T extends FormGroup<T>, C> extends UIElementImpl<T> implemen
 		List<Object> ret = new ArrayList<>();
 		if (label!=null) {
 			UIElement<?> labelTag = form.factory.tag(TagName.label, label).attribute("for", String.valueOf(controlId));
-			if (form.inline) {
+			if (form.inline && form.hideInlineLabels) {
 				labelTag.addClass("sr-only");
 			}
 			if (form.horizontal) {

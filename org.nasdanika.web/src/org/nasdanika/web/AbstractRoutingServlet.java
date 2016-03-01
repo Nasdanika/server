@@ -25,8 +25,8 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 	protected ExtensionManager extensionManager;
 	
 	private boolean jsonPrettyPrint;
-	protected MimetypesFileTypeMap mimeTypesMap;
-
+	public static final MimetypesFileTypeMap MIME_TYPES_MAP = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
@@ -44,7 +44,6 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}		
-		mimeTypesMap = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));		
 	}
 			
 	@Override
@@ -62,7 +61,7 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 		if (path.length>0) {
 			String fn = path[path.length-1];
 			if (fn.indexOf('.')!=-1) {
-				String contentType = mimeTypesMap.getContentType(fn);
+				String contentType = MIME_TYPES_MAP.getContentType(fn);
 				if (!CoreUtil.isBlank(contentType)) {
 					resp.setContentType(contentType);
 				}

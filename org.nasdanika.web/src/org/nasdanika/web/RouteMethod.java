@@ -31,8 +31,8 @@ public @interface RouteMethod {
 	/**
 	 * Route method path. Takes precedence over pattern. May contain path parameter specs, e.g. <code>{something}</code>
 	 * When neither path nor pattern nor request method is specified then method name is split by camel-case and the first element
-	 * is treated as request method and remaining lowercased elements as path. E.g. <code>getTransactions</code> would be treated as GET for <code>transactions</code> path,
-	 * <code>getTransactionsList</code> would be treated as GET for <code>transactions/list</code> path.
+	 * is treated as request method and remaining lowercased elements as path with the last path element treated as extension for the GET method, if there is more than one path element. E.g. <code>getTransactions</code> would be treated as GET for <code>transactions</code> path,
+	 * <code>getTransactionsListHtml</code> would be treated as GET for <code>transactions/list.html</code> path.
 	 * If the first element does not correspond to an HTTP request method or a request method is specified, then method name is treated as path. If request method is not specified, then any method matches.  
 	 * @return
 	 */
@@ -46,6 +46,7 @@ public @interface RouteMethod {
 	
 	/**
 	 * Response content type produced by the method. Used for route matching and for setting response content type if not set by the method.
+	 * If this attribute is not set then it is implied from the path's extension.
 	 * @return
 	 */
 	String produces() default "";

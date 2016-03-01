@@ -63,10 +63,14 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 					for (RequestMethod rm: RequestMethod.values()) {
 						if (rm.name().toLowerCase().equals(smn[0])) {
 							requestMethods = new RequestMethod[] {rm};
+							StringBuilder pathBuilder = new StringBuilder();
 							for (int i=1; i < smn.length; ++i) {
-								smn[i] = smn[i].toLowerCase();
+								if (i>1) {
+									pathBuilder.append(RequestMethod.GET == rm && i == smn.length-1 ? "." : "/");
+								}
+								pathBuilder.append(smn[i].toLowerCase());
 							}
-							path = CoreUtil.join(smn, "/", 1);
+							path = pathBuilder.toString();
 							requestMethodMatched = true;
 							break;
 						}
@@ -83,6 +87,13 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 		}
 		
 		produces = routeMethod.produces();
+		if (CoreUtil.isBlank(produces)) {
+			String shortPath = path.substring(path.lastIndexOf("/")+1);
+			String impliedProduces = AbstractRoutingServlet.MIME_TYPES_MAP.getContentType(shortPath);
+			if (!CoreUtil.isBlank(impliedProduces)) {
+				produces = impliedProduces;
+			}
+		}
 		consumes = routeMethod.consumes();
 		action = routeMethod.action();
 		qualifier = routeMethod.qualifier();
