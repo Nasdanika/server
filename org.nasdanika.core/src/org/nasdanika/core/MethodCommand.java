@@ -224,21 +224,22 @@ public class MethodCommand<C extends Context, R> {
 		Class<?>[] pt = method.getParameterTypes();
 		Object[] args = new Object[pt.length];
 		for (int i=0,j=0; i<args.length; ++i) {
+			Object arg = null;
 			if (argumentResolvers[i]==null) {
 				if (arguments!=null && j<arguments.length) {
-					Object arg = arguments[j++];
-					if (arg!=null && !pt[i].isInstance(arg)) {
-						Object cArg = context.convert(arg, pt[i]);
-						if (cArg==null) {
-							throw new NasdanikaException("Cannot convert "+arg+" to "+pt[i]);
-						}
-						arg = cArg;
-					}
-					args[i] = arg;
+					arg = arguments[j++];
 				}
 			} else {
-				args[i] = argumentResolvers[i].getValue(context, arguments);
+				arg = argumentResolvers[i].getValue(context, arguments);
 			}
+			if (arg!=null && !pt[i].isInstance(arg)) {
+				Object cArg = context.convert(arg, pt[i]);
+				if (cArg==null) {
+					throw new NasdanikaException("Cannot convert "+arg+" to "+pt[i]);
+				}
+				arg = cArg;
+			}
+			args[i] = arg;
 		}
 		return (R) method.invoke(target, args);
 	}

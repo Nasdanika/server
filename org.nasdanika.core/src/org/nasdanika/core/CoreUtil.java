@@ -5,12 +5,14 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -461,9 +463,51 @@ public Map&lt;String, String&gt; getPackageMap() {
 				if (target.isEnum() && source instanceof String) {						
 					return (T) Enum.valueOf((Class) target, (String) source);
 				}
+				
+				// Array type conversion
+				if (target.isArray()) {
+					if (source.getClass().isArray()) {
+						int length = Array.getLength(source);
+						Class<?> targetComponentType = target.getComponentType();
+						Object ret = Array.newInstance(targetComponentType, length);
+						for (int i=0; i<length; ++i) {
+							Object sourceElement = Array.get(source, i);
+							@SuppressWarnings("resource")
+							Converter rawConverter = (Converter) this;
+							Object targetElement = rawConverter.convert(sourceElement, targetComponentType, context);
+							Array.set(ret, i, targetElement);
+						}
+						return (T) ret;
+					}
+					
+					if (source instanceof Collection) {
+						Collection<?> sourceCollection = (Collection<?>) source;
+						Class<?> targetComponentType = target.getComponentType();
+						Object ret = Array.newInstance(targetComponentType, sourceCollection.size());
+						int idx = 0;
+						for (Object sourceElement: sourceCollection) {
+							@SuppressWarnings("resource")
+							Converter rawConverter = (Converter) this;
+							Object targetElement = rawConverter.convert(sourceElement, targetComponentType, context);
+							Array.set(ret, idx, targetElement);
+						}
+						return (T) ret;
+					}
+					
+					Class<?> targetComponentType = target.getComponentType();
+					Object ret = Array.newInstance(targetComponentType, 1);
+					@SuppressWarnings("resource")
+					Converter rawConverter = (Converter) this;
+					Object targetElement = rawConverter.convert(source, targetComponentType, context);
+					Array.set(ret, 0, targetElement);
+					return (T) ret;
+					
+				}
+				
+				Class<?> box = PRIMITIVES_TO_BOXES_MAP.get(target);
 
 				// Constructor conversion - last resort
-				for (Constructor<?> c: target.getConstructors()) {
+				for (Constructor<?> c: (box==null ? target : box).getConstructors()) {
 					if (c.getParameterTypes().length==1 && c.getParameterTypes()[0].isInstance(source)) {
 						return (T) c.newInstance(source);
 					}
