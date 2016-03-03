@@ -33,6 +33,12 @@ public @interface Resource {
 	 */
 	String bundle() default "";
 	
+	/**
+	 * If true, location is considered to be an absolute URL instead of being relative to class or bundle.
+	 * @return
+	 */
+	boolean absolute() default false;
+	
 //	/**
 //	 * Optional version range. If the range has only one attribute, then
 //	 * the bundle's version shall be greater or equal to the specified version, 

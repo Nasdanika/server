@@ -1,18 +1,22 @@
 package org.nasdanika.web;
 
+import java.io.InputStream;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.Part;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.MethodCommand;
+import org.nasdanika.core.NasdanikaException;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -41,15 +45,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 					public Object getValue(C context, Object[] arguments) throws Exception {
 						if (parameterType.isArray()) {
 							Object[] values = context.getRequest().getParameterValues(queryParameter.value());
-							if (String.class == parameterType.getComponentType()) {
-								return values==null ? queryParameter.defaultValue() : values;
-							}
-							if (values==null) {
-								values = queryParameter.defaultValue();
-							}
-							Object ret = Array.newInstance(parameterType.getComponentType(), values.length);
-							System.arraycopy(values, 0, ret, 0, values.length);
-							return ret;							
+							return values==null ? queryParameter.defaultValue() : values;
 						}
 						
 						String parameterValue = context.getRequest().getParameter(queryParameter.value());
@@ -57,6 +53,47 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 							return parameterValue;
 						}
 						return queryParameter.defaultValue().length==0 ? null : queryParameter.defaultValue()[0];
+					}
+					
+					@Override
+					public void close() {
+						// NOP						
+					}
+				};
+			}
+			if (HeaderParameter.class.isInstance(a)) {
+				final HeaderParameter headerParameter = (HeaderParameter) a;
+				return new ArgumentResolver<C>() {
+					
+					@Override
+					public Object getValue(C context, Object[] arguments) throws Exception {
+						if (parameterType.isArray()) {
+							return Collections.list(context.getRequest().getHeaders(headerParameter.value()));
+						}
+						
+						return context.getRequest().getHeader(headerParameter.value());
+					}
+					
+					@Override
+					public void close() {
+						// NOP						
+					}
+				};
+			}
+			if (PartParameter.class.isInstance(a)) {
+				final PartParameter partParameter = (PartParameter) a;
+				return new ArgumentResolver<C>() {
+					
+					@Override
+					public Object getValue(C context, Object[] arguments) throws Exception {
+						Part part = context.getRequest().getPart(partParameter.value());
+						if (parameterType.isAssignableFrom(Part.class)) {
+							return part;
+						}
+						if (parameterType.isAssignableFrom(InputStream.class)) {
+							return part==null ? null : part.getInputStream();
+						}
+						throw new NasdanikaException("Parameter type "+parameterType+" is not assignable from "+Part.class);
 					}
 					
 					@Override
