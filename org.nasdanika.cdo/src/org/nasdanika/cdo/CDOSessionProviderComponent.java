@@ -24,6 +24,7 @@ public class CDOSessionProviderComponent implements CDOSessionProvider {
 	private static final String TCP_PREFIX = "tcp:";
 	private static final String JVM_PREFIX = "jvm:";
 	private static final String REPO_NAME_PROPERTY = ".repositoryName";	
+	private static final String SIGNAL_TIMEOUT_PROPERTY = ".signalTimeout";	
 
 //	private CDOSession session;
 
@@ -54,12 +55,17 @@ public class CDOSessionProviderComponent implements CDOSessionProvider {
 			if (connector!=null) {
 			    // Create configuration
 			    CDONet4jSessionConfiguration configuration = CDONet4jUtil.createNet4jSessionConfiguration();
+			    Object stp = context.getProperties().get(SIGNAL_TIMEOUT_PROPERTY);
+			    if (stp instanceof Long) {
+			    	configuration.setSignalTimeout((Long) stp);
+			    }
+			    		
+			    System.out.println("Signal timeout: "+configuration.getSignalTimeout());
 			    configuration.setConnector(connector);
 				configuration.setRepositoryName(String.valueOf(context.getProperties().get(REPO_NAME_PROPERTY)));
 				
 			    // Open session
 			    session = configuration.openNet4jSession();
-			    //session.options().getNet4jProtocol().setTimeout(200000); // Just for testing, configurable later 
 			    
 			    synchronized (sessionInitializers) {
 				    for (CDOSessionInitializer initializer: sessionInitializers) {
