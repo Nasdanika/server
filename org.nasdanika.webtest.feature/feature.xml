@@ -20,6 +20,10 @@
          id="org.nasdanika.html.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.nasdanika.cdo.feature"
+         version="0.0.0"/>
+
    <plugin
          id="org.nasdanika.webtest"
          download-size="0"
