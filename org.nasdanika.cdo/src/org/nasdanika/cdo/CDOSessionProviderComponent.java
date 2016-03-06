@@ -60,7 +60,6 @@ public class CDOSessionProviderComponent implements CDOSessionProvider {
 			    	configuration.setSignalTimeout((Long) stp);
 			    }
 			    		
-			    System.out.println("Signal timeout: "+configuration.getSignalTimeout());
 			    configuration.setConnector(connector);
 				configuration.setRepositoryName(String.valueOf(context.getProperties().get(REPO_NAME_PROPERTY)));
 				
