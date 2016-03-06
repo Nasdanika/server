@@ -134,6 +134,7 @@
 		
 		<module>../org.nasdanika.webtest</module>
 		<module>../org.nasdanika.webtest.model</module>
+		<module>../org.nasdanika.webtest.model.routes</module>
 		<module>../org.nasdanika.webtest.feature</module>
 
 		<module>../org.nasdanika.webtest.performance</module>

@@ -36,6 +36,7 @@
 		<module>org.nasdanika.web.resources</module>
 		<module>org.nasdanika.webtest</module>
 		<module>org.nasdanika.webtest.model</module>
+		<module>org.nasdanika.webtest.model.routes</module>
 		<module>org.nasdanika.webtest.performance</module>
 				
 		<module>org.nasdanika.workspace.wizard</module>
