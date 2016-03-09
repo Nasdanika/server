@@ -19,9 +19,9 @@ public abstract class AbstractRepositoryProvider implements RepositoryProvider {
 		return new HashMap<>();		
 	}
 	
-	protected abstract IStore createStore(ComponentContext context);
+	protected abstract IStore createStore(ComponentContext context) throws Exception;
 
-	public void activate(ComponentContext context) {
+	public void activate(ComponentContext context) throws Exception {
 		Object rn = context.getProperties().get(REPO_NAME_PROPERTY);
 		Object componentName = context.getProperties().get("component.name");
 		String repoName = rn instanceof String ? (String) rn : String.valueOf(componentName);

@@ -32,6 +32,8 @@ public class H2RepositoryProvider extends AbstractDatabaseRepositoryProvider {
 			props.put(IRepository.Props.SUPPORTING_BRANCHES, "true");
 		}
 		
+		props.put(IRepository.Props.ENSURE_REFERENTIAL_INTEGRITY, "true"); // Configurable?
+		
 		Enumeration<?> pne = context.getProperties().keys();
 		while (pne.hasMoreElements()) {
 			Object pn = pne.nextElement();
@@ -67,7 +69,7 @@ public class H2RepositoryProvider extends AbstractDatabaseRepositoryProvider {
 	@Override
 	protected IMappingStrategy createMappingStrategy(ComponentContext context) {
 		IMappingStrategy mappingStrategy = CDODBUtil.createHorizontalMappingStrategy(isAudits(context), isBranches(context));
-		mappingStrategy.getProperties().put("qualifiedNames", "true");
+		mappingStrategy.getProperties().put(IMappingStrategy.PROP_QUALIFIED_NAMES, "true");
 		return mappingStrategy;
 	}
 	

@@ -18,20 +18,22 @@ public abstract class AbstractDatabaseRepositoryProvider extends AbstractReposit
 		return ret;
 	}
 	
-	protected abstract DataSource createDataSource(ComponentContext context);
+	protected abstract DataSource createDataSource(ComponentContext context) throws Exception;
 
-	protected abstract String getDBAdapterName(ComponentContext context);
+	protected String getDBAdapterName(ComponentContext context) {
+		throw new UnsupportedOperationException();
+	};
 	
-	protected IDBAdapter getDBAdapter(ComponentContext context) {
+	protected IDBAdapter getDBAdapter(ComponentContext context) throws Exception {
 		return DBUtil.getDBAdapter(getDBAdapterName(context));
 	}
 	
-	protected IDBConnectionProvider createConnectionProvider(ComponentContext context) {
+	protected IDBConnectionProvider createConnectionProvider(ComponentContext context) throws Exception {
 		return DBUtil.createConnectionProvider(createDataSource(context));
 	}
 
 	@Override
-	protected IStore createStore(ComponentContext context) {
+	protected IStore createStore(ComponentContext context) throws Exception {
 		return CDODBUtil.createStore(createMappingStrategy(context), getDBAdapter(context), createConnectionProvider(context));
 	}
 
