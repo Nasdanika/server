@@ -34,6 +34,7 @@ public class <%=wizard.getJavaName()%>SessionInitializerComponent implements CDO
 			}
 			
 			transaction.commit();
+			transaction.close();
 		} catch (CommitException e) {
 			e.printStackTrace();
 		}

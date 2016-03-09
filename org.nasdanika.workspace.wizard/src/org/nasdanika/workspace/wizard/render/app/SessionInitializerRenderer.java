@@ -26,7 +26,7 @@ public class SessionInitializerRenderer {
   protected final String TEXT_11 = "\");" + NL + "\t\t\tif (cRes.getContents().isEmpty()) {" + NL + "\t\t\t\t// Create initial content" + NL + "\t\t\t\t// TODO - ";
   protected final String TEXT_12 = " rootElement = ";
   protected final String TEXT_13 = "Factory.eINSTANCE.create";
-  protected final String TEXT_14 = "();" + NL + "\t\t\t\t// TODO - configure root and add sub-elements" + NL + "\t\t\t\t// TODO - cRes.getContents().add(rootElement);" + NL + "\t\t\t}" + NL + "\t\t\t" + NL + "\t\t\ttransaction.commit();" + NL + "\t\t} catch (CommitException e) {" + NL + "\t\t\te.printStackTrace();" + NL + "\t\t}" + NL + "\t}" + NL + "" + NL + "}";
+  protected final String TEXT_14 = "();" + NL + "\t\t\t\t// TODO - configure root and add sub-elements" + NL + "\t\t\t\t// TODO - cRes.getContents().add(rootElement);" + NL + "\t\t\t}" + NL + "\t\t\t" + NL + "\t\t\ttransaction.commit();" + NL + "\t\t\ttransaction.close();" + NL + "\t\t} catch (CommitException e) {" + NL + "\t\t\te.printStackTrace();" + NL + "\t\t}" + NL + "\t}" + NL + "" + NL + "}";
   protected final String TEXT_15 = NL;
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
