@@ -724,11 +724,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		model.setFinish(finish);
 		
 		// Root results write master screenshots to the collector
-		if (parent==null) {
-			for (ScreenshotEntry se: screenshots) {				
-				if (se!=null && se.isMaster()) {
-					screenshotsCollector.add(se.toScreenshotModel(screenshotsDir, objectMap));
-				}
+		for (ScreenshotEntry se: screenshots) {				
+			if (se!=null && se.isMaster() && !objectMap.containsKey(se)) {
+				screenshotsCollector.add(se.toScreenshotModel(screenshotsDir, objectMap));
 			}
 		}
 				
@@ -747,6 +745,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 			}
 		}
 		
+		objectMap.put(this, model);
 		return model;
 	}
 	
