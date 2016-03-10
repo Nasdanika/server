@@ -978,8 +978,11 @@ public class DocRoute implements Route {
 		List<EPackage> packages = new ArrayList<>();
 		for (String nsURI: registry.keySet()) {			
 			EPackage ePackage = registry.getEPackage(nsURI);
-			if (ePackage.getESuperPackage()==null) {
-				packages.add(ePackage);
+			if (ePackage!=null) {
+				EPackage sp = ePackage.getESuperPackage();
+				if (sp == null || registry.getEPackage(sp.getNsURI()) == null) {
+					packages.add(ePackage);
+				}
 			}
 		}
 		Collections.sort(packages, new Comparator<EPackage>() {
