@@ -359,7 +359,7 @@ public class WebTestUtil {
 					((ContextAware) driver).context(ctxAnn.value());
 				}
 			}
-			T page;
+			T page = null;
 			if (args.length==0) {
 				page = PageFactory.initElements(driver, pageClassToProxy);
 			} else {
@@ -376,13 +376,16 @@ public class WebTestUtil {
 						}
 						try {
 							page = (T) constructor.newInstance(cArgs);
+							PageFactory.initElements(driver, page);
 						} catch (Exception e) {
 							throw new WebTestException(e);
 						}
 						break;
 					}
 				}
-				throw new WebTestException("No constructor for "+pageClassToProxy+" which can accepts arguments "+Arrays.toString(args));
+				if (page == null) {
+					throw new WebTestException("No constructor for "+pageClassToProxy+" which can accepts arguments "+Arrays.toString(cArgs));
+				}
 			}
 			AbstractNasdanikaWebTestRunner.afterPageInitialization(driver, pageClassToProxy, page, null);
 			return page;

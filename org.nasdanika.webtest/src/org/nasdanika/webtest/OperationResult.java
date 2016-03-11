@@ -673,7 +673,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	}
 	
 	public M toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {
-		M model = createModel();		
+		M model = createModel();				
+		objectMap.put(this, model);
+		
 		WebTestUtil.titleAndDescriptionAndLinksToDescriptor(getOperation(), model);
 		model.setOperationName(getOperationName());
 		if (WebTestUtil.isBlank(model.getTitle())) {
@@ -724,9 +726,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		model.setFinish(finish);
 		
 		// Root results write master screenshots to the collector
-		for (ScreenshotEntry se: screenshots) {				
-			if (se!=null && se.isMaster() && !objectMap.containsKey(se)) {
-				screenshotsCollector.add(se.toScreenshotModel(screenshotsDir, objectMap));
+		for (ScreenshotEntry se: screenshots) {	
+			if (se!=null && !objectMap.containsKey(se.getMaster())) {
+				screenshotsCollector.add(se.getMaster().toScreenshotModel(screenshotsDir, objectMap));
 			}
 		}
 				
@@ -744,8 +746,6 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 				model.getChildren().add(childModel);
 			}
 		}
-		
-		objectMap.put(this, model);
 		return model;
 	}
 	

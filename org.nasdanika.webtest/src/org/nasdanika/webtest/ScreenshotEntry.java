@@ -299,7 +299,7 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		screenshotModel.setLocation(screenshotsDir.getName()+"/"+screenshotFile.getName());
 		screenshotModel.setWidth(getWidth());
 		
-		objectMap.put(this, screenshotModel);
+		objectMap.put(getMaster(), screenshotModel);
 		return screenshotModel;
 	}
 	
@@ -313,7 +313,6 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		modelScreenshotEntry.setType(ScreenshotType.valueOf(getWhen().name()));				
 		modelScreenshotEntry.setScreenshot(screenshot);
 		return modelScreenshotEntry;
-	}
-	
+	}	
 		
 }
