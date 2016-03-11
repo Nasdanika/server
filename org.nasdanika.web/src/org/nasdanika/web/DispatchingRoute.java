@@ -148,10 +148,10 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			Bundle bundle = Platform.getBundle(this.bundle);
 			if (bundle!=null) {
 				if (CoreUtil.isBlank(path)) {
-					return bundle.getResource(location);
+					return bundle.getEntry(location);
 				}
 				
-				return bundle.getResource(location+path);					
+				return bundle.getEntry(location+path);					
 			}
 			
 			return null;

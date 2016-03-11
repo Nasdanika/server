@@ -636,7 +636,7 @@ public class ExtensionManager extends AdapterManager {
 					Class<?> targetType = (Class<?>) bundle.loadClass(targetClassName.trim());
 
 					final String rName = ce.getAttribute("resource");			
-					final URL baseURL = bundle.getResource(rName);
+					final URL baseURL = bundle.getEntry(rName);
 					
 					final String contentType = ce.getAttribute("content-type");					
 					
@@ -736,8 +736,7 @@ public class ExtensionManager extends AdapterManager {
 					Bundle bundle = Platform.getBundle(contributor.getName());
 
 					final String rName = ce.getAttribute("resource");			
-					final URL baseURL = bundle.getResource(rName);
-					
+					final URL baseURL = bundle.getEntry(rName);
 					final String contentType = ce.getAttribute("content-type");					
 					
 					final Route route = new Route() {

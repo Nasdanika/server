@@ -116,7 +116,7 @@ public class EObjectRouteTracker {
 	    					String descriptionContentType = "text/markdown";
 	    					String descriptionAttribute = ce.getAttribute("description");
 							if (!CoreUtil.isBlank(descriptionAttribute)) {
-	    						URL descriptionResource = Platform.getBundle(ce.getContributor().getName()).getResource(descriptionAttribute);
+	    						URL descriptionResource = Platform.getBundle(ce.getContributor().getName()).getEntry(descriptionAttribute);
 	    						if (descriptionResource!=null) {
 	    							description = CoreUtil.stringify(descriptionResource);
 	    							if (descriptionAttribute.toLowerCase().endsWith(".txt")) {
@@ -342,7 +342,7 @@ public class EObjectRouteTracker {
 										if (!CoreUtil.isBlank(rre.resource)) {
 											joinedPath = rre.resource+"/"+joinedPath;
 										}
-										URL res = bundle.getResource(joinedPath);
+										URL res = bundle.getEntry(joinedPath);
 										if (res == null) {
 											return Action.NOT_FOUND;
 										}

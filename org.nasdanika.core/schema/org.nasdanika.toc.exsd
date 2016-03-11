@@ -124,7 +124,7 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  TOC name. For TOC&apos;s linked to EPackages and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in EPackage/EClassifier documentation and sub-topics are rendered as sections.
+                  TOC name. For TOC&apos;s linked to bundles, EPackages, and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in Bundle/EPackage/EClassifier documentation and sub-topics are rendered as sections.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -187,6 +187,20 @@
                <appinfo>
                   <meta.attribute kind="java" basedOn=":org.nasdanika.core.Topic"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="bundle" type="string">
+            <annotation>
+               <documentation>
+                  Symbolic name of a bundle for toc&apos;s linked to bundle TOC entries. Dot (.) is an alias for the bundle containing the toc definition.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="bundle-version" type="string">
+            <annotation>
+               <documentation>
+                  Optional bundle version if there is more than one bundle with the same symbolic name in the system.
+               </documentation>
             </annotation>
          </attribute>
       </complexType>

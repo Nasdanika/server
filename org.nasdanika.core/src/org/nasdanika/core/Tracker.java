@@ -105,7 +105,7 @@ public class Tracker<T> {
 	    					final String[] descriptionContentType = {"text/markdown"};
 	    					String descriptionAttribute = ce.getAttribute("description");
 							if (!CoreUtil.isBlank(descriptionAttribute)) {
-	    						URL descriptionResource = Platform.getBundle(ce.getContributor().getName()).getResource(descriptionAttribute);
+	    						URL descriptionResource = Platform.getBundle(ce.getContributor().getName()).getEntry(descriptionAttribute);
 	    						if (descriptionResource!=null) {
 	    							description[0] = CoreUtil.stringify(descriptionResource);
 	    							if (descriptionAttribute.toLowerCase().endsWith(".txt")) {

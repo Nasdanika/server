@@ -227,7 +227,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 		
 		URL configURL;
 		if (config.startsWith(RESOURCE_URL_SCHEME)) {
-			configURL = bundleContext.getBundle().getResource(config.substring(RESOURCE_URL_SCHEME.length()));
+			configURL = bundleContext.getBundle().getEntry(config.substring(RESOURCE_URL_SCHEME.length()));
 		} else if (config.startsWith(BUNDLE_URL_SCHEME)) {
 			int idx = config.indexOf("/", BUNDLE_URL_SCHEME.length());
 			if (idx==-1) {
@@ -237,7 +237,7 @@ public abstract class AbstractComponentImpl extends CDOObjectImpl implements Abs
 			configURL = null;
 			for (Bundle bundle: bundleContext.getBundles()) {
 				if (bundleSymbolicName.equals(bundle.getSymbolicName())) {
-					configURL = bundle.getResource(config.substring(idx+1));
+					configURL = bundle.getEntry(config.substring(idx+1));
 				}
 			}
 		} else {

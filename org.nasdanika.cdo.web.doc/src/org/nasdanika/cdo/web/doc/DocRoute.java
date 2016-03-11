@@ -1149,7 +1149,7 @@ public class DocRoute implements Route {
 			
 			for (Bundle targetBundle: bundleContext.getBundles()) {
 				if (bundleId.equals(targetBundle.getSymbolicName())) {
-					return targetBundle.getResource(path.substring(idx+1));
+					return targetBundle.getEntry(path.substring(idx+1));
 				}
 			}
 			return null;
@@ -1414,7 +1414,7 @@ public class DocRoute implements Route {
 	protected URL getResource(Class<?> clazz, String resourcePath) {
 		Bundle docBundle = FrameworkUtil.getBundle(clazz);
 		if (docBundle!=null) {
-			URL res = docBundle.getResource(resourcePath);
+			URL res = docBundle.getEntry(resourcePath);
 			if (res!=null) {
 				return res;
 			}
