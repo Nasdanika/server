@@ -4,7 +4,6 @@ package org.nasdanika.story.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.util.Switch;
 import org.nasdanika.story.Actor;
 import org.nasdanika.story.Catalog;

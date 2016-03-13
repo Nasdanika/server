@@ -21,6 +21,12 @@ public @interface RouteField {
 	RequestMethod[] value() default RequestMethod.GET;
 	
 	/**
+	 * Path, if not set and pattern is not set, then defaults to the field name.
+	 * @return
+	 */
+	String path() default "";
+	
+	/**
 	 * Pattern to match path. If not set then field
 	 * is matched if path's second elements equals to field name.
 	 * @return

@@ -9,9 +9,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
-
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
 import org.nasdanika.webtest.model.Coverage;

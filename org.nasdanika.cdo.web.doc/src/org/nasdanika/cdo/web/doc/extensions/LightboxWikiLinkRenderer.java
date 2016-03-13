@@ -3,8 +3,8 @@ package org.nasdanika.cdo.web.doc.extensions;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
-import org.nasdanika.cdo.web.doc.WikiLinkProcessor;
 
+import org.nasdanika.cdo.web.doc.WikiLinkProcessor;
 import org.pegdown.LinkRenderer.Rendering;
 
 public class LightboxWikiLinkRenderer implements WikiLinkProcessor.Renderer {

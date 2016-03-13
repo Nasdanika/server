@@ -3,7 +3,6 @@
 package org.nasdanika.story.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.User;
 

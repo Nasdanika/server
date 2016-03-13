@@ -6,11 +6,8 @@ import java.util.Map;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
-
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
-
 import org.eclipse.emf.ecore.EObject;
-
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
 import org.nasdanika.webtest.model.Coverage;

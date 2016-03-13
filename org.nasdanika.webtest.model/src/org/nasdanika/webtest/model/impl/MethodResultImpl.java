@@ -3,7 +3,6 @@
 package org.nasdanika.webtest.model.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
 import org.nasdanika.webtest.model.MethodResult;
 import org.nasdanika.webtest.model.ModelPackage;
 

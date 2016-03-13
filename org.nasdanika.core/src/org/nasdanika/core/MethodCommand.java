@@ -129,8 +129,7 @@ public class MethodCommand<C extends Context, R> {
 			}
 						
 			// Extension parameter
-			if (ExtensionParameter.class.isInstance(a)) {
-				
+			if (ExtensionParameter.class.isInstance(a)) {			
 				IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
 				final ExtensionTracker extensionTracker = new ExtensionTracker(extensionRegistry);
 		    	final ExtensionParameter extensionParameter = (ExtensionParameter) a;

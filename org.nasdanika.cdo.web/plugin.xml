@@ -14,9 +14,9 @@
             target="org.eclipse.emf.cdo.eresource.CDOResourceFolder">
       </object-route>
       <object-route
-            class="org.nasdanika.cdo.web.routes.CDOResourceRoute"
+            class="org.nasdanika.cdo.web.routes.ResourceRoute"
             method="*"
-            target="org.eclipse.emf.cdo.eresource.CDOResource">
+            target="org.eclipse.emf.ecore.resource.Resource">
       </object-route>
       <extension-route
             class="org.nasdanika.cdo.web.routes.CDOViewJsonExtensionRoute"

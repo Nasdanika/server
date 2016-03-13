@@ -293,6 +293,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry re = new RouteEntry(
 							RouteDescriptor.RouteType.OBJECT, 
 							methods, 
+							expandTokens((String) se.getKey().getProperty("path"), se.getKey().getBundle()), 
 							expandTokens((String) se.getKey().getProperty("pattern"), se.getKey().getBundle()), 
 							se.getKey().getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
@@ -310,13 +311,14 @@ public class ExtensionManager extends AdapterManager {
 						RouteEntry re = new RouteEntry(
 								RouteType.OBJECT, 
 								rfAnnotation.value(), 
+								rfAnnotation.path(),
 								rfAnnotation.pattern(), 
 								target.getClass(), 
 								rfAnnotation.priority(), 
 								(Route) routeField.get(target)) {
 							
 							protected boolean match(Object obj, String[] path) {
-								if (getPattern()==null) {
+								if (CoreUtil.isBlank(this.path) && getPattern()==null) {
 									return path.length>1 && routeField.getName().equals(path[1]);
 								}
 								return super.match(obj, path);
@@ -334,6 +336,7 @@ public class ExtensionManager extends AdapterManager {
 						RouteEntry re = new RouteEntry(
 								RouteType.OBJECT, 
 								amAnnotation.value(), 
+								amAnnotation.path(),
 								amAnnotation.pattern(), 
 								target.getClass(), 
 								amAnnotation.priority(), 
@@ -401,6 +404,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry re = new RouteEntry(
 							RouteDescriptor.RouteType.ROOT, 
 							methods, 
+							expandTokens((String) se.getKey().getProperty("path"), se.getKey().getBundle()), 
 							expandTokens((String) se.getKey().getProperty("pattern"), se.getKey().getBundle()), 
 							null, 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
@@ -456,8 +460,9 @@ public class ExtensionManager extends AdapterManager {
 					}
 					Object priorityProperty = se.getKey().getProperty("priority");
 					collector.add(new RouteEntry(
-							RouteDescriptor.RouteType.OBJECT, 
-							methods, 
+							RouteDescriptor.RouteType.EXTENSION, 
+							methods,
+							null,
 							(String) se.getKey().getProperty("extension"), 
 							se.getKey().getBundle().loadClass((String) se.getKey().getProperty("targetType")), 
 							priorityProperty instanceof Integer ? ((Integer) priorityProperty).intValue() : 0, 
@@ -487,29 +492,58 @@ public class ExtensionManager extends AdapterManager {
 		private Class<?> targetType;
 		private int priority;
 		private Route route;
-		private RequestMethod[] methods;	
+		private RequestMethod[] methods;
+		protected String path;	
 
 		public RouteEntry(
 				RouteDescriptor.RouteType type,
 				RequestMethod[] methods,
+				String path,
 				String patternStr, 
 				Class<?> targetType, 
 				int priority, 
-				Route route) {
+				final Route route) {
 			
 			this.type = type;
 			this.methods = methods;
+			this.path = path;
 			if (!CoreUtil.isBlank(patternStr)) {
 				pattern = Pattern.compile(patternStr);
 			}
 			this.targetType = targetType;
 			this.priority = priority;
-			this.route = route;
+			if (CoreUtil.isBlank(path)) {
+				this.route = route;
+			} else {
+				final int offset = path.split("/").length;
+				// Wrap route to shift context to path
+				this.route = new Route() {
+					
+					@Override
+					public void close() throws Exception {
+						route.close();						
+					}
+					
+					@Override
+					public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+						return route.execute(context.shift(offset), args);
+					}
+					
+					@Override
+					public boolean canExecute() {
+						return route.canExecute();
+					}
+				};
+			}
 		}
 		
 		protected boolean match(Object obj, String[] path) {
 			if (targetType!=null && !targetType.isInstance(obj)) {
 				return false;
+			}
+			if (!CoreUtil.isBlank(this.path)) {
+				String jrp = CoreUtil.join(path, "/");
+				return jrp.equals(this.path) || (this.path.endsWith("/") && jrp.startsWith(this.path)); 
 			}
 			return pattern==null ? true : pattern.matcher(CoreUtil.join(path, "/")).matches();			
 		}
@@ -593,6 +627,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry routeEntry = new RouteEntry(
 							RouteType.OBJECT, 
 							routeMethods, 
+							expandTokens(ce.getAttribute("path"), bundle),
 							expandTokens(ce.getAttribute("pattern"), bundle),
 							targetType, 
 							priority, 
@@ -617,7 +652,14 @@ public class ExtensionManager extends AdapterManager {
 						Class<?> targetType = (Class<?>) bundle.loadClass(targetClassName.trim());
 						String methodStr = ce.getAttribute("method");					
 						RequestMethod[] routeMethods = "*".equals(methodStr) ? RequestMethod.values() : new RequestMethod[] {RequestMethod.valueOf(methodStr)};
-						RouteEntry routeEntry = new RouteEntry(RouteType.EXTENSION, routeMethods, ce.getAttribute("extension"), targetType, priority, route);
+						RouteEntry routeEntry = new RouteEntry(
+								RouteType.EXTENSION, 
+								routeMethods,
+								null,
+								ce.getAttribute("extension"), 
+								targetType, 
+								priority, 
+								route);
 											
 						for (RequestMethod routeMethod: routeMethods) {
 							List<RouteEntry> methodRoutes = routeMap.get(RouteType.EXTENSION).get(routeMethod);
@@ -695,6 +737,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry routeEntry = new RouteEntry(
 							RouteType.OBJECT, 
 							new RequestMethod[] {RequestMethod.GET}, 
+							expandTokens(ce.getAttribute("path"), bundle), 
 							expandTokens(ce.getAttribute("pattern"), bundle), 
 							targetType, 
 							priority, 
@@ -716,6 +759,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry routeEntry = new RouteEntry(
 							RouteType.ROOT, 
 							routeMethods, 
+							expandTokens(ce.getAttribute("path"), Platform.getBundle(ce.getContributor().getName())), 
 							expandTokens(ce.getAttribute("pattern"), Platform.getBundle(ce.getContributor().getName())), 
 							null, 
 							priority, 
@@ -794,6 +838,7 @@ public class ExtensionManager extends AdapterManager {
 					RouteEntry routeEntry = new RouteEntry(
 							RouteType.ROOT, 
 							new RequestMethod[] { RequestMethod.GET } , 
+							expandTokens(ce.getAttribute("path"), Platform.getBundle(ce.getContributor().getName())), 
 							expandTokens(ce.getAttribute("pattern"), Platform.getBundle(ce.getContributor().getName())), 
 							null, 
 							priority, 
@@ -809,7 +854,14 @@ public class ExtensionManager extends AdapterManager {
 					RouteProvider routeProvider = (RouteProvider) ce.createExecutableExtension("class");
 					CoreUtil.injectProperties(ce, routeProvider);
 					for (final RouteDescriptor routeDescriptor: routeProvider.getRouteDescriptors()) {
-						RouteEntry routeEntry = new RouteEntry(routeDescriptor.getType(), routeDescriptor.getMethods(), routeDescriptor.getPattern(), routeDescriptor.getTarget(), routeDescriptor.getPriority(), routeDescriptor.getRoute());
+						RouteEntry routeEntry = new RouteEntry(
+								routeDescriptor.getType(), 
+								routeDescriptor.getMethods(),
+								routeDescriptor.getPath(),
+								routeDescriptor.getPattern(), 
+								routeDescriptor.getTarget(), 
+								routeDescriptor.getPriority(), 
+								routeDescriptor.getRoute());
 																
 						for (RequestMethod routeMethod: routeDescriptor.getMethods()) {
 							List<RouteEntry> methodRoutes = routeMap.get(routeDescriptor.getType()).get(routeMethod);

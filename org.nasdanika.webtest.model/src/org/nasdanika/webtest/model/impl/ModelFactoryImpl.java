@@ -8,11 +8,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
-
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
 import org.nasdanika.webtest.model.Coverage;

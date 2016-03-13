@@ -1,24 +1,23 @@
 package org.nasdanika.cdo.web.routes;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 
-public class CDOResourceRoute implements Route {
+public class ResourceRoute implements Route {
 
 	@Override
 	public Action execute(final HttpServletRequestContext context, Object... args) throws Exception {
-		final CDOResource cdoResource = (CDOResource) context.getTarget();
+		final Resource resource = (Resource) context.getTarget();
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(cdoResource, "read", null, null)) {
+				if (context.authorize(resource, "read", null, null)) {
 					int dotIdx = context.getPath()[0].lastIndexOf(".");
 					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
-					Action extensionAction = context.getExtensionAction(cdoResource, extension);
+					Action extensionAction = context.getExtensionAction(resource, extension);
 					return extensionAction==null ? Action.NOT_FOUND : extensionAction;
 				} 
 				return Action.FORBIDDEN;
@@ -28,9 +27,6 @@ public class CDOResourceRoute implements Route {
 			
 			return Action.NOT_FOUND;
 		} 
-
-		// Router path
-		context.addPathTraceEntry("#router/main"+context.getObjectPath(cdoResource)+".html", StringEscapeUtils.escapeHtml4(cdoResource.getName()));
 		
 		String objId = context.getPath()[1];
 		int idx = objId.lastIndexOf('.');
@@ -40,11 +36,11 @@ public class CDOResourceRoute implements Route {
 		
 		if (Character.isDigit(objId.charAt(0))) {
 			// Index in content
-			return context.getAction(cdoResource.getContents().get(Integer.parseInt(objId)), 1, null, context.getPath()[1]);
+			return context.getAction(resource.getContents().get(Integer.parseInt(objId)), 1, null, context.getPath()[1]);
 		}
 		
 		// CDO ID / uriFragment
-		EObject eObj = cdoResource.getEObject(objId);
+		EObject eObj = resource.getEObject(objId);
 		if (eObj==null) {
 			return Action.NOT_FOUND;
 		}

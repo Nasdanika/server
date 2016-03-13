@@ -14,7 +14,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;

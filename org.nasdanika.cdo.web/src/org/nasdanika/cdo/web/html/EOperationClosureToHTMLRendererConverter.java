@@ -8,7 +8,6 @@ import org.nasdanika.cdo.EOperationClosure;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;

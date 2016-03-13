@@ -1,7 +1,6 @@
 package org.nasdanika.webtest;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.HttpURLConnection;

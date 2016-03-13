@@ -11,8 +11,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
-import org.nasdanika.html.Bootstrap.DeviceSize;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Button.Type;
 import org.nasdanika.html.Form;

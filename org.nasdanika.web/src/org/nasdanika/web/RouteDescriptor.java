@@ -10,6 +10,8 @@ public interface RouteDescriptor {
 	
 	String getPattern();
 	
+	String getPath();
+	
 	Class<?> getTarget();
 	
 	RequestMethod[] getMethods();

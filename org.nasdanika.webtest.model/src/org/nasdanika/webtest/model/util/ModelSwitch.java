@@ -6,9 +6,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
-
 import org.eclipse.emf.ecore.util.Switch;
-
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
 import org.nasdanika.webtest.model.Coverage;

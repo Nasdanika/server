@@ -1,7 +1,5 @@
 package org.nasdanika.core;
 
-import java.util.Set;
-
 /**
  * Runtime components such as extensions and services may implement this interface to 
  * report runtime documentation/configuration to the documentation system.

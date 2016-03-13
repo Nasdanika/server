@@ -10,7 +10,6 @@ import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.nasdanika.core.Converter;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.web.HttpServletRequestContext;
-import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.html.HTMLRenderer;
 
 public class CDOResourceFolderToHTMLRendererConverter implements Converter<CDOResourceFolder, HTMLRenderer, HttpServletRequestContext> {
