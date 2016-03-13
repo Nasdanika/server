@@ -79,12 +79,18 @@ public class ResultsRoute implements Route {
 	@Override
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
 		String[] requestPath = context.getPath();
-		String jrp = CoreUtil.join(requestPath, "/");
-		for (Entry<String, Resource> re: resultsMap.entrySet()) {
-			if (jrp.startsWith(re.getKey()+"/")) {
-				return context.getAction(re.getValue(), re.getKey().split("/").length-1, null, args);
+		if (requestPath.length>1 && "results".equals(requestPath[0])) {
+			String jrp = CoreUtil.join(requestPath, "/", 1);
+			for (Entry<String, Resource> re: resultsMap.entrySet()) {
+				String resultPath = re.getKey();
+				if (jrp.startsWith(resultPath+"/")) {
+					return context.getAction(re.getValue(), resultPath.split("/").length, null, args);
+				}
 			}
 		}
+		
+		// TODO - index.html and web resources - bootstrap, ...
+		
 		return Action.NOT_FOUND;
 	}
 
