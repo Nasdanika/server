@@ -130,7 +130,6 @@
 		<module>../org.nasdanika.core</module>
 		<module>../org.nasdanika.core.tests</module>
 		<module>../org.nasdanika.web</module>
-		<module>../org.nasdanika.web.resources</module>
 		
 		<module>../org.nasdanika.webtest</module>
 		<module>../org.nasdanika.webtest.model</module>

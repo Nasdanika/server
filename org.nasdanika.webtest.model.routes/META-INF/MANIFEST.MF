@@ -7,5 +7,5 @@ Bundle-Vendor: Nasdanika LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.nasdanika.cdo.web;bundle-version="0.1.0";visibility:=reexport,
  org.nasdanika.webtest.model;bundle-version="0.1.0";visibility:=reexport,
- org.nasdanika.web.resources;bundle-version="0.1.0"
+ org.nasdanika.web.resources;bundle-version="1.0.0"
 Export-Package: org.nasdanika.webtest.model.routes

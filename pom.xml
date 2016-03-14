@@ -33,7 +33,6 @@
 		<module>org.nasdanika.cdo.security.feature</module>
 		<module>org.nasdanika.core.tests</module>
 		<module>org.nasdanika.web</module>
-		<module>org.nasdanika.web.resources</module>
 		<module>org.nasdanika.webtest</module>
 		<module>org.nasdanika.webtest.model</module>
 		<module>org.nasdanika.webtest.model.routes</module>
