@@ -36,7 +36,7 @@ public class EReferenceClosureRoute implements Route {
 		} 
 
 		// Router path
-		context.addPathTraceEntry("#router/main"+context.getObjectPath(eReferenceClosure)+".html", context.toHTML(eReferenceClosure, "label", null));
+		// context.addPathTraceEntry("#router/main"+context.getObjectPath(eReferenceClosure)+".html", context.toHTML(eReferenceClosure, "label", null));
 
 		if (eReferenceClosure.getFeature().isMany()) {		
 			String index = context.getPath()[1];
@@ -57,7 +57,8 @@ public class EReferenceClosureRoute implements Route {
 			return context.getAction(element, 1, null, context.getPath()[1]);
 		}
 		
-		return Action.NOT_FOUND;
+		Object value = eReferenceClosure.getValue();
+		return value==null ? Action.NOT_FOUND : context.getAction(value, 0, null, context.getPath()[0]);
 	}
 
 	@Override

@@ -43,25 +43,52 @@ import org.osgi.framework.BundleContext;
  *
  */
 public class DispatchingRoute implements Route, DocumentationProvider {
-			
-	private Object target;
-	protected List<RouteMethodCommand<HttpServletRequestContext, Object>> routeMethodCommands = new ArrayList<>();
 	
-	protected Object getTarget() {
-		return target==null ? this : target;
-	}
-	
-	public DispatchingRoute(BundleContext bundleContext, Object target) throws Exception {
-		this.target = target;
-		for (Method method: (target==null ? getClass() : target.getClass()).getMethods()) {
-			final RouteMethod routeMethod = method.getAnnotation(RouteMethod.class);
-			if (routeMethod!=null) {
-				routeMethodCommands.add(createRouteMethodCommand(bundleContext, method));
-			}
+	private class RouteMethodEntry implements Comparable<RouteMethodEntry> {
+		Object target;
+		RouteMethodCommand<HttpServletRequestContext, Object> command;
+		
+		RouteMethodEntry(Object target, RouteMethodCommand<HttpServletRequestContext, Object> command) {
+			super();
+			this.target = target;
+			this.command = command;
 		}
 		
-		Collections.sort(routeMethodCommands);				
-		collectResourceEntries(target==null ? getClass() : target.getClass(), 0, 0, new HashSet<Class<?>>());
+		Object getTarget() {
+			return target==null ? DispatchingRoute.this : target;
+		}
+		
+		Object execute(HttpServletRequestContext context, Object[] args) throws Exception {
+			return command.execute(context, getTarget(), args);
+		}
+
+		@Override
+		public int compareTo(RouteMethodEntry o) {
+			return command.compareTo(o.command);
+		}				
+	}
+			
+	protected List<RouteMethodEntry> routeMethodEntries = new ArrayList<>();
+	private Object[] targets;
+	
+	public DispatchingRoute(BundleContext bundleContext, Object... targets) throws Exception {
+		if (targets.length==0) {
+			targets = new Object[] {this}; // Self-dispatch
+		}
+		
+		HashSet<Class<?>> traversed = new HashSet<Class<?>>();
+		for (Object target: targets) {
+			for (Method method: (target==null ? getClass() : target.getClass()).getMethods()) {
+				final RouteMethod routeMethod = method.getAnnotation(RouteMethod.class);
+				if (routeMethod!=null) {
+					routeMethodEntries.add(new RouteMethodEntry(target, createRouteMethodCommand(bundleContext, method)));
+				}
+			}
+			collectResourceEntries(target==null ? getClass() : target.getClass(), 0, 0, traversed);
+		}
+		
+		Collections.sort(routeMethodEntries);	
+		this.targets = targets;
 	}
 
 	/**
@@ -194,15 +221,6 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 	
 	private List<ResourceEntry> resourceEntries = new ArrayList<>();
 
-	
-	/**
-	 * Dispatches to self 
-	 * @throws Exception 
-	 */
-	protected DispatchingRoute(BundleContext bundleContext) throws Exception {
-		this(bundleContext, null);
-	}
-
 	@Override
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {						
 		String[] path = context.getPath();
@@ -227,7 +245,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			}
 		}
 		
-		W: for (RouteMethodCommand<HttpServletRequestContext, Object> routeMethodCommand: routeMethodCommands) {
+		W: for (RouteMethodEntry routeMethodEntry: routeMethodEntries) {
+			RouteMethodCommand<HttpServletRequestContext, Object> routeMethodCommand = routeMethodEntry.command;
 			
 			if (routeMethodCommand.getRequestMethods().length>0) {
 				boolean methodMatch = false;
@@ -269,11 +288,11 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 					}
 				}
 				
-				if (context.authorize(getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
+				if (context.authorize(context.getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
 					if (!CoreUtil.isBlank(routeMethodCommand.getProduces())) {
 						context.getResponse().setContentType(routeMethodCommand.getProduces());
 					}							
-					Object result = routeMethodCommand.execute(context, getTarget(), args);
+					Object result = routeMethodEntry.execute(context, args);
 					if (result==null && routeMethodCommand.getMethod().getReturnType() == void.class) {
 						return Action.NOP;				
 					}
@@ -283,11 +302,11 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				return Action.FORBIDDEN;
 			} else if (path.length > 1) {										
 				if (routeMethodCommand.getPattern()!=null && routeMethodCommand.getPattern().matcher(CoreUtil.join(path, "/")).matches()) {
-					if (context.authorize(getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
+					if (context.authorize(context.getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
 						if (!CoreUtil.isBlank(routeMethodCommand.getProduces())) {
 							context.getResponse().setContentType(routeMethodCommand.getProduces());
 						}							
-						Object result = routeMethodCommand.execute(context, getTarget(), args);
+						Object result = routeMethodEntry.execute(context, args);
 						if (result==null && routeMethodCommand.getMethod().getReturnType() == void.class) {
 							return Action.NOP;				
 						}
@@ -308,8 +327,13 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 
 	@Override
 	public void close() throws Exception {
-		for (WebMethodCommand<HttpServletRequestContext, Object> wmc: routeMethodCommands) {
-			wmc.close();
+		for (RouteMethodEntry rme: routeMethodEntries) {
+			rme.command.close();
+		}
+		for (Object target: targets) {
+			if (target instanceof AutoCloseable) {
+				((AutoCloseable) target).close();
+			}
 		}
 	}
 	
@@ -392,7 +416,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		private String markdownRequestModel = "";
 		private String markdownResponseModel = "";
 		
-		ApiInfo(RouteMethodCommand<HttpServletRequestContext, Object> rmc) {
+		ApiInfo(RouteMethodEntry rme) {
+			RouteMethodCommand<HttpServletRequestContext, Object> rmc = rme.command;
 			path = rmc.getPath();
 			pattern = rmc.getMethod().getAnnotation(RouteMethod.class).pattern();
 			methods = rmc.getRequestMethods();
@@ -537,15 +562,23 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 	 * @return
 	 */
 	protected String generateApiDocumentation() {
+		StringBuilder sb = new StringBuilder();
+		for (Object target: targets) {
+			Class<?> tc = target==null ? getClass() : target.getClass();
+			if (sb.length()>0) {
+				sb.append(", ");
+			}
+			sb.append(tc.getName());
+		}
 		Map<String, Object> env = new HashMap<>();
 		env.put("bootstrap-css", getBootstrapCssLocation());
 		env.put("bootstrap-theme-css", getBootstrapThemeCssLocation());
 		env.put("jquery-js", getJQueryScriptLocation());
 		env.put("bootstrap-js", getBootstrapScriptLocation());
-		env.put("title", "Web API: "+getTarget().getClass().getName());
+		env.put("title", "Web API: "+sb);
 		Table apiTable = generateApiHtmlTable();		
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;		
-		env.put("content", htmlFactory.panel(Style.PRIMARY, "<H4><B>Web API:</B> "+getTarget().getClass().getName()+"</H4>", apiTable, null).style().margin("10px"));
+		env.put("content", htmlFactory.panel(Style.PRIMARY, "<H4><B>Web API:</B> "+sb+"</H4>", apiTable, null).style().margin("10px"));
 		String apiDoc = htmlFactory.interpolate(getApiDocumentationPageTemplate(), env);
 		return apiDoc;
 	}
@@ -564,8 +597,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		hRow.header("Comment");
 		
 		List<ApiInfo> apiInfos = new ArrayList<>();
-		for (RouteMethodCommand<HttpServletRequestContext, Object> rmc: routeMethodCommands) {
-			apiInfos.add(new ApiInfo(rmc));
+		for (RouteMethodEntry rme: routeMethodEntries) {
+			apiInfos.add(new ApiInfo(rme));
 		}
 		
 		for (ResourceEntry re: resourceEntries) {
@@ -647,8 +680,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		tableBuilder.append("-----|-------------|:---------:|:--------:|:--------:|:-------:|:--------:|:--------:|--------").append(System.lineSeparator());
 
 		List<ApiInfo> apiInfos = new ArrayList<>();
-		for (RouteMethodCommand<HttpServletRequestContext, Object> rmc: routeMethodCommands) {
-			apiInfos.add(new ApiInfo(rmc));
+		for (RouteMethodEntry rme: routeMethodEntries) {
+			apiInfos.add(new ApiInfo(rme));
 		}
 		
 		for (ResourceEntry re: resourceEntries) {
@@ -660,8 +693,7 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		for (ApiInfo ai: apiInfos) {
 			ai.generateRow(tableBuilder);
 		}
-		
-		
+				
 		tableBuilder.append(System.lineSeparator());
 		return tableBuilder.toString();
 	}

@@ -18,11 +18,16 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.nasdanika.cdo.web.routes.EDispatchingRoute;
+import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.Action;
+import org.nasdanika.web.DispatchingRoute;
 import org.nasdanika.web.HttpServletRequestContext;
-import org.nasdanika.web.Route;
+import org.nasdanika.web.RequestMethod;
+import org.nasdanika.web.RouteMethod;
 import org.nasdanika.webtest.model.ModelPackage;
+import org.osgi.framework.FrameworkUtil;
 
 
 /**
@@ -30,13 +35,15 @@ import org.nasdanika.webtest.model.ModelPackage;
  * @author Pavel Vlasov
  *
  */
-public class ResultsRoute implements Route {
+public class ResultsRoute extends RouteBase {
 	
 	private ResourceSet resourceSet;
 	private Map<String, Resource> resultsMap = new ConcurrentHashMap<>();
 	private ExtensionTracker extensionTracker;
 	
-	public ResultsRoute() {
+	public ResultsRoute() throws Exception {
+		super();
+		
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 		resourceSet.getPackageRegistry().put(ModelPackage.eNS_URI, ModelPackage.eINSTANCE);
@@ -76,22 +83,24 @@ public class ResultsRoute implements Route {
 		}		
 	}
 
-	@Override
-	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+	@RouteMethod(path="results/", value=RequestMethod.GET, comment="Routes requests to registered test result models")
+	public Action getResults(@ContextParameter HttpServletRequestContext context) throws Exception {
 		String[] requestPath = context.getPath();
-		if (requestPath.length>1 && "results".equals(requestPath[0])) {
-			String jrp = CoreUtil.join(requestPath, "/", 1);
+		if (requestPath.length>1) {
+			String jrp = CoreUtil.join(requestPath, "/");
 			for (Entry<String, Resource> re: resultsMap.entrySet()) {
 				String resultPath = re.getKey();
 				if (jrp.startsWith(resultPath+"/")) {
-					return context.getAction(re.getValue(), resultPath.split("/").length, null, args);
+					return context.getAction(re.getValue(), resultPath.split("/").length-1, null);
 				}
 			}
 		}
-		
-		// TODO - index.html and web resources - bootstrap, ...
-		
 		return Action.NOT_FOUND;
+	}
+	
+	@RouteMethod
+	public Object getIndexHtml(@ContextParameter HttpServletRequestContext context) {
+		return "TODO - list registered test sessions";
 	}
 
 	@Override

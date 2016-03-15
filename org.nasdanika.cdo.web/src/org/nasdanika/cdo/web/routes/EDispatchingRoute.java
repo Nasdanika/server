@@ -40,13 +40,13 @@ import org.osgi.framework.BundleContext;
  */
 public class EDispatchingRoute extends DispatchingRoute {
 
-	private static final String PATH_KEY = "$path";
-	private static final String ID_KEY = "$id";
-
-	protected EDispatchingRoute(BundleContext bundleContext) throws Exception {
-		super(bundleContext);
+	public EDispatchingRoute(BundleContext bundleContext, Object... targets) throws Exception {
+		super(bundleContext, targets);
 	}
 
+	private static final String PATH_KEY = "$path";
+	private static final String ID_KEY = "$id";
+	
 	@Override
 	protected RouteMethodCommand<HttpServletRequestContext, Object> createRouteMethodCommand(BundleContext bundleContext, Method method) throws Exception {
 		return new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method) {

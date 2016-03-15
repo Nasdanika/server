@@ -174,19 +174,17 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
-	public <U extends User> EList<U> getAllUsers() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
+	@Override
+	public abstract <U extends User> EList<U> getAllUsers();
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
+	@Override
 	public LoginPasswordHashUser authenticate(LoginPasswordCredentials credentials) {
 		for (User user: getAllUsers()) {
 			if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled() && ((LoginPasswordHashUser) user).getPasswordHash()!=null) {
