@@ -18,6 +18,7 @@ import org.nasdanika.core.Context;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Action#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#isGrantable <em>Grantable</em>}</li>
@@ -28,7 +29,6 @@ import org.nasdanika.core.Context;
  *   <li>{@link org.nasdanika.cdo.security.Action#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getCategory <em>Category</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getAction()
  * @model

@@ -8,6 +8,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.nasdanika.cdo.security.*;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.ActionContainer;
 import org.nasdanika.cdo.security.ActionKey;
@@ -88,6 +89,8 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 		switch (eDataType.getClassifierID()) {
 			case SecurityPackage.CONTEXT:
 				return createContextFromString(eDataType, initialValue);
+			case SecurityPackage.PRINCIPAL_VISITOR:
+				return createPrincipalVisitorFromString(eDataType, initialValue);
 			case SecurityPackage.ACCESS_DECISION:
 				return createAccessDecisionFromString(eDataType, initialValue);
 			default:
@@ -105,6 +108,8 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 		switch (eDataType.getClassifierID()) {
 			case SecurityPackage.CONTEXT:
 				return convertContextToString(eDataType, instanceValue);
+			case SecurityPackage.PRINCIPAL_VISITOR:
+				return convertPrincipalVisitorToString(eDataType, instanceValue);
 			case SecurityPackage.ACCESS_DECISION:
 				return convertAccessDecisionToString(eDataType, instanceValue);
 			default:
@@ -225,6 +230,24 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	 * @generated
 	 */
 	public String convertContextToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public PrincipalVisitor createPrincipalVisitorFromString(EDataType eDataType, String initialValue) {
+		return (PrincipalVisitor)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertPrincipalVisitorToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

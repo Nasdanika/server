@@ -11,13 +11,13 @@ import org.eclipse.emf.cdo.CDOObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.ActionKey#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ActionKey#getTargetNamespaceURI <em>Target Namespace URI</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ActionKey#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.ActionKey#getQualifier <em>Qualifier</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getActionKey()
  * @model

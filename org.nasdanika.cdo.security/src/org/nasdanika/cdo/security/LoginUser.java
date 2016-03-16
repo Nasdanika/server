@@ -10,11 +10,11 @@ package org.nasdanika.cdo.security;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.LoginUser#getLogin <em>Login</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.LoginUser#isDisabled <em>Disabled</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getLoginUser()
  * @model

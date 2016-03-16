@@ -23,13 +23,13 @@ import org.nasdanika.core.CoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.SecurityPolicyContainerImpl#getImports <em>Imports</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

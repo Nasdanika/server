@@ -11,12 +11,12 @@ import org.eclipse.emf.common.util.EList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Group#getMembers <em>Members</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Group#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Group#getDescription <em>Description</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getGroup()
  * @model

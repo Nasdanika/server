@@ -58,6 +58,7 @@
       <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
     </eGenericSuperTypes>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="PrincipalVisitor" instanceClassName="org.nasdanika.cdo.security.PrincipalVisitor"/>
   <eClassifiers xsi:type="ecore:EClass" name="Principal" abstract="true" interface="true">
     <eOperations name="authorize" eType="#//AccessDecision">
       <eParameters name="securityPolicy" eType="#//SecurityPolicy"/>
@@ -72,26 +73,8 @@
         </eGenericType>
       </eParameters>
     </eOperations>
-    <eOperations name="sendMessage">
-      <eParameters name="from" eType="#//Principal"/>
-      <eParameters name="subject" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="bodyMimeType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="body" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-    </eOperations>
-    <eOperations name="sendMessage">
-      <eParameters name="from" eType="#//Principal"/>
-      <eParameters name="subject" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="bodyMap">
-        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
-          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-        </eGenericType>
-      </eParameters>
-    </eOperations>
-    <eOperations name="sendMessage">
-      <eParameters name="from" eType="#//Principal"/>
-      <eParameters name="subject" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="body" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eOperations name="accept">
+      <eParameters name="visitor" eType="#//PrincipalVisitor"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="memberOf" upperBound="-1"
         eType="#//Group" eOpposite="#//Group/members"/>

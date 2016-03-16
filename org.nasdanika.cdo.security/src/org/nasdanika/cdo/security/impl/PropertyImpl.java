@@ -13,13 +13,13 @@ import org.nasdanika.cdo.security.SecurityPackage;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.PropertyImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PropertyImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PropertyImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PropertyImpl#getComment <em>Comment</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

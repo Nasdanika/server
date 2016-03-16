@@ -10,10 +10,10 @@ package org.nasdanika.cdo.security;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.LoginPasswordHashUser#getPasswordHash <em>Password Hash</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getLoginPasswordHashUser()
  * @model interface="true" abstract="true"

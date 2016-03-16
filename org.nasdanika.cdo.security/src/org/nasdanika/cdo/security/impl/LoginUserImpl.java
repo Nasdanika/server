@@ -13,7 +13,7 @@ import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
-import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
@@ -26,6 +26,7 @@ import org.nasdanika.core.Context;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getMemberOf <em>Member Of</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getPermissions <em>Permissions</em>}</li>
@@ -33,7 +34,6 @@ import org.nasdanika.core.Context;
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getLogin <em>Login</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#isDisabled <em>Disabled</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -156,29 +156,7 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void sendMessage(Principal from, String subject, String bodyMimeType, Object body) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void sendMessage(Principal from, String subject, Map<String, Object> bodyMap) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void sendMessage(Principal from, String subject, String body) {
+	public void accept(PrincipalVisitor visitor) {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
@@ -195,14 +173,8 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 		switch (operationID) {
 			case SecurityPackage.LOGIN_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP:
 				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
-			case SecurityPackage.LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT:
-				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), arguments.get(3));
-				return null;
-			case SecurityPackage.LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP:
-				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (Map<String, Object>)arguments.get(2));
-				return null;
-			case SecurityPackage.LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING:
-				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2));
+			case SecurityPackage.LOGIN_USER___ACCEPT__PRINCIPALVISITOR:
+				accept((PrincipalVisitor)arguments.get(0));
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

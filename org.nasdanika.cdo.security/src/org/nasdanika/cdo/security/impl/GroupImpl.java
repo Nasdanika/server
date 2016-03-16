@@ -13,6 +13,7 @@ import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
@@ -25,6 +26,7 @@ import org.nasdanika.core.Context;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getMemberOf <em>Member Of</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getPermissions <em>Permissions</em>}</li>
@@ -33,7 +35,6 @@ import org.nasdanika.core.Context;
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getDescription <em>Description</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -186,31 +187,10 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public void sendMessage(Principal from, String subject, String bodyMimeType, Object body) {
+	public void accept(PrincipalVisitor visitor) {
+		visitor.visit(this);
 		for (Principal m: getMembers()) {
-			m.sendMessage(from, subject, bodyMimeType, body);
-		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void sendMessage(Principal from, String subject, Map<String, Object> bodyMap) {
-		for (Principal m: getMembers()) {
-			m.sendMessage(from, subject, bodyMap);
-		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void sendMessage(Principal from, String subject, String body) {
-		for (Principal m: getMembers()) {
-			m.sendMessage(from, subject, body);
+			m.accept(visitor);
 		}
 	}
 
@@ -227,14 +207,8 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 				return isMember((Principal)arguments.get(0));
 			case SecurityPackage.GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP:
 				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
-			case SecurityPackage.GROUP___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT:
-				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), arguments.get(3));
-				return null;
-			case SecurityPackage.GROUP___SEND_MESSAGE__PRINCIPAL_STRING_MAP:
-				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (Map<String, Object>)arguments.get(2));
-				return null;
-			case SecurityPackage.GROUP___SEND_MESSAGE__PRINCIPAL_STRING_STRING:
-				sendMessage((Principal)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2));
+			case SecurityPackage.GROUP___ACCEPT__PRINCIPALVISITOR:
+				accept((PrincipalVisitor)arguments.get(0));
 				return null;
 		}
 		return super.eInvoke(operationID, arguments);

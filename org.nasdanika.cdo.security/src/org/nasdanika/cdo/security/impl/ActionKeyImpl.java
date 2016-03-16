@@ -13,13 +13,13 @@ import org.nasdanika.cdo.security.SecurityPackage;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionKeyImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionKeyImpl#getTargetNamespaceURI <em>Target Namespace URI</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionKeyImpl#getTargetClass <em>Target Class</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionKeyImpl#getQualifier <em>Qualifier</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

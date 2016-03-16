@@ -16,12 +16,12 @@ import org.nasdanika.core.Context;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Principal#getMemberOf <em>Member Of</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Principal#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Principal#getProtectionDomain <em>Protection Domain</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPrincipal()
  * @model interface="true" abstract="true"
@@ -89,25 +89,9 @@ public interface Principal extends CDOObject {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model
+	 * @model visitorDataType="org.nasdanika.cdo.security.PrincipalVisitor"
 	 * @generated
 	 */
-	void sendMessage(Principal from, String subject, String bodyMimeType, Object body);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @model
-	 * @generated
-	 */
-	void sendMessage(Principal from, String subject, Map<String, Object> bodyMap);
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @model
-	 * @generated
-	 */
-	void sendMessage(Principal from, String subject, String body);
+	void accept(PrincipalVisitor visitor);
 
 } // Principal

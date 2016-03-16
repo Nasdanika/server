@@ -20,6 +20,7 @@ import org.nasdanika.core.Context;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Permission#isAllow <em>Allow</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getTarget <em>Target</em>}</li>
@@ -28,7 +29,6 @@ import org.nasdanika.core.Context;
  *   <li>{@link org.nasdanika.cdo.security.Permission#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getComment <em>Comment</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPermission()
  * @model

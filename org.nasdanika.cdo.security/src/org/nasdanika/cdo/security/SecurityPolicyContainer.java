@@ -11,12 +11,12 @@ import org.eclipse.emf.common.util.EList;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.SecurityPolicyContainer#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.SecurityPolicyContainer#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.SecurityPolicyContainer#getImports <em>Imports</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getSecurityPolicyContainer()
  * @model superTypes="org.nasdanika.cdo.security.SecurityPolicy org.nasdanika.cdo.security.ActionContainer"

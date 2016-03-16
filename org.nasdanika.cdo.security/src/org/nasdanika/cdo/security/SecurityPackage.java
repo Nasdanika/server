@@ -59,96 +59,6 @@ public interface SecurityPackage extends EPackage {
 	SecurityPackage eINSTANCE = org.nasdanika.cdo.security.impl.SecurityPackageImpl.init();
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.ProtectionDomain <em>Protection Domain</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.ProtectionDomain
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtectionDomain()
-	 * @generated
-	 */
-	int PROTECTION_DOMAIN = 1;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl <em>Login Password Protection Domain</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordProtectionDomain()
-	 * @generated
-	 */
-	int LOGIN_PASSWORD_PROTECTION_DOMAIN = 2;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.Principal
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipal()
-	 * @generated
-	 */
-	int PRINCIPAL = 3;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.GroupImpl <em>Group</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.GroupImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGroup()
-	 * @generated
-	 */
-	int GROUP = 4;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.User <em>User</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.User
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getUser()
-	 * @generated
-	 */
-	int USER = 5;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.LoginPasswordHashUser
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordHashUser()
-	 * @generated
-	 */
-	int LOGIN_PASSWORD_HASH_USER = 7;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.ActionImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAction()
-	 * @generated
-	 */
-	int ACTION = 9;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PropertyImpl <em>Property</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.PropertyImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProperty()
-	 * @generated
-	 */
-	int PROPERTY = 10;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PermissionImpl <em>Permission</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.security.impl.PermissionImpl
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPermission()
-	 * @generated
-	 */
-	int PERMISSION = 11;
-
-	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -175,6 +85,16 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOGIN_PASSWORD_CREDENTIALS_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.ProtectionDomain <em>Protection Domain</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.ProtectionDomain
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtectionDomain()
+	 * @generated
+	 */
+	int PROTECTION_DOMAIN = 1;
 
 	/**
 	 * The feature id for the '<em><b>Super Users Group</b></em>' reference.
@@ -247,6 +167,16 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROTECTION_DOMAIN_OPERATION_COUNT = 3;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl <em>Login Password Protection Domain</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordProtectionDomain()
+	 * @generated
+	 */
+	int LOGIN_PASSWORD_PROTECTION_DOMAIN = 2;
 
 	/**
 	 * The feature id for the '<em><b>Super Users Group</b></em>' reference.
@@ -339,6 +269,16 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_PROTECTION_DOMAIN_OPERATION_COUNT = PROTECTION_DOMAIN_OPERATION_COUNT + 2;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.Principal
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipal()
+	 * @generated
+	 */
+	int PRINCIPAL = 3;
+
+	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -384,31 +324,13 @@ public interface SecurityPackage extends EPackage {
 	int PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = 0;
 
 	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
+	 * The operation id for the '<em>Accept</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT = 1;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_MAP = 2;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING = 3;
+	int PRINCIPAL___ACCEPT__PRINCIPALVISITOR = 1;
 
 	/**
 	 * The number of operations of the '<em>Principal</em>' class.
@@ -417,7 +339,17 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PRINCIPAL_OPERATION_COUNT = 4;
+	int PRINCIPAL_OPERATION_COUNT = 2;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.GroupImpl <em>Group</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.GroupImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGroup()
+	 * @generated
+	 */
+	int GROUP = 4;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -492,31 +424,13 @@ public interface SecurityPackage extends EPackage {
 	int GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP;
 
 	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
+	 * The operation id for the '<em>Accept</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int GROUP___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT = PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GROUP___SEND_MESSAGE__PRINCIPAL_STRING_MAP = PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_MAP;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GROUP___SEND_MESSAGE__PRINCIPAL_STRING_STRING = PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING;
+	int GROUP___ACCEPT__PRINCIPALVISITOR = PRINCIPAL___ACCEPT__PRINCIPALVISITOR;
 
 	/**
 	 * The operation id for the '<em>Is Member</em>' operation.
@@ -535,6 +449,16 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int GROUP_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.User <em>User</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.User
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getUser()
+	 * @generated
+	 */
+	int USER = 5;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -582,31 +506,13 @@ public interface SecurityPackage extends EPackage {
 	int USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP;
 
 	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
+	 * The operation id for the '<em>Accept</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT = PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP = PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_MAP;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING = PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING;
+	int USER___ACCEPT__PRINCIPALVISITOR = PRINCIPAL___ACCEPT__PRINCIPALVISITOR;
 
 	/**
 	 * The number of operations of the '<em>User</em>' class.
@@ -691,31 +597,13 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP;
 
 	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
+	 * The operation id for the '<em>Accept</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT = USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP = USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING = USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING;
+	int LOGIN_USER___ACCEPT__PRINCIPALVISITOR = USER___ACCEPT__PRINCIPALVISITOR;
 
 	/**
 	 * The number of operations of the '<em>Login User</em>' class.
@@ -725,6 +613,16 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOGIN_USER_OPERATION_COUNT = USER_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.LoginPasswordHashUser
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordHashUser()
+	 * @generated
+	 */
+	int LOGIN_PASSWORD_HASH_USER = 7;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -799,31 +697,13 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_HASH_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = LOGIN_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP;
 
 	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
+	 * The operation id for the '<em>Accept</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_HASH_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT = LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_PASSWORD_HASH_USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP = LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_MAP;
-
-	/**
-	 * The operation id for the '<em>Send Message</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_PASSWORD_HASH_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING = LOGIN_USER___SEND_MESSAGE__PRINCIPAL_STRING_STRING;
+	int LOGIN_PASSWORD_HASH_USER___ACCEPT__PRINCIPALVISITOR = LOGIN_USER___ACCEPT__PRINCIPALVISITOR;
 
 	/**
 	 * The number of operations of the '<em>Login Password Hash User</em>' class.
@@ -897,6 +777,16 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int ACTION_KEY_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.ActionImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAction()
+	 * @generated
+	 */
+	int ACTION = 9;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1043,6 +933,16 @@ public interface SecurityPackage extends EPackage {
 	int ACTION_OPERATION_COUNT = ACTION_KEY_OPERATION_COUNT + 1;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PropertyImpl <em>Property</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.PropertyImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProperty()
+	 * @generated
+	 */
+	int PROPERTY = 10;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1095,6 +995,16 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROPERTY_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PermissionImpl <em>Permission</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.PermissionImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPermission()
+	 * @generated
+	 */
+	int PERMISSION = 11;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1343,17 +1253,6 @@ public interface SecurityPackage extends EPackage {
 	int SECURITY_POLICY_CONTAINER_OPERATION_COUNT = SECURITY_POLICY_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '<em>Access Decision</em>' data type.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.core.AuthorizationProvider.AccessDecision
-	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
-	 * @generated
-	 */
-	int ACCESS_DECISION = 16;
-
-
-	/**
 	 * The meta object id for the '<em>Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1363,6 +1262,37 @@ public interface SecurityPackage extends EPackage {
 	 */
 	int CONTEXT = 15;
 
+	/**
+	 * The meta object id for the '<em>Principal Visitor</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.PrincipalVisitor
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalVisitor()
+	 * @generated
+	 */
+	int PRINCIPAL_VISITOR = 16;
+
+	/**
+	 * The meta object id for the '<em>Access Decision</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.core.AuthorizationProvider.AccessDecision
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
+	 * @generated
+	 */
+	int ACCESS_DECISION = 17;
+
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Login Password Credentials</em>'.
+	 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
+	 * @model instanceClass="org.nasdanika.cdo.security.LoginPasswordCredentials"
+	 * @generated
+	 */
+	EClass getLoginPasswordCredentials();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.ProtectionDomain <em>Protection Domain</em>}'.
@@ -1521,34 +1451,14 @@ public interface SecurityPackage extends EPackage {
 	EOperation getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String, java.lang.Object) <em>Send Message</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#accept(org.nasdanika.cdo.security.PrincipalVisitor) <em>Accept</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Send Message</em>' operation.
-	 * @see org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String, java.lang.Object)
+	 * @return the meta object for the '<em>Accept</em>' operation.
+	 * @see org.nasdanika.cdo.security.Principal#accept(org.nasdanika.cdo.security.PrincipalVisitor)
 	 * @generated
 	 */
-	EOperation getPrincipal__SendMessage__Principal_String_String_Object();
-
-	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.util.Map) <em>Send Message</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Send Message</em>' operation.
-	 * @see org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.util.Map)
-	 * @generated
-	 */
-	EOperation getPrincipal__SendMessage__Principal_String_Map();
-
-	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String) <em>Send Message</em>}' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Send Message</em>' operation.
-	 * @see org.nasdanika.cdo.security.Principal#sendMessage(org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String)
-	 * @generated
-	 */
-	EOperation getPrincipal__SendMessage__Principal_String_String();
+	EOperation getPrincipal__Accept__PrincipalVisitor();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Group <em>Group</em>}'.
@@ -2044,15 +1954,26 @@ public interface SecurityPackage extends EPackage {
 	EReference getSecurityPolicyContainer_Imports();
 
 	/**
-	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}'.
+	 * Returns the meta object for data type '{@link org.nasdanika.core.Context <em>Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Login Password Credentials</em>'.
-	 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
-	 * @model instanceClass="org.nasdanika.cdo.security.LoginPasswordCredentials"
+	 * @return the meta object for data type '<em>Context</em>'.
+	 * @see org.nasdanika.core.Context
+	 * @model instanceClass="org.nasdanika.core.Context"
 	 * @generated
 	 */
-	EClass getLoginPasswordCredentials();
+	EDataType getContext();
+
+	/**
+	 * Returns the meta object for data type '{@link org.nasdanika.cdo.security.PrincipalVisitor <em>Principal Visitor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Principal Visitor</em>'.
+	 * @see org.nasdanika.cdo.security.PrincipalVisitor
+	 * @model instanceClass="org.nasdanika.cdo.security.PrincipalVisitor"
+	 * @generated
+	 */
+	EDataType getPrincipalVisitor();
 
 	/**
 	 * Returns the meta object for data type '{@link org.nasdanika.core.AuthorizationProvider.AccessDecision <em>Access Decision</em>}'.
@@ -2064,17 +1985,6 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getAccessDecision();
-
-	/**
-	 * Returns the meta object for data type '{@link org.nasdanika.core.Context <em>Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Context</em>'.
-	 * @see org.nasdanika.core.Context
-	 * @model instanceClass="org.nasdanika.core.Context"
-	 * @generated
-	 */
-	EDataType getContext();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2099,6 +2009,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	interface Literals {
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordCredentials()
+		 * @generated
+		 */
+		EClass LOGIN_PASSWORD_CREDENTIALS = eINSTANCE.getLoginPasswordCredentials();
+
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.ProtectionDomain <em>Protection Domain</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -2226,28 +2146,12 @@ public interface SecurityPackage extends EPackage {
 		EOperation PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP = eINSTANCE.getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map();
 
 		/**
-		 * The meta object literal for the '<em><b>Send Message</b></em>' operation.
+		 * The meta object literal for the '<em><b>Accept</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT = eINSTANCE.getPrincipal__SendMessage__Principal_String_String_Object();
-
-		/**
-		 * The meta object literal for the '<em><b>Send Message</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_MAP = eINSTANCE.getPrincipal__SendMessage__Principal_String_Map();
-
-		/**
-		 * The meta object literal for the '<em><b>Send Message</b></em>' operation.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EOperation PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING = eINSTANCE.getPrincipal__SendMessage__Principal_String_String();
+		EOperation PRINCIPAL___ACCEPT__PRINCIPALVISITOR = eINSTANCE.getPrincipal__Accept__PrincipalVisitor();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.GroupImpl <em>Group</em>}' class.
@@ -2640,14 +2544,24 @@ public interface SecurityPackage extends EPackage {
 		EReference SECURITY_POLICY_CONTAINER__IMPORTS = eINSTANCE.getSecurityPolicyContainer_Imports();
 
 		/**
-		 * The meta object literal for the '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}' class.
+		 * The meta object literal for the '<em>Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.cdo.security.LoginPasswordCredentials
-		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordCredentials()
+		 * @see org.nasdanika.core.Context
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 		 * @generated
 		 */
-		EClass LOGIN_PASSWORD_CREDENTIALS = eINSTANCE.getLoginPasswordCredentials();
+		EDataType CONTEXT = eINSTANCE.getContext();
+
+		/**
+		 * The meta object literal for the '<em>Principal Visitor</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.PrincipalVisitor
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalVisitor()
+		 * @generated
+		 */
+		EDataType PRINCIPAL_VISITOR = eINSTANCE.getPrincipalVisitor();
 
 		/**
 		 * The meta object literal for the '<em>Access Decision</em>' data type.
@@ -2658,16 +2572,6 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType ACCESS_DECISION = eINSTANCE.getAccessDecision();
-
-		/**
-		 * The meta object literal for the '<em>Context</em>' data type.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.core.Context
-		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
-		 * @generated
-		 */
-		EDataType CONTEXT = eINSTANCE.getContext();
 
 	}
 

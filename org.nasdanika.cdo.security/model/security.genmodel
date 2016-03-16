@@ -10,6 +10,7 @@
   <genPackages prefix="Security" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
       fileExtensions="nasdanika_cdo_security" ecorePackage="security.ecore#/">
     <genDataTypes ecoreDataType="security.ecore#//Context"/>
+    <genDataTypes ecoreDataType="security.ecore#//PrincipalVisitor"/>
     <genDataTypes ecoreDataType="security.ecore#//AccessDecision"/>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
     <genClasses image="false" ecoreClass="security.ecore#//ProtectionDomain">
@@ -48,21 +49,8 @@
         <genParameters ecoreParameter="security.ecore#//Principal/authorize/qualifier"/>
         <genParameters ecoreParameter="security.ecore#//Principal/authorize/environment"/>
       </genOperations>
-      <genOperations ecoreOperation="security.ecore#//Principal/sendMessage">
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage/from"/>
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage/subject"/>
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage/bodyMimeType"/>
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage/body"/>
-      </genOperations>
-      <genOperations ecoreOperation="security.ecore#//Principal/sendMessage.1">
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage.1/from"/>
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage.1/subject"/>
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage.1/bodyMap"/>
-      </genOperations>
-      <genOperations ecoreOperation="security.ecore#//Principal/sendMessage.2">
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage.2/from"/>
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage.2/subject"/>
-        <genParameters ecoreParameter="security.ecore#//Principal/sendMessage.2/body"/>
+      <genOperations ecoreOperation="security.ecore#//Principal/accept">
+        <genParameters ecoreParameter="security.ecore#//Principal/accept/visitor"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//Group">

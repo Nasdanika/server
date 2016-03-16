@@ -27,6 +27,7 @@ import org.nasdanika.core.NasdanikaException;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getDescription <em>Description</em>}</li>
@@ -38,7 +39,6 @@ import org.nasdanika.core.NasdanikaException;
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getCategory <em>Category</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

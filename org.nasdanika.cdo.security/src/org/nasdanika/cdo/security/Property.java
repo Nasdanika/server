@@ -11,13 +11,13 @@ import org.eclipse.emf.cdo.CDOObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Property#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Property#getValue <em>Value</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Property#getType <em>Type</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Property#getComment <em>Comment</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getProperty()
  * @model

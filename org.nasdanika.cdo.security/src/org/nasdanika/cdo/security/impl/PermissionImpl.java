@@ -24,6 +24,7 @@ import org.nasdanika.core.CoreUtil;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#isAllow <em>Allow</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getTarget <em>Target</em>}</li>
@@ -32,7 +33,6 @@ import org.nasdanika.core.CoreUtil;
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getComment <em>Comment</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

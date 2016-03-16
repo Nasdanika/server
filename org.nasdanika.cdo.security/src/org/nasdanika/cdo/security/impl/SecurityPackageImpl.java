@@ -21,6 +21,7 @@ import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.Property;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.security.SecurityFactory;
@@ -156,6 +157,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	private EDataType contextEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType principalVisitorEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -358,26 +366,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getPrincipal__SendMessage__Principal_String_String_Object() {
+	public EOperation getPrincipal__Accept__PrincipalVisitor() {
 		return principalEClass.getEOperations().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EOperation getPrincipal__SendMessage__Principal_String_Map() {
-		return principalEClass.getEOperations().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EOperation getPrincipal__SendMessage__Principal_String_String() {
-		return principalEClass.getEOperations().get(3);
 	}
 
 	/**
@@ -826,6 +816,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getPrincipalVisitor() {
+		return principalVisitorEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public SecurityFactory getSecurityFactory() {
 		return (SecurityFactory)getEFactoryInstance();
 	}
@@ -868,9 +867,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEReference(principalEClass, PRINCIPAL__PERMISSIONS);
 		createEReference(principalEClass, PRINCIPAL__PROTECTION_DOMAIN);
 		createEOperation(principalEClass, PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP);
-		createEOperation(principalEClass, PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING_OBJECT);
-		createEOperation(principalEClass, PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_MAP);
-		createEOperation(principalEClass, PRINCIPAL___SEND_MESSAGE__PRINCIPAL_STRING_STRING);
+		createEOperation(principalEClass, PRINCIPAL___ACCEPT__PRINCIPALVISITOR);
 
 		groupEClass = createEClass(GROUP);
 		createEReference(groupEClass, GROUP__MEMBERS);
@@ -931,6 +928,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
+		principalVisitorEDataType = createEDataType(PRINCIPAL_VISITOR);
 		accessDecisionEDataType = createEDataType(ACCESS_DECISION);
 	}
 
@@ -1029,26 +1027,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getPrincipal__SendMessage__Principal_String_String_Object(), null, "sendMessage", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getPrincipal(), "from", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "subject", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "bodyMimeType", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEJavaObject(), "body", 0, 1, IS_UNIQUE, IS_ORDERED);
-
-		op = initEOperation(getPrincipal__SendMessage__Principal_String_Map(), null, "sendMessage", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getPrincipal(), "from", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "subject", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(ecorePackage.getEMap());
-		g2 = createEGenericType(ecorePackage.getEString());
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(ecorePackage.getEJavaObject());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "bodyMap", 0, 1, IS_UNIQUE, IS_ORDERED);
-
-		op = initEOperation(getPrincipal__SendMessage__Principal_String_String(), null, "sendMessage", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getPrincipal(), "from", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "subject", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "body", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getPrincipal__Accept__PrincipalVisitor(), null, "accept", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getPrincipalVisitor(), "visitor", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(groupEClass, Group.class, "Group", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getGroup_Members(), this.getPrincipal(), this.getPrincipal_MemberOf(), "members", null, 0, -1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1133,6 +1113,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(principalVisitorEDataType, PrincipalVisitor.class, "PrincipalVisitor", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(accessDecisionEDataType, AccessDecision.class, "AccessDecision", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
