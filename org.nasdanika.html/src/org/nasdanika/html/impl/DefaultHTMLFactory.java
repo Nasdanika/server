@@ -503,7 +503,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 				.style("position", "absolute")
 				.style("width", "100%")
 				.style("height", "100%")
-				.style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHT)
+				.style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHTER)
 				.style("opacity", 0.7)
 				.style("z-index", 10)
 				.style("display", "block");
@@ -512,7 +512,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 	@Override
 	public Tag spinnerOverlay(Spinner spinner) {
 		Tag spinnerTag = fontAwesome().spinner(spinner).size(Size.x5).spin().getTarget();
-		Table table = table().style("height", "100%").style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHT);
+		Table table = table().style("height", "100%").style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHTER);
 		table.row().cell(spinnerTag).style("text-align", "center").style("vertical-align", "middle");
 		return overlay(table);
 	}
