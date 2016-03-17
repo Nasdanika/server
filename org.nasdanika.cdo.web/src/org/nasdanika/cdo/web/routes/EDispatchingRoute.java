@@ -2,12 +2,18 @@ package org.nasdanika.cdo.web.routes;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -17,9 +23,11 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.CDOViewHttpServletRequestContext;
 import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.DispatchingRoute;
@@ -54,9 +62,10 @@ public class EDispatchingRoute extends DispatchingRoute {
 			@Override
 			protected Object processBodyParameter(HttpServletRequestContext context, Class<?> parameterType) throws Exception {
 				if (JSON_CONTENT_TYPE.equals(context.getRequest().getContentType())) {
+					Registry registry = context instanceof CDOViewHttpServletRequestContext ? ((CDOViewHttpServletRequestContext<?>) context).getView().getSession().getPackageRegistry() : EPackage.Registry.INSTANCE;
 					if (parameterType.isArray() && EObject.class.isAssignableFrom(parameterType.getComponentType())) {
 						JSONArray jsonArray = new JSONArray(new JSONTokener(context.getRequest().getReader()));
-						EClassifier eClassifier = resolveModelEClass(parameterType.getComponentType());
+						EClassifier eClassifier = resolveModelEClassifier(registry, parameterType.getComponentType());
 						if (eClassifier instanceof EClass) {
 							Object ret = Array.newInstance(parameterType.getComponentType(), jsonArray.length());
 							for (int i=0; i<jsonArray.length(); ++i) {
@@ -66,13 +75,28 @@ public class EDispatchingRoute extends DispatchingRoute {
 						}
 					} else if (EObject.class.isAssignableFrom(parameterType)) {						
 						JSONObject jsonObject = new JSONObject(new JSONTokener(context.getRequest().getReader()));
-						EClassifier eClassifier = resolveModelEClass(parameterType);
+						EClassifier eClassifier = resolveModelEClassifier(registry, parameterType);
 						if (eClassifier instanceof EClass) {
 							return convert(context, jsonObject, (EClass) eClassifier);
 						}												
 					}
 				}
 				return super.processBodyParameter(context, parameterType);
+			}
+			
+			@Override
+			protected Object processModelParameter(HttpServletRequestContext context, Class<?> parameterType) throws Exception {				
+				if (EObject.class.isAssignableFrom(parameterType) && context instanceof CDOViewContext) {
+					CDOView view = ((CDOViewContext<?,?>) context).getView();
+					CDOPackageRegistry packageRegistry = view.getSession().getPackageRegistry();										
+					EClassifier eClassifier = resolveModelEClassifier(packageRegistry, parameterType);
+					if (eClassifier instanceof EClass) {
+						EObject model = EcoreUtil.create((EClass) eClassifier);
+						inject(context, context.getRequest().getParameterMap(), model);
+						return model;
+					}
+				}
+				return super.processModelParameter(context, parameterType);
 			}
 
 			/**
@@ -103,7 +127,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 			
 		};
 	}
-	
+
 	private Set<String> asSet(String[] array) {
 		Set<String> ret = new HashSet<>();
 		if (array!=null) {
@@ -255,7 +279,34 @@ public class EDispatchingRoute extends DispatchingRoute {
 			return convertedValue;
 		}
 		return value;
+	}
+	
+	
+	/**
+	 * Converts String value to attribute type. This implementation delegates to context.convert();
+	 * Override to customize.
+	 * @param attribute
+	 * @param value
+	 * @return
+	 */
+	protected Object fromString(HttpServletRequestContext context, EAttribute attribute, String value) throws Exception {
+		if (value==null) {
+			return null;
+		}
+		Class<?> instanceClass = attribute.getEType().getInstanceClass();
+		if (instanceClass!=null) {
+			if (instanceClass.isInstance(value)) {
+				return value;
+			}
+			Object convertedValue = context.convert(value, instanceClass);
+			if (convertedValue == null) {
+				throw new IllegalArgumentException("Cannot convert "+value+"("+value.getClass().getName()+") to "+instanceClass.getName());
+			}
+			return convertedValue;
+		}
+		return value;
 	}	
+	
 
 	protected ReferenceMode referenceMode(
 			EReference reference, 
@@ -287,7 +338,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 		if (jsonObject.has(ID_KEY) && context instanceof CDOViewHttpServletRequestContext && ((CDOViewHttpServletRequestContext<?>) context).getView()!=null) {
 			ret = ((CDOViewHttpServletRequestContext<?>) context).getView().getObject(CDOIDUtil.read(jsonObject.getString(ID_KEY)));
 		} else {
-			ret= eClass.getEPackage().getEFactoryInstance().create(eClass);
+			ret=  EcoreUtil.create(eClass);
 		}
 		for (EStructuralFeature feature: eClass.getEAllStructuralFeatures()) {
 			if (jsonObject.has(feature.getName())) {
@@ -313,7 +364,81 @@ public class EDispatchingRoute extends DispatchingRoute {
 			}			
 		}
 		return ret;
-	}		
+	}	
+		
+	@SuppressWarnings("unchecked")
+	protected void inject(HttpServletRequestContext context, Map<String, String[]> parameterMap, EObject model) throws Exception {
+		for (EStructuralFeature feature: model.eClass().getEAllStructuralFeatures()) {
+			String[] values = parameterMap.get(feature.getName());
+			if (values==null) {
+				Map<String, String[]> subMap = new HashMap<>();
+				String dotPrefix = feature.getName()+".";
+				int maxSize = -1;
+				for (Entry<String, String[]> e: parameterMap.entrySet()) {
+					if (e.getKey().startsWith(dotPrefix)) {
+						String[] value = e.getValue();
+						if (value.length > maxSize) {
+							maxSize = value.length;
+						}
+						subMap.put(e.getKey().substring(dotPrefix.length()), value);
+					}					
+				}
+				
+				if (!subMap.isEmpty() && feature instanceof EAttribute) {
+					throw new IllegalArgumentException("Hierarhical parameter names are not supported for attributes: "+feature.getName()+" "+subMap);
+				}				
+				
+				for (int i=0; i<maxSize; ++i) {
+					Map<String, String[]> entryMap = new HashMap<>();
+					for (Entry<String, String[]> e: subMap.entrySet()) {
+						if (e.getKey().startsWith(dotPrefix)) {
+							String[] value = e.getValue();
+							if (i < value.length) {
+								entryMap.put(e.getKey(), new String[] {value[i]});
+							}
+						}					
+					}
+					EObject subModel = EcoreUtil.create(((EReference) feature).getEReferenceType());
+					inject(context, entryMap, subModel);
+					if (feature.isMany()) {
+						((Collection<EObject>) model.eGet(feature)).add(subModel);
+					} else {
+						if (i == 0) {
+							model.eSet(feature, subModel);
+						} else {
+							throw new IllegalArgumentException("Cannot inject multi-value into a single-value reference: "+feature.getName()+" "+i+" "+entryMap);
+						}
+					}
+				}
+			} else {
+				if (feature.isMany()) {
+					Collection<Object> featureValue = (Collection<Object>) model.eGet(feature);
+					featureValue.clear();					
+					for (int i=0; i<values.length; ++i) {
+						if (feature instanceof EReference) {
+							// Got to be a CDOID
+							CDOObject value = ((CDOViewHttpServletRequestContext<?>) context).getView().getObject(CDOIDUtil.read(values[i]));
+							featureValue.add(value);
+						} else {
+							featureValue.add(fromString(context, (EAttribute) feature, values[i]));
+						}
+					}
+				} else {
+					if (values.length>1) {
+						throw new IllegalArgumentException("Multiple values for "+feature.getName()+": "+Arrays.toString(values));
+					} else if (values.length == 1) {
+						if (feature instanceof EReference) {
+							// Got to be a CDOID
+							CDOObject value = ((CDOViewHttpServletRequestContext<?>) context).getView().getObject(CDOIDUtil.read(values[0]));
+							model.eSet(feature, value);
+						} else {
+							model.eSet(feature, fromString(context, (EAttribute) feature, values[0]));
+						}
+					}
+				}
+			}			
+		}
+	}	
 
 	/**
 	 * Generates classifier links for model classes.
@@ -321,12 +446,12 @@ public class EDispatchingRoute extends DispatchingRoute {
 	@Override
 	protected String markdownModelName(Class<?> modelClass) {
 		if (EObject.class.isAssignableFrom(modelClass)) {
-			EClassifier eClassifier = resolveModelEClass(modelClass);
+			EClassifier eClassifier = resolveModelEClassifier(EPackage.Registry.INSTANCE, modelClass);
 			if (eClassifier!=null) {
 				return "[[classifier>"+eClassifier.getName()+"@"+eClassifier.getEPackage().getNsURI()+"]]";
 			}
 		} else if (modelClass.isArray() && EObject.class.isAssignableFrom(modelClass.getComponentType())) {
-			EClassifier eClassifier = resolveModelEClass(modelClass.getComponentType());
+			EClassifier eClassifier = resolveModelEClassifier(EPackage.Registry.INSTANCE, modelClass.getComponentType());
 			if (eClassifier!=null) {
 				return "[[classifier>"+eClassifier.getName()+"@"+eClassifier.getEPackage().getNsURI()+"]]";
 			}			
@@ -334,23 +459,36 @@ public class EDispatchingRoute extends DispatchingRoute {
 		
 		return super.markdownModelName(modelClass);
 	}
+
+	
+	private Map<Registry, Map<Class<?>, EClassifier>> modelTypeMap = new ConcurrentHashMap<>();
 	
 	/**
 	 * Finds EClass by Class in the global registry.
 	 * @param modelClass
 	 * @return
 	 */
-	private EClassifier resolveModelEClass(Class<?> modelClass) {
-		Registry registry = EPackage.Registry.INSTANCE;
-		for (String nsURI: registry.keySet()) {			
-			EPackage ePackage = registry.getEPackage(nsURI);
-			for (EClassifier c: ePackage.getEClassifiers()) {
-				if (c.getInstanceClass() == modelClass) {
-					return c;
+	private EClassifier resolveModelEClassifier(Registry registry, Class<?> modelClass) {
+		Map<Class<?>, EClassifier> typeMap = modelTypeMap.get(registry);
+		if (typeMap == null) {
+			typeMap = new ConcurrentHashMap<>();
+			modelTypeMap.put(registry, typeMap);
+		}
+		EClassifier ret = typeMap.get(modelClass);
+		if (ret==null) {
+			//Registry registry = EPackage.Registry.INSTANCE;
+			for (String nsURI: registry.keySet()) {			
+				EPackage ePackage = registry.getEPackage(nsURI);
+				for (EClassifier c: ePackage.getEClassifiers()) {
+					if (c.getInstanceClass() == modelClass) {
+						ret = c;
+						typeMap.put(modelClass, ret);
+						return ret;
+					}
 				}
 			}
 		}
-		return null;
+		return ret;
 	}
 	
 

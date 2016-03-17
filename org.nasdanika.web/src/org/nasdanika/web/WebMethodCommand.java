@@ -130,6 +130,20 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 					}
 				};
 			}
+			if (ModelParameter.class.isInstance(a)) {
+				return new ArgumentResolver<C>() {
+					
+					@Override
+					public Object getValue(C context, Object[] arguments) throws Exception {
+						return processModelParameter(context, parameterType);
+					}
+					
+					@Override
+					public void close() {
+						// NOP						
+					}
+				};
+			}
 			if (CookieParameter.class.isInstance(a)) {
 				final CookieParameter cookieParameter = (CookieParameter) a;
 				return new ArgumentResolver<C>() {
@@ -225,6 +239,22 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 		}
 		
 		return context.convert(context.getRequest().getInputStream(), parameterType);
+	}
+	
+	/**
+	 * Converts request to parameter type. This implementation instantiates parameter type and then injects request parameters with {@link CoreUtil}.injectProperty method.
+	 * Multi-value parameters are currently not supported.
+	 * @param context
+	 * @param parameterType
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object processModelParameter(C context, Class<?> parameterType) throws Exception {		
+		Object model = parameterType.newInstance();
+		for (String pName: Collections.list(context.getRequest().getParameterNames())) {
+			CoreUtil.injectProperty(model, pName.split("\\."), context.getRequest().getParameter(pName));
+		}
+		return model;
 	}
 
 }
