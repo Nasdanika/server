@@ -166,11 +166,11 @@ public class EpicItemProvider
 	 * This returns Epic.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Epic"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("book.png"));
 	}
 
 	/**
@@ -243,6 +243,11 @@ public class EpicItemProvider
 	@Override
 	public ResourceLocator getResourceLocator() {
 		return StoryEditPlugin.INSTANCE;
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

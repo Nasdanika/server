@@ -166,11 +166,11 @@ public class CatalogItemProvider
 	 * This returns Catalog.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Catalog"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("drawer.png"));
 	}
 
 	/**
@@ -278,6 +278,11 @@ public class CatalogItemProvider
 	@Override
 	public ResourceLocator getResourceLocator() {
 		return StoryEditPlugin.INSTANCE;
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

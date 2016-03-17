@@ -2,6 +2,7 @@
  */
 package org.nasdanika.story.provider;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.EMFPlugin;
 import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.ecore.provider.EcoreEditPlugin;
@@ -99,6 +100,10 @@ public final class StoryEditPlugin extends EMFPlugin {
 				return new Implementation();
 			}
 		}
+	}
+	
+	public Object getIcon(String icon) {
+		return Platform.getBundle("org.nasdanika.icons").getEntry("fatcow-hosting-icons/FatCow_Icons16x16/"+icon);
 	}
 
 }

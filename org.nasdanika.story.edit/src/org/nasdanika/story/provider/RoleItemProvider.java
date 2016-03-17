@@ -105,11 +105,11 @@ public class RoleItemProvider extends ProtagonistItemProvider {
 	 * This returns Role.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Role"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("user_silhouette.png"));
 	}
 
 	/**
@@ -161,6 +161,11 @@ public class RoleItemProvider extends ProtagonistItemProvider {
 			(createChildParameter
 				(StoryPackage.Literals.ROLE__SUB_ROLES,
 				 StoryFactory.eINSTANCE.createRole()));
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

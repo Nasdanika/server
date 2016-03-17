@@ -46,11 +46,11 @@ public class SystemItemProvider extends ActorItemProvider {
 	 * This returns System.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/System"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("server.png"));
 	}
 
 	/**
@@ -91,6 +91,11 @@ public class SystemItemProvider extends ActorItemProvider {
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

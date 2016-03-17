@@ -175,5 +175,10 @@ public class GoalItemProvider
 	public ResourceLocator getResourceLocator() {
 		return StoryEditPlugin.INSTANCE;
 	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
+	}
 
 }

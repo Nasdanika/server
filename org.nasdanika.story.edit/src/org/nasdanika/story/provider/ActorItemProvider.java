@@ -128,11 +128,11 @@ public class ActorItemProvider extends ProtagonistItemProvider {
 	 * This returns Actor.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Actor"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("role.png"));
 	}
 
 	/**
@@ -194,6 +194,11 @@ public class ActorItemProvider extends ProtagonistItemProvider {
 			(createChildParameter
 				(StoryPackage.Literals.ACTOR__SUB_ACTORS,
 				 StoryFactory.eINSTANCE.createPersona()));
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

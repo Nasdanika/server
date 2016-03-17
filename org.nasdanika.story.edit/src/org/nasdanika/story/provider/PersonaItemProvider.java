@@ -106,11 +106,11 @@ public class PersonaItemProvider extends UserItemProvider {
 	 * This returns Persona.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Persona"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("user_gray.png"));
 	}
 
 	/**
@@ -165,6 +165,11 @@ public class PersonaItemProvider extends UserItemProvider {
 			(createChildParameter
 				(StoryPackage.Literals.PERSONA__GOALS,
 				 StoryFactory.eINSTANCE.createGoal()));
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

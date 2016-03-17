@@ -329,11 +329,11 @@ public class StoryItemProvider
 	 * This returns Story.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Story"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("document_notes.png"));
 	}
 
 	/**
@@ -416,6 +416,11 @@ public class StoryItemProvider
 	@Override
 	public ResourceLocator getResourceLocator() {
 		return StoryEditPlugin.INSTANCE;
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }
