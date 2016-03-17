@@ -112,8 +112,10 @@ public class MethodCommand<C extends Context, R> {
 					public Object getValue(C context, Object[] args) throws Exception {
 						if (parameterType.isArray()) {
 							Object[] services = serviceTracker.getServices();
-							Object ret = Array.newInstance(parameterType.getComponentType(), services.length);
-							System.arraycopy(services, 0, ret, 0, services.length);
+							Object ret = Array.newInstance(parameterType.getComponentType(), services==null ? 0 : services.length);
+							if (services!=null) {
+								System.arraycopy(services, 0, ret, 0, services.length);
+							}
 							return ret;
 						}
 						
@@ -124,6 +126,7 @@ public class MethodCommand<C extends Context, R> {
 					public void close() {
 						serviceTracker.close();						
 					}
+					
 				};
 				
 			}
