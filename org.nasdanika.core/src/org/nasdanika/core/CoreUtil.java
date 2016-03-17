@@ -217,7 +217,7 @@ public Map&lt;String, String&gt; getPackageMap() {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static void injectProperty(Object target, String[] propertyPath, String value) throws Exception {
+	public static void injectProperty(Object target, String[] propertyPath, String value) throws Exception {
 		if (target instanceof Map) {
 			// Injection to a Map, e.g. some object has a method Map<String, String> getConfig(), 
 			// then config.property_a -> 123 would put <property_a, 123> to the config map
