@@ -28,7 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.cdo.CDOViewContext;
-import org.nasdanika.cdo.web.CDOViewHttpServletRequestContext;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.DispatchingRoute;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -53,6 +54,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 	}
 
 	private static final String PATH_KEY = "$path";
+	private static final String TYPE_KEY = "$type";
 	private static final String ID_KEY = "$id";
 	
 	@Override
@@ -62,7 +64,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 			@Override
 			protected Object processBodyParameter(HttpServletRequestContext context, Class<?> parameterType) throws Exception {
 				if (JSON_CONTENT_TYPE.equals(context.getRequest().getContentType())) {
-					Registry registry = context instanceof CDOViewHttpServletRequestContext ? ((CDOViewHttpServletRequestContext<?>) context).getView().getSession().getPackageRegistry() : EPackage.Registry.INSTANCE;
+					Registry registry = context instanceof CDOViewContext ? ((CDOViewContext<?,?>) context).getView().getSession().getPackageRegistry() : EPackage.Registry.INSTANCE;
 					if (parameterType.isArray() && EObject.class.isAssignableFrom(parameterType.getComponentType())) {
 						JSONArray jsonArray = new JSONArray(new JSONTokener(context.getRequest().getReader()));
 						EClassifier eClassifier = resolveModelEClassifier(registry, parameterType.getComponentType());
@@ -88,13 +90,20 @@ public class EDispatchingRoute extends DispatchingRoute {
 			protected Object processModelParameter(HttpServletRequestContext context, Class<?> parameterType) throws Exception {				
 				if (EObject.class.isAssignableFrom(parameterType) && context instanceof CDOViewContext) {
 					CDOView view = ((CDOViewContext<?,?>) context).getView();
-					CDOPackageRegistry packageRegistry = view.getSession().getPackageRegistry();										
-					EClassifier eClassifier = resolveModelEClassifier(packageRegistry, parameterType);
-					if (eClassifier instanceof EClass) {
-						EObject model = EcoreUtil.create((EClass) eClassifier);
+					String idParameter = context.getRequest().getParameter(ID_KEY);
+					if (CoreUtil.isBlank(idParameter)) {
+						CDOPackageRegistry packageRegistry = view.getSession().getPackageRegistry();										
+						EClassifier eClassifier = resolveModelEClassifier(packageRegistry, parameterType);
+						if (eClassifier instanceof EClass) {
+							EObject model = EcoreUtil.create((EClass) eClassifier);
+							inject(context, context.getRequest().getParameterMap(), model);
+							return model;
+						}						
+					} else {
+						CDOObject model = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(idParameter));
 						inject(context, context.getRequest().getParameterMap(), model);
-						return model;
-					}
+						return model;						
+					}					
 				}
 				return super.processModelParameter(context, parameterType);
 			}
@@ -105,7 +114,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 			@Override
 			public Object execute(HttpServletRequestContext context, Object target, Object[] arguments)	throws Exception {
 				Object ret = super.execute(context, target, arguments);
-				if (JSON_CONTENT_TYPE.equals(context.getResponse().getContentType()) && ret instanceof EObject) {
+				if (JSON_CONTENT_TYPE.equals(context.getResponse().getContentType())) {
 					ResponseModel responseModel = method.getAnnotation(ResponseModel.class);
 					String[] include = responseModel==null ? new String[0] : responseModel.include();
 					String[] exclude = responseModel==null ? new String[0] : responseModel.exclude();
@@ -113,14 +122,34 @@ public class EDispatchingRoute extends DispatchingRoute {
 					String[] idReferences = responseModel==null ? new String[0] : responseModel.idReferences();
 					String[] pathReferences = responseModel==null ? new String[0] : responseModel.pathReferences();
 					
-					return convert(
-							context,
-							(EObject) ret, 
-							asSet(include), 
-							asSet(exclude), 
-							asSet(valueReferences), 
-							asSet(idReferences), 
-							asSet(pathReferences));
+					if (ret instanceof EObject) {					
+						return convert(
+								context,
+								(EObject) ret, 
+								asSet(include), 
+								asSet(exclude), 
+								asSet(valueReferences), 
+								asSet(idReferences), 
+								asSet(pathReferences));
+					} else if (ret instanceof Collection) {
+						// If all are e-objects then convert
+						JSONArray ja = new JSONArray();
+						for (Object re: (Collection<?>) ret) {
+							if (re instanceof EObject) {
+								ja.put(convert(
+								context,
+								(EObject) re, 
+								asSet(include), 
+								asSet(exclude), 
+								asSet(valueReferences), 
+								asSet(idReferences), 
+								asSet(pathReferences)));
+							} else {
+								return ret; // Not EObject element
+							}
+						}
+						return ja;
+					}					
 				}
 				return ret;
 			}
@@ -153,8 +182,8 @@ public class EDispatchingRoute extends DispatchingRoute {
 			
 	@SuppressWarnings("unchecked")
 	protected Object convert(
-			HttpServletRequestContext context,
-			EObject eObject, 
+			final HttpServletRequestContext context,
+			final EObject eObject, 
 			Set<String> include, 
 			Set<String> exclude, 
 			Set<String> valueReferences,
@@ -232,15 +261,38 @@ public class EDispatchingRoute extends DispatchingRoute {
 		
 		if (eObject instanceof CDOObject && ((CDOObject) eObject).cdoView()!=null) {
 			if ((include.isEmpty() || include.contains(ID_KEY)) && !exclude.contains(ID_KEY)) {
-				StringBuilder builder = new StringBuilder();
-				CDOIDUtil.write(builder, ((CDOObject) eObject).cdoID());
-				ret.put(ID_KEY, builder.toString());
+				ret.put(ID_KEY, new Object() {
+					
+					@Override
+					public String toString() {
+						StringBuilder builder = new StringBuilder();
+						CDOIDUtil.write(builder, ((CDOObject) eObject).cdoID());
+						return builder.toString();
+					}
+					
+				});
 			}
 			if ((include.isEmpty() || include.contains(PATH_KEY)) && !exclude.contains(PATH_KEY)) {
-				String objectPath = context.getObjectPath(eObject);
-				if (objectPath!=null) {
-					ret.put(PATH_KEY, objectPath);
-				}
+				ret.put(PATH_KEY, new Object() {
+				
+					@Override
+					public String toString() {
+						try {
+							String objectPath = context.getObjectPath(eObject);
+							return objectPath==null ? "" : objectPath;
+						} catch (Exception e) {
+							return e.toString();
+						}
+					}
+					
+				});
+			}
+			if ((include.isEmpty() || include.contains(TYPE_KEY)) && !exclude.contains(TYPE_KEY)) {
+				JSONObject type = new JSONObject();
+				EClass eClass = eObject.eClass();
+				type.put("name", eClass.getName());
+				type.put("nsURI", eClass.getEPackage().getNsURI());
+				ret.put(TYPE_KEY, type);
 			}
 		}
 		return ret;
@@ -252,7 +304,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 	 * @param value
 	 * @return
 	 */
-	protected Object toJSON(HttpServletRequestContext context, EAttribute attribute, Object value) throws Exception {
+	protected Object toJSON(Context context, EAttribute attribute, Object value) throws Exception {
 		return value;
 	}
 	
@@ -263,7 +315,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 	 * @param value
 	 * @return
 	 */
-	protected Object fromJSON(HttpServletRequestContext context, EAttribute attribute, Object value) throws Exception {
+	protected Object fromJSON(Context context, EAttribute attribute, Object value) throws Exception {
 		if (value==null) {
 			return null;
 		}
@@ -289,7 +341,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 	 * @param value
 	 * @return
 	 */
-	protected Object fromString(HttpServletRequestContext context, EAttribute attribute, String value) throws Exception {
+	protected Object fromString(Context context, EAttribute attribute, String value) throws Exception {
 		if (value==null) {
 			return null;
 		}
@@ -333,10 +385,10 @@ public class EDispatchingRoute extends DispatchingRoute {
 	 * @return
 	 * @throws Exception
 	 */
-	protected EObject convert(HttpServletRequestContext context, JSONObject jsonObject, EClass eClass) throws Exception {		
+	protected EObject convert(Context context, JSONObject jsonObject, EClass eClass) throws Exception {		
 		EObject ret;
-		if (jsonObject.has(ID_KEY) && context instanceof CDOViewHttpServletRequestContext && ((CDOViewHttpServletRequestContext<?>) context).getView()!=null) {
-			ret = ((CDOViewHttpServletRequestContext<?>) context).getView().getObject(CDOIDUtil.read(jsonObject.getString(ID_KEY)));
+		if (jsonObject.has(ID_KEY) && context instanceof CDOViewContext && ((CDOViewContext<?,?>) context).getView()!=null) {
+			ret = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(jsonObject.getString(ID_KEY)));
 		} else {
 			ret=  EcoreUtil.create(eClass);
 		}
@@ -367,7 +419,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 	}	
 		
 	@SuppressWarnings("unchecked")
-	protected void inject(HttpServletRequestContext context, Map<String, String[]> parameterMap, EObject model) throws Exception {
+	protected void inject(Context context, Map<String, String[]> parameterMap, EObject model) throws Exception {
 		for (EStructuralFeature feature: model.eClass().getEAllStructuralFeatures()) {
 			String[] values = parameterMap.get(feature.getName());
 			if (values==null) {
@@ -417,7 +469,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 					for (int i=0; i<values.length; ++i) {
 						if (feature instanceof EReference) {
 							// Got to be a CDOID
-							CDOObject value = ((CDOViewHttpServletRequestContext<?>) context).getView().getObject(CDOIDUtil.read(values[i]));
+							CDOObject value = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(values[i]));
 							featureValue.add(value);
 						} else {
 							featureValue.add(fromString(context, (EAttribute) feature, values[i]));
@@ -429,7 +481,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 					} else if (values.length == 1) {
 						if (feature instanceof EReference) {
 							// Got to be a CDOID
-							CDOObject value = ((CDOViewHttpServletRequestContext<?>) context).getView().getObject(CDOIDUtil.read(values[0]));
+							CDOObject value = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(values[0]));
 							model.eSet(feature, value);
 						} else {
 							model.eSet(feature, fromString(context, (EAttribute) feature, values[0]));
