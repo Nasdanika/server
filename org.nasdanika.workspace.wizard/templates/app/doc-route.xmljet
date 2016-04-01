@@ -12,5 +12,7 @@
    <% if (wizard.isCdoTransactionContextProvider()) { %>
    		<reference bind="setCdoSessionProvider" cardinality="1..1" interface="org.eclipse.emf.cdo.session.CDOSessionProvider" name="CDOSessionProvider" policy="static"/>
    <% } %>
+ 
+   <reference bind="setScrService" cardinality="0..1" interface="org.apache.felix.scr.ScrService" name="ScrService" policy="static"/>
    
 </scr:component>

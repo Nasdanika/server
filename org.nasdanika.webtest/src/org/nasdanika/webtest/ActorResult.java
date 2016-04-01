@@ -125,6 +125,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 		pConnection.setRequestMethod("POST");
 		pConnection.setDoOutput(true);
 		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
+		pConnection.setRequestProperty("Content-Type", "application/json");
 		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
 			toJSON(idMap).write(w);
 		}

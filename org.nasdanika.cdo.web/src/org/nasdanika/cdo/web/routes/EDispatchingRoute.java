@@ -1,9 +1,15 @@
 package org.nasdanika.cdo.web.routes;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
+import java.text.DecimalFormat;
+import java.text.MessageFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -62,8 +68,15 @@ public class EDispatchingRoute extends DispatchingRoute {
 		return new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method) {
 
 			@Override
-			protected Object processBodyParameter(HttpServletRequestContext context, Class<?> parameterType) throws Exception {
+			protected Object processBodyParameter(HttpServletRequestContext context, Class<?> parameterType, Annotation[] parameterAnnotations) throws Exception {
 				if (JSON_CONTENT_TYPE.equals(context.getRequest().getContentType())) {
+					Map<String,String> formats = Collections.emptyMap();
+					for (Annotation ann: parameterAnnotations) {
+						if (ann instanceof Format) {
+							formats = asMap(((Format) ann).value());
+							break;
+						}
+					}
 					Registry registry = context instanceof CDOViewContext ? ((CDOViewContext<?,?>) context).getView().getSession().getPackageRegistry() : EPackage.Registry.INSTANCE;
 					if (parameterType.isArray() && EObject.class.isAssignableFrom(parameterType.getComponentType())) {
 						JSONArray jsonArray = new JSONArray(new JSONTokener(context.getRequest().getReader()));
@@ -71,19 +84,25 @@ public class EDispatchingRoute extends DispatchingRoute {
 						if (eClassifier instanceof EClass) {
 							Object ret = Array.newInstance(parameterType.getComponentType(), jsonArray.length());
 							for (int i=0; i<jsonArray.length(); ++i) {
-								Array.set(ret, i, convert(context, jsonArray.getJSONObject(i), (EClass) eClassifier));
+								Array.set(ret, i, convert(context, jsonArray.getJSONObject(i), (EClass) eClassifier, formats));
 							}
 							return ret;
 						}
 					} else if (EObject.class.isAssignableFrom(parameterType)) {						
+//						try (Reader reader = context.getRequest().getReader()) {
+//							int ch;
+//							while ((ch=reader.read())!=-1) {
+//								System.out.print((char) ch);
+//							}
+//						}
 						JSONObject jsonObject = new JSONObject(new JSONTokener(context.getRequest().getReader()));
 						EClassifier eClassifier = resolveModelEClassifier(registry, parameterType);
 						if (eClassifier instanceof EClass) {
-							return convert(context, jsonObject, (EClass) eClassifier);
+							return convert(context, jsonObject, (EClass) eClassifier, formats);
 						}												
 					}
 				}
-				return super.processBodyParameter(context, parameterType);
+				return super.processBodyParameter(context, parameterType, parameterAnnotations);
 			}
 			
 			@Override
@@ -121,6 +140,8 @@ public class EDispatchingRoute extends DispatchingRoute {
 					String[] valueReferences = responseModel==null ? new String[0] : responseModel.valueReferences();
 					String[] idReferences = responseModel==null ? new String[0] : responseModel.idReferences();
 					String[] pathReferences = responseModel==null ? new String[0] : responseModel.pathReferences();
+					Format format = method.getAnnotation(Format.class);
+					String[] formats = format == null ? new String[0] : format.value();
 					
 					if (ret instanceof EObject) {					
 						return convert(
@@ -130,7 +151,8 @@ public class EDispatchingRoute extends DispatchingRoute {
 								asSet(exclude), 
 								asSet(valueReferences), 
 								asSet(idReferences), 
-								asSet(pathReferences));
+								asSet(pathReferences),
+								asMap(formats));
 					} else if (ret instanceof Collection) {
 						// If all are e-objects then convert
 						JSONArray ja = new JSONArray();
@@ -143,7 +165,8 @@ public class EDispatchingRoute extends DispatchingRoute {
 								asSet(exclude), 
 								asSet(valueReferences), 
 								asSet(idReferences), 
-								asSet(pathReferences)));
+								asSet(pathReferences),
+								asMap(formats)));
 							} else {
 								return ret; // Not EObject element
 							}
@@ -156,6 +179,35 @@ public class EDispatchingRoute extends DispatchingRoute {
 			
 		};
 	}
+	
+	/**
+	 * Converts array of key=value to map.
+	 * @param array
+	 * @return
+	 */
+	private Map<String, String> asMap(String[] array) {
+		Map<String, String> ret = new HashMap<>();
+		if (array!=null) {
+			for (String s: array) {
+				int idx = s.indexOf("=");
+				if (idx!=-1) {
+					ret.put(s.substring(0, idx), s.substring(idx+1));
+				}
+			}
+		}
+		return ret;
+	}
+		
+	private Map<String, String> subMap(Map<String,String> map, String namespace) {
+		Map<String,String> ret = new HashMap<>();
+		String prefix = namespace+".";
+		for (Entry<String, String> s: map.entrySet()) {
+			if (s.getKey().startsWith(namespace)) {
+				ret.put(s.getKey().substring(prefix.length()), s.getValue());
+			}
+		}
+		return ret;		
+	}	
 
 	private Set<String> asSet(String[] array) {
 		Set<String> ret = new HashSet<>();
@@ -188,7 +240,8 @@ public class EDispatchingRoute extends DispatchingRoute {
 			Set<String> exclude, 
 			Set<String> valueReferences,
 			Set<String> idReferences, 
-			Set<String> pathReferences) throws Exception {
+			Set<String> pathReferences,
+			Map<String,String> formats) throws Exception {
 		
 		JSONObject ret = new JSONObject();
 		for (EStructuralFeature feature: eObject.eClass().getEAllStructuralFeatures()) {
@@ -217,11 +270,12 @@ public class EDispatchingRoute extends DispatchingRoute {
 											subSet(exclude, feature.getName()),
 											subSet(valueReferences, feature.getName()),
 											subSet(idReferences, feature.getName()),
-											subSet(pathReferences, feature.getName())));
+											subSet(pathReferences, feature.getName()),
+											subMap(formats, feature.getName())));
 									break;							
 								}							
 							} else {
-								fa.put(toJSON(context, (EAttribute) feature, obj)); 
+								fa.put(toJSON(context, (EAttribute) feature, obj, formats.get(feature.getName()))); 
 							}
 						}
 					}
@@ -248,11 +302,12 @@ public class EDispatchingRoute extends DispatchingRoute {
 											subSet(exclude, feature.getName()),
 											subSet(valueReferences, feature.getName()),
 											subSet(idReferences, feature.getName()),
-											subSet(pathReferences, feature.getName())));
+											subSet(pathReferences, feature.getName()),
+											subMap(formats, feature.getName())));
 								break;							
 							}							
 						} else {
-							ret.put(feature.getName(), toJSON(context, (EAttribute) feature, obj)); 
+							ret.put(feature.getName(), toJSON(context, (EAttribute) feature, obj, formats.get(feature.getName()))); 
 						}
 					}
 				}
@@ -302,10 +357,23 @@ public class EDispatchingRoute extends DispatchingRoute {
 	 * Allows to customize conversion to JSON in subclasses. This implementation simply returns value attribute.
 	 * @param attribute
 	 * @param value
+	 * @param format 
 	 * @return
 	 */
-	protected Object toJSON(Context context, EAttribute attribute, Object value) throws Exception {
-		return value;
+	protected Object toJSON(Context context, EAttribute attribute, Object value, String format) throws Exception {
+		if (format == null) {
+			return value;
+		}
+		if (value instanceof Number) {
+			DecimalFormat theFormat = new DecimalFormat(format);
+			return theFormat.format(value);
+		}
+		if (value instanceof Date) {
+			SimpleDateFormat theFormat = new SimpleDateFormat(format);
+			return theFormat.format(value);
+		}
+		
+		return MessageFormat.format(format, value);		
 	}
 	
 	/**
@@ -313,13 +381,29 @@ public class EDispatchingRoute extends DispatchingRoute {
 	 * Override to customize conversion from JSON.
 	 * @param attribute
 	 * @param value
+	 * @param string 
 	 * @return
 	 */
-	protected Object fromJSON(Context context, EAttribute attribute, Object value) throws Exception {
+	protected Object fromJSON(Context context, EAttribute attribute, Object value, String format) throws Exception {
 		if (value==null) {
 			return null;
 		}
+		
 		Class<?> instanceClass = attribute.getEType().getInstanceClass();
+		if (instanceClass.isPrimitive()) {
+			instanceClass = CoreUtil.PRIMITIVES_TO_BOXES_MAP.get(instanceClass);
+		}
+		if (Number.class.isAssignableFrom(instanceClass)) {
+			DecimalFormat theFormat = new DecimalFormat(format);
+			value = theFormat.parse(String.valueOf(value));
+		} else if (Date.class.isAssignableFrom(instanceClass)) {
+			SimpleDateFormat theFormat = new SimpleDateFormat(format);
+			value = theFormat.parse(String.valueOf(value));
+		} else {		
+			MessageFormat theFormat = new MessageFormat(format);
+			value = theFormat.parse(String.valueOf(value))[0];
+		}
+		
 		if (instanceClass!=null) {
 			if (instanceClass.isInstance(value)) {
 				return value;
@@ -382,10 +466,11 @@ public class EDispatchingRoute extends DispatchingRoute {
 	 * @param context
 	 * @param jsonObject
 	 * @param eClass
+	 * @param formats 
 	 * @return
 	 * @throws Exception
 	 */
-	protected EObject convert(Context context, JSONObject jsonObject, EClass eClass) throws Exception {		
+	protected EObject convert(Context context, JSONObject jsonObject, EClass eClass, Map<String, String> formats) throws Exception {		
 		EObject ret;
 		if (jsonObject.has(ID_KEY) && context instanceof CDOViewContext && ((CDOViewContext<?,?>) context).getView()!=null) {
 			ret = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(jsonObject.getString(ID_KEY)));
@@ -401,16 +486,16 @@ public class EDispatchingRoute extends DispatchingRoute {
 					JSONArray ja = jsonObject.getJSONArray(feature.getName());
 					for (int i=0; i<ja.length(); ++i) {
 						if (feature instanceof EReference) {
-							featureValue.add(convert(context, ja.getJSONObject(i), ((EReference) feature).getEReferenceType()));
-						} else {
-							featureValue.add(fromJSON(context, (EAttribute) feature, ja.get(i)));
+							featureValue.add(convert(context, ja.getJSONObject(i), ((EReference) feature).getEReferenceType(), subMap(formats, feature.getName())));
+						} else {							
+							featureValue.add(fromJSON(context, (EAttribute) feature, ja.get(i), formats.get(feature.getName())));
 						}
 					}
 				} else {
 					if (feature instanceof EReference) {
-						ret.eSet(feature, convert(context, jsonObject.getJSONObject(feature.getName()), ((EReference) feature).getEReferenceType()));
+						ret.eSet(feature, convert(context, jsonObject.getJSONObject(feature.getName()), ((EReference) feature).getEReferenceType(), subMap(formats, feature.getName())));
 					} else {
-						ret.eSet(feature, fromJSON(context, (EAttribute) feature, jsonObject.get(feature.getName())));
+						ret.eSet(feature, fromJSON(context, (EAttribute) feature, jsonObject.get(feature.getName()), formats.get(feature.getName())));
 					}					
 				}
 			}			

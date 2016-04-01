@@ -41,7 +41,7 @@ public class EObjectPathResolver implements ObjectPathResolver<EObject> {
 		if (container!=null && containmentReference!=null) {
 			String containerPath = master.resolve(container, master, context);
 			if (containerPath!=null) {
-				String ret = containerPath+"/"+URLEncoder.encode(containmentReference.getName(), ((HttpServletRequestContext) context).getCharacterEncoding());
+				String ret = containerPath+"/feature/"+URLEncoder.encode(containmentReference.getName(), ((HttpServletRequestContext) context).getCharacterEncoding());
 				if (containmentReference.isMany()) {
 					int idx = ((List<?>) container.eGet(containmentReference)).indexOf(obj);
 					if (idx==-1) {

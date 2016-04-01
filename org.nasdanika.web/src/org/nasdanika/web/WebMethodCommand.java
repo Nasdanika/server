@@ -42,7 +42,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
 						if (parameterType.isArray()) {
 							Object[] values = context.getRequest().getParameterValues(queryParameter.value());
 							return values==null ? queryParameter.defaultValue() : values;
@@ -66,7 +66,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
 						if (parameterType.isArray()) {
 							return Collections.list(context.getRequest().getHeaders(headerParameter.value()));
 						}
@@ -85,7 +85,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
 						Part part = context.getRequest().getPart(partParameter.value());
 						if (parameterType.isAssignableFrom(Part.class)) {
 							return part;
@@ -106,7 +106,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
 						return context.getTarget();
 					}
 					
@@ -120,8 +120,8 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
-						return processBodyParameter(context, parameterType);
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
+						return processBodyParameter(context, parameterType, parameterAnnotations);
 					}
 					
 					@Override
@@ -134,7 +134,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
 						return processModelParameter(context, parameterType);
 					}
 					
@@ -149,7 +149,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
 						List<Cookie> cookies = new ArrayList<>();
 						for (Cookie cookie: context.getRequest().getCookies()) {
 							if (cookieParameter.value().equals(cookie.getName())) {
@@ -204,7 +204,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] arguments) throws Exception {
+					public Object getValue(C context, Object[] arguments, Annotation[] parameterAnnotations) throws Exception {
 						return context.getPath()[idx[0]];
 					}
 					
@@ -226,7 +226,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 	 * @return
 	 * @throws Exception
 	 */
-	protected Object processBodyParameter(C context, Class<?> parameterType) throws Exception {
+	protected Object processBodyParameter(C context, Class<?> parameterType, Annotation[] parameterAnnotations) throws Exception {
 		// Explicit JSON conversion
 		if (JSON_CONTENT_TYPE.equals(context.getResponse().getContentType())) {
 			if (parameterType == JSONArray.class) {

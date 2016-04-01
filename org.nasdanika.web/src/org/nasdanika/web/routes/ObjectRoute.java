@@ -232,6 +232,10 @@ public class ObjectRoute implements Route {
 		if (CoreUtil.isBlank(contentType)) {
 			return false;
 		}
+		int idx = contentType.indexOf(";");
+		if (idx != -1) {
+			contentType = contentType.substring(0, idx).trim();
+		}
 		for (String consumesEntry: consumes) {
 			String contentTypeLowerCase = contentType.trim().toLowerCase();
 			String ceLowerCase = consumesEntry.trim().toLowerCase();

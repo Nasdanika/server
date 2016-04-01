@@ -21,7 +21,7 @@ public class DocRouteRenderer {
   protected final String TEXT_6 = "/";
   protected final String TEXT_7 = "\"/>" + NL + "   ";
   protected final String TEXT_8 = NL + "   \t\t<reference bind=\"setCdoSessionProvider\" cardinality=\"1..1\" interface=\"org.eclipse.emf.cdo.session.CDOSessionProvider\" name=\"CDOSessionProvider\" policy=\"static\"/>";
-  protected final String TEXT_9 = NL + "   " + NL + "</scr:component>";
+  protected final String TEXT_9 = NL + " " + NL + "   <reference bind=\"setScrService\" cardinality=\"0..1\" interface=\"org.apache.felix.scr.ScrService\" name=\"ScrService\" policy=\"static\"/>" + NL + "   " + NL + "</scr:component>";
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {

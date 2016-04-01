@@ -29,7 +29,6 @@ import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.routes.ObjectRoute;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-
 /**
  * Dispatches requests to target's methods with {@link RouteMethod} annotation. Route methods parameters can be annotated with
  * {@link ContextParameter}, {@link ServiceParameter}, {@link ExtensionParameter}, {@link PathParameter}, {@link QueryParameter}, 

@@ -126,7 +126,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(HttpServletRequestContext context, Object[] args) throws Exception {
+					public Object getValue(HttpServletRequestContext context, Object[] args, Annotation[] parameterAnnotations) throws Exception {
 						if (!CoreUtil.isBlank(path)) {
 							context = context.shift(path.split("/").length);
 						}

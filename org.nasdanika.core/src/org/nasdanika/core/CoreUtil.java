@@ -451,6 +451,12 @@ public Map&lt;String, String&gt; getPackageMap() {
 				if (target.isInstance(source)) {
 					return (T) source;
 				}
+				
+				Class<?> box = target.isPrimitive() ? PRIMITIVES_TO_BOXES_MAP.get(target) : null;
+				if (box!=null) {
+					return convert(source, (Class) box, context);
+				}
+				
 				for (ConverterEntry ce: ceList) {
 					if (ce.source.isInstance(source) && target.isAssignableFrom(ce.target)) {
 						T ret = ce.converter.convert(source, target, context);
@@ -503,8 +509,6 @@ public Map&lt;String, String&gt; getPackageMap() {
 					return (T) ret;
 					
 				}
-				
-				Class<?> box = PRIMITIVES_TO_BOXES_MAP.get(target);
 
 				// Constructor conversion - last resort
 				for (Constructor<?> c: (box==null ? target : box).getConstructors()) {

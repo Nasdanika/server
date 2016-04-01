@@ -35,7 +35,7 @@ public class MethodCommand<C extends Context, R> {
 	 */
 	protected interface ArgumentResolver<C extends Context> {
 		
-		Object getValue(C context, Object[] args) throws Exception;
+		Object getValue(C context, Object[] args, Annotation[] parameterAnnotations) throws Exception;
 		
 		void close();
 		
@@ -76,7 +76,7 @@ public class MethodCommand<C extends Context, R> {
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] args) throws Exception {
+					public Object getValue(C context, Object[] args, Annotation[] parameterAnnotations) throws Exception {
 						if (parameterType.isInstance(context)) {
 							return context;
 						}
@@ -109,7 +109,7 @@ public class MethodCommand<C extends Context, R> {
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] args) throws Exception {
+					public Object getValue(C context, Object[] args, Annotation[] parameterAnnotations) throws Exception {
 						if (parameterType.isArray()) {
 							Object[] services = serviceTracker.getServices();
 							Object ret = Array.newInstance(parameterType.getComponentType(), services==null ? 0 : services.length);
@@ -181,7 +181,7 @@ public class MethodCommand<C extends Context, R> {
 				return new ArgumentResolver<C>() {
 					
 					@Override
-					public Object getValue(C context, Object[] args) throws Exception {
+					public Object getValue(C context, Object[] args, Annotation[] parameterAnnotations) throws Exception {
 						synchronized (extensions) {
 							if (parameterType.isArray()) {
 								Object ret = Array.newInstance(parameterType.getComponentType(), extensions.size());
@@ -232,7 +232,7 @@ public class MethodCommand<C extends Context, R> {
 					arg = arguments[j++];
 				}
 			} else {
-				arg = argumentResolvers[i].getValue(context, arguments);
+				arg = argumentResolvers[i].getValue(context, arguments, method.getParameterAnnotations()[i]);
 			}
 			if (arg!=null && !pt[i].isInstance(arg)) {
 				Object cArg = context.convert(arg, pt[i]);

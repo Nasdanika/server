@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,6 +36,9 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.felix.scr.Component;
+import org.apache.felix.scr.Reference;
+import org.apache.felix.scr.ScrService;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.DirectoryReader;
@@ -73,9 +77,11 @@ import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
@@ -90,14 +96,17 @@ import org.nasdanika.web.Route;
 import org.nasdanika.web.ValueAction;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.Version;
 import org.osgi.service.component.ComponentContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.PegDownProcessor;
 
-public class DocRoute implements Route {
+public class DocRoute implements Route, BundleListener {
 		
 	private static final String PACKAGE_SUMMARY_HTML = "package-summary.html";
 	private static final String MIME_TYPE_HTML = "text/html";
@@ -114,6 +123,7 @@ public class DocRoute implements Route {
 	private static final String TOC = "toc";
 	private static final String RESOURCES_PATH = "/resources/";
 	private static final String BUNDLE_PATH = "/bundle/";
+	private static final String BUNDLE_INFO_PATH = "/bundle-info/";
 	private static final String PACKAGES_PATH = "/packages/";
 	private static final String PACKAGES_SESSION_PATH = PACKAGES_PATH + "session/";
 	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
@@ -122,6 +132,7 @@ public class DocRoute implements Route {
 	public static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
 	public static final int MARKDOWN_OPTIONS = 	Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS ^ Extensions.SUPPRESS_ALL_HTML;
 
+	private ScrService scrService;
 	private int pathOffset = 1;
 	private BundleContext bundleContext;
 	private Directory searchIndexDirectory;
@@ -719,10 +730,11 @@ public class DocRoute implements Route {
 		};
 		
 		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
+
+		bundleContext.addBundleListener(this);		
     				
 		loadTimer = new Timer();
-		doLoad.set(false);
-		loadTimer.schedule(loadTask, 500);
+		loadTimer.schedule(new LoadTask(), 500);		
 	}
 	
 	public String getContentType(String filename) {
@@ -757,12 +769,12 @@ public class DocRoute implements Route {
 	private AtomicBoolean doLoad = new AtomicBoolean();
 	
 	void scheduleReloading() {
-		if (!doLoad.getAndSet(true)) {
-			loadTimer.schedule(loadTask, reloadDelay);
+		if (loadTimer!=null && !doLoad.getAndSet(true)) {
+			loadTimer.schedule(new LoadTask(), reloadDelay);
 		}
 	}
 	
-	TimerTask loadTask = new TimerTask() {
+	private class LoadTask extends TimerTask {
 		
 		@Override
 		public void run() {
@@ -788,12 +800,42 @@ public class DocRoute implements Route {
 		}
 		return pkg.getEClassifier(key.getName());
 	}
+	
+	public static final Comparator<Bundle> BUNDLE_COMPARATOR = new Comparator<Bundle>() {
+
+		@Override
+		public int compare(Bundle b1, Bundle b2) {
+			if (b1 == b2) {
+				return 0;
+			}
+			int cmp = b1.getSymbolicName().compareTo(b2.getSymbolicName());
+			if (cmp!=0) {
+				return cmp;
+			}
+			cmp = b1.getVersion().compareTo(b2.getVersion());					
+			if (cmp!=0) {
+				return cmp;
+			}
+			if (b1.getBundleId() > b2.getBundleId()) {
+				return 1;
+			}
+			if (b1.getBundleId() < b2.getBundleId()) {
+				return -1;
+			}
+			return 0;
+		}
+		
+	};
 
 	/**
 	 * (Re)Builds TOC and index. 
 	 * @throws IOException
 	 */
+	@SuppressWarnings("unchecked")
 	private void load() throws IOException {
+		if (deactivating) {
+			return;
+		}
 		lock.writeLock().lock();
 		try {
 			// TOC
@@ -806,6 +848,34 @@ public class DocRoute implements Route {
 			if (isSessionRegistry()) {
 				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), packagesToc.createChild("Session", null, null, null), "/packages/session");				
 			}
+			
+			// Bundles
+			// TODO - make optional
+			TocNode bundlesToc = tocRoot.createChild("Bundles", BUNDLE_INFO_PATH+"summary.html", null, null);
+			Bundle[] bundles = bundleContext.getBundles().clone();
+			Arrays.sort(bundles, BUNDLE_COMPARATOR);
+			final Map<String, Object> rootBucket = new TreeMap<String, Object>();
+			for (Bundle bundle: bundles) {
+				String[] bna = bundle.getSymbolicName().split("\\.");
+				Map<String, Object> bucket = rootBucket;
+				for (int i=0; i<bna.length; ++i) {
+					if (i==bna.length-1) {
+						bucket.put(bna[i], bundle);
+					} else {
+						Object entry = bucket.get(bna[i]);
+						if (entry instanceof Bundle) {
+							bucket.put(CoreUtil.join(bna, ".", i), bundle);
+							break;
+						}
+						if (entry == null) {
+							entry = new TreeMap<String, Object>();
+							bucket.put(bna[i], entry);
+						}
+						bucket = (Map<String, Object>) entry;
+					}
+				}
+			}
+			createBundlesToc(rootBucket, bundlesToc);
 			
 			synchronized (tocNodeFactories) {
 				for (TocNodeFactory tnf: tocNodeFactories) {
@@ -964,6 +1034,38 @@ public class DocRoute implements Route {
 		} finally {
 			lock.writeLock().unlock();
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void createBundlesToc(Map<String, Object> bucket, TocNode parentToc) {
+		for (Entry<String, Object> e: bucket.entrySet()) {
+			if (e.getValue() instanceof Bundle) {
+				parentToc.createChild(e.getKey()+" "+((Bundle) e.getValue()).getVersion(), BUNDLE_INFO_PATH+((Bundle) e.getValue()).getSymbolicName()+"/"+((Bundle) e.getValue()).getVersion()+"/index.html", null, null);			
+			} else {				
+				Map<String, Object> subBucket = (Map<String, Object>) e.getValue();
+				if (subBucket.size()==1) {
+					if (!singlePath(subBucket, parentToc, e.getKey())) {
+						createBundlesToc(subBucket, parentToc.createChild(e.getKey(), null, null, null));						
+					}
+				} else {
+					createBundlesToc(subBucket, parentToc.createChild(e.getKey(), null, null, null));						
+				}
+			}
+		}		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean singlePath(Map<String, Object> bucket, TocNode parentToc, String path) {
+		if (bucket.size()==1) {
+			for (Entry<String, Object> e: bucket.entrySet()) {
+				if (e.getValue() instanceof Bundle) {
+					parentToc.createChild(path+"."+e.getKey()+" "+((Bundle) e.getValue()).getVersion(), BUNDLE_INFO_PATH+((Bundle) e.getValue()).getSymbolicName()+"/"+((Bundle) e.getValue()).getVersion()+"/index.html", null, null);
+					return true;
+				}
+				return singlePath((Map<String, Object>) e.getValue(), parentToc, path+"."+e.getKey());
+			}
+		}
+		return false;
 	}
 
 	public boolean isSessionRegistry() {
@@ -1157,11 +1259,121 @@ public class DocRoute implements Route {
 		
 		if (path.startsWith(RESOURCES_PATH)) {
 			return getResource(getClass(), path.substring(RESOURCES_PATH.length()));
-		} 
+		}
+		
+		if (path.startsWith(BUNDLE_INFO_PATH)) {
+			String tail = path.substring(BUNDLE_INFO_PATH.length());
+			if ("summary.html".equals(tail)) {
+				return generateBundlesSummary();
+			}
+			
+			if ("diagram.png".equals(tail)) {
+				return generateBundlesDiagram(/* TODO - parameters */);
+			}
+			
+			String[] ta = tail.split("/");
+			if (ta.length!=3) {
+				return null;
+			}
+			Version bundleVersion = new Version(ta[1]);
+			for (Bundle targetBundle: bundleContext.getBundles()) {
+				if (ta[0].equals(targetBundle.getSymbolicName()) && bundleVersion.equals(targetBundle.getVersion())) {
+					if ("index.html".equals(ta[2])) {
+						return generateBundleInfo(targetBundle);
+					}
+					
+					if ("diagram.png".equals(ta[2])) {
+						return generateBundleContextDiagram(/* TODO - parameters */);
+					}
+					
+					return null;
+				}
+			}
+			return null;
+		}
+		
+		// TODO - diagrams - package/classifier - session/global. Delegate to extensions. 
 		
 		// TODO - extensions
 		
 		return null; // Not found
+	}
+
+	protected String generateBundleContextDiagram() {
+		return "TODO diagram";
+	}
+
+	protected String generateBundlesDiagram() {
+		return "TODO - diagram generation";
+	}
+
+	protected String generateBundleInfo(Bundle bundle) {
+		if (scrService!=null) {
+			Component[] components = scrService.getComponents(bundle);
+			if (components!=null) {
+				for (Component cmp: components) {
+					System.out.println(cmp.getName());
+					String[] svcs = cmp.getServices();
+					if (svcs!=null) {
+						System.out.println("\t--- services");
+						for (String svc: svcs) {
+							System.out.println("\t"+svc);
+						}
+					}
+					Reference[] refs = cmp.getReferences();
+					if (refs!=null) {
+						System.out.println("\t--- references");
+						for (Reference ref: refs) {
+							System.out.println("\t"+ref.getServiceName()+" "+Arrays.toString(ref.getServiceReferences()));
+						}					
+					}
+				}
+			}
+		}
+		return "Bundle info";
+	}
+
+	protected String generateBundlesSummary() {
+		Bundle[] bundles = bundleContext.getBundles().clone();
+		Arrays.sort(bundles, BUNDLE_COMPARATOR);
+		Table bundlesTable = htmlFactory.table().bordered();
+		Row hr = bundlesTable.header().row().style(Style.PRIMARY);
+		hr.header("Symbolic name");
+		hr.header("Version").bootstrap().text().center();
+		hr.header("State").bootstrap().text().center();
+		RowContainer<?> tBody = bundlesTable.body();
+		for (Bundle bundle: bundles) {
+			Row bRow = tBody.row();
+			bRow.cell(htmlFactory.link("#router/doc-content/"+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", StringEscapeUtils.escapeHtml4(bundle.getSymbolicName())));
+			bRow.cell(StringEscapeUtils.escapeHtml4(bundle.getVersion().toString())).bootstrap().text().center();
+			switch (bundle.getState()) {
+			case Bundle.ACTIVE:
+				bRow.cell("Active").bootstrap().text().center();
+				break;
+			case Bundle.INSTALLED:
+				bRow.cell("Installed").bootstrap().text().center();
+				break;
+			case Bundle.RESOLVED:
+				bRow.cell("Resolved").bootstrap().text().center();
+				break;
+			case Bundle.STARTING:
+				bRow.cell("Starting").bootstrap().text().center();
+				break;
+			case Bundle.STOPPING:
+				bRow.cell("Stopping").bootstrap().text().center();
+				break;
+			case Bundle.UNINSTALLED:
+				bRow.cell("Uninstalled").bootstrap().text().center();
+				break;				
+			default:
+				bRow.cell("Undefined: "+bundle.getState()).bootstrap().text().center();
+				break;				
+			}
+		}
+		Tabs tabs = htmlFactory.tabs();
+		tabs.item("Bundles", bundlesTable);
+		// TODO - diagram app.
+		return tabs.toString();
 	}
 	
 	// Not thread-safe - there is a chance of concurrent modification exception if documentation is rendered when a new generator gets registered/unregistered.
@@ -1241,26 +1453,37 @@ public class DocRoute implements Route {
 		}
 		return "No matching generator";
 	}
-
+	
+	boolean deactivating;
+	
 	public void deactivate(ComponentContext context) throws Exception {
-		if (searchIndexReader!=null) {
-			searchIndexReader.close();
-		}
-		if (searchIndexDirectory!=null) {
-			searchIndexDirectory.close();
-			searchIndexDirectory = null;
-		}
-		if (analyzer!=null) {
-			analyzer.close();
-			analyzer = null;
-		}
-		if (extensionTracker!=null) {
-			extensionTracker.close();
-			extensionTracker = null;
-		}
+		deactivating = true;
+		bundleContext.removeBundleListener(this);
+		
 		if (loadTimer!=null) {
 			loadTimer.cancel();
 			loadTimer = null;
+		}
+	
+		lock.writeLock().lock();
+		try {
+			if (searchIndexReader!=null) {
+				searchIndexReader.close();
+			}
+			if (searchIndexDirectory!=null) {
+				searchIndexDirectory.close();
+				searchIndexDirectory = null;
+			}
+			if (analyzer!=null) {
+				analyzer.close();
+				analyzer = null;
+			}
+			if (extensionTracker!=null) {
+				extensionTracker.close();
+				extensionTracker = null;
+			}
+		} finally {
+			lock.writeLock().unlock();
 		}
 	}
 	
@@ -1332,7 +1555,7 @@ public class DocRoute implements Route {
 			String requestURL = context.getRequest().getRequestURL().toString();
 			String requestURI = context.getRequest().getRequestURI();
 			String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
-			String prefix = docAppPath+"#router/doc-content/"+docRoutePath;
+			String prefix = docAppPath+"#router/doc-content/"+docRoutePath;			
 			String pathStr = "/"+StringUtils.join(path, "/");
 			Object content = getContent(new URL(requestURL), urlPrefix, pathStr);
 			if (content!=null) {
@@ -2048,6 +2271,15 @@ public class DocRoute implements Route {
 			}
 		};
 		
+	}
+
+	@Override
+	public void bundleChanged(BundleEvent event) {
+		scheduleReloading();		
+	}
+	
+	public void setScrService(ScrService scrService) {
+		this.scrService = scrService;
 	}
 	
 }
