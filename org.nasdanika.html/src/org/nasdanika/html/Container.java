@@ -15,4 +15,6 @@ public interface Container<T extends Container<?>> extends AutoCloseable {
 	 */
 	T content(Object... content);
 	
+	boolean isEmpty();
+	
 }

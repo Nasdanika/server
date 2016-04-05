@@ -1229,6 +1229,10 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 		return style;
 	}
 	
+	public boolean isEmpty() {
+		return getContent().isEmpty();
+	}
+	
 }
 
 

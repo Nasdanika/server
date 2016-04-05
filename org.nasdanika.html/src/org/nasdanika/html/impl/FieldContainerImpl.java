@@ -197,5 +197,10 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	public String toString() {
 		return produce(0);
 	}
+
+	@Override
+	public boolean isEmpty() {
+		return content.isEmpty();
+	}
 	
 }
