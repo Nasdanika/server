@@ -69,7 +69,7 @@ public interface Tag extends UIElement<Tag>, Container<Tag> {
 		keygen,
 		label,
 		legend,
-		li,
+		li(true),
 		link,
 		main,
 		map,
@@ -118,7 +118,7 @@ public interface Tag extends UIElement<Tag>, Container<Tag> {
 		tr(true),
 		track,
 		u,
-		ul,
+		ul(true),
 		var,
 		video,
 		wbr;
