@@ -477,7 +477,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				.append("\"")
 				.append(System.lineSeparator());
 		}
-		manifestBuilder.append("Bundle-RequiredExecutionEnvironment: JavaSE-1.7").append(System.lineSeparator());
+		manifestBuilder.append("Bundle-RequiredExecutionEnvironment: JavaSE-1.8").append(System.lineSeparator());
 		if (!requiredBundles.isEmpty()) {
 			manifestBuilder.append("Require-Bundle:");
 			Iterator<String> rit = requiredBundles.iterator();
