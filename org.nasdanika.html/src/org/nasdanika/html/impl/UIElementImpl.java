@@ -8,6 +8,9 @@ import java.io.StringWriter;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +38,7 @@ import org.nasdanika.html.UIElement;
  */
 public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement<T>, AutoCloseable {
 
+
 	private static final String STYLE = "style";
 
 	private static final String DATA_BIND = "data-bind";
@@ -52,6 +56,8 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	private Map<String, Object> styles = new LinkedHashMap<>();
 	
 	private Map<String, Object> koDataBindEntries = new LinkedHashMap<>();
+	
+	private Map<String, Object> koInitialValueEntries = new HashMap<>();
 
 	protected HTMLFactory factory;
 	
@@ -372,137 +378,267 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 	
 	@Override
 	public Knockout<T> knockout() {
+		
 		return new Knockout<T>() {
 
 			@Override
+			public T visible(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.VISIBLE.name, expression, initialValue);
+			}
+			
+			@Override
 			public T visible(Object expression) {
-				return bind("visible", expression);
+				return visible(expression, null);
+			}
+
+			@Override
+			public T text(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.TEXT.name, expression, initialValue);
 			}
 
 			@Override
 			public T text(Object expression) {
-				return bind("text", expression);
+				return text(expression, null);
 			}
 
 			@Override
+			public T html(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.HTML.name, expression, initialValue);
+			}
+			
+			@Override
 			public T html(Object expression) {
-				return bind("html", expression);
+				return html(expression, null);
 			}
 
 			@Override
 			public T css(Object expression) {
-				return bind("css", expression);
+				return bind(KnockoutBindingInfo.CSS.name, expression, null);
 			}
 
 			@Override
 			public T style(Object expression) {
-				return bind("style", expression);
+				return bind(KnockoutBindingInfo.STYLE.name, expression, null);
 			}
 
 			@Override
 			public T attr(Object expression) {
-				return bind("attr", expression);
+				return bind(KnockoutBindingInfo.ATTR.name, expression, null);
 			}
 
+			@Override
+			public T foreach(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.FOREACH.name, expression, initialValue);
+			}
+			
 			@Override
 			public T foreach(Object expression) {
-				return bind("foreach", expression);
+				return foreach(expression, null);
 			}
 
+			@Override
+			public T if_(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.IF.name, expression, initialValue);
+			}
+			
 			@Override
 			public T if_(Object expression) {
-				return bind("if", expression);
+				return if_(expression, null);
 			}
 
 			@Override
+			public T ifnot(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.IFNOT.name, expression, initialValue);
+			}
+			
+			@Override
 			public T ifnot(Object expression) {
-				return bind("ifnot", expression);
+				return ifnot(expression, null);
 			}
 
 			@Override
 			public T with(Object expression) {
-				return bind("with", expression);
+				return bind(KnockoutBindingInfo.WITH.name, expression, null);
 			}
 
 			@Override
 			public T component(Object expression) {
-				return bind("component", expression);
+				return bind(KnockoutBindingInfo.COMPONENT.name, expression, null);
 			}
 
 			@Override
 			public T click(Object expression) {
-				return bind("click", expression);
+				return bind(KnockoutBindingInfo.CLICK.name, expression, null);
 			}
 
 			@Override
 			public T event(Object expression) {
-				return bind("event", expression);
+				return bind(KnockoutBindingInfo.EVENT.name, expression, null);
 			}
 
 			@Override
 			public T submit(Object expression) {
-				return bind("submit", expression);
+				return bind(KnockoutBindingInfo.SUBMIT.name, expression, null);
 			}
 
+			@Override
+			public T enable(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.ENABLE.name, expression, initialValue);
+			}
+			
 			@Override
 			public T enable(Object expression) {
-				return bind("enable", expression);
+				return enable(expression, null);
 			}
 
+			@Override
+			public T disable(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.DISABLE.name, expression, initialValue);
+			}
+			
 			@Override
 			public T disable(Object expression) {
-				return bind("disable", expression);
+				return disable(expression, null);
 			}
 
+			@Override
+			public T value(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.VALUE.name, expression, initialValue);
+			}
+			
 			@Override
 			public T value(Object expression) {
-				return bind("value", expression);
+				return value(expression, null);
 			}
 
+			@Override
+			public T textInput(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.TEXT_INPUT.name, expression, initialValue);
+			}
+			
 			@Override
 			public T textInput(Object expression) {
-				return bind("textInput", expression);
+				return text(expression, null);
 			}
 
+			@Override
+			public T hasFocus(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.HAS_FOCUS.name, expression, initialValue);
+			}
+			
 			@Override
 			public T hasFocus(Object expression) {
-				return bind("hasFocus", expression);
+				return hasFocus(expression, null);
 			}
 
+			@Override
+			public T checked(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.CHECKED.name, expression, initialValue);
+			}
+			
 			@Override
 			public T checked(Object expression) {
-				return bind("checked", expression);
+				return checked(expression, null);
 			}
 
+			@Override
+			public T options(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.OPTIONS.name, expression, initialValue);
+			}
+			
 			@Override
 			public T options(Object expression) {
-				return bind("options", expression);
+				return options(expression, null);
 			}
 
 			@Override
+			public T selectedOptions(Object expression, Object initialValue) {
+				return bind(KnockoutBindingInfo.SELECTED_OPTIONS.name, expression, initialValue);
+			}
+			
+			@Override
 			public T selectedOptions(Object expression) {
-				return bind("selectedOptions", expression);
+				return selectedOptions(expression, null);
 			}
 
 			@Override
 			public T uniqueName(Object expression) {
-				return bind("uniqueName", expression);
+				return bind(KnockoutBindingInfo.UNIQUE_NAME.name, expression, null);
 			}
 
 			@Override
 			public T template(Object expression) {
-				return bind("template", expression);
+				return bind(KnockoutBindingInfo.TEMPLATE.name, expression, null);
 			}
 
 			@SuppressWarnings("unchecked")
 			@Override
-			public T bind(String binding, Object expression) {
+			public T bind(String binding, Object expression, Object initialValue) {
 				if (expression==null) {
 					koDataBindEntries.remove(binding);
+					koInitialValueEntries.remove(binding);
 				} else {
 					koDataBindEntries.put(binding, expression);
+					if (initialValue!=null) {
+						koInitialValueEntries.put(binding, initialValue);
+					}
 				}
 				return (T) UIElementImpl.this;
+			}
+			
+			@Override
+			public Collection<Binding> getAllBindings() {
+				Map<String, Binding> collector = new LinkedHashMap<>();
+				boolean isNewScope = false;
+				for (String binding: koDataBindEntries.keySet()) {
+					if (KnockoutBindingInfo.isObservable(binding)) {
+						String fieldName = String.valueOf(koDataBindEntries.get(binding)).trim();
+						if (KnockoutVirtualElementImpl.isJavaIdentifier(fieldName)) {
+							collector.put(fieldName, new KnockoutBindingImpl(fieldName, KnockoutBindingInfo.isArray(binding), koInitialValueEntries.get(binding)));
+						}
+					}
+					if (KnockoutBindingInfo.isNewScope(binding)) {
+						isNewScope = true;
+					}
+				}
+				
+				if (!isNewScope) {
+					for (Object c: getContent()) {
+						if (c instanceof UIElement) {
+							for (Binding b: ((UIElement<?>) c).knockout().getAllBindings()) {
+								Binding eb = collector.get(b.getName());
+								if (eb==null) {
+									collector.put(b.getName(), b);
+								} else if (eb.getInitialValue()==null && b.getInitialValue()!=null) {
+									((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
+								}
+							}
+						}
+					}
+				}
+				return Collections.unmodifiableCollection(collector.values());
+			}			
+
+			@Override
+			public String generateObservables(String... excludes) {
+				StringBuilder ret = new StringBuilder("// Generated observables").append(System.lineSeparator());
+				Z: for (Binding binding: getAllBindings()) {
+					for (String ex: excludes) {
+						if (ex.equals(binding.getName())) {
+							continue Z;
+						}
+					}
+					ret.append("this.").append(binding.getName()).append(" = ko.observable");
+					if (binding.isArray()) {
+						ret.append("Array");
+					}
+					ret.append("(");
+					if (binding.getInitialValue()!=null) {
+						ret.append(binding.getInitialValue());
+					}
+					ret.append(");").append(System.lineSeparator());
+				}		
+				return ret.append("// End of generated observables").append(System.lineSeparator()).toString();		
 			}
 		};
 	}

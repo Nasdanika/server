@@ -325,4 +325,14 @@ public interface HTMLFactory {
 	 */
 	String interpolate(Object input, final Map<String, Object> env);	
 	
+	/**
+	 * Expands a single token in the form of <code>{{token name}}</code> to its value.
+	 * If a token is not found expansion is not processed.
+	 * @param input 
+	 * @param token
+	 * @param value
+	 * @return
+	 */
+	String interpolate(Object input, String token, Object value);
+	
 }

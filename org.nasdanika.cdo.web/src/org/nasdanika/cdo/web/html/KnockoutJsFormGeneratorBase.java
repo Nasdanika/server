@@ -114,7 +114,7 @@ public abstract class KnockoutJsFormGeneratorBase<S extends EModelElement, T ext
 	protected void configureControl(HTMLFactory htmlFactory, T element,	Object control) {		
 		super.configureControl(htmlFactory, element, control);
 		if (control instanceof InputBase) {
-			((InputBase<?>) control).knockout().bind(isCheckbox(element, control) ? "checked" : "value", getModelPrefix()+"data."+element.getName());
+			((InputBase<?>) control).knockout().bind(isCheckbox(element, control) ? "checked" : "value", getModelPrefix()+"data."+element.getName(), null);
 		} else if (control instanceof UIElement) {
 			((UIElement<?>) control).knockout().text(getModelPrefix()+"data."+element.getName());
 		}

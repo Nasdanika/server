@@ -3,6 +3,7 @@ package org.nasdanika.html.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -371,5 +372,10 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	public String interpolate(Object input, Map<String, Object> env) {
 		return interpolate(UIElementImpl.stringify(input, 0, this), env);
 	}	
+	
+	@Override
+	public String interpolate(Object input, String token, Object value) {
+		return interpolate(input, Collections.singletonMap(token, value));
+	}
 	
 }

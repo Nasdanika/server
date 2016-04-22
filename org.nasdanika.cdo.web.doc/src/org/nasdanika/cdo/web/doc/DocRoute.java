@@ -32,6 +32,8 @@ import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
 
+// TODO? - switch to org.osgi.service.component.runtime.ServiceComponentRuntime when it is (easily) available in Equinox
+
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
