@@ -481,7 +481,14 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					accordionFragment.content(htmlFactory.tag(TagName.h3, "Parameters"));
 					for (EParameter param: operation.getEParameters()) {
 						accordionFragment.content(htmlFactory.tag(TagName.h4, param.getName(), " : ", eClassifierLink(docRoute, param.getEType(), registryPath, true), " ", cardinality(param)));						
-						getModelDocumentation(docRoute, baseURL, urlPrefix, param);
+						String parameterDoc = getModelDocumentation(docRoute, baseURL, urlPrefix, param);
+						if (!CoreUtil.isBlank(parameterDoc)) {
+							accordionFragment.content(docRoute.getHtmlFactory().div(parameterDoc)
+									.addClass("markdown-body")
+									.style().margin().top("10px")
+									.style().margin().bottom("20px"));
+							
+						}
 						for (EAnnotation ann: param.getEAnnotations()) {
 							accordionFragment.content(documentAnnotation(docRoute, ann));
 						}						
