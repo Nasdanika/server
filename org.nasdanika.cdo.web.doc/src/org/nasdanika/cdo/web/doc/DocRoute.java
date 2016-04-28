@@ -110,6 +110,8 @@ import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route, BundleListener {
 		
+	private static final String DIAGRAM_PNG = "diagram.png";
+	private static final String INDEX_HTML = "index.html";
 	private static final String PACKAGE_SUMMARY_HTML = "package-summary.html";
 	private static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
@@ -1041,16 +1043,38 @@ public class DocRoute implements Route, BundleListener {
 	@SuppressWarnings("unchecked")
 	private void createBundlesToc(Map<String, Object> bucket, TocNode parentToc) {
 		for (Entry<String, Object> e: bucket.entrySet()) {
+			String localName = e.getKey();
 			if (e.getValue() instanceof Bundle) {
-				parentToc.createChild(e.getKey()+" "+((Bundle) e.getValue()).getVersion(), BUNDLE_INFO_PATH+((Bundle) e.getValue()).getSymbolicName()+"/"+((Bundle) e.getValue()).getVersion()+"/index.html", null, null);			
+				Bundle bundle = (Bundle) e.getValue();
+				TocNode bundleToc = parentToc.createChild(
+						localName+" "+bundle.getVersion(), 
+						BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", 
+						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
+						null);	
+				if (scrService != null) {
+					Component[] components = scrService.getComponents(bundle);
+					if (components != null) {
+						Map<String, Component> componentMap = new TreeMap<>();
+						for (Component component: components) {
+							componentMap.put(component.getName(), component);
+						}
+						for (Component component: componentMap.values()) {
+							bundleToc.createChild(
+									component.getName(), 
+									BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/component/"+component.getId()+"/index.html", 
+									"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
+									null);
+						}
+					}
+				}
 			} else {				
 				Map<String, Object> subBucket = (Map<String, Object>) e.getValue();
 				if (subBucket.size()==1) {
-					if (!singlePath(subBucket, parentToc, e.getKey())) {
-						createBundlesToc(subBucket, parentToc.createChild(e.getKey(), null, null, null));						
+					if (!singlePath(subBucket, parentToc, localName)) {
+						createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null));						
 					}
 				} else {
-					createBundlesToc(subBucket, parentToc.createChild(e.getKey(), null, null, null));						
+					createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null));						
 				}
 			}
 		}		
@@ -1060,11 +1084,33 @@ public class DocRoute implements Route, BundleListener {
 	private boolean singlePath(Map<String, Object> bucket, TocNode parentToc, String path) {
 		if (bucket.size()==1) {
 			for (Entry<String, Object> e: bucket.entrySet()) {
+				String localName = e.getKey();
 				if (e.getValue() instanceof Bundle) {
-					parentToc.createChild(path+"."+e.getKey()+" "+((Bundle) e.getValue()).getVersion(), BUNDLE_INFO_PATH+((Bundle) e.getValue()).getSymbolicName()+"/"+((Bundle) e.getValue()).getVersion()+"/index.html", null, null);
+					Bundle bundle = (Bundle) e.getValue();
+					TocNode bundleToc = parentToc.createChild(
+							path+"."+localName+" "+bundle.getVersion(), 
+							BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", 
+							"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
+							null);
+					if (scrService != null) {
+						Component[] components = scrService.getComponents(bundle);
+						if (components != null) {
+							Map<String, Component> componentMap = new TreeMap<>();
+							for (Component component: components) {
+								componentMap.put(component.getName(), component);
+							}
+							for (Component component: componentMap.values()) {
+								bundleToc.createChild(
+										component.getName(), 
+										BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/component/"+component.getId()+"/index.html", 
+										"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
+										null);
+							}
+						}
+					}
 					return true;
 				}
-				return singlePath((Map<String, Object>) e.getValue(), parentToc, path+"."+e.getKey());
+				return singlePath((Map<String, Object>) e.getValue(), parentToc, path+"."+localName);
 			}
 		}
 		return false;
@@ -1269,23 +1315,35 @@ public class DocRoute implements Route, BundleListener {
 				return generateBundlesSummary();
 			}
 			
-			if ("diagram.png".equals(tail)) {
+			if (DIAGRAM_PNG.equals(tail)) {
 				return generateBundlesDiagram(/* TODO - parameters */);
 			}
 			
 			String[] ta = tail.split("/");
-			if (ta.length!=3) {
+			if (ta.length<3) {
 				return null;
 			}
 			Version bundleVersion = new Version(ta[1]);
 			for (Bundle targetBundle: bundleContext.getBundles()) {
 				if (ta[0].equals(targetBundle.getSymbolicName()) && bundleVersion.equals(targetBundle.getVersion())) {
-					if ("index.html".equals(ta[2])) {
+					if (INDEX_HTML.equals(ta[2])) {
 						return generateBundleInfo(targetBundle);
 					}
 					
-					if ("diagram.png".equals(ta[2])) {
+					if (DIAGRAM_PNG.equals(ta[2])) {
 						return generateBundleContextDiagram(/* TODO - parameters */);
+					}
+					
+					if ("component".equals(ta[2]) && scrService!=null) {
+						Component component = scrService.getComponent(Long.parseLong(ta[3]));
+						if (component!=null) {
+							if (INDEX_HTML.equals(ta[4])) {
+								return generateComponentInfo(component);
+							}
+							if (DIAGRAM_PNG.equals(ta[4])) {
+								return generateComponentContextDiagram(/* TODO - parameters */);
+							}							
+						}
 					}
 					
 					return null;
@@ -1301,6 +1359,10 @@ public class DocRoute implements Route, BundleListener {
 		return null; // Not found
 	}
 
+	protected String generateComponentContextDiagram() {
+		return "TODO diagram";
+	}
+
 	protected String generateBundleContextDiagram() {
 		return "TODO diagram";
 	}
@@ -1310,30 +1372,34 @@ public class DocRoute implements Route, BundleListener {
 	}
 
 	protected String generateBundleInfo(Bundle bundle) {
-		if (scrService!=null) {
-			Component[] components = scrService.getComponents(bundle);
-			if (components!=null) {
-				for (Component cmp: components) {
-					System.out.println(cmp.getName());
-					String[] svcs = cmp.getServices();
-					if (svcs!=null) {
-						System.out.println("\t--- services");
-						for (String svc: svcs) {
-							System.out.println("\t"+svc);
-						}
-					}
-					Reference[] refs = cmp.getReferences();
-					if (refs!=null) {
-						System.out.println("\t--- references");
-						for (Reference ref: refs) {
-							System.out.println("\t"+ref.getServiceName()+" "+Arrays.toString(ref.getServiceReferences()));
-						}					
-					}
-				}
-			}
-		}
+//		if (scrService!=null) {
+//			Component[] components = scrService.getComponents(bundle);
+//			if (components!=null) {
+//				for (Component cmp: components) {
+//					System.out.println(cmp.getName());
+//					String[] svcs = cmp.getServices();
+//					if (svcs!=null) {
+//						System.out.println("\t--- services");
+//						for (String svc: svcs) {
+//							System.out.println("\t"+svc);
+//						}
+//					}
+//					Reference[] refs = cmp.getReferences();
+//					if (refs!=null) {
+//						System.out.println("\t--- references");
+//						for (Reference ref: refs) {
+//							System.out.println("\t"+ref.getServiceName()+" "+Arrays.toString(ref.getServiceReferences()));
+//						}					
+//					}
+//				}
+//			}
+//		}
 		return "Bundle info";
 	}
+	
+	protected String generateComponentInfo(Component component) {
+		return "Component info: "+component.getName();
+	}	
 
 	protected String generateBundlesSummary() {
 		Bundle[] bundles = bundleContext.getBundles().clone();
@@ -1942,7 +2008,7 @@ public class DocRoute implements Route, BundleListener {
 				if (pathElement.getIcon()==null) {
 					bcContent = pathElement.getText();
 				} else {
-					bcContent = htmlFactory.tag(TagName.img).attribute("src", getDocRoutePath()+pathElement.getIcon()).style("margin-right", "1px") + pathElement.getText();
+					bcContent = htmlFactory.tag(TagName.img).attribute("src", getDocRoutePath()+pathElement.getIcon()).style().margin().right("3px") + pathElement.getText();
 				}
 				breadcrumbs.item(pathElement==toc ? null : "javascript:"+tocNodeSelectScript(pathElement.getId()), bcContent); // prefix+pathElement.getHref()
 			}
