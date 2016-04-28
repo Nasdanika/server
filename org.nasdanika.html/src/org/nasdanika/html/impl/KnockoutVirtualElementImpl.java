@@ -127,26 +127,15 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 	public String toString() {
 		return produce(0);
 	}
-
+	
 	@Override
 	public String generateObservables(String... excludes) {
 		StringBuilder ret = new StringBuilder("// Generated observables").append(System.lineSeparator());
-		Z: for (Binding binding: getAllBindings()) {
-			for (String ex: excludes) {
-				if (ex.equals(binding.getName())) {
-					continue Z;
-				}
-				ret.append("this.").append(binding.getName()).append(" = ko.observable");
-				if (binding.isArray()) {
-					ret.append("Array");
-				}
-				ret.append("(");
-				if (binding.getInitialValue()!=null) {
-					ret.append(binding.getInitialValue());
-				}
-				ret.append(");").append(System.lineSeparator());
-			}
+		ObservablesGenerator og = new ObservablesGenerator(excludes);
+		for (Binding binding: getAllBindings()) {
+			og.addBinding(binding);
 		}		
+		og.generateObservables(ret);
 		return ret.append("// End of generated observables").append(System.lineSeparator()).toString();		
 	}
 	
@@ -155,11 +144,21 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 	        return false;
 	    }
 	    for (int i=1; i<s.length(); i++) {
-	        if (!Character.isJavaIdentifierPart(s.charAt(i))) {
+	        if (s.charAt(i) != '.' && !Character.isJavaIdentifierPart(s.charAt(i))) {
 	            return false;
 	        }
 	    }
 	    return true;
+	}
+	
+	static boolean isJavaIdentifierPath(String s) {
+		String[] pea = s.split("\\.");
+		for (String pe: pea) {
+			if (!isJavaIdentifier(pe)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	@Override
@@ -167,7 +166,7 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 		Map<String, Binding> collector = new LinkedHashMap<>();
 		if (KnockoutBindingInfo.isObservable(binding)) {
 			String fieldName = String.valueOf(expression).trim();
-			if (isJavaIdentifier(fieldName)) {
+			if (isJavaIdentifierPath(fieldName)) {
 				collector.put(fieldName, new KnockoutBindingImpl(fieldName, KnockoutBindingInfo.isArray(binding), initialValue));
 			}
 		}

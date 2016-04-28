@@ -593,7 +593,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 				for (String binding: koDataBindEntries.keySet()) {
 					if (KnockoutBindingInfo.isObservable(binding)) {
 						String fieldName = String.valueOf(koDataBindEntries.get(binding)).trim();
-						if (KnockoutVirtualElementImpl.isJavaIdentifier(fieldName)) {
+						if (KnockoutVirtualElementImpl.isJavaIdentifierPath(fieldName)) {
 							collector.put(fieldName, new KnockoutBindingImpl(fieldName, KnockoutBindingInfo.isArray(binding), koInitialValueEntries.get(binding)));
 						}
 					}
@@ -622,22 +622,11 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			@Override
 			public String generateObservables(String... excludes) {
 				StringBuilder ret = new StringBuilder("// Generated observables").append(System.lineSeparator());
-				Z: for (Binding binding: getAllBindings()) {
-					for (String ex: excludes) {
-						if (ex.equals(binding.getName())) {
-							continue Z;
-						}
-					}
-					ret.append("this.").append(binding.getName()).append(" = ko.observable");
-					if (binding.isArray()) {
-						ret.append("Array");
-					}
-					ret.append("(");
-					if (binding.getInitialValue()!=null) {
-						ret.append(binding.getInitialValue());
-					}
-					ret.append(");").append(System.lineSeparator());
-				}		
+				ObservablesGenerator og = new ObservablesGenerator(excludes);
+				for (Binding binding: getAllBindings()) {
+					og.addBinding(binding);
+				}	
+				og.generateObservables(ret);
 				return ret.append("// End of generated observables").append(System.lineSeparator()).toString();		
 			}
 		};
