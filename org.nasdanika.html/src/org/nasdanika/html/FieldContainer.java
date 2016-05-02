@@ -1,6 +1,5 @@
 package org.nasdanika.html;
 
-
 public interface FieldContainer<T extends FieldContainer<T>> extends Container<T> {
 		
 	/**

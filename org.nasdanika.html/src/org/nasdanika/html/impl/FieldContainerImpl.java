@@ -1,7 +1,11 @@
 package org.nasdanika.html.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FieldContainer;
@@ -15,6 +19,7 @@ import org.nasdanika.html.Producer;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.KnockoutControlFlow.Binding;
 
 class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<T>, Producer {
 	
@@ -28,7 +33,6 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		this.form = form;
 		this.master = master==null ? (T) this : master;
 	}
-
 	
 	private List<Object> content = new ArrayList<>();
 
@@ -176,6 +180,8 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 		}
 		return sb.toString();
 	}
+	
+	
 
 	@Override
 	public void close() throws Exception {
@@ -202,5 +208,22 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	public boolean isEmpty() {
 		return content.isEmpty();
 	}
+	
+	Collection<Binding> getKnockoutBindings() {
+		Map<String, Binding> collector = new LinkedHashMap<>();
+		for (Object c: content) {
+			if (c instanceof UIElement) {
+				for (Binding b: ((UIElement<?>) c).knockout().getAllBindings()) {
+					Binding eb = collector.get(b.getName());
+					if (eb==null) {
+						collector.put(b.getName(), b);
+					} else if (eb.getInitialValue()==null && b.getInitialValue()!=null) {
+						((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
+					}
+				}
+			}
+		}
+		return Collections.unmodifiableCollection(collector.values());
+	}	
 	
 }

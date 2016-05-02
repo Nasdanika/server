@@ -1,5 +1,10 @@
 package org.nasdanika.html.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FieldContainer;
@@ -10,8 +15,11 @@ import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
+import org.nasdanika.html.Knockout;
+import org.nasdanika.html.KnockoutFilter;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.KnockoutControlFlow.Binding;
 
 class FormImpl extends UIElementImpl<Form> implements Form {
 	
@@ -20,7 +28,7 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	boolean hideInlineLabels;
 	Bootstrap.DeviceSize deviceSize;
 	int labelWidth;
-	private FieldContainer<Form> container;
+	private FieldContainerImpl<Form> container;
 
 	FormImpl(HTMLFactory factory, boolean nav, boolean navRight) {
 		super(factory, TagName.form);
@@ -110,6 +118,47 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	public FormInputGroup formInputGroup(Object label, Object controlId, Object control, Object helpText) {
 		return container.formInputGroup(label, controlId, control, helpText);
 	}
+	
+	@Override
+	public Knockout<Form> knockout() {		
+		return new KnockoutFilter<Form>(super.knockout()) {
+			
+			@Override
+			public Collection<Binding> getAllBindings() {
+				Map<String, Binding> collector = new LinkedHashMap<>();
+				for (Binding b: super.getAllBindings()) {
+					Binding eb = collector.get(b.getName());
+					if (eb==null) {
+						collector.put(b.getName(), b);
+					} else if (eb.getInitialValue()==null && b.getInitialValue()!=null) {
+						((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
+					}
+				}
+				for (Binding b: container.getKnockoutBindings()) {
+					Binding eb = collector.get(b.getName());
+					if (eb==null) {
+						collector.put(b.getName(), b);
+					} else if (eb.getInitialValue()==null && b.getInitialValue()!=null) {
+						((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
+					}
+				}
+				
+				return Collections.unmodifiableCollection(collector.values());
+			}
+			
+			@Override
+			public String generateObservables(String... excludes) {
+				StringBuilder ret = new StringBuilder("// Generated observables").append(System.lineSeparator());
+				ObservablesGenerator og = new ObservablesGenerator(excludes);
+				for (Binding binding: getAllBindings()) {
+					og.addBinding(binding);
+				}	
+				og.generateObservables(ret);
+				return ret.append("// End of generated observables").append(System.lineSeparator()).toString();		
+			}
+						
+		};
+	}
 
 	@Override
 	public FormInputGroup formInputGroup(Object label, UIElement<?> control, Object helpText) {
@@ -176,5 +225,6 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	public Form ngSubmit(Object handler) {
 		return attribute("ng-submit", handler);
 	}
+	
 
 }

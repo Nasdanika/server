@@ -160,7 +160,7 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 		}
 		return true;
 	}
-	
+		
 	@Override
 	public Collection<Binding> getAllBindings() {
 		Map<String, Binding> collector = new LinkedHashMap<>();
