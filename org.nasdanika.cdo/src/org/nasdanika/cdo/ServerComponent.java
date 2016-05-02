@@ -58,7 +58,7 @@ public class ServerComponent {
 		}
 	}
 
-	void addAcceptor(String acceptorString) {
+	private void addAcceptor(String acceptorString) {
 		String nas = acceptorString.trim();
 		if (nas.startsWith(TCP_PREFIX)) {
 			ITCPAcceptor acceptor = TCPUtil.getAcceptor(container, nas.substring(TCP_PREFIX.length()));
@@ -68,6 +68,8 @@ public class ServerComponent {
 			IJVMAcceptor acceptor = JVMUtil.getAcceptor(container, nas.substring(JVM_PREFIX.length()));
 			LifecycleUtil.activate(acceptor);
 			acceptors.add(acceptor);					
+		} else {
+			System.err.println("Unsupported acceptor: "+acceptorString);
 		}
 	}
 	
