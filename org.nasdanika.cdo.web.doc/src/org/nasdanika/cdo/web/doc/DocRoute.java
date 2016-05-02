@@ -846,11 +846,21 @@ public class DocRoute implements Route, BundleListener {
 			tocRoot = new TocNode(null, null, null);
 			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null);
 			if (isGlobalRegistry()) {
-				createPackageRegistryToc(EPackage.Registry.INSTANCE, packagesToc.createChild("Global", null, null, null), "/packages/global");
+				TocNode globalPackageRegistryToc = packagesToc.createChild(
+						"Global", 
+						null, 
+						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/database.png", 
+						null);
+				createPackageRegistryToc(EPackage.Registry.INSTANCE, globalPackageRegistryToc, "/packages/global");
 			}
 			
 			if (isSessionRegistry()) {
-				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), packagesToc.createChild("Session", null, null, null), "/packages/session");				
+				TocNode sessionPackageRegistryToc = packagesToc.createChild(
+						"Session", 
+						null, 
+						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/database_yellow.png", 
+						null);
+				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), sessionPackageRegistryToc, "/packages/session");				
 			}
 			
 			// Bundles
