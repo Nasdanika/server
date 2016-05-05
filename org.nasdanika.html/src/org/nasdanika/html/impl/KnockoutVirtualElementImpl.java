@@ -8,8 +8,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.KnockoutControlFlow;
 import org.nasdanika.html.KnockoutVirtualElement;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.KnockoutControlFlow.Binding;
 
 class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 		
@@ -181,6 +183,15 @@ class KnockoutVirtualElementImpl implements KnockoutVirtualElement {
 							((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
 						}
 					}
+				} else if (c instanceof KnockoutControlFlow) {
+					for (Binding b: ((KnockoutControlFlow<?>) c).getAllBindings()) {
+						Binding eb = collector.get(b.getName());
+						if (eb==null) {
+							collector.put(b.getName(), b);
+						} else if (eb.getInitialValue()==null && b.getInitialValue()!=null) {
+							((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
+						}
+					}							
 				}
 			}
 		}
