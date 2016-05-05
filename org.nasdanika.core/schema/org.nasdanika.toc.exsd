@@ -17,9 +17,13 @@
          </appinfo>
       </annotation>
       <complexType>
-         <choice>
+         <sequence>
             <element ref="toc" minOccurs="0" maxOccurs="unbounded"/>
-         </choice>
+            <element ref="bundle-toc" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="component-toc" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="eclassifier-toc" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="epackage-toc" minOccurs="0" maxOccurs="unbounded"/>
+         </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
                <documentation>
@@ -124,7 +128,7 @@
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  TOC name. For TOC&apos;s linked to bundles, EPackages, and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in Bundle/EPackage/EClassifier documentation and sub-topics are rendered as sections.
+                  TOC name. For TOC&apos;s linked to bundles, components, EPackages, and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in Bundle/EPackage/EClassifier documentation and sub-topics are rendered as sections.
                </documentation>
                <appinfo>
                   <meta.attribute translatable="true"/>
@@ -165,14 +169,163 @@
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="nsURI" type="string">
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Provides dynamic content and sub-topics. Takes precedence over static content - html, markdown, text or location. If both dynamic and static sub-topics are present, they get sorted alphabetically.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.core.Topic"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="epackage-toc">
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="1">
+               <element ref="markdown"/>
+               <element ref="html"/>
+               <element ref="text"/>
+            </choice>
+            <sequence>
+               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  TOC name. For TOC&apos;s linked to bundles, components, EPackages, and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in Bundle/EPackage/EClassifier documentation and sub-topics are rendered as sections.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Icon resource or URL.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="location" type="string">
+            <annotation>
+               <documentation>
+                  Location of topic content - html, text, or markdown.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="linkTo" type="string">
+            <annotation>
+               <documentation>
+                  Topic to link this Toc to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ns-uri" type="string">
             <annotation>
                <documentation>
                   Namespace URI for topics linked to EPackages and EClassifiers.
                </documentation>
             </annotation>
          </attribute>
-         <attribute name="classifier" type="string">
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Provides dynamic content and sub-topics. Takes precedence over static content - html, markdown, text or location. If both dynamic and static sub-topics are present, they get sorted alphabetically.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.core.Topic"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="eclassifier-toc">
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="1">
+               <element ref="markdown"/>
+               <element ref="html"/>
+               <element ref="text"/>
+            </choice>
+            <sequence>
+               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  TOC name. For TOC&apos;s linked to bundles, components, EPackages, and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in Bundle/EPackage/EClassifier documentation and sub-topics are rendered as sections.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Icon resource or URL.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="location" type="string">
+            <annotation>
+               <documentation>
+                  Location of topic content - html, text, or markdown.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="linkTo" type="string">
+            <annotation>
+               <documentation>
+                  Topic to link this Toc to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="ns-uri" type="string">
+            <annotation>
+               <documentation>
+                  Namespace URI for topics linked to EPackages and EClassifiers.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="classifier" type="string" use="required">
             <annotation>
                <documentation>
                   Classifier name for toc&apos;s linked to classifiers.
@@ -189,10 +342,166 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="bundle" type="string">
+      </complexType>
+   </element>
+
+   <element name="bundle-toc">
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="1">
+               <element ref="markdown"/>
+               <element ref="html"/>
+               <element ref="text"/>
+            </choice>
+            <sequence>
+               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+         </sequence>
+         <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  Symbolic name of a bundle for toc&apos;s linked to bundle TOC entries. Dot (.) is an alias for the bundle containing the toc definition.
+                  TOC name. For TOC&apos;s linked to bundles, components, EPackages, and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in Bundle/EPackage/EClassifier documentation and sub-topics are rendered as sections.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Icon resource or URL.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="location" type="string">
+            <annotation>
+               <documentation>
+                  Location of topic content - html, text, or markdown.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="linkTo" type="string">
+            <annotation>
+               <documentation>
+                  Topic to link this Toc to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Provides dynamic content and sub-topics. Takes precedence over static content - html, markdown, text or location. If both dynamic and static sub-topics are present, they get sorted alphabetically.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.core.Topic"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="symbolic-name" type="string">
+            <annotation>
+               <documentation>
+                  Symbolic name of a bundle for toc&apos;s linked to bundle TOC entries. If blank, then defaults to the symbolic name of the bundle containing the toc definition.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="version" type="string">
+            <annotation>
+               <documentation>
+                  Optional bundle version if there is more than one bundle with the same symbolic name in the system.
+               </documentation>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="component-toc">
+      <complexType>
+         <sequence>
+            <choice minOccurs="0" maxOccurs="1">
+               <element ref="markdown"/>
+               <element ref="html"/>
+               <element ref="text"/>
+            </choice>
+            <sequence>
+               <element ref="topic" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="link" minOccurs="0" maxOccurs="unbounded"/>
+               <element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+            </sequence>
+         </sequence>
+         <attribute name="name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  TOC name. For TOC&apos;s linked to bundles, components, EPackages, and EClassifiers if TOC name starts with #, then the TOC is rendered as a tab in Bundle/EPackage/EClassifier documentation and sub-topics are rendered as sections.
+               </documentation>
+               <appinfo>
+                  <meta.attribute translatable="true"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="icon" type="string">
+            <annotation>
+               <documentation>
+                  Icon resource or URL.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="location" type="string">
+            <annotation>
+               <documentation>
+                  Location of topic content - html, text, or markdown.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="resource"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="linkTo" type="string">
+            <annotation>
+               <documentation>
+                  Topic to link this Toc to.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="id" type="string">
+            <annotation>
+               <documentation>
+                  Anchor for TOC&apos;s to link to. Shall be unique within the defining plug-in. Fully Qualified name of the anchor is {plugin id}/{anchor}.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="class" type="string">
+            <annotation>
+               <documentation>
+                  Provides dynamic content and sub-topics. Takes precedence over static content - html, markdown, text or location. If both dynamic and static sub-topics are present, they get sorted alphabetically.
+               </documentation>
+               <appinfo>
+                  <meta.attribute kind="java" basedOn=":org.nasdanika.core.Topic"/>
+               </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="bundle-symbolic-name" type="string">
+            <annotation>
+               <documentation>
+                  Symbolic name of a bundle for toc&apos;s linked to bundle or component TOC entries. If blank, then defaults to the symbolic name of the bundle containing the toc definition.
                </documentation>
             </annotation>
          </attribute>
@@ -200,6 +509,13 @@
             <annotation>
                <documentation>
                   Optional bundle version if there is more than one bundle with the same symbolic name in the system.
+               </documentation>
+            </annotation>
+         </attribute>
+         <attribute name="component-name" type="string" use="required">
+            <annotation>
+               <documentation>
+                  Component name.
                </documentation>
             </annotation>
          </attribute>

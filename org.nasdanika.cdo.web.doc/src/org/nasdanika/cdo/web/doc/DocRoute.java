@@ -39,7 +39,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.Component;
-import org.apache.felix.scr.Reference;
 import org.apache.felix.scr.ScrService;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -110,6 +109,12 @@ import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route, BundleListener {
 		
+	private static final String COMPONENT_NAME = "component-name";
+	private static final String BUNDLE_VERSION = "bundle-version";
+	private static final String BUNDLE_SYMBOLIC_NAME = "bundle-symbolic-name";
+	private static final String VERSION = "version";
+	private static final String SYMBOLIC_NAME = "symbolic-name";
+	public static final String NS_URI = "ns-uri";
 	private static final String DIAGRAM_PNG = "diagram.png";
 	private static final String INDEX_HTML = "index.html";
 	private static final String PACKAGE_SUMMARY_HTML = "package-summary.html";
@@ -124,7 +129,13 @@ public class DocRoute implements Route, BundleListener {
 	private static final String MARKDOWN_PRE_PROCESSOR = "markdown-pre-processor";
 	private static final String EANNOTATION_RENDERER = "eannotation-renderer";
 	private static final String CONTENT_FILTER = "content-filter";
+	
 	private static final String TOC = "toc";
+	private static final String EPACKAGE_TOC = "epackage-toc";
+	private static final String ECLASSIFIER_TOC = "eclassifier-toc";
+	private static final String BUNDLE_TOC = "bundle-toc";
+	private static final String COMPONENT_TOC = "component-toc";
+	
 	private static final String RESOURCES_PATH = "/resources/";
 	private static final String BUNDLE_PATH = "/bundle/";
 	private static final String BUNDLE_INFO_PATH = "/bundle-info/";
@@ -227,7 +238,7 @@ public class DocRoute implements Route, BundleListener {
 		EModelElementDocumentationGeneratorKey(IConfigurationElement ce) {
 			type = ce.getName();
 			priority = Integer.parseInt(ce.getAttribute("priority").trim());
-			nsURI = ce.getAttribute("ns-uri");
+			nsURI = ce.getAttribute(NS_URI);
 			if (nsURI==null) {
 				nsURI = "";
 			} else {
@@ -332,7 +343,17 @@ public class DocRoute implements Route, BundleListener {
 		
 	}
 
-	private Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = new HashMap<>();	
+	private Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = new HashMap<>();
+
+	public static class BundleTocNodeFactoryEntry {
+
+		public final List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
+		
+		public final Map<String, List<TocNodeFactory>> componentTocNodeFactories = new HashMap<>();
+		
+	}
+	
+	private Map<String, Map<Version, BundleTocNodeFactoryEntry>> bundleTocNodeFactories = new HashMap<>();
 	
 	public Map<String, PackageTocNodeFactoryEntry> getPackageTocNodeFactories() {
 		return packageTocNodeFactories;
@@ -631,65 +652,19 @@ public class DocRoute implements Route, BundleListener {
     			for (IConfigurationElement ce: extension.getConfigurationElements()) {
     				switch (ce.getName()) {
     				case TOC:
-						try {
-							for (Pattern p: bundleExcludes) {
-								if (p.matcher(ce.getContributor().getName()).matches()) {
-									return;
-								}
-							}
-							if (!bundleIncludes.isEmpty()) {
-								boolean included = false;
-								for (Pattern p: bundleIncludes) {
-									if (p.matcher(ce.getContributor().getName()).matches()) {
-										included = true;
-										break;
-									}
-								}				
-								if (!included) {
-									return;
-								}
-							}
-							
-							//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
-							TocNodeFactory tocNodeFactory = new TocNodeFactory(
-									DocRoute.this, 
-									baseURL,
-									urlPrefix,
-									docRoutePath,
-									extension.getContributor().getName(),
-									contentFilters,
-									ce);
-							
-							String nsURI = ce.getAttribute("nsURI");
-							if (CoreUtil.isBlank(nsURI)) {
-		   						synchronized (tocNodeFactories) {
-		   							tocNodeFactories.add(tocNodeFactory);
-		   						}								
-							} else {
-		   						synchronized (packageTocNodeFactories) {
-		   							PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(nsURI);
-		   							if (pe==null) {
-		   								pe = new PackageTocNodeFactoryEntry();
-		   								packageTocNodeFactories.put(nsURI, pe);
-		   							}
-		   							String classifier = ce.getAttribute("classifier");
-		   							if (CoreUtil.isBlank(classifier)) {
-		   								pe.tocNodeFactories.add(tocNodeFactory);
-		   							} else {
-		   								List<TocNodeFactory> ctnfl = pe.classifierTocNodeFactories.get(classifier);
-		   								if (ctnfl==null) {
-		   									ctnfl = new ArrayList<TocNodeFactory>();
-		   									pe.classifierTocNodeFactories.put(classifier, ctnfl);
-		   								}
-		   								ctnfl.add(tocNodeFactory);
-		   							}
-		   						}																
-							}
-							tracker.registerObject(extension, tocNodeFactory, IExtensionTracker.REF_WEAK);
-						} catch (Exception e) {
-							// TODO proper logging
-							e.printStackTrace();
-						}
+						addTocExtension(tracker, extension, ce);
+    					break;
+    				case EPACKAGE_TOC:
+						addEPackageTocExtension(tracker, extension, ce);
+    					break;
+    				case ECLASSIFIER_TOC:
+						addEClassifierTocExtension(tracker, extension, ce);
+    					break;
+    				case BUNDLE_TOC:
+						addBundleTocExtension(tracker, extension, ce);
+    					break;
+    				case COMPONENT_TOC:
+						addComponentTocExtension(tracker, extension, ce);
     					break;
     				default:
     					System.err.println("Unrecognized extension: "+ce.getName());
@@ -704,6 +679,20 @@ public class DocRoute implements Route, BundleListener {
 					if (obj instanceof TocNodeFactory) {
 						synchronized (tocNodeFactories) {
 							tocNodeFactories.remove(obj);
+						}
+						synchronized (packageTocNodeFactories) {
+							for (PackageTocNodeFactoryEntry ptnf: packageTocNodeFactories.values()) {
+								ptnf.tocNodeFactories.remove(obj);
+								ptnf.classifierTocNodeFactories.remove(obj);
+							}
+						}
+						synchronized (bundleTocNodeFactories) {
+							for (Map<Version, BundleTocNodeFactoryEntry> vbtnfm: bundleTocNodeFactories.values()) {
+								for (BundleTocNodeFactoryEntry btnf: vbtnfm.values()) {
+									btnf.tocNodeFactories.remove(obj);
+									btnf.componentTocNodeFactories.remove(obj);
+								}
+							}
 						}
 					} 						
 				}
@@ -939,7 +928,7 @@ public class DocRoute implements Route, BundleListener {
 							URL theBaseURL = new URL(baseURL);
 							if (path.startsWith(PACKAGES_GLOBAL_PATH) || path.startsWith(PACKAGES_SESSION_PATH)) {
 								// Always HTML String for packages if not null.
-									final Object content = DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path);
+									final Object content = DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path);
 									if (content instanceof String) { 
 										return new ContentEntry() {
 		
@@ -961,7 +950,7 @@ public class DocRoute implements Route, BundleListener {
 							String contentType = getContentType(fn);
 							if (contentType!=null) {
 								if (MIME_TYPE_HTML.equals(contentType)) {
-									final String content = CoreUtil.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+									final String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
 									return new ContentEntry() {
 	
 										@Override
@@ -980,7 +969,7 @@ public class DocRoute implements Route, BundleListener {
 								ExtensionEntry<ContentFilter> extensionEntry = tm==null ? null : tm.get(MIME_TYPE_HTML);
 								ContentFilter cf = extensionEntry==null ? null : extensionEntry.extension;
 								if (cf!=null) {
-									String content = CoreUtil.stringify(DocRoute.this.getContent(new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+									String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
 									if (content!=null) {
 										final String htmlContent = String.valueOf(cf.filter(content, DocRoute.this, new URL(urlPrefix+docRoutePath+path), urlPrefix));
 										return new ContentEntry() {
@@ -1069,14 +1058,56 @@ public class DocRoute implements Route, BundleListener {
 							componentMap.put(component.getName(), component);
 						}
 						for (Component component: componentMap.values()) {
-							bundleToc.createChild(
+							TocNode componentToc = bundleToc.createChild(
 									component.getName(), 
 									BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/component/"+component.getId()+"/index.html", 
 									"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
 									null);
+
+							synchronized (bundleTocNodeFactories) {
+								Map<Version, BundleTocNodeFactoryEntry> vbm = bundleTocNodeFactories.get(bundle.getSymbolicName());
+								if (vbm!=null) {
+									List<Version> versions = new ArrayList<>(vbm.keySet());
+									Collections.reverse(versions);
+									for (Version version: versions) {
+										if (version.compareTo(bundle.getVersion()) < 0) {
+											BundleTocNodeFactoryEntry be = vbm.get(version);
+											List<TocNodeFactory> ctnfl = be.componentTocNodeFactories.get(component.getName());
+											if (ctnfl!=null) {
+												for (TocNodeFactory tnf: ctnfl) {
+													if (!tnf.isSection() && !tnf.isElementDoc() && tnf.isRoot(be.tocNodeFactories)) {
+														tnf.createTocNode(componentToc, be.tocNodeFactories, false);
+													}
+												}
+											}
+											break;
+										}
+									}
+								}
+							}									
 						}
 					}
 				}
+				
+				synchronized (bundleTocNodeFactories) {
+					Map<Version, BundleTocNodeFactoryEntry> vbm = bundleTocNodeFactories.get(bundle.getSymbolicName());
+					if (vbm!=null) {
+						List<Version> versions = new ArrayList<>(vbm.keySet());
+						Collections.reverse(versions);
+						for (Version version: versions) {
+							if (version.compareTo(bundle.getVersion()) < 0) {
+								BundleTocNodeFactoryEntry be = vbm.get(version);
+								for (TocNodeFactory tnf: be.tocNodeFactories) {
+									if (!tnf.isSection() && !tnf.isElementDoc() && tnf.isRoot(be.tocNodeFactories)) {
+										tnf.createTocNode(bundleToc, be.tocNodeFactories, false);
+									}
+								}
+								break;
+							}
+						}
+					}
+				}		
+				
 			} else {				
 				Map<String, Object> subBucket = (Map<String, Object>) e.getValue();
 				if (subBucket.size()==1) {
@@ -1255,7 +1286,7 @@ public class DocRoute implements Route, BundleListener {
 		// TODO - from extensions
 	}
 	
-	public Object getContent(URL baseURL, String urlPrefix, String path) {
+	public Object getContent(HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
 		if (path.startsWith(PACKAGES_GLOBAL_PATH)) {
 			String[] subPath = path.substring(PACKAGES_GLOBAL_PATH.length()).split("/");
 			EPackage ePackage;
@@ -1326,7 +1357,7 @@ public class DocRoute implements Route, BundleListener {
 			}
 			
 			if (DIAGRAM_PNG.equals(tail)) {
-				return generateBundlesDiagram(/* TODO - parameters */);
+				return generateBundlesDiagram(context);
 			}
 			
 			String[] ta = tail.split("/");
@@ -1341,7 +1372,7 @@ public class DocRoute implements Route, BundleListener {
 					}
 					
 					if (DIAGRAM_PNG.equals(ta[2])) {
-						return generateBundleContextDiagram(/* TODO - parameters */);
+						return generateBundleContextDiagram(context);
 					}
 					
 					if ("component".equals(ta[2]) && scrService!=null) {
@@ -1351,7 +1382,7 @@ public class DocRoute implements Route, BundleListener {
 								return generateComponentInfo(component);
 							}
 							if (DIAGRAM_PNG.equals(ta[4])) {
-								return generateComponentContextDiagram(/* TODO - parameters */);
+								return generateComponentContextDiagram(context);
 							}							
 						}
 					}
@@ -1369,19 +1400,59 @@ public class DocRoute implements Route, BundleListener {
 		return null; // Not found
 	}
 
-	protected String generateComponentContextDiagram() {
+	protected String generateComponentContextDiagram(HttpServletRequestContext context) {
 		return "TODO diagram";
 	}
 
-	protected String generateBundleContextDiagram() {
+	protected String generateBundleContextDiagram(HttpServletRequestContext context) {
 		return "TODO diagram";
 	}
 
-	protected String generateBundlesDiagram() {
+	protected String generateBundlesDiagram(HttpServletRequestContext context) {
 		return "TODO - diagram generation";
 	}
 
 	protected String generateBundleInfo(Bundle bundle) {
+		Fragment ret = htmlFactory.fragment();
+		ret.content(htmlFactory.tag(TagName.h3, StringEscapeUtils.escapeHtml4(bundle.getSymbolicName())));
+		Tabs tabs = htmlFactory.tabs();
+		
+		Fragment overviewContent = htmlFactory.fragment();
+		
+		tabs.item("Overview", overviewContent);
+		
+		
+//		switch (bundle.getState()) {
+//		case Bundle.ACTIVE:
+//			bRow.cell("Active").bootstrap().text().center();
+//			break;
+//		case Bundle.INSTALLED:
+//			bRow.cell("Installed").bootstrap().text().center();
+//			break;
+//		case Bundle.RESOLVED:
+//			bRow.cell("Resolved").bootstrap().text().center();
+//			break;
+//		case Bundle.STARTING:
+//			bRow.cell("Starting").bootstrap().text().center();
+//			break;
+//		case Bundle.STOPPING:
+//			bRow.cell("Stopping").bootstrap().text().center();
+//			break;
+//		case Bundle.UNINSTALLED:
+//			bRow.cell("Uninstalled").bootstrap().text().center();
+//			break;				
+//		default:
+//			bRow.cell("Undefined: "+bundle.getState()).bootstrap().text().center();
+//			break;				
+//		}
+		
+		tabs.item("Headers", "TODO");
+		tabs.item("Registered Services", "TODO");
+		tabs.item("Services In Use", "TODO");
+		tabs.item("Components", "TODO");
+		tabs.item("Context Diagram", "TODO");
+		
+		
 //		if (scrService!=null) {
 //			Component[] components = scrService.getComponents(bundle);
 //			if (components!=null) {
@@ -1404,7 +1475,7 @@ public class DocRoute implements Route, BundleListener {
 //				}
 //			}
 //		}
-		return "Bundle info";
+		return ret.toString();
 	}
 	
 	protected String generateComponentInfo(Component component) {
@@ -1635,7 +1706,7 @@ public class DocRoute implements Route, BundleListener {
 			String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
 			String prefix = docAppPath+"#router/doc-content/"+docRoutePath;			
 			String pathStr = "/"+StringUtils.join(path, "/");
-			Object content = getContent(new URL(requestURL), urlPrefix, pathStr);
+			Object content = getContent(context, new URL(requestURL), urlPrefix, pathStr);
 			if (content!=null) {
 				if (path.length>0) {
 					String contentType = "packages".equals(path[0]) ? "text/html" : getContentType(path[path.length-1]);
@@ -2359,5 +2430,232 @@ public class DocRoute implements Route, BundleListener {
 	public void setScrService(ScrService scrService) {
 		this.scrService = scrService;
 	}
+
+	protected void addTocExtension(IExtensionTracker tracker, IExtension extension, IConfigurationElement ce) {
+		if (isIncluded(ce)) {
+			try {
+				//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
+				TocNodeFactory tocNodeFactory = new TocNodeFactory(
+						DocRoute.this, 
+						baseURL,
+						urlPrefix,
+						docRoutePath,
+						extension.getContributor().getName(),
+						contentFilters,
+						ce);
+				
+				synchronized (tocNodeFactories) {
+					tocNodeFactories.add(tocNodeFactory);
+				}								
+				tracker.registerObject(extension, tocNodeFactory, IExtensionTracker.REF_WEAK);
+			} catch (Exception e) {
+				// TODO proper logging
+				e.printStackTrace();
+			}
+		}
+	}
+
+	protected boolean isIncluded(IConfigurationElement ce) {
+		for (Pattern p: bundleExcludes) {
+			if (p.matcher(ce.getContributor().getName()).matches()) {
+				return false;
+			}
+		}
+		if (bundleIncludes.isEmpty()) {
+			return true;
+		}
+		
+		for (Pattern p: bundleIncludes) {
+			if (p.matcher(ce.getContributor().getName()).matches()) {
+				return true;
+			}
+		}				
+		return false;
+	}
+	
+	protected void addEPackageTocExtension(IExtensionTracker tracker, IExtension extension, IConfigurationElement ce) {
+		if (isIncluded(ce)) {
+			try {			
+				//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
+				TocNodeFactory tocNodeFactory = new TocNodeFactory(
+						DocRoute.this, 
+						baseURL,
+						urlPrefix,
+						docRoutePath,
+						extension.getContributor().getName(),
+						contentFilters,
+						ce);
+				
+				String nsURI = ce.getAttribute(NS_URI);
+				synchronized (packageTocNodeFactories) {
+					PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(nsURI);
+					if (pe==null) {
+						pe = new PackageTocNodeFactoryEntry();
+						packageTocNodeFactories.put(nsURI, pe);
+					}
+					pe.tocNodeFactories.add(tocNodeFactory);
+				}																
+				tracker.registerObject(extension, tocNodeFactory, IExtensionTracker.REF_WEAK);
+			} catch (Exception e) {
+				// TODO proper logging
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void addEClassifierTocExtension(IExtensionTracker tracker, IExtension extension, IConfigurationElement ce) {
+		if (isIncluded(ce)) {
+			try {
+				//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
+				TocNodeFactory tocNodeFactory = new TocNodeFactory(
+						DocRoute.this, 
+						baseURL,
+						urlPrefix,
+						docRoutePath,
+						extension.getContributor().getName(),
+						contentFilters,
+						ce);
+				
+				String nsURI = ce.getAttribute(NS_URI);
+				synchronized (packageTocNodeFactories) {
+					PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(nsURI);
+					if (pe==null) {
+						pe = new PackageTocNodeFactoryEntry();
+						packageTocNodeFactories.put(nsURI, pe);
+					}
+					String classifier = ce.getAttribute("classifier");
+					List<TocNodeFactory> ctnfl = pe.classifierTocNodeFactories.get(classifier);
+					if (ctnfl==null) {
+						ctnfl = new ArrayList<TocNodeFactory>();
+						pe.classifierTocNodeFactories.put(classifier, ctnfl);
+					}
+					ctnfl.add(tocNodeFactory);
+				}																
+				tracker.registerObject(extension, tocNodeFactory, IExtensionTracker.REF_WEAK);
+			} catch (Exception e) {
+				// TODO proper logging
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void addComponentTocExtension(IExtensionTracker tracker, IExtension extension, IConfigurationElement ce) {
+		if (isIncluded(ce)) {
+			try {
+				//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
+				TocNodeFactory tocNodeFactory = new TocNodeFactory(
+						DocRoute.this, 
+						baseURL,
+						urlPrefix,
+						docRoutePath,
+						extension.getContributor().getName(),
+						contentFilters,
+						ce);
+				
+				String symbolicName = ce.getAttribute(SYMBOLIC_NAME);
+				if (CoreUtil.isBlank(symbolicName)) {
+					symbolicName = ce.getContributor().getName();
+				}
+				synchronized (bundleTocNodeFactories) {
+					Map<Version, BundleTocNodeFactoryEntry> vbe = bundleTocNodeFactories.get(symbolicName);
+					if (vbe==null) {
+						vbe = new TreeMap<>();
+						bundleTocNodeFactories.put(symbolicName, vbe);
+					}
+					String versionStr = ce.getAttribute(VERSION);
+					Version version = CoreUtil.isBlank(versionStr) ? Version.emptyVersion : new Version(versionStr);
+					BundleTocNodeFactoryEntry be = vbe.get(version);
+					if (be == null) {
+						be = new BundleTocNodeFactoryEntry();
+						vbe.put(version, be);
+					}
+					String componentName = ce.getAttribute(COMPONENT_NAME);
+					List<TocNodeFactory> ctnfl = be.componentTocNodeFactories.get(componentName);
+					if (ctnfl==null) {
+						ctnfl = new ArrayList<TocNodeFactory>();
+						be.componentTocNodeFactories.put(componentName, ctnfl);
+					}
+					ctnfl.add(tocNodeFactory);
+				}																
+				tracker.registerObject(extension, tocNodeFactory, IExtensionTracker.REF_WEAK);
+			} catch (Exception e) {
+				// TODO proper logging
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	protected void addBundleTocExtension(IExtensionTracker tracker, IExtension extension, IConfigurationElement ce) {
+		if (isIncluded(ce)) {
+			try {
+				//Map<Object, Object> contentFilterEnv = createExtensionEnvironment(new URL(baseURL), urlPrefix);
+				TocNodeFactory tocNodeFactory = new TocNodeFactory(
+						DocRoute.this, 
+						baseURL,
+						urlPrefix,
+						docRoutePath,
+						extension.getContributor().getName(),
+						contentFilters,
+						ce);
+				
+				String symbolicName = ce.getAttribute(BUNDLE_SYMBOLIC_NAME);
+				if (CoreUtil.isBlank(symbolicName)) {
+					symbolicName = ce.getContributor().getName();
+				}
+				synchronized (bundleTocNodeFactories) {
+					Map<Version, BundleTocNodeFactoryEntry> vbe = bundleTocNodeFactories.get(symbolicName);
+					if (vbe==null) {
+						vbe = new TreeMap<>();
+						bundleTocNodeFactories.put(symbolicName, vbe);
+					}
+					String versionStr = ce.getAttribute(BUNDLE_VERSION);
+					Version version = CoreUtil.isBlank(versionStr) ? Version.emptyVersion : new Version(versionStr);
+					BundleTocNodeFactoryEntry be = vbe.get(version);
+					if (be == null) {
+						be = new BundleTocNodeFactoryEntry();
+						vbe.put(version, be);
+					}
+					be.tocNodeFactories.add(tocNodeFactory);
+				}																
+				tracker.registerObject(extension, tocNodeFactory, IExtensionTracker.REF_WEAK);
+			} catch (Exception e) {
+				// TODO proper logging
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	/**
+	 * Generates section content from TOC nodes linked with "#" prefix to EPackages, EClasses, bundles and components. 
+	 * @param section
+	 * @param level
+	 * @param sectionFragment
+	 */
+	public String section(TocNode section, int level) {		
+		Fragment sectionFragment = getHtmlFactory().fragment();
+		if (level!=-1) {
+			String header = StringEscapeUtils.escapeHtml4(section.getText().substring(1));
+			if (section.getIcon()!=null) {
+				header = getHtmlFactory().tag(TagName.img).attribute("src", getHtmlFactory()+section.getIcon()).style("margin-right", "5px") + header;
+			}
+			sectionFragment.content(getHtmlFactory().tag("h"+level, header));
+		}		
+		
+		String content = section.getContent();
+		if (content==null) {
+			// TODO - inclusion instead of AJAX
+			String sectionId = "section_"+getHtmlFactory().nextId();
+			String script = getHtmlFactory().tag(TagName.script, "nsdLoad('#"+sectionId+"','"+getDocRoutePath()+section.getHref()+"');").toString();
+			sectionFragment.content(getHtmlFactory().div().id(sectionId), script); 
+		} else {
+			sectionFragment.content(content); 
+		}
+		
+		for (TocNode subSection: section.getChildren()) {
+			sectionFragment.content(section(subSection, level==-1 ? 3 : Math.min(6, level+1)));
+		}
+		
+		return sectionFragment.toString();
+	}		
 	
 }

@@ -58,7 +58,7 @@ public class IncludeMarkdownPreProcessor implements MarkdownPreProcessor {
 				URL contentURL = new URL(baseURL, theContent);
 				String contentURLStr = contentURL.toString();
 				String absDocRoutePath = urlPrefix+docRoute.getDocRoutePath();
-				String contentToInclude = CoreUtil.stringify(contentURLStr.startsWith(absDocRoutePath) ? docRoute.getContent(contentURL, urlPrefix, contentURLStr.substring(absDocRoutePath.length())) : contentURL);
+				String contentToInclude = CoreUtil.stringify(contentURLStr.startsWith(absDocRoutePath) ? docRoute.getContent(null, contentURL, urlPrefix, contentURLStr.substring(absDocRoutePath.length())) : contentURL);
 				return contentToInclude==null ? null : chain.process(contentToInclude);
 			} catch (MalformedURLException e) {
 				return "(Include exception: "+e+")";

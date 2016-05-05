@@ -95,7 +95,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		}		
 		
 		for (TocNode eDoc: elementDoc.getChildren()) {
-			section(docRoute, eDoc, -1,  ret);
+			ret.content(docRoute.section(eDoc, -1));
 		}		
 						
 		EPackage eSuperPackage = ePackage.getESuperPackage();
@@ -156,7 +156,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 				tabName = htmlFactory.tag(TagName.img).attribute("src", docRoute.getDocRoutePath()+section.getIcon()).style("margin-right", "5px") + tabName;
 			}
 			Fragment sectionFragment = htmlFactory.fragment();
-			section(docRoute, section, -1, sectionFragment);
+			sectionFragment.content(docRoute.section(section, -1));
 			tabs.item(tabName, sectionFragment);
 		}
 	}

@@ -96,7 +96,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		}
 		
 		for (TocNode eDoc: elementDoc.getChildren()) {
-			section(docRoute, eDoc, -1, sink);
+			sink.content(docRoute.section(eDoc, -1));
 		}		
 				
 	}
@@ -229,40 +229,11 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 				tabName = docRoute.getHtmlFactory().tag(TagName.img).attribute("src", docRoute.getDocRoutePath()+section.getIcon()).style("margin-right", "5px") + tabName;
 			}
 			Fragment sectionFragment = docRoute.getHtmlFactory().fragment();
-			section(docRoute, section, -1, sectionFragment);
+			sectionFragment.content(docRoute.section(section, -1));
 			tabs.item(tabName, sectionFragment);
 		}		
 	}		
 	
-	protected static void section(
-			DocRoute docRoute, 
-			TocNode section, 
-			int level, 
-			Fragment sectionFragment) {
-		
-		if (level!=-1) {
-			String header = StringEscapeUtils.escapeHtml4(section.getText().substring(1));
-			if (section.getIcon()!=null) {
-				header = docRoute.getHtmlFactory().tag(TagName.img).attribute("src", docRoute.getHtmlFactory()+section.getIcon()).style("margin-right", "5px") + header;
-			}
-			sectionFragment.content(docRoute.getHtmlFactory().tag("h"+level, header));
-		}		
-		
-		String content = section.getContent();
-		if (content==null) {
-			// TODO - inclusion instead of AJAX
-			String sectionId = "section_"+docRoute.getHtmlFactory().nextId();
-			String script = docRoute.getHtmlFactory().tag(TagName.script, "nsdLoad('#"+sectionId+"','"+docRoute.getDocRoutePath()+section.getHref()+"');").toString();
-			sectionFragment.content(docRoute.getHtmlFactory().div().id(sectionId), script); 
-		} else {
-			sectionFragment.content(content); 
-		}
-		
-		for (TocNode subSection: section.getChildren()) {
-			section(docRoute, subSection, level==-1 ? 3 : Math.min(6, level+1), sectionFragment);
-		}
-		
-	}	
 
 	public static UIElement<?> preStyle(UIElement<?> uiElement) {
 		return uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
