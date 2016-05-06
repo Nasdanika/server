@@ -226,13 +226,6 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="linkTo" type="string">
-            <annotation>
-               <documentation>
-                  Topic to link this Toc to.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
@@ -302,13 +295,6 @@
                <appinfo>
                   <meta.attribute kind="resource"/>
                </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="linkTo" type="string">
-            <annotation>
-               <documentation>
-                  Topic to link this Toc to.
-               </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">
@@ -389,13 +375,6 @@
                </appinfo>
             </annotation>
          </attribute>
-         <attribute name="linkTo" type="string">
-            <annotation>
-               <documentation>
-                  Topic to link this Toc to.
-               </documentation>
-            </annotation>
-         </attribute>
          <attribute name="id" type="string">
             <annotation>
                <documentation>
@@ -472,13 +451,6 @@
                <appinfo>
                   <meta.attribute kind="resource"/>
                </appinfo>
-            </annotation>
-         </attribute>
-         <attribute name="linkTo" type="string">
-            <annotation>
-               <documentation>
-                  Topic to link this Toc to.
-               </documentation>
             </annotation>
          </attribute>
          <attribute name="id" type="string">

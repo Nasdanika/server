@@ -67,6 +67,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
+import org.eclipse.osgi.util.ManifestElement;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -98,9 +99,12 @@ import org.nasdanika.web.ValueAction;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleException;
 import org.osgi.framework.BundleListener;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
+import org.osgi.framework.VersionRange;
 import org.osgi.service.component.ComponentContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
@@ -109,6 +113,8 @@ import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route, BundleListener {
 		
+	private static final String REQUIRE_BUNDLE_MANIFEST_HEADER = "Require-Bundle";
+	private static final String ROUTER_DOC_CONTENT_FRAGMENT_PREFIX = "#router/doc-content/";
 	private static final String COMPONENT_NAME = "component-name";
 	private static final String BUNDLE_VERSION = "bundle-version";
 	private static final String BUNDLE_SYMBOLIC_NAME = "bundle-symbolic-name";
@@ -137,8 +143,8 @@ public class DocRoute implements Route, BundleListener {
 	private static final String COMPONENT_TOC = "component-toc";
 	
 	private static final String RESOURCES_PATH = "/resources/";
-	private static final String BUNDLE_PATH = "/bundle/";
-	private static final String BUNDLE_INFO_PATH = "/bundle-info/";
+	public static final String BUNDLE_PATH = "/bundle/";
+	public static final String BUNDLE_INFO_PATH = "/bundle-info/";
 	private static final String PACKAGES_PATH = "/packages/";
 	private static final String PACKAGES_SESSION_PATH = PACKAGES_PATH + "session/";
 	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
@@ -997,7 +1003,7 @@ public class DocRoute implements Route, BundleListener {
 	        	};
 				final Indexer indexer = new Indexer(searchableContentProvider, writer, baseURL) {
 					
-					private String prefix = "http://localhost:18080"+docAppPath+"#router/doc-content/"+docRoutePath+"/";
+					private String prefix = "http://localhost:18080"+docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+"/";
 					
 					@Override
 					protected boolean isInternalLink(String href) {
@@ -1046,7 +1052,7 @@ public class DocRoute implements Route, BundleListener {
 			if (e.getValue() instanceof Bundle) {
 				Bundle bundle = (Bundle) e.getValue();
 				TocNode bundleToc = parentToc.createChild(
-						localName+" "+bundle.getVersion(), 
+						localName+" ("+bundle.getVersion()+")", 
 						BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
 						null);	
@@ -1065,49 +1071,32 @@ public class DocRoute implements Route, BundleListener {
 									null);
 
 							synchronized (bundleTocNodeFactories) {
-								Map<Version, BundleTocNodeFactoryEntry> vbm = bundleTocNodeFactories.get(bundle.getSymbolicName());
-								if (vbm!=null) {
-									List<Version> versions = new ArrayList<>(vbm.keySet());
-									Collections.reverse(versions);
-									for (Version version: versions) {
-										if (version.compareTo(bundle.getVersion()) < 0) {
-											BundleTocNodeFactoryEntry be = vbm.get(version);
-											List<TocNodeFactory> ctnfl = be.componentTocNodeFactories.get(component.getName());
-											if (ctnfl!=null) {
-												for (TocNodeFactory tnf: ctnfl) {
-													if (!tnf.isSection() && !tnf.isElementDoc() && tnf.isRoot(be.tocNodeFactories)) {
-														tnf.createTocNode(componentToc, be.tocNodeFactories, false);
-													}
-												}
+								BundleTocNodeFactoryEntry be = matchVersion(bundle);
+								if (be!=null) {
+									List<TocNodeFactory> ctnfl = be.componentTocNodeFactories.get(component.getName());
+									if (ctnfl!=null) {
+										for (TocNodeFactory tnf: ctnfl) {
+											if (!tnf.isSection() && !tnf.isElementDoc() && tnf.isRoot(be.tocNodeFactories)) {
+												tnf.createTocNode(componentToc, be.tocNodeFactories, false);
 											}
-											break;
 										}
 									}
 								}
-							}									
+							}						
 						}
 					}
 				}
 				
 				synchronized (bundleTocNodeFactories) {
-					Map<Version, BundleTocNodeFactoryEntry> vbm = bundleTocNodeFactories.get(bundle.getSymbolicName());
-					if (vbm!=null) {
-						List<Version> versions = new ArrayList<>(vbm.keySet());
-						Collections.reverse(versions);
-						for (Version version: versions) {
-							if (version.compareTo(bundle.getVersion()) < 0) {
-								BundleTocNodeFactoryEntry be = vbm.get(version);
-								for (TocNodeFactory tnf: be.tocNodeFactories) {
-									if (!tnf.isSection() && !tnf.isElementDoc() && tnf.isRoot(be.tocNodeFactories)) {
-										tnf.createTocNode(bundleToc, be.tocNodeFactories, false);
-									}
-								}
-								break;
+					BundleTocNodeFactoryEntry be = matchVersion(bundle);
+					if (be!=null) {
+						for (TocNodeFactory tnf: be.tocNodeFactories) {
+							if (!tnf.isSection() && !tnf.isElementDoc() && tnf.isRoot(be.tocNodeFactories)) {
+								tnf.createTocNode(bundleToc, be.tocNodeFactories, false);
 							}
 						}
 					}
-				}		
-				
+				}						
 			} else {				
 				Map<String, Object> subBucket = (Map<String, Object>) e.getValue();
 				if (subBucket.size()==1) {
@@ -1119,6 +1108,29 @@ public class DocRoute implements Route, BundleListener {
 				}
 			}
 		}		
+	}
+
+	/**
+	 * Find a TOC with a version lower than the bundle version.
+	 * If none is found, return the lowest version.
+	 * @param bundle
+	 * @return
+	 */
+	private BundleTocNodeFactoryEntry matchVersion(Bundle bundle) {
+		Map<Version, BundleTocNodeFactoryEntry> vbm = bundleTocNodeFactories.get(bundle.getSymbolicName());
+		if (vbm!=null) {
+			List<Version> versions = new ArrayList<>(vbm.keySet());
+			Collections.reverse(versions);
+			for (Version version: versions) {
+				if (version.compareTo(bundle.getVersion()) <= 0) {
+					return vbm.get(version);
+				}
+			}
+			if (!vbm.isEmpty()) {
+				return vbm.values().iterator().next(); // Lowest version 
+			}
+		}
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -1411,46 +1423,220 @@ public class DocRoute implements Route, BundleListener {
 	protected String generateBundlesDiagram(HttpServletRequestContext context) {
 		return "TODO - diagram generation";
 	}
-
+	
 	protected String generateBundleInfo(Bundle bundle) {
 		Fragment ret = htmlFactory.fragment();
-		ret.content(htmlFactory.tag(TagName.h3, StringEscapeUtils.escapeHtml4(bundle.getSymbolicName())));
-		Tabs tabs = htmlFactory.tabs();
+		ret.content(htmlFactory.tag(TagName.h3, "Bundle "+StringEscapeUtils.escapeHtml4(bundle.getSymbolicName())));
+		Tabs tabs = htmlFactory.tabs().style().margin().right("5px");
+		ret.content(tabs);
 		
-		Fragment overviewContent = htmlFactory.fragment();
-		
+		Fragment overviewContent = htmlFactory.fragment();		
 		tabs.item("Overview", overviewContent);
 		
+		Table overviewTable = htmlFactory.table().bordered();
+		overviewContent.content(overviewTable);
 		
-//		switch (bundle.getState()) {
-//		case Bundle.ACTIVE:
-//			bRow.cell("Active").bootstrap().text().center();
-//			break;
-//		case Bundle.INSTALLED:
-//			bRow.cell("Installed").bootstrap().text().center();
-//			break;
-//		case Bundle.RESOLVED:
-//			bRow.cell("Resolved").bootstrap().text().center();
-//			break;
-//		case Bundle.STARTING:
-//			bRow.cell("Starting").bootstrap().text().center();
-//			break;
-//		case Bundle.STOPPING:
-//			bRow.cell("Stopping").bootstrap().text().center();
-//			break;
-//		case Bundle.UNINSTALLED:
-//			bRow.cell("Uninstalled").bootstrap().text().center();
-//			break;				
-//		default:
-//			bRow.cell("Undefined: "+bundle.getState()).bootstrap().text().center();
-//			break;				
+		Row versionRow = overviewTable.row();
+		versionRow.header("Version");
+		versionRow.cell(bundle.getVersion());
+		
+		Row stateRow = overviewTable.row();
+		stateRow.header("State");
+		
+		switch (bundle.getState()) {
+		case Bundle.ACTIVE:
+			stateRow.cell("Active");
+			break;
+		case Bundle.INSTALLED:
+			stateRow.cell("Installed");
+			break;
+		case Bundle.RESOLVED:
+			stateRow.cell("Resolved");
+			break;
+		case Bundle.STARTING:
+			stateRow.cell("Starting");
+			break;
+		case Bundle.STOPPING:
+			stateRow.cell("Stopping");
+			break;
+		case Bundle.UNINSTALLED:
+			stateRow.cell("Uninstalled");
+			break;				
+		default:
+			stateRow.cell("Undefined: "+bundle.getState());
+			break;				
+		}
+		
+		Row idRow = overviewTable.row();
+		idRow.header("ID");
+		idRow.cell(bundle.getBundleId());
+		
+		mountedDocumentation(bundle, null, overviewContent);
+		
+		Table headersTable = htmlFactory.table().bordered();
+		headersTable.headerRow("Name", "Value").style(Style.PRIMARY);
+		for (String header: Collections.list(bundle.getHeaders().keys())) {
+			try {
+				ManifestElement[] manifestElements = ManifestElement.parseHeader(header, bundle.getHeaders().get(header));
+				if (manifestElements != null) {
+					if (REQUIRE_BUNDLE_MANIFEST_HEADER.equals(header)) {
+						Table requireBundlesTable = htmlFactory.table().bordered();
+						requireBundlesTable.headerRow("Symbolic name", "Version").style(Style.PRIMARY);
+						for (ManifestElement me: manifestElements) {
+							String symbolicName = me.getValue();
+							String versionRange = me.getAttribute(BUNDLE_VERSION);
+							VersionRange vr = versionRange == null ? null : new VersionRange(versionRange);
+							Bundle targetBundle = null;
+							for (Bundle rb: bundleContext.getBundles()) {
+								if (rb.getSymbolicName().equals(symbolicName) && (vr == null || vr.includes(rb.getVersion()))) {
+									if (targetBundle == null || targetBundle.getVersion().compareTo(rb.getVersion()) < 0) {
+										targetBundle = rb;
+									}
+								}
+							}
+							requireBundlesTable.row(
+									targetBundle == null ? symbolicName : htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+symbolicName+"/"+targetBundle.getVersion()+"/index.html", symbolicName), 
+									versionRange == null ? "" : versionRange);
+						}
+						tabs.item("Required bundles", requireBundlesTable);
+					} else {
+						if (manifestElements.length == 1) {
+							headersTable.row(StringEscapeUtils.escapeHtml4(header), StringEscapeUtils.escapeHtml4(manifestElements[0].toString()));
+						} else {								
+							Tag list = htmlFactory.tag(TagName.ul);
+							for (ManifestElement me: manifestElements) {
+								list.content(htmlFactory.tag(TagName.li, StringEscapeUtils.escapeHtml4(me.toString())));
+							}	
+							headersTable.row(StringEscapeUtils.escapeHtml4(header), list);
+						}
+					}
+				}
+			} catch (BundleException e) {
+				headersTable.row(header, "Exception: "+e.toString());
+				e.printStackTrace();
+			}
+		}
+		tabs.item("Headers", headersTable);
+		
+		// Required by
+		List<Bundle> siblings = new ArrayList<>();
+		for (Bundle b: bundleContext.getBundles()) {
+			if (b != bundle 
+					&& b.getSymbolicName().equals(bundle.getSymbolicName()) 
+					&& b.getVersion().compareTo(bundle.getVersion()) > 0) {
+				siblings.add(b);
+			}
+		}
+		
+		List<Bundle> requiredBy = new ArrayList<>();
+		
+		RB: for (Bundle b: bundleContext.getBundles()) {
+			if (b != bundle) {
+				String requireBundle = b.getHeaders().get(REQUIRE_BUNDLE_MANIFEST_HEADER);
+				if (!CoreUtil.isBlank(requireBundle)) {
+					try {
+						ManifestElement[] mea = ManifestElement.parseHeader(REQUIRE_BUNDLE_MANIFEST_HEADER, requireBundle);
+						for (ManifestElement me: mea) {
+							if (bundle.getSymbolicName().equals(me.getValue())) {
+								String versionRange = me.getAttribute(BUNDLE_VERSION);
+								VersionRange vr = versionRange == null ? null : new VersionRange(versionRange);
+								if (vr == null || vr.includes(bundle.getVersion())) {
+									for (Bundle sibling: siblings) {
+										if (vr == null || vr.includes(sibling.getVersion())) {
+											continue RB;
+										}
+									}
+									requiredBy.add(b);
+								}
+							}
+						}
+					} catch (BundleException e) {
+						System.err.println("Could not parse require bundle header for "+b);
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		
+		if (!requiredBy.isEmpty()) {		
+			Collections.sort(requiredBy, new Comparator<Bundle>() {
+	
+				@Override
+				public int compare(Bundle o1, Bundle o2) {
+					int cmp = o1.getSymbolicName().compareTo(o2.getSymbolicName());
+					return cmp == 0 ? o1.getVersion().compareTo(o2.getVersion()) : cmp;
+				}
+				
+			});
+			
+			Table requiredByTable = htmlFactory.table().bordered();
+			requiredByTable.headerRow("Symbolic name", "Version").style(Style.PRIMARY);
+			for (Bundle rb: requiredBy) {
+				requiredByTable.row(
+						htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+rb.getSymbolicName()+"/"+rb.getVersion()+"/index.html", rb.getSymbolicName()), 
+						rb.getVersion());
+			}
+			tabs.item("Required by", requiredByTable);
+		}				
+		
+		ServiceReference<?>[] registeredServices = bundle.getRegisteredServices();
+		if (registeredServices!=null) {
+			Table registeredServicesTable = htmlFactory.table().bordered();
+			Row hr1 = registeredServicesTable.row().style(Style.PRIMARY);
+			hr1.header("Class").rowspan(2);
+			hr1.header("Using bundle(s)").rowspan(2);
+			hr1.header("Properties").colspan(2).bootstrap().text().center();
+			registeredServicesTable.headerRow("Name", "Value(s)").style(Style.PRIMARY);
+			
+			for (ServiceReference<?> sr: registeredServices) {
+				// TODO - get rid of the hack - objectClass property
+				String srStr = sr.toString();
+				int idx = srStr.indexOf("}={");
+				Row serviceRow = registeredServicesTable.row();
+				if (idx==-1) {
+					serviceRow.cell(StringEscapeUtils.escapeHtml4(srStr)); // TODO - colspan
+				} else {
+					// TODO - ignore component properties, component link
+					
+					String[] propertyKeys = sr.getPropertyKeys();
+					int rowSpan = propertyKeys == null || propertyKeys.length == 0 ? 1 : propertyKeys.length;
+					
+					// TODO - split, JavaDoc link
+					serviceRow.cell(StringEscapeUtils.escapeHtml4(srStr.substring(1, idx))).rowspan(rowSpan);
+									
+					Bundle[] usingBundles = sr.getUsingBundles();
+					serviceRow.cell("Using bundles...").rowspan(rowSpan);
+					
+					if (propertyKeys == null || propertyKeys.length == 0) {
+						serviceRow.cell("").colspan(2);
+					} else {
+						serviceRow.cell(StringEscapeUtils.escapeHtml4(propertyKeys[0]));
+						serviceRow.cell(sr.getProperty(propertyKeys[0]));
+						for (int i=1; i<propertyKeys.length; ++i) {
+							registeredServicesTable.row(StringEscapeUtils.escapeHtml4(propertyKeys[i]), sr.getProperty(propertyKeys[i]));
+						}
+					}
+				}
+			}
+			tabs.item("Registered Services", registeredServicesTable);
+		}
+		
+		ServiceReference<?>[] servicesInUse = bundle.getServicesInUse();
+		if (servicesInUse!=null) {
+			tabs.item("Services In Use", "TODO");
+		}
+
+		// In sub-nodes
+//		if (scrService != null) {
+//			Component[] components = scrService.getComponents(bundle);
+//			if (components!=null) {
+//				tabs.item("Components", "TODO");
+//			}
 //		}
 		
-		tabs.item("Headers", "TODO");
-		tabs.item("Registered Services", "TODO");
-		tabs.item("Services In Use", "TODO");
-		tabs.item("Components", "TODO");
 		tabs.item("Context Diagram", "TODO");
+		
+		sections(bundle, null, tabs);
 		
 		
 //		if (scrService!=null) {
@@ -1479,7 +1665,74 @@ public class DocRoute implements Route, BundleListener {
 	}
 	
 	protected String generateComponentInfo(Component component) {
-		return "Component info: "+component.getName();
+		Fragment ret = htmlFactory.fragment();
+		ret.content(htmlFactory.tag(TagName.h3, "Component "+StringEscapeUtils.escapeHtml4(component.getName())));
+		Tabs tabs = htmlFactory.tabs();
+		ret.content(tabs);
+		
+		Fragment overviewContent = htmlFactory.fragment();		
+		tabs.item("Overview", overviewContent);
+		
+		Table overviewTable = htmlFactory.table().bordered();
+		overviewContent.content(overviewTable);
+				
+		Row stateRow = overviewTable.row();
+		stateRow.header("State");
+		
+		switch (component.getState()) {
+		
+		case Component.STATE_DISABLED:
+			stateRow.cell("Disabled");
+			break;
+		case Component.STATE_ENABLING:
+			stateRow.cell("Enabling");
+			break;
+		case Component.STATE_UNSATISFIED:
+			stateRow.cell("Unsatisfied");
+			break;
+		case Component.STATE_ACTIVATING:
+			stateRow.cell("Activating");
+			break;
+		case Component.STATE_ACTIVE:
+			stateRow.cell("Active");
+			break;
+		case Component.STATE_REGISTERED:
+			stateRow.cell("Registered");
+			break;
+		case Component.STATE_FACTORY:
+			stateRow.cell("Factory");
+			break;
+		case Component.STATE_DEACTIVATING:
+			stateRow.cell("Deactivating");
+			break;
+		case Component.STATE_DISABLING:
+			stateRow.cell("Disabling");
+			break;
+		case Component.STATE_DISPOSING:
+			stateRow.cell("Disposing");
+			break;
+		case Component.STATE_DISPOSED:		
+			stateRow.cell("Disposed");
+			break;
+		default:
+			stateRow.cell("Undefined: "+component.getState());
+			break;				
+		}
+		
+		Row idRow = overviewTable.row();
+		idRow.header("ID");
+		idRow.cell(component.getId());
+		
+		mountedDocumentation(component.getBundle(), component.getName(), overviewContent);
+		
+		tabs.item("Properties", "TODO");
+		tabs.item("References", "TODO");
+		tabs.item("Serivces", "TODO");
+		tabs.item("Context Diagram", "TODO");
+		
+		sections(component.getBundle(), component.getName(), tabs);
+		
+		return ret.toString();
 	}	
 
 	protected String generateBundlesSummary() {
@@ -1493,7 +1746,7 @@ public class DocRoute implements Route, BundleListener {
 		RowContainer<?> tBody = bundlesTable.body();
 		for (Bundle bundle: bundles) {
 			Row bRow = tBody.row();
-			bRow.cell(htmlFactory.link("#router/doc-content/"+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", StringEscapeUtils.escapeHtml4(bundle.getSymbolicName())));
+			bRow.cell(htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", StringEscapeUtils.escapeHtml4(bundle.getSymbolicName())));
 			bRow.cell(StringEscapeUtils.escapeHtml4(bundle.getVersion().toString())).bootstrap().text().center();
 			switch (bundle.getState()) {
 			case Bundle.ACTIVE:
@@ -1638,6 +1891,7 @@ public class DocRoute implements Route, BundleListener {
 	
 	@Override
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+		boolean doNavWrap = !"no".equals(context.getRequest().getParameter("navWrap"));
 		String[] path = new String[context.getPath().length-pathOffset];
 		System.arraycopy(context.getPath(), pathOffset, path, 0, path.length);
 		if (RequestMethod.GET.equals(context.getMethod())) {
@@ -1645,7 +1899,7 @@ public class DocRoute implements Route, BundleListener {
 				if (lock.readLock().tryLock(30, TimeUnit.SECONDS)) {
 					try {
 						if ("toc.js".equals(path[0])) {
-							final String hrefPrefix = "#router/doc-content/"+docRoutePath; 
+							final String hrefPrefix = ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath; 
 							final JSONObject idMap = new JSONObject();
 							tocRoot.accept(new TocNodeVisitor() {
 								
@@ -1673,7 +1927,7 @@ public class DocRoute implements Route, BundleListener {
 								JSONObject searchResult = new JSONObject();
 								searchResults.put(searchResult);
 								String hitPath = hitDoc.get("path");
-								searchResult.put("href", "#router/doc-content/"+docRoutePath+hitPath);
+								searchResult.put("href", ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+hitPath);
 								TocNode tocEntry = tocRoot.find(hitPath);
 								if (tocEntry==null || tocEntry.getText()==null) {
 									int idx = hitPath.lastIndexOf("/");
@@ -1704,7 +1958,7 @@ public class DocRoute implements Route, BundleListener {
 			String requestURL = context.getRequest().getRequestURL().toString();
 			String requestURI = context.getRequest().getRequestURI();
 			String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
-			String prefix = docAppPath+"#router/doc-content/"+docRoutePath;			
+			String prefix = docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath;			
 			String pathStr = "/"+StringUtils.join(path, "/");
 			Object content = getContent(context, new URL(requestURL), urlPrefix, pathStr);
 			if (content!=null) {
@@ -1718,7 +1972,7 @@ public class DocRoute implements Route, BundleListener {
 								Object filteredContent = tme.getValue().extension.filter(content, this, new URL(requestURL), urlPrefix);
 								if ("text/html".equals(tme.getKey()) && filteredContent instanceof String) {
 									TocNode toc = tocRoot.find(pathStr);
-									if (toc!=null) {
+									if (doNavWrap && toc!=null) {
 										filteredContent = navWrap(context.adapt(HTMLFactory.class), toc, (String) filteredContent, prefix);
 									}
 								}
@@ -1728,7 +1982,7 @@ public class DocRoute implements Route, BundleListener {
 					}
 					if ("text/html".equals(contentType) && content instanceof String) {
 						TocNode toc = tocRoot.find(pathStr);
-						if (toc!=null) {
+						if (doNavWrap && toc!=null) {
 							content = navWrap(context.adapt(HTMLFactory.class), toc, (String) content, prefix);
 						}
 					}
@@ -1759,7 +2013,7 @@ public class DocRoute implements Route, BundleListener {
 				} else {
 					fragment.content(toc.getContent());
 				}
-				return new ValueAction(navWrap(context.adapt(HTMLFactory.class), toc, fragment.toString(), prefix));
+				return new ValueAction(doNavWrap ? navWrap(context.adapt(HTMLFactory.class), toc, fragment.toString(), prefix) : fragment.toString());
 			}
 			
 			if (path.length>2 && "resources".equals(path[0])) {
@@ -2111,7 +2365,7 @@ public class DocRoute implements Route, BundleListener {
 	 * @return
 	 */
 	public String tocLink(String href) {
-		String prefix = "#router/doc-content/"+docRoutePath;
+		String prefix = ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath;
 		if (href==null || !href.startsWith(prefix)) {
 			return href;
 		}
@@ -2274,7 +2528,7 @@ public class DocRoute implements Route, BundleListener {
 						String relURL = ret.substring(urlPrefix.length());
 						if (relURL.startsWith(docRoutePath)) {
 							if (relURL.startsWith(docRoutePath+"/packages/") || relURL.startsWith(docRoutePath+"/toc/")) {
-								return tocLink("#router/doc-content/"+relURL);								
+								return tocLink(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+relURL);								
 							}
 							int idx = relURL.lastIndexOf('/');
 							String fn = idx==-1 ? relURL : relURL.substring(idx+1);
@@ -2287,7 +2541,7 @@ public class DocRoute implements Route, BundleListener {
 									}
 								}
 								if (MIME_TYPE_HTML.equals(contentType)) {
-									return tocLink("#router/doc-content/"+relURL);
+									return tocLink(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+relURL);
 								}
 							}
 						}
@@ -2428,7 +2682,11 @@ public class DocRoute implements Route, BundleListener {
 	}
 	
 	public void setScrService(ScrService scrService) {
-		this.scrService = scrService;
+		this.scrService = scrService;		
+	}
+	
+	public ScrService getScrService() {
+		return scrService;
 	}
 
 	protected void addTocExtension(IExtensionTracker tracker, IExtension extension, IConfigurationElement ce) {
@@ -2645,7 +2903,7 @@ public class DocRoute implements Route, BundleListener {
 		if (content==null) {
 			// TODO - inclusion instead of AJAX
 			String sectionId = "section_"+getHtmlFactory().nextId();
-			String script = getHtmlFactory().tag(TagName.script, "nsdLoad('#"+sectionId+"','"+getDocRoutePath()+section.getHref()+"');").toString();
+			String script = getHtmlFactory().tag(TagName.script, "nsdLoad('#"+sectionId+"','"+getDocRoutePath()+section.getHref()+"?navWrap=no');").toString();
 			sectionFragment.content(getHtmlFactory().div().id(sectionId), script); 
 		} else {
 			sectionFragment.content(content); 
@@ -2656,6 +2914,59 @@ public class DocRoute implements Route, BundleListener {
 		}
 		
 		return sectionFragment.toString();
-	}		
+	}
+		
+	public void mountedDocumentation(Bundle bundle, String componentName, Fragment sink) {
+		
+		TocNode elementDoc = new TocNode(null, null, null);
+		
+		synchronized (bundleTocNodeFactories) {
+			BundleTocNodeFactoryEntry be = matchVersion(bundle);
+			if (be!=null) {				
+				List<TocNodeFactory> tnfl = CoreUtil.isBlank(componentName) ? be.tocNodeFactories : be.componentTocNodeFactories.get(componentName);
+				if (tnfl!=null) {
+					for (TocNodeFactory tnf: tnfl) {
+						if (tnf.isElementDoc() && tnf.isRoot(tnfl)) {
+							tnf.createTocNode(elementDoc, tnfl, false);
+						}
+					}
+				}					
+			}
+		}
+		
+		for (TocNode eDoc: elementDoc.getChildren()) {
+			sink.content(section(eDoc, -1));
+		}						
+	}
+	
+	protected void sections(Bundle bundle, String componentName, Tabs tabs) {		
+		TocNode sections = new TocNode(null, null, null);
+		
+		synchronized (bundleTocNodeFactories) {
+			BundleTocNodeFactoryEntry be = matchVersion(bundle);
+			if (be!=null) {				
+				List<TocNodeFactory> tnfl = CoreUtil.isBlank(componentName) ? be.tocNodeFactories : be.componentTocNodeFactories.get(componentName);
+				if (tnfl!=null) {
+					for (TocNodeFactory tnf: tnfl) {
+						if (tnf.isSection() && tnf.isRoot(tnfl)) {
+							tnf.createTocNode(sections, tnfl, false);
+						}
+					}
+				}
+			}
+		}
+		
+		sections.sort(false);
+		
+		for (TocNode section: sections.getChildren()) {
+			String tabName = StringEscapeUtils.escapeHtml4(section.getText().substring(1));
+			if (section.getIcon()!=null) {
+				tabName = getHtmlFactory().tag(TagName.img).attribute("src", getDocRoutePath()+section.getIcon()).style("margin-right", "5px") + tabName;
+			}
+			Fragment sectionFragment = getHtmlFactory().fragment();
+			sectionFragment.content(section(section, -1));
+			tabs.item(tabName, sectionFragment);
+		}		
+	}			
 	
 }

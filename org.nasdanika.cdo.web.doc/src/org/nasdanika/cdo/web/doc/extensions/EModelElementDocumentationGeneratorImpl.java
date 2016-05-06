@@ -234,7 +234,6 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		}		
 	}		
 	
-
 	public static UIElement<?> preStyle(UIElement<?> uiElement) {
 		return uiElement.style().whiteSpace().preWrap().style().font().family("monospace");
 	}

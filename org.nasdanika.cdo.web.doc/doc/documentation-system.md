@@ -21,7 +21,13 @@ This [video](https://www.youtube.com/watch?v=qfvr6HWo_Ok) demonstrates how to cr
 
 ### Table of content (TOC) entries and topics
 
-Table of content entries can be added through ``org.nasdanika.toc`` extension point defined in ``org.nasdanika.ecore`` bundle. TOC entries and topic can either reference a resource with documentation content or contain text, html, or markdown documentation elements.
+Table of content entries can be added through ``org.nasdanika.toc`` extension point defined in ``org.nasdanika.ecore`` bundle. TOC entries and topics can either reference a resource with documentation content or contain text, html, or markdown documentation elements. 
+
+TOC entries can be mounted to:
+
+* The root of the documentation tree, 
+* Other topics and TOC's,
+* Bundles, components, EPackages, and EClassifiers as sub-nodes, text in the overview tab, or tabs. 
 
 ### Search
 
@@ -49,4 +55,5 @@ Nasdanika documentation system leverages the following open-source components:
 * [Q](https://github.com/kriskowal/q)
 * [Font Awesome](https://fortawesome.github.io/Font-Awesome/)
 * [Lightbox](http://lokeshdhakar.com/projects/lightbox2/)
+* [PlantUML](http://plantuml.com/)
 

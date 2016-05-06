@@ -59,6 +59,20 @@ Examples:
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.extensions.BundleInfoResolver"
+            name="bundle-info">
+            <description><![CDATA[
+            Resolves bundle info TOC URL. Format: ``[[bundle-info>bundle symbolic name/bundle version]]``. Slash and bundle version are optional. Example: ``[[bundle-info>org.nasdanika.cdo.web]]`` is rendered as [[bundle-info>org.nasdanika.cdo.web]].
+            ]]></description>
+      </wiki-link-resolver>
+      <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.extensions.ComponentInfoResolver"
+            name="component-info">
+            <description><![CDATA[
+            Resolves OSGi component info TOC URL. Format: ``[[component-info>bundle symbolic name/bundle version/component name]]``. Slash and bundle version are optional. Example: ``[[component-info>org.nasdanika.cdo.web/Component Name]]``.
+            ]]></description>
+      </wiki-link-resolver>
+      <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.extensions.TocWikiLinkResolver"
             name="toc">
             <description><![CDATA[
