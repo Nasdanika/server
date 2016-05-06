@@ -179,7 +179,7 @@ class ModalImpl extends UIElementImpl<Modal> implements Modal {
 				try {
 					JSONObject jObj = new JSONObject();
 					if (backdrop!=null) {
-							jObj.put("backdrop", backdrop);
+						jObj.put("backdrop", backdrop);
 					}
 					if (keyboard!=null) {
 						jObj.put("keyboard", keyboard);						

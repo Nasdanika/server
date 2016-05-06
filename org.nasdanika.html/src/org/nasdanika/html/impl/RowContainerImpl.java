@@ -95,8 +95,21 @@ class RowContainerImpl<T extends RowContainer<T>> extends UIElementImpl<T> imple
 	}
 
 	@Override
-	public Row row() {
+	public Row row(Object... cells) {
 		Row row = new RowImpl();
+		for (Object cell: cells) {
+			row.cell(cell);
+		}
+		content.add(row);
+		return row;
+	}
+	
+	@Override
+	public Row headerRow(Object... headers) {
+		Row row = new RowImpl();
+		for (Object header: headers) {
+			row.header(header);
+		}
 		content.add(row);
 		return row;
 	}

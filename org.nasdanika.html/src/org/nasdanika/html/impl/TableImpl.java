@@ -17,8 +17,11 @@ class TableImpl extends RowContainerImpl<Table> implements Table {
 	private boolean responsive;
 
 	@Override
-	public Row row() {
+	public Row row(Object... cells) {
 		Row row = new RowImpl();
+		for (Object cell: cells) {
+			row.cell(cell);
+		}
 		content.add(row);
 		return row;
 	}

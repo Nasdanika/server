@@ -26,6 +26,18 @@ public interface RowContainer<T extends RowContainer<T>> extends Container<T>, U
 		
 	List<Row> rows();
 	
-	Row row();	
+	/**
+	 * Creates a row
+	 * @param cells Optional cells content.
+	 * @return
+	 */
+	Row row(Object...cells);
+	
+	/**
+	 * Creates a row
+	 * @param headers Optional headers content.
+	 * @return
+	 */
+	Row headerRow(Object...headers);			
 
 }
