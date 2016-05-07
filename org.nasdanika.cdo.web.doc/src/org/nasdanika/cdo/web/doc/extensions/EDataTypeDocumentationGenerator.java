@@ -40,7 +40,7 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 		if (instanceClass.isPrimitive()) {
 			icDiv.content(instanceClass.getName());
 		} else {
-			icDiv.content(markdownToHtml(docRoute, baseURL, urlPrefix, "[[javadoc>"+eDataType.getInstanceClassName()+"|"+eDataType.getInstanceClassName()+"]]"));
+			icDiv.content(docRoute.markdownToHtml(baseURL, urlPrefix, "[[javadoc>"+eDataType.getInstanceClassName()+"|"+eDataType.getInstanceClassName()+"]]"));
 		}
 		if (isArray) {
 			icDiv.content("[]");

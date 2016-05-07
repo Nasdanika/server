@@ -60,10 +60,6 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		return maxFirstSentenceLength;
 	}
 	
-	public String markdownToHtml(DocRoute docRoute, URL baseURL, String urlPrefix, String markdownSource) {
-		return new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(docRoute.preProcessMarkdown(markdownSource, baseURL, urlPrefix), docRoute.createMarkdownLinkRenderer(baseURL, urlPrefix));
-	}
-	
 	public String getModelDocumentation(DocRoute docRoute, URL baseURL, String urlPrefix, EModelElement modelElement) {
 		EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
 		if (docAnn==null) {
@@ -73,7 +69,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		if (CoreUtil.isBlank(markdown)) {
 			return null;
 		}
-		return markdownToHtml(docRoute, baseURL, urlPrefix, markdown);		
+		return docRoute.markdownToHtml(baseURL, urlPrefix, markdown);		
 	}
 	
 	public void mountedModelElementDocumentation(DocRoute docRoute, EClassifier eClassifier, Fragment sink) {
@@ -132,7 +128,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 			return "";
 		}
 
-		String text = Jsoup.parse(markdownToHtml(docRoute, baseURL, urlPrefix, markdown)).text();
+		String text = Jsoup.parse(docRoute.markdownToHtml(baseURL, urlPrefix, markdown)).text();
 		return firstSentence(text);
 	}
 		

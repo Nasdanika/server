@@ -94,7 +94,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			modifiers.append("class ");
 		}
 		
-		ret.content(htmlFactory.div(markdownToHtml(docRoute, baseURL, urlPrefix, modifiers+" [[javadoc>"+eClass.getInstanceClassName()+"|"+eClass.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
+		ret.content(htmlFactory.div(docRoute.markdownToHtml(baseURL, urlPrefix, modifiers+" [[javadoc>"+eClass.getInstanceClassName()+"|"+eClass.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
 	
 		Tabs tabs = htmlFactory.tabs();
 		ret.content(tabs);
@@ -759,7 +759,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 				String docText = "";
 				if (!CoreUtil.isBlank(routeEntry.getDescription())) {
 					if ("text/markdown".equalsIgnoreCase(routeEntry.getDescriptionContentType())) {
-						String html = htmlFactory.div(markdownToHtml(docRoute, baseURL, urlPrefix, routeEntry.getDescription())).addClass("markdown-body").style().margin().bottom("5px").toString();
+						String html = htmlFactory.div(docRoute.markdownToHtml(baseURL, urlPrefix, routeEntry.getDescription())).addClass("markdown-body").style().margin().bottom("5px").toString();
 						accordionFragment.content(html);
 						docText = Jsoup.parse(html).text();;
 					} else if ("text/html".equalsIgnoreCase(routeEntry.getDescriptionContentType())) {

@@ -35,7 +35,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EEnum "+eEnum.getName()));
 		ret.content(htmlFactory.tag(TagName.h2, enumIcon, eEnum.getName()));
 		
-		ret.content(htmlFactory.div(markdownToHtml(docRoute, baseURL, urlPrefix, "enum [[javadoc>"+eEnum.getInstanceClassName()+"|"+eEnum.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
+		ret.content(htmlFactory.div(docRoute.markdownToHtml(baseURL, urlPrefix, "enum [[javadoc>"+eEnum.getInstanceClassName()+"|"+eEnum.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
 		String doc = getModelDocumentation(docRoute, baseURL, urlPrefix, eEnum);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)

@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Array;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -1430,94 +1431,170 @@ public class DocRoute implements Route, BundleListener {
 		Tabs tabs = htmlFactory.tabs().style().margin().right("5px");
 		ret.content(tabs);
 		
-		Fragment overviewContent = htmlFactory.fragment();		
-		tabs.item("Overview", overviewContent);
+		generateBundleOverviewTab(bundle, tabs);		
+		generateBundleHeadersTab(bundle, tabs);		
+		generateBundleRequiredByTab(bundle, tabs);				
+		generateBundleRegisteredServicesTab(bundle, tabs);
 		
-		Table overviewTable = htmlFactory.table().bordered();
-		overviewContent.content(overviewTable);
-		
-		Row versionRow = overviewTable.row();
-		versionRow.header("Version");
-		versionRow.cell(bundle.getVersion());
-		
-		Row stateRow = overviewTable.row();
-		stateRow.header("State");
-		
-		switch (bundle.getState()) {
-		case Bundle.ACTIVE:
-			stateRow.cell("Active");
-			break;
-		case Bundle.INSTALLED:
-			stateRow.cell("Installed");
-			break;
-		case Bundle.RESOLVED:
-			stateRow.cell("Resolved");
-			break;
-		case Bundle.STARTING:
-			stateRow.cell("Starting");
-			break;
-		case Bundle.STOPPING:
-			stateRow.cell("Stopping");
-			break;
-		case Bundle.UNINSTALLED:
-			stateRow.cell("Uninstalled");
-			break;				
-		default:
-			stateRow.cell("Undefined: "+bundle.getState());
-			break;				
+		ServiceReference<?>[] servicesInUse = bundle.getServicesInUse();
+		if (servicesInUse!=null) {
+			tabs.item("Services In Use", "TODO");
 		}
+
+		// In sub-nodes
+//		if (scrService != null) {
+//			Component[] components = scrService.getComponents(bundle);
+//			if (components!=null) {
+//				tabs.item("Components", "TODO");
+//			}
+//		}
 		
-		Row idRow = overviewTable.row();
-		idRow.header("ID");
-		idRow.cell(bundle.getBundleId());
+		tabs.item("Context Diagram", "TODO");
 		
-		mountedDocumentation(bundle, null, overviewContent);
+		sections(bundle, null, tabs);
 		
-		Table headersTable = htmlFactory.table().bordered();
-		headersTable.headerRow("Name", "Value").style(Style.PRIMARY);
-		for (String header: Collections.list(bundle.getHeaders().keys())) {
-			try {
-				ManifestElement[] manifestElements = ManifestElement.parseHeader(header, bundle.getHeaders().get(header));
-				if (manifestElements != null) {
-					if (REQUIRE_BUNDLE_MANIFEST_HEADER.equals(header)) {
-						Table requireBundlesTable = htmlFactory.table().bordered();
-						requireBundlesTable.headerRow("Symbolic name", "Version").style(Style.PRIMARY);
-						for (ManifestElement me: manifestElements) {
-							String symbolicName = me.getValue();
-							String versionRange = me.getAttribute(BUNDLE_VERSION);
-							VersionRange vr = versionRange == null ? null : new VersionRange(versionRange);
-							Bundle targetBundle = null;
-							for (Bundle rb: bundleContext.getBundles()) {
-								if (rb.getSymbolicName().equals(symbolicName) && (vr == null || vr.includes(rb.getVersion()))) {
-									if (targetBundle == null || targetBundle.getVersion().compareTo(rb.getVersion()) < 0) {
-										targetBundle = rb;
-									}
-								}
-							}
-							requireBundlesTable.row(
-									targetBundle == null ? symbolicName : htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+symbolicName+"/"+targetBundle.getVersion()+"/index.html", symbolicName), 
-									versionRange == null ? "" : versionRange);
-						}
-						tabs.item("Required bundles", requireBundlesTable);
-					} else {
-						if (manifestElements.length == 1) {
-							headersTable.row(StringEscapeUtils.escapeHtml4(header), StringEscapeUtils.escapeHtml4(manifestElements[0].toString()));
-						} else {								
-							Tag list = htmlFactory.tag(TagName.ul);
-							for (ManifestElement me: manifestElements) {
-								list.content(htmlFactory.tag(TagName.li, StringEscapeUtils.escapeHtml4(me.toString())));
-							}	
-							headersTable.row(StringEscapeUtils.escapeHtml4(header), list);
-						}
+		
+//		if (scrService!=null) {
+//			Component[] components = scrService.getComponents(bundle);
+//			if (components!=null) {
+//				for (Component cmp: components) {
+//					System.out.println(cmp.getName());
+//					String[] svcs = cmp.getServices();
+//					if (svcs!=null) {
+//						System.out.println("\t--- services");
+//						for (String svc: svcs) {
+//							System.out.println("\t"+svc);
+//						}
+//					}
+//					Reference[] refs = cmp.getReferences();
+//					if (refs!=null) {
+//						System.out.println("\t--- references");
+//						for (Reference ref: refs) {
+//							System.out.println("\t"+ref.getServiceName()+" "+Arrays.toString(ref.getServiceReferences()));
+//						}					
+//					}
+//				}
+//			}
+//		}
+		return ret.toString();
+	}
+
+	private void generateBundleRegisteredServicesTab(Bundle bundle, Tabs tabs) {
+		ServiceReference<?>[] registeredServices = bundle.getRegisteredServices();
+		if (registeredServices!=null) {
+			Table registeredServicesTable = htmlFactory.table().bordered();
+			Row hr1 = registeredServicesTable.row().style(Style.PRIMARY);
+			hr1.header("Class(es)").rowspan(2);
+			hr1.header("Component").rowspan(2);
+			hr1.header("Scope").rowspan(2).bootstrap().text().center();
+			hr1.header("Using bundle(s)").rowspan(2);
+			hr1.header("Properties").colspan(3).bootstrap().text().center();
+			registeredServicesTable.headerRow("Name", "Type", "Value(s)").style(Style.PRIMARY);
+			
+			for (ServiceReference<?> sr: registeredServices) {
+				String[] propertyKeys = sr.getPropertyKeys();
+				Map<String, Object> serviceProperties = new TreeMap<>();
+				if (propertyKeys != null) {
+					for (String pKey: propertyKeys) {
+						serviceProperties.put(pKey, sr.getProperty(pKey));
 					}
 				}
-			} catch (BundleException e) {
-				headersTable.row(header, "Exception: "+e.toString());
-				e.printStackTrace();
+				String[] objectClass = (String[]) serviceProperties.remove("objectClass");
+				String componentName = (String) serviceProperties.remove("component.name");
+				Long componentId = (Long) serviceProperties.remove("component.id");
+				
+				// Not used, but no need to display either
+				serviceProperties.remove("service.id");
+				serviceProperties.remove("service.bundleid");
+				
+				String serviceScope = (String) serviceProperties.remove("service.scope");
+				
+				int rowSpan = serviceProperties.isEmpty() ? 1 : serviceProperties.size();
+				
+				Row serviceRow = registeredServicesTable.row();
+				
+				// Service class
+				if (objectClass.length == 0) {
+					serviceRow.cell().rowspan(rowSpan);
+				} else if (objectClass.length == 1) {
+					serviceRow.cell(javaDocLink(objectClass[0], true)).rowspan(rowSpan);
+				} else {
+					Tag ul = htmlFactory.tag(TagName.ul);
+					for (String oc: objectClass) {
+						ul.content(htmlFactory.tag(TagName.li, javaDocLink(oc, true)));
+					}
+					serviceRow.cell(ul).rowspan(rowSpan);
+				}
+				
+				// Component
+				if (CoreUtil.isBlank(componentName) || componentId == null) {
+					serviceRow.cell().rowspan(rowSpan);					
+				} else {
+					serviceRow.cell(componentLink(bundle, componentName, componentId)).rowspan(rowSpan); 
+				}
+				
+				// Scope
+				serviceRow.cell(serviceScope == null ? "" : serviceScope).rowspan(rowSpan);										
+				
+				// TODO - ignore component properties, component link
+								
+				Bundle[] usingBundles = sr.getUsingBundles();
+				if (usingBundles == null) {
+					serviceRow.cell().rowspan(rowSpan);
+				} else if (usingBundles.length == 1) {
+					serviceRow.cell(bundleLink(usingBundles[0])).rowspan(rowSpan); 					
+				} else {
+					Tag ul = htmlFactory.tag(TagName.ul);
+					for (Bundle ub: usingBundles) {
+						ul.content(TagName.li, bundleLink(ub));
+					}
+					serviceRow.cell(ul).rowspan(rowSpan);					
+				}
+				
+				if (serviceProperties.isEmpty()) {
+					serviceRow.cell("").colspan(3);
+				} else {
+					Iterator<Entry<String, Object>> pit = serviceProperties.entrySet().iterator();
+					Entry<String, Object> firstEntry = pit.next();
+					serviceRow.cell(StringEscapeUtils.escapeHtml4(firstEntry.getKey()));
+					serviceRow.cell(valueTypeLink(firstEntry.getValue()));
+					serviceRow.cell(renderValue(firstEntry.getValue()));
+					while (pit.hasNext()) {
+						Entry<String, Object> entry = pit.next();
+						registeredServicesTable.row(StringEscapeUtils.escapeHtml4(entry.getKey()), valueTypeLink(entry.getValue()), renderValue(entry.getValue()));
+					}
+				}
 			}
+			tabs.item("Registered Services", registeredServicesTable);
 		}
-		tabs.item("Headers", headersTable);
+	}
+	
+	private String valueTypeLink(Object value) {
+		if (value == null) {
+			return "";
+		}
+		if (value.getClass().isArray()) {
+			return javaDocLink(value.getClass().getComponentType().getName(), true)+"[]";
+		}
+		return javaDocLink(value.getClass().getName(), true);
+	}
+	
+	private Object renderValue(Object value) {
+		if (value == null) {
+			return "";
+		}
+		if (value.getClass().isArray()) {
+			Tag ul = htmlFactory.tag(TagName.ul);
+			for (int i = 0; i < Array.getLength(value); ++i) {
+				ul.content(TagName.li, renderValue(Array.get(value, i)));
+			}
+			return ul;
+		}
+		return StringEscapeUtils.escapeHtml4(value.toString());
 		
+	}
+
+	private void generateBundleRequiredByTab(Bundle bundle, Tabs tabs) {
 		// Required by
 		List<Bundle> siblings = new ArrayList<>();
 		for (Bundle b: bundleContext.getBundles()) {
@@ -1572,96 +1649,102 @@ public class DocRoute implements Route, BundleListener {
 			Table requiredByTable = htmlFactory.table().bordered();
 			requiredByTable.headerRow("Symbolic name", "Version").style(Style.PRIMARY);
 			for (Bundle rb: requiredBy) {
-				requiredByTable.row(
-						htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+rb.getSymbolicName()+"/"+rb.getVersion()+"/index.html", rb.getSymbolicName()), 
-						rb.getVersion());
+				requiredByTable.row(bundleLink(rb),	rb.getVersion());
 			}
 			tabs.item("Required by", requiredByTable);
-		}				
+		}
+	}
+
+	private void generateBundleOverviewTab(Bundle bundle, Tabs tabs) {
+		Fragment overviewContent = htmlFactory.fragment();		
+		tabs.item("Overview", overviewContent);
 		
-		ServiceReference<?>[] registeredServices = bundle.getRegisteredServices();
-		if (registeredServices!=null) {
-			Table registeredServicesTable = htmlFactory.table().bordered();
-			Row hr1 = registeredServicesTable.row().style(Style.PRIMARY);
-			hr1.header("Class").rowspan(2);
-			hr1.header("Using bundle(s)").rowspan(2);
-			hr1.header("Properties").colspan(2).bootstrap().text().center();
-			registeredServicesTable.headerRow("Name", "Value(s)").style(Style.PRIMARY);
-			
-			for (ServiceReference<?> sr: registeredServices) {
-				// TODO - get rid of the hack - objectClass property
-				String srStr = sr.toString();
-				int idx = srStr.indexOf("}={");
-				Row serviceRow = registeredServicesTable.row();
-				if (idx==-1) {
-					serviceRow.cell(StringEscapeUtils.escapeHtml4(srStr)); // TODO - colspan
-				} else {
-					// TODO - ignore component properties, component link
-					
-					String[] propertyKeys = sr.getPropertyKeys();
-					int rowSpan = propertyKeys == null || propertyKeys.length == 0 ? 1 : propertyKeys.length;
-					
-					// TODO - split, JavaDoc link
-					serviceRow.cell(StringEscapeUtils.escapeHtml4(srStr.substring(1, idx))).rowspan(rowSpan);
-									
-					Bundle[] usingBundles = sr.getUsingBundles();
-					serviceRow.cell("Using bundles...").rowspan(rowSpan);
-					
-					if (propertyKeys == null || propertyKeys.length == 0) {
-						serviceRow.cell("").colspan(2);
+		Table overviewTable = htmlFactory.table().bordered();
+		overviewContent.content(overviewTable);
+		
+		Row versionRow = overviewTable.row();
+		versionRow.header("Version");
+		versionRow.cell(bundle.getVersion());
+		
+		Row stateRow = overviewTable.row();
+		stateRow.header("State");
+		
+		switch (bundle.getState()) {
+		case Bundle.ACTIVE:
+			stateRow.cell("Active");
+			break;
+		case Bundle.INSTALLED:
+			stateRow.cell("Installed");
+			break;
+		case Bundle.RESOLVED:
+			stateRow.cell("Resolved");
+			break;
+		case Bundle.STARTING:
+			stateRow.cell("Starting");
+			break;
+		case Bundle.STOPPING:
+			stateRow.cell("Stopping");
+			break;
+		case Bundle.UNINSTALLED:
+			stateRow.cell("Uninstalled");
+			break;				
+		default:
+			stateRow.cell("Undefined: "+bundle.getState());
+			break;				
+		}
+		
+		Row idRow = overviewTable.row();
+		idRow.header("ID");
+		idRow.cell(bundle.getBundleId());
+		
+		mountedDocumentation(bundle, null, overviewContent);
+	}
+
+	private void generateBundleHeadersTab(Bundle bundle, Tabs tabs) {
+		Table headersTable = htmlFactory.table().bordered();
+		headersTable.headerRow("Name", "Value").style(Style.PRIMARY);
+		for (String header: Collections.list(bundle.getHeaders().keys())) {
+			try {
+				ManifestElement[] manifestElements = ManifestElement.parseHeader(header, bundle.getHeaders().get(header));
+				if (manifestElements != null) {
+					if (REQUIRE_BUNDLE_MANIFEST_HEADER.equals(header)) {
+						Table requireBundlesTable = htmlFactory.table().bordered();
+						requireBundlesTable.headerRow("Symbolic name", "Version").style(Style.PRIMARY);
+						for (ManifestElement me: manifestElements) {
+							String symbolicName = me.getValue();
+							String versionRange = me.getAttribute(BUNDLE_VERSION);
+							VersionRange vr = versionRange == null ? null : new VersionRange(versionRange);
+							Bundle targetBundle = null;
+							for (Bundle rb: bundleContext.getBundles()) {
+								if (rb.getSymbolicName().equals(symbolicName) && (vr == null || vr.includes(rb.getVersion()))) {
+									if (targetBundle == null || targetBundle.getVersion().compareTo(rb.getVersion()) < 0) {
+										targetBundle = rb;
+									}
+								}
+							}
+							requireBundlesTable.row(
+									targetBundle == null ? symbolicName : bundleLink(targetBundle), 
+									versionRange == null ? "" : versionRange);
+						}
+						tabs.item("Required bundles", requireBundlesTable);
 					} else {
-						serviceRow.cell(StringEscapeUtils.escapeHtml4(propertyKeys[0]));
-						serviceRow.cell(sr.getProperty(propertyKeys[0]));
-						for (int i=1; i<propertyKeys.length; ++i) {
-							registeredServicesTable.row(StringEscapeUtils.escapeHtml4(propertyKeys[i]), sr.getProperty(propertyKeys[i]));
+						if (manifestElements.length == 1) {
+							headersTable.row(StringEscapeUtils.escapeHtml4(header), StringEscapeUtils.escapeHtml4(manifestElements[0].toString()));
+						} else {								
+							Tag list = htmlFactory.tag(TagName.ul);
+							for (ManifestElement me: manifestElements) {
+								list.content(htmlFactory.tag(TagName.li, StringEscapeUtils.escapeHtml4(me.toString())));
+							}	
+							headersTable.row(StringEscapeUtils.escapeHtml4(header), list);
 						}
 					}
 				}
+			} catch (BundleException e) {
+				headersTable.row(header, "Exception: "+e.toString());
+				e.printStackTrace();
 			}
-			tabs.item("Registered Services", registeredServicesTable);
 		}
-		
-		ServiceReference<?>[] servicesInUse = bundle.getServicesInUse();
-		if (servicesInUse!=null) {
-			tabs.item("Services In Use", "TODO");
-		}
-
-		// In sub-nodes
-//		if (scrService != null) {
-//			Component[] components = scrService.getComponents(bundle);
-//			if (components!=null) {
-//				tabs.item("Components", "TODO");
-//			}
-//		}
-		
-		tabs.item("Context Diagram", "TODO");
-		
-		sections(bundle, null, tabs);
-		
-		
-//		if (scrService!=null) {
-//			Component[] components = scrService.getComponents(bundle);
-//			if (components!=null) {
-//				for (Component cmp: components) {
-//					System.out.println(cmp.getName());
-//					String[] svcs = cmp.getServices();
-//					if (svcs!=null) {
-//						System.out.println("\t--- services");
-//						for (String svc: svcs) {
-//							System.out.println("\t"+svc);
-//						}
-//					}
-//					Reference[] refs = cmp.getReferences();
-//					if (refs!=null) {
-//						System.out.println("\t--- references");
-//						for (Reference ref: refs) {
-//							System.out.println("\t"+ref.getServiceName()+" "+Arrays.toString(ref.getServiceReferences()));
-//						}					
-//					}
-//				}
-//			}
-//		}
-		return ret.toString();
+		tabs.item("Headers", headersTable);
 	}
 	
 	protected String generateComponentInfo(Component component) {
@@ -2967,6 +3050,42 @@ public class DocRoute implements Route, BundleListener {
 			sectionFragment.content(section(section, -1));
 			tabs.item(tabName, sectionFragment);
 		}		
-	}			
+	}
+	
+	/**
+	 * Helper method.
+	 * @param baseURL
+	 * @param urlPrefix
+	 * @param markdownSource
+	 * @return
+	 */
+	public String markdownToHtml(URL baseURL, String urlPrefix, String markdownSource) {
+		return new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(preProcessMarkdown(markdownSource, baseURL, urlPrefix), createMarkdownLinkRenderer(baseURL, urlPrefix));
+	}
+
+	public String javaDocLink(String className, boolean qualified) {
+		try {
+			if (qualified) {
+				return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"|"+className+"]]");
+			}
+			
+			return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"]]");
+		} catch (MalformedURLException e) {
+			return htmlFactory.span("Exception: "+e).bootstrap().text().color(Style.DANGER).toString();
+		}		
+				
+	}
+	
+	public Tag bundleLink(Bundle bundle) {
+		return htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", bundle.getSymbolicName());		
+	}
+	
+	public Tag componentLink(Component component) {
+		return componentLink(component.getBundle(), component.getName(), component.getId());
+	}
+	
+	public Tag componentLink(Bundle bundle, String componentName, long componentId) {
+		return htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/component/"+componentId+"/index.html", componentName);		
+	}
 	
 }
