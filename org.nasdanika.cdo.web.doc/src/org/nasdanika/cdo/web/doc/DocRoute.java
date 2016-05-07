@@ -1435,11 +1435,7 @@ public class DocRoute implements Route, BundleListener {
 		generateBundleHeadersTab(bundle, tabs);		
 		generateBundleRequiredByTab(bundle, tabs);				
 		generateBundleRegisteredServicesTab(bundle, tabs);
-		
-		ServiceReference<?>[] servicesInUse = bundle.getServicesInUse();
-		if (servicesInUse!=null) {
-			tabs.item("Services In Use", "TODO");
-		}
+		generateServicesInUseTab(bundle, tabs);
 
 		// In sub-nodes
 //		if (scrService != null) {
@@ -1477,6 +1473,83 @@ public class DocRoute implements Route, BundleListener {
 //			}
 //		}
 		return ret.toString();
+	}
+
+	private void generateServicesInUseTab(Bundle bundle, Tabs tabs) {
+		ServiceReference<?>[] servicesInUse = bundle.getServicesInUse();
+		if (servicesInUse!=null) {
+			Table servicesInUseTable = htmlFactory.table().bordered();
+			Row hr1 = servicesInUseTable.row().style(Style.PRIMARY);
+			hr1.header("Class(es)").rowspan(2);
+			hr1.header("Bundle").rowspan(2);
+			hr1.header("Component").rowspan(2);
+			hr1.header("Scope").rowspan(2).bootstrap().text().center();
+			hr1.header("Properties").colspan(3).bootstrap().text().center();
+			servicesInUseTable.headerRow("Name", "Type", "Value(s)").style(Style.PRIMARY);
+			
+			for (ServiceReference<?> sr: servicesInUse) {
+				String[] propertyKeys = sr.getPropertyKeys();
+				Map<String, Object> serviceProperties = new TreeMap<>();
+				if (propertyKeys != null) {
+					for (String pKey: propertyKeys) {
+						serviceProperties.put(pKey, sr.getProperty(pKey));
+					}
+				}
+				String[] objectClass = (String[]) serviceProperties.remove("objectClass");
+				String componentName = (String) serviceProperties.remove("component.name");
+				Long componentId = (Long) serviceProperties.remove("component.id");
+				
+				// Not used, but no need to display either
+				serviceProperties.remove("service.id");
+				serviceProperties.remove("service.bundleid");
+				
+				String serviceScope = (String) serviceProperties.remove("service.scope");
+				
+				int rowSpan = serviceProperties.isEmpty() ? 1 : serviceProperties.size();
+				
+				Row serviceRow = servicesInUseTable.row();
+				
+				// Service class
+				if (objectClass.length == 0) {
+					serviceRow.cell().rowspan(rowSpan);
+				} else if (objectClass.length == 1) {
+					serviceRow.cell(javaDocLink(objectClass[0], true)).rowspan(rowSpan);
+				} else {
+					Tag ul = htmlFactory.tag(TagName.ul);
+					for (String oc: objectClass) {
+						ul.content(htmlFactory.tag(TagName.li, javaDocLink(oc, true)));
+					}
+					serviceRow.cell(ul).rowspan(rowSpan);
+				}
+				
+				serviceRow.cell(bundleLink(sr.getBundle())).rowspan(rowSpan); 					
+				
+				// Component
+				if (CoreUtil.isBlank(componentName) || componentId == null) {
+					serviceRow.cell().rowspan(rowSpan);					
+				} else {
+					serviceRow.cell(componentLink(sr.getBundle(), componentName, componentId)).rowspan(rowSpan); 
+				}
+				
+				// Scope
+				serviceRow.cell(serviceScope == null ? "" : serviceScope).rowspan(rowSpan);										
+				
+				if (serviceProperties.isEmpty()) {
+					serviceRow.cell("").colspan(3);
+				} else {
+					Iterator<Entry<String, Object>> pit = serviceProperties.entrySet().iterator();
+					Entry<String, Object> firstEntry = pit.next();
+					serviceRow.cell(StringEscapeUtils.escapeHtml4(firstEntry.getKey()));
+					serviceRow.cell(valueTypeLink(firstEntry.getValue()));
+					serviceRow.cell(renderValue(firstEntry.getValue()));
+					while (pit.hasNext()) {
+						Entry<String, Object> entry = pit.next();
+						servicesInUseTable.row(StringEscapeUtils.escapeHtml4(entry.getKey()), valueTypeLink(entry.getValue()), renderValue(entry.getValue()));
+					}
+				}
+			}
+			tabs.item("Services In Use", servicesInUseTable);
+		}
 	}
 
 	private void generateBundleRegisteredServicesTab(Bundle bundle, Tabs tabs) {
@@ -1535,8 +1608,6 @@ public class DocRoute implements Route, BundleListener {
 				
 				// Scope
 				serviceRow.cell(serviceScope == null ? "" : serviceScope).rowspan(rowSpan);										
-				
-				// TODO - ignore component properties, component link
 								
 				Bundle[] usingBundles = sr.getUsingBundles();
 				if (usingBundles == null) {
