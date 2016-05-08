@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.doc.extensions;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -23,28 +24,35 @@ public class BundleInfoResolver implements WikiLinkResolver, Renderer {
 		int slashIdx = spec.indexOf("/");
 		String bundleSymbolicName = slashIdx == -1 ? spec : spec.substring(0, slashIdx);
 		Version version = slashIdx == -1 ? null : new Version(spec.substring(slashIdx+1));
-		List<Version> availableVersions = new ArrayList<>();		
+		List<Bundle> availableBundles = new ArrayList<>();		
 		DocRoute docRoute = (DocRoute) environment.get(DocRoute.class);
 		for (Bundle bundle: docRoute.getBundleContext().getBundles()) {
 			if (bundleSymbolicName.equals(bundle.getSymbolicName())) {
-				availableVersions.add(bundle.getVersion());
+				availableBundles.add(bundle);
 			}
 		}
-		if (availableVersions.isEmpty()) {
+		if (availableBundles.isEmpty()) {
 			return null;
 		}
-		Collections.sort(availableVersions);
-		Version matchedVersion;
+		Collections.sort(availableBundles, new Comparator<Bundle>() {
+
+			@Override
+			public int compare(Bundle o1, Bundle o2) {
+				return o1.getVersion().compareTo(o2.getVersion());
+			}
+		});
+		
+		Bundle matchedBundle;
 		if (version == null) {
 			// Latest version
-			matchedVersion = availableVersions.get(availableVersions.size()-1);
+			matchedBundle = availableBundles.get(availableBundles.size()-1);
 		} else {
 			// Lowest lesser version
-			matchedVersion = availableVersions.get(0);
-			Collections.reverse(availableVersions);
-			for (Version availableVersion : availableVersions) {
-				if (availableVersion.compareTo(version) <= 0) {
-					matchedVersion = availableVersion;
+			matchedBundle = availableBundles.get(0);
+			Collections.reverse(availableBundles);
+			for (Bundle availableBundle: availableBundles) {
+				if (availableBundle.getVersion().compareTo(version) <= 0) {
+					matchedBundle = availableBundle;
 					break;
 				}
 			}
@@ -52,7 +60,7 @@ public class BundleInfoResolver implements WikiLinkResolver, Renderer {
 		
 		specTL.set(spec);
 		docRoutePathTL.set(docRoutePath);
-		return docRoutePath+"/bundle-info/"+bundleSymbolicName+"/"+matchedVersion+"/index.html";
+		return docRoutePath+DocRoute.BUNDLE_INFO_PATH+matchedBundle.getBundleId()+"/index.html";
 	}
 
 	@Override

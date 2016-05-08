@@ -79,7 +79,7 @@ public class ComponentInfoResolver implements WikiLinkResolver, Renderer {
 			if (component.getName().equals(componentName)) {
 				specTL.set(spec);
 				docRoutePathTL.set(docRoutePath);
-				return docRoutePath+"/bundle-info/"+bundleSymbolicName+"/"+matchedBundle.getVersion()+"/component/"+component.getId()+"/index.html";				
+				return docRoutePath+DocRoute.COMPONENT_INFO_PATH+component.getId()+"/index.html";				
 			}
 		}
 

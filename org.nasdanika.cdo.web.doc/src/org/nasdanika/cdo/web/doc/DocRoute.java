@@ -40,6 +40,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.felix.scr.Component;
+import org.apache.felix.scr.Reference;
 import org.apache.felix.scr.ScrService;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
@@ -81,6 +82,7 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Style;
+import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -114,6 +116,7 @@ import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route, BundleListener {
 		
+	private static final String COMPONENT_ID_PROPERTY = "component.id";
 	private static final String REQUIRE_BUNDLE_MANIFEST_HEADER = "Require-Bundle";
 	private static final String ROUTER_DOC_CONTENT_FRAGMENT_PREFIX = "#router/doc-content/";
 	private static final String COMPONENT_NAME = "component-name";
@@ -146,6 +149,7 @@ public class DocRoute implements Route, BundleListener {
 	private static final String RESOURCES_PATH = "/resources/";
 	public static final String BUNDLE_PATH = "/bundle/";
 	public static final String BUNDLE_INFO_PATH = "/bundle-info/";
+	public static final String COMPONENT_INFO_PATH = "/component-info/";	
 	private static final String PACKAGES_PATH = "/packages/";
 	private static final String PACKAGES_SESSION_PATH = PACKAGES_PATH + "session/";
 	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
@@ -1054,7 +1058,7 @@ public class DocRoute implements Route, BundleListener {
 				Bundle bundle = (Bundle) e.getValue();
 				TocNode bundleToc = parentToc.createChild(
 						localName+" ("+bundle.getVersion()+")", 
-						BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", 
+						BUNDLE_INFO_PATH+bundle.getBundleId()+"/index.html", 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
 						null);	
 				if (scrService != null) {
@@ -1067,7 +1071,7 @@ public class DocRoute implements Route, BundleListener {
 						for (Component component: componentMap.values()) {
 							TocNode componentToc = bundleToc.createChild(
 									component.getName(), 
-									BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/component/"+component.getId()+"/index.html", 
+									COMPONENT_INFO_PATH+component.getId()+"/index.html", 
 									"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
 									null);
 
@@ -1143,7 +1147,7 @@ public class DocRoute implements Route, BundleListener {
 					Bundle bundle = (Bundle) e.getValue();
 					TocNode bundleToc = parentToc.createChild(
 							path+"."+localName+" "+bundle.getVersion(), 
-							BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", 
+							BUNDLE_INFO_PATH+bundle.getBundleId()+"/index.html", 
 							"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
 							null);
 					if (scrService != null) {
@@ -1156,7 +1160,7 @@ public class DocRoute implements Route, BundleListener {
 							for (Component component: componentMap.values()) {
 								bundleToc.createChild(
 										component.getName(), 
-										BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/component/"+component.getId()+"/index.html", 
+										COMPONENT_INFO_PATH+component.getId()+"/index.html", 
 										"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
 										null);
 							}
@@ -1374,37 +1378,46 @@ public class DocRoute implements Route, BundleListener {
 			}
 			
 			String[] ta = tail.split("/");
-			if (ta.length<3) {
+			if (ta.length != 2) {
 				return null;
 			}
-			Version bundleVersion = new Version(ta[1]);
-			for (Bundle targetBundle: bundleContext.getBundles()) {
-				if (ta[0].equals(targetBundle.getSymbolicName()) && bundleVersion.equals(targetBundle.getVersion())) {
-					if (INDEX_HTML.equals(ta[2])) {
-						return generateBundleInfo(targetBundle);
-					}
-					
-					if (DIAGRAM_PNG.equals(ta[2])) {
-						return generateBundleContextDiagram(context);
-					}
-					
-					if ("component".equals(ta[2]) && scrService!=null) {
-						Component component = scrService.getComponent(Long.parseLong(ta[3]));
-						if (component!=null) {
-							if (INDEX_HTML.equals(ta[4])) {
-								return generateComponentInfo(component);
-							}
-							if (DIAGRAM_PNG.equals(ta[4])) {
-								return generateComponentContextDiagram(context);
-							}							
-						}
-					}
-					
-					return null;
+			Bundle bundle = bundleContext.getBundle(Long.parseLong(ta[0]));
+			if (bundle != null) {
+				if (INDEX_HTML.equals(ta[1])) {
+					return generateBundleInfo(bundle);
 				}
+				
+				if (DIAGRAM_PNG.equals(ta[1])) {
+					return generateBundleContextDiagram(context, bundle);
+				}
+				
+				return null;
 			}
 			return null;
 		}
+		
+		if (path.startsWith(COMPONENT_INFO_PATH)) {
+			String tail = path.substring(COMPONENT_INFO_PATH.length());
+			
+			String[] ta = tail.split("/");
+			if (ta.length != 2 || scrService == null) {
+				return null;
+			}
+			Component component = scrService.getComponent(Long.parseLong(ta[0]));
+			if (component != null) {
+				if (INDEX_HTML.equals(ta[1])) {
+					return generateComponentInfo(component);
+				}
+				
+				if (DIAGRAM_PNG.equals(ta[1])) {
+					return generateComponentContextDiagram(context, component);
+				}
+				
+				return null;
+			}
+			return null;
+		}
+		
 		
 		// TODO - diagrams - package/classifier - session/global. Delegate to extensions. 
 		
@@ -1413,11 +1426,11 @@ public class DocRoute implements Route, BundleListener {
 		return null; // Not found
 	}
 
-	protected String generateComponentContextDiagram(HttpServletRequestContext context) {
+	protected String generateComponentContextDiagram(HttpServletRequestContext context, Component component) {
 		return "TODO diagram";
 	}
 
-	protected String generateBundleContextDiagram(HttpServletRequestContext context) {
+	protected String generateBundleContextDiagram(HttpServletRequestContext context, Bundle bundle) {
 		return "TODO diagram";
 	}
 
@@ -1448,30 +1461,6 @@ public class DocRoute implements Route, BundleListener {
 		tabs.item("Context Diagram", "TODO");
 		
 		sections(bundle, null, tabs);
-		
-		
-//		if (scrService!=null) {
-//			Component[] components = scrService.getComponents(bundle);
-//			if (components!=null) {
-//				for (Component cmp: components) {
-//					System.out.println(cmp.getName());
-//					String[] svcs = cmp.getServices();
-//					if (svcs!=null) {
-//						System.out.println("\t--- services");
-//						for (String svc: svcs) {
-//							System.out.println("\t"+svc);
-//						}
-//					}
-//					Reference[] refs = cmp.getReferences();
-//					if (refs!=null) {
-//						System.out.println("\t--- references");
-//						for (Reference ref: refs) {
-//							System.out.println("\t"+ref.getServiceName()+" "+Arrays.toString(ref.getServiceReferences()));
-//						}					
-//					}
-//				}
-//			}
-//		}
 		return ret.toString();
 	}
 
@@ -1497,7 +1486,7 @@ public class DocRoute implements Route, BundleListener {
 				}
 				String[] objectClass = (String[]) serviceProperties.remove("objectClass");
 				String componentName = (String) serviceProperties.remove("component.name");
-				Long componentId = (Long) serviceProperties.remove("component.id");
+				Long componentId = (Long) serviceProperties.remove(COMPONENT_ID_PROPERTY);
 				
 				// Not used, but no need to display either
 				serviceProperties.remove("service.id");
@@ -1513,11 +1502,11 @@ public class DocRoute implements Route, BundleListener {
 				if (objectClass.length == 0) {
 					serviceRow.cell().rowspan(rowSpan);
 				} else if (objectClass.length == 1) {
-					serviceRow.cell(javaDocLink(objectClass[0], true)).rowspan(rowSpan);
+					serviceRow.cell(javaDocLink(objectClass[0], true, false)).rowspan(rowSpan);
 				} else {
 					Tag ul = htmlFactory.tag(TagName.ul);
 					for (String oc: objectClass) {
-						ul.content(htmlFactory.tag(TagName.li, javaDocLink(oc, true)));
+						ul.content(htmlFactory.tag(TagName.li, javaDocLink(oc, true, false)));
 					}
 					serviceRow.cell(ul).rowspan(rowSpan);
 				}
@@ -1528,7 +1517,7 @@ public class DocRoute implements Route, BundleListener {
 				if (CoreUtil.isBlank(componentName) || componentId == null) {
 					serviceRow.cell().rowspan(rowSpan);					
 				} else {
-					serviceRow.cell(componentLink(sr.getBundle(), componentName, componentId)).rowspan(rowSpan); 
+					serviceRow.cell(componentLink(componentName, componentId)).rowspan(rowSpan); 
 				}
 				
 				// Scope
@@ -1574,7 +1563,7 @@ public class DocRoute implements Route, BundleListener {
 				}
 				String[] objectClass = (String[]) serviceProperties.remove("objectClass");
 				String componentName = (String) serviceProperties.remove("component.name");
-				Long componentId = (Long) serviceProperties.remove("component.id");
+				Long componentId = (Long) serviceProperties.remove(COMPONENT_ID_PROPERTY);
 				
 				// Not used, but no need to display either
 				serviceProperties.remove("service.id");
@@ -1590,11 +1579,11 @@ public class DocRoute implements Route, BundleListener {
 				if (objectClass.length == 0) {
 					serviceRow.cell().rowspan(rowSpan);
 				} else if (objectClass.length == 1) {
-					serviceRow.cell(javaDocLink(objectClass[0], true)).rowspan(rowSpan);
+					serviceRow.cell(javaDocLink(objectClass[0], true, false)).rowspan(rowSpan);
 				} else {
 					Tag ul = htmlFactory.tag(TagName.ul);
 					for (String oc: objectClass) {
-						ul.content(htmlFactory.tag(TagName.li, javaDocLink(oc, true)));
+						ul.content(htmlFactory.tag(TagName.li, javaDocLink(oc, true, false)));
 					}
 					serviceRow.cell(ul).rowspan(rowSpan);
 				}
@@ -1603,7 +1592,7 @@ public class DocRoute implements Route, BundleListener {
 				if (CoreUtil.isBlank(componentName) || componentId == null) {
 					serviceRow.cell().rowspan(rowSpan);					
 				} else {
-					serviceRow.cell(componentLink(bundle, componentName, componentId)).rowspan(rowSpan); 
+					serviceRow.cell(componentLink(componentName, componentId)).rowspan(rowSpan); 
 				}
 				
 				// Scope
@@ -1617,7 +1606,7 @@ public class DocRoute implements Route, BundleListener {
 				} else {
 					Tag ul = htmlFactory.tag(TagName.ul);
 					for (Bundle ub: usingBundles) {
-						ul.content(TagName.li, bundleLink(ub));
+						ul.content(htmlFactory.tag(TagName.li, bundleLink(ub)));
 					}
 					serviceRow.cell(ul).rowspan(rowSpan);					
 				}
@@ -1645,9 +1634,9 @@ public class DocRoute implements Route, BundleListener {
 			return "";
 		}
 		if (value.getClass().isArray()) {
-			return javaDocLink(value.getClass().getComponentType().getName(), true)+"[]";
+			return javaDocLink(value.getClass().getComponentType().getName(), true, true);
 		}
-		return javaDocLink(value.getClass().getName(), true);
+		return javaDocLink(value.getClass().getName(), true, false);
 	}
 	
 	private Object renderValue(Object value) {
@@ -1657,7 +1646,7 @@ public class DocRoute implements Route, BundleListener {
 		if (value.getClass().isArray()) {
 			Tag ul = htmlFactory.tag(TagName.ul);
 			for (int i = 0; i < Array.getLength(value); ++i) {
-				ul.content(TagName.li, renderValue(Array.get(value, i)));
+				ul.content(htmlFactory.tag(TagName.li, renderValue(Array.get(value, i))));
 			}
 			return ul;
 		}
@@ -1821,9 +1810,231 @@ public class DocRoute implements Route, BundleListener {
 	protected String generateComponentInfo(Component component) {
 		Fragment ret = htmlFactory.fragment();
 		ret.content(htmlFactory.tag(TagName.h3, "Component "+StringEscapeUtils.escapeHtml4(component.getName())));
-		Tabs tabs = htmlFactory.tabs();
+		Tabs tabs = htmlFactory.tabs().style().margin().right("5px");
 		ret.content(tabs);
 		
+		generateComponentOverviewTab(component, tabs);		
+		generateComponentPropertiesTab(component, tabs);
+		generateComponentReferencesTab(component, tabs);
+		generateComponentReferencedByTab(component, tabs);
+		generateComponentContextDiagramTab(component, tabs);
+		
+		sections(component.getBundle(), component.getName(), tabs);
+		
+		return ret.toString();
+	}
+	
+	private void generateComponentPropertiesTab(Component component, Tabs tabs) {
+		@SuppressWarnings("unchecked")
+		Dictionary<String, Object> properties = component.getProperties();
+		if (properties != null && !properties.isEmpty()) {
+			Map<String, Object> cProperties = new TreeMap<>();
+			for (String pKey: Collections.list(properties.keys())) {
+				cProperties.put(pKey, properties.get(pKey));
+			}
+			cProperties.remove("objectClass");
+			cProperties.remove("component.name");
+			cProperties.remove(COMPONENT_ID_PROPERTY);
+
+			if (!cProperties.isEmpty()) {
+				Table propertiesTable = htmlFactory.table().bordered();
+				propertiesTable.headerRow("Name", "Type", "Value(s)").style(Style.PRIMARY);
+				
+				for (Entry<String, Object> pe: cProperties.entrySet()) {
+					propertiesTable.row(StringEscapeUtils.escapeHtml4(pe.getKey()), valueTypeLink(pe.getValue()), renderValue(pe.getValue()));
+				}
+				tabs.item("Properties", propertiesTable);
+			}
+		}		
+	}
+	
+	private void generateComponentContextDiagramTab(Component component, Tabs tabs) {
+		tabs.item("Context Diagram", "TODO");
+	}
+	
+	private void generateComponentReferencesTab(Component component, Tabs tabs) {
+		Reference[] references = component.getReferences();
+		if (references != null && references.length > 0) {
+			Fragment referencesFragment = htmlFactory.fragment();
+			for (Reference reference: references) {
+				Table referenceInfoTable = htmlFactory.table().bordered();				
+				Fragment referenceInfoFragment = htmlFactory.fragment(referenceInfoTable);
+				
+				Row svcRow = referenceInfoTable.row();
+				svcRow.header("Service name");
+				svcRow.cell(javaDocLink(reference.getServiceName(), true, false));
+				
+				if (!CoreUtil.isBlank(reference.getTarget())) {
+					Row targetRow = referenceInfoTable.row();
+					targetRow.header("Target");
+					targetRow.cell(StringEscapeUtils.escapeHtml4(reference.getTarget()));
+				}
+				
+				Row multipleRow = referenceInfoTable.row();
+				multipleRow.header("Multiple");
+				multipleRow.cell(reference.isMultiple() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");
+				
+				Row optionalRow = referenceInfoTable.row();
+				optionalRow.header("Optional");
+				optionalRow.cell(reference.isOptional() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");
+								
+				Row satisfiedRow = referenceInfoTable.row();
+				satisfiedRow.header("Satisfied");
+				satisfiedRow.cell(reference.isSatisfied() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");
+				
+				Row staticRow = referenceInfoTable.row();
+				staticRow.header("Static");
+				staticRow.cell(reference.isStatic() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");				
+				
+				ServiceReference<?>[] serviceReferences = reference.getServiceReferences();
+				if (serviceReferences != null && serviceReferences.length > 0) {
+					Table serviceReferencesTable = htmlFactory.table().bordered();
+					Row hr1 = serviceReferencesTable.row().style(Style.PRIMARY);
+					hr1.header("Class(es)").rowspan(2);
+					hr1.header("Bundle").rowspan(2);
+					hr1.header("Component").rowspan(2);
+					hr1.header("Scope").rowspan(2).bootstrap().text().center();
+					hr1.header("Properties").colspan(3).bootstrap().text().center();
+					serviceReferencesTable.headerRow("Name", "Type", "Value(s)").style(Style.PRIMARY);
+					
+					for (ServiceReference<?> sr: serviceReferences) {
+						String[] propertyKeys = sr.getPropertyKeys();
+						Map<String, Object> serviceProperties = new TreeMap<>();
+						if (propertyKeys != null) {
+							for (String pKey: propertyKeys) {
+								serviceProperties.put(pKey, sr.getProperty(pKey));
+							}
+						}
+						String[] objectClass = (String[]) serviceProperties.remove("objectClass");
+						String componentName = (String) serviceProperties.remove("component.name");
+						Long componentId = (Long) serviceProperties.remove(COMPONENT_ID_PROPERTY);
+						
+						// Not used, but no need to display either
+						serviceProperties.remove("service.id");
+						serviceProperties.remove("service.bundleid");
+						
+						String serviceScope = (String) serviceProperties.remove("service.scope");
+						
+						int rowSpan = serviceProperties.isEmpty() ? 1 : serviceProperties.size();
+						
+						Row serviceRow = serviceReferencesTable.row();
+						
+						// Service class
+						if (objectClass.length == 0) {
+							serviceRow.cell().rowspan(rowSpan);
+						} else if (objectClass.length == 1) {
+							serviceRow.cell(javaDocLink(objectClass[0], true, false)).rowspan(rowSpan);
+						} else {
+							Tag ul = htmlFactory.tag(TagName.ul);
+							for (String oc: objectClass) {
+								ul.content(htmlFactory.tag(TagName.li, javaDocLink(oc, true, false)));
+							}
+							serviceRow.cell(ul).rowspan(rowSpan);
+						}
+						
+						serviceRow.cell(bundleLink(sr.getBundle())).rowspan(rowSpan); 					
+						
+						// Component
+						if (CoreUtil.isBlank(componentName) || componentId == null) {
+							serviceRow.cell().rowspan(rowSpan);					
+						} else {
+							serviceRow.cell(componentLink(componentName, componentId)).rowspan(rowSpan); 
+						}
+						
+						// Scope
+						serviceRow.cell(serviceScope == null ? "" : serviceScope).rowspan(rowSpan);										
+						
+						if (serviceProperties.isEmpty()) {
+							serviceRow.cell("").colspan(3);
+						} else {
+							Iterator<Entry<String, Object>> pit = serviceProperties.entrySet().iterator();
+							Entry<String, Object> firstEntry = pit.next();
+							serviceRow.cell(StringEscapeUtils.escapeHtml4(firstEntry.getKey()));
+							serviceRow.cell(valueTypeLink(firstEntry.getValue()));
+							serviceRow.cell(renderValue(firstEntry.getValue()));
+							while (pit.hasNext()) {
+								Entry<String, Object> entry = pit.next();
+								serviceReferencesTable.row(StringEscapeUtils.escapeHtml4(entry.getKey()), valueTypeLink(entry.getValue()), renderValue(entry.getValue()));
+							}
+						}
+					}					
+					referenceInfoFragment.content(htmlFactory.panel(Style.PRIMARY, "Service references", serviceReferencesTable, null));
+				}
+				
+				referencesFragment.content(htmlFactory.panel(Style.PRIMARY, StringEscapeUtils.escapeHtml4(reference.getName()), referenceInfoFragment, null));
+			}
+			tabs.item("References", referencesFragment);
+		}
+	}
+	
+	private void generateComponentReferencedByTab(Component component, Tabs tabs) {
+		List<ServiceReference<?>> allReferences = new ArrayList<>();
+		for (Bundle bundle: bundleContext.getBundles()) {
+			ServiceReference<?>[] siu = bundle.getServicesInUse();
+			if (siu != null) {
+				for (ServiceReference<?> sr: siu) {
+					Object componentId = sr.getProperty(COMPONENT_ID_PROPERTY);
+					if (componentId instanceof Long && component.getId() == ((Long) componentId).longValue()) {
+						allReferences.add(sr);
+					}														
+				}
+			}
+		}
+		
+		List<Component> referencingComponents = new ArrayList<>();
+		for (Component cmp: scrService.getComponents()) {
+			Reference[] refs = cmp.getReferences();
+			if (refs != null) {
+				for (Reference ref: refs) {
+					ServiceReference<?>[] svcs = ref.getServiceReferences();
+					if (svcs != null) {
+						for (ServiceReference<?> sr: svcs) {
+							Object componentId = sr.getProperty(COMPONENT_ID_PROPERTY);
+							if (componentId instanceof Long && component.getId() == ((Long) componentId).longValue()) {
+								referencingComponents.add(cmp);
+								allReferences.remove(sr); // Bound to component
+							}									
+						}
+					}
+				}
+			}
+		}
+		
+		Fragment referencedByFragment = htmlFactory.fragment();
+		if (!referencingComponents.isEmpty()) {
+			Table referencedByTable = htmlFactory.table().bordered();
+			referencedByTable.headerRow("Bundle", "Bundle version", "Component").style(Style.PRIMARY);
+			for (Component cmp: referencingComponents) {
+				referencedByTable.row(bundleLink(cmp.getBundle()), cmp.getBundle().getVersion(), componentLink(cmp));
+			}
+			referencedByFragment.content(htmlFactory.tag(TagName.h4, "Components"), referencedByTable);
+		}
+				
+		List<Bundle> referencingBundles = new ArrayList<>();
+		for (ServiceReference<?> sr: allReferences) {
+			for (Bundle bundle: sr.getUsingBundles()) {
+				if (!referencingBundles.contains(bundle)) {
+					referencingBundles.add(bundle);
+				}
+			}
+		}
+
+		if (!referencingBundles.isEmpty()) {
+			Table referencedByTable = htmlFactory.table().bordered();
+			referencedByTable.headerRow("Bundle", "Bundle version").style(Style.PRIMARY);
+			for (Bundle bundle: referencingBundles) {
+				referencedByTable.row(bundleLink(bundle), bundle.getVersion());
+			}
+			referencedByFragment.content(htmlFactory.tag(TagName.h4, "Bundles"), referencedByTable);
+		}		
+		
+		if (!referencedByFragment.isEmpty()) {
+			tabs.item("Referenced by", referencedByFragment);
+		}
+	}
+	
+	
+	private void generateComponentOverviewTab(Component component, Tabs tabs) {
 		Fragment overviewContent = htmlFactory.fragment();		
 		tabs.item("Overview", overviewContent);
 		
@@ -1877,16 +2088,23 @@ public class DocRoute implements Route, BundleListener {
 		idRow.header("ID");
 		idRow.cell(component.getId());
 		
+		
+		String[] svcs = component.getServices();
+		if (svcs != null && svcs.length > 0) {
+			Row servicesRow = overviewTable.row();
+			servicesRow.header("Services").rowspan(svcs.length);
+			servicesRow.cell(javaDocLink(svcs[0], true, false));
+			for (int i = 1; i < svcs.length; ++i) {
+				overviewTable.row(javaDocLink(svcs[i], true, false));
+			}
+		}
+		
+		Row classRow = overviewTable.row();
+		classRow.header("Class");
+		classRow.cell(javaDocLink(component.getClassName(), true, false));
+		
+				
 		mountedDocumentation(component.getBundle(), component.getName(), overviewContent);
-		
-		tabs.item("Properties", "TODO");
-		tabs.item("References", "TODO");
-		tabs.item("Serivces", "TODO");
-		tabs.item("Context Diagram", "TODO");
-		
-		sections(component.getBundle(), component.getName(), tabs);
-		
-		return ret.toString();
 	}	
 
 	protected String generateBundlesSummary() {
@@ -1900,7 +2118,7 @@ public class DocRoute implements Route, BundleListener {
 		RowContainer<?> tBody = bundlesTable.body();
 		for (Bundle bundle: bundles) {
 			Row bRow = tBody.row();
-			bRow.cell(htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", StringEscapeUtils.escapeHtml4(bundle.getSymbolicName())));
+			bRow.cell(bundleLink(bundle));
 			bRow.cell(StringEscapeUtils.escapeHtml4(bundle.getVersion().toString())).bootstrap().text().center();
 			switch (bundle.getState()) {
 			case Bundle.ACTIVE:
@@ -3134,10 +3352,10 @@ public class DocRoute implements Route, BundleListener {
 		return new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(preProcessMarkdown(markdownSource, baseURL, urlPrefix), createMarkdownLinkRenderer(baseURL, urlPrefix));
 	}
 
-	public String javaDocLink(String className, boolean qualified) {
+	public String javaDocLink(String className, boolean qualified, boolean isArray) {
 		try {
 			if (qualified) {
-				return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"|"+className+"]]");
+				return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"|"+className+"]]"+(isArray ? "[]" : ""));
 			}
 			
 			return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"]]");
@@ -3148,15 +3366,31 @@ public class DocRoute implements Route, BundleListener {
 	}
 	
 	public Tag bundleLink(Bundle bundle) {
-		return htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/index.html", bundle.getSymbolicName());		
+		return htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+bundle.getBundleId()+"/index.html", StringEscapeUtils.escapeHtml4(bundle.getSymbolicName()));		
 	}
+	
+	public Tag componentLink(String componentName, long componentId) {
+		return htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+COMPONENT_INFO_PATH+componentId+"/index.html", StringEscapeUtils.escapeHtml4(componentName));		
+	}	
 	
 	public Tag componentLink(Component component) {
-		return componentLink(component.getBundle(), component.getName(), component.getId());
+		return componentLink(component.getName(), component.getId());
 	}
 	
-	public Tag componentLink(Bundle bundle, String componentName, long componentId) {
-		return htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+BUNDLE_INFO_PATH+bundle.getSymbolicName()+"/"+bundle.getVersion()+"/component/"+componentId+"/index.html", componentName);		
+	public Tag componentLink(Bundle bundle, String componentName) {
+		if (scrService == null) {
+			return htmlFactory.span(StringEscapeUtils.escapeHtml4("SCR service not available, component not found: '"+componentName+"' in "+bundle.getSymbolicName()+" "+bundle.getVersion()));
+		}
+		Component[] bundleComponents = scrService.getComponents(bundle);
+		if (bundleComponents != null) {
+			for (Component cmp: bundleComponents) {
+				if (componentName.equals(cmp.getName())) {
+					return componentLink(cmp);
+				}
+			}
+		}
+				
+		return htmlFactory.span(StringEscapeUtils.escapeHtml4("Component not found: '"+componentName+"' in "+bundle.getSymbolicName()+" "+bundle.getVersion()));
 	}
 	
 }
