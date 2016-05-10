@@ -3,6 +3,6 @@ require.config({
     baseUrl: '<%=wizard.getContextPath()%><%=wizard.getWebContentAlias()%>js',
     paths: {
         jquery: 'jquery-global', 
-        knockout: 'knockout-3.3.0'
+        knockout: 'knockout-3.4.0'
     }
 });

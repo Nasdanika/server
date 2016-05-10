@@ -64,7 +64,7 @@ public class ApplicationPluginRenderer {
   protected final String TEXT_49 = "js/underscore-min.js" + NL + "            </script>" + NL + "            <script>";
   protected final String TEXT_50 = "js/backbone-min.js</script>" + NL + "            <script>";
   protected final String TEXT_51 = "bootstrap/js/bootstrap.min.js</script>" + NL + "            <script>";
-  protected final String TEXT_52 = "js/knockout-3.3.0.js</script>" + NL + "            <script>";
+  protected final String TEXT_52 = "js/knockout-3.4.0.js</script>" + NL + "            <script>";
   protected final String TEXT_53 = NL + "               ";
   protected final String TEXT_54 = "js/require.js" + NL + "            </script>            " + NL + "            <script>";
   protected final String TEXT_55 = NL + "               ";
