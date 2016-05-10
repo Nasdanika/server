@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.osgi.model/src" modelPluginID="org.nasdanika.osgi.model"
+    modelName="Model" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
+    reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
+    complianceLevel="8.0" suppressGenModelAnnotations="false" copyrightFields="false"
+    providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter" operationReflection="true"
+    importOrganizing="true">
+  <foreignModel>model.ecore</foreignModel>
+  <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
+  <genPackages prefix="Model" basePackage="org.nasdanika.osgi" disposableProviderFactory="true"
+      ecorePackage="model.ecore#/">
+    <genDataTypes ecoreDataType="model.ecore#//ScrService"/>
+    <genDataTypes ecoreDataType="model.ecore#//FrameworkBundle"/>
+    <genDataTypes ecoreDataType="model.ecore#//BundleException"/>
+    <genClasses ecoreClass="model.ecore#//Runtime">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Runtime/bundles"/>
+      <genOperations ecoreOperation="model.ecore#//Runtime/load">
+        <genParameters ecoreParameter="model.ecore#//Runtime/load/bundles"/>
+        <genParameters ecoreParameter="model.ecore#//Runtime/load/scrService"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Element">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Element/outboundReferences"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Element/inboundReferences"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Element/id"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//ServiceReference">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ServiceReference/objectClass"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ServiceReference/referenceTarget"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ServiceReference/name"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Bundle">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Bundle/components"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Bundle/symbolicName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Bundle/version"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Bundle/requires"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Bundle/requiredBy"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Component">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Component/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Component/className"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

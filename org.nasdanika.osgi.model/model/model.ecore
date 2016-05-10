@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="model" nsURI="urn:org.nasdanika.osgi.model" nsPrefix="org.nasdanika.osgi.model">
+  <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+    <details key="documentation" value="OSGi runtime model for documentation purposes."/>
+  </eAnnotations>
+  <eClassifiers xsi:type="ecore:EClass" name="Runtime">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="The root element of the model."/>
+    </eAnnotations>
+    <eOperations name="load" eExceptions="#//BundleException">
+      <eParameters name="bundles" upperBound="-1" eType="#//FrameworkBundle"/>
+      <eParameters name="scrService" eType="#//ScrService"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bundles" upperBound="-1"
+        eType="#//Bundle" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Runtime consitst from a set of bundles."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Element">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Base class for OSGi runtime element which can expose and consume services - bundles and components."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outboundReferences" upperBound="-1"
+        eType="#//ServiceReference" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="inboundReferences" upperBound="-1"
+        eType="#//ServiceReference" eOpposite="#//ServiceReference/referenceTarget"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ServiceReference">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="objectClass" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="referenceTarget" eType="#//Element"
+        eOpposite="#//Element/inboundReferences"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Reference name for component references."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Bundle" eSuperTypes="#//Element">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
+        eType="#//Component" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="symbolicName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="version" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="requires" upperBound="-1"
+        eType="#//Bundle" eOpposite="#//Bundle/requiredBy"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="requiredBy" upperBound="-1"
+        eType="#//Bundle" eOpposite="#//Bundle/requires"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Component" eSuperTypes="#//Element">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ScrService" instanceClassName="org.apache.felix.scr.ScrService"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="FrameworkBundle" instanceClassName="org.osgi.framework.Bundle"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="BundleException" instanceClassName="org.osgi.framework.BundleException"/>
+</ecore:EPackage>
