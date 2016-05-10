@@ -63,6 +63,7 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
@@ -82,17 +83,24 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Style;
-import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Breadcrumbs;
+import org.nasdanika.html.FontAwesome.Spinner;
+import org.nasdanika.html.FontAwesome.WebApplication;
+import org.nasdanika.html.Form;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
+import org.nasdanika.html.Select;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
+import org.nasdanika.osgi.model.ModelFactory;
+import org.nasdanika.osgi.model.Runtime;
 import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -113,6 +121,8 @@ import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
 import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.PegDownProcessor;
+
+import net.sourceforge.plantuml.SourceStringReader;
 
 public class DocRoute implements Route, BundleListener {
 		
@@ -1426,16 +1436,57 @@ public class DocRoute implements Route, BundleListener {
 		return null; // Not found
 	}
 
-	protected String generateComponentContextDiagram(HttpServletRequestContext context, Component component) {
-		return "TODO diagram";
+	protected Action generateComponentContextDiagram(HttpServletRequestContext context, Component component) {
+		try {
+			StringBuilder specBuilder = new StringBuilder("@startuml").append(System.lineSeparator());
+			
+			specBuilder.append("Component_"+component.getId()+" -> Alice : hello").append(System.lineSeparator()); // For testing
+			
+			specBuilder.append("@enduml").append(System.lineSeparator());
+			//System.out.println(specBuilder);
+			SourceStringReader reader = new SourceStringReader(specBuilder.toString());
+			context.getResponse().setContentType("image/png");
+			reader.generateImage(context.getResponse().getOutputStream());
+			return Action.NOP;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Action.INTERNAL_SERVER_ERROR;
+		}
 	}
 
-	protected String generateBundleContextDiagram(HttpServletRequestContext context, Bundle bundle) {
-		return "TODO diagram";
+	protected Action generateBundleContextDiagram(HttpServletRequestContext context, Bundle bundle) {
+		try {
+			StringBuilder specBuilder = new StringBuilder("@startuml").append(System.lineSeparator());
+			
+			specBuilder.append("Bundle_"+bundle.getBundleId()+" -> Alice : hello").append(System.lineSeparator()); // For testing
+			
+			specBuilder.append("@enduml").append(System.lineSeparator());
+			SourceStringReader reader = new SourceStringReader(specBuilder.toString());
+			context.getResponse().setContentType("image/png");
+			reader.generateImage(context.getResponse().getOutputStream());
+			return Action.NOP;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Action.INTERNAL_SERVER_ERROR;
+		}
 	}
 
-	protected String generateBundlesDiagram(HttpServletRequestContext context) {
-		return "TODO - diagram generation";
+	protected Action generateBundlesDiagram(HttpServletRequestContext context) {
+		try {
+			StringBuilder specBuilder = new StringBuilder("@startuml").append(System.lineSeparator());
+			
+			specBuilder.append("Bob -> Alice : hello"); // For testing
+			
+			specBuilder.append("@enduml").append(System.lineSeparator());
+			//System.out.println(specBuilder);
+			SourceStringReader reader = new SourceStringReader(specBuilder.toString());
+			context.getResponse().setContentType("image/png");
+			reader.generateImage(context.getResponse().getOutputStream());
+			return Action.NOP;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return Action.INTERNAL_SERVER_ERROR;
+		}
 	}
 	
 	protected String generateBundleInfo(Bundle bundle) {
@@ -1449,19 +1500,85 @@ public class DocRoute implements Route, BundleListener {
 		generateBundleRequiredByTab(bundle, tabs);				
 		generateBundleRegisteredServicesTab(bundle, tabs);
 		generateServicesInUseTab(bundle, tabs);
-
-		// In sub-nodes
-//		if (scrService != null) {
-//			Component[] components = scrService.getComponents(bundle);
-//			if (components!=null) {
-//				tabs.item("Components", "TODO");
-//			}
-//		}
-		
-		tabs.item("Context Diagram", "TODO");
+		generateBundleContextDiagramTab(bundle, tabs);
 		
 		sections(bundle, null, tabs);
 		return ret.toString();
+	}
+
+	private void generateBundleContextDiagramTab(Bundle bundle, Tabs tabs) {
+		String idBase = "bundleContextDiagram-"+bundle.getBundleId()+"-"+htmlFactory.nextId();
+		Tag contextDiagramApp = htmlFactory.div().id(idBase + "-app");
+		
+		contextDiagramApp.content(htmlFactory.spinnerOverlay(Spinner.cog).id(idBase+"-overlay"));
+		
+		Form diagramConfigurationForm = htmlFactory.form()
+				.inline(true, false)
+				.style().border("1px silver solid")
+				.style().border().top("none")
+				.style().padding("3px")
+				.style().margin().bottom("3px");
+		
+		contextDiagramApp.content(diagramConfigurationForm);
+		
+		Select directionSelect = htmlFactory.select().knockout().value("direction");
+		directionSelect.option("in", false, false, "In");
+		directionSelect.option("out", false, false, "Out");
+		directionSelect.option("both", true, false, "Both");
+		diagramConfigurationForm.formGroup("Direction", directionSelect, "Related elements to display")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Select depthSelect = htmlFactory.select().knockout().value("depth");
+		for (int i=0; i<10; ++i) {
+			depthSelect.option(String.valueOf(i), i==1, false, String.valueOf(i));
+		}
+		depthSelect.option("-1", false, false, "&infin;");
+		diagramConfigurationForm.formGroup("Depth", depthSelect, "Dependency depth")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");		
+		
+		Input dependenciesCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("dependencies");
+		diagramConfigurationForm.formGroup("Dependencies", dependenciesCheckbox, "Show dependencies (Require-Bundle)")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Input servicesCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("services");
+		diagramConfigurationForm.formGroup("Services", servicesCheckbox, "Show service references")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		Input componentsCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("components");
+		diagramConfigurationForm.formGroup("Components", componentsCheckbox, "Show components in bundles")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		Select typesSelect = htmlFactory.select().knockout().value("types");
+		typesSelect.option("hide", false, false, "Hide");
+		typesSelect.option("name", false, false, "Name");
+		typesSelect.option("fullyQualifiedType", true, false, "Fully Qualified Type");
+		diagramConfigurationForm.formGroup("Types", typesSelect, "How to display types")		
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Input leftToRightDirectionCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("leftToRightDirection");
+		diagramConfigurationForm.formGroup("Left to right", leftToRightDirectionCheckbox, "Diagram direction");				
+		
+		Tag img = htmlFactory.tag(TagName.img)
+				.knockout().attr("diagramAttributes")
+				.knockout().event("{ load : imageLoaded }");
+		
+		Tag diagramDiv = htmlFactory.div(img);
+		
+		contextDiagramApp.content(diagramDiv);
+				
+		Map<String, Object> scriptEnv = new HashMap<>();
+		scriptEnv.put("docRoutePath", docRoutePath);
+		scriptEnv.put("id-base", idBase);
+		scriptEnv.put("diagram-url", docRoutePath+BUNDLE_INFO_PATH+bundle.getBundleId()+"/diagram.png");
+		
+		String script = htmlFactory.interpolate(getClass().getResource("BundleContextDiagramAppLoader.js"), scriptEnv);
+		tabs.item("Context Diagram", htmlFactory.fragment(contextDiagramApp, htmlFactory.tag(TagName.script, script)));		
 	}
 
 	private void generateServicesInUseTab(Bundle bundle, Tabs tabs) {
@@ -1849,7 +1966,63 @@ public class DocRoute implements Route, BundleListener {
 	}
 	
 	private void generateComponentContextDiagramTab(Component component, Tabs tabs) {
-		tabs.item("Context Diagram", "TODO");
+		String idBase = "componentContextDiagram-"+component.getId()+"-"+htmlFactory.nextId();
+		Tag contextDiagramApp = htmlFactory.div().id(idBase + "-app");
+		
+		contextDiagramApp.content(htmlFactory.spinnerOverlay(Spinner.cog).id(idBase+"-overlay"));
+		
+		Form diagramConfigurationForm = htmlFactory.form()
+				.inline(true, false)
+				.style().border("1px silver solid")
+				.style().border().top("none")
+				.style().padding("3px")
+				.style().margin().bottom("3px");
+		
+		contextDiagramApp.content(diagramConfigurationForm);
+		
+		Select directionSelect = htmlFactory.select().knockout().value("direction");
+		directionSelect.option("in", false, false, "In");
+		directionSelect.option("out", false, false, "Out");
+		directionSelect.option("both", true, false, "Both");
+		diagramConfigurationForm.formGroup("Direction", directionSelect, "Related elements to display")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Select depthSelect = htmlFactory.select().knockout().value("depth");
+		for (int i=0; i<10; ++i) {
+			depthSelect.option(String.valueOf(i), i==1, false, String.valueOf(i));
+		}
+		depthSelect.option("-1", false, false, "&infin;");
+		diagramConfigurationForm.formGroup("Depth", depthSelect, "Dependency depth")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");		
+		
+		Select typesSelect = htmlFactory.select().knockout().value("types");
+		typesSelect.option("hide", false, false, "Hide");
+		typesSelect.option("name", false, false, "Name");
+		typesSelect.option("fullyQualifiedType", true, false, "Fully Qualified Type");
+		diagramConfigurationForm.formGroup("Types", typesSelect, "How to display types")		
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Input leftToRightDirectionCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("leftToRightDirection");
+		diagramConfigurationForm.formGroup("Left to right", leftToRightDirectionCheckbox, "Diagram direction");				
+		
+		Tag img = htmlFactory.tag(TagName.img)
+				.knockout().attr("diagramAttributes")
+				.knockout().event("{ load : imageLoaded }");
+		
+		Tag diagramDiv = htmlFactory.div(img);
+		
+		contextDiagramApp.content(diagramDiv);
+				
+		Map<String, Object> scriptEnv = new HashMap<>();
+		scriptEnv.put("docRoutePath", docRoutePath);
+		scriptEnv.put("id-base", idBase);
+		scriptEnv.put("diagram-url", docRoutePath+COMPONENT_INFO_PATH+component.getId()+"/diagram.png");
+		
+		String script = htmlFactory.interpolate(getClass().getResource("BundleContextDiagramAppLoader.js"), scriptEnv);
+		tabs.item("Context Diagram", htmlFactory.fragment(contextDiagramApp, htmlFactory.tag(TagName.script, script)));		
 	}
 	
 	private void generateComponentReferencesTab(Component component, Tabs tabs) {
@@ -2333,6 +2506,9 @@ public class DocRoute implements Route, BundleListener {
 			String prefix = docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath;			
 			String pathStr = "/"+StringUtils.join(path, "/");
 			Object content = getContent(context, new URL(requestURL), urlPrefix, pathStr);
+			if (content instanceof Action) {
+				return (Action) content;
+			}
 			if (content!=null) {
 				if (path.length>0) {
 					String contentType = "packages".equals(path[0]) ? "text/html" : getContentType(path[path.length-1]);
