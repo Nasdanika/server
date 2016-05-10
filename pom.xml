@@ -45,6 +45,7 @@
 		<module>org.nasdanika.cdo</module>
 		<module>org.nasdanika.cdo.web</module>
 		<module>org.nasdanika.cdo.web.doc</module>
+		<module>org.nasdanika.osgi.model</module>
 		<module>org.nasdanika.cdo.boxing</module>
 		<module>org.nasdanika.function</module>
 		<!--<module>org.nasdanika.promise</module>-->
