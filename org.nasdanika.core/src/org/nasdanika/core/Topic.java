@@ -12,7 +12,7 @@ public interface Topic {
 	/**
 	 * @return HTML content
 	 */
-	String getContent();
+	String getContent(); // TODO - environment map?
 	
 	Map<String, Topic> getSubTopics();
 	
@@ -20,4 +20,10 @@ public interface Topic {
 	 * @return relative path to topic icon or null.
 	 */
 	String getIcon();
+	
+	/**
+	 * @return Location of content (URL).
+	 */
+	String getLocation(); // TODO - environment map?
+	
 }

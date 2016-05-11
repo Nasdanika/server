@@ -127,7 +127,11 @@ public class TocNodeFactory {
 		if (!merge) {
 			node = parent.createChild(name, location, icon, id);
 			if (topic!=null) {
-				node.setContent(topic.getContent());
+				if (CoreUtil.isBlank(topic.getLocation())) {
+					node.setContent(topic.getContent());
+				} else {
+					node.setHref(topic.getLocation());
+				}
 			} else if (content!=null) {
 				node.setContent(content);
 			}
@@ -166,7 +170,11 @@ public class TocNodeFactory {
 	
 	private void createTocNode(TocNode parent, String name, Topic topic) {
 		TocNode node = parent.createChild(name, null, topic.getIcon(), null);					
-		node.setContent(topic.getContent());
+		if (CoreUtil.isBlank(topic.getLocation())) {
+			node.setContent(topic.getContent());
+		} else {
+			node.setHref(topic.getLocation());
+		}
 		
 		Map<String, Topic> subTopics = topic.getSubTopics();
 		if (subTopics!=null && !subTopics.isEmpty()) {

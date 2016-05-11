@@ -40,6 +40,10 @@ public class TocNode {
 		return href;
 	}
 	
+	public void setHref(String href) {
+		this.href = href;
+	}
+	
 	public String getText() {
 		return text;
 	}

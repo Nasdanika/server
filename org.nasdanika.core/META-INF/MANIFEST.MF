@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.nasdanika.core;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Nasdanika LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.eclipse.osgi;bundle-version="3.9.1",
- org.json;bundle-version="1.0.0";visibility:=reexport,
+Require-Bundle: org.json;bundle-version="1.0.0";visibility:=reexport,
  org.eclipse.core.runtime;bundle-version="3.10.0"
 Export-Package: org.nasdanika.core,
  org.nasdanika.core.convert.json

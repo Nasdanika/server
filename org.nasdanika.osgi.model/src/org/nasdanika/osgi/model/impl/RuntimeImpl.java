@@ -160,6 +160,7 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 								bundleReferencesInUse.remove(csr);
 								
 								ServiceReference serviceReference = ModelFactory.eINSTANCE.createServiceReference();
+								serviceReference.setName(componentReference.getName());
 								component.getOutboundReferences().add(serviceReference);
 								Object oca = csr.getProperty(OBJECT_CLASS);
 								if (oca instanceof String[]) {

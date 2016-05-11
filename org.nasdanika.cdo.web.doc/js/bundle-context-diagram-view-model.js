@@ -8,6 +8,7 @@ define(['jquery', 'knockout', 'domReady!'], function(jQuery, ko, doc) {
 		this.components = ko.observable(false);
 		this.types = ko.observable("name");
 		this.leftToRightDirection = ko.observable(false);
+		this.fitWidth = ko.observable(false);
 
 		var overlay = jQuery("#"+idBase+"-overlay");
 		
@@ -23,6 +24,10 @@ define(['jquery', 'knockout', 'domReady!'], function(jQuery, ko, doc) {
 	    		"&components="+this.components() +
 	    		"&types="+this.types() +
 	    		"&leftToRightDirection="+this.leftToRightDirection();
+	    	
+	    	if (this.fitWidth()) {
+	    		queryString+="&width="+(document.body.getBoundingClientRect().right - document.getElementById(idBase+"-app").getBoundingClientRect().left - 10);
+	    	}
 
 	    	var attrs = {
 	    		src: diagramURL+"?"+queryString
