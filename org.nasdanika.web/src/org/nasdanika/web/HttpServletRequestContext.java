@@ -95,5 +95,11 @@ public interface HttpServletRequestContext extends Context, ExportingContext, Cl
 	void addPathTraceEntry(String path, String displayName);
 	
 	void addSessionTraceEntry(String path, String displayName);
+	
+	/**
+	 * Adds object path resolver.
+	 * @param resolver
+	 */
+	<T> void addObjectPathResolver(Class<T> clazz, ObjectPathResolver<T> resolver);	
 
 }

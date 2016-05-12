@@ -87,7 +87,7 @@ public class StoryItemProvider
 				 getString("_UI_CatalogElement_id_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_CatalogElement_id_feature", "_UI_CatalogElement_type"),
 				 StoryPackage.Literals.CATALOG_ELEMENT__ID,
-				 false,
+				 true,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,

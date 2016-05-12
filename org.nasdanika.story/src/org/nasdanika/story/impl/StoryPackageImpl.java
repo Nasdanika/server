@@ -824,7 +824,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		initEReference(getCatalog_Elements(), this.getCatalogElement(), null, "elements", null, 0, -1, Catalog.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(catalogElementEClass, CatalogElement.class, "CatalogElement", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getCatalogElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, CatalogElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getCatalogElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, CatalogElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCatalogElement_Name(), ecorePackage.getEString(), "name", null, 0, 1, CatalogElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCatalogElement_Description(), ecorePackage.getEString(), "description", null, 0, 1, CatalogElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

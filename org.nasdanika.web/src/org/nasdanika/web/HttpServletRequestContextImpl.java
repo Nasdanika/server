@@ -470,5 +470,10 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 	public Principal getSecurityPrincipal() {
 		return getRequest().getUserPrincipal();
 	}
+	
+	@Override
+	public <T> void addObjectPathResolver(Class<T> clazz, ObjectPathResolver<T> resolver) {
+		objectPathResolver.addResolver(clazz, resolver);
+	}	
 
 }

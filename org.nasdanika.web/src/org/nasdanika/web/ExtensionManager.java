@@ -925,8 +925,8 @@ public class ExtensionManager extends AdapterManager {
 	
 	private CompositeObjectPathResolver objectPathResolver;
 	
-	public CompositeObjectPathResolver getObjectPathResolver() {
-		return objectPathResolver;
+	public CompositeObjectPathResolver getObjectPathResolver() throws CloneNotSupportedException {
+		return objectPathResolver.clone();
 	}
 	
 	public List<UIPart<?,?>> getUIParts(Object target, String category) throws Exception {

@@ -13,7 +13,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Catalog/elements"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//CatalogElement">
-      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/name"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/description"/>
     </genClasses>
