@@ -4,15 +4,22 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.felix.scr.Component;
 import org.eclipse.emf.common.util.ECollections;
+import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Modal;
 import org.nasdanika.html.Tag;
+import org.nasdanika.html.TextArea;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.osgi.model.Element;
 import org.nasdanika.osgi.model.ModelFactory;
@@ -26,11 +33,13 @@ class BundleAndComponentDocumentationGeneratorBase {
 	protected static final String COMPONENT_ID_PROPERTY = "component.id";
 	
 	protected final DocRoute docRoute;
-	protected final HTMLFactory htmlFactory;
-
-	protected BundleAndComponentDocumentationGeneratorBase(DocRoute docRoute) {
+	protected final String defaultIncludes;
+	protected final String defaultExcludes;
+	
+	protected BundleAndComponentDocumentationGeneratorBase(DocRoute docRoute, String defaultIncludes, String defaultExcludes) {
 		this.docRoute = docRoute;
-		this.htmlFactory = docRoute.getHtmlFactory(); 
+		this.defaultIncludes = defaultIncludes;
+		this.defaultExcludes = defaultExcludes;
 	}
 	
 	protected enum Direction { in, out, both }
@@ -47,6 +56,8 @@ class BundleAndComponentDocumentationGeneratorBase {
 			Types types,
 			boolean leftToRightDirection,
 			String width,
+			String includes,
+			String excludes,
 			OutputStream out) throws IOException, BundleException {
 		
 		Runtime runtime = ModelFactory.eINSTANCE.createRuntime();
@@ -81,12 +92,30 @@ class BundleAndComponentDocumentationGeneratorBase {
 		if (contextElement == null) { // Shall not happen
 			specBuilder.append("note \"Context element not found\" as NOT_FOUND_NOTE").append(System.lineSeparator());
 		} else {
+			Collection<Pattern> includePatterns = new ArrayList<>();
+			if (!CoreUtil.isBlank(includes)) {
+				for (String ie: includes.split("\\R")) {
+					if (!CoreUtil.isBlank(ie)) {
+						includePatterns.add(Pattern.compile(ie));
+					}
+				}				
+			}
+			
+			Collection<Pattern> excludePatterns = new ArrayList<>();
+			if (!CoreUtil.isBlank(excludes)) {
+				for (String ee: excludes.split("\\R")) {
+					if (!CoreUtil.isBlank(ee)) {
+						excludePatterns.add(Pattern.compile(ee));
+					}
+				}				
+			}
+			
 			Set<Element> diagramElements = new HashSet<>();
-			collectDiagramElements(contextElement, direction, depth, dependencies, services, diagramElements);
+			collectDiagramElements(contextElement, direction, depth, dependencies, services, includePatterns, excludePatterns, diagramElements);
 			if (contextElement instanceof org.nasdanika.osgi.model.Bundle) {
 				for (org.nasdanika.osgi.model.Component cmp: ((org.nasdanika.osgi.model.Bundle) contextElement).getComponents()) {
 					Set<Element> cde = new HashSet<>();
-					collectDiagramElements(cmp, direction, depth, dependencies, services, cde);
+					collectDiagramElements(cmp, direction, depth, dependencies, services, includePatterns, excludePatterns, cde);
 					diagramElements.addAll(cde);
 				}
 			}
@@ -220,27 +249,7 @@ class BundleAndComponentDocumentationGeneratorBase {
 						}
 					}
 				}								
-			}
-			
-			
-//			for (org.nasdanika.osgi.model.Bundle mb: runtime.getBundles()) {
-//				if (diagramElements.contains(mb)) {
-//					for (org.nasdanika.osgi.model.ServiceReference ref: mb.getOutboundReferences()) {
-//						System.out.println(mb.getSymbolicName()+" --> "+diagramElements.contains(ref.getReferenceTarget()));
-//					}
-//				}
-//				
-//				for (org.nasdanika.osgi.model.Component mc: mb.getComponents()) {
-//					if (diagramElements.contains(mc)) {
-//						for (org.nasdanika.osgi.model.ServiceReference ref: mc.getOutboundReferences()) {
-//							System.out.println("\t"+mc.getName()+" --> "+diagramElements.contains(ref.getReferenceTarget()));
-//						}
-//					}
-//				}
-//			}
-			
-			
-			
+			}						
 		}		
 		
 		specBuilder.append("@enduml").append(System.lineSeparator());
@@ -256,19 +265,55 @@ class BundleAndComponentDocumentationGeneratorBase {
 			int depth,
 			boolean dependencies,
 			boolean services,
+			Collection<Pattern> includes,
+			Collection<Pattern> excludes,
 			Set<Element> diagramElements) {
 		
-		//System.out.println("Collecting for: "+candidate);
-		if (diagramElements.add(candidate) && depth != 0) {
+		if (!excludes.isEmpty() || !includes.isEmpty()) {
+			String symbolicName = ((org.nasdanika.osgi.model.Bundle) (candidate instanceof org.nasdanika.osgi.model.Bundle ? candidate : candidate.eContainer())).getSymbolicName();
+			boolean matched = includes.isEmpty();
+			for (Pattern includePattern: includes) {
+				if (includePattern.matcher(symbolicName).matches()) {
+					matched = true;
+					break;
+				}
+			}
+			if (!matched) {
+				return;
+			}
+			for (Pattern excludePattern: excludes) {
+				if (excludePattern.matcher(symbolicName).matches()) {
+					return;
+				}
+			}
+		}			
+
+		if (diagramElements.add(candidate) && depth != 0) {			
 			if (direction == Direction.in || direction == Direction.both) {
 				if (services) {
 					for (org.nasdanika.osgi.model.ServiceReference ir: candidate.getInboundReferences()) {
-						collectDiagramElements((Element) ir.eContainer(), direction, depth-1, dependencies, services, diagramElements);
+						collectDiagramElements(
+								(Element) ir.eContainer(), 
+								direction, 
+								depth-1, 
+								dependencies, 
+								services, 
+								includes, 
+								excludes, 
+								diagramElements);
 					}
 				}
 				if (dependencies && candidate instanceof org.nasdanika.osgi.model.Bundle) {
 					for (org.nasdanika.osgi.model.Bundle rb: ((org.nasdanika.osgi.model.Bundle) candidate).getRequiredBy()) {
-						collectDiagramElements(rb, direction, depth-1, dependencies, services, diagramElements);
+						collectDiagramElements(
+								rb, 
+								direction, 
+								depth-1, 
+								dependencies, 
+								services, 
+								includes, 
+								excludes, 
+								diagramElements);
 					}
 				}
 			} 
@@ -276,12 +321,28 @@ class BundleAndComponentDocumentationGeneratorBase {
 			if (direction == Direction.out || direction == Direction.both) {
 				if (services) {
 					for (org.nasdanika.osgi.model.ServiceReference ir: candidate.getOutboundReferences()) {
-						collectDiagramElements(ir.getReferenceTarget(), direction, depth-1, dependencies, services, diagramElements);
+						collectDiagramElements(
+								ir.getReferenceTarget(), 
+								direction, 
+								depth-1, 
+								dependencies, 
+								services, 
+								includes, 
+								excludes, 
+								diagramElements);
 					}
 				}
 				if (dependencies && candidate instanceof org.nasdanika.osgi.model.Bundle) {
 					for (org.nasdanika.osgi.model.Bundle rb: ((org.nasdanika.osgi.model.Bundle) candidate).getRequires()) {
-						collectDiagramElements(rb, direction, depth-1, dependencies, services, diagramElements);
+						collectDiagramElements(
+								rb, 
+								direction, 
+								depth-1, 
+								dependencies, 
+								services, 
+								includes, 
+								excludes, 
+								diagramElements);
 					}
 				}				
 			}
@@ -303,14 +364,36 @@ class BundleAndComponentDocumentationGeneratorBase {
 			return "";
 		}
 		if (value.getClass().isArray()) {
-			Tag ul = htmlFactory.tag(TagName.ul);
+			Tag ul = getHtmlFactory().tag(TagName.ul);
 			for (int i = 0; i < Array.getLength(value); ++i) {
-				ul.content(htmlFactory.tag(TagName.li, renderValue(Array.get(value, i))));
+				ul.content(getHtmlFactory().tag(TagName.li, renderValue(Array.get(value, i))));
 			}
 			return ul;
 		}
 		return StringEscapeUtils.escapeHtml4(value.toString());
 		
+	}
+
+	protected HTMLFactory getHtmlFactory() {
+		return docRoute.getHtmlFactory();
+	}
+
+	protected Modal createFilterModal() {
+		Modal filterModal = getHtmlFactory().modal();
+		filterModal.title("Filter bundles");
+		Form filterForm = getHtmlFactory().form();
+		TextArea formIncludes = getHtmlFactory().textArea().rows(4).knockout().value("formIncludes");
+		filterForm.formGroup("Includes", formIncludes, "Include bundles regex patterns");
+		TextArea formExcludes = getHtmlFactory().textArea().rows(4).knockout().value("formExcludes");
+		filterForm.formGroup("Excludes", formExcludes, "Exclude bundles regex patterns");
+		filterModal.body(filterForm);
+		filterModal.footer(
+				getHtmlFactory().button("Filter")
+					.style(Style.PRIMARY)
+					.knockout().click("filter")
+					.style().margin().right("10px"),
+				getHtmlFactory().button("Close").attribute("data-dismiss", "modal"));
+		return filterModal;
 	}
 
 }

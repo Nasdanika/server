@@ -6,8 +6,25 @@ define(['jquery', 'knockout', 'domReady!'], function(jQuery, ko, doc) {
 		this.types = ko.observable("name");
 		this.leftToRightDirection = ko.observable(false);
 		this.fitWidth = ko.observable(false);
+		this.includes = ko.observable(defaultIncludes);
+		this.excludes = ko.observable(defaultExcludes);
+		this.formIncludes = ko.observable();
+		this.formExcludes = ko.observable();
 
 		var overlay = jQuery("#"+idBase+"-overlay");
+		var modal = jQuery("#"+idBase+"-modal");
+		
+		this.showFilterModal = function() {
+			this.formIncludes(this.includes());
+			this.formExcludes(this.excludes());
+			modal.modal('show');
+		}.bind(this);
+		
+		this.filter = function() {
+			this.includes(this.formIncludes());
+			this.excludes(this.formExcludes());
+			modal.modal('hide');
+		}
 		
 		this.imageLoaded = function(model, event) {
 			overlay.hide();
@@ -17,7 +34,9 @@ define(['jquery', 'knockout', 'domReady!'], function(jQuery, ko, doc) {
 	    	var queryString = "direction="+this.direction() +
 	    		"&depth="+this.depth() +
 	    		"&types="+this.types() +
-	    		"&leftToRightDirection="+this.leftToRightDirection();
+	    		"&leftToRightDirection="+this.leftToRightDirection() +
+	    		"&includes="+encodeURIComponent(this.includes()) +
+	    		"&excludes="+encodeURIComponent(this.excludes());
 	    	
 	    	if (this.fitWidth()) {
 	    		queryString+="&width="+(document.body.getBoundingClientRect().right - document.getElementById(idBase+"-app").getBoundingClientRect().left - 10);
@@ -32,7 +51,9 @@ define(['jquery', 'knockout', 'domReady!'], function(jQuery, ko, doc) {
 	    	overlay.show();
 	    	
 	    	return attrs;
-	    }.bind(this));    
+	    }.bind(this));
+	    
+	    this.diagramAttributes.extend({ deferred: true });    
 		
 	};
 });

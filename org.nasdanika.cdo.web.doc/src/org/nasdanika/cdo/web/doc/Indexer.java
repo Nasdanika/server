@@ -68,43 +68,48 @@ public class Indexer {
 			if (indexableContent==null) {
 				missingPaths.add(path);
 			} else {
-				if (indexableContent.isHTML()) {
-					List<String> links = new ArrayList<>();
-					Document document = Jsoup.parse(indexableContent.getContent(), baseURL);
-					for (Element link: document.body().getElementsByTag("a")) {
-						String href = link.absUrl("href");
-						if (!CoreUtil.isBlank(href)) {
-							if (isInternalLink(href)) {
-								// Internal link
-								String relativePath = internalLinkPath(href);
-								index(relativePath);
-								links.add(relativePath);
+				String content = indexableContent.getContent();
+				if (content == null) {
+					System.err.println("[WARNING] No content for "+path);
+				} else {
+					if (indexableContent.isHTML()) {
+						List<String> links = new ArrayList<>();
+						Document document = Jsoup.parse(content, baseURL);
+						for (Element link: document.body().getElementsByTag("a")) {
+							String href = link.absUrl("href");
+							if (!CoreUtil.isBlank(href)) {
+								if (isInternalLink(href)) {
+									// Internal link
+									String relativePath = internalLinkPath(href);
+									index(relativePath);
+									links.add(relativePath);
+								}
 							}
 						}
+						if (!links.isEmpty()) {
+							linkMap.put(path, links);
+						}
+						org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
+				        doc.add(new Field("path", path, TextField.TYPE_STORED));
+				        doc.add(new Field("text", document.body().text(), TextField.TYPE_STORED));
+				        try {
+							indexWriter.addDocument(doc);
+						} catch (IOException e) {
+							// TODO proper logging
+							e.printStackTrace();
+						}
+					} else {
+						// Plain text
+						org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
+				        doc.add(new Field("path", path, TextField.TYPE_STORED));
+				        doc.add(new Field("text", content, TextField.TYPE_STORED));
+				        try {
+							indexWriter.addDocument(doc);
+						} catch (IOException e) {
+							// TODO proper logging
+							e.printStackTrace();
+						}					
 					}
-					if (!links.isEmpty()) {
-						linkMap.put(path, links);
-					}
-					org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
-			        doc.add(new Field("path", path, TextField.TYPE_STORED));
-			        doc.add(new Field("text", document.body().text(), TextField.TYPE_STORED));
-			        try {
-						indexWriter.addDocument(doc);
-					} catch (IOException e) {
-						// TODO proper logging
-						e.printStackTrace();
-					}
-				} else {
-					// Plain text
-					org.apache.lucene.document.Document doc = new org.apache.lucene.document.Document();
-			        doc.add(new Field("path", path, TextField.TYPE_STORED));
-			        doc.add(new Field("text", indexableContent.getContent(), TextField.TYPE_STORED));
-			        try {
-						indexWriter.addDocument(doc);
-					} catch (IOException e) {
-						// TODO proper logging
-						e.printStackTrace();
-					}					
 				}
 			}
 		}

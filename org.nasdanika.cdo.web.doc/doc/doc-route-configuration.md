@@ -8,6 +8,8 @@ Name           | Type     | Default value | Description
 ---------------|:--------:|:-------------:|-------------
 doc-app-path      | String | /router/doc.html | Path of the documentation application route.
 doc-route-path    | String | /router/doc | Path of the documentation route.
+bundle-context-diagram-default-excludes | String - single or multi-value |  | [[javadoc>java.util.regex.Pattern|Regex pattern(s)]]. Bundles matching the patterns are not included by default into bundle/component context diagrams.
+bundle-context-diagram-default-includes | String - single or multi-value |  | [[javadoc>java.util.regex.Pattern|Regex pattern(s)]]. Bundles matching the patterns are included by default into bundle/component context diagrams.
 bundle-excludes  | String - single or multi-value |  | [[javadoc>java.util.regex.Pattern|Regex pattern(s)]]. TOC entries from bundles with symbolic names matching the patterns are not included into the TOC tree.
 bundle-includes  | String - single or multi-value |  | Regex patterns(s). If this property is set, then only TOC entries from bundles with symbolic names matching includes patterns and not matching excludes patterns are mounted to the TOC tree.
 expand-content | Boolean  | true          | If true, content enclosed into double curly brackets is expanded with plugins.

@@ -36,8 +36,8 @@ import org.osgi.framework.ServiceReference;
 
 class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGeneratorBase {
 
-	ComponentDocumentationGenerator(DocRoute docRoute) {
-		super(docRoute);
+	ComponentDocumentationGenerator(DocRoute docRoute, String defaultIncludes, String defaultExcludes) {
+		super(docRoute, defaultIncludes, defaultExcludes);
 	}
 
 	Action generateComponentContextDiagram(HttpServletRequestContext context, Component component) {
@@ -54,6 +54,8 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 					Types.valueOf(context.getRequest().getParameter("types")), 
 					Boolean.TRUE.toString().equals(context.getRequest().getParameter("leftToRightDirection")),
 					context.getRequest().getParameter("width"),
+					context.getRequest().getParameter("includes"),
+					context.getRequest().getParameter("excludes"),
 					context.getResponse().getOutputStream());
 			return Action.NOP;
 		} catch (IOException | BundleException e) {
@@ -63,9 +65,9 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 	}
 	
 	String generateComponentInfo(Component component) {
-		Fragment ret = htmlFactory.fragment();
-		ret.content(htmlFactory.tag(TagName.h3, "Component "+StringEscapeUtils.escapeHtml4(component.getName())));
-		Tabs tabs = htmlFactory.tabs().style().margin().right("5px");
+		Fragment ret = getHtmlFactory().fragment();
+		ret.content(getHtmlFactory().tag(TagName.h3, "Component "+StringEscapeUtils.escapeHtml4(component.getName())));
+		Tabs tabs = getHtmlFactory().tabs().style().margin().right("5px");
 		ret.content(tabs);
 		
 		generateComponentOverviewTab(component, tabs);		
@@ -92,7 +94,7 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 			cProperties.remove(COMPONENT_ID_PROPERTY);
 
 			if (!cProperties.isEmpty()) {
-				Table propertiesTable = htmlFactory.table().bordered();
+				Table propertiesTable = getHtmlFactory().table().bordered();
 				propertiesTable.headerRow("Name", "Type", "Value(s)").style(Style.PRIMARY);
 				
 				for (Entry<String, Object> pe: cProperties.entrySet()) {
@@ -104,12 +106,12 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 	}
 	
 	private void generateComponentContextDiagramTab(Component component, Tabs tabs) {
-		String idBase = "componentContextDiagram-"+component.getId()+"-"+htmlFactory.nextId();
-		Tag contextDiagramApp = htmlFactory.div().id(idBase + "-app");
+		String idBase = "componentContextDiagram-"+component.getId()+"-"+getHtmlFactory().nextId();
+		Tag contextDiagramApp = getHtmlFactory().div().id(idBase + "-app");
 		
-		contextDiagramApp.content(htmlFactory.spinnerOverlay(Spinner.cog).id(idBase+"-overlay"));
+		contextDiagramApp.content(getHtmlFactory().spinnerOverlay(Spinner.cog).id(idBase+"-overlay"));
 		
-		Form diagramConfigurationForm = htmlFactory.form()
+		Form diagramConfigurationForm = getHtmlFactory().form()
 				.inline(true, false)
 				.style().border("1px silver solid")
 				.style().border().top("none")
@@ -118,7 +120,7 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 		
 		contextDiagramApp.content(diagramConfigurationForm);
 		
-		Select directionSelect = htmlFactory.select().knockout().value("direction");
+		Select directionSelect = getHtmlFactory().select().knockout().value("direction");
 		directionSelect.option("in", false, false, "In");
 		directionSelect.option("out", false, false, "Out");
 		directionSelect.option("both", true, false, "Both");
@@ -126,7 +128,7 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 			.style().border().right("dashed 1px silver")
 			.style().padding().right("5px");
 
-		Select depthSelect = htmlFactory.select().knockout().value("depth");
+		Select depthSelect = getHtmlFactory().select().knockout().value("depth");
 		for (int i=1; i<10; ++i) {
 			depthSelect.option(String.valueOf(i), i==1, false, String.valueOf(i));
 		}
@@ -135,7 +137,7 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 			.style().border().right("dashed 1px silver")
 			.style().padding().right("5px");		
 		
-		Select typesSelect = htmlFactory.select().knockout().value("types");
+		Select typesSelect = getHtmlFactory().select().knockout().value("types");
 		typesSelect.option("hide", false, false, "Hide");
 		typesSelect.option("name", false, false, "Name");
 		typesSelect.option("fullyQualifiedName", true, false, "Fully Qualified Name");
@@ -143,19 +145,26 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 			.style().border().right("dashed 1px silver")
 			.style().padding().right("5px");
 
-		Input leftToRightDirectionCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("leftToRightDirection");
+		Input leftToRightDirectionCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("leftToRightDirection");
 		diagramConfigurationForm.formGroup("Left to right", leftToRightDirectionCheckbox, "Diagram direction")
 			.style().border().right("dashed 1px silver")
 			.style().padding().right("5px");
 		
-		Input fitWidthCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("fitWidth");
-		diagramConfigurationForm.formGroup("Fit width", fitWidthCheckbox, "Scale diagram to fit width");
+		Input fitWidthCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("fitWidth");
+		diagramConfigurationForm.formGroup("Fit width", fitWidthCheckbox, "Scale diagram to fit width")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		diagramConfigurationForm.button(getHtmlFactory().fontAwesome().webApplication(WebApplication.filter))
+			.knockout().click("showFilterModal");
 				
-		Tag img = htmlFactory.tag(TagName.img)
+		contextDiagramApp.content(createFilterModal().id(idBase+"-modal"));
+				
+		Tag img = getHtmlFactory().tag(TagName.img)
 				.knockout().attr("diagramAttributes")
 				.knockout().event("{ load : imageLoaded }");
 		
-		Tag diagramDiv = htmlFactory.div(img);
+		Tag diagramDiv = getHtmlFactory().div(img);
 		
 		contextDiagramApp.content(diagramDiv);
 				
@@ -163,18 +172,20 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 		scriptEnv.put("docRoutePath", docRoute.getDocRoutePath());
 		scriptEnv.put("id-base", idBase);
 		scriptEnv.put("diagram-url", docRoute.getDocRoutePath()+DocRoute.COMPONENT_INFO_PATH+component.getId()+"/diagram.png");
+		scriptEnv.put("default-includes", defaultIncludes);
+		scriptEnv.put("default-excludes", defaultExcludes);
 		
-		String script = htmlFactory.interpolate(getClass().getResource("BundleContextDiagramAppLoader.js"), scriptEnv);
-		tabs.item("Context Diagram", htmlFactory.fragment(contextDiagramApp, htmlFactory.tag(TagName.script, script)));		
+		String script = getHtmlFactory().interpolate(getClass().getResource("BundleContextDiagramAppLoader.js"), scriptEnv);
+		tabs.item("Context Diagram", getHtmlFactory().fragment(contextDiagramApp, getHtmlFactory().tag(TagName.script, script)));		
 	}
 	
 	private void generateComponentReferencesTab(Component component, Tabs tabs) {
 		Reference[] references = component.getReferences();
 		if (references != null && references.length > 0) {
-			Fragment referencesFragment = htmlFactory.fragment();
+			Fragment referencesFragment = getHtmlFactory().fragment();
 			for (Reference reference: references) {
-				Table referenceInfoTable = htmlFactory.table().bordered();				
-				Fragment referenceInfoFragment = htmlFactory.fragment(referenceInfoTable);
+				Table referenceInfoTable = getHtmlFactory().table().bordered();				
+				Fragment referenceInfoFragment = getHtmlFactory().fragment(referenceInfoTable);
 				
 				Row svcRow = referenceInfoTable.row();
 				svcRow.header("Service name");
@@ -188,23 +199,23 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 				
 				Row multipleRow = referenceInfoTable.row();
 				multipleRow.header("Multiple");
-				multipleRow.cell(reference.isMultiple() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");
+				multipleRow.cell(reference.isMultiple() ? getHtmlFactory().fontAwesome().webApplication(WebApplication.check) : "");
 				
 				Row optionalRow = referenceInfoTable.row();
 				optionalRow.header("Optional");
-				optionalRow.cell(reference.isOptional() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");
+				optionalRow.cell(reference.isOptional() ? getHtmlFactory().fontAwesome().webApplication(WebApplication.check) : "");
 								
 				Row satisfiedRow = referenceInfoTable.row();
 				satisfiedRow.header("Satisfied");
-				satisfiedRow.cell(reference.isSatisfied() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");
+				satisfiedRow.cell(reference.isSatisfied() ? getHtmlFactory().fontAwesome().webApplication(WebApplication.check) : "");
 				
 				Row staticRow = referenceInfoTable.row();
 				staticRow.header("Static");
-				staticRow.cell(reference.isStatic() ? htmlFactory.fontAwesome().webApplication(WebApplication.check) : "");				
+				staticRow.cell(reference.isStatic() ? getHtmlFactory().fontAwesome().webApplication(WebApplication.check) : "");				
 				
 				ServiceReference<?>[] serviceReferences = reference.getServiceReferences();
 				if (serviceReferences != null && serviceReferences.length > 0) {
-					Table serviceReferencesTable = htmlFactory.table().bordered();
+					Table serviceReferencesTable = getHtmlFactory().table().bordered();
 					Row hr1 = serviceReferencesTable.row().style(Style.PRIMARY);
 					hr1.header("Class(es)").rowspan(2);
 					hr1.header("Bundle").rowspan(2);
@@ -241,9 +252,9 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 						} else if (objectClass.length == 1) {
 							serviceRow.cell(docRoute.javaDocLink(objectClass[0], true, false)).rowspan(rowSpan);
 						} else {
-							Tag ul = htmlFactory.tag(TagName.ul);
+							Tag ul = getHtmlFactory().tag(TagName.ul);
 							for (String oc: objectClass) {
-								ul.content(htmlFactory.tag(TagName.li, docRoute.javaDocLink(oc, true, false)));
+								ul.content(getHtmlFactory().tag(TagName.li, docRoute.javaDocLink(oc, true, false)));
 							}
 							serviceRow.cell(ul).rowspan(rowSpan);
 						}
@@ -274,10 +285,10 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 							}
 						}
 					}					
-					referenceInfoFragment.content(htmlFactory.panel(Style.PRIMARY, "Service references", serviceReferencesTable, null));
+					referenceInfoFragment.content(getHtmlFactory().panel(Style.PRIMARY, "Service references", serviceReferencesTable, null));
 				}
 				
-				referencesFragment.content(htmlFactory.panel(Style.PRIMARY, StringEscapeUtils.escapeHtml4(reference.getName()), referenceInfoFragment, null));
+				referencesFragment.content(getHtmlFactory().panel(Style.PRIMARY, StringEscapeUtils.escapeHtml4(reference.getName()), referenceInfoFragment, null));
 			}
 			tabs.item("References", referencesFragment);
 		}
@@ -316,14 +327,14 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 			}
 		}
 		
-		Fragment referencedByFragment = htmlFactory.fragment();
+		Fragment referencedByFragment = getHtmlFactory().fragment();
 		if (!referencingComponents.isEmpty()) {
-			Table referencedByTable = htmlFactory.table().bordered();
+			Table referencedByTable = getHtmlFactory().table().bordered();
 			referencedByTable.headerRow("Bundle", "Bundle version", "Component").style(Style.PRIMARY);
 			for (Component cmp: referencingComponents) {
 				referencedByTable.row(docRoute.bundleLink(cmp.getBundle()), cmp.getBundle().getVersion(), docRoute.componentLink(cmp));
 			}
-			referencedByFragment.content(htmlFactory.tag(TagName.h4, "Components"), referencedByTable);
+			referencedByFragment.content(getHtmlFactory().tag(TagName.h4, "Components"), referencedByTable);
 		}
 				
 		List<Bundle> referencingBundles = new ArrayList<>();
@@ -336,12 +347,12 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 		}
 
 		if (!referencingBundles.isEmpty()) {
-			Table referencedByTable = htmlFactory.table().bordered();
+			Table referencedByTable = getHtmlFactory().table().bordered();
 			referencedByTable.headerRow("Bundle", "Bundle version").style(Style.PRIMARY);
 			for (Bundle bundle: referencingBundles) {
 				referencedByTable.row(docRoute.bundleLink(bundle), bundle.getVersion());
 			}
-			referencedByFragment.content(htmlFactory.tag(TagName.h4, "Bundles"), referencedByTable);
+			referencedByFragment.content(getHtmlFactory().tag(TagName.h4, "Bundles"), referencedByTable);
 		}		
 		
 		if (!referencedByFragment.isEmpty()) {
@@ -351,10 +362,10 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 	
 	
 	private void generateComponentOverviewTab(Component component, Tabs tabs) {
-		Fragment overviewContent = htmlFactory.fragment();		
+		Fragment overviewContent = getHtmlFactory().fragment();		
 		tabs.item("Overview", overviewContent);
 		
-		Table overviewTable = htmlFactory.table().bordered();
+		Table overviewTable = getHtmlFactory().table().bordered();
 		overviewContent.content(overviewTable);
 				
 		Row stateRow = overviewTable.row();

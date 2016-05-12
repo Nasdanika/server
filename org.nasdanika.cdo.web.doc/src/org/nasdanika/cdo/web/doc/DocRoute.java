@@ -61,12 +61,18 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -89,6 +95,7 @@ import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.impl.DefaultHTMLFactory;
+import org.nasdanika.story.StoryPackage;
 import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -157,7 +164,7 @@ public class DocRoute implements Route, BundleListener {
 	private IndexSearcher indexSearcher;
 	private StandardAnalyzer analyzer;
 	private CDOSessionProvider cdoSessionProvider;
-	private HTMLFactory htmlFactory = new DefaultHTMLFactory();
+	private HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 	private String docRoutePath = "/router/doc";
 	private String docAppPath = "/router/doc.html";
 	private long reloadDelay = 30000; // Wait 30 seconds before reloading index on extension tracker notifications. 
@@ -447,8 +454,34 @@ public class DocRoute implements Route, BundleListener {
     	}
     	baseURL+=docAppPath;
     	
-    	bundleDocumentationGenerator = new BundleDocumentationGenerator(this);
-    	componentDocumentationGenerator = new ComponentDocumentationGenerator(this);
+    	Object bundleContextDiagramDefaultIncludesProperty = properties.get("bundle-context-diagram-default-includes");
+    	StringBuilder bundleContextDiagramDefaultIncludesBuilder = new StringBuilder();
+    	if (bundleContextDiagramDefaultIncludesProperty instanceof String) {
+    		bundleContextDiagramDefaultIncludesBuilder.append(bundleContextDiagramDefaultIncludesProperty);
+    	} else if (bundleContextDiagramDefaultIncludesProperty instanceof String[]) {
+    		for (String s: (String[]) bundleContextDiagramDefaultIncludesProperty) {
+    			bundleContextDiagramDefaultIncludesBuilder.append(s).append(System.lineSeparator());
+    		}
+    	}
+    	Object bundleContextDiagramDefaultExcludesProperty = properties.get("bundle-context-diagram-default-excludes");
+    	StringBuilder bundleContextDiagramDefaultExcludesBuilder = new StringBuilder();
+    	if (bundleContextDiagramDefaultExcludesProperty instanceof String) {
+    		bundleContextDiagramDefaultExcludesBuilder.append(bundleContextDiagramDefaultExcludesProperty);
+    	} else if (bundleContextDiagramDefaultExcludesProperty instanceof String[]) {
+    		for (String s: (String[]) bundleContextDiagramDefaultExcludesProperty) {
+    			bundleContextDiagramDefaultExcludesBuilder.append(s).append(System.lineSeparator());
+    		}
+    	}
+    	
+    	bundleDocumentationGenerator = new BundleDocumentationGenerator(
+    			this, 
+    			bundleContextDiagramDefaultIncludesBuilder.toString(), 
+    			bundleContextDiagramDefaultExcludesBuilder.toString());
+    	
+    	componentDocumentationGenerator = new ComponentDocumentationGenerator(
+    			this, 
+    			bundleContextDiagramDefaultIncludesBuilder.toString(), 
+    			bundleContextDiagramDefaultExcludesBuilder.toString());    			
     	
     	IExtensionRegistry extensionRegistry = Platform.getExtensionRegistry();
     	extensionTracker = new ExtensionTracker(extensionRegistry);
@@ -456,7 +489,179 @@ public class DocRoute implements Route, BundleListener {
     	doLoad.set(true); // To prevent scheduling of delayed loading.
     	
     	// Tracking doc extensions
-    	IExtensionPoint docExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.cdo.web.doc.extensions");    	
+    	trackDocExtensions(extensionRegistry);
+		
+    	// Tracking TOC extensions
+    	trackToc(extensionRegistry);
+    	
+    	// Tracking stories
+    	trackStories(extensionRegistry);
+    	
+    	// Tracking test results
+    	trackTestResults(extensionRegistry);
+    	
+		// Global package registry changes
+		listenForGeneratedPackagesChange(extensionRegistry);		
+
+		bundleContext.addBundleListener(this);		
+    				
+		loadTimer = new Timer();
+		loadTimer.schedule(new LoadTask(), 500);		
+	}
+
+	private void listenForGeneratedPackagesChange(IExtensionRegistry extensionRegistry) {
+		IExtensionPoint generatedPackageExtensionPoint = extensionRegistry.getExtensionPoint("org.eclipse.emf.ecore.generated_package");
+		IExtensionChangeHandler generatedPackageExtensionChangeHandler = new IExtensionChangeHandler() {
+			
+			@Override
+			public void removeExtension(IExtension extension, Object[] objects) {
+				scheduleReloading();				
+			}
+			
+			@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+				scheduleReloading();				
+			}
+			
+		};
+		
+		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));
+	}
+
+	private void trackToc(IExtensionRegistry extensionRegistry) {
+		IExtensionPoint tocExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.toc");    	
+    	IExtensionChangeHandler tocExtensionChangeHandler = new IExtensionChangeHandler() {
+
+    		@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+    			for (IConfigurationElement ce: extension.getConfigurationElements()) {
+    				switch (ce.getName()) {
+    				case TOC:
+						addTocExtension(tracker, extension, ce);
+    					break;
+    				case EPACKAGE_TOC:
+						addEPackageTocExtension(tracker, extension, ce);
+    					break;
+    				case ECLASSIFIER_TOC:
+						addEClassifierTocExtension(tracker, extension, ce);
+    					break;
+    				case BUNDLE_TOC:
+						addBundleTocExtension(tracker, extension, ce);
+    					break;
+    				case COMPONENT_TOC:
+						addComponentTocExtension(tracker, extension, ce);
+    					break;
+    				default:
+    					System.err.println("Unrecognized extension: "+ce.getName());
+    				}
+    			}
+    			scheduleReloading();
+			}
+			
+			@Override
+			public void removeExtension(IExtension extension, Object[] objects) {
+				for (Object obj: objects) {
+					if (obj instanceof TocNodeFactory) {
+						synchronized (tocNodeFactories) {
+							tocNodeFactories.remove(obj);
+						}
+						synchronized (packageTocNodeFactories) {
+							for (PackageTocNodeFactoryEntry ptnf: packageTocNodeFactories.values()) {
+								ptnf.tocNodeFactories.remove(obj);
+								ptnf.classifierTocNodeFactories.remove(obj);
+							}
+						}
+						synchronized (bundleTocNodeFactories) {
+							for (Map<Version, BundleTocNodeFactoryEntry> vbtnfm: bundleTocNodeFactories.values()) {
+								for (BundleTocNodeFactoryEntry btnf: vbtnfm.values()) {
+									btnf.tocNodeFactories.remove(obj);
+									btnf.componentTocNodeFactories.remove(obj);
+								}
+							}
+						}
+					} 						
+				}
+    			scheduleReloading();				
+			}
+			
+		};
+		
+		extensionTracker.registerHandler(tocExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(tocExtensionPoint));
+		for (IExtension ex: tocExtensionPoint.getExtensions()) {
+			tocExtensionChangeHandler.addExtension(extensionTracker, ex);
+		}
+	}
+	
+	private void trackTestResults(IExtensionRegistry extensionRegistry) {
+		IExtensionPoint testResultsExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.webtest.model.results");    	
+    	IExtensionChangeHandler testResultsExtensionChangeHandler = new IExtensionChangeHandler() {
+
+    		@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {
+    			System.out.println("Test result extension: "+extension.getContributor().getName());
+    			scheduleReloading();
+			}
+			
+			@Override
+			public void removeExtension(IExtension extension, Object[] objects) {
+				// TODO
+    			scheduleReloading();				
+			}
+			
+		};
+		
+		extensionTracker.registerHandler(testResultsExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(testResultsExtensionPoint));
+		for (IExtension ex: testResultsExtensionPoint.getExtensions()) {
+			testResultsExtensionChangeHandler.addExtension(extensionTracker, ex);
+		}
+	}
+	
+	private void trackStories(IExtensionRegistry extensionRegistry) {
+		IExtensionPoint testResultsExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.story.model");    	
+    	IExtensionChangeHandler testResultsExtensionChangeHandler = new IExtensionChangeHandler() {
+
+    		@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {    			
+    			for (IConfigurationElement ce: extension.getConfigurationElements()) {
+	    			String contributorName = ce.getContributor().getName();
+	    			String location = ce.getAttribute("file");
+					System.out.println("Story extension: "+contributorName+"/"+location);
+					URI modelUri = URI.createPlatformPluginURI(contributorName+"/"+location, true);
+					tracker.registerObject(extension, modelUri, IExtensionTracker.REF_WEAK);
+
+					// Do in load().
+					ResourceSet resourceSet = new ResourceSetImpl();
+					resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put
+						(Resource.Factory.Registry.DEFAULT_EXTENSION, 
+						 new XMIResourceFactoryImpl());
+
+					resourceSet.getPackageRegistry().put(StoryPackage.eNS_URI, StoryPackage.eINSTANCE);
+			        
+					Resource resource = resourceSet.getResource(modelUri, true);
+					for (EObject eObject : resource.getContents()) {
+						System.out.println(eObject);
+					}
+    			}
+    			
+    			scheduleReloading();
+			}
+			
+			@Override
+			public void removeExtension(IExtension extension, Object[] objects) {
+				// TODO
+    			scheduleReloading();				
+			}
+			
+		};
+		
+		extensionTracker.registerHandler(testResultsExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(testResultsExtensionPoint));
+		for (IExtension ex: testResultsExtensionPoint.getExtensions()) {
+			testResultsExtensionChangeHandler.addExtension(extensionTracker, ex);
+		}
+	}	
+
+	private void trackDocExtensions(IExtensionRegistry extensionRegistry) {
+		IExtensionPoint docExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.cdo.web.doc.extensions");    	
     	IExtensionChangeHandler docExtensionChangeHandler = new IExtensionChangeHandler() {
 
     		@Override
@@ -649,92 +854,6 @@ public class DocRoute implements Route, BundleListener {
 		for (IExtension ex: docExtensionPoint.getExtensions()) {
 			docExtensionChangeHandler.addExtension(extensionTracker, ex);
 		}
-		
-    	// Tracking TOC extensions
-    	IExtensionPoint tocExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.toc");    	
-    	IExtensionChangeHandler tocExtensionChangeHandler = new IExtensionChangeHandler() {
-
-    		@Override
-			public void addExtension(IExtensionTracker tracker, IExtension extension) {
-    			for (IConfigurationElement ce: extension.getConfigurationElements()) {
-    				switch (ce.getName()) {
-    				case TOC:
-						addTocExtension(tracker, extension, ce);
-    					break;
-    				case EPACKAGE_TOC:
-						addEPackageTocExtension(tracker, extension, ce);
-    					break;
-    				case ECLASSIFIER_TOC:
-						addEClassifierTocExtension(tracker, extension, ce);
-    					break;
-    				case BUNDLE_TOC:
-						addBundleTocExtension(tracker, extension, ce);
-    					break;
-    				case COMPONENT_TOC:
-						addComponentTocExtension(tracker, extension, ce);
-    					break;
-    				default:
-    					System.err.println("Unrecognized extension: "+ce.getName());
-    				}
-    			}
-    			scheduleReloading();
-			}
-			
-			@Override
-			public void removeExtension(IExtension extension, Object[] objects) {
-				for (Object obj: objects) {
-					if (obj instanceof TocNodeFactory) {
-						synchronized (tocNodeFactories) {
-							tocNodeFactories.remove(obj);
-						}
-						synchronized (packageTocNodeFactories) {
-							for (PackageTocNodeFactoryEntry ptnf: packageTocNodeFactories.values()) {
-								ptnf.tocNodeFactories.remove(obj);
-								ptnf.classifierTocNodeFactories.remove(obj);
-							}
-						}
-						synchronized (bundleTocNodeFactories) {
-							for (Map<Version, BundleTocNodeFactoryEntry> vbtnfm: bundleTocNodeFactories.values()) {
-								for (BundleTocNodeFactoryEntry btnf: vbtnfm.values()) {
-									btnf.tocNodeFactories.remove(obj);
-									btnf.componentTocNodeFactories.remove(obj);
-								}
-							}
-						}
-					} 						
-				}
-    			scheduleReloading();				
-			}
-			
-		};
-		
-		extensionTracker.registerHandler(tocExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(tocExtensionPoint));
-		for (IExtension ex: tocExtensionPoint.getExtensions()) {
-			tocExtensionChangeHandler.addExtension(extensionTracker, ex);
-		}
-    	
-		// Global package registry changes
-		IExtensionPoint generatedPackageExtensionPoint = extensionRegistry.getExtensionPoint("org.eclipse.emf.ecore.generated_package");
-		IExtensionChangeHandler generatedPackageExtensionChangeHandler = new IExtensionChangeHandler() {
-			
-			@Override
-			public void removeExtension(IExtension extension, Object[] objects) {
-				scheduleReloading();				
-			}
-			
-			@Override
-			public void addExtension(IExtensionTracker tracker, IExtension extension) {
-				scheduleReloading();				
-			}
-			
-		};
-		
-		extensionTracker.registerHandler(generatedPackageExtensionChangeHandler, ExtensionTracker.createExtensionPointFilter(generatedPackageExtensionPoint));		
-
-		bundleContext.addBundleListener(this);		
-    				
-		loadTimer = new Timer();
-		loadTimer.schedule(new LoadTask(), 500);		
 	}
 	
 	public String getContentType(String filename) {
@@ -1369,10 +1488,6 @@ public class DocRoute implements Route, BundleListener {
 				return generateBundlesSummary();
 			}
 			
-//			if (DIAGRAM_PNG.equals(tail)) {
-//				return generateBundlesDiagram(context);
-//			}
-			
 			String[] ta = tail.split("/");
 			if (ta.length != 2) {
 				return null;
@@ -1413,6 +1528,8 @@ public class DocRoute implements Route, BundleListener {
 			}
 			return null;
 		}
+		
+		// TODO - stories, tests
 		
 		
 		// TODO - diagrams - package/classifier - session/global. Delegate to extensions. 
@@ -1666,6 +1783,7 @@ public class DocRoute implements Route, BundleListener {
 			String prefix = docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath;			
 			String pathStr = "/"+StringUtils.join(path, "/");
 			Object content = getContent(context, new URL(requestURL), urlPrefix, pathStr);
+			// Sub-routes
 			if (content instanceof Action) {
 				return (Action) content;
 			}
