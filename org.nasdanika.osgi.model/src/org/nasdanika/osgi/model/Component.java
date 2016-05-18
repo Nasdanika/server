@@ -2,6 +2,8 @@
  */
 package org.nasdanika.osgi.model;
 
+import org.eclipse.emf.common.util.EList;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Component</b></em>'.
@@ -13,6 +15,7 @@ package org.nasdanika.osgi.model;
  * <ul>
  *   <li>{@link org.nasdanika.osgi.model.Component#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.osgi.model.Component#getClassName <em>Class Name</em>}</li>
+ *   <li>{@link org.nasdanika.osgi.model.Component#getServices <em>Services</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.osgi.model.ModelPackage#getComponent()
@@ -71,5 +74,21 @@ public interface Component extends Element {
 	 * @generated
 	 */
 	void setClassName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Services</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Services</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Services</em>' attribute list.
+	 * @see org.nasdanika.osgi.model.ModelPackage#getComponent_Services()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getServices();
 
 } // Component

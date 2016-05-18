@@ -4,8 +4,11 @@ package org.nasdanika.story.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.story.Actor;
@@ -26,6 +29,7 @@ import org.nasdanika.story.StoryFactory;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.Theme;
 import org.nasdanika.story.User;
+import org.nasdanika.story.util.StoryValidator;
 
 /**
  * <!-- begin-user-doc -->
@@ -208,6 +212,15 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		// Initialize created meta-data
 		theStoryPackage.initializePackageContents();
 
+		// Register package validator
+		EValidator.Registry.INSTANCE.put
+			(theStoryPackage, 
+			 new EValidator.Descriptor() {
+				 public EValidator getEValidator() {
+					 return StoryValidator.INSTANCE;
+				 }
+			 });
+
 		// Mark meta-data to indicate it can't be changed
 		theStoryPackage.freeze();
 
@@ -269,6 +282,15 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 */
 	public EAttribute getCatalogElement_Description() {
 		return (EAttribute)catalogElementEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getCatalogElement__Validate__DiagnosticChain_Map() {
+		return catalogElementEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -711,6 +733,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		createEAttribute(catalogElementEClass, CATALOG_ELEMENT__ID);
 		createEAttribute(catalogElementEClass, CATALOG_ELEMENT__NAME);
 		createEAttribute(catalogElementEClass, CATALOG_ELEMENT__DESCRIPTION);
+		createEOperation(catalogElementEClass, CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP);
 
 		storyBaseEClass = createEClass(STORY_BASE);
 
@@ -828,6 +851,15 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		initEAttribute(getCatalogElement_Name(), ecorePackage.getEString(), "name", null, 0, 1, CatalogElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCatalogElement_Description(), ecorePackage.getEString(), "description", null, 0, 1, CatalogElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		EOperation op = initEOperation(getCatalogElement__Validate__DiagnosticChain_Map(), ecorePackage.getEBoolean(), "validate", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEDiagnosticChain(), "diagnostics", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EGenericType g1 = createEGenericType(ecorePackage.getEMap());
+		EGenericType g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(storyBaseEClass, StoryBase.class, "StoryBase", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(storyContainerEClass, StoryContainer.class, "StoryContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -927,6 +959,24 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Base interface for model elements which can be added to a catalog."
+		   });	
+		addAnnotation
+		  (getCatalogElement__Validate__DiagnosticChain_Map(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Validates element for execution/generation. Adds messages to diagnostics and "
+		   });	
+		addAnnotation
+		  ((getCatalogElement__Validate__DiagnosticChain_Map()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Diagnostics to add validation messages to."
+		   });	
+		addAnnotation
+		  ((getCatalogElement__Validate__DiagnosticChain_Map()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Validation context."
 		   });	
 		addAnnotation
 		  (getCatalogElement_Id(), 

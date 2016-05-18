@@ -137,7 +137,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 			return ""; // Already generated as doc.
 		}
 
-		EAnnotationRenderer renderer = docRoute.geteAnnotationRenderers().get(eAnnotation.getSource());
+		EAnnotationRenderer renderer = docRoute.getEAnnotationRenderers().get(eAnnotation.getSource());
 		if (renderer!=null) {
 			return renderer.render(eAnnotation, docRoute.getHtmlFactory());
 		}

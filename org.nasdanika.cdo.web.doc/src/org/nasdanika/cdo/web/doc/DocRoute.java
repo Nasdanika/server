@@ -66,7 +66,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -81,6 +80,7 @@ import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
+import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
@@ -88,13 +88,11 @@ import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.html.impl.DefaultHTMLFactory;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
@@ -153,6 +151,9 @@ public class DocRoute implements Route, BundleListener {
 	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
 	private static final String TOC_PATH = "/toc/";
 	
+	public static final String STORY_PATH = "/story/";
+	public static final String TEST_RESULT_PATH = "/test-result/";	
+	
 	public static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
 	public static final int MARKDOWN_OPTIONS = 	Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS ^ Extensions.SUPPRESS_ALL_HTML;
 
@@ -192,13 +193,17 @@ public class DocRoute implements Route, BundleListener {
 	private Map<String, Map<String, ExtensionEntry<ContentFilter>>> contentFilters = new ConcurrentHashMap<>();
 	private Map<String, ExtensionEntry<EAnnotationRenderer>> eAnnotationRenderers = new ConcurrentHashMap<>();
 	
-	public Map<String, EAnnotationRenderer> geteAnnotationRenderers() {
+	public Map<String, EAnnotationRenderer> getEAnnotationRenderers() {
 		Map<String, EAnnotationRenderer> ret = new ConcurrentHashMap<>();
 		for (Entry<String, ExtensionEntry<EAnnotationRenderer>> e: eAnnotationRenderers.entrySet()) {
 			ret.put(e.getKey(), e.getValue().extension);
 		}
 		return ret;
-	}	
+	}
+	
+	private Collection<String> storyModels = new ArrayList<>();
+	private Collection<String> testResultsModels = new ArrayList<>();
+	
 	public void setReloadDelay(long reloadDelay) {
 		this.reloadDelay = reloadDelay;
 	}
@@ -596,16 +601,31 @@ public class DocRoute implements Route, BundleListener {
 		IExtensionPoint testResultsExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.webtest.model.results");    	
     	IExtensionChangeHandler testResultsExtensionChangeHandler = new IExtensionChangeHandler() {
 
-    		@Override
-			public void addExtension(IExtensionTracker tracker, IExtension extension) {
-    			System.out.println("Test result extension: "+extension.getContributor().getName());
+			@Override
+			public void addExtension(IExtensionTracker tracker, IExtension extension) {    			
+    			for (IConfigurationElement ce: extension.getConfigurationElements()) {
+	    			String contributorName = ce.getContributor().getName();
+	    			String location = ce.getAttribute("model");
+					String modelLocation = contributorName+"/"+location;
+					tracker.registerObject(extension, modelLocation, IExtensionTracker.REF_WEAK);
+					synchronized (testResultsModels) {
+						testResultsModels.add(modelLocation);
+					}
+    			}
+    			
     			scheduleReloading();
 			}
 			
 			@Override
 			public void removeExtension(IExtension extension, Object[] objects) {
-				// TODO
-    			scheduleReloading();				
+				if (objects!=null && objects.length > 0) {
+					synchronized (testResultsModels) {
+						for (Object obj: objects) {
+							testResultsModels.remove(obj);
+						}
+					}
+	    			scheduleReloading();
+				}
 			}
 			
 		};
@@ -620,26 +640,15 @@ public class DocRoute implements Route, BundleListener {
 		IExtensionPoint testResultsExtensionPoint = extensionRegistry.getExtensionPoint("org.nasdanika.story.model");    	
     	IExtensionChangeHandler testResultsExtensionChangeHandler = new IExtensionChangeHandler() {
 
-    		@Override
+			@Override
 			public void addExtension(IExtensionTracker tracker, IExtension extension) {    			
     			for (IConfigurationElement ce: extension.getConfigurationElements()) {
 	    			String contributorName = ce.getContributor().getName();
-	    			String location = ce.getAttribute("file");
-					System.out.println("Story extension: "+contributorName+"/"+location);
-					URI modelUri = URI.createPlatformPluginURI(contributorName+"/"+location, true);
-					tracker.registerObject(extension, modelUri, IExtensionTracker.REF_WEAK);
-
-					// Do in load().
-					ResourceSet resourceSet = new ResourceSetImpl();
-					resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put
-						(Resource.Factory.Registry.DEFAULT_EXTENSION, 
-						 new XMIResourceFactoryImpl());
-
-					resourceSet.getPackageRegistry().put(StoryPackage.eNS_URI, StoryPackage.eINSTANCE);
-			        
-					Resource resource = resourceSet.getResource(modelUri, true);
-					for (EObject eObject : resource.getContents()) {
-						System.out.println(eObject);
+	    			String location = ce.getAttribute("model");
+					String modelLocation = contributorName+"/"+location;
+					tracker.registerObject(extension, modelLocation, IExtensionTracker.REF_WEAK);
+					synchronized (storyModels) {
+						storyModels.add(modelLocation);
 					}
     			}
     			
@@ -648,8 +657,14 @@ public class DocRoute implements Route, BundleListener {
 			
 			@Override
 			public void removeExtension(IExtension extension, Object[] objects) {
-				// TODO
-    			scheduleReloading();				
+				if (objects!=null && objects.length > 0) {
+					synchronized (storyModels) {
+						for (Object obj: objects) {
+							storyModels.remove(obj);
+						}
+					}
+	    			scheduleReloading();
+				}
 			}
 			
 		};
@@ -886,6 +901,7 @@ public class DocRoute implements Route, BundleListener {
 	 * reset to false when loading is completed.
 	 */
 	private AtomicBoolean doLoad = new AtomicBoolean();
+	private StoryDocumentationGenerator storyDocumentationGenerator;
 	
 	void scheduleReloading() {
 		if (loadTimer!=null && !doLoad.getAndSet(true)) {
@@ -957,6 +973,9 @@ public class DocRoute implements Route, BundleListener {
 		}
 		lock.writeLock().lock();
 		try {
+			// Load stories
+			storyDocumentationGenerator = new StoryDocumentationGenerator(storyModels, testResultsModels);
+			
 			// TOC
 			tocRoot = new TocNode(null, null, null);
 			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null);
@@ -1006,13 +1025,15 @@ public class DocRoute implements Route, BundleListener {
 			}
 			createBundlesToc(rootBucket, bundlesToc);
 			
+			storyDocumentationGenerator.createRootTocEntries(tocRoot);	
+			
 			synchronized (tocNodeFactories) {
 				for (TocNodeFactory tnf: tocNodeFactories) {
 					if (tnf.isRoot(tocNodeFactories)) {
 						tnf.createTocNode(tocRoot, tocNodeFactories, false);
 					}
 				}
-			}
+			}			
 			
 			tocRoot.sort(false);
 						
@@ -1395,6 +1416,8 @@ public class DocRoute implements Route, BundleListener {
 				}
 				subTypes.add(subTypeKey);
 			}
+			
+			storyDocumentationGenerator.createEClassTocEntries((EClass) eClassifier, cToc);
 		} else if (eClassifier instanceof EEnum) {
 			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EEnum.gif", null);
 		} else {
@@ -1485,8 +1508,12 @@ public class DocRoute implements Route, BundleListener {
 		if (path.startsWith(BUNDLE_INFO_PATH)) {
 			String tail = path.substring(BUNDLE_INFO_PATH.length());
 			if ("summary.html".equals(tail)) {
-				return generateBundlesSummary();
+				return bundleDocumentationGenerator.generateBundlesSummary();
 			}
+			
+			if (DIAGRAM_PNG.equals(tail)) {
+				return bundleDocumentationGenerator.generateBundlesDiagram(context);
+			}			
 			
 			String[] ta = tail.split("/");
 			if (ta.length != 2) {
@@ -1506,7 +1533,7 @@ public class DocRoute implements Route, BundleListener {
 			}
 			return null;
 		}
-		
+						
 		if (path.startsWith(COMPONENT_INFO_PATH)) {
 			String tail = path.substring(COMPONENT_INFO_PATH.length());
 			
@@ -1529,8 +1556,14 @@ public class DocRoute implements Route, BundleListener {
 			return null;
 		}
 		
-		// TODO - stories, tests
-		
+		if (path.startsWith(STORY_PATH)) {
+			try {
+				return storyDocumentationGenerator.execute(context);
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Action.INTERNAL_SERVER_ERROR;
+			}
+		}		
 		
 		// TODO - diagrams - package/classifier - session/global. Delegate to extensions. 
 		
@@ -1538,68 +1571,7 @@ public class DocRoute implements Route, BundleListener {
 		
 		return null; // Not found
 	}
-	
-//	protected Action generateBundlesDiagram(HttpServletRequestContext context) {
-//		try {
-//			StringBuilder specBuilder = new StringBuilder("@startuml").append(System.lineSeparator());
-//			
-//			specBuilder.append("Bob -> Alice : hello"); // For testing
-//			
-//			specBuilder.append("@enduml").append(System.lineSeparator());
-//			//System.out.println(specBuilder);
-//			SourceStringReader reader = new SourceStringReader(specBuilder.toString());
-//			context.getResponse().setContentType("image/png");
-//			reader.generateImage(context.getResponse().getOutputStream());
-//			return Action.NOP;
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			return Action.INTERNAL_SERVER_ERROR;
-//		}
-//	}
-	
-	protected String generateBundlesSummary() {
-		Bundle[] bundles = bundleContext.getBundles().clone();
-		Arrays.sort(bundles, BUNDLE_COMPARATOR);
-		Table bundlesTable = htmlFactory.table().bordered();
-		Row hr = bundlesTable.header().row().style(Style.PRIMARY);
-		hr.header("Symbolic name");
-		hr.header("Version").bootstrap().text().center();
-		hr.header("State").bootstrap().text().center();
-		RowContainer<?> tBody = bundlesTable.body();
-		for (Bundle bundle: bundles) {
-			Row bRow = tBody.row();
-			bRow.cell(bundleLink(bundle));
-			bRow.cell(StringEscapeUtils.escapeHtml4(bundle.getVersion().toString())).bootstrap().text().center();
-			switch (bundle.getState()) {
-			case Bundle.ACTIVE:
-				bRow.cell("Active").bootstrap().text().center();
-				break;
-			case Bundle.INSTALLED:
-				bRow.cell("Installed").bootstrap().text().center();
-				break;
-			case Bundle.RESOLVED:
-				bRow.cell("Resolved").bootstrap().text().center();
-				break;
-			case Bundle.STARTING:
-				bRow.cell("Starting").bootstrap().text().center();
-				break;
-			case Bundle.STOPPING:
-				bRow.cell("Stopping").bootstrap().text().center();
-				break;
-			case Bundle.UNINSTALLED:
-				bRow.cell("Uninstalled").bootstrap().text().center();
-				break;				
-			default:
-				bRow.cell("Undefined: "+bundle.getState()).bootstrap().text().center();
-				break;				
-			}
-		}
-		Tabs tabs = htmlFactory.tabs();
-		tabs.item("Bundles", bundlesTable);
-		// TODO - diagram app.
-		return tabs.toString();
-	}
-	
+		
 	// Not thread-safe - there is a chance of concurrent modification exception if documentation is rendered when a new generator gets registered/unregistered.
 	private Map<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EClass>>> eClassDocumentationGenerators = new TreeMap<>();	
 	private Map<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EPackage>>> ePackageDocumentationGenerators = new TreeMap<>();	
@@ -1708,6 +1680,10 @@ public class DocRoute implements Route, BundleListener {
 			}
 		} finally {
 			lock.writeLock().unlock();
+		}
+		
+		if (storyDocumentationGenerator != null) {
+			storyDocumentationGenerator.close();
 		}
 	}
 	

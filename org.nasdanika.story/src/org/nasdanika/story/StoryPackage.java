@@ -4,6 +4,7 @@ package org.nasdanika.story;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -108,13 +109,22 @@ public interface StoryPackage extends EPackage {
 	int CATALOG_ELEMENT_FEATURE_COUNT = 3;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP = 0;
+
+	/**
 	 * The number of operations of the '<em>Catalog Element</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int CATALOG_ELEMENT_OPERATION_COUNT = 0;
+	int CATALOG_ELEMENT_OPERATION_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.story.impl.CatalogImpl <em>Catalog</em>}' class.
@@ -172,6 +182,15 @@ public interface StoryPackage extends EPackage {
 	int CATALOG_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int CATALOG___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Catalog</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -225,6 +244,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int STORY_BASE_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY_BASE___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Base</em>' class.
@@ -289,6 +317,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int STORY_CONTAINER_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Container</em>' class.
@@ -362,6 +399,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROTAGONIST_FEATURE_COUNT = STORY_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTAGONIST___VALIDATE__DIAGNOSTICCHAIN_MAP = STORY_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Protagonist</em>' class.
@@ -453,6 +499,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int ROLE_FEATURE_COUNT = PROTAGONIST_FEATURE_COUNT + 2;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROLE___VALIDATE__DIAGNOSTICCHAIN_MAP = PROTAGONIST___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Role</em>' class.
@@ -555,6 +610,15 @@ public interface StoryPackage extends EPackage {
 	int ACTOR_FEATURE_COUNT = PROTAGONIST_FEATURE_COUNT + 3;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR___VALIDATE__DIAGNOSTICCHAIN_MAP = PROTAGONIST___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Actor</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -655,6 +719,15 @@ public interface StoryPackage extends EPackage {
 	int USER_FEATURE_COUNT = ACTOR_FEATURE_COUNT + 0;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int USER___VALIDATE__DIAGNOSTICCHAIN_MAP = ACTOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>User</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -753,6 +826,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int SYSTEM_FEATURE_COUNT = ACTOR_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM___VALIDATE__DIAGNOSTICCHAIN_MAP = ACTOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>System</em>' class.
@@ -873,6 +955,15 @@ public interface StoryPackage extends EPackage {
 	int PERSONA_FEATURE_COUNT = USER_FEATURE_COUNT + 2;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSONA___VALIDATE__DIAGNOSTICCHAIN_MAP = USER___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Persona</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -937,6 +1028,15 @@ public interface StoryPackage extends EPackage {
 	int EPIC_FEATURE_COUNT = STORY_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPIC___VALIDATE__DIAGNOSTICCHAIN_MAP = STORY_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Epic</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -999,6 +1099,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int THEME_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int THEME___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Theme</em>' class.
@@ -1146,6 +1255,15 @@ public interface StoryPackage extends EPackage {
 	int STORY_FEATURE_COUNT = STORY_BASE_FEATURE_COUNT + 10;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY___VALIDATE__DIAGNOSTICCHAIN_MAP = STORY_BASE___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Story</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1226,6 +1344,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int SCENARIO_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCENARIO___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Scenario</em>' class.
@@ -1447,6 +1574,16 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCatalogElement_Description();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.story.CatalogElement#validate(org.eclipse.emf.common.util.DiagnosticChain, java.util.Map) <em>Validate</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Validate</em>' operation.
+	 * @see org.nasdanika.story.CatalogElement#validate(org.eclipse.emf.common.util.DiagnosticChain, java.util.Map)
+	 * @generated
+	 */
+	EOperation getCatalogElement__Validate__DiagnosticChain_Map();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.story.StoryBase <em>Base</em>}'.
@@ -2002,6 +2139,14 @@ public interface StoryPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CATALOG_ELEMENT__DESCRIPTION = eINSTANCE.getCatalogElement_Description();
+
+		/**
+		 * The meta object literal for the '<em><b>Validate</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP = eINSTANCE.getCatalogElement__Validate__DiagnosticChain_Map();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.story.StoryBase <em>Base</em>}' class.

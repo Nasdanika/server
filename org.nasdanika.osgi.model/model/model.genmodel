@@ -40,6 +40,7 @@
     <genClasses ecoreClass="model.ecore#//Component">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Component/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Component/className"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Component/services"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

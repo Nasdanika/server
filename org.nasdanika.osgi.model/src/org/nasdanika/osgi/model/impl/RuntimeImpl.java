@@ -107,6 +107,12 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 						component.setName(dsComponent.getName());
 						component.setId(dsComponent.getId());
 						componentMap.put(component.getId(), component);
+						String[] svcs = dsComponent.getServices();
+						if (svcs != null) {
+							for (String svc: svcs) {
+								component.getServices().add(svc);
+							}
+						}
 					}
 				}
 			}

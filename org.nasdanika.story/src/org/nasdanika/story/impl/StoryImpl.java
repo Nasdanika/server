@@ -2,18 +2,28 @@
  */
 package org.nasdanika.story.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
+import java.util.Map;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.ecore.util.EObjectValidator;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.ConditionalProtagonist;
 import org.nasdanika.story.Goal;
 import org.nasdanika.story.Parameter;
@@ -22,6 +32,7 @@ import org.nasdanika.story.Scenario;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.Theme;
+import org.nasdanika.story.util.StoryValidator;
 
 /**
  * <!-- begin-user-doc -->
@@ -471,6 +482,36 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public boolean validate(DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (getId() != null && getId().trim().length() > 0) {
+			TreeIterator<EObject> rcit = eResource().getAllContents();
+			while (rcit.hasNext()) {
+				EObject next = rcit.next();
+				if (next != this && next instanceof CatalogElement) {
+					String nextId = ((CatalogElement) next).getId();
+					if (nextId != null && getId().trim().equals(nextId.trim())) {
+						if (diagnostics != null) {
+							diagnostics.add
+								(new BasicDiagnostic
+									(Diagnostic.ERROR,
+									 StoryValidator.DIAGNOSTIC_SOURCE,
+									 StoryValidator.CATALOG_ELEMENT__VALIDATE,
+									 "Duplicate ID " + EObjectValidator.getObjectLabel(this, context),
+									 new Object [] { this }));
+						}
+						return false;						
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -670,6 +711,21 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 				return realizes != null && !realizes.isEmpty();
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	@SuppressWarnings("unchecked")
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case StoryPackage.STORY___VALIDATE__DIAGNOSTICCHAIN_MAP:
+				return validate((DiagnosticChain)arguments.get(0), (Map<Object, Object>)arguments.get(1));
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

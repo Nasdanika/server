@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="model" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="story" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,14 +47,14 @@
       </complexType>
    </element>
 
-   <element name="model">
+   <element name="story">
       <annotation>
          <documentation>
             References model file in the bundle.
          </documentation>
       </annotation>
       <complexType>
-         <attribute name="file" type="string">
+         <attribute name="model" type="string">
             <annotation>
                <documentation>
                   Model resource (file).

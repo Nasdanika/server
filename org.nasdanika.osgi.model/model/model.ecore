@@ -53,6 +53,8 @@
   <eClassifiers xsi:type="ecore:EClass" name="Component" eSuperTypes="#//Element">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="services" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="ScrService" instanceClassName="org.apache.felix.scr.ScrService"/>
   <eClassifiers xsi:type="ecore:EDataType" name="FrameworkBundle" instanceClassName="org.osgi.framework.Bundle"/>

@@ -2,6 +2,8 @@ package org.nasdanika.cdo.web.doc;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -21,6 +23,7 @@ import org.nasdanika.html.Form;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.Table;
@@ -45,9 +48,39 @@ class BundleDocumentationGenerator extends BundleAndComponentDocumentationGenera
 		try {
 			context.getResponse().setContentType("image/png");
 			generateContextDiagram(
-					bundle, 
+					Collections.<Object>singleton(bundle), 
 					Direction.valueOf(context.getRequest().getParameter("direction")), 
 					Integer.parseInt(context.getRequest().getParameter("depth")), 
+					Boolean.TRUE.toString().equals(context.getRequest().getParameter("dependencies")), 
+					Boolean.TRUE.toString().equals(context.getRequest().getParameter("services")), 
+					Boolean.TRUE.toString().equals(context.getRequest().getParameter("components")), 
+					true,
+					Types.valueOf(context.getRequest().getParameter("types")), 
+					Boolean.TRUE.toString().equals(context.getRequest().getParameter("leftToRightDirection")),
+					context.getRequest().getParameter("width"),
+					context.getRequest().getParameter("includes"),
+					context.getRequest().getParameter("excludes"),
+					context.getResponse().getOutputStream());
+			return Action.NOP;
+		} catch (IOException | BundleException e) {
+			e.printStackTrace();
+			return Action.INTERNAL_SERVER_ERROR;
+		}
+	}
+		
+	Action generateBundlesDiagram(HttpServletRequestContext context) {
+		try {
+			context.getResponse().setContentType("image/png");
+
+			Collection<Object> contextObjects = new ArrayList<>();
+			for (Bundle bundle: docRoute.getBundleContext().getBundles()) {
+				contextObjects.add(bundle);
+			}
+			
+			generateContextDiagram(
+					contextObjects, 
+					Direction.both, 
+					0, 
 					Boolean.TRUE.toString().equals(context.getRequest().getParameter("dependencies")), 
 					Boolean.TRUE.toString().equals(context.getRequest().getParameter("services")), 
 					Boolean.TRUE.toString().equals(context.getRequest().getParameter("components")), 
@@ -171,6 +204,80 @@ class BundleDocumentationGenerator extends BundleAndComponentDocumentationGenera
 		
 		String script = getHtmlFactory().interpolate(getClass().getResource("BundleContextDiagramAppLoader.js"), scriptEnv);
 		tabs.item("Context Diagram", getHtmlFactory().fragment(contextDiagramApp, getHtmlFactory().tag(TagName.script, script)));		
+	}
+	
+	private void generateBundlesDiagramTab(Tabs tabs) {
+		String idBase = "bundlesDiagram-"+getHtmlFactory().nextId();
+		Tag bundlesDiagramApp = getHtmlFactory().div().id(idBase + "-app");
+		
+		bundlesDiagramApp.content(getHtmlFactory().spinnerOverlay(Spinner.cog).id(idBase+"-overlay"));
+		
+		Form diagramConfigurationForm = getHtmlFactory().form()
+				.inline(true, false)
+				.style().border("1px silver solid")
+				.style().border().top("none")
+				.style().padding("3px")
+				.style().margin().bottom("3px");
+		
+		bundlesDiagramApp.content(diagramConfigurationForm);
+				
+		Input dependenciesCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("dependencies");
+		diagramConfigurationForm.formGroup("Dependencies", dependenciesCheckbox, "Show dependencies (Require-Bundle)")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Input servicesCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("services");
+		diagramConfigurationForm.formGroup("Services", servicesCheckbox, "Show service references")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		if (docRoute.getScrService() != null && docRoute.getScrService().getComponents() != null) {
+			Input componentsCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("components");
+			diagramConfigurationForm.formGroup("Components", componentsCheckbox, "Show components in bundles")
+				.style().border().right("dashed 1px silver")
+				.style().padding().right("5px");
+		}
+		
+		Select typesSelect = getHtmlFactory().select().knockout().value("types");
+		typesSelect.option("hide", false, false, "Hide");
+		typesSelect.option("name", false, false, "Name");
+		typesSelect.option("fullyQualifiedName", true, false, "Fully Qualified Name");
+		diagramConfigurationForm.formGroup("Types", typesSelect, "How to display types")		
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Input leftToRightDirectionCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("leftToRightDirection");
+		diagramConfigurationForm.formGroup("Left to right", leftToRightDirectionCheckbox, "Diagram direction")				
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		Input fitWidthCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("fitWidth");
+		diagramConfigurationForm.formGroup("Fit width", fitWidthCheckbox, "Scale diagram to fit width")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		diagramConfigurationForm.button(getHtmlFactory().fontAwesome().webApplication(WebApplication.filter))
+			.knockout().click("showFilterModal");
+				
+		bundlesDiagramApp.content(createFilterModal().id(idBase+"-modal"));
+		
+		Tag img = getHtmlFactory().tag(TagName.img)
+				.knockout().attr("diagramAttributes")
+				.knockout().event("{ load : imageLoaded }");
+		
+		Tag diagramDiv = getHtmlFactory().div(img);
+		
+		bundlesDiagramApp.content(diagramDiv);
+				
+		Map<String, Object> scriptEnv = new HashMap<>();
+		scriptEnv.put("docRoutePath", docRoute.getDocRoutePath());
+		scriptEnv.put("id-base", idBase);
+		scriptEnv.put("diagram-url", docRoute.getDocRoutePath()+DocRoute.BUNDLE_INFO_PATH+"diagram.png");
+		scriptEnv.put("default-includes", defaultIncludes);
+		scriptEnv.put("default-excludes", defaultExcludes);
+		
+		String script = getHtmlFactory().interpolate(getClass().getResource("BundleContextDiagramAppLoader.js"), scriptEnv);
+		tabs.item("Diagram", getHtmlFactory().fragment(bundlesDiagramApp, getHtmlFactory().tag(TagName.script, script)));		
 	}
 
 	private void generateServicesInUseTab(Bundle bundle, Tabs tabs) {
@@ -490,5 +597,53 @@ class BundleDocumentationGenerator extends BundleAndComponentDocumentationGenera
 		}
 		tabs.item("Headers", headersTable);
 	}
+	
+	String generateBundlesSummary() {
+		Tabs tabs = getHtmlFactory().tabs();
+		generateBundlesTableTab(tabs);
+		generateBundlesDiagramTab(tabs);
+		return tabs.toString();
+	}
+
+	private void generateBundlesTableTab(Tabs tabs) {
+		Bundle[] bundles = docRoute.getBundleContext().getBundles().clone();
+		Arrays.sort(bundles, DocRoute.BUNDLE_COMPARATOR);
+		Table bundlesTable = getHtmlFactory().table().bordered();
+		Row hr = bundlesTable.header().row().style(Style.PRIMARY);
+		hr.header("Symbolic name");
+		hr.header("Version").bootstrap().text().center();
+		hr.header("State").bootstrap().text().center();
+		RowContainer<?> tBody = bundlesTable.body();
+		for (Bundle bundle: bundles) {
+			Row bRow = tBody.row();
+			bRow.cell(docRoute.bundleLink(bundle));
+			bRow.cell(StringEscapeUtils.escapeHtml4(bundle.getVersion().toString())).bootstrap().text().center();
+			switch (bundle.getState()) {
+			case Bundle.ACTIVE:
+				bRow.cell("Active").bootstrap().text().center();
+				break;
+			case Bundle.INSTALLED:
+				bRow.cell("Installed").bootstrap().text().center();
+				break;
+			case Bundle.RESOLVED:
+				bRow.cell("Resolved").bootstrap().text().center();
+				break;
+			case Bundle.STARTING:
+				bRow.cell("Starting").bootstrap().text().center();
+				break;
+			case Bundle.STOPPING:
+				bRow.cell("Stopping").bootstrap().text().center();
+				break;
+			case Bundle.UNINSTALLED:
+				bRow.cell("Uninstalled").bootstrap().text().center();
+				break;				
+			default:
+				bRow.cell("Undefined: "+bundle.getState()).bootstrap().text().center();
+				break;				
+			}
+		}
+		tabs.item("Bundles", bundlesTable);
+	}
+
 
 }

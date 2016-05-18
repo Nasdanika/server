@@ -16,6 +16,10 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/id"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/name"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//CatalogElement/description"/>
+      <genOperations ecoreOperation="story.ecore#//CatalogElement/validate">
+        <genParameters ecoreParameter="story.ecore#//CatalogElement/validate/diagnostics"/>
+        <genParameters ecoreParameter="story.ecore#//CatalogElement/validate/context"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="story.ecore#//StoryBase"/>
     <genClasses ecoreClass="story.ecore#//StoryContainer">

@@ -2,6 +2,7 @@
  */
 package org.nasdanika.osgi.model.impl;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.nasdanika.osgi.model.Component;
 import org.nasdanika.osgi.model.ModelPackage;
@@ -16,6 +17,7 @@ import org.nasdanika.osgi.model.ModelPackage;
  * <ul>
  *   <li>{@link org.nasdanika.osgi.model.impl.ComponentImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.osgi.model.impl.ComponentImpl#getClassName <em>Class Name</em>}</li>
+ *   <li>{@link org.nasdanika.osgi.model.impl.ComponentImpl#getServices <em>Services</em>}</li>
  * </ul>
  *
  * @generated
@@ -74,6 +76,16 @@ public class ComponentImpl extends ElementImpl implements Component {
 	 */
 	public void setClassName(String newClassName) {
 		eSet(ModelPackage.Literals.COMPONENT__CLASS_NAME, newClassName);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<String> getServices() {
+		return (EList<String>)eGet(ModelPackage.Literals.COMPONENT__SERVICES, true);
 	}
 
 } //ComponentImpl

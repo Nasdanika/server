@@ -373,13 +373,22 @@ public interface ModelPackage extends EPackage {
 	int COMPONENT__CLASS_NAME = ELEMENT_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Services</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPONENT__SERVICES = ELEMENT_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>Component</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPONENT_FEATURE_COUNT = ELEMENT_FEATURE_COUNT + 2;
+	int COMPONENT_FEATURE_COUNT = ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Component</em>' class.
@@ -638,6 +647,17 @@ public interface ModelPackage extends EPackage {
 	EAttribute getComponent_ClassName();
 
 	/**
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.osgi.model.Component#getServices <em>Services</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Services</em>'.
+	 * @see org.nasdanika.osgi.model.Component#getServices()
+	 * @see #getComponent()
+	 * @generated
+	 */
+	EAttribute getComponent_Services();
+
+	/**
 	 * Returns the meta object for data type '{@link org.apache.felix.scr.ScrService <em>Scr Service</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -862,6 +882,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute COMPONENT__CLASS_NAME = eINSTANCE.getComponent_ClassName();
+
+		/**
+		 * The meta object literal for the '<em><b>Services</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMPONENT__SERVICES = eINSTANCE.getComponent_Services();
 
 		/**
 		 * The meta object literal for the '<em>Scr Service</em>' data type.

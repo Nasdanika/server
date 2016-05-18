@@ -44,7 +44,7 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 		try {
 			context.getResponse().setContentType("image/png");
 			generateContextDiagram(
-					component, 
+					Collections.<Object>singleton(component), 
 					Direction.valueOf(context.getRequest().getParameter("direction")), 
 					Integer.parseInt(context.getRequest().getParameter("depth")), 
 					false, 
