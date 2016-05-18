@@ -1,6 +1,6 @@
 package org.nasdanika.html.impl;
 
-import org.nasdanika.html.KnockoutControlFlow.Binding;
+import org.nasdanika.html.KnockoutBindingsSource.Binding;
 
 class KnockoutBindingImpl implements Binding {
 

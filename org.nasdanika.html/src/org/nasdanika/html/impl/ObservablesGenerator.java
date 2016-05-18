@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.nasdanika.html.KnockoutControlFlow.Binding;
+import org.nasdanika.html.KnockoutBindingsSource.Binding;
 
 class ObservablesGenerator {
 	

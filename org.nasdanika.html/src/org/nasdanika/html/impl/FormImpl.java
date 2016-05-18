@@ -7,7 +7,6 @@ import java.util.Map;
 
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Button;
-import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormFragment;
@@ -19,7 +18,6 @@ import org.nasdanika.html.Knockout;
 import org.nasdanika.html.KnockoutFilter;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.KnockoutControlFlow.Binding;
 
 class FormImpl extends UIElementImpl<Form> implements Form {
 	
@@ -225,6 +223,5 @@ class FormImpl extends UIElementImpl<Form> implements Form {
 	public Form ngSubmit(Object handler) {
 		return attribute("ng-submit", handler);
 	}
-	
 
 }

@@ -15,11 +15,12 @@ import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.InputGroup;
+import org.nasdanika.html.KnockoutBindingsSource;
+import org.nasdanika.html.KnockoutBindingsSource.Binding;
 import org.nasdanika.html.Producer;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.KnockoutControlFlow.Binding;
 
 class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<T>, Producer {
 	
@@ -56,10 +57,14 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 	public FormGroup<?> formGroup(Object label, UIElement<?> control, Object helpText) {
 		return formGroup(label, UIElementImpl.autoId(factory, control), control, helpText) ;
 	}
+	
+	private interface KnockoutBindingsSourceProducer extends KnockoutBindingsSource, Producer {
+
+	}	
 
 	@Override
 	public T checkbox(final Object label, final Object checkboxControl, final boolean inline) {
-		content.add(new Producer() {
+		content.add(new KnockoutBindingsSourceProducer() {
 			
 			@Override
 			public Object produce(int indent) {
@@ -87,6 +92,19 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 				return stringify(produce(0), 0);
 			}
 			
+
+			@Override
+			public Collection<Binding> getAllBindings() {
+				if (checkboxControl instanceof UIElement<?>) {
+					return ((UIElement<?>) checkboxControl).knockout().getAllBindings();
+				}
+				if (checkboxControl instanceof KnockoutBindingsSource) {
+					return ((KnockoutBindingsSource) checkboxControl).getAllBindings();
+				}
+				return Collections.emptyList();
+			}
+			
+			
 		});
 				
 		return master;
@@ -94,7 +112,7 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 
 	@Override
 	public T radio(final Object label, final Object radioControl, final boolean inline) {
-		content.add(new Producer() {
+		content.add(new KnockoutBindingsSourceProducer() {
 			
 			@Override
 			public Object produce(int indent) {
@@ -120,6 +138,17 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 			@Override
 			public String toString() {
 				return stringify(produce(0), 0);
+			}
+
+			@Override
+			public Collection<Binding> getAllBindings() {
+				if (radioControl instanceof UIElement<?>) {
+					return ((UIElement<?>) radioControl).knockout().getAllBindings();
+				}
+				if (radioControl instanceof KnockoutBindingsSource) {
+					return ((KnockoutBindingsSource) radioControl).getAllBindings();
+				}
+				return Collections.emptyList();
 			}
 			
 		});
@@ -221,6 +250,17 @@ class FieldContainerImpl<T extends FieldContainer<T>> implements FieldContainer<
 						((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
 					}
 				}
+			}
+			
+			if (c instanceof KnockoutBindingsSource) {
+				for (Binding b: ((KnockoutBindingsSource) c).getAllBindings()) {
+					Binding eb = collector.get(b.getName());
+					if (eb==null) {
+						collector.put(b.getName(), b);
+					} else if (eb.getInitialValue()==null && b.getInitialValue()!=null) {
+						((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
+					}
+				}				
 			}
 		}
 		return Collections.unmodifiableCollection(collector.values());

@@ -1,13 +1,11 @@
 package org.nasdanika.html;
 
-import java.util.Collection;
-
 /**
- * Knockout bindings which can be used on a regular and virtual elements.
+ * Knockout bindings which can be used on regular and virtual elements.
  * @author Pavel
  *
  */
-public interface KnockoutControlFlow<T> {		
+public interface KnockoutControlFlow<T> extends KnockoutBindingsSource {		
 
 	T foreach(Object expression);
 	T foreach(Object expression, Object initialValue);
@@ -37,25 +35,5 @@ public interface KnockoutControlFlow<T> {
 	 * @return List of <code> var varName = ko.observable();</code>
 	 */
 	String generateObservables(String... excludes);
-	
-	/**
-	 * Binding interface for generation of observables.
-	 * @author Pavel Vlasov
-	 *
-	 */
-	interface Binding {
 		
-		String getName();
-		
-		Object getInitialValue();
-		
-		boolean isArray();
-		
-	}
-	
-	/**
-	 * @return Returns all bindings in this element and sub-elements.
-	 */
-	Collection<Binding> getAllBindings();
-	
 }

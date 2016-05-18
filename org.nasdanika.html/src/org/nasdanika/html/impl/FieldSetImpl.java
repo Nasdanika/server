@@ -17,7 +17,7 @@ import org.nasdanika.html.KnockoutFilter;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.KnockoutControlFlow.Binding;
+import org.nasdanika.html.KnockoutBindingsSource.Binding;
 
 class FieldSetImpl extends UIElementImpl<FieldSet> implements FieldSet {
 	

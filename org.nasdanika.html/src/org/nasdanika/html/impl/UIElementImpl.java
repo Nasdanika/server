@@ -24,6 +24,7 @@ import org.nasdanika.html.FactoryProducer;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Knockout;
+import org.nasdanika.html.KnockoutBindingsSource;
 import org.nasdanika.html.KnockoutControlFlow;
 import org.nasdanika.html.Producer;
 import org.nasdanika.html.ProducerException;
@@ -614,8 +615,8 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 									((KnockoutBindingImpl) eb).setInitialValue(b.getInitialValue());
 								}
 							}
-						} else if (c instanceof KnockoutControlFlow) {
-							for (Binding b: ((KnockoutControlFlow<?>) c).getAllBindings()) {
+						} else if (c instanceof KnockoutBindingsSource) {
+							for (Binding b: ((KnockoutBindingsSource) c).getAllBindings()) {
 								Binding eb = collector.get(b.getName());
 								if (eb==null) {
 									collector.put(b.getName(), b);
