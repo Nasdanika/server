@@ -974,7 +974,7 @@ public class DocRoute implements Route, BundleListener {
 		lock.writeLock().lock();
 		try {
 			// Load stories
-			storyDocumentationGenerator = new StoryDocumentationGenerator(storyModels, testResultsModels);
+			storyDocumentationGenerator = new StoryDocumentationGenerator(this, storyModels, testResultsModels);
 			
 			// TOC
 			tocRoot = new TocNode(null, null, null);
@@ -1557,12 +1557,7 @@ public class DocRoute implements Route, BundleListener {
 		}
 		
 		if (path.startsWith(STORY_PATH)) {
-			try {
-				return storyDocumentationGenerator.execute(context);
-			} catch (Exception e) {
-				e.printStackTrace();
-				return Action.INTERNAL_SERVER_ERROR;
-			}
+			return storyDocumentationGenerator.getContent(context, baseURL, urlPrefix, path);
 		}		
 		
 		// TODO - diagrams - package/classifier - session/global. Delegate to extensions. 

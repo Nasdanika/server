@@ -1,8 +1,13 @@
 package org.nasdanika.cdo.web.doc.story;
 
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -11,21 +16,101 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.TocNode;
-import org.nasdanika.story.Catalog;
+import org.nasdanika.cdo.web.objectpathresolvers.EObjectPathResolver;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.ContextImpl;
 import org.nasdanika.story.CatalogElement;
+import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.StoryPackage;
-import org.nasdanika.web.Action;
+import org.nasdanika.web.CompositeObjectPathResolver;
 import org.nasdanika.web.HttpServletRequestContext;
-import org.nasdanika.web.Route;
+import org.nasdanika.web.ObjectPathResolver;
 
-public class StoryDocumentationGenerator implements Route {
+public class StoryDocumentationGenerator implements AutoCloseable {
+	
+	private static final String MODEL_PATH = "model";
+
+	private static class TocBuilderRouteEntry implements Comparable<TocBuilderRouteEntry> {
+		
+		private EClass eClass;
+		private TocBuilderRoute<Object> tocBuilderRoute;
+
+		@SuppressWarnings("unchecked")
+		public TocBuilderRouteEntry(EClass eClass, TocBuilderRoute<?> tocBuilderRoute) {
+			this.eClass = eClass;
+			this.tocBuilderRoute = (TocBuilderRoute<Object>) tocBuilderRoute;
+		}
+
+		@Override
+		public int compareTo(TocBuilderRouteEntry o) {
+			if (eClass == o.eClass) {
+				return 0;
+			}
+			
+			if (eClass.isSuperTypeOf(o.eClass)) {
+				return 1;
+			}
+			
+			if (o.eClass.isSuperTypeOf(eClass)) {
+				return -1;
+			}
+			
+			return eClass.hashCode() - o.eClass.hashCode();
+		}
+		
+	}
+	
+	private ObjectPathResolver<Resource> resourcePathResolver = new ObjectPathResolver<Resource>() {
+		
+		@Override
+		public String resolve(Resource obj, ObjectPathResolver<Object> master, Context context) throws Exception {
+			for (Entry<String, Resource> sre: storyResources.entrySet()) {
+				if (sre.getValue() == obj) {
+					return DocRoute.STORY_PATH+MODEL_PATH+"/"+sre.getKey();
+				}
+			}
+			return master.resolve(obj, master, context);
+		}
+		
+	};
+	
+	private EObjectPathResolver eObjectPathResolver = new EObjectPathResolver();
+	
+	private CompositeObjectPathResolver objectPathResolver = new CompositeObjectPathResolver();
+	
+	private final List<TocBuilderRouteEntry> tocBuilderRoutes;
+	
+	{
+		List<TocBuilderRouteEntry> tocBuilderRoutes = new ArrayList<>();
+		tocBuilderRoutes.add(new TocBuilderRouteEntry(StoryPackage.eINSTANCE.getCatalog(), new CatalogTocBuilderRoute(this)));
+		
+		Collections.sort(tocBuilderRoutes);
+		this.tocBuilderRoutes = Collections.unmodifiableList(tocBuilderRoutes);
+
+		objectPathResolver.addResolver(EObject.class, eObjectPathResolver);
+		objectPathResolver.addResolver(Resource.class, resourcePathResolver);
+	}
+	
+	TocBuilderRoute<Object> getTocBuilderRoute(EClass eClass) {
+		for (TocBuilderRouteEntry tcr: tocBuilderRoutes) {
+			if (tcr.eClass.isSuperTypeOf(eClass)) {
+				return tcr.tocBuilderRoute;
+			}
+		}
+		return null;
+	}
 
 	private Map<String, Resource> storyResources;
 	private Map<String, Resource> testResultResources;
 	private ResourceSetImpl resourceSet;
 
-	public StoryDocumentationGenerator(Collection<String> storyModels, Collection<String> testResultModels) {
+	private DocRoute docRoute;
+
+	public StoryDocumentationGenerator(DocRoute docRoute, Collection<String> storyModels, Collection<String> testResultModels) {
+		this.docRoute = docRoute;
+		
 		resourceSet = new ResourceSetImpl();
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 
@@ -52,20 +137,15 @@ public class StoryDocumentationGenerator implements Route {
 		TocNode storyToc = tocRoot.createChild("Stories", null, null, null);
 		for (Resource storyResource: storyResources.values()) {
 			for (EObject root: storyResource.getContents()) {
-				if (root instanceof CatalogElement) {
-					createCatalogElementToc((CatalogElement) root, storyToc);					
+				TocBuilderRoute<Object> tocBuilderRoute = getTocBuilderRoute(root.eClass());
+				if (tocBuilderRoute != null) {
+					tocBuilderRoute.createToc(root, storyToc);
 				}
 			}
 		}		
 		if (storyToc.getChildren().isEmpty()) {
 			tocRoot.getChildren().remove(storyToc);
 		}
-	}
-	
-	private void createCatalogElementToc(CatalogElement catalogElement, TocNode parent) {
-		if (catalogElement instanceof Catalog) {
-			createCatalogToc((Catalog) catalogElement, parent);
-		}		
 	}
 	
 	public String findCatalogElement(String location, String id) {
@@ -82,40 +162,40 @@ public class StoryDocumentationGenerator implements Route {
 		return null;
 	}
 	
-	private void createCatalogToc(Catalog catalog, TocNode parent) {
-		TocNode catalogToc = parent.createChild(
-				catalog.getName(), 
-				null, // TODO
-				"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/drawer.png", 
-				null);
-		
-		// TODO - hijos
-		
-		if (catalogToc.getChildren().isEmpty()) {
-			parent.getChildren().remove(catalogToc);
+	public void createEClassTocEntries(EClass eClass, TocNode cToc) {
+		for (Resource sr: storyResources.values()) {
+			TreeIterator<EObject> cit = sr.getAllContents();
+			while (cit.hasNext()) {
+				EObject next = cit.next();
+				if (next instanceof Protagonist && ((Protagonist) next).getLinkTo() == eClass) { // superclass relationship?
+					TocBuilderRoute<Object> ptbr = getTocBuilderRoute(((Protagonist) next).eClass());
+					if (ptbr != null) {
+						ptbr.createToc(next, cToc);
+					}
+				}				
+			}
 		}
 	}	
-
-	public void createEClassTocEntries(EClass eClassifier, TocNode cToc) {
-		// TODO Auto-generated method stub
-		
+	
+	String getObjectPath(EObject eObject) throws Exception {
+		return objectPathResolver.resolve(eObject, null, new ContextImpl(docRoute.getBundleContext()));		
 	}
-
-	@Override
-	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+	
+	public Object getContent(HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
+//		String[] path = context.getPath();
+//		System.out.println(Arrays.toString(path));
+//		if (path.length > 1) {
+//			
+//		}
 		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean canExecute() {
-		return true;
+		return path;
 	}
 
 	@Override
 	public void close() throws Exception {
-		// TODO Auto-generated method stub
-		
+		for (TocBuilderRouteEntry tbr: tocBuilderRoutes) {
+			tbr.tocBuilderRoute.close();
+		}
 	}
 
 }

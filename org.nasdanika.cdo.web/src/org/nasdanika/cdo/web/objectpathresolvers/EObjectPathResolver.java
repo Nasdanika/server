@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.ObjectPathResolver;
 
@@ -52,15 +53,20 @@ public class EObjectPathResolver implements ObjectPathResolver<EObject> {
 				return ret;
 			}			
 		}
-		// Resource URI fragment
+		// Location in resource content.
 		Resource res = obj.eResource();
 		if (res!=null) {
 			String resPath = master.resolve(res, master, context);
 			if (resPath!=null) {
-				String fragment = res.getURIFragment(obj);
-				if (fragment != null) {
-					return resPath+"/"+fragment;
-				}
+//				String fragment = res.getURIFragment(obj);
+//				if (CoreUtil.isBlank(fragment)) {
+					int idx = res.getContents().indexOf(obj);
+					if (idx != -1) {
+						return resPath+"/"+idx;
+					}
+//				} else {
+//					return resPath+"/"+fragment;
+//				}
 			}
 		}
 		return null;
