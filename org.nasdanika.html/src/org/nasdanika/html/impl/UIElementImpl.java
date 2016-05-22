@@ -520,7 +520,7 @@ public abstract class UIElementImpl<T extends UIElement<T>> implements UIElement
 			
 			@Override
 			public T textInput(Object expression) {
-				return text(expression, null);
+				return textInput(expression, null);
 			}
 
 			@Override
