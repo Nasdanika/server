@@ -112,7 +112,7 @@ import org.pegdown.LinkRenderer;
 import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.PegDownProcessor;
 
-public class DocRoute implements Route, BundleListener {
+public class DocRoute implements Route, BundleListener, DocumentationContentProvider {
 		
 	static final String ROUTER_DOC_CONTENT_FRAGMENT_PREFIX = "#router/doc-content/";
 	static final String COMPONENT_NAME = "component-name";
@@ -1441,6 +1441,7 @@ public class DocRoute implements Route, BundleListener {
 		// TODO - from extensions
 	}
 	
+	@Override
 	public Object getContent(HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
 		if (path.startsWith(PACKAGES_GLOBAL_PATH)) {
 			String[] subPath = path.substring(PACKAGES_GLOBAL_PATH.length()).split("/");

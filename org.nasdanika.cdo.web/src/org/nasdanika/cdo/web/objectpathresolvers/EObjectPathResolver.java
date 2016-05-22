@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.web.objectpathresolvers;
 
-import java.net.URLEncoder;
 import java.util.List;
 
 import org.eclipse.emf.cdo.CDOObject;
@@ -10,8 +9,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.CoreUtil;
-import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.ObjectPathResolver;
 
 /**
@@ -42,7 +39,7 @@ public class EObjectPathResolver implements ObjectPathResolver<EObject> {
 		if (container!=null && containmentReference!=null) {
 			String containerPath = master.resolve(container, master, context);
 			if (containerPath!=null) {
-				String ret = containerPath+"/feature/"+URLEncoder.encode(containmentReference.getName(), ((HttpServletRequestContext) context).getCharacterEncoding());
+				String ret = containerPath+"/feature/" + containmentReference.getName(); // URLEncoder.encode(containmentReference.getName(), ((HttpServletRequestContext) context).getCharacterEncoding());
 				if (containmentReference.isMany()) {
 					int idx = ((List<?>) container.eGet(containmentReference)).indexOf(obj);
 					if (idx==-1) {

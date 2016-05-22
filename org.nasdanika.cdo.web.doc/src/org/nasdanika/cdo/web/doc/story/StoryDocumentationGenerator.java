@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.nasdanika.cdo.web.doc.DocRoute;
+import org.nasdanika.cdo.web.doc.DocumentationContentProvider;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.cdo.web.objectpathresolvers.EObjectPathResolver;
 import org.nasdanika.core.Context;
@@ -24,27 +25,28 @@ import org.nasdanika.core.ContextImpl;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.StoryPackage;
+import org.nasdanika.web.Action;
 import org.nasdanika.web.CompositeObjectPathResolver;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.ObjectPathResolver;
 
-public class StoryDocumentationGenerator implements AutoCloseable {
+public class StoryDocumentationGenerator implements AutoCloseable, DocumentationContentProvider {
 	
 	private static final String MODEL_PATH = "model";
 
-	private static class TocBuilderRouteEntry implements Comparable<TocBuilderRouteEntry> {
+	private static class StoryElementDocumentationGeneratorEntry implements Comparable<StoryElementDocumentationGeneratorEntry>, AutoCloseable {
 		
 		private EClass eClass;
-		private TocBuilderRoute<Object> tocBuilderRoute;
+		private StoryElementDocumentationGenerator<Object> storyElementDocumentationGenerator;
 
 		@SuppressWarnings("unchecked")
-		public TocBuilderRouteEntry(EClass eClass, TocBuilderRoute<?> tocBuilderRoute) {
+		public StoryElementDocumentationGeneratorEntry(EClass eClass, StoryElementDocumentationGenerator<?> tocBuilderRoute) {
 			this.eClass = eClass;
-			this.tocBuilderRoute = (TocBuilderRoute<Object>) tocBuilderRoute;
+			this.storyElementDocumentationGenerator = (StoryElementDocumentationGenerator<Object>) tocBuilderRoute;
 		}
 
 		@Override
-		public int compareTo(TocBuilderRouteEntry o) {
+		public int compareTo(StoryElementDocumentationGeneratorEntry o) {
 			if (eClass == o.eClass) {
 				return 0;
 			}
@@ -59,44 +61,38 @@ public class StoryDocumentationGenerator implements AutoCloseable {
 			
 			return eClass.hashCode() - o.eClass.hashCode();
 		}
-		
-	}
-	
-	private ObjectPathResolver<Resource> resourcePathResolver = new ObjectPathResolver<Resource>() {
-		
+
 		@Override
-		public String resolve(Resource obj, ObjectPathResolver<Object> master, Context context) throws Exception {
-			for (Entry<String, Resource> sre: storyResources.entrySet()) {
-				if (sre.getValue() == obj) {
-					return DocRoute.STORY_PATH+MODEL_PATH+"/"+sre.getKey();
-				}
-			}
-			return master.resolve(obj, master, context);
+		public void close() throws Exception {
+			if (storyElementDocumentationGenerator instanceof AutoCloseable) {
+				((AutoCloseable) storyElementDocumentationGenerator).close();
+			}			
 		}
 		
-	};
-	
-	private EObjectPathResolver eObjectPathResolver = new EObjectPathResolver();
-	
-	private CompositeObjectPathResolver objectPathResolver = new CompositeObjectPathResolver();
-	
-	private final List<TocBuilderRouteEntry> tocBuilderRoutes;
+	}
+		
+	private final List<StoryElementDocumentationGeneratorEntry> storyElementDocumentationGenerators;
 	
 	{
-		List<TocBuilderRouteEntry> tocBuilderRoutes = new ArrayList<>();
-		tocBuilderRoutes.add(new TocBuilderRouteEntry(StoryPackage.eINSTANCE.getCatalog(), new CatalogTocBuilderRoute(this)));
+		List<StoryElementDocumentationGeneratorEntry> tocBuilderRoutes = new ArrayList<>();
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getCatalog(), new CatalogDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getEpic(), new EpicDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getPersona(), new PersonaDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getRole(), new RoleDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getScenario(), new ScenarioDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getStory(), new UserStoryDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getSystem(), new SystemDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getTheme(), new ThemeDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getUser(), new UserDocumentationGenerator(this)));
 		
 		Collections.sort(tocBuilderRoutes);
-		this.tocBuilderRoutes = Collections.unmodifiableList(tocBuilderRoutes);
-
-		objectPathResolver.addResolver(EObject.class, eObjectPathResolver);
-		objectPathResolver.addResolver(Resource.class, resourcePathResolver);
+		this.storyElementDocumentationGenerators = Collections.unmodifiableList(tocBuilderRoutes);
 	}
 	
-	TocBuilderRoute<Object> getTocBuilderRoute(EClass eClass) {
-		for (TocBuilderRouteEntry tcr: tocBuilderRoutes) {
+	StoryElementDocumentationGenerator<Object> getStoryElementDocumentationGenerator(EClass eClass) {
+		for (StoryElementDocumentationGeneratorEntry tcr: storyElementDocumentationGenerators) {
 			if (tcr.eClass.isSuperTypeOf(eClass)) {
-				return tcr.tocBuilderRoute;
+				return tcr.storyElementDocumentationGenerator;
 			}
 		}
 		return null;
@@ -104,6 +100,7 @@ public class StoryDocumentationGenerator implements AutoCloseable {
 
 	private Map<String, Resource> storyResources;
 	private Map<String, Resource> testResultResources;
+	private Map<EObject, String> modelElementToPathMap = new HashMap<>();
 	private ResourceSetImpl resourceSet;
 
 	private DocRoute docRoute;
@@ -120,7 +117,9 @@ public class StoryDocumentationGenerator implements AutoCloseable {
 		
 		synchronized (storyModels) {
 			for (String modelLocation: storyModels) {
-				storyResources.put(modelLocation, resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true));
+				Resource model = resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true);
+				storyResources.put(modelLocation, model);
+				mapModelContent(modelLocation, model, docRoute);
 			}
 		}
 		
@@ -128,16 +127,49 @@ public class StoryDocumentationGenerator implements AutoCloseable {
 		
 		synchronized (testResultModels) {
 			for (String modelLocation: testResultModels) {
-				testResultResources.put(modelLocation, resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true));
+				Resource model = resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true);
+				testResultResources.put(modelLocation, model);
+				mapModelContent(modelLocation, model, docRoute);
 			}
 		}		
+	}
+
+	private void mapModelContent(final String modelLocation, final Resource model, DocRoute docRoute) {
+		ObjectPathResolver<Resource> resourcePathResolver = new ObjectPathResolver<Resource>() {
+			
+			@Override
+			public String resolve(Resource obj, ObjectPathResolver<Object> master, Context context) throws Exception {
+				if (model == obj) {
+					return DocRoute.STORY_PATH+MODEL_PATH+"/"+modelLocation;
+				}
+				return master.resolve(obj, master, context);
+			}
+			
+		};
+
+		
+		Context context = new ContextImpl(docRoute.getBundleContext());
+		CompositeObjectPathResolver objectPathResolver = new CompositeObjectPathResolver();
+		objectPathResolver.addResolver(EObject.class, new EObjectPathResolver());
+		objectPathResolver.addResolver(Resource.class, resourcePathResolver);		
+
+		TreeIterator<EObject> cit = model.getAllContents();
+		while (cit.hasNext()) {
+			try {
+				EObject obj = cit.next();
+				String path = objectPathResolver.resolve(obj, null, context);
+				modelElementToPathMap.put(obj, path);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public void createRootTocEntries(TocNode tocRoot) {
 		TocNode storyToc = tocRoot.createChild("Stories", null, null, null);
 		for (Resource storyResource: storyResources.values()) {
 			for (EObject root: storyResource.getContents()) {
-				TocBuilderRoute<Object> tocBuilderRoute = getTocBuilderRoute(root.eClass());
+				StoryElementDocumentationGenerator<Object> tocBuilderRoute = getStoryElementDocumentationGenerator(root.eClass());
 				if (tocBuilderRoute != null) {
 					tocBuilderRoute.createToc(root, storyToc);
 				}
@@ -167,10 +199,13 @@ public class StoryDocumentationGenerator implements AutoCloseable {
 			TreeIterator<EObject> cit = sr.getAllContents();
 			while (cit.hasNext()) {
 				EObject next = cit.next();
-				if (next instanceof Protagonist && ((Protagonist) next).getLinkTo() == eClass) { // superclass relationship?
-					TocBuilderRoute<Object> ptbr = getTocBuilderRoute(((Protagonist) next).eClass());
-					if (ptbr != null) {
-						ptbr.createToc(next, cToc);
+				if (next instanceof Protagonist && ((Protagonist) next).getLinkTo() != null) { // superclass relationship?
+					EClass linkedTo = ((Protagonist) next).getLinkTo();
+					if (linkedTo.getName().equals(eClass.getName()) && linkedTo.getEPackage().getNsURI().equals(eClass.getEPackage().getNsURI())) {
+						StoryElementDocumentationGenerator<Object> ptbr = getStoryElementDocumentationGenerator(((Protagonist) next).eClass());
+						if (ptbr != null) {
+							ptbr.createToc(next, cToc);
+						}
 					}
 				}				
 			}
@@ -178,23 +213,45 @@ public class StoryDocumentationGenerator implements AutoCloseable {
 	}	
 	
 	String getObjectPath(EObject eObject) throws Exception {
-		return objectPathResolver.resolve(eObject, null, new ContextImpl(docRoute.getBundleContext()));		
+		return modelElementToPathMap.get(eObject);		
 	}
 	
-	public Object getContent(HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
-//		String[] path = context.getPath();
-//		System.out.println(Arrays.toString(path));
-//		if (path.length > 1) {
-//			
-//		}
-		// TODO Auto-generated method stub
-		return path;
+	public Object getContent(HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {		
+		if (path.startsWith(DocRoute.STORY_PATH+MODEL_PATH+"/")) {
+			Entry<EObject, String> entry = null;
+			for (Entry<EObject, String> candidate: modelElementToPathMap.entrySet()) {
+				if (path.startsWith(candidate.getValue()+"/") && (entry == null || entry.getValue().length() < candidate.getValue().length())) {
+					entry = candidate;
+				}				
+			}
+			
+			if (entry != null) {
+				int offset = entry.getValue().split("/").length;
+				StoryElementDocumentationGenerator<Object> sedg = getStoryElementDocumentationGenerator(entry.getKey().eClass());
+				if (sedg != null) {
+					try {
+						// Maybe shift path as well.
+						return sedg.getContent(
+								entry.getKey(),
+								context == null ? context : context.shift(offset), 
+								baseURL, 
+								urlPrefix, 
+								path);
+					} catch (Exception e) {
+						e.printStackTrace();
+						return Action.INTERNAL_SERVER_ERROR;
+					}
+				}				
+			}
+			return Action.NOT_FOUND;
+		} 
+		return Action.NOT_FOUND;
 	}
 
 	@Override
 	public void close() throws Exception {
-		for (TocBuilderRouteEntry tbr: tocBuilderRoutes) {
-			tbr.tocBuilderRoute.close();
+		for (StoryElementDocumentationGeneratorEntry tbr: storyElementDocumentationGenerators) {			
+			tbr.close();
 		}
 	}
 
