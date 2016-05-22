@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import java.util.Map;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -16,13 +15,9 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EObjectValidator;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.ConditionalProtagonist;
 import org.nasdanika.story.Goal;
@@ -59,7 +54,7 @@ import org.nasdanika.story.util.StoryValidator;
  *
  * @generated
  */
-public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
+public class StoryImpl extends CDOObjectImpl implements Story {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -69,16 +64,6 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @ordered
 	 */
 	protected static final String ID_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getId()
-	 * @generated
-	 * @ordered
-	 */
-	protected String id = ID_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -91,16 +76,6 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	protected static final String NAME_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String name = NAME_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -109,66 +84,6 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @ordered
 	 */
 	protected static final String DESCRIPTION_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDescription()
-	 * @generated
-	 * @ordered
-	 */
-	protected String description = DESCRIPTION_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getScenarios() <em>Scenarios</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getScenarios()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Scenario> scenarios;
-
-	/**
-	 * The cached value of the '{@link #getDepends() <em>Depends</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDepends()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Story> depends;
-
-	/**
-	 * The cached value of the '{@link #getThemes() <em>Themes</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getThemes()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Theme> themes;
-
-	/**
-	 * The cached value of the '{@link #getProtagonists() <em>Protagonists</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getProtagonists()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Protagonist> protagonists;
-
-	/**
-	 * The cached value of the '{@link #getConditionalprotagonists() <em>Conditionalprotagonists</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getConditionalprotagonists()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<ConditionalProtagonist> conditionalprotagonists;
 
 	/**
 	 * The default value of the '{@link #getGoal() <em>Goal</em>}' attribute.
@@ -181,16 +96,6 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	protected static final String GOAL_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getGoal() <em>Goal</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getGoal()
-	 * @generated
-	 * @ordered
-	 */
-	protected String goal = GOAL_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getBenefit() <em>Benefit</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -201,26 +106,6 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	protected static final String BENEFIT_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getBenefit() <em>Benefit</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getBenefit()
-	 * @generated
-	 * @ordered
-	 */
-	protected String benefit = BENEFIT_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getParameters()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Parameter> parameters;
-
-	/**
 	 * The default value of the '{@link #isCompleted() <em>Completed</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -229,26 +114,6 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @ordered
 	 */
 	protected static final boolean COMPLETED_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isCompleted() <em>Completed</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isCompleted()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean completed = COMPLETED_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getRealizes() <em>Realizes</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRealizes()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Goal> realizes;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -274,8 +139,18 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getId() {
-		return id;
+		return (String)eDynamicGet(StoryPackage.STORY__ID, StoryPackage.Literals.CATALOG_ELEMENT__ID, true, true);
 	}
 
 	/**
@@ -284,10 +159,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public void setId(String newId) {
-		String oldId = id;
-		id = newId;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.STORY__ID, oldId, id));
+		eDynamicSet(StoryPackage.STORY__ID, StoryPackage.Literals.CATALOG_ELEMENT__ID, newId);
 	}
 
 	/**
@@ -296,7 +168,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public String getName() {
-		return name;
+		return (String)eDynamicGet(StoryPackage.STORY__NAME, StoryPackage.Literals.CATALOG_ELEMENT__NAME, true, true);
 	}
 
 	/**
@@ -305,10 +177,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.STORY__NAME, oldName, name));
+		eDynamicSet(StoryPackage.STORY__NAME, StoryPackage.Literals.CATALOG_ELEMENT__NAME, newName);
 	}
 
 	/**
@@ -317,7 +186,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public String getDescription() {
-		return description;
+		return (String)eDynamicGet(StoryPackage.STORY__DESCRIPTION, StoryPackage.Literals.CATALOG_ELEMENT__DESCRIPTION, true, true);
 	}
 
 	/**
@@ -326,10 +195,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public void setDescription(String newDescription) {
-		String oldDescription = description;
-		description = newDescription;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.STORY__DESCRIPTION, oldDescription, description));
+		eDynamicSet(StoryPackage.STORY__DESCRIPTION, StoryPackage.Literals.CATALOG_ELEMENT__DESCRIPTION, newDescription);
 	}
 
 	/**
@@ -337,11 +203,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Scenario> getScenarios() {
-		if (scenarios == null) {
-			scenarios = new EObjectContainmentEList<Scenario>(Scenario.class, this, StoryPackage.STORY__SCENARIOS);
-		}
-		return scenarios;
+		return (EList<Scenario>)eDynamicGet(StoryPackage.STORY__SCENARIOS, StoryPackage.Literals.STORY__SCENARIOS, true, true);
 	}
 
 	/**
@@ -349,11 +213,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Story> getDepends() {
-		if (depends == null) {
-			depends = new EObjectResolvingEList<Story>(Story.class, this, StoryPackage.STORY__DEPENDS);
-		}
-		return depends;
+		return (EList<Story>)eDynamicGet(StoryPackage.STORY__DEPENDS, StoryPackage.Literals.STORY__DEPENDS, true, true);
 	}
 
 	/**
@@ -361,11 +223,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Theme> getThemes() {
-		if (themes == null) {
-			themes = new EObjectResolvingEList<Theme>(Theme.class, this, StoryPackage.STORY__THEMES);
-		}
-		return themes;
+		return (EList<Theme>)eDynamicGet(StoryPackage.STORY__THEMES, StoryPackage.Literals.STORY__THEMES, true, true);
 	}
 
 	/**
@@ -373,11 +233,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Protagonist> getProtagonists() {
-		if (protagonists == null) {
-			protagonists = new EObjectResolvingEList<Protagonist>(Protagonist.class, this, StoryPackage.STORY__PROTAGONISTS);
-		}
-		return protagonists;
+		return (EList<Protagonist>)eDynamicGet(StoryPackage.STORY__PROTAGONISTS, StoryPackage.Literals.STORY__PROTAGONISTS, true, true);
 	}
 
 	/**
@@ -385,11 +243,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<ConditionalProtagonist> getConditionalprotagonists() {
-		if (conditionalprotagonists == null) {
-			conditionalprotagonists = new EObjectContainmentEList<ConditionalProtagonist>(ConditionalProtagonist.class, this, StoryPackage.STORY__CONDITIONALPROTAGONISTS);
-		}
-		return conditionalprotagonists;
+		return (EList<ConditionalProtagonist>)eDynamicGet(StoryPackage.STORY__CONDITIONALPROTAGONISTS, StoryPackage.Literals.STORY__CONDITIONALPROTAGONISTS, true, true);
 	}
 
 	/**
@@ -398,7 +254,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public String getGoal() {
-		return goal;
+		return (String)eDynamicGet(StoryPackage.STORY__GOAL, StoryPackage.Literals.STORY__GOAL, true, true);
 	}
 
 	/**
@@ -407,10 +263,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public void setGoal(String newGoal) {
-		String oldGoal = goal;
-		goal = newGoal;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.STORY__GOAL, oldGoal, goal));
+		eDynamicSet(StoryPackage.STORY__GOAL, StoryPackage.Literals.STORY__GOAL, newGoal);
 	}
 
 	/**
@@ -419,7 +272,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public String getBenefit() {
-		return benefit;
+		return (String)eDynamicGet(StoryPackage.STORY__BENEFIT, StoryPackage.Literals.STORY__BENEFIT, true, true);
 	}
 
 	/**
@@ -428,10 +281,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public void setBenefit(String newBenefit) {
-		String oldBenefit = benefit;
-		benefit = newBenefit;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.STORY__BENEFIT, oldBenefit, benefit));
+		eDynamicSet(StoryPackage.STORY__BENEFIT, StoryPackage.Literals.STORY__BENEFIT, newBenefit);
 	}
 
 	/**
@@ -439,11 +289,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Parameter> getParameters() {
-		if (parameters == null) {
-			parameters = new EObjectContainmentEList<Parameter>(Parameter.class, this, StoryPackage.STORY__PARAMETERS);
-		}
-		return parameters;
+		return (EList<Parameter>)eDynamicGet(StoryPackage.STORY__PARAMETERS, StoryPackage.Literals.STORY__PARAMETERS, true, true);
 	}
 
 	/**
@@ -452,7 +300,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public boolean isCompleted() {
-		return completed;
+		return (Boolean)eDynamicGet(StoryPackage.STORY__COMPLETED, StoryPackage.Literals.STORY__COMPLETED, true, true);
 	}
 
 	/**
@@ -461,10 +309,7 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * @generated
 	 */
 	public void setCompleted(boolean newCompleted) {
-		boolean oldCompleted = completed;
-		completed = newCompleted;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.STORY__COMPLETED, oldCompleted, completed));
+		eDynamicSet(StoryPackage.STORY__COMPLETED, StoryPackage.Literals.STORY__COMPLETED, newCompleted);
 	}
 
 	/**
@@ -472,11 +317,9 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Goal> getRealizes() {
-		if (realizes == null) {
-			realizes = new EObjectResolvingEList<Goal>(Goal.class, this, StoryPackage.STORY__REALIZES);
-		}
-		return realizes;
+		return (EList<Goal>)eDynamicGet(StoryPackage.STORY__REALIZES, StoryPackage.Literals.STORY__REALIZES, true, true);
 	}
 
 	/**
@@ -684,31 +527,31 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.STORY__ID:
-				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+				return ID_EDEFAULT == null ? getId() != null : !ID_EDEFAULT.equals(getId());
 			case StoryPackage.STORY__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+				return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
 			case StoryPackage.STORY__DESCRIPTION:
-				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+				return DESCRIPTION_EDEFAULT == null ? getDescription() != null : !DESCRIPTION_EDEFAULT.equals(getDescription());
 			case StoryPackage.STORY__SCENARIOS:
-				return scenarios != null && !scenarios.isEmpty();
+				return !getScenarios().isEmpty();
 			case StoryPackage.STORY__DEPENDS:
-				return depends != null && !depends.isEmpty();
+				return !getDepends().isEmpty();
 			case StoryPackage.STORY__THEMES:
-				return themes != null && !themes.isEmpty();
+				return !getThemes().isEmpty();
 			case StoryPackage.STORY__PROTAGONISTS:
-				return protagonists != null && !protagonists.isEmpty();
+				return !getProtagonists().isEmpty();
 			case StoryPackage.STORY__CONDITIONALPROTAGONISTS:
-				return conditionalprotagonists != null && !conditionalprotagonists.isEmpty();
+				return !getConditionalprotagonists().isEmpty();
 			case StoryPackage.STORY__GOAL:
-				return GOAL_EDEFAULT == null ? goal != null : !GOAL_EDEFAULT.equals(goal);
+				return GOAL_EDEFAULT == null ? getGoal() != null : !GOAL_EDEFAULT.equals(getGoal());
 			case StoryPackage.STORY__BENEFIT:
-				return BENEFIT_EDEFAULT == null ? benefit != null : !BENEFIT_EDEFAULT.equals(benefit);
+				return BENEFIT_EDEFAULT == null ? getBenefit() != null : !BENEFIT_EDEFAULT.equals(getBenefit());
 			case StoryPackage.STORY__PARAMETERS:
-				return parameters != null && !parameters.isEmpty();
+				return !getParameters().isEmpty();
 			case StoryPackage.STORY__COMPLETED:
-				return completed != COMPLETED_EDEFAULT;
+				return isCompleted() != COMPLETED_EDEFAULT;
 			case StoryPackage.STORY__REALIZES:
-				return realizes != null && !realizes.isEmpty();
+				return !getRealizes().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -726,32 +569,6 @@ public class StoryImpl extends MinimalEObjectImpl.Container implements Story {
 				return validate((DiagnosticChain)arguments.get(0), (Map<Object, Object>)arguments.get(1));
 		}
 		return super.eInvoke(operationID, arguments);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (id: ");
-		result.append(id);
-		result.append(", name: ");
-		result.append(name);
-		result.append(", description: ");
-		result.append(description);
-		result.append(", goal: ");
-		result.append(goal);
-		result.append(", benefit: ");
-		result.append(benefit);
-		result.append(", completed: ");
-		result.append(completed);
-		result.append(')');
-		return result.toString();
 	}
 
 } //StoryImpl

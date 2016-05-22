@@ -3,8 +3,8 @@
 package org.nasdanika.story;
 
 import java.util.Map;
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.DiagnosticChain;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -26,9 +26,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * @see org.nasdanika.story.StoryPackage#getCatalogElement()
  * @model interface="true" abstract="true"
+ * @extends CDOObject
  * @generated
  */
-public interface CatalogElement extends EObject {
+public interface CatalogElement extends CDOObject {
 	/**
 	 * Returns the value of the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->

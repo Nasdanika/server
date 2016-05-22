@@ -3,14 +3,10 @@
 package org.nasdanika.story.impl;
 
 import java.util.Collection;
-
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.nasdanika.story.Goal;
 import org.nasdanika.story.Persona;
@@ -42,26 +38,6 @@ public class PersonaImpl extends UserImpl implements Persona {
 	protected static final String PICTURE_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getPicture() <em>Picture</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPicture()
-	 * @generated
-	 * @ordered
-	 */
-	protected String picture = PICTURE_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getGoals() <em>Goals</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getGoals()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Goal> goals;
-
-	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -86,7 +62,7 @@ public class PersonaImpl extends UserImpl implements Persona {
 	 * @generated
 	 */
 	public String getPicture() {
-		return picture;
+		return (String)eDynamicGet(StoryPackage.PERSONA__PICTURE, StoryPackage.Literals.PERSONA__PICTURE, true, true);
 	}
 
 	/**
@@ -95,10 +71,7 @@ public class PersonaImpl extends UserImpl implements Persona {
 	 * @generated
 	 */
 	public void setPicture(String newPicture) {
-		String oldPicture = picture;
-		picture = newPicture;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.PERSONA__PICTURE, oldPicture, picture));
+		eDynamicSet(StoryPackage.PERSONA__PICTURE, StoryPackage.Literals.PERSONA__PICTURE, newPicture);
 	}
 
 	/**
@@ -106,11 +79,9 @@ public class PersonaImpl extends UserImpl implements Persona {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Goal> getGoals() {
-		if (goals == null) {
-			goals = new EObjectContainmentEList<Goal>(Goal.class, this, StoryPackage.PERSONA__GOALS);
-		}
-		return goals;
+		return (EList<Goal>)eDynamicGet(StoryPackage.PERSONA__GOALS, StoryPackage.Literals.PERSONA__GOALS, true, true);
 	}
 
 	/**
@@ -190,27 +161,11 @@ public class PersonaImpl extends UserImpl implements Persona {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.PERSONA__PICTURE:
-				return PICTURE_EDEFAULT == null ? picture != null : !PICTURE_EDEFAULT.equals(picture);
+				return PICTURE_EDEFAULT == null ? getPicture() != null : !PICTURE_EDEFAULT.equals(getPicture());
 			case StoryPackage.PERSONA__GOALS:
-				return goals != null && !goals.isEmpty();
+				return !getGoals().isEmpty();
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (picture: ");
-		result.append(picture);
-		result.append(')');
-		return result.toString();
 	}
 
 } //PersonaImpl

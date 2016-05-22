@@ -8,8 +8,6 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.nasdanika.story.Actor;
 import org.nasdanika.story.Role;
@@ -31,36 +29,6 @@ import org.nasdanika.story.StoryPackage;
  * @generated
  */
 public abstract class ActorImpl extends ProtagonistImpl implements Actor {
-	/**
-	 * The cached value of the '{@link #getRoles() <em>Roles</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRoles()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Role> roles;
-
-	/**
-	 * The cached value of the '{@link #getSubActors() <em>Sub Actors</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSubActors()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Actor> subActors;
-
-	/**
-	 * The cached value of the '{@link #getSuperActors() <em>Super Actors</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSuperActors()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Actor> superActors;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -85,11 +53,9 @@ public abstract class ActorImpl extends ProtagonistImpl implements Actor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Role> getRoles() {
-		if (roles == null) {
-			roles = new EObjectResolvingEList<Role>(Role.class, this, StoryPackage.ACTOR__ROLES);
-		}
-		return roles;
+		return (EList<Role>)eDynamicGet(StoryPackage.ACTOR__ROLES, StoryPackage.Literals.ACTOR__ROLES, true, true);
 	}
 
 	/**
@@ -97,11 +63,9 @@ public abstract class ActorImpl extends ProtagonistImpl implements Actor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Actor> getSubActors() {
-		if (subActors == null) {
-			subActors = new EObjectContainmentEList<Actor>(Actor.class, this, StoryPackage.ACTOR__SUB_ACTORS);
-		}
-		return subActors;
+		return (EList<Actor>)eDynamicGet(StoryPackage.ACTOR__SUB_ACTORS, StoryPackage.Literals.ACTOR__SUB_ACTORS, true, true);
 	}
 
 	/**
@@ -109,11 +73,9 @@ public abstract class ActorImpl extends ProtagonistImpl implements Actor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Actor> getSuperActors() {
-		if (superActors == null) {
-			superActors = new EObjectResolvingEList<Actor>(Actor.class, this, StoryPackage.ACTOR__SUPER_ACTORS);
-		}
-		return superActors;
+		return (EList<Actor>)eDynamicGet(StoryPackage.ACTOR__SUPER_ACTORS, StoryPackage.Literals.ACTOR__SUPER_ACTORS, true, true);
 	}
 
 	/**
@@ -203,11 +165,11 @@ public abstract class ActorImpl extends ProtagonistImpl implements Actor {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.ACTOR__ROLES:
-				return roles != null && !roles.isEmpty();
+				return !getRoles().isEmpty();
 			case StoryPackage.ACTOR__SUB_ACTORS:
-				return subActors != null && !subActors.isEmpty();
+				return !getSubActors().isEmpty();
 			case StoryPackage.ACTOR__SUPER_ACTORS:
-				return superActors != null && !superActors.isEmpty();
+				return !getSuperActors().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

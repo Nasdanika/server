@@ -65,18 +65,18 @@ public class StoryFactoryImpl extends EFactoryImpl implements StoryFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case StoryPackage.CATALOG: return createCatalog();
-			case StoryPackage.ROLE: return createRole();
-			case StoryPackage.USER: return createUser();
-			case StoryPackage.SYSTEM: return createSystem();
-			case StoryPackage.PERSONA: return createPersona();
-			case StoryPackage.EPIC: return createEpic();
-			case StoryPackage.THEME: return createTheme();
-			case StoryPackage.STORY: return createStory();
-			case StoryPackage.SCENARIO: return createScenario();
-			case StoryPackage.CONDITIONAL_PROTAGONIST: return createConditionalProtagonist();
-			case StoryPackage.GOAL: return createGoal();
-			case StoryPackage.PARAMETER: return createParameter();
+			case StoryPackage.CATALOG: return (EObject)createCatalog();
+			case StoryPackage.ROLE: return (EObject)createRole();
+			case StoryPackage.USER: return (EObject)createUser();
+			case StoryPackage.SYSTEM: return (EObject)createSystem();
+			case StoryPackage.PERSONA: return (EObject)createPersona();
+			case StoryPackage.EPIC: return (EObject)createEpic();
+			case StoryPackage.THEME: return (EObject)createTheme();
+			case StoryPackage.STORY: return (EObject)createStory();
+			case StoryPackage.SCENARIO: return (EObject)createScenario();
+			case StoryPackage.CONDITIONAL_PROTAGONIST: return (EObject)createConditionalProtagonist();
+			case StoryPackage.GOAL: return (EObject)createGoal();
+			case StoryPackage.PARAMETER: return (EObject)createParameter();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}

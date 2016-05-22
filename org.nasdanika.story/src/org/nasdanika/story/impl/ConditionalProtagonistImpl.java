@@ -3,13 +3,9 @@
 package org.nasdanika.story.impl;
 
 import java.util.Collection;
-
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.story.ConditionalProtagonist;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.StoryPackage;
@@ -28,17 +24,7 @@ import org.nasdanika.story.StoryPackage;
  *
  * @generated
  */
-public class ConditionalProtagonistImpl extends MinimalEObjectImpl.Container implements ConditionalProtagonist {
-	/**
-	 * The cached value of the '{@link #getProtagonist() <em>Protagonist</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getProtagonist()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Protagonist> protagonist;
-
+public class ConditionalProtagonistImpl extends CDOObjectImpl implements ConditionalProtagonist {
 	/**
 	 * The default value of the '{@link #getCondition() <em>Condition</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -48,16 +34,6 @@ public class ConditionalProtagonistImpl extends MinimalEObjectImpl.Container imp
 	 * @ordered
 	 */
 	protected static final String CONDITION_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getCondition() <em>Condition</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getCondition()
-	 * @generated
-	 * @ordered
-	 */
-	protected String condition = CONDITION_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -83,11 +59,19 @@ public class ConditionalProtagonistImpl extends MinimalEObjectImpl.Container imp
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
 	public EList<Protagonist> getProtagonist() {
-		if (protagonist == null) {
-			protagonist = new EObjectResolvingEList<Protagonist>(Protagonist.class, this, StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST);
-		}
-		return protagonist;
+		return (EList<Protagonist>)eDynamicGet(StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST, StoryPackage.Literals.CONDITIONAL_PROTAGONIST__PROTAGONIST, true, true);
 	}
 
 	/**
@@ -96,7 +80,7 @@ public class ConditionalProtagonistImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	public String getCondition() {
-		return condition;
+		return (String)eDynamicGet(StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION, StoryPackage.Literals.CONDITIONAL_PROTAGONIST__CONDITION, true, true);
 	}
 
 	/**
@@ -105,10 +89,7 @@ public class ConditionalProtagonistImpl extends MinimalEObjectImpl.Container imp
 	 * @generated
 	 */
 	public void setCondition(String newCondition) {
-		String oldCondition = condition;
-		condition = newCondition;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION, oldCondition, condition));
+		eDynamicSet(StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION, StoryPackage.Literals.CONDITIONAL_PROTAGONIST__CONDITION, newCondition);
 	}
 
 	/**
@@ -174,27 +155,11 @@ public class ConditionalProtagonistImpl extends MinimalEObjectImpl.Container imp
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST:
-				return protagonist != null && !protagonist.isEmpty();
+				return !getProtagonist().isEmpty();
 			case StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION:
-				return CONDITION_EDEFAULT == null ? condition != null : !CONDITION_EDEFAULT.equals(condition);
+				return CONDITION_EDEFAULT == null ? getCondition() != null : !CONDITION_EDEFAULT.equals(getCondition());
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (condition: ");
-		result.append(condition);
-		result.append(')');
-		return result.toString();
 	}
 
 } //ConditionalProtagonistImpl

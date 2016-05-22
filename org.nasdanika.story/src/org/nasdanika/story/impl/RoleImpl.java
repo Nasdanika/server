@@ -8,8 +8,6 @@ import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.nasdanika.story.Role;
 import org.nasdanika.story.StoryPackage;
@@ -29,26 +27,6 @@ import org.nasdanika.story.StoryPackage;
  * @generated
  */
 public class RoleImpl extends ProtagonistImpl implements Role {
-	/**
-	 * The cached value of the '{@link #getSubRoles() <em>Sub Roles</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSubRoles()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Role> subRoles;
-
-	/**
-	 * The cached value of the '{@link #getSuperRoles() <em>Super Roles</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getSuperRoles()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Role> superRoles;
-
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -73,11 +51,9 @@ public class RoleImpl extends ProtagonistImpl implements Role {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Role> getSubRoles() {
-		if (subRoles == null) {
-			subRoles = new EObjectContainmentEList<Role>(Role.class, this, StoryPackage.ROLE__SUB_ROLES);
-		}
-		return subRoles;
+		return (EList<Role>)eDynamicGet(StoryPackage.ROLE__SUB_ROLES, StoryPackage.Literals.ROLE__SUB_ROLES, true, true);
 	}
 
 	/**
@@ -85,11 +61,9 @@ public class RoleImpl extends ProtagonistImpl implements Role {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<Role> getSuperRoles() {
-		if (superRoles == null) {
-			superRoles = new EObjectResolvingEList<Role>(Role.class, this, StoryPackage.ROLE__SUPER_ROLES);
-		}
-		return superRoles;
+		return (EList<Role>)eDynamicGet(StoryPackage.ROLE__SUPER_ROLES, StoryPackage.Literals.ROLE__SUPER_ROLES, true, true);
 	}
 
 	/**
@@ -170,9 +144,9 @@ public class RoleImpl extends ProtagonistImpl implements Role {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.ROLE__SUB_ROLES:
-				return subRoles != null && !subRoles.isEmpty();
+				return !getSubRoles().isEmpty();
 			case StoryPackage.ROLE__SUPER_ROLES:
-				return superRoles != null && !superRoles.isEmpty();
+				return !getSuperRoles().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

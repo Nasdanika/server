@@ -2,10 +2,8 @@
  */
 package org.nasdanika.story.impl;
 
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.story.Goal;
 import org.nasdanika.story.StoryPackage;
 
@@ -23,7 +21,7 @@ import org.nasdanika.story.StoryPackage;
  *
  * @generated
  */
-public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
+public class GoalImpl extends CDOObjectImpl implements Goal {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -35,16 +33,6 @@ public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
 	protected static final String NAME_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String name = NAME_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getDetails() <em>Details</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -53,16 +41,6 @@ public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
 	 * @ordered
 	 */
 	protected static final String DETAILS_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getDetails() <em>Details</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDetails()
-	 * @generated
-	 * @ordered
-	 */
-	protected String details = DETAILS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -88,8 +66,18 @@ public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getName() {
-		return name;
+		return (String)eDynamicGet(StoryPackage.GOAL__NAME, StoryPackage.Literals.GOAL__NAME, true, true);
 	}
 
 	/**
@@ -98,10 +86,7 @@ public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
 	 * @generated
 	 */
 	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.GOAL__NAME, oldName, name));
+		eDynamicSet(StoryPackage.GOAL__NAME, StoryPackage.Literals.GOAL__NAME, newName);
 	}
 
 	/**
@@ -110,7 +95,7 @@ public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
 	 * @generated
 	 */
 	public String getDetails() {
-		return details;
+		return (String)eDynamicGet(StoryPackage.GOAL__DETAILS, StoryPackage.Literals.GOAL__DETAILS, true, true);
 	}
 
 	/**
@@ -119,10 +104,7 @@ public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
 	 * @generated
 	 */
 	public void setDetails(String newDetails) {
-		String oldDetails = details;
-		details = newDetails;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.GOAL__DETAILS, oldDetails, details));
+		eDynamicSet(StoryPackage.GOAL__DETAILS, StoryPackage.Literals.GOAL__DETAILS, newDetails);
 	}
 
 	/**
@@ -186,29 +168,11 @@ public class GoalImpl extends MinimalEObjectImpl.Container implements Goal {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.GOAL__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+				return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
 			case StoryPackage.GOAL__DETAILS:
-				return DETAILS_EDEFAULT == null ? details != null : !DETAILS_EDEFAULT.equals(details);
+				return DETAILS_EDEFAULT == null ? getDetails() != null : !DETAILS_EDEFAULT.equals(getDetails());
 		}
 		return super.eIsSet(featureID);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: ");
-		result.append(name);
-		result.append(", details: ");
-		result.append(details);
-		result.append(')');
-		return result.toString();
 	}
 
 } //GoalImpl

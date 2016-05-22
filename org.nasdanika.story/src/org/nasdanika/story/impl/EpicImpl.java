@@ -6,7 +6,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 
 import java.util.Map;
-import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -16,12 +15,9 @@ import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
-import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectValidator;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Epic;
 import org.nasdanika.story.StoryBase;
@@ -44,7 +40,7 @@ import org.nasdanika.story.util.StoryValidator;
  *
  * @generated
  */
-public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
+public class EpicImpl extends CDOObjectImpl implements Epic {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -54,16 +50,6 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * @ordered
 	 */
 	protected static final String ID_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getId()
-	 * @generated
-	 * @ordered
-	 */
-	protected String id = ID_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -76,16 +62,6 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	protected static final String NAME_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getName()
-	 * @generated
-	 * @ordered
-	 */
-	protected String name = NAME_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -94,26 +70,6 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * @ordered
 	 */
 	protected static final String DESCRIPTION_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDescription()
-	 * @generated
-	 * @ordered
-	 */
-	protected String description = DESCRIPTION_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getStories() <em>Stories</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getStories()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<StoryBase> stories;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -139,8 +95,18 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getId() {
-		return id;
+		return (String)eDynamicGet(StoryPackage.EPIC__ID, StoryPackage.Literals.CATALOG_ELEMENT__ID, true, true);
 	}
 
 	/**
@@ -149,10 +115,7 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * @generated
 	 */
 	public void setId(String newId) {
-		String oldId = id;
-		id = newId;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.EPIC__ID, oldId, id));
+		eDynamicSet(StoryPackage.EPIC__ID, StoryPackage.Literals.CATALOG_ELEMENT__ID, newId);
 	}
 
 	/**
@@ -161,7 +124,7 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * @generated
 	 */
 	public String getName() {
-		return name;
+		return (String)eDynamicGet(StoryPackage.EPIC__NAME, StoryPackage.Literals.CATALOG_ELEMENT__NAME, true, true);
 	}
 
 	/**
@@ -170,10 +133,7 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * @generated
 	 */
 	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.EPIC__NAME, oldName, name));
+		eDynamicSet(StoryPackage.EPIC__NAME, StoryPackage.Literals.CATALOG_ELEMENT__NAME, newName);
 	}
 
 	/**
@@ -182,7 +142,7 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * @generated
 	 */
 	public String getDescription() {
-		return description;
+		return (String)eDynamicGet(StoryPackage.EPIC__DESCRIPTION, StoryPackage.Literals.CATALOG_ELEMENT__DESCRIPTION, true, true);
 	}
 
 	/**
@@ -191,10 +151,7 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * @generated
 	 */
 	public void setDescription(String newDescription) {
-		String oldDescription = description;
-		description = newDescription;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, StoryPackage.EPIC__DESCRIPTION, oldDescription, description));
+		eDynamicSet(StoryPackage.EPIC__DESCRIPTION, StoryPackage.Literals.CATALOG_ELEMENT__DESCRIPTION, newDescription);
 	}
 
 	/**
@@ -202,11 +159,9 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	public EList<StoryBase> getStories() {
-		if (stories == null) {
-			stories = new EObjectContainmentEList<StoryBase>(StoryBase.class, this, StoryPackage.EPIC__STORIES);
-		}
-		return stories;
+		return (EList<StoryBase>)eDynamicGet(StoryPackage.EPIC__STORIES, StoryPackage.Literals.STORY_CONTAINER__STORIES, true, true);
 	}
 
 	/**
@@ -332,13 +287,13 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.EPIC__ID:
-				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+				return ID_EDEFAULT == null ? getId() != null : !ID_EDEFAULT.equals(getId());
 			case StoryPackage.EPIC__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+				return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
 			case StoryPackage.EPIC__DESCRIPTION:
-				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+				return DESCRIPTION_EDEFAULT == null ? getDescription() != null : !DESCRIPTION_EDEFAULT.equals(getDescription());
 			case StoryPackage.EPIC__STORIES:
-				return stories != null && !stories.isEmpty();
+				return !getStories().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -356,26 +311,6 @@ public class EpicImpl extends MinimalEObjectImpl.Container implements Epic {
 				return validate((DiagnosticChain)arguments.get(0), (Map<Object, Object>)arguments.get(1));
 		}
 		return super.eInvoke(operationID, arguments);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public String toString() {
-		if (eIsProxy()) return super.toString();
-
-		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (id: ");
-		result.append(id);
-		result.append(", name: ");
-		result.append(name);
-		result.append(", description: ");
-		result.append(description);
-		result.append(')');
-		return result.toString();
 	}
 
 } //EpicImpl

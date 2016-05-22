@@ -2,8 +2,8 @@
  */
 package org.nasdanika.story;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -20,9 +20,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * @see org.nasdanika.story.StoryPackage#getConditionalProtagonist()
  * @model
+ * @extends CDOObject
  * @generated
  */
-public interface ConditionalProtagonist extends EObject {
+public interface ConditionalProtagonist extends CDOObject {
 	/**
 	 * Returns the value of the '<em><b>Protagonist</b></em>' reference list.
 	 * The list contents are of type {@link org.nasdanika.story.Protagonist}.

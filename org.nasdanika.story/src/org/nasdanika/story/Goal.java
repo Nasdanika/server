@@ -2,7 +2,7 @@
  */
 package org.nasdanika.story;
 
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.cdo.CDOObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,9 +23,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * @see org.nasdanika.story.StoryPackage#getGoal()
  * @model
+ * @extends CDOObject
  * @generated
  */
-public interface Goal extends EObject {
+public interface Goal extends CDOObject {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.ResourceLocator;
 
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.EObjectValidator;
@@ -154,15 +155,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateCatalog(Catalog catalog, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(catalog, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(catalog, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(catalog, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(catalog, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(catalog, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(catalog, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(catalog, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(catalog, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(catalog, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)catalog, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)catalog, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)catalog, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)catalog, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)catalog, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)catalog, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)catalog, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)catalog, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)catalog, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(catalog, diagnostics, context);
 		return result;
 	}
@@ -173,15 +174,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateCatalogElement(CatalogElement catalogElement, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(catalogElement, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(catalogElement, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(catalogElement, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(catalogElement, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(catalogElement, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(catalogElement, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(catalogElement, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(catalogElement, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(catalogElement, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)catalogElement, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)catalogElement, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)catalogElement, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)catalogElement, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)catalogElement, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)catalogElement, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)catalogElement, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)catalogElement, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)catalogElement, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(catalogElement, diagnostics, context);
 		return result;
 	}
@@ -202,15 +203,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateStoryBase(StoryBase storyBase, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(storyBase, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(storyBase, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(storyBase, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(storyBase, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(storyBase, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(storyBase, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(storyBase, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(storyBase, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(storyBase, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)storyBase, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)storyBase, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)storyBase, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)storyBase, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)storyBase, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)storyBase, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)storyBase, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)storyBase, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)storyBase, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(storyBase, diagnostics, context);
 		return result;
 	}
@@ -221,15 +222,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateStoryContainer(StoryContainer storyContainer, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(storyContainer, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(storyContainer, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(storyContainer, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(storyContainer, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(storyContainer, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(storyContainer, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(storyContainer, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(storyContainer, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(storyContainer, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)storyContainer, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)storyContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)storyContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)storyContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)storyContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)storyContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)storyContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)storyContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)storyContainer, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(storyContainer, diagnostics, context);
 		return result;
 	}
@@ -240,15 +241,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateProtagonist(Protagonist protagonist, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(protagonist, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(protagonist, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(protagonist, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(protagonist, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(protagonist, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(protagonist, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(protagonist, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(protagonist, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(protagonist, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)protagonist, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)protagonist, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)protagonist, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)protagonist, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)protagonist, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)protagonist, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)protagonist, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)protagonist, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)protagonist, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(protagonist, diagnostics, context);
 		return result;
 	}
@@ -259,15 +260,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateRole(Role role, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(role, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(role, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(role, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(role, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(role, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(role, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(role, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(role, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(role, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)role, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)role, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)role, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)role, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)role, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)role, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)role, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)role, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)role, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(role, diagnostics, context);
 		return result;
 	}
@@ -278,15 +279,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateActor(Actor actor, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(actor, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(actor, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(actor, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(actor, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(actor, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(actor, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(actor, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(actor, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(actor, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)actor, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)actor, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)actor, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)actor, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)actor, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)actor, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)actor, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)actor, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)actor, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(actor, diagnostics, context);
 		return result;
 	}
@@ -297,15 +298,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateUser(User user, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(user, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(user, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(user, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(user, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(user, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(user, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(user, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(user, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(user, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)user, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)user, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)user, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)user, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)user, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)user, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)user, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)user, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)user, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(user, diagnostics, context);
 		return result;
 	}
@@ -316,15 +317,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateSystem(org.nasdanika.story.System system, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(system, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(system, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(system, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(system, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(system, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(system, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(system, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(system, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(system, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)system, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)system, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)system, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)system, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)system, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)system, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)system, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)system, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)system, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(system, diagnostics, context);
 		return result;
 	}
@@ -335,15 +336,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validatePersona(Persona persona, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(persona, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(persona, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(persona, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(persona, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(persona, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(persona, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(persona, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(persona, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(persona, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)persona, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)persona, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)persona, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)persona, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)persona, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)persona, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)persona, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)persona, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)persona, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(persona, diagnostics, context);
 		return result;
 	}
@@ -354,15 +355,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateEpic(Epic epic, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(epic, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(epic, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(epic, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(epic, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(epic, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(epic, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(epic, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(epic, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(epic, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)epic, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)epic, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)epic, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)epic, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)epic, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)epic, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)epic, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)epic, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)epic, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(epic, diagnostics, context);
 		return result;
 	}
@@ -373,15 +374,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateTheme(Theme theme, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(theme, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(theme, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(theme, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(theme, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(theme, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(theme, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(theme, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(theme, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(theme, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)theme, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)theme, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)theme, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)theme, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)theme, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)theme, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)theme, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)theme, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)theme, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(theme, diagnostics, context);
 		return result;
 	}
@@ -392,15 +393,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateStory(Story story, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(story, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(story, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(story, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(story, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(story, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(story, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(story, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(story, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(story, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)story, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)story, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)story, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)story, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)story, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)story, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)story, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)story, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)story, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(story, diagnostics, context);
 		return result;
 	}
@@ -411,15 +412,15 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateScenario(Scenario scenario, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment(scenario, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms(scenario, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms(scenario, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained(scenario, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired(scenario, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves(scenario, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID(scenario, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique(scenario, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique(scenario, diagnostics, context);
+		if (!validate_NoCircularContainment((EObject)scenario, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)scenario, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)scenario, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)scenario, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)scenario, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)scenario, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)scenario, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)scenario, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)scenario, diagnostics, context);
 		if (result || diagnostics != null) result &= validateCatalogElement_validate(scenario, diagnostics, context);
 		return result;
 	}
@@ -430,7 +431,7 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateConditionalProtagonist(ConditionalProtagonist conditionalProtagonist, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		return validate_EveryDefaultConstraint(conditionalProtagonist, diagnostics, context);
+		return validate_EveryDefaultConstraint((EObject)conditionalProtagonist, diagnostics, context);
 	}
 
 	/**
@@ -439,7 +440,7 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateGoal(Goal goal, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		return validate_EveryDefaultConstraint(goal, diagnostics, context);
+		return validate_EveryDefaultConstraint((EObject)goal, diagnostics, context);
 	}
 
 	/**
@@ -448,7 +449,7 @@ public class StoryValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateParameter(Parameter parameter, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		return validate_EveryDefaultConstraint(parameter, diagnostics, context);
+		return validate_EveryDefaultConstraint((EObject)parameter, diagnostics, context);
 	}
 
 	/**
