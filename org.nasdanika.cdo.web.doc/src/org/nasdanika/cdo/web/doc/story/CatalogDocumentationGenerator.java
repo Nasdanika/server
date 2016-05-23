@@ -1,13 +1,9 @@
 package org.nasdanika.cdo.web.doc.story;
 
-import java.net.URL;
-import java.util.Arrays;
-
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.story.Catalog;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Protagonist;
-import org.nasdanika.web.HttpServletRequestContext;
 
 class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator<Catalog> {
 
@@ -21,7 +17,7 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 			TocNode catalogToc = parent.createChild(
 					catalog.getName(), 
 					storyDocumentationGenerator.getObjectPath(catalog)+"/index.html",
-					"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/drawer.png", 
+					getIcon(), 
 					null);
 			
 			for (CatalogElement el: catalog.getElements()) {
@@ -40,11 +36,10 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 			e.printStackTrace();
 		}
 	}
-
+	
 	@Override
-	public Object getContent(Catalog catalog, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
-		// TODO Auto-generated method stub
-		return "~~Catalog documentation "+path+" "+(context==null ? "" : Arrays.toString(context.getPath()))+" "+baseURL+" "+urlPrefix;
+	protected String getIcon() {
+		return "/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/drawer.png";
 	}
 
 }

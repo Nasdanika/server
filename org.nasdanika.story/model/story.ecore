@@ -40,7 +40,7 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Unique, in the containing resource, catalog element identifier. Identifiers are automatically generated when an element is added to a catalog."/>
+        <details key="documentation" value="Unique, in the containing resource, catalog element identifier. &#xD;&#xA;If catalog element ID contains ${parent} token then the token is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         &#xD;&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">

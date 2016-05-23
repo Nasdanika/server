@@ -73,6 +73,15 @@ Examples:
             ]]></description>
       </wiki-link-resolver>
       <wiki-link-resolver
+            class="org.nasdanika.cdo.web.doc.extensions.StoryResolver"
+            name="story">
+            <description><![CDATA[
+            Resolves [[global>CatalogElement@urn:org.nasdanika.story|story element]] URL from ID. Format: ``[[story>bundle/location#id]]``. Example: ``[[story>org.myorg.mybundle/mystory.nasdanika_story#my-story-element]]``.
+            
+If story element ID contains ``${parent}`` token then the token is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         
+            ]]></description>
+      </wiki-link-resolver>
+      <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.extensions.TocWikiLinkResolver"
             name="toc">
             <description><![CDATA[

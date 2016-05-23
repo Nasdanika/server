@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -22,9 +24,11 @@ import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.cdo.web.objectpathresolvers.EObjectPathResolver;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.ContextImpl;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.StoryPackage;
+import org.nasdanika.story.User;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.CompositeObjectPathResolver;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -83,7 +87,7 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getStory(), new UserStoryDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getSystem(), new SystemDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getTheme(), new ThemeDocumentationGenerator(this)));
-		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getUser(), new UserDocumentationGenerator(this)));
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getUser(), new UserDocumentationGenerator<User>(this)));
 		
 		Collections.sort(tocBuilderRoutes);
 		this.storyElementDocumentationGenerators = Collections.unmodifiableList(tocBuilderRoutes);
@@ -104,6 +108,10 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 	private ResourceSetImpl resourceSet;
 
 	private DocRoute docRoute;
+	
+	DocRoute getDocRoute() {
+		return docRoute;
+	}
 
 	public StoryDocumentationGenerator(DocRoute docRoute, Collection<String> storyModels, Collection<String> testResultModels) {
 		this.docRoute = docRoute;
@@ -180,14 +188,40 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		}
 	}
 	
+	private static final Pattern PARENT_ID_TOKEN_PATTERN = Pattern.compile("\\$\\{parent\\}");		
+	
+	static String resolveCatalogElementID(CatalogElement catalogElement) {
+		String id = catalogElement.getId();
+		if (CoreUtil.isBlank(id)) {
+			return null;
+		}
+		Matcher matcher = PARENT_ID_TOKEN_PATTERN.matcher(id);
+		StringBuilder output = new StringBuilder();
+		int i = 0;
+		while (matcher.find()) {
+			EObject container = catalogElement.eContainer();
+			if (!(container instanceof CatalogElement)) {
+				return null;
+			}
+			String parentID = resolveCatalogElementID((CatalogElement) container);
+			if (CoreUtil.isBlank(parentID)) {
+				return null;
+			}
+		    output.append(id.substring(i, matcher.start())).append(parentID);			    
+		    i = matcher.end();
+		}
+		output.append(id.substring(i, id.length()));
+		return output.toString();
+	}
+	
 	public String findCatalogElement(String location, String id) {
 		Resource res = storyResources.get(location);
 		if (res != null) {
 			TreeIterator<EObject> cit = res.getAllContents();
 			while (cit.hasNext()) {
 				EObject next = cit.next();
-				if (next instanceof CatalogElement) {
-					
+				if (next instanceof CatalogElement && id.equals(resolveCatalogElementID((CatalogElement) next))) {
+					return modelElementToPathMap.get(next);
 				}
 			}
 		}

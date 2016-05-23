@@ -1,13 +1,18 @@
 package org.nasdanika.cdo.web.doc.story;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.web.doc.TocNode;
+import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Fragment;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.story.CatalogElement;
+import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 
 abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> implements StoryElementDocumentationGenerator<T> {
@@ -45,11 +50,35 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 	protected String getIcon() {
 		return null;
 	}
-	
+			
 	@Override
 	public Object getContent(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
-		// TODO - name, description.
-		return obj.eClass().getName()+" documentation "+path+" "+(context==null ? "" : Arrays.toString(context.getPath()))+" "+baseURL+" "+urlPrefix;
+		if (path.endsWith("/index.html")) {
+			return getIndex(obj, context, baseURL, urlPrefix, path).toString();
+		}
+		
+		return Action.NOT_FOUND;
+	}
+
+	protected Fragment getIndex(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
+		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
+		Fragment ret = htmlFactory.fragment(
+			htmlFactory.tag(
+					TagName.h3, 
+					htmlFactory.tag(TagName.img).attribute("src", storyDocumentationGenerator.getDocRoute().getDocRoutePath()+getIcon()).style().margin().right("5px"),
+					StringEscapeUtils.escapeHtml4(obj.getName()),
+					" (", obj.eClass().getName(), ")"));
+		
+		String resolvedID = StoryDocumentationGenerator.resolveCatalogElementID(obj);
+		if (!CoreUtil.isBlank(resolvedID)) {
+			ret.content(htmlFactory.div("<B>ID:</B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
+		}
+		
+		if (!CoreUtil.isBlank(obj.getDescription())) {
+			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getDescription()).style().margin().top("10px").style().margin().bottom("10px"));
+		}
+		
+		return ret;
 	}
 
 }

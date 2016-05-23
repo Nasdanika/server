@@ -2777,6 +2777,18 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	public String markdownToHtml(URL baseURL, String urlPrefix, String markdownSource) {
 		return new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(preProcessMarkdown(markdownSource, baseURL, urlPrefix), createMarkdownLinkRenderer(baseURL, urlPrefix));
 	}
+	
+	/**
+	 * Helper method.
+	 * @param baseURL
+	 * @param urlPrefix
+	 * @param markdownSource
+	 * @return
+	 */
+	public Tag markdownToHtmlDiv(URL baseURL, String urlPrefix, String markdownSource) {
+		return htmlFactory.div(markdownToHtml(baseURL, urlPrefix, markdownSource)).addClass("markdown-body");
+	}
+	
 
 	public String javaDocLink(String className, boolean qualified, boolean isArray) {
 		try {
@@ -2817,6 +2829,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		}
 				
 		return htmlFactory.span(StringEscapeUtils.escapeHtml4("Component not found: '"+componentName+"' in "+bundle.getSymbolicName()+" "+bundle.getVersion()));
+	}
+
+	public String findStoryElement(String spec) {
+		if (CoreUtil.isBlank(spec)) {
+			return null;
+		}
+		int idx = spec.indexOf("#");		
+		return idx==-1 ? null : storyDocumentationGenerator.findCatalogElement(spec.substring(0, idx), spec.substring(idx+1));
 	}
 	
 }

@@ -99,6 +99,15 @@ Resolves TOC URL from TOC ID. Format: ``[[toc>bundle/id]]``. Example: ``[[toc>or
 
 This resolver is registered by the documentation bundle.
 
+#### StoryResolver
+Class: [[javadoc>org.nasdanika.cdo.web.doc.extensions.StoryResolver|org.nasdanika.cdo.web.doc.extensions.StoryResolver]]
+
+Resolves [[global>CatalogElement@urn:org.nasdanika.story|story element]] URL from ID. Format: ``[[story>bundle/location#id]]``. Example: ``[[story>org.myorg.mybundle/mystory.nasdanika_story#my-story-element]]``.
+            
+If story element ID contains ``${parent}`` token then the token is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         
+
+This resolver is registered by the documentation bundle.
+
 #### WikipediaResolver
 Class: [[javadoc>org.nasdanika.cdo.web.doc.extensions.WikipediaResolver|org.nasdanika.cdo.web.doc.extensions.WikipediaResolver]]
 

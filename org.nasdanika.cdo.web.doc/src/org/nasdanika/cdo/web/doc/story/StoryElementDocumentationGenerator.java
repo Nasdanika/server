@@ -2,7 +2,6 @@ package org.nasdanika.cdo.web.doc.story;
 
 import java.net.URL;
 
-import org.nasdanika.cdo.web.doc.DocumentationContentProvider;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.web.HttpServletRequestContext;
 
