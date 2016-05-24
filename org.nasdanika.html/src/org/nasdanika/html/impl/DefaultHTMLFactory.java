@@ -498,7 +498,14 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 
 	@Override
 	public Tag overlay(Object... content) {		
-		Tag contentDiv = div(content).style("position", "relative").style("height", "100%");
+		Tag contentDiv = div(content)
+				.style("position", "relative")
+				.style("height", "100%")
+				.style("width", "100%")
+				.style("display", "flex")
+				.style("justify-content", "center")
+				.style("align-items", "center");
+		
 		return div(contentDiv)
 				.style("position", "absolute")
 				.style("width", "100%")
@@ -511,10 +518,7 @@ public class DefaultHTMLFactory extends AbstractHTMLFactory {
 
 	@Override
 	public Tag spinnerOverlay(Spinner spinner) {
-		Tag spinnerTag = fontAwesome().spinner(spinner).size(Size.x5).spin().getTarget();
-		Table table = table().style("height", "100%").style().background().color().bootstrapColor(Bootstrap.Color.GRAY_LIGHTER);
-		table.row().cell(spinnerTag).style("text-align", "center").style("vertical-align", "middle");
-		return overlay(table);
+		return overlay(fontAwesome().spinner(spinner).size(Size.x5).spin().getTarget());
 	}
 
 	@Override
