@@ -28,6 +28,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.function.Predicate;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -61,20 +63,16 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
-import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
-import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
 import org.nasdanika.cdo.web.doc.MarkdownPreProcessor.Region;
 import org.nasdanika.cdo.web.doc.TocNode.TocNodeVisitor;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
@@ -93,7 +91,6 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.story.StoryPackage;
 import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -177,6 +174,20 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private List<Pattern> bundleExcludes = new ArrayList<>();
 	private List<Pattern> packageIncludes = new ArrayList<>();
 	private List<Pattern> packageExcludes = new ArrayList<>();
+		
+	private static Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
+	
+	private static String[] ABBREVIATIONS = { "e.g.", "i.e." }; // TODO - load from extensions?
+		
+	private int maxFirstSentenceLength = 250;
+	
+	public void setMaxFirstSentenceLength(int maxFirstSentenceLength) {
+		this.maxFirstSentenceLength = maxFirstSentenceLength;
+	}
+	
+	public int getMaxFirstSentenceLength() {
+		return maxFirstSentenceLength;
+	}	
 	
 	public HTMLFactory getHtmlFactory() {
 		return htmlFactory;
@@ -977,13 +988,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			storyDocumentationGenerator = new StoryDocumentationGenerator(this, storyModels, testResultsModels);
 			
 			// TOC
-			tocRoot = new TocNode(null, null, null);
-			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null);
+			tocRoot = new TocNode(null, null, null, null);
+			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null, null);
 			if (isGlobalRegistry()) {
 				TocNode globalPackageRegistryToc = packagesToc.createChild(
 						"Global", 
 						null, 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/database.png", 
+						null, 
 						null);
 				createPackageRegistryToc(EPackage.Registry.INSTANCE, globalPackageRegistryToc, "/packages/global");
 			}
@@ -993,13 +1005,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						"Session", 
 						null, 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/database_yellow.png", 
+						null,
 						null);
 				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), sessionPackageRegistryToc, "/packages/session");				
 			}
 			
 			// Bundles
 			// TODO - make optional
-			TocNode bundlesToc = tocRoot.createChild("Bundles", BUNDLE_INFO_PATH+"summary.html", null, null);
+			TocNode bundlesToc = tocRoot.createChild("Bundles", BUNDLE_INFO_PATH+"summary.html", null, null, null);
 			Bundle[] bundles = bundleContext.getBundles().clone();
 			Arrays.sort(bundles, BUNDLE_COMPARATOR);
 			final Map<String, Object> rootBucket = new TreeMap<String, Object>();
@@ -1196,7 +1209,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						localName+" ("+bundle.getVersion()+")", 
 						BUNDLE_INFO_PATH+bundle.getBundleId()+"/index.html", 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
-						null);	
+						null,
+						obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()));	
 				if (scrService != null) {
 					Component[] components = scrService.getComponents(bundle);
 					if (components != null) {
@@ -1209,7 +1223,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 									component.getName(), 
 									COMPONENT_INFO_PATH+component.getId()+"/index.html", 
 									"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
-									null);
+									null,
+									obj->obj instanceof Component && ((Component) obj).getId() == component.getId());
 
 							synchronized (bundleTocNodeFactories) {
 								BundleTocNodeFactoryEntry be = matchVersion(bundle);
@@ -1242,10 +1257,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				Map<String, Object> subBucket = (Map<String, Object>) e.getValue();
 				if (subBucket.size()==1) {
 					if (!singlePath(subBucket, parentToc, localName)) {
-						createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null));						
+						createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null, null));						
 					}
 				} else {
-					createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null));						
+					createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null, null));						
 				}
 			}
 		}		
@@ -1285,7 +1300,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							path+"."+localName+" "+bundle.getVersion(), 
 							BUNDLE_INFO_PATH+bundle.getBundleId()+"/index.html", 
 							"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
-							null);
+							null,
+							obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()));
 					if (scrService != null) {
 						Component[] components = scrService.getComponents(bundle);
 						if (components != null) {
@@ -1298,7 +1314,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 										component.getName(), 
 										COMPONENT_INFO_PATH+component.getId()+"/index.html", 
 										"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
-										null);
+										null,
+										obj->obj instanceof Component && ((Component) obj).getId() == component.getId());
 							}
 						}
 					}
@@ -1360,7 +1377,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 		
 	private void createEPackageToc(TocNode parent, EPackage ePackage, String prefix) {
-		TocNode ePackageToc = parent.createChild(ePackage.getName(), prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, "/resources/images/EPackage.gif", null);
+		TocNode ePackageToc = parent.createChild(
+				ePackage.getName(), prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, 
+				"/resources/images/EPackage.gif", 
+				null,
+				obj->obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(ePackage.getNsURI()));
 		List<EPackage> subPackages = new ArrayList<>(ePackage.getESubpackages());
 		Collections.sort(subPackages, new Comparator<EPackage>() {
 
@@ -1404,8 +1425,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private void createEClassifierToc(TocNode parent, EClassifier eClassifier, String prefix) {
 		String href = prefix+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClassifier.getName();
 		TocNode cToc;
+		Predicate<Object> predicate = obj->obj instanceof EClassifier && ((EClassifier) obj).getName().equals(eClassifier.getName()) && ((EClassifier) obj).getEPackage().getNsURI().equals(eClassifier.getEPackage().getNsURI());
 		if (eClassifier instanceof EClass) {
-			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EClass.gif", null);
+			cToc = parent.createChild(
+					eClassifier.getName(), 
+					href, 
+					"/resources/images/EClass.gif", 
+					null,
+					predicate);
 			EClassifierKey subTypeKey = new EClassifierKey((EClass) eClassifier);
 			for (EClass sc: ((EClass) eClassifier).getESuperTypes()) {
 				EClassifierKey superTypeKey = new EClassifierKey(sc);
@@ -1419,9 +1446,19 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			
 			storyDocumentationGenerator.createEClassTocEntries((EClass) eClassifier, cToc);
 		} else if (eClassifier instanceof EEnum) {
-			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EEnum.gif", null);
+			cToc = parent.createChild(
+					eClassifier.getName(), 
+					href, 
+					"/resources/images/EEnum.gif", 
+					null,
+					predicate);
 		} else {
-			cToc = parent.createChild(eClassifier.getName(), href, "/resources/images/EDataType.gif", null);
+			cToc = parent.createChild(
+					eClassifier.getName(), 
+					href, 
+					"/resources/images/EDataType.gif", 
+					null,
+					predicate);
 		}
 		
 		synchronized (packageTocNodeFactories) {
@@ -2293,7 +2330,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 
 							@Override
 							public String getIconTag() {
-								return CoreUtil.isBlank(toc.getIcon()) ? "" : "<img style=\"vertical-align: text-top; margin-right:1px;\" src=\""+docRoutePath+toc.getIcon()+"\"/>";
+								return CoreUtil.isBlank(toc.getIcon()) ? "" : htmlFactory.tag(TagName.img).attribute("src", docRoutePath+toc.getIcon()).style().margin().right("1px").style("vertical-align", "text-top").toString();
 							}
 
 							@Override
@@ -2716,7 +2753,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 	public void mountedDocumentation(Bundle bundle, String componentName, Fragment sink) {
 		
-		TocNode elementDoc = new TocNode(null, null, null);
+		TocNode elementDoc = new TocNode(null, null, null, null);
 		
 		synchronized (bundleTocNodeFactories) {
 			BundleTocNodeFactoryEntry be = matchVersion(bundle);
@@ -2738,7 +2775,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 	
 	protected void sections(Bundle bundle, String componentName, Tabs tabs) {		
-		TocNode sections = new TocNode(null, null, null);
+		TocNode sections = new TocNode(null, null, null, null);
 		
 		synchronized (bundleTocNodeFactories) {
 			BundleTocNodeFactoryEntry be = matchVersion(bundle);
@@ -2775,7 +2812,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	 * @return
 	 */
 	public String markdownToHtml(URL baseURL, String urlPrefix, String markdownSource) {
-		return new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(preProcessMarkdown(markdownSource, baseURL, urlPrefix), createMarkdownLinkRenderer(baseURL, urlPrefix));
+		return CoreUtil.isBlank(markdownSource) ? "" : new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(preProcessMarkdown(markdownSource, baseURL, urlPrefix), createMarkdownLinkRenderer(baseURL, urlPrefix));
 	}
 	
 	/**
@@ -2839,4 +2876,42 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return idx==-1 ? null : storyDocumentationGenerator.findCatalogElement(spec.substring(0, idx), spec.substring(idx+1));
 	}
 	
+	public String firstMarkdownSentence(String markdown) {
+		if (CoreUtil.isBlank(markdown)) {
+			return "";
+		}
+
+		try {
+			return firstSentence(Jsoup.parse(markdownToHtml(new URL(baseURL), urlPrefix, markdown)).text());
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+	
+	public String firstSentence(String text) {
+		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
+		Z: while (matcher.find()) {
+			String group = matcher.group();
+			for (String abbr: ABBREVIATIONS) {
+				if (group.trim().endsWith(abbr)) {
+					continue Z;
+				}
+			}
+			if (matcher.end()<maxFirstSentenceLength) {
+				return text.substring(0, matcher.end());
+			}
+		}
+		
+		return text.length()<maxFirstSentenceLength ? text : text.substring(0, maxFirstSentenceLength)+"...";
+	}
+	
+	/**
+	 * 
+	 * @param obj
+	 * @return Toc node for a given object or null.
+	 */
+	public TocNode findToc(Object obj) {
+		return tocRoot.match(obj);
+	}
 }

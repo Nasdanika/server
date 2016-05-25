@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.nasdanika.cdo.web.doc.DocRoute;
-import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
+import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
 import org.pegdown.LinkRenderer.Rendering;

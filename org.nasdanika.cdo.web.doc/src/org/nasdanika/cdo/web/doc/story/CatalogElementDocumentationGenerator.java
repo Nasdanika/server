@@ -30,7 +30,8 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					catalogElement.getName(), 
 					storyDocumentationGenerator.getObjectPath(catalogElement)+"/index.html",
 					getIcon(), 
-					null);
+					null,
+					obj -> obj == catalogElement);
 
 			for (EObject el: getTocChildren(catalogElement)) {
 				StoryElementDocumentationGenerator<Object> elTocBuilderRoute = storyDocumentationGenerator.getStoryElementDocumentationGenerator(el.eClass());
@@ -71,7 +72,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 		
 		String resolvedID = StoryDocumentationGenerator.resolveCatalogElementID(obj);
 		if (!CoreUtil.isBlank(resolvedID)) {
-			ret.content(htmlFactory.div("<B>ID:</B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
+			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
 		}
 		
 		if (!CoreUtil.isBlank(obj.getDescription())) {

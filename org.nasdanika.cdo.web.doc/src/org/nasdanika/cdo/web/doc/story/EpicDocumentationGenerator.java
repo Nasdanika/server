@@ -12,5 +12,6 @@ class EpicDocumentationGenerator extends StoryContainerDocumentationGenerator<Ep
 	protected String getIcon() {
 		return "/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/book.png";
 	}
+	
 
 }

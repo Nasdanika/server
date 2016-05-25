@@ -4,7 +4,7 @@ Bundle-Name: Nasdanika CDO Web Documentation
 Bundle-SymbolicName: org.nasdanika.cdo.web.doc;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Nasdanika
-Bundle-RequiredExecutionEnvironment: JavaSE-1.7
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.nasdanika.cdo.web;bundle-version="0.1.0",
  org.apache.commons.lang3;bundle-version="3.3.2",
  org.nasdanika.html,

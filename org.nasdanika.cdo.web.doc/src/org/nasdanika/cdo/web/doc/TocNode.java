@@ -5,10 +5,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Predicate;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Tag.TagName;
 
 public class TocNode {	
 	
@@ -27,6 +32,7 @@ public class TocNode {
 	private String id;
 	private String content;
 	private String tocId;
+	private Predicate<Object> predicate;
 			
 	public String getContent() {
 		return content;
@@ -55,13 +61,14 @@ public class TocNode {
 	public String getId() {
 		return id;
 	}
-
+	
 	protected TocNode(
 			String text, 
 			String href, 
 			String icon, 
 			AtomicLong counter,
-			String tocId) {
+			String tocId,
+			Predicate<Object> objectPredicate) {
 		this.text = text;
 		this.href = href;
 		this.icon = icon;
@@ -75,21 +82,35 @@ public class TocNode {
 				this.href = "/toc/"+this.tocId;				
 			}
 		}
+		this.predicate = objectPredicate == null ? obj->false : objectPredicate; 
 	}
 		
-	public TocNode(String text, String href, String icon) {
-		this(text, href, icon, new AtomicLong(), null);
+	public TocNode(String text, String href, String icon, Predicate<Object> objectPredicate) {
+		this(text, href, icon, new AtomicLong(), null, objectPredicate);
 	}
 
 	public List<TocNode> getChildren() {
 		return children;
 	}
 	
-	public TocNode createChild(String text, String href, String icon, String tocId) {
-		TocNode child = new TocNode(text, href, icon, counter, tocId);
+	public TocNode createChild(String text, String href, String icon, String tocId, Predicate<Object> objectPredicate) {
+		TocNode child = new TocNode(text, href, icon, counter, tocId, objectPredicate);
 		children.add(child);
 		child.parent = this;
 		return child;
+	}
+	
+	public TocNode match(Object obj) {
+		if (predicate.test(obj)) {
+			return this;
+		}
+		for (TocNode child: getChildren()) {
+			TocNode matchedChild = child.match(obj);
+			if (matchedChild != null) {
+				return matchedChild;
+			}
+		}
+		return null;
 	}
 	
 	public List<TocNode> getPath() {
@@ -181,5 +202,10 @@ public class TocNode {
 				child.sort(recursive);
 			}
 		}
+	}
+	
+	public Tag getLink(String docRoutePath) {
+		String iconTag = CoreUtil.isBlank(getIcon()) ? "" : HTMLFactory.INSTANCE.tag(TagName.img).attribute("src", docRoutePath+getIcon()).style().margin().right("3px").style("vertical-align", "text-top").toString();
+		return HTMLFactory.INSTANCE.link("javascript:"+DocRoute.tocNodeSelectScript(getId()), iconTag, StringEscapeUtils.escapeHtml4(getText()));
 	}
 }

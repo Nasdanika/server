@@ -5,8 +5,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -33,13 +31,8 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement;
-import org.pegdown.PegDownProcessor;
 
 public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelElement> implements EModelElementDocumentationGenerator<T> {
-	
-	private static Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
-	
-	private static String[] ABBREVIATIONS = { "e.g.", "i.e." }; // TODO - load from extensions?
 	
 	public static Comparator<ENamedElement> NAMED_ELEMENT_COMPARATOR = new Comparator<ENamedElement>() {
 
@@ -49,16 +42,6 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		}
 		
 	};
-		
-	private int maxFirstSentenceLength = 250;
-	
-	public void setMaxFirstSentenceLength(int maxFirstSentenceLength) {
-		this.maxFirstSentenceLength = maxFirstSentenceLength;
-	}
-	
-	public int getMaxFirstSentenceLength() {
-		return maxFirstSentenceLength;
-	}
 	
 	public String getModelDocumentation(DocRoute docRoute, URL baseURL, String urlPrefix, EModelElement modelElement) {
 		EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
@@ -75,7 +58,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 	public void mountedModelElementDocumentation(DocRoute docRoute, EClassifier eClassifier, Fragment sink) {
 		
 		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
-		TocNode elementDoc = new TocNode(null, null, null);
+		TocNode elementDoc = new TocNode(null, null, null, null);
 		
 		synchronized (packageTocNodeFactories) {
 			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(eClassifier.getEPackage().getNsURI());
@@ -103,24 +86,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 			return "";
 		}
 		String text = Jsoup.parse(html).text();
-		return firstSentence(text);
-	}
-
-	protected String firstSentence(String text) {
-		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
-		Z: while (matcher.find()) {
-			String group = matcher.group();
-			for (String abbr: ABBREVIATIONS) {
-				if (group.trim().endsWith(abbr)) {
-					continue Z;
-				}
-			}
-			if (matcher.end()<maxFirstSentenceLength) {
-				return text.substring(0, matcher.end());
-			}
-		}
-		
-		return text.length()<maxFirstSentenceLength ? text : text.substring(0, maxFirstSentenceLength)+"...";
+		return docRoute.firstSentence(text);
 	}
 		
 	public String getFirstDocSentence(DocRoute docRoute, URL baseURL, String urlPrefix, String markdown) {
@@ -129,7 +95,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		}
 
 		String text = Jsoup.parse(docRoute.markdownToHtml(baseURL, urlPrefix, markdown)).text();
-		return firstSentence(text);
+		return docRoute.firstSentence(text);
 	}
 		
 	protected String documentAnnotation(DocRoute docRoute,  EAnnotation eAnnotation) {
@@ -201,7 +167,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 	
 	protected void sections(DocRoute docRoute, EClassifier eClassifier, Tabs tabs) {		
 		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
-		TocNode sections = new TocNode(null, null, null);
+		TocNode sections = new TocNode(null, null, null, null);
 		
 		synchronized (packageTocNodeFactories) {
 			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(eClassifier.getEPackage().getNsURI());

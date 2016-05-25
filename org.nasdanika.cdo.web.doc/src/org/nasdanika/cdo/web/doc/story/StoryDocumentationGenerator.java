@@ -33,6 +33,9 @@ import org.nasdanika.web.Action;
 import org.nasdanika.web.CompositeObjectPathResolver;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.ObjectPathResolver;
+import org.nasdanika.webtest.model.Descriptor;
+import org.nasdanika.webtest.model.Link;
+import org.nasdanika.webtest.model.ModelPackage;
 
 public class StoryDocumentationGenerator implements AutoCloseable, DocumentationContentProvider {
 	
@@ -88,6 +91,9 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getSystem(), new SystemDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getTheme(), new ThemeDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getUser(), new UserDocumentationGenerator<User>(this)));
+		
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(ModelPackage.eINSTANCE.getTestMethodResult(), new TestMethodResultDocumentationGenerator(this)));
+		
 		
 		Collections.sort(tocBuilderRoutes);
 		this.storyElementDocumentationGenerators = Collections.unmodifiableList(tocBuilderRoutes);
@@ -154,7 +160,6 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 			}
 			
 		};
-
 		
 		Context context = new ContextImpl(docRoute.getBundleContext());
 		CompositeObjectPathResolver objectPathResolver = new CompositeObjectPathResolver();
@@ -174,7 +179,7 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 	}
 
 	public void createRootTocEntries(TocNode tocRoot) {
-		TocNode storyToc = tocRoot.createChild("Stories", null, null, null);
+		TocNode storyToc = tocRoot.createChild("Stories", null, null, null, null);
 		for (Resource storyResource: storyResources.values()) {
 			for (EObject root: storyResource.getContents()) {
 				StoryElementDocumentationGenerator<Object> tocBuilderRoute = getStoryElementDocumentationGenerator(root.eClass());
@@ -186,11 +191,16 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		if (storyToc.getChildren().isEmpty()) {
 			tocRoot.getChildren().remove(storyToc);
 		}
+		
+		// TODO - Test results.
 	}
 	
 	private static final Pattern PARENT_ID_TOKEN_PATTERN = Pattern.compile("\\$\\{parent\\}");		
 	
 	static String resolveCatalogElementID(CatalogElement catalogElement) {
+		if (catalogElement == null) {
+			return null;
+		}
 		String id = catalogElement.getId();
 		if (CoreUtil.isBlank(id)) {
 			return null;
@@ -287,6 +297,42 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		for (StoryElementDocumentationGeneratorEntry tbr: storyElementDocumentationGenerators) {			
 			tbr.close();
 		}
+	}
+
+	/**
+	 * Finds test results linked to this catalog element
+	 * @param 
+	 * @return
+	 */
+	Collection<? extends EObject> findLinkedTestResults(CatalogElement catalogElement) {
+		String id = resolveCatalogElementID(catalogElement);
+		if (id == null) {
+			return Collections.emptyList();
+		}
+		
+		Collection<EObject> ret = new ArrayList<>();
+		for (Entry<String, Resource> sre: storyResources.entrySet()) {
+			if (catalogElement.eResource() == sre.getValue()) {
+				String qualifiedID = sre.getKey()+"#"+id;
+				for (Entry<String, Resource> trre: testResultResources.entrySet()) {
+					TreeIterator<EObject> trit = trre.getValue().getAllContents();
+					while (trit.hasNext()) {
+						EObject next = trit.next();
+						if (next instanceof Descriptor) {
+							for (Link link: ((Descriptor) next).getLinks()) {
+								if (catalogElement.eClass().getName().equals(link.getType()) && qualifiedID.equals(link.getValue())) {
+									ret.add(next);
+								}
+							}
+						}				
+					}			
+				}
+				
+				break;
+			}
+		}
+		
+		return ret;
 	}
 
 }

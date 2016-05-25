@@ -771,7 +771,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 					}
 				}
 				
-				String firstDocSentence = firstSentence(docText);
+				String firstDocSentence = docRoute.firstSentence(docText);
 				String declaringType = routeEntry.getEClass()==eClass ? "" : " ("+routeEntry.getEClass().getName()+") ";
 
 				Table propTable = htmlFactory.table().bordered();

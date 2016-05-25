@@ -280,7 +280,7 @@ public class PlantUmlTextGenerator {
 	
 	protected static String qualifiedName(EClassifier eClassifier) {
 		EPackage ePackage = eClassifier.getEPackage();
-		return "\""+ePackage.getName()+"("+ePackage.getNsURI()+")."+eClassifier.getName()+"\"";
+		return "\""+ePackage.getName()+" ("+ePackage.getNsURI()+")."+eClassifier.getName()+"\"";
 	}
 	
 	public void append(EClass eClass) throws IOException {
