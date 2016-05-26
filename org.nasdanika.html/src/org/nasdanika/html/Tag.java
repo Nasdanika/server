@@ -81,7 +81,7 @@ public interface Tag extends UIElement<Tag>, Container<Tag> {
 		nav,
 		noscript,
 		object,
-		ol,
+		ol(true),
 		optgroup,
 		option,
 		output,
