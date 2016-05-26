@@ -2,10 +2,14 @@
  */
 package org.nasdanika.webtest.model.impl;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
+import java.util.Comparator;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -16,7 +20,9 @@ import org.nasdanika.webtest.model.ModelPackage;
 import org.nasdanika.webtest.model.OperationArgument;
 import org.nasdanika.webtest.model.OperationResult;
 import org.nasdanika.webtest.model.OperationStatus;
+import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.ScreenshotEntry;
+import org.nasdanika.webtest.model.TestSession;
 
 /**
  * <!-- begin-user-doc -->
@@ -494,6 +500,38 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public EList<Screenshot> allScreenshots() {
+		BasicEList<Screenshot> ret = ECollections.newBasicEList();
+		for (ScreenshotEntry se: getScreenshots()) {
+			if (!ret.contains(se.getScreenshot())) {
+				ret.add(se.getScreenshot()); 
+			}
+		}
+		
+		for (OperationResult child: getChildren()) {
+			for (Screenshot s: child.allScreenshots()) {
+				if (!ret.contains(s)) {
+					ret.add(s);
+				}
+			}
+		}
+		
+		ECollections.sort(ret, new Comparator<Screenshot>() {
+
+			@Override
+			public int compare(Screenshot o1, Screenshot o2) {
+				return ((TestSession) o1.eContainer()).getScreenshots().indexOf(o1) - ((TestSession) o2.eContainer()).getScreenshots().indexOf(o2);
+			}
+			
+		});
+		return ret;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -675,6 +713,20 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 				return INSTANCE_ALIAS_EDEFAULT == null ? instanceAlias != null : !INSTANCE_ALIAS_EDEFAULT.equals(instanceAlias);
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case ModelPackage.OPERATION_RESULT___ALL_SCREENSHOTS:
+				return allScreenshots();
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.web.doc.story;
 
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -36,6 +37,7 @@ import org.nasdanika.web.ObjectPathResolver;
 import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.Link;
 import org.nasdanika.webtest.model.ModelPackage;
+import org.nasdanika.webtest.model.Screenshot;
 
 public class StoryDocumentationGenerator implements AutoCloseable, DocumentationContentProvider {
 	
@@ -92,8 +94,7 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getTheme(), new ThemeDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(StoryPackage.eINSTANCE.getUser(), new UserDocumentationGenerator<User>(this)));
 		
-		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(ModelPackage.eINSTANCE.getTestMethodResult(), new TestMethodResultDocumentationGenerator(this)));
-		
+		tocBuilderRoutes.add(new StoryElementDocumentationGeneratorEntry(ModelPackage.eINSTANCE.getTestMethodResult(), new TestMethodResultDocumentationGenerator(this)));		
 		
 		Collections.sort(tocBuilderRoutes);
 		this.storyElementDocumentationGenerators = Collections.unmodifiableList(tocBuilderRoutes);
@@ -334,5 +335,16 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		
 		return ret;
 	}
-
+	
+	String resolveScreenshotLocation(Screenshot screenshot) throws URISyntaxException {
+		for (Entry<String, Resource> trre: testResultResources.entrySet()) {
+			if (screenshot.eResource() == trre.getValue()) {
+				java.net.URI uri = new java.net.URI(docRoute.getDocRoutePath()+DocRoute.BUNDLE_PATH+trre.getKey()); 
+				return uri.resolve(screenshot.getLocation()).toASCIIString();
+			}
+		}
+		
+		return null;		
+	}
+	
 }

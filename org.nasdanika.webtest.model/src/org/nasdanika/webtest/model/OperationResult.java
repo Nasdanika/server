@@ -324,4 +324,15 @@ public interface OperationResult extends Descriptor {
 	 */
 	void setInstanceAlias(String value);
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Returns a list of all screenshots taken by this operation and its children ordered and without duplicates.
+	 * <!-- end-model-doc -->
+	 * @model
+	 * @generated
+	 */
+	EList<Screenshot> allScreenshots();
+
 } // OperationResult

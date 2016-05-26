@@ -5,6 +5,7 @@ package org.nasdanika.webtest.model;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -1054,13 +1055,22 @@ public interface ModelPackage extends EPackage {
 	int OPERATION_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 11;
 
 	/**
+	 * The operation id for the '<em>All Screenshots</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_RESULT___ALL_SCREENSHOTS = DESCRIPTOR_OPERATION_COUNT + 0;
+
+	/**
 	 * The number of operations of the '<em>Operation Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPERATION_RESULT_OPERATION_COUNT = DESCRIPTOR_OPERATION_COUNT + 0;
+	int OPERATION_RESULT_OPERATION_COUNT = DESCRIPTOR_OPERATION_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.model.impl.ThrowableImpl <em>Throwable</em>}' class.
@@ -1345,6 +1355,15 @@ public interface ModelPackage extends EPackage {
 	int METHOD_RESULT_FEATURE_COUNT = OPERATION_RESULT_FEATURE_COUNT + 0;
 
 	/**
+	 * The operation id for the '<em>All Screenshots</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_RESULT___ALL_SCREENSHOTS = OPERATION_RESULT___ALL_SCREENSHOTS;
+
+	/**
 	 * The number of operations of the '<em>Method Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1515,6 +1534,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int PAGE_METHOD_RESULT_FEATURE_COUNT = METHOD_RESULT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>All Screenshots</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE_METHOD_RESULT___ALL_SCREENSHOTS = METHOD_RESULT___ALL_SCREENSHOTS;
 
 	/**
 	 * The number of operations of the '<em>Page Method Result</em>' class.
@@ -1689,6 +1717,15 @@ public interface ModelPackage extends EPackage {
 	int INITIALIZATION_RESULT_FEATURE_COUNT = PAGE_METHOD_RESULT_FEATURE_COUNT + 0;
 
 	/**
+	 * The operation id for the '<em>All Screenshots</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INITIALIZATION_RESULT___ALL_SCREENSHOTS = PAGE_METHOD_RESULT___ALL_SCREENSHOTS;
+
+	/**
 	 * The number of operations of the '<em>Initialization Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1861,6 +1898,15 @@ public interface ModelPackage extends EPackage {
 	int ACTOR_METHOD_RESULT_FEATURE_COUNT = METHOD_RESULT_FEATURE_COUNT + 1;
 
 	/**
+	 * The operation id for the '<em>All Screenshots</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR_METHOD_RESULT___ALL_SCREENSHOTS = METHOD_RESULT___ALL_SCREENSHOTS;
+
+	/**
 	 * The number of operations of the '<em>Actor Method Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2031,6 +2077,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int TEST_METHOD_RESULT_FEATURE_COUNT = METHOD_RESULT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>All Screenshots</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_METHOD_RESULT___ALL_SCREENSHOTS = METHOD_RESULT___ALL_SCREENSHOTS;
 
 	/**
 	 * The number of operations of the '<em>Test Method Result</em>' class.
@@ -3087,6 +3142,16 @@ public interface ModelPackage extends EPackage {
 	EAttribute getOperationResult_InstanceAlias();
 
 	/**
+	 * Returns the meta object for the '{@link org.nasdanika.webtest.model.OperationResult#allScreenshots() <em>All Screenshots</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>All Screenshots</em>' operation.
+	 * @see org.nasdanika.webtest.model.OperationResult#allScreenshots()
+	 * @generated
+	 */
+	EOperation getOperationResult__AllScreenshots();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.Throwable <em>Throwable</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3986,6 +4051,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute OPERATION_RESULT__INSTANCE_ALIAS = eINSTANCE.getOperationResult_InstanceAlias();
+
+		/**
+		 * The meta object literal for the '<em><b>All Screenshots</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation OPERATION_RESULT___ALL_SCREENSHOTS = eINSTANCE.getOperationResult__AllScreenshots();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.ThrowableImpl <em>Throwable</em>}' class.

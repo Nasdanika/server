@@ -7,6 +7,7 @@ import java.util.Map;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
@@ -794,6 +795,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getOperationResult__AllScreenshots() {
+		return operationResultEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getThrowable() {
 		return throwableEClass;
 	}
@@ -1234,6 +1244,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEReference(operationResultEClass, OPERATION_RESULT__ARGUMENTS);
 		createEReference(operationResultEClass, OPERATION_RESULT__RESULT);
 		createEAttribute(operationResultEClass, OPERATION_RESULT__INSTANCE_ALIAS);
+		createEOperation(operationResultEClass, OPERATION_RESULT___ALL_SCREENSHOTS);
 
 		throwableEClass = createEClass(THROWABLE);
 		createEAttribute(throwableEClass, THROWABLE__TYPE);
@@ -1401,6 +1412,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEReference(getOperationResult_Arguments(), this.getOperationArgument(), null, "arguments", null, 0, -1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOperationResult_Result(), this.getOperationArgument(), null, "result", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getOperationResult_InstanceAlias(), ecorePackage.getEString(), "instanceAlias", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEOperation(getOperationResult__AllScreenshots(), this.getScreenshot(), "allScreenshots", 0, -1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(throwableEClass, org.nasdanika.webtest.model.Throwable.class, "Throwable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getThrowable_Type(), ecorePackage.getEString(), "type", null, 0, 1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1804,6 +1817,12 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Base class for operation results where operation is a method or a constructor."
+		   });	
+		addAnnotation
+		  (getOperationResult__AllScreenshots(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Returns a list of all screenshots taken by this operation and its children ordered and without duplicates."
 		   });	
 		addAnnotation
 		  (getOperationResult_Screenshots(), 
