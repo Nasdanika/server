@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.nasdanika.webtest.model.ScreenshotEntry#getType <em>Type</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.ScreenshotEntry#getComment <em>Comment</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.ScreenshotEntry#getScreenshot <em>Screenshot</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.ScreenshotEntry#getSeqNo <em>Seq No</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.webtest.model.ModelPackage#getScreenshotEntry()
@@ -118,5 +119,31 @@ public interface ScreenshotEntry extends EObject {
 	 * @generated
 	 */
 	void setScreenshot(Screenshot value);
+
+	/**
+	 * Returns the value of the '<em><b>Seq No</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Seq No</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Seq No</em>' attribute.
+	 * @see #setSeqNo(int)
+	 * @see org.nasdanika.webtest.model.ModelPackage#getScreenshotEntry_SeqNo()
+	 * @model
+	 * @generated
+	 */
+	int getSeqNo();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.webtest.model.ScreenshotEntry#getSeqNo <em>Seq No</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Seq No</em>' attribute.
+	 * @see #getSeqNo()
+	 * @generated
+	 */
+	void setSeqNo(int value);
 
 } // ScreenshotEntry

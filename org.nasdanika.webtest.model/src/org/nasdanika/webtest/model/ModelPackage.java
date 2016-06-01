@@ -883,13 +883,22 @@ public interface ModelPackage extends EPackage {
 	int SCREENSHOT_ENTRY__SCREENSHOT = 2;
 
 	/**
+	 * The feature id for the '<em><b>Seq No</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCREENSHOT_ENTRY__SEQ_NO = 3;
+
+	/**
 	 * The number of structural features of the '<em>Screenshot Entry</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCREENSHOT_ENTRY_FEATURE_COUNT = 3;
+	int SCREENSHOT_ENTRY_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Screenshot Entry</em>' class.
@@ -3011,6 +3020,17 @@ public interface ModelPackage extends EPackage {
 	EReference getScreenshotEntry_Screenshot();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.ScreenshotEntry#getSeqNo <em>Seq No</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Seq No</em>'.
+	 * @see org.nasdanika.webtest.model.ScreenshotEntry#getSeqNo()
+	 * @see #getScreenshotEntry()
+	 * @generated
+	 */
+	EAttribute getScreenshotEntry_SeqNo();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.OperationResult <em>Operation Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3953,6 +3973,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EReference SCREENSHOT_ENTRY__SCREENSHOT = eINSTANCE.getScreenshotEntry_Screenshot();
+
+		/**
+		 * The meta object literal for the '<em><b>Seq No</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SCREENSHOT_ENTRY__SEQ_NO = eINSTANCE.getScreenshotEntry_SeqNo();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.OperationResultImpl <em>Operation Result</em>}' class.

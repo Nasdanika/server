@@ -333,6 +333,6 @@ public interface OperationResult extends Descriptor {
 	 * @model
 	 * @generated
 	 */
-	EList<Screenshot> allScreenshots();
+	EList<ScreenshotEntry> allScreenshots();
 
 } // OperationResult

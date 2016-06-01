@@ -280,12 +280,13 @@
         <details key="documentation" value="Reference to a screenshot."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="seqNo" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="OperationResult" eSuperTypes="#//Descriptor">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Base class for operation results where operation is a method or a constructor."/>
     </eAnnotations>
-    <eOperations name="allScreenshots" upperBound="-1" eType="#//Screenshot">
+    <eOperations name="allScreenshots" upperBound="-1" eType="#//ScreenshotEntry">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Returns a list of all screenshots taken by this operation and its children ordered and without duplicates."/>
       </eAnnotations>

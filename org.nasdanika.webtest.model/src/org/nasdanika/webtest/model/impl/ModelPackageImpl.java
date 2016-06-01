@@ -687,6 +687,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getScreenshotEntry_SeqNo() {
+		return (EAttribute)screenshotEntryEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getOperationResult() {
 		return operationResultEClass;
 	}
@@ -1231,6 +1240,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(screenshotEntryEClass, SCREENSHOT_ENTRY__TYPE);
 		createEAttribute(screenshotEntryEClass, SCREENSHOT_ENTRY__COMMENT);
 		createEReference(screenshotEntryEClass, SCREENSHOT_ENTRY__SCREENSHOT);
+		createEAttribute(screenshotEntryEClass, SCREENSHOT_ENTRY__SEQ_NO);
 
 		operationResultEClass = createEClass(OPERATION_RESULT);
 		createEReference(operationResultEClass, OPERATION_RESULT__SCREENSHOTS);
@@ -1399,6 +1409,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getScreenshotEntry_Type(), this.getScreenshotType(), "type", null, 0, 1, ScreenshotEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getScreenshotEntry_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, ScreenshotEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getScreenshotEntry_Screenshot(), this.getScreenshot(), this.getScreenshot_Entries(), "screenshot", null, 0, 1, ScreenshotEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getScreenshotEntry_SeqNo(), ecorePackage.getEInt(), "seqNo", null, 0, 1, ScreenshotEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(operationResultEClass, OperationResult.class, "OperationResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getOperationResult_Screenshots(), this.getScreenshotEntry(), null, "screenshots", null, 0, -1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1413,7 +1424,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEReference(getOperationResult_Result(), this.getOperationArgument(), null, "result", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getOperationResult_InstanceAlias(), ecorePackage.getEString(), "instanceAlias", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEOperation(getOperationResult__AllScreenshots(), this.getScreenshot(), "allScreenshots", 0, -1, IS_UNIQUE, IS_ORDERED);
+		initEOperation(getOperationResult__AllScreenshots(), this.getScreenshotEntry(), "allScreenshots", 0, -1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(throwableEClass, org.nasdanika.webtest.model.Throwable.class, "Throwable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getThrowable_Type(), ecorePackage.getEString(), "type", null, 0, 1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

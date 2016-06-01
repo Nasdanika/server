@@ -24,6 +24,7 @@ import org.nasdanika.webtest.model.ScreenshotType;
  *   <li>{@link org.nasdanika.webtest.model.impl.ScreenshotEntryImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.ScreenshotEntryImpl#getComment <em>Comment</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.ScreenshotEntryImpl#getScreenshot <em>Screenshot</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.ScreenshotEntryImpl#getSeqNo <em>Seq No</em>}</li>
  * </ul>
  *
  * @generated
@@ -78,6 +79,26 @@ public class ScreenshotEntryImpl extends MinimalEObjectImpl.Container implements
 	 * @ordered
 	 */
 	protected Screenshot screenshot;
+
+	/**
+	 * The default value of the '{@link #getSeqNo() <em>Seq No</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSeqNo()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int SEQ_NO_EDEFAULT = 0;
+
+	/**
+	 * The cached value of the '{@link #getSeqNo() <em>Seq No</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSeqNo()
+	 * @generated
+	 * @ordered
+	 */
+	protected int seqNo = SEQ_NO_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -205,6 +226,27 @@ public class ScreenshotEntryImpl extends MinimalEObjectImpl.Container implements
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public int getSeqNo() {
+		return seqNo;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setSeqNo(int newSeqNo) {
+		int oldSeqNo = seqNo;
+		seqNo = newSeqNo;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.SCREENSHOT_ENTRY__SEQ_NO, oldSeqNo, seqNo));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -245,6 +287,8 @@ public class ScreenshotEntryImpl extends MinimalEObjectImpl.Container implements
 			case ModelPackage.SCREENSHOT_ENTRY__SCREENSHOT:
 				if (resolve) return getScreenshot();
 				return basicGetScreenshot();
+			case ModelPackage.SCREENSHOT_ENTRY__SEQ_NO:
+				return getSeqNo();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -265,6 +309,9 @@ public class ScreenshotEntryImpl extends MinimalEObjectImpl.Container implements
 				return;
 			case ModelPackage.SCREENSHOT_ENTRY__SCREENSHOT:
 				setScreenshot((Screenshot)newValue);
+				return;
+			case ModelPackage.SCREENSHOT_ENTRY__SEQ_NO:
+				setSeqNo((Integer)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -287,6 +334,9 @@ public class ScreenshotEntryImpl extends MinimalEObjectImpl.Container implements
 			case ModelPackage.SCREENSHOT_ENTRY__SCREENSHOT:
 				setScreenshot((Screenshot)null);
 				return;
+			case ModelPackage.SCREENSHOT_ENTRY__SEQ_NO:
+				setSeqNo(SEQ_NO_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -305,6 +355,8 @@ public class ScreenshotEntryImpl extends MinimalEObjectImpl.Container implements
 				return COMMENT_EDEFAULT == null ? comment != null : !COMMENT_EDEFAULT.equals(comment);
 			case ModelPackage.SCREENSHOT_ENTRY__SCREENSHOT:
 				return screenshot != null;
+			case ModelPackage.SCREENSHOT_ENTRY__SEQ_NO:
+				return seqNo != SEQ_NO_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -323,6 +375,8 @@ public class ScreenshotEntryImpl extends MinimalEObjectImpl.Container implements
 		result.append(type);
 		result.append(", comment: ");
 		result.append(comment);
+		result.append(", seqNo: ");
+		result.append(seqNo);
 		result.append(')');
 		return result.toString();
 	}

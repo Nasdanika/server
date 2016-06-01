@@ -73,6 +73,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ScreenshotEntry/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ScreenshotEntry/comment"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ScreenshotEntry/screenshot"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ScreenshotEntry/seqNo"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//OperationResult">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//OperationResult/screenshots"/>

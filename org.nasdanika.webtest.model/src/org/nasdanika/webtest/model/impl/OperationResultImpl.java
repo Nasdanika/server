@@ -502,27 +502,26 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public EList<Screenshot> allScreenshots() {
-		BasicEList<Screenshot> ret = ECollections.newBasicEList();
+	@Override
+	public EList<ScreenshotEntry> allScreenshots() {
+		BasicEList<ScreenshotEntry> ret = ECollections.newBasicEList();
 		for (ScreenshotEntry se: getScreenshots()) {
-			if (!ret.contains(se.getScreenshot())) {
-				ret.add(se.getScreenshot()); 
-			}
+			ret.add(se); 
 		}
 		
 		for (OperationResult child: getChildren()) {
-			for (Screenshot s: child.allScreenshots()) {
+			for (ScreenshotEntry s: child.allScreenshots()) {
 				if (!ret.contains(s)) {
 					ret.add(s);
 				}
 			}
 		}
 		
-		ECollections.sort(ret, new Comparator<Screenshot>() {
+		ECollections.sort(ret, new Comparator<ScreenshotEntry>() {
 
 			@Override
-			public int compare(Screenshot o1, Screenshot o2) {
-				return ((TestSession) o1.eContainer()).getScreenshots().indexOf(o1) - ((TestSession) o2.eContainer()).getScreenshots().indexOf(o2);
+			public int compare(ScreenshotEntry o1, ScreenshotEntry o2) {
+				return o1.getSeqNo() - o2.getSeqNo();
 			}
 			
 		});
