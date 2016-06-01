@@ -72,7 +72,7 @@ public class <%=wizard.getJavaName()%>RouteTest implements WebTest<WebDriver> {
 	@Screenshot({Screenshot.When.AFTER, Screenshot.When.EXCEPTION})
 	public void appRoute() throws Exception {
 		getWebDriver().get("http://localhost:8080<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias()%>/<%=wizard.getDashedName()%>.html?theme="+theme);
-		new WebDriverWait(getWebDriver(), 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("button-groups")));		
+		//new WebDriverWait(getWebDriver(), 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("button-groups")));		
 	}
 	
 	@After

@@ -1,10 +1,6 @@
 package org.nasdanika.workspace.wizard;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
-import java.io.FilterInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -14,8 +10,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -60,6 +54,7 @@ import org.nasdanika.workspace.wizard.render.app.ServerRenderer;
 import org.nasdanika.workspace.wizard.render.app.SessionInitializerComponentRenderer;
 import org.nasdanika.workspace.wizard.render.app.SessionInitializerRenderer;
 import org.nasdanika.workspace.wizard.render.app.SetDimensionsScriptRenderer;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -315,34 +310,22 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			}
 			
 			if (applicationConfigurationPage.btnWebContent.getSelection()) {
-				try (InputStream resourcesZipStream = new BufferedInputStream(this.getClass().getResourceAsStream("WebContent.zip"))) {
-					if (resourcesZipStream!=null) {
-						try (ZipInputStream resourceStream = new ZipInputStream(resourcesZipStream)) {
-							ZipEntry entry;
-							while ((entry = resourceStream.getNextEntry())!=null) {
-								String entryPath = applicationConfigurationPage.webContentBaseName.getText().trim();
-								if (entryPath.length()==0) {
-									entryPath = entry.getName();
-								} else {
-									entryPath += "/" + entry.getName();
-								}
-								if (entry.isDirectory()) {
-									createResource(project.getProject(), entryPath, null, progressMonitor);
-								} else {
-									createResource(
-											project.getProject(), 
-											entryPath, 
-											new FilterInputStream(resourceStream) {
-												
-												@Override
-												public void close()	throws IOException {
-													// NOP.
-												}
-												
-											}, 
-											progressMonitor);
-								}
+				// TODO - load from the web resources bundle.
+				Bundle webResourcesBundle = Platform.getBundle("org.nasdanika.web.resources");
+				if (webResourcesBundle != null) {
+					for (String path: Collections.list(webResourcesBundle.getEntryPaths("/"))) {
+						if (!path.startsWith("META-INF/")) {							
+							String resourcePath = applicationConfigurationPage.webContentBaseName.getText().trim();
+							if (resourcePath.length()==0) {
+								resourcePath = path;
+							} else {
+								resourcePath += "/" + path;
 							}
+							createResource(
+									project.getProject(), 
+									resourcePath,
+									webResourcesBundle.getResource(path).openStream(), 
+									progressMonitor);
 						}
 					}
 				}
@@ -355,9 +338,6 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/js/domReady.js");	
 					target.create(getClass().getResourceAsStream("resources/domReady.js"), false, progressMonitor);		
 				}	
-								
-				IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/js/require-config.js");	
-				target.create(new ByteArrayInputStream(new RequireConfigRenderer().generate(this).getBytes()), false, progressMonitor);						
 			}
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ApplicationPomRenderer().generate(this).getBytes()), false, progressMonitor);		
@@ -391,6 +371,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				iFolder.getFile("Splitter.js").create(getClass().getResourceAsStream("resources/Splitter.js"), false, progressMonitor);
 				iFolder.getFile("Scroller.js").create(getClass().getResourceAsStream("resources/Scroller.js"), false, progressMonitor);
 				iFolder.getFile("SetDimensions.js").create(new ByteArrayInputStream(new SetDimensionsScriptRenderer().generate(this).getBytes()), false, progressMonitor);
+				iFolder.getFile("require-config.js").create(new ByteArrayInputStream(new RequireConfigRenderer().generate(this).getBytes()), false, progressMonitor);
 			}	
 
 			if (applicationConfigurationPage.btnTransactionContextProvider.getSelection()) {
