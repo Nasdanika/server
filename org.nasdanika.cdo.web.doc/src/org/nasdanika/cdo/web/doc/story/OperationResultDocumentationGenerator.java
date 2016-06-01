@@ -14,6 +14,7 @@ import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.OperationResult;
 import org.nasdanika.webtest.model.Screenshot;
+import org.nasdanika.webtest.model.ScreenshotEntry;
 
 class OperationResultDocumentationGenerator<T extends OperationResult> implements StoryElementDocumentationGenerator<T> {
 
@@ -76,27 +77,32 @@ class OperationResultDocumentationGenerator<T extends OperationResult> implement
 				.id(resultID+"_screenshotCarousel");
 		
 		try {
-			for (Screenshot screenshot: obj.allScreenshots()) {
-				String imageLocation = storyDocumentationGenerator.resolveScreenshotLocation(screenshot);
-				Tag imageTag = htmlFactory.tag(TagName.img).attribute("src", imageLocation).style("margin", "auto");
-				Tag link = htmlFactory.link(imageLocation, imageTag)
-						.attribute("data-lightbox", "test-"+resultID);
-//						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getComment())); // TODO 
-	//			String caption = se.getHTMLCaption();
-	//			if (se.operationResult!=null) {
-	//				String descr = se.operationResult.getDescriptionHTML();
-	//				if (descr!=null) {
-	//					Tag comment = htmlFactory.glyphicon(Glyphicon.comment);
-	//					comment.id(htmlFactory.nextId()+"_slide_comment");
-	//					htmlFactory.tooltip(comment, Placement.TOP, descr);
-	//					initScript.append("jQuery('#"+comment.getId()+"').tooltip({html:true});");
-	//					caption+="&nbsp;";
-	//					caption+=comment;		
-	//				}
-	//			}
-				screenshotCarousel.slide()
-					.content(link);
-//					.caption(htmlFactory.label(Bootstrap.Style.INFO, se.getComment()).style("opacity", "0.7"));				
+			Screenshot prev = null;
+			for (ScreenshotEntry screenshotEntry: obj.allScreenshots()) {
+				Screenshot screenshot = screenshotEntry.getScreenshot();
+				if (prev != screenshot) {
+					prev = screenshot;
+					String imageLocation = storyDocumentationGenerator.resolveScreenshotLocation(screenshot);
+					Tag imageTag = htmlFactory.tag(TagName.img).attribute("src", imageLocation).style("margin", "auto");
+					Tag link = htmlFactory.link(imageLocation, imageTag)
+							.attribute("data-lightbox", "test-"+resultID);
+	//						.attribute("data-title", StringEscapeUtils.escapeHtml4(se.getComment())); // TODO 
+		//			String caption = se.getHTMLCaption();
+		//			if (se.operationResult!=null) {
+		//				String descr = se.operationResult.getDescriptionHTML();
+		//				if (descr!=null) {
+		//					Tag comment = htmlFactory.glyphicon(Glyphicon.comment);
+		//					comment.id(htmlFactory.nextId()+"_slide_comment");
+		//					htmlFactory.tooltip(comment, Placement.TOP, descr);
+		//					initScript.append("jQuery('#"+comment.getId()+"').tooltip({html:true});");
+		//					caption+="&nbsp;";
+		//					caption+=comment;		
+		//				}
+		//			}
+					screenshotCarousel.slide()
+						.content(link);
+	//					.caption(htmlFactory.label(Bootstrap.Style.INFO, se.getComment()).style("opacity", "0.7"));
+				}
 			}
 			
 	//		testMethodResultWriter.write("<a name='carousel_"+screenshotCarousel.getId()+"'/>");

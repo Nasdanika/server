@@ -19,7 +19,8 @@ Require-Bundle: org.nasdanika.cdo.web;bundle-version="0.1.0",
  org.eclipse.emf.ecore.xmi,
  org.apache.lucene.core;bundle-version="5.1.0",
  org.apache.lucene.analyzers-common;bundle-version="5.1.0",
- org.apache.lucene.queryparser;bundle-version="5.1.0"
+ org.apache.lucene.queryparser;bundle-version="5.1.0",
+ org.nasdanika.web.resources;bundle-version="1.0.0"
 Export-Package: org.nasdanika.cdo.web.doc,
  org.nasdanika.cdo.web.doc.extensions
 Import-Package: javax.servlet;version="2.6.0",
