@@ -45,7 +45,7 @@ public class ExtensionManager extends AdapterManager {
 	private static final String BUNDLE_ID_TOKEN = "${bundleId}";
 	private ServiceTracker<Route, Route> routeServiceTracker;
 	private ServiceTracker<UIPart<?,?>, UIPart<?,?>> uiPartServiceTracker;	
-	private HTMLFactory htmlFactory;
+	private HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 	
 	// TODO - Converter and ConverterProvider service tracker.
 	
