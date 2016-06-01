@@ -31,6 +31,12 @@ import org.nasdanika.webtest.model.ScreenshotType;
 public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublisher, Comparable<ScreenshotEntry> {
 		
 	private Screenshot.When when;
+	
+	private int seqNo;
+	
+	public int getSeqNo() {
+		return seqNo;
+	}
 
 	public Screenshot.When getWhen() {
 		return when;
@@ -125,6 +131,9 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		this.bytes = bytes;
 		this.bytesRef = new SoftReference<byte[]>(bytes);
 		this.prev = prev;
+		if (prev != null) {
+			seqNo = prev.seqNo + 1;
+		}
 		this.when = when;
 	}
 
