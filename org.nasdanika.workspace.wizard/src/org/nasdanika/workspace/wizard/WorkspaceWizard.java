@@ -334,10 +334,6 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/index.html");	
 					target.create(new ByteArrayInputStream(new IndexRenderer().generate(this).getBytes()), false, progressMonitor);		
 				}	
-				if (applicationConfigurationPage.btnDocumentationApplicationRoute.getSelection() || applicationConfigurationPage.btnDocumentationRoute.getSelection()) {
-					IFile target = project.getProject().getFile(applicationConfigurationPage.webContentBaseName.getText().trim()+"/js/domReady.js");	
-					target.create(getClass().getResourceAsStream("resources/domReady.js"), false, progressMonitor);		
-				}	
 			}
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ApplicationPomRenderer().generate(this).getBytes()), false, progressMonitor);		

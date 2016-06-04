@@ -538,7 +538,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 	@Override
 	public boolean canFinish() {		
 		// Got to go to the end of the wizard.
-		return !getContainer().getCurrentPage().canFlipToNextPage();
+		return super.canFinish() && !getContainer().getCurrentPage().canFlipToNextPage();
 	}
 	
 	protected IWorkingSet[] getSelectedWorkingSets() {
