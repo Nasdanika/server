@@ -17,6 +17,12 @@ public interface CDOViewContext<V extends CDOView, CR> extends Context {
 	 */
 	Principal getPrincipal() throws Exception;
 	
+	/**
+	 * Subject holds principal identity and can be used to obtain the principal from the context.
+	 * @return
+	 */
+	CDOViewContextSubject<V,CR> getSubject() throws Exception;
+	
 	ProtectionDomain<CR> getProtectionDomain();
 	
 	/**

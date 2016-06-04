@@ -13,6 +13,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.core.runtime.Platform;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
@@ -64,7 +66,13 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		@Override
 		public int compareTo(RouteMethodEntry o) {
 			return command.compareTo(o.command);
-		}				
+		}
+
+		@Override
+		public String toString() {
+			return "RouteMethodEntry [command=" + command + ", target=" + target + "]";
+		}	
+		
 	}
 			
 	protected List<RouteMethodEntry> routeMethodEntries = new ArrayList<>();
@@ -224,11 +232,12 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {						
 		String[] path = context.getPath();
 		
+		HttpServletResponse response = context.getResponse();
 		if (!CoreUtil.isBlank(getApiDocPath())
 				&& context.getMethod() == RequestMethod.GET
 				&& getApiDocPath().equals(CoreUtil.join(path, "/"))) {
 			
-			context.getResponse().setContentType("text/html");
+			response.setContentType("text/html");
 			return new ValueAction(generateApiDocumentation());
 		}
 		
@@ -288,8 +297,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				}
 				
 				if (context.authorize(context.getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
-					if (!CoreUtil.isBlank(routeMethodCommand.getProduces())) {
-						context.getResponse().setContentType(routeMethodCommand.getProduces());
+					if (response!=null && !CoreUtil.isBlank(routeMethodCommand.getProduces())) {
+						response.setContentType(routeMethodCommand.getProduces());
 					}							
 					Object result = routeMethodEntry.execute(context, args);
 					if (result==null && routeMethodCommand.getMethod().getReturnType() == void.class) {
@@ -302,8 +311,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			} else if (path.length > 1) {										
 				if (routeMethodCommand.getPattern()!=null && routeMethodCommand.getPattern().matcher(CoreUtil.join(path, "/")).matches()) {
 					if (context.authorize(context.getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
-						if (!CoreUtil.isBlank(routeMethodCommand.getProduces())) {
-							context.getResponse().setContentType(routeMethodCommand.getProduces());
+						if (response!=null && !CoreUtil.isBlank(routeMethodCommand.getProduces())) {
+							response.setContentType(routeMethodCommand.getProduces());
 						}							
 						Object result = routeMethodEntry.execute(context, args);
 						if (result==null && routeMethodCommand.getMethod().getReturnType() == void.class) {

@@ -53,6 +53,7 @@ public @interface RouteMethod {
 	
 	/**
 	 * Content types which this method can consume. Used for matching the method to request. Empty array matches any content type.
+	 * for <code>CREATE_WEB_SOCKET</code> {@link RequestMethod} this attribute matches sub-protocols.
 	 * @return
 	 */
 	String[] consumes() default {};

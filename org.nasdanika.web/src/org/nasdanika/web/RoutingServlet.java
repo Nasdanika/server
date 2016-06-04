@@ -5,9 +5,13 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.nasdanika.core.BundleClassLoadingContext;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.ContextImpl;
+import org.nasdanika.core.ContextProvider;
 import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("serial")
@@ -26,7 +30,8 @@ public class RoutingServlet extends AbstractRoutingServlet {
 			String[] path,
 			HttpServletRequest req, 
 			HttpServletResponse resp, 
-			String reqUrl) throws Exception {
+			String reqUrl,
+			Context... chain) throws Exception {
 		
 		return new HttpServletRequestContextImpl(
 				path, 
@@ -38,7 +43,7 @@ public class RoutingServlet extends AbstractRoutingServlet {
 				resp,
 				reqUrl, 
 				null,
-				new Context[] {});
+				chain);
 		}
 	
 	@Override
@@ -50,6 +55,23 @@ public class RoutingServlet extends AbstractRoutingServlet {
 			e.printStackTrace();
 		}
 		super.destroy();
+	}
+
+	@Override
+	protected ContextProvider<?> createWebSocketContextProvider(
+			HttpServletRequestContext context,
+			ServletUpgradeRequest upgradeRequest, 
+			ServletUpgradeResponse upgradeResponse) throws Exception {
+		
+		Context webSocketContext = new ContextImpl(getBundleContext());
+		return new ContextProvider<Context>() {
+
+			@Override
+			public Context createContext() {
+				return webSocketContext;
+			}
+			
+		};
 	}
 
 }

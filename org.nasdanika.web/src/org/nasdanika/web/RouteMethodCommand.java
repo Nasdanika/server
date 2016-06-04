@@ -2,10 +2,15 @@ package org.nasdanika.web;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.WebSocketListener;
+import org.nasdanika.core.Context;
 import org.nasdanika.core.ContextParameter;
+import org.nasdanika.core.ContextProvider;
 import org.nasdanika.core.CoreUtil;
 import org.osgi.framework.BundleContext;
 
@@ -59,21 +64,25 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 			boolean requestMethodMatched = false;
 			if (requestMethods.length==0) {
 				String[] smn = StringUtils.splitByCharacterTypeCamelCase(method.getName());
-				if (smn.length>1) {
-					for (RequestMethod rm: RequestMethod.values()) {
-						if (rm.name().toLowerCase().equals(smn[0])) {
-							requestMethods = new RequestMethod[] {rm};
-							StringBuilder pathBuilder = new StringBuilder();
-							for (int i=1; i < smn.length; ++i) {
-								if (i>1) {
-									pathBuilder.append(RequestMethod.GET == rm && i == smn.length-1 ? "." : "/");
-								}
-								pathBuilder.append(smn[i].toLowerCase());
+				RM: for (RequestMethod rm: RequestMethod.values()) {
+					String[] rmna = rm.name().split("_");
+					if (smn.length>rmna.length) {
+						for (int idx = 0; idx < rmna.length; ++idx) {
+							if (!smn[idx].equalsIgnoreCase(rmna[idx])) {
+								continue RM;
 							}
-							path = pathBuilder.toString();
-							requestMethodMatched = true;
-							break;
 						}
+						requestMethods = new RequestMethod[] {rm};
+						StringBuilder pathBuilder = new StringBuilder();
+						for (int i = rmna.length; i < smn.length; ++i) {
+							if (i>rmna.length) {
+								pathBuilder.append(RequestMethod.GET == rm && i == smn.length-1 ? "." : "/");
+							}
+							pathBuilder.append(smn[i].toLowerCase());
+						}
+						path = pathBuilder.toString();
+						requestMethodMatched = true;
+						break;
 					}
 				}
 			}
@@ -189,5 +198,79 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 		return hashCode() - o.hashCode();
 	}
 	
+	/**
+	 * Wrapping ContextWebSocketListener
+	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public R execute(C context, Object target, Object[] arguments) throws Exception {
+		R ret = super.execute(context, target, arguments);
+		if (context.getMethod() == RequestMethod.CREATE_WEB_SOCKET) {
+			WebSocketUpgradeInfo webSocketUpgradeInfo = context.adapt(WebSocketUpgradeInfo.class);
+			if (webSocketUpgradeInfo == null) {
+				throw new NullPointerException("WebSocketUpgradeInfo is null");
+			}
+			ContextProvider<?> contextProvider = webSocketUpgradeInfo.getContextProvider(context);
+			
+			if (ret instanceof ContextWebSocketListener) {				
+				return (R) new WebSocketListener() {
+					
+					@Override
+					public void onWebSocketError(Throwable cause) {
+						try (Context ctx = contextProvider.createContext()) {
+							((ContextWebSocketListener<Context>) ret).onWebSocketError(ctx, cause);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					
+					@Override
+					public void onWebSocketConnect(Session session) {
+						try (Context ctx = contextProvider.createContext()) {
+							((ContextWebSocketListener<Context>) ret).onWebSocketConnect(ctx, session);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					
+					@Override
+					public void onWebSocketClose(int statusCode, String reason) {
+						try (Context ctx = contextProvider.createContext()) {
+							((ContextWebSocketListener<Context>) ret).onWebSocketClose(ctx, statusCode, reason);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					
+					@Override
+					public void onWebSocketText(String message) {
+						try (Context ctx = contextProvider.createContext()) {
+							((ContextWebSocketListener<Context>) ret).onWebSocketText(ctx, message);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+					
+					@Override
+					public void onWebSocketBinary(byte[] payload, int offset, int len) {
+						try (Context ctx = contextProvider.createContext()) {
+							((ContextWebSocketListener<Context>) ret).onWebSocketBinary(ctx, payload, offset, len);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				};
+			} 
+			throw new IllegalArgumentException("Return value must be an instance of "+ContextWebSocketListener.class.getName());
+		}
+		return ret;
+	}
 
+	@Override
+	public String toString() {
+		return "RouteMethodCommand [path=" + path + ", requestMethods=" + Arrays.toString(requestMethods) + ", pattern="
+				+ pattern + ", produces=" + produces + ", consumes=" + Arrays.toString(consumes) + ", action=" + action
+				+ ", qualifier=" + qualifier + ", comment=" + comment + ", method=" + method + "]";
+	}
+		
 }

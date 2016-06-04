@@ -5,4 +5,17 @@ package org.nasdanika.web;
  * @author Pavel
  *
  */
-public enum RequestMethod { DELETE, GET, OPTIONS, PATCH, POST, PUT, TRACE }
+public enum RequestMethod { 
+	DELETE, 
+	GET, 
+	OPTIONS, 
+	PATCH, 
+	POST, 
+	PUT, 
+	TRACE,
+	
+	/**
+	 * A pseudo method for web socket creation.
+	 */
+	CREATE_WEB_SOCKET
+}

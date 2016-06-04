@@ -1,43 +1,22 @@
-package org.nasdanika.cdo.web;
-
-import javax.servlet.http.HttpSession;
+package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.transaction.CDOCommitContext;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
 import org.eclipse.emf.cdo.view.CDOView;
-import org.nasdanika.cdo.CDOViewContext;
-import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.User;
 
-public class HttpSessionSubject<V extends CDOView, CR> implements CDOViewContextSubject<V, CR> {
+public abstract class AbstractCDOViewContextSubject<V extends CDOView, CR> implements CDOViewContextSubject<V, CR> {
 	
-private static final String PRINCIPAL_ID_KEY = Principal.class.getName()+":id";
+	protected abstract void setPrincipalID(CDOID cdoID);
 
-	private HttpSession session;
-	private String principalName;
-
-	public HttpSessionSubject(HttpSession session, String principalName) {			
-		this.session = session;
-		this.principalName = principalName;
-	}
+	protected abstract CDOID getPrincipalID();
 	
-	protected void setPrincipalID(CDOID cdoID) {
-		if (cdoID==null) {
-			session.removeAttribute(PRINCIPAL_ID_KEY);		
-		} else {
-			session.setAttribute(PRINCIPAL_ID_KEY, cdoID);
-		}
-	}
-
-	protected Object getPrincipalID() {
-		Object ret = session.getAttribute(PRINCIPAL_ID_KEY);
-		return ret;
-	}
+	protected abstract String getPrincipalName();
 	
 	@Override
 	public Principal getPrincipal(CDOViewContext<V, CR> context) {		
@@ -50,10 +29,10 @@ private static final String PRINCIPAL_ID_KEY = Principal.class.getName()+":id";
 			return null;
 		}
 		
-		if (principalName != null) {
+		if (getPrincipalName() != null) {
 			for (User pdu : context.getProtectionDomain().getAllUsers()) { 
 				// TODO - find(login) to optimize search in large user populations
-				if (pdu instanceof LoginUser && ((LoginUser) pdu).getLogin().equalsIgnoreCase(principalName)) {
+				if (pdu instanceof LoginUser && ((LoginUser) pdu).getLogin().equalsIgnoreCase(getPrincipalName())) {
 					if (((LoginUser) pdu).isDisabled() || (pdu instanceof LoginPasswordHashUser && ((LoginPasswordHashUser) pdu).getPasswordHash() != null)) {
 						break;
 					} else {

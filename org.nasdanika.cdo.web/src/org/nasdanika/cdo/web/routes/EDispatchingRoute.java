@@ -17,6 +17,8 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
@@ -133,7 +135,8 @@ public class EDispatchingRoute extends DispatchingRoute {
 			@Override
 			public Object execute(HttpServletRequestContext context, Object target, Object[] arguments)	throws Exception {
 				Object ret = super.execute(context, target, arguments);
-				if (JSON_CONTENT_TYPE.equals(context.getResponse().getContentType())) {
+				HttpServletResponse response = context.getResponse();
+				if (response!=null && JSON_CONTENT_TYPE.equals(response.getContentType())) {
 					ResponseModel responseModel = method.getAnnotation(ResponseModel.class);
 					String[] include = responseModel==null ? new String[0] : responseModel.include();
 					String[] exclude = responseModel==null ? new String[0] : responseModel.exclude();

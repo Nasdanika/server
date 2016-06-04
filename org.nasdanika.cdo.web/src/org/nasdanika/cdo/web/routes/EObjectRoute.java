@@ -55,6 +55,7 @@ public class EObjectRoute extends ObjectRoute {
 	@Override
 	public Action execute(final HttpServletRequestContext context, Object... args) throws Exception {
 		final EObject eObject = (EObject) context.getTarget();
+		
 		EClass eClass = eObject.eClass();
 		String[] path = context.getPath();
 		

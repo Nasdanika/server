@@ -10,18 +10,119 @@ import java.net.URL;
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
+import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
+import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
+import org.eclipse.jetty.websocket.servlet.WebSocketServlet;
+import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
+import org.nasdanika.core.Context;
+import org.nasdanika.core.ContextImpl;
+import org.nasdanika.core.ContextProvider;
 import org.nasdanika.core.CoreUtil;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("serial")
-public abstract class AbstractRoutingServlet extends HttpServlet {
+public abstract class AbstractRoutingServlet extends WebSocketServlet {
 	
+	private WebSocketServletFactory webSocketServletFactory;
+	
+    @Override
+    public void configure(WebSocketServletFactory factory) {
+    	this.webSocketServletFactory = factory;
+    	String webSocketIdleTimeout = getServletConfig().getInitParameter("web-socket-idle-timeout");
+        if (!CoreUtil.isBlank(webSocketIdleTimeout)) {
+        	factory.getPolicy().setIdleTimeout(Long.parseLong(webSocketIdleTimeout)); 
+        }
+        factory.setCreator(new WebSocketCreator() {
+			
+			@Override
+			public Object createWebSocket(ServletUpgradeRequest req, ServletUpgradeResponse resp) {
+				String pathInfo = req.getHttpServletRequest().getPathInfo();		
+				
+				if (pathInfo==null) {
+					pathInfo = "";
+				}
+				if (pathInfo.startsWith("/")) {
+					pathInfo = pathInfo.substring(1);
+				}
+				String[] path = pathInfo.split("/");
+				String reqUrl = req.getHttpServletRequest().getContextPath()+req.getHttpServletRequest().getServletPath();
+				Action action = null;
+				Context chain = new ContextImpl(getBundleContext()) {
+					
+					@SuppressWarnings("unchecked")
+					@Override
+					public <T> T adapt(Class<T> targetType) throws Exception {
+						if (WebSocketUpgradeInfo.class == targetType) {
+							return (T) new WebSocketUpgradeInfo() {
+								
+								@Override
+								public ServletUpgradeResponse getUpgradeResponse() {
+									return resp;
+								}
+								
+								@Override
+								public ServletUpgradeRequest getUpgradeRequest() {
+									return req;
+								}
+								
+								@Override
+								public ContextProvider<?> getContextProvider(HttpServletRequestContext context) throws Exception {
+									return createWebSocketContextProvider(context, req, resp);
+								}
+								
+							};
+						}
+						return super.adapt(targetType);
+					}
+				};
+				try (HttpServletRequestContext context = createContext(path, req.getHttpServletRequest(), null, reqUrl, chain)) {
+					for (Route route: matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
+						action = route.execute(context);
+						if (action!=null) {
+							break;
+						}
+					}
+					if (action!=null) {
+						return action.execute();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					try {
+						resp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e.toString());
+					} catch (IOException ioe) {
+						ioe.printStackTrace();
+					}
+				}
+				
+				return null;
+			}
+		});
+    }	
+    
+    protected BundleContext getBundleContext() {
+		return FrameworkUtil.getBundle(getClass()).getBundleContext();
+    }
+    
+    /**
+     * Creates web socket context provider. Implementations may, for example, store the original request principal/subject in the provider.
+     * @param context
+     * @param upgradeRequest
+     * @param upgradeResponse
+     * @return
+     */
+    protected abstract ContextProvider<?> createWebSocketContextProvider(
+    		HttpServletRequestContext context,
+    		ServletUpgradeRequest upgradeRequest, 
+    		ServletUpgradeResponse upgradeResponse) throws Exception;
+    
 	protected ExtensionManager extensionManager;
 	
 	private boolean jsonPrettyPrint;
@@ -29,12 +130,20 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
-		super.init(config);
+		Thread currentThread = Thread.currentThread();
+		ClassLoader ccl = currentThread.getContextClassLoader();
+		try {			
+			currentThread.setContextClassLoader(getClass().getClassLoader());
+			super.init(config);
+		} finally {
+			currentThread.setContextClassLoader(ccl);
+		}
+		
 		jsonPrettyPrint = "true".equals(config.getInitParameter("json-pretty-print"));
 		try {
 			extensionManager = new ExtensionManager(
 					this,
-					null, 
+					getBundleContext(), 
 					config.getInitParameter("adapter-service-filter"),
 					config.getInitParameter("route-service-filter"),
 					config.getInitParameter("ui-part-service-filter"),
@@ -48,62 +157,67 @@ public abstract class AbstractRoutingServlet extends HttpServlet {
 			
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-		String reqUrl = req.getContextPath()+req.getServletPath();
-		String pathInfo = req.getPathInfo();		
-		
-		if (pathInfo==null) {
-			pathInfo = "";
-		}
-		if (pathInfo.startsWith("/")) {
-			pathInfo = pathInfo.substring(1);
-		}
-		String[] path = pathInfo.split("/");
-		if (path.length>0) {
-			String fn = path[path.length-1];
-			if (fn.indexOf('.')!=-1) {
-				String contentType = MIME_TYPES_MAP.getContentType(fn);
-				if (!CoreUtil.isBlank(contentType)) {
-					resp.setContentType(contentType);
+        if (webSocketServletFactory != null && webSocketServletFactory.isUpgradeRequest(req,resp)) {
+        	super.service(req, resp);
+        } else {		
+			String reqUrl = req.getContextPath()+req.getServletPath();
+			String pathInfo = req.getPathInfo();		
+			
+			if (pathInfo==null) {
+				pathInfo = "";
+			}
+			if (pathInfo.startsWith("/")) {
+				pathInfo = pathInfo.substring(1);
+			}
+			String[] path = pathInfo.split("/");
+			if (path.length>0) {
+				String fn = path[path.length-1];
+				if (fn.indexOf('.')!=-1) {
+					String contentType = MIME_TYPES_MAP.getContentType(fn);
+					if (!CoreUtil.isBlank(contentType)) {
+						resp.setContentType(contentType);
+					}
 				}
 			}
-		}
-		Action action = null;
-		try (HttpServletRequestContext context = createContext(path, req, resp, reqUrl)) {
-			for (Route route: matchRootRoutes(req, path)) {
-				action = route.execute(context);
-				if (action!=null) {
-					break;
+			Action action = null;
+			try (HttpServletRequestContext context = createContext(path, req, resp, reqUrl)) {
+				for (Route route: matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
+					action = route.execute(context);
+					if (action!=null) {
+						break;
+					}
 				}
-			}
-		} catch (ServerException e) {
-			resp.sendError(e.getStatusCode(), e.getMessage());
-		} catch (ServletException | IOException e) {
-			throw e;
-		} catch (Exception e) {
-			throw new ServletException(e);			
-		}
-		if (action==null) {			
-			resp.sendError(HttpServletResponse.SC_NOT_FOUND);			
-		} else {
-			try {
-				resultToResponse(action.execute(), resp);
-			} catch (IOException | ServletException e) {
+			} catch (ServerException e) {
+				resp.sendError(e.getStatusCode(), e.getMessage());
+			} catch (ServletException | IOException e) {
 				throw e;
 			} catch (Exception e) {
-				throw new ServletException(e);
+				throw new ServletException(e);			
 			}
-		}
+			if (action==null) {			
+				resp.sendError(HttpServletResponse.SC_NOT_FOUND);			
+			} else {
+				try {
+					resultToResponse(action.execute(), resp);
+				} catch (IOException | ServletException e) {
+					throw e;
+				} catch (Exception e) {
+					throw new ServletException(e);
+				}
+			}
+        }
 	}
 
-	protected Iterable<Route> matchRootRoutes(HttpServletRequest req, String[] path) throws Exception {
-		return extensionManager.getRouteRegistry().matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path);
+	protected Iterable<Route> matchRootRoutes(RequestMethod method, String[] path) throws Exception {
+		return extensionManager.getRouteRegistry().matchRootRoutes(method, path);
 	}
 
 	protected abstract HttpServletRequestContext createContext(
 			String[] path,
 			HttpServletRequest req, 
 			HttpServletResponse resp, 
-			String reqUrl) throws Exception;
+			String reqUrl,
+			Context... chain) throws Exception;
 
 	public void resultToResponse(Object result, HttpServletResponse resp) throws Exception {
 		if (result instanceof ProcessingError) {

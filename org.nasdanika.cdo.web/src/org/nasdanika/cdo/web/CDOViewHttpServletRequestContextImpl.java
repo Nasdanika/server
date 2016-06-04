@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.core.ClassLoadingContext;
@@ -51,7 +52,7 @@ public class CDOViewHttpServletRequestContextImpl<CR> extends HttpServletRequest
 				getResponse(), 
 				subContextURL(subPath, true),
 				this,
-				chain,
+				fullChain(chain),
 				viewContext);
 		subContext.getRootObjectsPaths().putAll(getRootObjectsPaths());
 		return subContext;
@@ -92,6 +93,11 @@ public class CDOViewHttpServletRequestContextImpl<CR> extends HttpServletRequest
 	public <T> T adapt(Class<T> targetType) throws Exception {
 		T ret = viewContext.adapt(targetType);
 		return ret==null ? super.adapt(targetType) : ret;
+	}
+
+	@Override
+	public CDOViewContextSubject<CDOView, CR> getSubject() throws Exception {
+		return viewContext.getSubject();
 	}
 
 }

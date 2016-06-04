@@ -41,6 +41,17 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	
 	private CDOViewContextSubject<V,CR> subject;
 	private Principal authenticatedPrincipal;
+	
+	@Override
+	public CDOViewContextSubject<V, CR> getSubject() throws Exception {
+		if (subject == null) {
+			Principal principal = getPrincipal();
+			if (principal != null) {
+				subject = new CDOIDSubject<V,CR>(principal);
+			}
+		}
+		return subject;
+	}
 
 	@Override
 	public final Principal getPrincipal() throws Exception {

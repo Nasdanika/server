@@ -40,6 +40,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOTransactionContextProvider;
+import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.cdo.web.SessionWebSocketServlet.WebSocketContext;
@@ -397,7 +398,7 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 			if (cdoTransactionContextProvider == null) {
 				reject(requestID, "Transaction provider is not available");
 			} else {															
-				try (final CDOTransactionContext<CR> cdoTransactionContext = cdoTransactionContextProvider.createContext(new HttpSessionSubject<CDOTransaction, CR>((HttpSession) webSocketSession.getUpgradeRequest().getSession(), null))) {
+				try (final CDOTransactionContext<CR> cdoTransactionContext = cdoTransactionContextProvider.createContext(new HttpSessionCDOViewContextSubject<CDOTransaction, CR>((HttpSession) webSocketSession.getUpgradeRequest().getSession(), null))) {
 					try {
 						final WebSocketContext<CR> webSocketContext = new WebSocketContext<CR>() {
 
@@ -485,6 +486,11 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 							@Override
 							public Object getAttribute(String name) {
 								return attributes.get(name);
+							}
+
+							@Override
+							public CDOViewContextSubject<CDOTransaction, CR> getSubject() throws Exception {
+								return cdoTransactionContext.getSubject();
 							}
 							
 						};					

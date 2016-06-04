@@ -24,6 +24,9 @@ public class ContextImpl implements Context {
 	public ContextImpl(BundleContext bundleContext, Context... chain) {
 		this.bundleContext = bundleContext;
 		this.chain = chain;
+		if (chain == null) {
+			System.out.print("SHIT");
+		}
 	}
 	
 	public AccessDecision getDefaultAccessDecision() {

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.nasdanika.cdo.CDOTransactionContext;
+import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.ProtectionDomain;
 import org.nasdanika.core.ClassLoadingContext;
@@ -51,7 +52,7 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 				getResponse(), 
 				subContextURL(subPath, true),
 				this, 
-				chain,
+				fullChain(chain),
 				transactionContext);
 		subContext.getRootObjectsPaths().putAll(getRootObjectsPaths());
 		return subContext;
@@ -102,6 +103,11 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 	public <T> T adapt(Class<T> targetType) throws Exception {
 		T ret = transactionContext.adapt(targetType);
 		return ret==null ? super.adapt(targetType) : ret;
+	}
+
+	@Override
+	public CDOViewContextSubject<CDOTransaction, CR> getSubject() throws Exception {
+		return transactionContext.getSubject();
 	}
 		
 }

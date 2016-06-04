@@ -104,6 +104,8 @@
                   </enumeration>
                   <enumeration value="PUT">
                   </enumeration>
+                  <enumeration value="CREATE_WEB_SOCKET">
+                  </enumeration>
                   <enumeration value="*">
                   </enumeration>
                </restriction>
@@ -237,6 +239,8 @@
                   <enumeration value="POST">
                   </enumeration>
                   <enumeration value="PUT">
+                  </enumeration>
+                  <enumeration value="CREATE_WEB_SOCKET">
                   </enumeration>
                   <enumeration value="*">
                   </enumeration>
@@ -411,6 +415,8 @@
                   </enumeration>
                   <enumeration value="PUT">
                   </enumeration>
+                  <enumeration value="CREATE_WEB_SOCKET">
+                  </enumeration>
                   <enumeration value="*">
                   </enumeration>
                </restriction>
@@ -465,6 +471,8 @@
                   <enumeration value="POST">
                   </enumeration>
                   <enumeration value="PUT">
+                  </enumeration>
+                  <enumeration value="CREATE_WEB_SOCKET">
                   </enumeration>
                   <enumeration value="*">
                   </enumeration>

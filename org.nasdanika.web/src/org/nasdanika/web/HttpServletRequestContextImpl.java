@@ -249,9 +249,18 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 				getResponse(),
 				subContextURL(subPath, false),
 				this, 
-				chain);
+				fullChain(chain));
 		subContext.getRootObjectsPaths().putAll(getRootObjectsPaths());
 		return subContext;
+	}
+
+	protected Context[] fullChain(Context[] chain) {
+		Context[] theChain = new Context[chain == null ? 1 : chain.length + 1];
+		if (chain != null) {
+			System.arraycopy(chain, 0, theChain, 0, chain.length);
+		}
+		theChain[theChain.length - 1] = this;
+		return theChain;
 	}
 	
 	/**
@@ -296,6 +305,13 @@ public class HttpServletRequestContextImpl extends ContextImpl implements HttpSe
 
 	@Override
 	public RequestMethod getMethod() {
+		try {
+			if (adapt(WebSocketUpgradeInfo.class) != null) {
+				return RequestMethod.CREATE_WEB_SOCKET;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		return RequestMethod.valueOf(req.getMethod());
 	}
 	

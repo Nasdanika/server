@@ -262,5 +262,9 @@ public class MethodCommand<C extends Context, R> {
 		return (Class<R>) method.getReturnType();
 	}
 
-
+	@Override
+	public String toString() {
+		return "MethodCommand [method=" + method + "]";
+	}
+	
 }

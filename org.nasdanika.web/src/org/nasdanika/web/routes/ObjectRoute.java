@@ -8,6 +8,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
 import org.nasdanika.core.CoreUtil;
@@ -16,6 +17,7 @@ import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Route;
 import org.nasdanika.web.RouteMethod;
+import org.nasdanika.web.WebSocketUpgradeInfo;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -224,10 +226,33 @@ public class ObjectRoute implements Route {
 		
 	}
 	
-	public static boolean matchConsumes(HttpServletRequestContext context, String[] consumes) {
+	public static boolean matchConsumes(HttpServletRequestContext context, String[] consumes) throws Exception {
+		
+		if (RequestMethod.CREATE_WEB_SOCKET == context.getMethod()) {
+			WebSocketUpgradeInfo upgradeInfo = context.adapt(WebSocketUpgradeInfo.class);
+			List<String> subProtocols = upgradeInfo.getUpgradeRequest().getSubProtocols();
+			if (subProtocols.isEmpty()) {
+				return true;
+			}
+			for (String sp: subProtocols) {
+				if (consumes == null || consumes.length == 0) {
+					// Accept the first sub-protocol
+					upgradeInfo.getUpgradeResponse().setAcceptedSubProtocol(sp);
+					return true;
+				}
+				for (String ce: consumes) {
+					if (ce.equals(sp)) {
+						upgradeInfo.getUpgradeResponse().setAcceptedSubProtocol(sp);
+						return true;
+					}
+				}
+			}
+		}
+		
 		if (consumes==null || consumes.length==0) {
 			return true;
-		}
+		}		
+		
 		String contentType = context.getRequest().getContentType();
 		if (CoreUtil.isBlank(contentType)) {
 			return false;
