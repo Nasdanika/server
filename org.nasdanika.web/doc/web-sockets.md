@@ -22,7 +22,8 @@ an instance of [[javadoc>org.nasdanika.web.ContextWebSocketListener]]. In the la
 a web socket context. If ``keepWebSocketContext`` @RouteMethod annotation attribute is set to true then a context is kept open for the
 whole life of the WebSocket. Otherwise (default) a new web socket context is created for each invocation and is closed after the invocation finishes.   
 
-WebSocket creator methods can use all the parameter annotations available for other route methods, e.g. [[javadoc>org.nasdanika.core.ServiceParameter]] annotation, so web socket listeners can have access to OSGi services.   
+WebSocket creator methods can use all the parameter annotations available for other route methods, e.g. [[javadoc>org.nasdanika.core.ServiceParameter]]
+annotation, so web socket listeners can have access to OSGi services, request parameters, etc..   
 
 Sample ContextWebSocketListener creator method in a dispatch route for a CDOObject:
 
