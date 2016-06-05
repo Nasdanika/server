@@ -31,6 +31,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	private String action;
 	private String qualifier;
 	private String comment;
+	private boolean keepWebSocketContext;
 	
 	public String getComment() {
 		return comment;
@@ -38,6 +39,10 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	
 	public String getPath() {
 		return path;
+	}
+	
+	public boolean isKeepWebSocketContext() {
+		return keepWebSocketContext;
 	}
 	
 	public RequestMethod[] getRequestMethods() {
@@ -58,6 +63,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 		path = routeMethod.path();						
 		requestMethods = routeMethod.value();
 		comment = routeMethod.comment();
+		keepWebSocketContext = routeMethod.keepWebSocketContext();
 		
 		// Implying path and possibly request method from method name
 		if (CoreUtil.isBlank(path) && CoreUtil.isBlank(routeMethod.pattern())) {
@@ -213,50 +219,83 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 			ContextProvider<?> contextProvider = webSocketUpgradeInfo.getContextProvider(context);
 			
 			if (ret instanceof ContextWebSocketListener) {				
+				ContextWebSocketListener<Context> contextWebSocketListener = (ContextWebSocketListener<Context>) ret;
 				return (R) new WebSocketListener() {
+					
+					private Context webSocketContext;
 					
 					@Override
 					public void onWebSocketError(Throwable cause) {
-						try (Context ctx = contextProvider.createContext()) {
-							((ContextWebSocketListener<Context>) ret).onWebSocketError(ctx, cause);
-						} catch (Exception e) {
-							e.printStackTrace();
+						if (isKeepWebSocketContext()) {
+							contextWebSocketListener.onWebSocketError(webSocketContext, cause);
+						} else {
+							try (Context ctx = contextProvider.createContext()) {
+								contextWebSocketListener.onWebSocketError(ctx, cause);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					
 					@Override
 					public void onWebSocketConnect(Session session) {
-						try (Context ctx = contextProvider.createContext()) {
-							((ContextWebSocketListener<Context>) ret).onWebSocketConnect(ctx, session);
-						} catch (Exception e) {
-							e.printStackTrace();
+						if (isKeepWebSocketContext()) {
+							webSocketContext = contextProvider.createContext();
+							contextWebSocketListener.onWebSocketConnect(webSocketContext, session);
+						} else {
+							try (Context ctx = contextProvider.createContext()) {
+								contextWebSocketListener.onWebSocketConnect(ctx, session);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					
 					@Override
 					public void onWebSocketClose(int statusCode, String reason) {
-						try (Context ctx = contextProvider.createContext()) {
-							((ContextWebSocketListener<Context>) ret).onWebSocketClose(ctx, statusCode, reason);
-						} catch (Exception e) {
-							e.printStackTrace();
+						if (isKeepWebSocketContext()) {
+							try {
+								contextWebSocketListener.onWebSocketClose(webSocketContext, statusCode, reason);
+							} finally {
+								try {
+									webSocketContext.close();
+									webSocketContext = null;
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							}
+						} else {
+							try (Context ctx = contextProvider.createContext()) {
+								contextWebSocketListener.onWebSocketClose(ctx, statusCode, reason);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					
 					@Override
 					public void onWebSocketText(String message) {
-						try (Context ctx = contextProvider.createContext()) {
-							((ContextWebSocketListener<Context>) ret).onWebSocketText(ctx, message);
-						} catch (Exception e) {
-							e.printStackTrace();
+						if (isKeepWebSocketContext()) {
+							contextWebSocketListener.onWebSocketText(webSocketContext, message);
+						} else {
+							try (Context ctx = contextProvider.createContext()) {
+								contextWebSocketListener.onWebSocketText(ctx, message);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 					
 					@Override
 					public void onWebSocketBinary(byte[] payload, int offset, int len) {
-						try (Context ctx = contextProvider.createContext()) {
-							((ContextWebSocketListener<Context>) ret).onWebSocketBinary(ctx, payload, offset, len);
-						} catch (Exception e) {
-							e.printStackTrace();
+						if (isKeepWebSocketContext()) {
+							contextWebSocketListener.onWebSocketBinary(webSocketContext, payload, offset, len);
+						} else {
+							try (Context ctx = contextProvider.createContext()) {
+								contextWebSocketListener.onWebSocketBinary(ctx, payload, offset, len);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
 				};
@@ -270,7 +309,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	public String toString() {
 		return "RouteMethodCommand [path=" + path + ", requestMethods=" + Arrays.toString(requestMethods) + ", pattern="
 				+ pattern + ", produces=" + produces + ", consumes=" + Arrays.toString(consumes) + ", action=" + action
-				+ ", qualifier=" + qualifier + ", comment=" + comment + ", method=" + method + "]";
+				+ ", qualifier=" + qualifier + ", comment=" + comment + ", method=" + method + ", keepWebSocketContext="+keepWebSocketContext+"]";
 	}
 		
 }

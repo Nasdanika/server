@@ -65,6 +65,10 @@
          <topic
                id="web"
                name="Web">
+            <topic
+                  location="doc/web-sockets.md"
+                  name="WebSockets">
+            </topic>
          </topic>
       </toc>
    </extension>

@@ -59,6 +59,14 @@ public @interface RouteMethod {
 	String[] consumes() default {};
 	
 	/**
+	 * Applicable only to web socket creation methods. 
+	 * @return If true, web socket context is created before invocation of {@link ContextWebSocketListener}.<code>onWebSocketConnect()</code> method and is
+	 * kept open until after invocation of <code>onWebSocketClose()</code> method. Otherwise a new context is create before each onXXX method invocation
+	 * and closed after the invocation. 
+	 */
+	boolean keepWebSocketContext() default false;
+	
+	/**
 	 * Authorization action. If not set, the request method name is used, e.g. GET.
 	 * @return
 	 */
