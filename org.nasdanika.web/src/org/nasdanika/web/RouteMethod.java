@@ -61,7 +61,7 @@ public @interface RouteMethod {
 	/**
 	 * Applicable only to web socket creation methods. 
 	 * @return If true, web socket context is created before invocation of {@link ContextWebSocketListener}.<code>onWebSocketConnect()</code> method and is
-	 * kept open until after invocation of <code>onWebSocketClose()</code> method. Otherwise a new context is create before each onXXX method invocation
+	 * kept open until after invocation of <code>onWebSocketClose()</code> method. Otherwise a new context is created before each onXXX method invocation
 	 * and closed after the invocation. 
 	 */
 	boolean keepWebSocketContext() default false;
