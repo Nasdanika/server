@@ -5,16 +5,21 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.nasdanika.cdo.web.doc.ConfigurableExtension;
+import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
+import org.pegdown.LinkRenderer.Rendering;
 
-public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableExtension {
+public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableExtension, Renderer {
+	
+	private ThreadLocal<String> specTL = new ThreadLocal<>();
 
 	@Override
 	public String resolve(String spec, String docRoutePath, Map<Object, Object> environment) {
+		specTL.set(spec);
 		for (Entry<String, String> pe: packageMap.entrySet()) {
 			String key = pe.getKey();
 			String value = pe.getValue();
@@ -53,6 +58,18 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 		}
 		
 		return htmlFactory.panel(Bootstrap.Style.INFO, "Package map", packageMapTable, null);
+	}
+
+	@Override
+	public Rendering render(String href, String content, String config, boolean isMissing) {
+		Rendering ret = new Rendering(href, content);
+		String spec = specTL.get();
+		if (spec!=null) {
+			ret.withAttribute("title", spec);
+		}
+		ret.withAttribute("target", "javaDoc");
+		specTL.set(null);
+		return ret;
 	}
 
 }
