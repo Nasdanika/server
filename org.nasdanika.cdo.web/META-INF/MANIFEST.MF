@@ -5,8 +5,7 @@ Bundle-SymbolicName: org.nasdanika.cdo.web;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Nasdanika
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Require-Bundle: org.json;bundle-version="1.0.0",
- org.nasdanika.web;bundle-version="0.1.0";visibility:=reexport,
+Require-Bundle: org.nasdanika.web;bundle-version="0.1.0";visibility:=reexport,
  org.nasdanika.cdo;bundle-version="0.1.0";visibility:=reexport,
  org.apache.commons.lang3;bundle-version="3.3.2",
  org.mozilla.rhino;bundle-version="1.0.0"
