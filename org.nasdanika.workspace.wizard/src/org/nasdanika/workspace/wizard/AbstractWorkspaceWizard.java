@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
+import org.nasdanika.workspace.wizard.render.DocPomRenderer;
 
 /**
  * Base class for wizards generating Tycho-built workspaces.
@@ -107,6 +109,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		generateRepositoryProject(progressMonitor);
 		generateAggregatorProject(progressMonitor);
 		generateTargetProject(progressMonitor);
+		generateDocProject(progressMonitor);
 	}
 	
 	public IResource createResource(IProject project, String path, InputStream content, IProgressMonitor progressMonitor) throws CoreException {
@@ -167,7 +170,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
 		IPath locationPath = generalInformationPage.getLocationPath();
-		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getGroupId()+".aggregator").toFile().toURI());
+		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getAggregatorArtifactId()).toFile().toURI());
 		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
 		
 		final ICommand m2 = description.newCommand();
@@ -175,7 +178,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
         description.setBuildSpec(new ICommand[] { m2 });
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(getGroupId()+".aggregator");
+		IProject project = root.getProject(getAggregatorArtifactId());
 		project.create(description, progressMonitor);
 		project.open(progressMonitor);
 		
@@ -186,6 +189,29 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 
 		IFile pom = project.getFile("pom.xml");	
 		pom.create(new ByteArrayInputStream(new AggregatorPomRenderer().generate(this).getBytes()), false, progressMonitor);
+	}
+
+	public String getAggregatorArtifactId() {
+		return getGroupId()+".aggregator";
+	}
+
+	protected void generateDocProject(IProgressMonitor progressMonitor) throws Exception {
+		IJavaProject project = createPluginProject(
+				getDocArtifactId(), 
+				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
+				Collections.singleton("apidocs"), 
+				null,
+				progressMonitor);
+		
+		IWorkingSet[] workingSets = getSelectedWorkingSets();
+		if (workingSets != null) {
+			workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+		}
+		
+		project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);		
 	}
 	
 	/**
@@ -331,9 +357,16 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		
 		//ret.add(getGroupId()+".target");
 		ret.add(getGroupId()+".feature");
-		ret.add(getGroupId()+".repository");								
+		ret.add(getGroupId()+".repository");										
+		ret.add(getDocArtifactId());
+		
 		return ret;
 	}
+	
+	public String getDocArtifactId() {
+		return getGroupId()+".doc";
+	}
+	
 	
 	protected IJavaProject createPluginProject(
 			final String name,

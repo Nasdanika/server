@@ -5,7 +5,7 @@
    <service>
       <provide interface="org.nasdanika.web.Route"/>
    </service>
-   <property name="pattern" type="String" value="<%=wizard.getDocRoutePath()%>/.+"/>
+   <property name="path" type="String" value="<%=wizard.getDocRoutePath()%>/"/>
    <property name="doc-route-path" type="String" value="<%=wizard.getRoutingServletAlias()%>/<%=wizard.getDocRoutePath()%>"/>
    <property name="doc-app-path" type="String" value="<%=wizard.getRoutingServletAlias()%>/<%=wizard.getDocAppRoutePath()%>"/>
    

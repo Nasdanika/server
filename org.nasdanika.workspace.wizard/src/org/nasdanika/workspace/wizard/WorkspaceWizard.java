@@ -934,7 +934,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		if (projectsPage.btnTests.getSelection()) {
 			ret.add(getTestsArtifactId());
 		}
-		
+						
 		if (shallGenerateTestsFeature()) {
 			ret.add(getTestsArtifactId()+".feature");			
 		}

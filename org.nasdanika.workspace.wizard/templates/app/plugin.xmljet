@@ -187,150 +187,39 @@ link resolvers, e.g. ``bundle`` schema.
        <wiki-link-resolver
             class="org.nasdanika.cdo.web.doc.extensions.JavadocWikiLinkResolver"
             name="javadoc">
-         <property
-         		name="packageMap.org.nasdanika.cdo.boxing"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.boxing/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.function"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.function/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.h2"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.h2/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.promise"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.promise/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.sca"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.sca.edit"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca.edit/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.scheduler"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.scheduler/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.security"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.security.edit"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.edit/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.security.editor"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.editor/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.web"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo.web.doc"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web.doc/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.cdo"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.core"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.core/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.core.tests"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.core.tests/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.function.cdo"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.function.cdo/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.function"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.function/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.html"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.html/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.sca.design"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.design/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.sca.edit"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.edit/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.sca.editor"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.editor/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.sca"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.tools.design"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.tools.design/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.web"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.web/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.webtest.performance"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.webtest"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/target/site/apidocs">
-         </property>
-
-         <property
-         		name="packageMap.org.nasdanika.workspace.wizard"
-         		value="http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/target/site/apidocs">
-         </property>
-
-         <property
-               name="packageMap.java"
-               value="http://docs.oracle.com/javase/8/docs/api">
-         </property>
+            
+         <property name="packageMap.<%=wizard.getGroupId()%>" value="<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias()%>/wizard.getDocRoutePath()/bundle/<%=wizard.getDocArtifactId()%>/api/"/>
+            
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.boxing/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.function/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.h2/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.promise/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca.edit/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.scheduler/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.edit/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.editor/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web.doc/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo/target/site/apidocs/">
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.core/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.core.tests/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.function.cdo/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.function/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.html/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.design/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.edit/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.editor/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.tools.design/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.web/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/target/site/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/target/site/apidocs"/>
+         <property name="location" value="http://help.eclipse.org/mars/topic/org.eclipse.emf.cdo.doc/javadoc/"/>
+         <property name="location" value="http://docs.oracle.com/javase/8/docs/api"/>
          
-         <property
-               name="packageMap.javax"
-               value="http://docs.oracle.com/javase/8/docs/api">
-         </property>
          <description>
             Resolves JavaDoc URL from the class/package name. Usage: ``[[javadoc&gt;fully qualified class name|text]]``. Text is optional. Examples: 
 

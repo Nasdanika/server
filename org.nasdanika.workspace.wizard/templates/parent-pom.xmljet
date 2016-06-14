@@ -15,7 +15,7 @@
 	</prerequisites>
 	
 	<properties>
-		<tycho-version>0.24.0</tycho-version>
+		<tycho-version>0.25.0</tycho-version>
 	</properties>
 
 	<repositories>
@@ -34,10 +34,44 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.10.3</version>
+				<version>2.10.4</version>
 				<configuration>
 					<linksource>true</linksource>
 					<failOnError>false</failOnError>
+		            <links>
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.boxing/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.function/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.h2/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.promise/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca.edit/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.scheduler/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.edit/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.editor/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web.doc/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.core/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.core.tests/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.function.cdo/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.function/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.html/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.design/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.edit/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.editor/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.tools.design/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.web/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/target/site/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/target/site/apidocs</link>
+						<!--						
+						<link>http://docs.oracle.com/javase/8/docs/api</link>						
+						<link>http://docs.oracle.com/javase/8/docs/api</link>
+						-->
+		            </links>
+					<detectLinks>true</detectLinks>					
 				</configuration>
 			</plugin>
 			<plugin>

@@ -122,7 +122,7 @@ public class ApplicationConfigurationPage extends WizardPage {
 				webContentBaseName.setEnabled(((Button) e.getSource()).getSelection());
 			}
 		});
-		btnWebContent.setSelection(false);
+		btnWebContent.setSelection(true);
 		btnWebContent.setText("Web Content");
 		new Label(grpWebApplication, SWT.NONE);
 		
