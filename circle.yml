@@ -73,7 +73,7 @@ test:
     - mv org.nasdanika.sca/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca
     - mv org.nasdanika.story.editor/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story.editor
     - mv org.nasdanika.story.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story.edit
-    - mv org.nasdanika.story/target/site/apidocs $CIRCLE_ARTIFACTS/apidocsorg.nasdanika.story
+    - mv org.nasdanika.story/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story
     - mv org.nasdanika.tools.design/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.tools.design
     - mv org.nasdanika.web/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.web
     - mv org.nasdanika.webtest.model.routes/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.model.routes
