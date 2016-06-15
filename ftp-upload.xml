@@ -3,13 +3,9 @@
     
   <target name="upload">
 
-	  <ftp action="rmdir" server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}">
-	    <fileset>
-	      <include name="repository/**"/>
-	      <include name="apidocs/**"/>
-	    </fileset>
-	  </ftp>    
-		
+	  <ftp action="rmdir" server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="repository"/>
+	  <ftp action="rmdir" server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}" remotedir="apidocs"/>
+
 	  <ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}">
 	    <fileset dir="${circle.artifacts}"/>
 	  </ftp>    
