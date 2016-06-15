@@ -83,5 +83,5 @@ test:
     - mv org.nasdanika.workspace.wizard/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
     
     - wget http://nasdanika.org/commons-net-3.5.jar
-    - ant -f ftp-upload.xml -lib commons-net-3.5.jar -Dftp.server=$DEPLOY_FTP_SERVER -Dftp.user=$DEPLOY_FTP_USER -Dftp.password=$DEPLOY_FTP_PASSWORD -Dcircle.artifacts=$CIRCLE_ARTIFACTS
+    - ant -verbose -f ftp-upload.xml -lib commons-net-3.5.jar -Dftp.server=$DEPLOY_FTP_SERVER -Dftp.user=$DEPLOY_FTP_USER -Dftp.password=$DEPLOY_FTP_PASSWORD -Dcircle.artifacts=$CIRCLE_ARTIFACTS
     
