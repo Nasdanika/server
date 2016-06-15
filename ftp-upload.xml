@@ -1,7 +1,11 @@
 <project name="FtpUpload" default="upload" basedir=".">
-    <description>Uploads build results to the server</description>
+  <description>Uploads build results to the server</description>
     
   <target name="upload">
+  	<echo message="${ftp.server}"/>
+  	<echo message="${ftp.user}"/>
+  	<echo message="${ftp.password}"/>
+  	<echo message="${circle.artifacts}"/>
 
 	  <ftp action="rmdir" server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}">
 	    <fileset>
