@@ -1,0 +1,18 @@
+<project name="FtpUpload" default="upload" basedir=".">
+    <description>Uploads build results to the server</description>
+    
+  <target name="upload">
+	  <property environment="env"/>
+
+	  <ftp action="rmdir" server="${env.DEPLOY_FTP_SERVER}" userid="${env.DEPLOY_FTP_USER}" password="${env.DEPLOY_FTP_PASSWORD}">
+	    <fileset>
+	      <include name="repository"/>
+	      <include name="apidocs"/>
+	    </fileset>
+	  </ftp>    
+		
+	  <ftp server="${env.DEPLOY_FTP_SERVER}" userid="${env.DEPLOY_FTP_USER}" password="${env.DEPLOY_FTP_PASSWORD}">
+	    <fileset dir="${env.CIRCLE_ARTIFACTS}"/>
+	  </ftp>    
+  </target>
+</project>
