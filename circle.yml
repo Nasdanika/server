@@ -8,12 +8,12 @@ dependencies:
 
 test:
   override:
-    - mvn clean verify
+    # - mvn clean verify
     
   post:
     - mv org.nasdanika.repository/target/repository $CIRCLE_ARTIFACTS    
 
-    - mvn clean verify javadoc:javadoc
+    # - mvn clean verify javadoc:javadoc
     - mkdir $CIRCLE_ARTIFACTS/apidocs
     
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
