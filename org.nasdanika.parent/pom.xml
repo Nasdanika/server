@@ -188,7 +188,8 @@
 
 	</modules>
 	<name>Nasdanika Foundation Server</name>
-	<url>http://www.nasdanika.org/wiki/doku.php?id=products:server:start</url>
+	<!-- For resolution of JavaDoc between modules -->
+	<url>http://www.nasdanika.org/server/apidocs/</url>
 	<organization>
 		<name>Nasdanika LLC</name>
 		<url>http://www.nasdanika.org</url>
