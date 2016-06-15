@@ -2,17 +2,16 @@
     <description>Uploads build results to the server</description>
     
   <target name="upload">
-	  <property environment="env"/>
 
-	  <ftp action="rmdir" server="${env.DEPLOY_FTP_SERVER}" userid="${env.DEPLOY_FTP_USER}" password="${env.DEPLOY_FTP_PASSWORD}">
+	  <ftp action="rmdir" server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}">
 	    <fileset>
 	      <include name="repository"/>
 	      <include name="apidocs"/>
 	    </fileset>
 	  </ftp>    
 		
-	  <ftp server="${env.DEPLOY_FTP_SERVER}" userid="${env.DEPLOY_FTP_USER}" password="${env.DEPLOY_FTP_PASSWORD}">
-	    <fileset dir="${env.CIRCLE_ARTIFACTS}"/>
+	  <ftp server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}">
+	    <fileset dir="${circle.artifacts}"/>
 	  </ftp>    
   </target>
 </project>

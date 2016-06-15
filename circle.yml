@@ -8,12 +8,12 @@ dependencies:
 
 test:
   override:
-    # - mvn clean verify
+    - mvn clean verify
     
   post:
     - mv org.nasdanika.repository/target/repository $CIRCLE_ARTIFACTS    
 
-    # - mvn clean verify javadoc:javadoc
+    - mvn clean verify javadoc:javadoc
     - mkdir $CIRCLE_ARTIFACTS/apidocs
     
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
@@ -82,4 +82,6 @@ test:
     - mv org.nasdanika.webtest/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
     - mv org.nasdanika.workspace.wizard/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
     
-    # - ant -f ftp-upload.xml
+    - wget http://nasdanika.org/commons-net-3.5.jar
+    - ant -f ftp-upload.xml -lib commons-net-3.5.jar -Dftp.server=$DEPLOY_FTP_SERVER -Dftp.user=$DEPLOY_FTP_USER -Dftp.password=$DEPLOY_FTP_PASSWORD -Dcircle.artifacts=$CIRCLE_ARTIFACTS
+    
