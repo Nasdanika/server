@@ -8,10 +8,10 @@ dependencies:
 
 test:
   override:
-    - mvn clean verify
+    - mvn clean verify javadoc:javadoc
     
   post:
     - mv org.nasdanika.repository/target/repository $CIRCLE_ARTIFACTS    
-    - mvn clean verify javadoc:javadoc
-    - mkdir $CIRCLE_ARTIFACTS/apidocs
-    - mv */target/site/apidocs $CIRCLE_ARTIFACTS/apidocs
+    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.html
+    - mv org.nasdanika.html/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.html
+    # TODO - Other projects' JAVADOC
