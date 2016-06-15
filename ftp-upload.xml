@@ -2,15 +2,11 @@
   <description>Uploads build results to the server</description>
     
   <target name="upload">
-  	<echo message="${ftp.server}"/>
-  	<echo message="${ftp.user}"/>
-  	<echo message="${ftp.password}"/>
-  	<echo message="${circle.artifacts}"/>
 
 	  <ftp action="rmdir" server="${ftp.server}" userid="${ftp.user}" password="${ftp.password}">
 	    <fileset>
-	      <include name="repository"/>
-	      <include name="apidocs"/>
+	      <include name="repository/**"/>
+	      <include name="apidocs/**"/>
 	    </fileset>
 	  </ftp>    
 		
