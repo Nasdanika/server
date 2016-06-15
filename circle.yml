@@ -12,6 +12,9 @@ test:
     
   post:
     - mv org.nasdanika.repository/target/repository $CIRCLE_ARTIFACTS    
+
+    - mkdir $CIRCLE_ARTIFACTS/apidocs
+    
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.h2
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.promise
