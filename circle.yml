@@ -8,7 +8,8 @@ dependencies:
 
 test:
   override:
-    - mvn clean verify
+     - ant -f ftp-upload.xml
+  #  - mvn clean verify
     
   post:
     - mv org.nasdanika.repository/target/repository $CIRCLE_ARTIFACTS    
