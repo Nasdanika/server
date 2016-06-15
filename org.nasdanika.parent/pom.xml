@@ -189,7 +189,7 @@
 	</modules>
 	<name>Nasdanika Foundation Server</name>
 	<!-- For resolution of JavaDoc between modules -->
-	<url>http://www.nasdanika.org/server/apidocs/</url>
+	<url>http://www.nasdanika.org/server/apidocs/parent/</url>
 	<organization>
 		<name>Nasdanika LLC</name>
 		<url>http://www.nasdanika.org</url>
