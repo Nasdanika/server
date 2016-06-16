@@ -82,6 +82,6 @@ test:
     - mv org.nasdanika.webtest/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
     - mv org.nasdanika.workspace.wizard/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
     
-    - wget http://nasdanika.org/commons-net-3.5.jar
-    - ant -f ftp-upload.xml -lib commons-net-3.5.jar -Dftp.server=$DEPLOY_FTP_SERVER -Dftp.user=$DEPLOY_FTP_USER -Dftp.password=$DEPLOY_FTP_PASSWORD -Dcircle.artifacts=$CIRCLE_ARTIFACTS
-    
+    - wget http://nasdanika.org/commons-net-1.4.1.jar
+    - wget http://nasdanika.org/jakarta-oro-2.0.8.jar    
+    - ant -verbose -f ftp-upload.xml -lib commons-net-1.4.1.jar:jakarta-oro-2.0.8.jar -Dftp.server=$DEPLOY_FTP_SERVER -Dftp.user=$DEPLOY_FTP_USER -Dftp.password=$DEPLOY_FTP_PASSWORD -Dcircle.artifacts=$CIRCLE_ARTIFACTS
