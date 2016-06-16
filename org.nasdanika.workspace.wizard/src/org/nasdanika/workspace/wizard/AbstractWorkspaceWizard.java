@@ -202,7 +202,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				Collections.<String>emptyList(), 
 				Collections.<String>emptyList(), 
 				Collections.<String>emptyList(), 
-				Collections.singleton("apidocs"), 
+				Collections.singleton("apidocs/"), 
 				null,
 				progressMonitor);
 		
@@ -210,6 +210,8 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		if (workingSets != null) {
 			workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 		}
+		
+		project.getProject().getFolder("apidocs").create(false, true, progressMonitor);
 		
 		project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);		
 	}
@@ -358,7 +360,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		//ret.add(getGroupId()+".target");
 		ret.add(getGroupId()+".feature");
 		ret.add(getGroupId()+".repository");										
-		ret.add(getDocArtifactId());
+		//ret.add(getDocArtifactId());
 		
 		return ret;
 	}

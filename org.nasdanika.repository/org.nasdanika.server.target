@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="89">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="90">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.simple" version="1.7.6"/>
@@ -8,9 +8,9 @@
 </location>
 <location path="${eclipse_home}" type="Profile"/>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.3.5.201510142109"/>
-<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.3.5.201510142109"/>
-<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.5.v20151012"/>
+<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.3.9.201605312009"/>
+<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.3.9.201605312009"/>
+<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.emf.cdo.sdk.feature.group" version="4.4.1.v20150916-0832"/>

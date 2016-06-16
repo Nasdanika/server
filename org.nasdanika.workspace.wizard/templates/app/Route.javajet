@@ -2,6 +2,7 @@
 package <%=wizard.getApplicationArtifactId()%>;
 
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.Action;
 import org.nasdanika.web.ValueAction;
 import org.nasdanika.web.Route;
 

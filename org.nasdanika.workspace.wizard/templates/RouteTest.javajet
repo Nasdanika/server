@@ -2,7 +2,6 @@
 package <%=wizard.getTestsArtifactId()%>;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -10,45 +9,33 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.fail;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
-import org.nasdanika.html.Theme;
 import org.nasdanika.webtest.Description;
 import org.nasdanika.webtest.NasdanikaParameterizedWebTestRunner;
 import org.nasdanika.webtest.Screenshot;
-import org.nasdanika.webtest.Title;
 import org.nasdanika.webtest.WebTest;
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 
 @RunWith(NasdanikaParameterizedWebTestRunner.class)
 @Description("Tests <%=wizard.getJavaName()%>Route")
 public class <%=wizard.getJavaName()%>RouteTest implements WebTest<WebDriver> {
 	
-	private enum DriverType { firefox, chrome, ie } 
+	private enum DriverType { firefox, chrome, ie, phantomjs } 
 	
 	private WebDriver driver;
 		
 	@Parameters(name="{index}: {0}")
 	public static Collection<Object[]> registrationData() {
 		List<Object[]> ret = new ArrayList<>();
-		for (Theme theme: Theme.values()) {
-			ret.add(new Object[] { DriverType.firefox, theme }); // TODO Add other browsers
-		}
+		ret.add(new Object[] { DriverType.firefox }); // TODO Add other browsers
 		return ret;
 	}
 	
 	@Parameter(0)
 	public DriverType driverType;
-	
-	@Parameter(1)
-	@Title("Theme")
-	public Theme theme;		
 	
 	@Override
 	public WebDriver getWebDriver() {
@@ -71,7 +58,7 @@ public class <%=wizard.getJavaName()%>RouteTest implements WebTest<WebDriver> {
 	@Description("<%=wizard.getName()%> Route")
 	@Screenshot({Screenshot.When.AFTER, Screenshot.When.EXCEPTION})
 	public void appRoute() throws Exception {
-		getWebDriver().get("http://localhost:8080<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias()%>/<%=wizard.getDashedName()%>.html?theme="+theme);
+		getWebDriver().get("http://localhost:8080<%=wizard.getContextPath()%><%=wizard.getRoutingServletAlias()%>/<%=wizard.getDashedName()%>.html");
 		//new WebDriverWait(getWebDriver(), 20).until(ExpectedConditions.visibilityOfElementLocated(By.id("button-groups")));		
 	}
 	

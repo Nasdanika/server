@@ -7,13 +7,17 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IProjectDescription;
+import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -39,6 +43,7 @@ import org.eclipse.pde.internal.ui.wizards.feature.CreateFeatureProjectOperation
 import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
+import org.nasdanika.workspace.wizard.render.DocPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPluginRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderComponentRenderer;
@@ -90,8 +95,12 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		generateApplicationProject(progressMonitor);
 		
 		generateFeatureProject(progressMonitor);
+
+		generateProductProject(progressMonitor);
+		generateProductFeatureProject(progressMonitor);		
 		
 		generateTestsProject(progressMonitor);
+		generateTestResultsProject(progressMonitor);
 		generateTestsFeatureProject(progressMonitor);
 		
 		generateActorSpecProject(progressMonitor);
@@ -429,7 +438,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
 					binIncludes,
-					projectsPage.btnApplication.getSelection() ? getActorImplArtifactId() : null,
+					projectsPage.btnApplication.getSelection() ? getApplicationArtifactId() : null,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = getSelectedWorkingSets();
@@ -453,7 +462,200 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			}
 		}
 	}
+	
+	protected void generateTestResultsProject(IProgressMonitor progressMonitor) throws Exception {
+		if (projectsPage.btnTests.getSelection()) {
+			IJavaProject project = createPluginProject(
+					getTestsArtifactId()+".results", 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					Collections.<String>emptyList(), 
+					Collections.singleton("apidocs"), // TODO - model and screenshots 
+					null,
+					progressMonitor);
+			
+			IWorkingSet[] workingSets = getSelectedWorkingSets();
+			if (workingSets != null) {
+				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+			}
+			
+			// TODO - TestResultsPomRenderer!!!
+			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);
+		}
+	}
+		
+	protected IProject generateProductProject(IProgressMonitor progressMonitor) throws Exception {
+		// TODO!!!
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
+		IPath locationPath = getLocationPath();
+		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getGroupId()+".product").toFile().toURI());
+		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
+		
+		final ICommand m2 = description.newCommand();
+        m2.setBuilderName(MAVEN_2_BUILDER);
+        description.setBuildSpec(new ICommand[] { m2 });
 
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(getGroupId()+".product");
+		project.create(description, progressMonitor);
+		project.open(progressMonitor);
+		
+		IWorkingSet[] workingSets = getSelectedWorkingSets();
+		if (workingSets != null) {
+			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
+		}
+
+		project.getFile("pom.xml").create(new ByteArrayInputStream(new RepositoryPomRenderer().generate(this).getBytes()), false, progressMonitor);
+		if (!getCategorizedFeatures().isEmpty()) {
+			project.getFile("category.xml").create(new ByteArrayInputStream(new CategoryRenderer().generate(this).getBytes()), false, progressMonitor);
+		}
+		
+		project.getFile(getGroupId()+".product").create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
+		if (shallGenerateTestsFeature()) {
+			project.getFile(getTestsArtifactId()+".product").create(new ByteArrayInputStream(new TestsProductRenderer().generate(this).getBytes()), false, progressMonitor);			
+		}
+		
+		return project;
+	}
+	
+	private void generateProductFeatureProject(IProgressMonitor progressMonitor) throws Exception {
+		// TODO!!!
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(getGroupId()+".product.feature");
+		
+		IWorkingSet[] workingSets = getSelectedWorkingSets();
+		if (workingSets != null) {
+			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
+		}
+		
+		IPath location = getLocationPath();
+		if (!Platform.getLocation().equals(location)) {
+			location = location.append(getGroupId()+".product.feature");
+		}
+		FeatureData featureData = new FeatureData();
+		featureData.id = getGroupId()+".product.feature";
+		featureData.name = getName()+" product feature";
+		featureData.version = getVersion()+".qualifier";
+		new CreateFeatureProjectOperation(project, location, featureData, null, getShell()) {
+			
+			@Override
+			protected void execute(IProgressMonitor monitor) throws CoreException ,InvocationTargetException ,InterruptedException {
+				super.execute(monitor);
+				addMaven2NatureAndBuilder(monitor, fProject);
+
+				try {
+					fProject.getFile("pom.xml").create(new ByteArrayInputStream(new FeaturePomRenderer().generate(WorkspaceWizard.this).getBytes()), false, monitor);
+				} catch (CoreException | InvocationTargetException | InterruptedException e) {
+					throw e;					
+				} catch (Exception e) {
+					throw new InvocationTargetException(e);
+				}				
+			}
+			
+			@Override
+			protected void configureFeature(IFeature feature, WorkspaceFeatureModel model) throws CoreException {
+				super.configureFeature(feature, model);
+				List<IFeaturePlugin> plugins = new ArrayList<>();
+				
+				if (projectsPage.btnModel.getSelection()) {
+					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+					fplugin.setId(getModelArtifactId());
+					fplugin.setVersion("0.0.0");
+					plugins.add(fplugin);
+				}
+				
+				if (projectsPage.btnApplication.getSelection()) {
+					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+					fplugin.setId(getApplicationArtifactId());
+					fplugin.setVersion("0.0.0");
+					plugins.add(fplugin);
+				}
+				
+				if (!shallGenerateTestsFeature()) {
+					if (projectsPage.btnTests.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getTestsArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnActorSpec.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getActorSpecArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnPageSpec.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getPageSpecArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnActorImpl.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getActorImplArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+					
+					if (projectsPage.btnPageImpl.getSelection()) {
+						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+						fplugin.setId(getPageImplArtifactId());
+						fplugin.setVersion("0.0.0");
+						plugins.add(fplugin);
+					}
+				}
+				
+				feature.addPlugins(plugins.toArray(new IFeaturePlugin[plugins.size()]));
+				
+				List<FeatureChild> includedFeatures = new ArrayList<>();
+				
+				if (isIncludeCdo()) {
+					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
+					fChild.setVersion("0.0.0");
+					fChild.setId("org.nasdanika.cdo.feature");
+					includedFeatures.add(fChild);
+				}
+				
+				if (isIncludeEquinox()) {
+					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
+					fChild.setVersion("0.0.0");
+					fChild.setId("org.nasdanika.equinox.feature");
+					includedFeatures.add(fChild);
+				}
+				
+				if (isIncludeNasdanika()) {
+					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
+					fChild.setVersion("0.0.0");
+					fChild.setId("org.nasdanika.feature");
+					includedFeatures.add(fChild);
+				}
+				
+				if (isIncludeJetty()) {
+					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
+					fChild.setVersion("0.0.0");
+					fChild.setId("org.nasdanika.server.jetty.feature");
+					includedFeatures.add(fChild);
+				}
+				
+				if (!shallGenerateTestsFeature() && isIncludeWebTest()) {
+					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
+					fChild.setVersion("0.0.0");
+					fChild.setId("org.nasdanika.webtest.feature");
+					includedFeatures.add(fChild);
+				}
+				
+				feature.addIncludedFeatures(includedFeatures.toArray(new FeatureChild[includedFeatures.size()]));
+			};
+			
+		}.execute(progressMonitor);				
+	}
+	
+	
 	private void generateFeatureProject(IProgressMonitor progressMonitor) throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(getGroupId()+".feature");
@@ -542,6 +744,12 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						plugins.add(fplugin);
 					}
 				}
+
+//				// Doc
+//				FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
+//				fplugin.setId(getDocArtifactId());
+//				fplugin.setVersion("0.0.0");
+//				plugins.add(fplugin);
 				
 				feature.addPlugins(plugins.toArray(new IFeaturePlugin[plugins.size()]));
 				
@@ -692,17 +900,17 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 	
 	@Override
 	public Map<String, String> getRepositories() {
-		return Collections.singletonMap("nasdanika-server", "http://www.nasdanika.org/server/repository");
+//		return Collections.singletonMap("nasdanika-server", "http://www.nasdanika.org/server/repository");
 		
-//		Map<String, String> repoMap = new HashMap<>();
+		Map<String, String> repoMap = new LinkedHashMap<>();
 		
 		// Kinda bad style, load from a properties file?
-//		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
-//		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20150821153341/repository");
-//		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.5.v20151012");
-//		repoMap.put("maven-osgi", "http://www.nasdanika.org/maven-osgi");
-//		repoMap.put("nasdanika-server", "http://www.nasdanika.org/server/repository");
-//		return repoMap;
+		repoMap.put("nasdanika-server", "http://www.nasdanika.org/server/repository");
+		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
+		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository");
+		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517");
+		repoMap.put("maven-osgi", "http://www.nasdanika.org/maven-osgi");
+		return repoMap;
 	}
 	
 	@Override
@@ -725,7 +933,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		
 		return project;
 	}
-	
+
 	@Override
 	protected Collection<String[]> getTargetUnits() {
 		Collection<String[]> ret = new ArrayList<String[]>();
