@@ -2,6 +2,7 @@ package org.nasdanika.workspace.wizard;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -294,24 +295,10 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		
 		org.eclipse.pde.core.target.ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		
-		List<String> versions = new ArrayList<>();
-		List<String> unitIds = new ArrayList<>();
-		for (String[] unitEntry: getTargetUnits()) {
-			unitIds.add(unitEntry[0]);
-			versions.add(unitEntry[1]);			
-		}
-		
-		List<String> repos = new ArrayList<>(getRepositories().values());
-		java.net.URI[] repositories = new java.net.URI[repos.size()];
-		for (int i=0; i<repos.size(); ++i){
-			repositories[i] = new java.net.URI(repos.get(i));
-		}
-		int resolutionFlags = IUBundleContainer.INCLUDE_SOURCE; // | IUBundleContainer.INCLUDE_REQUIRED;		
-		
-		ITargetLocation targetLocation = service.newIULocation(unitIds.toArray(new String[unitIds.size()]), versions.toArray(new String[versions.size()]), repositories, resolutionFlags);			
-
 		ITargetDefinition targetDefinition = service.getTarget(targetFile).getTargetDefinition();
-		targetDefinition.setTargetLocations(new ITargetLocation[] { targetLocation });
+		targetDefinition.setTargetLocations(new ITargetLocation[] { 
+				createNasdanikaServerTargetLocation(service),
+				createMavenOsgiTargetLocation(service) });
 		targetDefinition.setName(getGroupId()+".target");
 		
 		service.saveTargetDefinition(targetDefinition);
@@ -322,6 +309,44 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		IStatus rs = targetDefinition.resolve(progressMonitor);
 		System.out.println(rs);
 	}
+
+	private ITargetLocation createNasdanikaServerTargetLocation(org.eclipse.pde.core.target.ITargetPlatformService service) throws URISyntaxException {
+		List<String> versions = new ArrayList<>();
+		List<String> unitIds = new ArrayList<>();
+		for (String[] unitEntry: getTargetUnits()) {
+			unitIds.add(unitEntry[0]);
+			versions.add(unitEntry[1]);			
+		}
+		
+		int resolutionFlags = IUBundleContainer.INCLUDE_SOURCE; // | IUBundleContainer.INCLUDE_REQUIRED;		
+		return service.newIULocation(
+				unitIds.toArray(new String[unitIds.size()]), 
+				versions.toArray(new String[versions.size()]), 
+				new java.net.URI[] { new java.net.URI("http://www.nasdanika.org/server/repository") }, 
+				resolutionFlags);
+	}
+	
+	private ITargetLocation createMavenOsgiTargetLocation(org.eclipse.pde.core.target.ITargetPlatformService service) throws URISyntaxException {
+		
+//		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
+//		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository");
+//		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517");
+		
+		List<String> repos = new ArrayList<>(getRepositories().values());
+		java.net.URI[] repositories = new java.net.URI[repos.size()];
+		for (int i=0; i<repos.size(); ++i){
+			repositories[i] = new java.net.URI(repos.get(i));
+		}
+		int resolutionFlags = IUBundleContainer.INCLUDE_SOURCE; // | IUBundleContainer.INCLUDE_REQUIRED;		
+		
+		return service.newIULocation(
+				new String[] { "json" }, 
+				new String[] { "20160212.0.0" }, 
+				new java.net.URI[] { new java.net.URI("http://www.nasdanika.org/maven-osgi") }, 
+				resolutionFlags);
+	}
+	
+	
 	
 	public static void addMaven2NatureAndBuilder(IProgressMonitor progressMonitor, IProject project) throws CoreException {
 		IProjectDescription desc = project.getDescription();

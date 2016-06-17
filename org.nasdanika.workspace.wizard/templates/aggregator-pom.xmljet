@@ -9,6 +9,55 @@
 	<version><%=wizard.getVersion()%>-SNAPSHOT</version>
 	<name>Aggregator</name>
 	<packaging>pom</packaging>
+	
+ 	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>2.10.4</version>
+				<configuration>
+	  	        	<reportOutputDirectory>${basedir}/../org.nasdanika.bank.doc/apidocs</reportOutputDirectory>
+					<linksource>true</linksource>
+					<failOnError>false</failOnError>
+		            <links>
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.boxing/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.function/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.h2/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.promise/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca.edit/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.scheduler/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.edit/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.editor/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web.doc/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.core/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.core.tests/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.function.cdo/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.function/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.html/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.design/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.edit/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.editor/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.tools.design/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.web/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/apidocs</link>						
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/apidocs</link>
+						<!--						
+						<link>http://docs.oracle.com/javase/8/docs/api</link>						
+						-->
+		            </links>
+					<detectLinks>true</detectLinks>					
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	
 	<modules>
 	<% for (String module: wizard.getModules()) { %>
 		<module>../<%=module%></module>
