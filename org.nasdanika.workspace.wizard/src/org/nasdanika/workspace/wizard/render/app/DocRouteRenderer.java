@@ -14,8 +14,8 @@ public class DocRouteRenderer {
 
   public final String NL = nl == null ? (System.getProperties().getProperty("line.separator")) : nl;
   protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<scr:component xmlns:scr=\"http://www.osgi.org/xmlns/scr/v1.1.0\" activate=\"activate\" immediate=\"true\" name=\"";
-  protected final String TEXT_2 = " Documentation route\">" + NL + "   <implementation class=\"org.nasdanika.cdo.web.doc.DocRoute\"/>" + NL + "   <service>" + NL + "      <provide interface=\"org.nasdanika.web.Route\"/>" + NL + "   </service>" + NL + "   <property name=\"path\" type=\"String\" value=\"";
-  protected final String TEXT_3 = "/\"/>" + NL + "   <property name=\"doc-route-path\" type=\"String\" value=\"";
+  protected final String TEXT_2 = " Documentation route\">" + NL + "   <implementation class=\"org.nasdanika.cdo.web.doc.DocRoute\"/>" + NL + "   <service>" + NL + "      <provide interface=\"org.nasdanika.web.Route\"/>" + NL + "   </service>" + NL + "   <property name=\"pattern\" type=\"String\" value=\"";
+  protected final String TEXT_3 = "/.+\"/>" + NL + "   <property name=\"doc-route-path\" type=\"String\" value=\"";
   protected final String TEXT_4 = "/";
   protected final String TEXT_5 = "\"/>" + NL + "   <property name=\"doc-app-path\" type=\"String\" value=\"";
   protected final String TEXT_6 = "/";

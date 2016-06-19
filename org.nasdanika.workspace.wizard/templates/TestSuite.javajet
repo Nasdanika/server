@@ -4,11 +4,13 @@ package <%=wizard.getTestsArtifactId()%>;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite.SuiteClasses;
 import org.nasdanika.webtest.NasdanikaWebTestSuite;
+import org.nasdanika.webtest.ResultsModel;
 import org.nasdanika.webtest.Title;
 
 @RunWith(NasdanikaWebTestSuite.class)
 @Title("<%=wizard.getName()%> test report")
 @SuiteClasses({<%=wizard.getJavaName()%>Test.class, <%=wizard.getJavaName()%>RouteTest.class})
+@ResultsModel(outputDir="../<%=wizard.getTestsArtifactId()%>.results/model")
 public class <%=wizard.getJavaName()%>Tests {
 	
 }

@@ -1,6 +1,7 @@
 package org.nasdanika.workspace.wizard;
 
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -44,6 +45,8 @@ import org.eclipse.pde.internal.ui.wizards.feature.FeatureData;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 import org.nasdanika.workspace.wizard.render.DocPomRenderer;
+import org.nasdanika.workspace.wizard.render.TestResultsPluginRenderer;
+import org.nasdanika.workspace.wizard.render.TestResultsPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPluginRenderer;
 import org.nasdanika.workspace.wizard.render.app.ApplicationPomRenderer;
 import org.nasdanika.workspace.wizard.render.app.CDOTransactionContextProviderComponentRenderer;
@@ -97,7 +100,10 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		generateFeatureProject(progressMonitor);
 
 		generateProductProject(progressMonitor);
-		generateProductFeatureProject(progressMonitor);		
+		generateProductFeatureProject(progressMonitor);	
+		generateProductParentProject(progressMonitor);
+		
+		generateDocProject(progressMonitor);
 		
 		generateTestsProject(progressMonitor);
 		generateTestResultsProject(progressMonitor);
@@ -324,16 +330,11 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				if (webResourcesBundle != null) {
 					for (String path: Collections.list(webResourcesBundle.getEntryPaths("/"))) {
 						if (!path.startsWith("META-INF/")) {							
-							String resourcePath = applicationConfigurationPage.webContentBaseName.getText().trim();
-							if (resourcePath.length()==0) {
-								resourcePath = path;
-							} else {
-								resourcePath += "/" + path;
-							}
-							createResource(
-									project.getProject(), 
-									resourcePath,
-									webResourcesBundle.getResource(path).openStream(), 
+							createWebResource(
+									project,
+									webResourcesBundle,
+									applicationConfigurationPage.webContentBaseName.getText().trim(),
+									path,
 									progressMonitor);
 						}
 					}
@@ -400,6 +401,41 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			
 		}
 	}
+
+	private void createWebResource(
+			IJavaProject project, 
+			Bundle webResourcesBundle, 
+			String resourcePath,
+			String path, 
+			IProgressMonitor progressMonitor) throws CoreException, IOException {
+		
+		if (path.endsWith("/")) {
+			for (String subPath: Collections.list(webResourcesBundle.getEntryPaths(path))) {
+				createWebResource(
+						project,
+						webResourcesBundle,
+						resourcePath,
+						subPath,
+						progressMonitor);
+			}			
+		} else {
+			if (resourcePath.length()==0) {
+				resourcePath = path;
+			} else {
+				if (!resourcePath.endsWith("/")) {
+					resourcePath += "/";
+				}
+				resourcePath += path;
+			}
+			createResource(
+					project.getProject(), 
+					resourcePath,
+					webResourcesBundle.getResource(path).openStream(), 
+					progressMonitor);
+		}
+	}
+	
+	
 	
 	public boolean isRepositoryComponent() {
 		return applicationConfigurationPage.btnRepository.getSelection();
@@ -467,11 +503,11 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		if (projectsPage.btnTests.getSelection()) {
 			IJavaProject project = createPluginProject(
 					getTestsArtifactId()+".results", 
+					Collections.singleton("org.nasdanika.webtest.model"), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
-					Collections.<String>emptyList(), 
-					Collections.singleton("apidocs"), // TODO - model and screenshots 
+					Collections.singleton("model/"),  
 					null,
 					progressMonitor);
 			
@@ -480,17 +516,16 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
 			}
 			
-			// TODO - TestResultsPomRenderer!!!
-			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);
+			project.getProject().getFile("plugin.xml").create(new ByteArrayInputStream(new TestResultsPluginRenderer().generate(this).getBytes()), false, progressMonitor);
+			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new TestResultsPomRenderer().generate(this).getBytes()), false, progressMonitor);
 		}
 	}
 		
 	protected IProject generateProductProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO!!!
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
-		final IProjectDescription description = workspace.newProjectDescription(getParentArtifactId());
+		final IProjectDescription description = workspace.newProjectDescription(getProductArtifactId());
 		IPath locationPath = getLocationPath();
-		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getGroupId()+".product").toFile().toURI());
+		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getProductArtifactId()).toFile().toURI());
 		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
 		
 		final ICommand m2 = description.newCommand();
@@ -498,7 +533,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
         description.setBuildSpec(new ICommand[] { m2 });
 
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		IProject project = root.getProject(getGroupId()+".product");
+		IProject project = root.getProject(getProductArtifactId());
 		project.create(description, progressMonitor);
 		project.open(progressMonitor);
 		
@@ -507,36 +542,39 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
 		}
 
-		project.getFile("pom.xml").create(new ByteArrayInputStream(new RepositoryPomRenderer().generate(this).getBytes()), false, progressMonitor);
-		if (!getCategorizedFeatures().isEmpty()) {
-			project.getFile("category.xml").create(new ByteArrayInputStream(new CategoryRenderer().generate(this).getBytes()), false, progressMonitor);
+		project.getFile("pom.xml").create(new ByteArrayInputStream(new ProductPomRenderer().generate(this).getBytes()), false, progressMonitor);
+		if (!getProductCategorizedFeatures().isEmpty()) {
+			project.getFile("category.xml").create(new ByteArrayInputStream(new ProductCategoryRenderer().generate(this).getBytes()), false, progressMonitor);
 		}
 		
-		project.getFile(getGroupId()+".product").create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
-		if (shallGenerateTestsFeature()) {
-			project.getFile(getTestsArtifactId()+".product").create(new ByteArrayInputStream(new TestsProductRenderer().generate(this).getBytes()), false, progressMonitor);			
-		}
+		// TODO - Dockerfile.
+		
+		project.getFile(getProductArtifactId()).create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
 		
 		return project;
 	}
+
+	public String getProductArtifactId() {
+		return getGroupId()+".product";
+	}
 	
 	private void generateProductFeatureProject(IProgressMonitor progressMonitor) throws Exception {
-		// TODO!!!
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(getGroupId()+".product.feature");
+
+		IPath location = getLocationPath();
+		if (!Platform.getLocation().equals(location)) {
+			location = location.append(getGroupId()+".product.feature");
+		}
 		
 		IWorkingSet[] workingSets = getSelectedWorkingSets();
 		if (workingSets != null) {
 			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
 		}
 		
-		IPath location = getLocationPath();
-		if (!Platform.getLocation().equals(location)) {
-			location = location.append(getGroupId()+".product.feature");
-		}
 		FeatureData featureData = new FeatureData();
 		featureData.id = getGroupId()+".product.feature";
-		featureData.name = getName()+" product feature";
+		featureData.name = getName()+" Product Feature";
 		featureData.version = getVersion()+".qualifier";
 		new CreateFeatureProjectOperation(project, location, featureData, null, getShell()) {
 			
@@ -546,7 +584,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				addMaven2NatureAndBuilder(monitor, fProject);
 
 				try {
-					fProject.getFile("pom.xml").create(new ByteArrayInputStream(new FeaturePomRenderer().generate(WorkspaceWizard.this).getBytes()), false, monitor);
+					fProject.getFile("pom.xml").create(new ByteArrayInputStream(new ProductFeaturePomRenderer().generate(WorkspaceWizard.this).getBytes()), false, monitor);
 				} catch (CoreException | InvocationTargetException | InterruptedException e) {
 					throw e;					
 				} catch (Exception e) {
@@ -559,102 +597,59 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				super.configureFeature(feature, model);
 				List<IFeaturePlugin> plugins = new ArrayList<>();
 				
-				if (projectsPage.btnModel.getSelection()) {
-					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-					fplugin.setId(getModelArtifactId());
-					fplugin.setVersion("0.0.0");
-					plugins.add(fplugin);
-				}
+				FeaturePlugin docPlugin = (FeaturePlugin) model.getFactory().createPlugin();
+				docPlugin.setId(getDocArtifactId());
+				docPlugin.setVersion("0.0.0");
+				plugins.add(docPlugin);
 				
-				if (projectsPage.btnApplication.getSelection()) {
-					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-					fplugin.setId(getApplicationArtifactId());
-					fplugin.setVersion("0.0.0");
-					plugins.add(fplugin);
-				}
-				
-				if (!shallGenerateTestsFeature()) {
-					if (projectsPage.btnTests.getSelection()) {
-						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-						fplugin.setId(getTestsArtifactId());
-						fplugin.setVersion("0.0.0");
-						plugins.add(fplugin);
-					}
-					
-					if (projectsPage.btnActorSpec.getSelection()) {
-						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-						fplugin.setId(getActorSpecArtifactId());
-						fplugin.setVersion("0.0.0");
-						plugins.add(fplugin);
-					}
-					
-					if (projectsPage.btnPageSpec.getSelection()) {
-						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-						fplugin.setId(getPageSpecArtifactId());
-						fplugin.setVersion("0.0.0");
-						plugins.add(fplugin);
-					}
-					
-					if (projectsPage.btnActorImpl.getSelection()) {
-						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-						fplugin.setId(getActorImplArtifactId());
-						fplugin.setVersion("0.0.0");
-						plugins.add(fplugin);
-					}
-					
-					if (projectsPage.btnPageImpl.getSelection()) {
-						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
-						fplugin.setId(getPageImplArtifactId());
-						fplugin.setVersion("0.0.0");
-						plugins.add(fplugin);
-					}
-				}
-				
+				FeaturePlugin testResultsPlugin = (FeaturePlugin) model.getFactory().createPlugin();
+				testResultsPlugin.setId(getTestsArtifactId()+".results");
+				testResultsPlugin.setVersion("0.0.0");
+				plugins.add(testResultsPlugin);
+								
 				feature.addPlugins(plugins.toArray(new IFeaturePlugin[plugins.size()]));
 				
 				List<FeatureChild> includedFeatures = new ArrayList<>();
 				
-				if (isIncludeCdo()) {
-					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
-					fChild.setVersion("0.0.0");
-					fChild.setId("org.nasdanika.cdo.feature");
-					includedFeatures.add(fChild);
-				}
-				
-				if (isIncludeEquinox()) {
-					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
-					fChild.setVersion("0.0.0");
-					fChild.setId("org.nasdanika.equinox.feature");
-					includedFeatures.add(fChild);
-				}
-				
-				if (isIncludeNasdanika()) {
-					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
-					fChild.setVersion("0.0.0");
-					fChild.setId("org.nasdanika.feature");
-					includedFeatures.add(fChild);
-				}
-				
-				if (isIncludeJetty()) {
-					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
-					fChild.setVersion("0.0.0");
-					fChild.setId("org.nasdanika.server.jetty.feature");
-					includedFeatures.add(fChild);
-				}
-				
-				if (!shallGenerateTestsFeature() && isIncludeWebTest()) {
-					FeatureChild fChild = (FeatureChild) model.getFactory().createChild();
-					fChild.setVersion("0.0.0");
-					fChild.setId("org.nasdanika.webtest.feature");
-					includedFeatures.add(fChild);
-				}
+				FeatureChild mainFeature = (FeatureChild) model.getFactory().createChild();
+				mainFeature.setVersion("0.0.0");
+				mainFeature.setId(getGroupId()+".feature");
+				includedFeatures.add(mainFeature);
 				
 				feature.addIncludedFeatures(includedFeatures.toArray(new FeatureChild[includedFeatures.size()]));
 			};
 			
-		}.execute(progressMonitor);				
+		}.execute(progressMonitor);
 	}
 	
+
+	protected void generateProductParentProject(IProgressMonitor progressMonitor) throws Exception {
+		IWorkspace workspace = ResourcesPlugin.getWorkspace();
+		final IProjectDescription description = workspace.newProjectDescription(getProductParentArtifactId());
+		IPath locationPath = getLocationPath();
+		description.setLocationURI(Platform.getLocation().equals(locationPath) ? null : locationPath.append(getProductParentArtifactId()).toFile().toURI());
+		description.setNatureIds(new String[] { MAVEN_2_NATURE_ID });
+		
+		final ICommand m2 = description.newCommand();
+        m2.setBuilderName(MAVEN_2_BUILDER);
+        description.setBuildSpec(new ICommand[] { m2 });
+
+		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
+		IProject project = root.getProject(getProductParentArtifactId());
+		project.create(description, progressMonitor);
+		project.open(progressMonitor);
+		
+		IWorkingSet[] workingSets = getSelectedWorkingSets();
+		if (workingSets != null) {
+			workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
+		}
+
+		project.getFile("pom.xml").create(new ByteArrayInputStream(new ProductParentPomRenderer().generate(this).getBytes()), false, progressMonitor);
+	}
+
+	public String getProductParentArtifactId() {
+		return getGroupId()+".product.parent";
+	}
 	
 	private void generateFeatureProject(IProgressMonitor progressMonitor) throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
@@ -918,15 +913,19 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		return Collections.singleton(getGroupId()+".feature");
 	}
 	
+	public Collection<String> getProductCategorizedFeatures() {
+		return Collections.singleton(getGroupId()+".product.feature");
+	}
+	
 	@Override
 	public Collection<String> getProductsToMaterialize() {
-		return Collections.singleton(getGroupId()+".product");
+		return Collections.singleton(getProductArtifactId());
 	}
 
 	protected IProject generateRepositoryProject(IProgressMonitor progressMonitor) throws Exception {
 		IProject project = super.generateRepositoryProject(progressMonitor);
 		
-		project.getFile(getGroupId()+".product").create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
+		//project.getFile(getGroupId()+".product").create(new ByteArrayInputStream(new ProductRenderer().generate(this).getBytes()), false, progressMonitor);
 		if (shallGenerateTestsFeature()) {
 			project.getFile(getTestsArtifactId()+".product").create(new ByteArrayInputStream(new TestsProductRenderer().generate(this).getBytes()), false, progressMonitor);			
 		}
@@ -1149,6 +1148,18 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		
 		return ret;
 	}
+	
+	public List<String> getProductModules() {
+		List<String> ret = new ArrayList<>();		
+		
+		ret.add(getGroupId()+".product.feature");
+		ret.add(getProductArtifactId());										
+		ret.add(getDocArtifactId());
+		ret.add(getTestsArtifactId()+".results");
+		
+		return ret;
+	}
+
 
 	public boolean isIncludeJetty() {
 		return projectsPage.btnApplication.getSelection() &&
@@ -1240,5 +1251,26 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		// Got to go to the end of the wizard.
 		return !getContainer().getCurrentPage().canFlipToNextPage();
 	}	
+
+	protected void generateDocProject(IProgressMonitor progressMonitor) throws Exception {
+		IJavaProject project = createPluginProject(
+				getDocArtifactId(), 
+				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
+				Collections.<String>emptyList(), 
+				Collections.singleton("apidocs/"), 
+				null,
+				progressMonitor);
+		
+		IWorkingSet[] workingSets = getSelectedWorkingSets();
+		if (workingSets != null) {
+			workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
+		}
+		
+		project.getProject().getFolder("apidocs").create(false, true, progressMonitor);
+		
+		project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);		
+	}
 	
 }

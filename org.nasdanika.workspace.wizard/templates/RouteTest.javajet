@@ -1,6 +1,7 @@
 <%@ jet package="org.nasdanika.workspace.wizard" class="RouteTestRenderer" skeleton="Renderer.skeleton" %>
 package <%=wizard.getTestsArtifactId()%>;
 
+import java.awt.GraphicsEnvironment;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -19,6 +20,7 @@ import org.nasdanika.webtest.Screenshot;
 import org.nasdanika.webtest.WebTest;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 @RunWith(NasdanikaParameterizedWebTestRunner.class)
 @Description("Tests <%=wizard.getJavaName()%>Route")
@@ -31,7 +33,7 @@ public class <%=wizard.getJavaName()%>RouteTest implements WebTest<WebDriver> {
 	@Parameters(name="{index}: {0}")
 	public static Collection<Object[]> registrationData() {
 		List<Object[]> ret = new ArrayList<>();
-		ret.add(new Object[] { DriverType.firefox }); // TODO Add other browsers
+		ret.add(new Object[] { GraphicsEnvironment.isHeadless() ? DriverType.phantomjs : DriverType.firefox }); // TODO Add other browsers
 		return ret;
 	}
 	
@@ -48,6 +50,10 @@ public class <%=wizard.getJavaName()%>RouteTest implements WebTest<WebDriver> {
 		switch (driverType) {
 		case firefox:
 	        driver = new FirefoxDriver();
+	        driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
+			break;
+		case phantomjs:
+	        driver = new PhantomJSDriver();
 	        driver.manage().timeouts().pageLoadTimeout(20, TimeUnit.SECONDS);
 			break;
 		default:

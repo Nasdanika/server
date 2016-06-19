@@ -18,6 +18,11 @@ RUN yum update -y \
 	&& wget https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2
 	&& tar xvfj phantomjs-2.1.1-linux-x86_64.tar.bz2
 	&& rm phantomjs-2.1.1-linux-x86_64.tar.bz2
+	&& wget http://www.nasdanika.org/winstone-0.9.10.jar
+	&& java -jar winstone-0.9.10.jar --webroot=... --controlPort=8081
+	&& mvn product parent
+	&& java -cp winstone-0.9.10.jar winstone.tools.WinstoneControl shutdown
+	
 
 # -- JDK
 # -- Maven
@@ -26,6 +31,8 @@ RUN yum update -y \
 # -- Phantom JS
 # - Pull to /usr/local/src/<app name>
 # - Build and put to /usr/local/<app name>
+# - Uninstall Maven
+# - Cleanup yum and wget and bzip2
 # - ENTRYPOINT
 
 

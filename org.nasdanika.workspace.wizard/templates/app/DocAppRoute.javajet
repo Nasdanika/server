@@ -20,7 +20,7 @@ public class <%=wizard.getJavaName()%>DocAppRoute implements Route {
 
 	@Override
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
-		HTMLFactory htmlFactory = context.adapt(HTMLFactory.class);
+		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		ApplicationPanel appPanel = htmlFactory.applicationPanel()
 				.style(Style.INFO) 
 				.header("<%=wizard.getName()%> Information Center")

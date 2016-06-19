@@ -1,0 +1,10 @@
+<%@ jet package="org.nasdanika.workspace.wizard.render" class="TestResultsPluginRenderer" skeleton="Renderer.skeleton" %>
+<plugin>
+   <extension
+         point="org.nasdanika.webtest.model.results">
+      <result
+            model="model/<%=wizard.getJavaName()%>Tests.xml">
+      </result>
+   </extension>
+
+</plugin>

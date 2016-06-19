@@ -4,6 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId><%=wizard.getGroupId()%>.target</artifactId>
   <packaging>eclipse-target-definition</packaging>
+  <name><%=wizard.getName()%> Target Definition</name>
   <parent>
   	<groupId><%=wizard.getGroupId()%></groupId>
   	<artifactId><%=wizard.getGroupId()%>.parent</artifactId>

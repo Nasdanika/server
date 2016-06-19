@@ -110,7 +110,6 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		generateRepositoryProject(progressMonitor);
 		generateAggregatorProject(progressMonitor);
 		generateTargetProject(progressMonitor);
-		generateDocProject(progressMonitor);
 	}
 	
 	public IResource createResource(IProject project, String path, InputStream content, IProgressMonitor progressMonitor) throws CoreException {
@@ -194,27 +193,6 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 
 	public String getAggregatorArtifactId() {
 		return getGroupId()+".aggregator";
-	}
-
-	protected void generateDocProject(IProgressMonitor progressMonitor) throws Exception {
-		IJavaProject project = createPluginProject(
-				getDocArtifactId(), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.<String>emptyList(), 
-				Collections.singleton("apidocs/"), 
-				null,
-				progressMonitor);
-		
-		IWorkingSet[] workingSets = getSelectedWorkingSets();
-		if (workingSets != null) {
-			workbench.getWorkingSetManager().addToWorkingSets(project.getProject(), workingSets);
-		}
-		
-		project.getProject().getFolder("apidocs").create(false, true, progressMonitor);
-		
-		project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);		
 	}
 	
 	/**

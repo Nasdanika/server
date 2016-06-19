@@ -1,0 +1,56 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="ProductPomRenderer" skeleton="AbstractWizardRenderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId><%=wizard.getGroupId()%>.product</artifactId>
+	<name><%=wizard.getName()%> Product</name>
+	<packaging>eclipse-repository</packaging>
+	<parent>
+		<groupId><%=wizard.getGroupId()%></groupId>
+		<artifactId><%=wizard.getGroupId()%>.product.parent</artifactId>
+		<version><%=wizard.getVersion()%>-SNAPSHOT</version>
+		<relativePath>../<%=wizard.getGroupId()%>.product.parent</relativePath>
+	</parent>
+	<build>
+		<plugins>
+			<!--
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-repository-plugin</artifactId>
+				<version>${tycho-version}</version>
+			</plugin>
+			-->
+			<% if (!wizard.getProductsToMaterialize().isEmpty()) { %>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-p2-director-plugin</artifactId>
+				<version>${tycho-version}</version>
+				<executions> 
+					<execution>
+						<id>build-distributions</id>
+						<goals>
+							<!-- install the product using the p2 director -->
+							<goal>materialize-products</goal>
+							<!-- create zip file with the installed product -->
+							<!-- <goal>archive-products</goal> -->
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<products>
+						<% for (String productId: wizard.getProductsToMaterialize()) { %>
+						<product>
+							<id><%=productId%></id>
+						</product>
+						<% } %>
+					</products>
+					<!-- global optional parameters (with default values) -->
+					<installFeatures>true</installFeatures>
+					<profile>DefaultProfile</profile>
+				</configuration>
+			</plugin>
+			<% } %>
+		</plugins>
+	</build>
+</project>

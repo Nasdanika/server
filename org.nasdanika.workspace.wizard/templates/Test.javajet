@@ -1,6 +1,7 @@
 <%@ jet package="org.nasdanika.workspace.wizard" class="TestRenderer" skeleton="Renderer.skeleton" %>
 package <%=wizard.getTestsArtifactId()%>;
 
+import java.awt.GraphicsEnvironment;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -17,10 +18,12 @@ import org.nasdanika.webtest.Actor;
 import org.nasdanika.webtest.ActorFactory;
 import org.nasdanika.webtest.Description;
 import org.nasdanika.webtest.NasdanikaWebTestRunner;
+import org.nasdanika.webtest.Pending;
 import org.nasdanika.webtest.Screenshot;
 import org.nasdanika.webtest.WebTest;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 
 @RunWith(NasdanikaWebTestRunner.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -38,11 +41,12 @@ public class <%=wizard.getJavaName()%>Test implements WebTest<WebDriver> {
 
 	@Before
 	public void setUp() throws Exception {
-        driver = new FirefoxDriver(); // new ChromeDriver();
+        driver = GraphicsEnvironment.isHeadless() ? new PhantomJSDriver() : new FirefoxDriver(); // new ChromeDriver();
         driver.manage().timeouts().pageLoadTimeout(3, TimeUnit.SECONDS);
 	}
 	
 	@Test
+	@Pending
 	@Description("Test 1")
 	@Screenshot({Screenshot.When.AFTER, Screenshot.When.EXCEPTION})
 	public void testOne() throws Exception {

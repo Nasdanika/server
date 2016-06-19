@@ -28,7 +28,7 @@
    </vm>
 
    <features>
-      <feature id="<%=wizard.getGroupId()%>.feature" version="<%=wizard.getVersion()%>.qualifier"/>
+      <feature id="<%=wizard.getGroupId()%>.product.feature" version="<%=wizard.getVersion()%>.qualifier"/>
    </features>
 
    <configurations>

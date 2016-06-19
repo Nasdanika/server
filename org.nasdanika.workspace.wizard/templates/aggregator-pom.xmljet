@@ -7,7 +7,7 @@
 	<groupId><%=wizard.getGroupId()%></groupId>
 	<artifactId><%=wizard.getGroupId()%>.aggregator</artifactId>
 	<version><%=wizard.getVersion()%>-SNAPSHOT</version>
-	<name>Aggregator</name>
+	<name><%=wizard.getName()%> Aggregator</name>
 	<packaging>pom</packaging>
 	
  	<build>
@@ -17,7 +17,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.4</version>
 				<configuration>
-	  	        	<reportOutputDirectory>${basedir}/../org.nasdanika.bank.doc/apidocs</reportOutputDirectory>
+	  	        	<reportOutputDirectory>${basedir}/../<%=wizard.getDocArtifactId()%>/apidocs</reportOutputDirectory>
 					<linksource>true</linksource>
 					<failOnError>false</failOnError>
 		            <links>

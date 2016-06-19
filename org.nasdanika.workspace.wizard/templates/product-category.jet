@@ -1,0 +1,14 @@
+<%@ jet package="org.nasdanika.workspace.wizard" class="ProductCategoryRenderer" skeleton="Renderer.skeleton" %>
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<% for (String featureId: wizard.getProductCategorizedFeatures()) { %>
+	   <feature url="features/<%=featureId%>_<%=wizard.getVersion()%>.qualifier.jar" id="<%=featureId%>" version="<%=wizard.getVersion()%>.qualifier">
+	      <category name="<%=wizard.getGroupId()%>.product.category"/>
+	   </feature>
+   <% } %>
+   <category-def name="<%=wizard.getGroupId()%>.product.category" label="<%=wizard.getName()%> Product">
+      <description>
+         <%=wizard.getGroupId()%> Product.
+      </description>
+   </category-def>
+</site>
