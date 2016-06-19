@@ -70,7 +70,7 @@ public class EObjectRoute extends ObjectRoute {
 					return cmp;
 				}
 				
-				// If priorities are equal, then route defined in a sub-class or a class with shortest inheritance distance to the context model element’s EClass takes precedence.
+				// If priorities are equal, then route defined in a sub-class or a class with shortest inheritance distance to the context model element's EClass takes precedence.
 				cmp = o1.getDistance() - o2.getDistance();
 				if (cmp!=0) {
 					return cmp;
