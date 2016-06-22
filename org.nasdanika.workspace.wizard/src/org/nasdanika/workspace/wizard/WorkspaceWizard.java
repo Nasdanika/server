@@ -7,6 +7,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,6 +27,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.codegen.ecore.Generator;
 import org.eclipse.emf.codegen.ecore.genmodel.provider.GenModelEditPlugin;
 import org.eclipse.emf.codegen.util.CodeGenUtil;
@@ -89,31 +91,99 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		applicationConfigurationPage = new ApplicationConfigurationPage();
 		addPage(applicationConfigurationPage);
 	}
-	
+			
 	public void modifyWorkspace(IProgressMonitor progressMonitor) throws Exception {
-		super.modifyWorkspace(progressMonitor);
-		
-		generateModelProject(progressMonitor);
-		
-		generateApplicationProject(progressMonitor);
-		
-		generateFeatureProject(progressMonitor);
+        SubMonitor progress = SubMonitor.convert(progressMonitor, 180);
 
-		generateProductProject(progressMonitor);
-		generateProductFeatureProject(progressMonitor);	
-		generateProductParentProject(progressMonitor);
+        SubMonitor superProgress = progress.newChild(40);
+		super.modifyWorkspace(superProgress);
+
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating model project", 
+				10, 
+				(monitor)->generateModelProject(monitor));
 		
-		generateDocProject(progressMonitor);
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating application project", 
+				10, 
+				(monitor)->generateApplicationProject(monitor));
 		
-		generateTestsProject(progressMonitor);
-		generateTestResultsProject(progressMonitor);
-		generateTestsFeatureProject(progressMonitor);
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating feature project", 
+				10, 
+				(monitor)->generateFeatureProject(monitor));
 		
-		generateActorSpecProject(progressMonitor);
-		generateActorImplProject(progressMonitor);
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating product project", 
+				10, 
+				(monitor)->generateProductProject(monitor));
 		
-		generatePageSpecProject(progressMonitor);
-		generatePageImplProject(progressMonitor);
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating product feature project", 
+				10, 
+				(monitor)->generateProductFeatureProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating product parent project", 
+				10, 
+				(monitor)->generateProductParentProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating documentation project", 
+				10, 
+				(monitor)->generateDocProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating tests project", 
+				10, 
+				(monitor)->generateTestsProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating test results project", 
+				10, 
+				(monitor)->generateTestResultsProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating tests feature project", 
+				10, 
+				(monitor)->generateTestsFeatureProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating actor specification project", 
+				10, 
+				(monitor)->generateActorSpecProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating actor implementation project", 
+				10, 
+				(monitor)->generateActorImplProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating page specification project", 
+				10, 
+				(monitor)->generatePageSpecProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating page implementation project", 
+				10, 
+				(monitor)->generatePageImplProject(monitor));
+		
+		
+		
 	}
 
 	protected void generateActorSpecProject(IProgressMonitor progressMonitor) throws Exception {
@@ -398,7 +468,6 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				}
 				osgiInfFolder.getFile(getDashedName()+"-doc-route.xml").create(new ByteArrayInputStream(new DocRouteRenderer().generate(this).getBytes()), false, progressMonitor);														
 			}
-			
 		}
 	}
 
@@ -788,7 +857,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				feature.addIncludedFeatures(includedFeatures.toArray(new FeatureChild[includedFeatures.size()]));
 			};
 			
-		}.execute(progressMonitor);				
+		}.execute(progressMonitor);			
 	}
 
 	private void generateTestsFeatureProject(IProgressMonitor progressMonitor) throws Exception {

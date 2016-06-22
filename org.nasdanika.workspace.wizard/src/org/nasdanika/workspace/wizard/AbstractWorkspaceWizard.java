@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.emf.codegen.ecore.genmodel.provider.GenModelEditPlugin;
 import org.eclipse.jdt.core.IClasspathEntry;
@@ -46,7 +47,7 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.nasdanika.workspace.wizard.render.DocPomRenderer;
+import org.eclipse.ui.internal.Workbench;
 
 /**
  * Base class for wizards generating Tycho-built workspaces.
@@ -64,6 +65,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		this.workbench = workbench;
 		this.selection = selection;
+		setNeedsProgressMonitor(true);
 	}
 
 	@Override
@@ -105,11 +107,45 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		return true;
 	}
 	
+	protected interface ProgressTask {
+		
+		void execute(IProgressMonitor progressMonitor) throws Exception;
+		
+	}
+	
+	protected void executeProgressTask(IProgressMonitor monitor, String taskName, int work, ProgressTask task) throws Exception {
+        SubMonitor progress = SubMonitor.convert(monitor, work);
+        progress.setTaskName(taskName);
+        task.execute(progress);
+        progress.worked(work);		
+	}
+	
 	protected void modifyWorkspace(IProgressMonitor progressMonitor) throws Exception {
-		generateParentProject(progressMonitor);
-		generateRepositoryProject(progressMonitor);
-		generateAggregatorProject(progressMonitor);
-		generateTargetProject(progressMonitor);
+		SubMonitor progress = SubMonitor.convert(progressMonitor, 40);
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating parent project", 
+				10, 
+				(monitor)->generateParentProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating repository project", 
+				10, 
+				(monitor)->generateRepositoryProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating aggregator project", 
+				10, 
+				(monitor)->generateAggregatorProject(monitor));
+		
+		executeProgressTask(
+				progress.newChild(10), 
+				"Generating target project", 
+				10, 
+				(monitor)->generateTargetProject(monitor));
+		
 	}
 	
 	public IResource createResource(IProject project, String path, InputStream content, IProgressMonitor progressMonitor) throws CoreException {
