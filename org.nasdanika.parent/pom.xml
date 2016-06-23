@@ -15,19 +15,19 @@
 
 	<properties>
 		<tycho-version>0.25.0</tycho-version>
-		<mars-repo.url>http://download.eclipse.org/releases/mars</mars-repo.url>
+		<neon-repo.url>http://download.eclipse.org/releases/neon</neon-repo.url>
 	</properties>
 
 	<repositories>
 		<!-- configure p2 repository to resolve against -->
 		<repository>
-			<id>mars</id>
-			<url>${mars-repo.url}</url>
+			<id>neon</id>
+			<url>${neon-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
 			<id>orbit</id>
-				<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20151221205849/repository</url>
+				<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
