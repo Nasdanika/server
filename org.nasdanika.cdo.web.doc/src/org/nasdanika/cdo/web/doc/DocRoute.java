@@ -169,7 +169,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private Timer loadTimer;
 	
 	private Boolean includeSessionRegistry = true;
-	private Boolean includeGlobalRegistry;
+	private Boolean includeGlobalRegistry = true;
+	private Boolean bundleToc = true;
 	private List<Pattern> bundleIncludes = new ArrayList<>();
 	private List<Pattern> bundleExcludes = new ArrayList<>();
 	private List<Pattern> packageIncludes = new ArrayList<>();
@@ -432,6 +433,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		if (packageRegistry instanceof Boolean) {
 			includeGlobalRegistry = (Boolean) packageRegistry;
 		}
+		
+		Object bundleTocProp = properties.get("bundle-toc");
+		if (bundleTocProp instanceof Boolean) {
+			bundleToc = (Boolean) bundleTocProp;
+		}		
 		
 		patternProperty(properties.get("bundle-excludes"), bundleExcludes);
 		patternProperty(properties.get("bundle-includes"), bundleIncludes);
@@ -1011,32 +1017,33 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			}
 			
 			// Bundles
-			// TODO - make optional
-			TocNode bundlesToc = tocRoot.createChild("Bundles", BUNDLE_INFO_PATH+"summary.html", null, null, null);
-			Bundle[] bundles = bundleContext.getBundles().clone();
-			Arrays.sort(bundles, BUNDLE_COMPARATOR);
-			final Map<String, Object> rootBucket = new TreeMap<String, Object>();
-			for (Bundle bundle: bundles) {
-				String[] bna = bundle.getSymbolicName().split("\\.");
-				Map<String, Object> bucket = rootBucket;
-				for (int i=0; i<bna.length; ++i) {
-					if (i==bna.length-1) {
-						bucket.put(bna[i], bundle);
-					} else {
-						Object entry = bucket.get(bna[i]);
-						if (entry instanceof Bundle) {
-							bucket.put(CoreUtil.join(bna, ".", i), bundle);
-							break;
+			if (bundleToc) {
+				TocNode bundlesToc = tocRoot.createChild("Bundles", BUNDLE_INFO_PATH+"summary.html", null, null, null);
+				Bundle[] bundles = bundleContext.getBundles().clone();
+				Arrays.sort(bundles, BUNDLE_COMPARATOR);
+				final Map<String, Object> rootBucket = new TreeMap<String, Object>();
+				for (Bundle bundle: bundles) {
+					String[] bna = bundle.getSymbolicName().split("\\.");
+					Map<String, Object> bucket = rootBucket;
+					for (int i=0; i<bna.length; ++i) {
+						if (i==bna.length-1) {
+							bucket.put(bna[i], bundle);
+						} else {
+							Object entry = bucket.get(bna[i]);
+							if (entry instanceof Bundle) {
+								bucket.put(CoreUtil.join(bna, ".", i), bundle);
+								break;
+							}
+							if (entry == null) {
+								entry = new TreeMap<String, Object>();
+								bucket.put(bna[i], entry);
+							}
+							bucket = (Map<String, Object>) entry;
 						}
-						if (entry == null) {
-							entry = new TreeMap<String, Object>();
-							bucket.put(bna[i], entry);
-						}
-						bucket = (Map<String, Object>) entry;
 					}
 				}
+				createBundlesToc(rootBucket, bundlesToc);
 			}
-			createBundlesToc(rootBucket, bundlesToc);
 			
 			storyDocumentationGenerator.createRootTocEntries(tocRoot);	
 			
