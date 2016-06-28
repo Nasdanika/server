@@ -73,7 +73,11 @@
 				<configuration>
 					<linksource>true</linksource>
 					<failOnError>false</failOnError>
-				</configuration>
+					<links>
+						<link>http://download.eclipse.org/modeling/emf/emf/javadoc/2.11</link>
+						<link>http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc</link>					
+					</links>
+				</configuration>				
 			</plugin>
 			<plugin>
 				<groupId>org.eclipse.tycho.extras</groupId>
