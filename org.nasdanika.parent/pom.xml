@@ -75,7 +75,8 @@
 					<failOnError>false</failOnError>
 					<links>
 						<link>http://download.eclipse.org/modeling/emf/emf/javadoc/2.11</link>
-						<link>http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc</link>					
+						<link>http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc</link>		
+						<link>http://stleary.github.io/JSON-java</link>			
 					</links>
 				</configuration>				
 			</plugin>
