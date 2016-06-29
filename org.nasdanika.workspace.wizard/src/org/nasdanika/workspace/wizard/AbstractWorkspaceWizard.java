@@ -310,9 +310,9 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		org.eclipse.pde.core.target.ITargetPlatformService service = (ITargetPlatformService) PDECore.getDefault().acquireService(ITargetPlatformService.class.getName());
 		
 		ITargetDefinition targetDefinition = service.getTarget(targetFile).getTargetDefinition();
-		targetDefinition.setTargetLocations(new ITargetLocation[] { 
-				createNasdanikaServerTargetLocation(service),
-				createMavenOsgiTargetLocation(service) });
+		targetDefinition.setTargetLocations(new ITargetLocation[] {
+//				createMavenOsgiTargetLocation(service),
+				createNasdanikaServerTargetLocation(service) });
 		targetDefinition.setName(getGroupId()+".target");
 		
 		service.saveTargetDefinition(targetDefinition);
@@ -340,28 +340,26 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				resolutionFlags);
 	}
 	
-	private ITargetLocation createMavenOsgiTargetLocation(org.eclipse.pde.core.target.ITargetPlatformService service) throws URISyntaxException {
-		
-//		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
-//		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository");
-//		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517");
-		
-		List<String> repos = new ArrayList<>(getRepositories().values());
-		java.net.URI[] repositories = new java.net.URI[repos.size()];
-		for (int i=0; i<repos.size(); ++i){
-			repositories[i] = new java.net.URI(repos.get(i));
-		}
-		int resolutionFlags = IUBundleContainer.INCLUDE_SOURCE; // | IUBundleContainer.INCLUDE_REQUIRED;		
-		
-		return service.newIULocation(
-				new String[] { "json" }, 
-				new String[] { "20160212.0.0" }, 
-				new java.net.URI[] { new java.net.URI("http://www.nasdanika.org/maven-osgi") }, 
-				resolutionFlags);
-	}
-	
-	
-	
+//	private ITargetLocation createMavenOsgiTargetLocation(org.eclipse.pde.core.target.ITargetPlatformService service) throws URISyntaxException {
+//		
+////		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
+////		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository");
+////		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517");
+//		
+//		List<String> repos = new ArrayList<>(getRepositories().values());
+//		java.net.URI[] repositories = new java.net.URI[repos.size()];
+//		for (int i=0; i<repos.size(); ++i){
+//			repositories[i] = new java.net.URI(repos.get(i));
+//		}
+//		int resolutionFlags = IUBundleContainer.INCLUDE_SOURCE; // | IUBundleContainer.INCLUDE_REQUIRED;		
+//		
+//		return service.newIULocation(
+//				new String[] { "json" }, 
+//				new String[] { "20160212.0.0" }, 
+//				new java.net.URI[] { new java.net.URI("http://www.nasdanika.org/maven-osgi") }, 
+//				resolutionFlags);
+//	}
+			
 	public static void addMaven2NatureAndBuilder(IProgressMonitor progressMonitor, IProject project) throws CoreException {
 		IProjectDescription desc = project.getDescription();
 		String[] prevNatures = desc.getNatureIds();
