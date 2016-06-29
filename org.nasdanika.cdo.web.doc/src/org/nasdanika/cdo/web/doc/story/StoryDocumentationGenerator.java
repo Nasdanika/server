@@ -132,9 +132,14 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		
 		synchronized (storyModels) {
 			for (String modelLocation: storyModels) {
-				Resource model = resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true);
-				storyResources.put(modelLocation, model);
-				mapModelContent(modelLocation, model, docRoute);
+				try {
+					Resource model = resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true);
+					storyResources.put(modelLocation, model);
+					mapModelContent(modelLocation, model, docRoute);
+				} catch (Exception e) {
+					System.err.println("[ERROR] Could not load story model "+modelLocation+": "+e);
+					e.printStackTrace();
+				}
 			}
 		}
 		
@@ -142,9 +147,14 @@ public class StoryDocumentationGenerator implements AutoCloseable, Documentation
 		
 		synchronized (testResultModels) {
 			for (String modelLocation: testResultModels) {
-				Resource model = resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true);
-				testResultResources.put(modelLocation, model);
-				mapModelContent(modelLocation, model, docRoute);
+				try {
+					Resource model = resourceSet.getResource(URI.createPlatformPluginURI(modelLocation, true), true);
+					testResultResources.put(modelLocation, model);
+					mapModelContent(modelLocation, model, docRoute);
+				} catch (Exception e) {
+					System.err.println("[ERROR] Could not test results model "+modelLocation+": "+e);
+					e.printStackTrace();
+				}
 			}
 		}		
 	}
