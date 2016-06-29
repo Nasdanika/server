@@ -104,13 +104,16 @@ class BundleAndComponentDocumentationGeneratorBase {
 				}
 			}
 			
-			Set<Element> coDiagramElements = new HashSet<>();
-			collectDiagramElements(contextElement, direction, depth, dependencies, services, includePatterns, excludePatterns, coDiagramElements);
+			Set<Element> coInDiagramElements = new HashSet<>();
+			Set<Element> coOutDiagramElements = new HashSet<>();
+			collectDiagramElements(contextElement, direction, depth, dependencies, services, includePatterns, excludePatterns, coInDiagramElements, coOutDiagramElements);
 			if (contextElement instanceof org.nasdanika.osgi.model.Bundle) {
 				for (org.nasdanika.osgi.model.Component cmp: ((org.nasdanika.osgi.model.Bundle) contextElement).getComponents()) {
-					Set<Element> cde = new HashSet<>();
-					collectDiagramElements(cmp, direction, depth, dependencies, services, includePatterns, excludePatterns, cde);
-					coDiagramElements.addAll(cde);
+					Set<Element> cdeIn = new HashSet<>();
+					Set<Element> cdeOut = new HashSet<>();
+					collectDiagramElements(cmp, direction, depth, dependencies, services, includePatterns, excludePatterns, cdeIn, cdeOut);
+					coInDiagramElements.addAll(cdeIn);
+					coOutDiagramElements.addAll(cdeOut);
 					contextElements.add(cmp);
 				}
 			} else {
@@ -118,7 +121,8 @@ class BundleAndComponentDocumentationGeneratorBase {
 				contextElements.add((org.nasdanika.osgi.model.Bundle) contextElement.eContainer());
 			}
 			
-			diagramElements.addAll(coDiagramElements);
+			diagramElements.addAll(coInDiagramElements);
+			diagramElements.addAll(coOutDiagramElements);
 		}
 				
 		StringBuilder specBuilder = new StringBuilder("@startuml").append(System.lineSeparator());
@@ -331,7 +335,8 @@ class BundleAndComponentDocumentationGeneratorBase {
 			boolean services,
 			Collection<Pattern> includes,
 			Collection<Pattern> excludes,
-			Set<Element> diagramElements) {
+			Set<Element> inDiagramElements,
+			Set<Element> outDiagramElements) {
 		
 		if (!excludes.isEmpty() || !includes.isEmpty()) {
 			String symbolicName = ((org.nasdanika.osgi.model.Bundle) (candidate instanceof org.nasdanika.osgi.model.Bundle ? candidate : candidate.eContainer())).getSymbolicName();
@@ -352,63 +357,69 @@ class BundleAndComponentDocumentationGeneratorBase {
 			}
 		}			
 
-		if (diagramElements.add(candidate) && depth != 0) {			
-			if (direction == Direction.in || direction == Direction.both) {
+		if (direction == Direction.in || direction == Direction.both) {
+			if (inDiagramElements.add(candidate) && depth != 0) {			
 				if (services) {
 					for (org.nasdanika.osgi.model.ServiceReference ir: candidate.getInboundReferences()) {
 						collectDiagramElements(
 								(Element) ir.eContainer(), 
-								direction, 
+								Direction.in, 
 								depth-1, 
 								dependencies, 
 								services, 
 								includes, 
 								excludes, 
-								diagramElements);
+								inDiagramElements,
+								null);
 					}
 				}
 				if (dependencies && candidate instanceof org.nasdanika.osgi.model.Bundle) {
 					for (org.nasdanika.osgi.model.Bundle rb: ((org.nasdanika.osgi.model.Bundle) candidate).getRequiredBy()) {
 						collectDiagramElements(
 								rb, 
-								direction, 
+								Direction.in, 
 								depth-1, 
 								dependencies, 
 								services, 
 								includes, 
 								excludes, 
-								diagramElements);
+								inDiagramElements, 
+								null);
 					}
 				}
-			} 
+			}
+		} 
 			
-			if (direction == Direction.out || direction == Direction.both) {
+		if (direction == Direction.out || direction == Direction.both) {
+			if (outDiagramElements.add(candidate) && depth != 0) {			
 				if (services) {
 					for (org.nasdanika.osgi.model.ServiceReference ir: candidate.getOutboundReferences()) {
 						collectDiagramElements(
 								ir.getReferenceTarget(), 
-								direction, 
+								Direction.out, 
 								depth-1, 
 								dependencies, 
 								services, 
 								includes, 
 								excludes, 
-								diagramElements);
+								null,
+								outDiagramElements);
 					}
 				}
 				if (dependencies && candidate instanceof org.nasdanika.osgi.model.Bundle) {
 					for (org.nasdanika.osgi.model.Bundle rb: ((org.nasdanika.osgi.model.Bundle) candidate).getRequires()) {
 						collectDiagramElements(
 								rb, 
-								direction, 
+								Direction.out, 
 								depth-1, 
 								dependencies, 
 								services, 
 								includes, 
 								excludes, 
-								diagramElements);
+								null,
+								outDiagramElements);
 					}
-				}				
+				}
 			}
 		}
 	}
