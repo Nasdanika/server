@@ -108,7 +108,7 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 			pRow.cell(htmlFactory.link(pe.getValue(), pe.getValue()));
 		}
 		
-		return htmlFactory.panel(Bootstrap.Style.INFO, "Package map", packageMapTable, null);
+		return htmlFactory.collapsible(Bootstrap.Style.INFO, "Package map", true, packageMapTable);
 	}
 
 	@Override
