@@ -1342,6 +1342,15 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return includeGlobalRegistry==null ? cdoSessionProvider==null : includeGlobalRegistry;
 	}
 	
+	private boolean hasDuplicateName(EPackage ePackage, Collection<EPackage> ePackages) {
+		for (EPackage otherPackage: ePackages) {
+			if (otherPackage != ePackage && otherPackage.getName().equals(ePackage.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	private void createPackageRegistryToc(Registry registry, TocNode owner, String prefix) {
 		List<EPackage> packages = new ArrayList<>();
 		for (String nsURI: registry.keySet()) {			
@@ -1379,13 +1388,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					continue Z;
 				}
 			}
-			createEPackageToc(owner, ePackage, prefix);
+			createEPackageToc(owner, ePackage, prefix, hasDuplicateName(ePackage, packages));
 		}
 	}
 		
-	private void createEPackageToc(TocNode parent, EPackage ePackage, String prefix) {
+	private void createEPackageToc(TocNode parent, EPackage ePackage, String prefix, boolean hasDuplicateName) {
 		TocNode ePackageToc = parent.createChild(
-				ePackage.getName(), prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, 
+				ePackage.getName() + (hasDuplicateName ? " ("+StringEscapeUtils.escapeHtml4(ePackage.getNsURI())+")" : ""), 
+				prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, 
 				"/resources/images/EPackage.gif", 
 				null,
 				obj->obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(ePackage.getNsURI()));
@@ -1400,7 +1410,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		});
 		
 		for (EPackage subPackage: subPackages) {
-			createEPackageToc(ePackageToc, subPackage, prefix);
+			createEPackageToc(ePackageToc, subPackage, prefix, hasDuplicateName(subPackage, subPackages));
 		}
 		
 		List<EClassifier> pClassifiers = new ArrayList<>(ePackage.getEClassifiers());
