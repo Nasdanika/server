@@ -86,10 +86,10 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 							}
 						}
 					} else {
-						System.err.println("Could not download package list from "+packageListURL+", response code: "+responseCode+", response message: "+packageListConnection.getResponseMessage());
+						System.err.println("[WARN] Could not download package list from "+packageListURL+", response code: "+responseCode+", response message: "+packageListConnection.getResponseMessage());
 					}
 				} catch (Exception e) {
-					System.err.println("Could not download package list from "+location+" - "+e);
+					System.err.println("[WARN] Could not download package list from "+location+" - "+e);
 				}
 			}
 			
