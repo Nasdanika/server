@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.doc.extensions;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -72,11 +73,20 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 				if (!normalizedLocation.endsWith("/")) {
 					normalizedLocation += "/";
 				}
-				try (BufferedReader br = new BufferedReader(new InputStreamReader(new URL(normalizedLocation+"package-list").openStream()))){
-					String line;
-					while ((line = br.readLine()) != null) {
-						locations.put(line.trim(), normalizedLocation);
-					}					
+				try {
+					URL packageListURL = new URL(normalizedLocation+"package-list");
+					HttpURLConnection packageListConnection = (HttpURLConnection) packageListURL.openConnection();
+					int responseCode = packageListConnection.getResponseCode();
+					if (responseCode==HttpURLConnection.HTTP_OK) {
+						try (BufferedReader br = new BufferedReader(new InputStreamReader(packageListConnection.getInputStream()))){
+							String line;
+							while ((line = br.readLine()) != null) {
+								locations.put(line.trim(), normalizedLocation);
+							}
+						}
+					} else {
+						System.err.println("Could not download package list from "+packageListURL+", response code: "+responseCode+", response message: "+packageListConnection.getResponseMessage());
+					}
 				} catch (Exception e) {
 					System.err.println("Could not download package list from "+location+" - "+e);
 				}
