@@ -17,6 +17,7 @@ test:
     - mkdir $CIRCLE_ARTIFACTS/apidocs
     
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
+    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.h2
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.promise
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca.edit
@@ -49,6 +50,7 @@ test:
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
     
+    - mv org.nasdanika.cdo.boxing/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
     - mv org.nasdanika.cdo.function/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
     - mv org.nasdanika.cdo.h2/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.h2
     - mv org.nasdanika.cdo.promise/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.promise
