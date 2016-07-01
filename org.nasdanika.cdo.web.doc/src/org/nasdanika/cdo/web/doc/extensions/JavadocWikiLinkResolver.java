@@ -6,6 +6,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -107,12 +108,12 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 		Row hRow = packageMapTable.row();
 		hRow.header("Package");
 		hRow.header("Location");
-		for (Entry<String, String> location: locations.entrySet()) {
+		for (Entry<String, String> location: new TreeMap<>(locations).entrySet()) {
 			Row pRow = packageMapTable.row();
 			pRow.cell("<b>"+location.getKey()+"</b>");
 			pRow.cell(htmlFactory.link(location.getValue(), location.getValue()));
 		}
-		for (Entry<String, String> pe: packageMap.entrySet()) {
+		for (Entry<String, String> pe: new TreeMap<>(packageMap).entrySet()) {
 			Row pRow = packageMapTable.row();
 			pRow.cell(pe.getKey());
 			pRow.cell(htmlFactory.link(pe.getValue(), pe.getValue()));
