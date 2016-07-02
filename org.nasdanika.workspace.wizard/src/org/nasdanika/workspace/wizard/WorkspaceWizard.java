@@ -1063,7 +1063,9 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			manifest.print(CodeGenUtil.validPluginID(genModelContainerPath.segment(0)));
 			manifest.println("; singleton:=true");
 			manifest.println("Bundle-Version: "+getVersion()+".qualifier");
+			manifest.println(BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT);;
 			manifest.print("Require-Bundle: ");
+
 			String[] requiredBundles = getRequiredBundles();
 			for (int i = 0, size = requiredBundles.length; i < size;) {
 				manifest.print(requiredBundles[i]);

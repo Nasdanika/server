@@ -55,6 +55,7 @@ import org.eclipse.ui.internal.Workbench;
  *
  */
 public abstract class AbstractWorkspaceWizard extends Wizard implements INewWizard {
+	protected static final String BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT = "Bundle-RequiredExecutionEnvironment: JavaSE-1.8";
 	protected static final String MAVEN_2_BUILDER = "org.eclipse.m2e.core.maven2Builder";
 	protected static final String MAVEN_2_NATURE_ID = "org.eclipse.m2e.core.maven2Nature";
 	private GeneralInformationPage generalInformationPage;
@@ -549,7 +550,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				.append("\"")
 				.append(System.lineSeparator());
 		}
-		manifestBuilder.append("Bundle-RequiredExecutionEnvironment: JavaSE-1.8").append(System.lineSeparator());
+		manifestBuilder.append(BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT).append(System.lineSeparator());
 		if (!requiredBundles.isEmpty()) {
 			manifestBuilder.append("Require-Bundle:");
 			Iterator<String> rit = requiredBundles.iterator();
