@@ -416,6 +416,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 			Collection<String> serviceComponents,
 			Collection<String> binIncludes,
 			String fragmentHost,
+			boolean lazy,
 			IProgressMonitor progressMonitor) throws Exception {
 		
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -487,6 +488,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				exportedPackages, 
 				serviceComponents,
 				fragmentHost,
+				lazy,
 				progressMonitor, 
 				project);
 		createBuildProps(progressMonitor, binIncludes, project);
@@ -535,6 +537,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 			Collection<String> exportedPackages, 
 			Collection<String> serviceComponents,
 			String fragmentHost,
+			boolean lazy,
 			IProgressMonitor progressMonitor, 
 			IProject project) throws Exception {
 		StringBuilder manifestBuilder = new StringBuilder("Manifest-Version: 1.0").append(System.lineSeparator());
@@ -574,7 +577,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				manifestBuilder.append(System.lineSeparator());
 			}
 		}
-
+		
 		if (exportedPackages != null && !exportedPackages.isEmpty()) {
 			manifestBuilder.append("Export-Package:");
 			Iterator<String> epit = exportedPackages.iterator();
@@ -597,6 +600,10 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 				}
 				manifestBuilder.append(System.lineSeparator());
 			}
+		}
+		
+		if (lazy) {
+			manifestBuilder.append("Bundle-ActivationPolicy: lazy").append(System.lineSeparator());
 		}
 
 		final IFolder metaInf = project.getFolder("META-INF");

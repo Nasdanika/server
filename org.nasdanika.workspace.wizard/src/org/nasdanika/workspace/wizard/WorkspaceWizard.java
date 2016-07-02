@@ -196,6 +196,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
 					null,
+					false,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorSpecPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -222,6 +223,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
 					null,
+					false,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = getSelectedWorkingSets();
@@ -251,6 +253,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-actor-factory.xml"), 
 					null,
+					true,
 					progressMonitor);
 			
 			project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new ActorImplPomRenderer().generate(this).getBytes()), false, progressMonitor);
@@ -286,6 +289,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
 					Collections.singleton("OSGI-INF/"+getDashedName()+"-page-factory.xml"), 
 					null,
+					true,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = getSelectedWorkingSets();
@@ -375,6 +379,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					components, 
 					binIncludes,
 					null,
+					true,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = getSelectedWorkingSets();
@@ -544,6 +549,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					Collections.<String>emptyList(), 
 					binIncludes,
 					projectsPage.btnApplication.getSelection() ? getApplicationArtifactId() : null,
+					false,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = getSelectedWorkingSets();
@@ -581,6 +587,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					Collections.<String>emptyList(), 
 					binIncludes,  
 					null,
+					false,
 					progressMonitor);
 			
 			IWorkingSet[] workingSets = getSelectedWorkingSets();
@@ -1335,6 +1342,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				Collections.<String>emptyList(), 
 				Collections.singleton("apidocs/"), 
 				null,
+				false,
 				progressMonitor);
 		
 		IWorkingSet[] workingSets = getSelectedWorkingSets();
