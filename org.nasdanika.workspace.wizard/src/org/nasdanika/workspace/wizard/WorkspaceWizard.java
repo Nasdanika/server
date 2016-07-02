@@ -570,13 +570,16 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 	
 	protected void generateTestResultsProject(IProgressMonitor progressMonitor) throws Exception {
 		if (projectsPage.btnTests.getSelection()) {
+			Set<String> binIncludes = new HashSet<>();
+			binIncludes.add("model/");
+			binIncludes.add("plugin.xml");
 			IJavaProject project = createPluginProject(
 					getTestsArtifactId()+".results", 
 					Collections.singleton("org.nasdanika.webtest.model"), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
 					Collections.<String>emptyList(), 
-					Collections.singleton("model/"),  
+					binIncludes,  
 					null,
 					progressMonitor);
 			
