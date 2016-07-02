@@ -33,6 +33,8 @@ import org.osgi.util.tracker.ServiceTracker;
  */
 public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRunner implements TestResultSource {
 	
+	private static final int WAIT_FOR_SERVICE_TIMEOUT = 2000;
+
 	private static final int SCREENSHOT_ATTEMPTS = 5;
 
 	private static final int SCREENSHOT_RETAKE_WAIT_INTERVAL = 2000;
@@ -351,13 +353,13 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
 						st.open();
 						serviceTrackersThreadLocal.get().add(st);
-						field.set(test, WebTestUtil.proxyActorFactory(st.waitForService(2000)));
+						field.set(test, WebTestUtil.proxyActorFactory(st.waitForService(WAIT_FOR_SERVICE_TIMEOUT)));
 					} else {
 						String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+MessageFormat.format(afa.filter(), getParameters())+")";
 						ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
 						st.open();
 						serviceTrackersThreadLocal.get().add(st);
-						field.set(test, WebTestUtil.proxyActorFactory(st.waitForService(2000)));
+						field.set(test, WebTestUtil.proxyActorFactory(st.waitForService(WAIT_FOR_SERVICE_TIMEOUT)));
 					}
 				} else {
 					PageFactory pfa = field.getAnnotation(PageFactory.class);
@@ -366,13 +368,13 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 							ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
 							st.open();
 							serviceTrackersThreadLocal.get().add(st);
-							field.set(test, WebTestUtil.proxyPageFactory(st.waitForService(2000)));
+							field.set(test, WebTestUtil.proxyPageFactory(st.waitForService(WAIT_FOR_SERVICE_TIMEOUT)));
 						} else {
 							String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+MessageFormat.format(pfa.filter(), getParameters())+")";
 							ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
 							st.open();
 							serviceTrackersThreadLocal.get().add(st);
-							field.set(test, WebTestUtil.proxyPageFactory(st.waitForService(2000)));
+							field.set(test, WebTestUtil.proxyPageFactory(st.waitForService(WAIT_FOR_SERVICE_TIMEOUT)));
 						}
 					} else {
 						Service sa = field.getAnnotation(Service.class);
@@ -381,13 +383,13 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 								ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext, (Class<Object>) field.getType(), null);
 								st.open();
 								serviceTrackersThreadLocal.get().add(st);
-								field.set(test, st.waitForService(2000));
+								field.set(test, st.waitForService(WAIT_FOR_SERVICE_TIMEOUT));
 							} else {
 								String filter = "(&(" + Constants.OBJECTCLASS + "=" + field.getType().getName() + ")"+MessageFormat.format(sa.filter(), getParameters())+")";
 								ServiceTracker<Object,Object> st = new ServiceTracker<Object,Object>(bundleContext,	filter,	null);
 								st.open();
 								serviceTrackersThreadLocal.get().add(st);
-								field.set(test, st.waitForService(2000));
+								field.set(test, st.waitForService(WAIT_FOR_SERVICE_TIMEOUT));
 							}
 						}						
 					}
