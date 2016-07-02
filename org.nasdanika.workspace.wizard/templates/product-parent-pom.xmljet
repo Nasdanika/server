@@ -48,6 +48,7 @@
 				<artifactId>target-platform-configuration</artifactId>
 				<version>${tycho-version}</version>
 				<configuration>
+					<executionEnvironment><%=wizard.JAVA_EXECUTION_ENVIRONMENT%></executionEnvironment>
 					<!--
 					<target>
 						<artifact>

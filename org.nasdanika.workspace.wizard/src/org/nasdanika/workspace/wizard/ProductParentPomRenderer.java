@@ -21,14 +21,15 @@ public class ProductParentPomRenderer {
   protected final String TEXT_6 = NL + "\t\t\t<repository>" + NL + "\t\t\t\t<id>";
   protected final String TEXT_7 = "</id>" + NL + "\t\t\t\t<url>";
   protected final String TEXT_8 = "</url>" + NL + "\t\t\t\t<layout>p2</layout>" + NL + "\t\t\t</repository>\t\t" + NL + "\t\t";
-  protected final String TEXT_9 = NL + "\t</repositories>" + NL + " \t" + NL + " \t<build>" + NL + "\t\t<sourceDirectory>src</sourceDirectory>" + NL + "\t\t<plugins>" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<!-- enable tycho build extension -->" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>tycho-maven-plugin</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<extensions>true</extensions>" + NL + "\t\t\t</plugin>" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>target-platform-configuration</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<configuration>" + NL + "\t\t\t\t\t<!--" + NL + "\t\t\t\t\t<target>" + NL + "\t\t\t\t\t\t<artifact>" + NL + "\t\t\t\t\t\t\t<groupId>";
-  protected final String TEXT_10 = "</groupId>" + NL + "\t\t\t\t\t\t\t<artifactId>";
-  protected final String TEXT_11 = ".target</artifactId>" + NL + "\t\t\t\t\t\t\t<version>";
-  protected final String TEXT_12 = "-SNAPSHOT</version>" + NL + "\t\t\t\t\t\t</artifact>" + NL + "\t\t\t\t\t</target>" + NL + "\t\t\t\t\t-->" + NL + "\t\t\t\t\t<pomDependencies>consider</pomDependencies>" + NL + "\t\t\t\t\t<!-- configure the p2 target environments for multi-platform build -->" + NL + "\t\t\t\t\t<environments>" + NL + "\t\t\t\t\t\t<environment>" + NL + "\t\t\t\t\t\t\t<os>linux</os>" + NL + "\t\t\t\t\t\t\t<ws>gtk</ws>" + NL + "\t\t\t\t\t\t\t<arch>x86_64</arch>" + NL + "\t\t\t\t\t\t</environment>" + NL + "\t\t\t\t\t\t<environment>" + NL + "\t\t\t\t\t\t\t<os>win32</os>" + NL + "\t\t\t\t\t\t\t<ws>win32</ws>" + NL + "\t\t\t\t\t\t\t<arch>x86_64</arch>" + NL + "\t\t\t\t\t\t</environment>" + NL + "\t\t\t\t\t</environments>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t</plugin>" + NL + "\t\t\t<!-- enable source bundle generation -->" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>tycho-source-plugin</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<executions>" + NL + "\t\t\t\t\t<execution>" + NL + "\t\t\t\t\t\t<id>plugin-source</id>" + NL + "\t\t\t\t\t\t<goals>" + NL + "\t\t\t\t\t\t\t<goal>plugin-source</goal>" + NL + "\t\t\t\t\t\t</goals>" + NL + "\t\t\t\t\t</execution>" + NL + "\t\t\t\t</executions>" + NL + "\t\t\t</plugin>" + NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "\t<modules>" + NL + "\t";
-  protected final String TEXT_13 = NL + "\t\t<module>../";
-  protected final String TEXT_14 = "</module>" + NL + "\t";
-  protected final String TEXT_15 = NL + "\t</modules>" + NL + "</project>";
-  protected final String TEXT_16 = NL;
+  protected final String TEXT_9 = NL + "\t</repositories>" + NL + " \t" + NL + " \t<build>" + NL + "\t\t<sourceDirectory>src</sourceDirectory>" + NL + "\t\t<plugins>" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<!-- enable tycho build extension -->" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>tycho-maven-plugin</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<extensions>true</extensions>" + NL + "\t\t\t</plugin>" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>target-platform-configuration</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<configuration>" + NL + "\t\t\t\t\t<executionEnvironment>";
+  protected final String TEXT_10 = "</executionEnvironment>" + NL + "\t\t\t\t\t<!--" + NL + "\t\t\t\t\t<target>" + NL + "\t\t\t\t\t\t<artifact>" + NL + "\t\t\t\t\t\t\t<groupId>";
+  protected final String TEXT_11 = "</groupId>" + NL + "\t\t\t\t\t\t\t<artifactId>";
+  protected final String TEXT_12 = ".target</artifactId>" + NL + "\t\t\t\t\t\t\t<version>";
+  protected final String TEXT_13 = "-SNAPSHOT</version>" + NL + "\t\t\t\t\t\t</artifact>" + NL + "\t\t\t\t\t</target>" + NL + "\t\t\t\t\t-->" + NL + "\t\t\t\t\t<pomDependencies>consider</pomDependencies>" + NL + "\t\t\t\t\t<!-- configure the p2 target environments for multi-platform build -->" + NL + "\t\t\t\t\t<environments>" + NL + "\t\t\t\t\t\t<environment>" + NL + "\t\t\t\t\t\t\t<os>linux</os>" + NL + "\t\t\t\t\t\t\t<ws>gtk</ws>" + NL + "\t\t\t\t\t\t\t<arch>x86_64</arch>" + NL + "\t\t\t\t\t\t</environment>" + NL + "\t\t\t\t\t\t<environment>" + NL + "\t\t\t\t\t\t\t<os>win32</os>" + NL + "\t\t\t\t\t\t\t<ws>win32</ws>" + NL + "\t\t\t\t\t\t\t<arch>x86_64</arch>" + NL + "\t\t\t\t\t\t</environment>" + NL + "\t\t\t\t\t</environments>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t</plugin>" + NL + "\t\t\t<!-- enable source bundle generation -->" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>tycho-source-plugin</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<executions>" + NL + "\t\t\t\t\t<execution>" + NL + "\t\t\t\t\t\t<id>plugin-source</id>" + NL + "\t\t\t\t\t\t<goals>" + NL + "\t\t\t\t\t\t\t<goal>plugin-source</goal>" + NL + "\t\t\t\t\t\t</goals>" + NL + "\t\t\t\t\t</execution>" + NL + "\t\t\t\t</executions>" + NL + "\t\t\t</plugin>" + NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "\t<modules>" + NL + "\t";
+  protected final String TEXT_14 = NL + "\t\t<module>../";
+  protected final String TEXT_15 = "</module>" + NL + "\t";
+  protected final String TEXT_16 = NL + "\t</modules>" + NL + "</project>";
+  protected final String TEXT_17 = NL;
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
@@ -50,19 +51,21 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_8);
      } 
     stringBuffer.append(TEXT_9);
-    stringBuffer.append(wizard.getGroupId());
+    stringBuffer.append(wizard.JAVA_EXECUTION_ENVIRONMENT);
     stringBuffer.append(TEXT_10);
     stringBuffer.append(wizard.getGroupId());
     stringBuffer.append(TEXT_11);
-    stringBuffer.append(wizard.getVersion());
+    stringBuffer.append(wizard.getGroupId());
     stringBuffer.append(TEXT_12);
-     for (String module: wizard.getProductModules()) { 
+    stringBuffer.append(wizard.getVersion());
     stringBuffer.append(TEXT_13);
-    stringBuffer.append(module);
+     for (String module: wizard.getProductModules()) { 
     stringBuffer.append(TEXT_14);
-     } 
+    stringBuffer.append(module);
     stringBuffer.append(TEXT_15);
+     } 
     stringBuffer.append(TEXT_16);
+    stringBuffer.append(TEXT_17);
     return stringBuffer.toString();
   }
 }

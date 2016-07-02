@@ -55,7 +55,8 @@ import org.eclipse.ui.internal.Workbench;
  *
  */
 public abstract class AbstractWorkspaceWizard extends Wizard implements INewWizard {
-	protected static final String BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT = "Bundle-RequiredExecutionEnvironment: JavaSE-1.8";
+	public static final String JAVA_EXECUTION_ENVIRONMENT = "JavaSE-1.8";
+	protected static final String BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT = "Bundle-RequiredExecutionEnvironment: "+JAVA_EXECUTION_ENVIRONMENT;
 	protected static final String MAVEN_2_BUILDER = "org.eclipse.m2e.core.maven2Builder";
 	protected static final String MAVEN_2_NATURE_ID = "org.eclipse.m2e.core.maven2Nature";
 	private GeneralInformationPage generalInformationPage;
