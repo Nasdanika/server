@@ -216,7 +216,7 @@ link resolvers, e.g. ``bundle`` schema.
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/apidocs"/>
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/apidocs"/>
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/apidocs"/>
-         <property name="location" value="http://help.eclipse.org/mars/topic/org.eclipse.emf.cdo.doc/javadoc/"/>
+         <property name="location" value="http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc/"/>
          <property name="location" value="http://docs.oracle.com/javase/8/docs/api"/>
          <property name="location" value="http://download.eclipse.org/modeling/emf/emf/javadoc/2.11"/>
          <property name="location" value="http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc"/>

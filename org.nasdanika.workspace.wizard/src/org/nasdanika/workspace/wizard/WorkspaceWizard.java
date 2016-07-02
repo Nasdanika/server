@@ -980,8 +980,8 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		
 		// Kinda bad style, load from a properties file?
 		repoMap.put("nasdanika-server", "http://www.nasdanika.org/server/repository");
-		repoMap.put("mars", "http://download.eclipse.org/releases/mars");
-		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20160221192158/repository");
+		repoMap.put("neon", "http://download.eclipse.org/releases/neon");
+		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository");
 		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517");
 		repoMap.put("maven-osgi", "http://www.nasdanika.org/maven-osgi");
 		return repoMap;

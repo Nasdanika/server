@@ -19,7 +19,7 @@ public class RepositoryPomRenderer {
   protected final String TEXT_4 = "</groupId>" + NL + "\t\t<artifactId>";
   protected final String TEXT_5 = ".parent</artifactId>" + NL + "\t\t<version>";
   protected final String TEXT_6 = "-SNAPSHOT</version>" + NL + "\t\t<relativePath>../";
-  protected final String TEXT_7 = ".parent</relativePath>" + NL + "\t</parent>" + NL + "\t<build>" + NL + "\t\t<plugins>" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>tycho-p2-repository-plugin</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<!--" + NL + "\t\t\t\t<configuration>" + NL + "\t\t\t\t\t<includeAllDependencies>true</includeAllDependencies>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t\t-->" + NL + "\t\t\t</plugin>" + NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "</project>";
+  protected final String TEXT_7 = ".parent</relativePath>" + NL + "\t</parent>" + NL + "\t<build>" + NL + "\t\t<plugins>" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>tycho-p2-repository-plugin</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<configuration>" + NL + "\t\t\t\t\t<includeAllDependencies>true</includeAllDependencies>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t</plugin>" + NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "</project>";
 
 public String generate(org.nasdanika.workspace.wizard.AbstractWorkspaceWizard wizard) throws Exception
   {
