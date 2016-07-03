@@ -23,8 +23,11 @@ public class ProductPomRenderer {
   protected final String TEXT_8 = NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<groupId>org.eclipse.tycho</groupId>" + NL + "\t\t\t\t<artifactId>tycho-p2-director-plugin</artifactId>" + NL + "\t\t\t\t<version>${tycho-version}</version>" + NL + "\t\t\t\t<executions> " + NL + "\t\t\t\t\t<execution>" + NL + "\t\t\t\t\t\t<id>build-distributions</id>" + NL + "\t\t\t\t\t\t<goals>" + NL + "\t\t\t\t\t\t\t<!-- install the product using the p2 director -->" + NL + "\t\t\t\t\t\t\t<goal>materialize-products</goal>" + NL + "\t\t\t\t\t\t\t<!-- create zip file with the installed product -->" + NL + "\t\t\t\t\t\t\t<!-- <goal>archive-products</goal> -->" + NL + "\t\t\t\t\t\t</goals>" + NL + "\t\t\t\t\t</execution>" + NL + "\t\t\t\t</executions>" + NL + "\t\t\t\t<configuration>" + NL + "\t\t\t\t\t<products>" + NL + "\t\t\t\t\t\t";
   protected final String TEXT_9 = NL + "\t\t\t\t\t\t<product>" + NL + "\t\t\t\t\t\t\t<id>";
   protected final String TEXT_10 = "</id>" + NL + "\t\t\t\t\t\t</product>" + NL + "\t\t\t\t\t\t";
-  protected final String TEXT_11 = NL + "\t\t\t\t\t</products>" + NL + "\t\t\t\t\t<!-- global optional parameters (with default values) -->" + NL + "\t\t\t\t\t<installFeatures>true</installFeatures>" + NL + "\t\t\t\t\t<profile>DefaultProfile</profile>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t</plugin>" + NL + "\t\t\t";
-  protected final String TEXT_12 = NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "</project>";
+  protected final String TEXT_11 = NL + "\t\t\t\t\t</products>" + NL + "\t\t\t\t\t<!-- global optional parameters (with default values) -->" + NL + "\t\t\t\t\t<installFeatures>true</installFeatures>" + NL + "\t\t\t\t\t<profile>DefaultProfile</profile>" + NL + "\t\t\t\t</configuration>" + NL + "\t\t\t</plugin>" + NL + "" + NL + "\t\t\t";
+  protected final String TEXT_12 = "\t\t\t" + NL + "\t\t\t<plugin>" + NL + "\t\t\t\t<artifactId>maven-resources-plugin</artifactId>" + NL + "\t\t\t\t<version>3.0.1</version>" + NL + "\t\t\t\t<executions>" + NL + "\t\t\t\t\t<execution>" + NL + "\t\t\t\t\t\t<id>copy-resources</id>" + NL + "\t\t\t\t\t\t<!-- here the phase you need -->" + NL + "\t\t\t\t\t\t<phase>package</phase>" + NL + "\t\t\t\t\t\t<goals>" + NL + "\t\t\t\t\t\t\t<goal>copy-resources</goal>" + NL + "\t\t\t\t\t\t</goals>" + NL + "\t\t\t\t\t\t<configuration>" + NL + "\t\t\t\t\t\t\t<outputDirectory>${basedir}/target/products/";
+  protected final String TEXT_13 = "/linux/gtk</outputDirectory>" + NL + "\t\t\t\t\t\t\t<resources>" + NL + "\t\t\t\t\t\t\t\t<resource>" + NL + "\t\t\t\t\t\t\t\t\t<directory>.</directory>" + NL + "\t\t\t\t\t\t\t\t\t<include>Dockerfile</include>" + NL + "\t\t\t\t\t\t\t\t\t<filtering>false</filtering>" + NL + "\t\t\t\t\t\t\t\t</resource>" + NL + "\t\t\t\t\t\t\t</resources>" + NL + "\t\t\t\t\t\t</configuration>" + NL + "\t\t\t\t\t</execution>" + NL + "\t\t\t\t</executions>" + NL + "\t\t\t</plugin>" + NL + "\t\t\t";
+  protected final String TEXT_14 = NL + "\t\t\t" + NL + "\t\t\t";
+  protected final String TEXT_15 = "\t\t\t" + NL + "\t\t</plugins>" + NL + "\t</build>" + NL + "</project>";
 
 public String generate(org.nasdanika.workspace.wizard.AbstractWorkspaceWizard wizard) throws Exception
   {
@@ -50,8 +53,14 @@ public String generate(org.nasdanika.workspace.wizard.AbstractWorkspaceWizard wi
     stringBuffer.append(TEXT_10);
      } 
     stringBuffer.append(TEXT_11);
-     } 
+     for (String productId: wizard.getProductsToMaterialize()) { 
     stringBuffer.append(TEXT_12);
+    stringBuffer.append(productId);
+    stringBuffer.append(TEXT_13);
+     } 
+    stringBuffer.append(TEXT_14);
+     } 
+    stringBuffer.append(TEXT_15);
     return stringBuffer.toString();
   }
 }

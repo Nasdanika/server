@@ -622,6 +622,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		}
 
 		project.getFile("pom.xml").create(new ByteArrayInputStream(new ProductPomRenderer().generate(this).getBytes()), false, progressMonitor);
+		project.getFile("Dockerfile").create(new ByteArrayInputStream(new DockerfileRenderer().generate(this).getBytes()), false, progressMonitor);
 		if (!getProductCategorizedFeatures().isEmpty()) {
 			project.getFile("category.xml").create(new ByteArrayInputStream(new ProductCategoryRenderer().generate(this).getBytes()), false, progressMonitor);
 		}
