@@ -680,11 +680,13 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				FeaturePlugin docPlugin = (FeaturePlugin) model.getFactory().createPlugin();
 				docPlugin.setId(getDocArtifactId());
 				docPlugin.setVersion("0.0.0");
+				docPlugin.setUnpack(false);
 				plugins.add(docPlugin);
 				
 				FeaturePlugin testResultsPlugin = (FeaturePlugin) model.getFactory().createPlugin();
 				testResultsPlugin.setId(getTestsArtifactId()+".results");
 				testResultsPlugin.setVersion("0.0.0");
+				testResultsPlugin.setUnpack(false);
 				plugins.add(testResultsPlugin);
 								
 				feature.addPlugins(plugins.toArray(new IFeaturePlugin[plugins.size()]));
@@ -773,6 +775,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 					fplugin.setId(getModelArtifactId());
 					fplugin.setVersion("0.0.0");
+					fplugin.setUnpack(false);
 					plugins.add(fplugin);
 				}
 				
@@ -780,6 +783,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 					FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 					fplugin.setId(getApplicationArtifactId());
 					fplugin.setVersion("0.0.0");
+					fplugin.setUnpack(false);
 					plugins.add(fplugin);
 				}
 				
@@ -788,6 +792,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getTestsArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
@@ -795,6 +800,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getActorSpecArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
@@ -802,6 +808,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getPageSpecArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
@@ -809,6 +816,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getActorImplArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
@@ -816,6 +824,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getPageImplArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 				}
@@ -914,6 +923,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getTestsArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						if (projectsPage.btnApplication.getSelection()) {
 							fplugin.setFragment(true);
 						}
@@ -924,6 +934,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getActorSpecArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
@@ -931,6 +942,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getPageSpecArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
@@ -938,6 +950,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getActorImplArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
@@ -945,6 +958,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 						FeaturePlugin fplugin = (FeaturePlugin) model.getFactory().createPlugin();
 						fplugin.setId(getPageImplArtifactId());
 						fplugin.setVersion("0.0.0");
+						fplugin.setUnpack(false);
 						plugins.add(fplugin);
 					}
 					
