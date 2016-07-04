@@ -33,7 +33,7 @@
 							<!-- install the product using the p2 director -->
 							<goal>materialize-products</goal>
 							<!-- create zip file with the installed product -->
-							<!-- <goal>archive-products</goal> -->
+							<goal>archive-products</goal>
 						</goals>
 					</execution>
 				</executions>
