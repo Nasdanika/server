@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -1113,6 +1114,9 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 			pom.print(new ModelPomRenderer().generate(this));
 			pom.close();
 			
+			project.getFile("model/"+getDashedName()+".ecore").create(new ByteArrayInputStream(new ModelRenderer().generate(this).getBytes()), false, progressMonitor);
+			project.getFile("model/"+getDashedName()+".genmodel").create(new ByteArrayInputStream(new GenModelRenderer().generate(this).getBytes()), false, progressMonitor);
+			
 			project.getFile("build.properties").create(new ByteArrayInputStream(new ModelBuildPropertiesRenderer().generate(this).getBytes()), false, progressMonitor);
 		}		
 	}
@@ -1370,4 +1374,20 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);		
 	}
 	
+	public String getModelPackageName() {
+		String modelID = getModelArtifactId();
+		int idx = modelID.lastIndexOf('.');
+		return idx == -1 ? modelID : modelID.substring(idx+1);
+	}
+
+	public String getGenModelPackagePrefix() {
+		return StringUtils.capitalize(getModelPackageName());
+	}	
+	
+	public String getGenModelBasePackageName() {
+		String modelID = getModelArtifactId();
+		int idx = modelID.lastIndexOf('.');
+		return idx == -1 ? "" : modelID.substring(0, idx);
+	}
+		
 }
