@@ -645,5 +645,4 @@ class BundleDocumentationGenerator extends BundleAndComponentDocumentationGenera
 		tabs.item("Bundles", bundlesTable);
 	}
 
-
 }
