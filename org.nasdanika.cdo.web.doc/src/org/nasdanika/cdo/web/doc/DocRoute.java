@@ -25,8 +25,11 @@ import java.util.TimerTask;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
@@ -44,13 +47,14 @@ import org.apache.felix.scr.Component;
 import org.apache.felix.scr.ScrService;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.SearcherFactory;
+import org.apache.lucene.search.SearcherManager;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.NIOFSDirectory;
 import org.apache.lucene.store.RAMDirectory;
@@ -158,8 +162,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private int pathOffset = 1;
 	private BundleContext bundleContext;
 	private Directory searchIndexDirectory;
-	private DirectoryReader searchIndexReader;
-	private IndexSearcher indexSearcher;
+	private SearcherManager searcherManager;
 	private StandardAnalyzer analyzer;
 	private CDOSessionProvider cdoSessionProvider;
 	private HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
@@ -389,6 +392,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private boolean preProcessMarkdown = true;
 	private BundleDocumentationGenerator bundleDocumentationGenerator;
 	private ComponentDocumentationGenerator componentDocumentationGenerator;
+	private IndexWriter searchIndexWriter;
+	private ExecutorService searchIndexerExecutor;
 	
 	private static void patternProperty(Object value, List<Pattern> accumulator) {
 		if (value instanceof String[]) {
@@ -400,6 +405,31 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				accumulator.add(Pattern.compile((String) value));
 			}			
 		}
+	}
+	
+	private interface Task {
+		void execute() throws Exception;
+	}
+	
+	private AtomicLong indexPassCounter = new AtomicLong();
+	
+	private void executeIndexWriterTask(Task task, long indexPass) {
+		searchIndexerExecutor.submit(new Runnable() {
+
+			@Override
+			public void run() {
+				// If deactivating or from the previous pass - don't waste time.
+				if (!deactivating && indexPassCounter.get() == indexPass) {
+					try {
+						task.execute();						
+						searcherManager.maybeRefresh();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			
+		});
 	}
 	
 	public BundleContext getBundleContext() {
@@ -451,6 +481,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			searchIndexDirectory = new NIOFSDirectory(searchIndexDir.toPath());
 		}
     	analyzer = new StandardAnalyzer();
+		IndexWriterConfig config = new IndexWriterConfig(analyzer);
+		searchIndexWriter = new IndexWriter(searchIndexDirectory, config);
+		searcherManager = new SearcherManager(searchIndexWriter, true, true, new SearcherFactory());
+		searchIndexerExecutor = Executors.newSingleThreadExecutor();
     	
     	baseURL = "http://localhost";
     	String port = System.getProperty("org.osgi.service.http.port");
@@ -1060,64 +1094,39 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			// TODO - from extensions
 			
 			// Index
-			if (searchIndexReader!=null) {
-				searchIndexReader.close();
-				searchIndexReader = null;
-			}
 			
-			IndexWriterConfig config = new IndexWriterConfig(analyzer);
-	        try (IndexWriter writer = new IndexWriter(searchIndexDirectory, config)) {
-	        	writer.deleteAll();
-	        	SearchableContentProvider searchableContentProvider = new SearchableContentProvider() {
+			long indexPass = indexPassCounter.incrementAndGet();
+			
+        	executeIndexWriterTask(()->searchIndexWriter.deleteAll(), indexPass);
+        	SearchableContentProvider searchableContentProvider = new SearchableContentProvider() {
 
-					@Override
-					public ContentEntry get(String path) {				
-						if (path.startsWith(TOC_PATH)) {
-							final TocNode tocNode = tocRoot.find(path);
-							if (tocNode!=null) {
-								return new ContentEntry() {
-									
-									@Override
-									public boolean isHTML() {
-										return true; // Embedded content is always rendered to HTML
-									}
-									
-									@Override
-									public String getContent() {
-										return CoreUtil.isBlank(tocNode.getContent()) ? "" : tocNode.getContent();
-									}
-								};
-							}
-							return null;
+				@Override
+				public ContentEntry get(String path) {				
+					if (path.startsWith(TOC_PATH)) {
+						final TocNode tocNode = tocRoot.find(path);
+						if (tocNode!=null) {
+							return new ContentEntry() {
+								
+								@Override
+								public boolean isHTML() {
+									return true; // Embedded content is always rendered to HTML
+								}
+								
+								@Override
+								public String getContent() {
+									return CoreUtil.isBlank(tocNode.getContent()) ? "" : tocNode.getContent();
+								}
+							};
 						}
-						
-						try {
-							URL theBaseURL = new URL(baseURL);
-							if (path.startsWith(PACKAGES_GLOBAL_PATH) || path.startsWith(PACKAGES_SESSION_PATH)) {
-								// Always HTML String for packages if not null.
-									final Object content = DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path);
-									if (content instanceof String) { 
-										return new ContentEntry() {
-		
-											@Override
-											public boolean isHTML() {
-												return true;
-											}
-											
-											@Override
-											public String getContent() {
-												return (String) content;
-											}
-										};
-									}
-							}
-							
-							int idx = path.lastIndexOf('/');
-							String fn = idx==-1 ? path : path.substring(idx+1);
-							String contentType = getContentType(fn);
-							if (contentType!=null) {
-								if (MIME_TYPE_HTML.equals(contentType)) {
-									final String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+						return null;
+					}
+					
+					try {
+						URL theBaseURL = new URL(baseURL);
+						if (path.startsWith(PACKAGES_GLOBAL_PATH) || path.startsWith(PACKAGES_SESSION_PATH)) {
+							// Always HTML String for packages if not null.
+								final Object content = DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path);
+								if (content instanceof String) { 
 									return new ContentEntry() {
 	
 										@Override
@@ -1127,80 +1136,110 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 										
 										@Override
 										public String getContent() {
-											return content;
+											return (String) content;
 										}
 									};
 								}
-								
-								Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
-								ExtensionEntry<ContentFilter> extensionEntry = tm==null ? null : tm.get(MIME_TYPE_HTML);
-								ContentFilter cf = extensionEntry==null ? null : extensionEntry.extension;
-								if (cf!=null) {
-									String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
-									if (content!=null) {
-										final String htmlContent = String.valueOf(cf.filter(content, DocRoute.this, new URL(urlPrefix+docRoutePath+path), urlPrefix));
-										return new ContentEntry() {
-		
-											@Override
-											public boolean isHTML() {
-												return true;
-											}
-											
-											@Override
-											public String getContent() {
-												return htmlContent;
-											}
-										};
-									}
-								}
-							}
-						} catch (Exception de) {
-							de.printStackTrace(); 
 						}
 						
-						return null;
-					}
-	        		
-	        	};
-				final Indexer indexer = new Indexer(searchableContentProvider, writer, baseURL) {
-					
-					private String prefix = "http://localhost:18080"+docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+"/";
-					
-					@Override
-					protected boolean isInternalLink(String href) {
-						return href.startsWith(prefix);
-					}
-					
-					@Override
-					protected String internalLinkPath(String href) {
-						return href.substring(prefix.length()-1);
-					}
-					
-				};
-				tocRoot.accept(new TocNodeVisitor() {
-					
-					@Override
-					public void visit(TocNode tocNode) {
-						if (tocNode.getHref()!=null) {
-							indexer.index(tocNode.getHref());
-						}						
-					}
-					
-				});
+						int idx = path.lastIndexOf('/');
+						String fn = idx==-1 ? path : path.substring(idx+1);
+						String contentType = getContentType(fn);
+						if (contentType!=null) {
+							if (MIME_TYPE_HTML.equals(contentType)) {
+								final String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+								return new ContentEntry() {
+
+									@Override
+									public boolean isHTML() {
+										return true;
+									}
+									
+									@Override
+									public String getContent() {
+										return content;
+									}
+								};
+							}
+							
+							Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
+							ExtensionEntry<ContentFilter> extensionEntry = tm==null ? null : tm.get(MIME_TYPE_HTML);
+							ContentFilter cf = extensionEntry==null ? null : extensionEntry.extension;
+							if (cf!=null) {
+								String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+								if (content!=null) {
+									final String htmlContent = String.valueOf(cf.filter(content, DocRoute.this, new URL(urlPrefix+docRoutePath+path), urlPrefix));
+									return new ContentEntry() {
 	
-				this.linkMap = indexer.getLinkMap();
-				this.missingPaths = indexer.getMissingPaths();
-	        }
-			
-	        searchIndexReader = DirectoryReader.open(searchIndexDirectory);
-	        System.out.println("Indexed "+searchIndexReader.numDocs()+" pages");
-			if (!missingPaths.isEmpty()) {
-				System.out.println("Missing paths:");
-				for (String mp: missingPaths) {
-					System.out.println("\t"+mp);
+										@Override
+										public boolean isHTML() {
+											return true;
+										}
+										
+										@Override
+										public String getContent() {
+											return htmlContent;
+										}
+									};
+								}
+							}
+						}
+					} catch (Exception de) {
+						de.printStackTrace(); 
+					}
+					
+					return null;
 				}
-			}
-	        indexSearcher = new IndexSearcher(searchIndexReader);
+        		
+        	};
+			final Indexer indexer = new Indexer(searchableContentProvider, searchIndexWriter, baseURL) {
+				
+				private String prefix = "http://localhost:18080"+docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+"/";
+				
+				@Override
+				protected boolean isInternalLink(String href) {
+					return href.startsWith(prefix);
+				}
+				
+				@Override
+				protected String internalLinkPath(String href) {
+					return href.substring(prefix.length()-1);
+				}
+				
+			};
+			
+			int[] indexTasksCounter = {0};
+			tocRoot.accept(new TocNodeVisitor() {
+				
+				@Override
+				public void visit(TocNode tocNode) {
+					if (tocNode.getHref()!=null) {						
+						executeIndexWriterTask(()->indexer.index(tocNode.getHref()), indexPass);
+						++indexTasksCounter[0];
+					}						
+				}
+				
+			});
+			
+	        System.out.println("Submitted "+indexTasksCounter[0]+" indexing tasks");			
+
+			// Terminator task
+	        executeIndexWriterTask(new Task() {
+				
+				@Override
+				public void execute() throws Exception {
+					DocRoute.this.linkMap = indexer.getLinkMap();
+					DocRoute.this.missingPaths = indexer.getMissingPaths();		
+			        System.out.println("[Pass "+indexPass+"] Indexed "+searchIndexWriter.numDocs()+" pages");
+					if (!missingPaths.isEmpty()) {
+						System.out.println("Missing paths:");
+						for (String mp: missingPaths) {
+							System.out.println("\t"+mp);
+						}
+					}
+				}
+			}, indexPass);
+			
 		} finally {
 			lock.writeLock().unlock();
 		}
@@ -1700,7 +1739,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return "No matching generator";
 	}
 	
-	boolean deactivating;
+	volatile boolean deactivating;
 	
 	public void deactivate(ComponentContext context) throws Exception {
 		deactivating = true;
@@ -1713,8 +1752,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	
 		lock.writeLock().lock();
 		try {
-			if (searchIndexReader!=null) {
-				searchIndexReader.close();
+			if (searchIndexerExecutor != null) {
+				searchIndexerExecutor.shutdown();
+			}
+			if (searcherManager!=null) {
+				searcherManager.close();
+			}
+			if (searchIndexWriter!=null) {
+				searchIndexWriter.close();
 			}
 			if (searchIndexDirectory!=null) {
 				searchIndexDirectory.close();
@@ -1744,9 +1789,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		System.arraycopy(context.getPath(), pathOffset, path, 0, path.length);
 		if (RequestMethod.GET.equals(context.getMethod())) {
 			if (path.length==1) {
-				if (lock.readLock().tryLock(30, TimeUnit.SECONDS)) {
-					try {
-						if ("toc.js".equals(path[0])) {
+				if ("toc.js".equals(path[0])) {
+					if (lock.readLock().tryLock(30, TimeUnit.SECONDS)) {
+						try {
 							final String hrefPrefix = ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath; 
 							final JSONObject idMap = new JSONObject();
 							tocRoot.accept(new TocNodeVisitor() {
@@ -1765,41 +1810,45 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							ret.put("idMap", idMap);
 							ret.put("tree", tocRoot.toJSON(docRoutePath).get("children"));
 							return new ValueAction("define("+ret+")");
-						} else if ("search".equals(path[0])) {
-					        QueryParser parser = new QueryParser("text", analyzer);
-					        Query query = parser.parse(context.getRequest().getParameter("query"));
-							ScoreDoc[] scoreDocs = indexSearcher.search(query, 150).scoreDocs;
-							JSONArray searchResults = new JSONArray();
-					        for (ScoreDoc scoreDoc: scoreDocs) {
-								Document hitDoc = indexSearcher.doc(scoreDoc.doc);
-								JSONObject searchResult = new JSONObject();
-								searchResults.put(searchResult);
-								String hitPath = hitDoc.get("path");
-								searchResult.put("href", ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+hitPath);
-								TocNode tocEntry = tocRoot.find(hitPath);
-								if (tocEntry==null || tocEntry.getText()==null) {
-									int idx = hitPath.lastIndexOf("/");
-									String lastSegment = idx==-1 ? hitPath : hitPath.substring(idx+1);
-									idx = lastSegment.lastIndexOf(".");
-									String title = idx==-1 ? lastSegment : lastSegment.substring(0, idx);
-									searchResult.put("name", title.replace('_', ' '));
-									searchResult.put("icon", "");
-								} else {
-									searchResult.put("name", tocEntry.getText());
-									searchResult.put("icon", tocEntry.getIcon()==null ? "" : context.getContextURL()+"/doc"+tocEntry.getIcon());
-								}
-								  
-					        }
-					        return new ValueAction(searchResults.toString());
+						} finally {
+							lock.readLock().unlock();
 						}
-					} finally {
-						lock.readLock().unlock();
+					} else {
+						System.out.println("Could not perform action due to toc being rebuilt");
+						return Action.INTERNAL_SERVER_ERROR; // TODO - better info if reloading takes too long
 					}
-				} else {
-					System.out.println("Could not perform action due to toc and index being rebuilt");
-					return Action.INTERNAL_SERVER_ERROR; // TODO - better info if reloading takes too long
-				}
-				
+				} else if ("search".equals(path[0])) {
+			        QueryParser parser = new QueryParser("text", analyzer);
+			        Query query = parser.parse(context.getRequest().getParameter("query"));
+			        IndexSearcher indexSearcher = searcherManager.acquire();
+			        try {
+						ScoreDoc[] scoreDocs = indexSearcher.search(query, 150).scoreDocs;
+						JSONArray searchResults = new JSONArray();
+				        for (ScoreDoc scoreDoc: scoreDocs) {
+							Document hitDoc = indexSearcher.doc(scoreDoc.doc);
+							JSONObject searchResult = new JSONObject();
+							searchResults.put(searchResult);
+							String hitPath = hitDoc.get("path");
+							searchResult.put("href", ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+hitPath);
+							TocNode tocEntry = tocRoot.find(hitPath);
+							if (tocEntry==null || tocEntry.getText()==null) {
+								int idx = hitPath.lastIndexOf("/");
+								String lastSegment = idx==-1 ? hitPath : hitPath.substring(idx+1);
+								idx = lastSegment.lastIndexOf(".");
+								String title = idx==-1 ? lastSegment : lastSegment.substring(0, idx);
+								searchResult.put("name", title.replace('_', ' '));
+								searchResult.put("icon", "");
+							} else {
+								searchResult.put("name", tocEntry.getText());
+								searchResult.put("icon", tocEntry.getIcon()==null ? "" : context.getContextURL()+"/doc"+tocEntry.getIcon());
+							}
+							  
+				        }
+				        return new ValueAction(searchResults.toString());
+			        } finally {
+			        	searcherManager.release(indexSearcher);
+			        }
+				}				
 				return Action.NOT_FOUND;
 			} 
 									
