@@ -233,39 +233,40 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		return new Statement() {
 
 			@Override
-			public void evaluate() throws Throwable {
-		    	boolean isPending = false;
-		    	Pending pendingAnnotation = method.getMethod().getAnnotation(Pending.class);
-		    	if (pendingAnnotation!=null) {
-		    		String until = pendingAnnotation.until();
-		    		if (until.trim().length()==0) {
-		    			isPending = true; // No expiration date - ignore the test
-		    		} else {
-		    			try {
-		    				isPending = new SimpleDateFormat("yyyy-MM-dd").parse(until).getTime() > System.currentTimeMillis();
-		    			} catch (ParseException e) {
-		    				System.err.println("Invalid until date: "+until);
-		    			}
-		    		}
-		    		
-		    	}
-				if (!isPending) {
-			    	collectorThreadLocal.get().beforeTestMethod(method.getMethod(), getIndex(), getParameters());
-			    	try {
-			    		superStatement.evaluate();
-			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), null);
-			    	} catch (Throwable th) {
-			    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), th);
-			    		throw th;
-			    	} finally {
-			    		// Close service trackers if any
-			    		for (ServiceTracker<?,?> st: serviceTrackersThreadLocal.get()) {
-			    			st.close();
+			public void evaluate() throws Throwable {		    	
+		    	collectorThreadLocal.get().beforeTestMethod(method.getMethod(), getIndex(), getParameters());
+		    	try {
+			    	boolean isPending = false;
+			    	Pending pendingAnnotation = method.getMethod().getAnnotation(Pending.class);
+			    	if (pendingAnnotation!=null) {
+			    		String until = pendingAnnotation.until();
+			    		if (until.trim().length()==0) {
+			    			isPending = true; // No expiration date - ignore the test
+			    		} else {
+			    			try {
+			    				isPending = new SimpleDateFormat("yyyy-MM-dd").parse(until).getTime() > System.currentTimeMillis();
+			    			} catch (ParseException e) {
+			    				System.err.println("Invalid until date: "+until);
+			    			}
 			    		}
 			    		
-			    		serviceTrackersThreadLocal.get().clear();
 			    	}
-				}
+			    	
+					if (!isPending) {
+						superStatement.evaluate();
+					}
+		    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), null);
+		    	} catch (Throwable th) {
+		    		collectorThreadLocal.get().afterTestMethod(method.getMethod(), th);
+		    		throw th;
+		    	} finally {
+		    		// Close service trackers if any
+		    		for (ServiceTracker<?,?> st: serviceTrackersThreadLocal.get()) {
+		    			st.close();
+		    		}
+		    		
+		    		serviceTrackersThreadLocal.get().clear();
+		    	}
 			}
 			
 		};
