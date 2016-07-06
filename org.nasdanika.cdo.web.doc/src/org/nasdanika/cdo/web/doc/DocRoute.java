@@ -421,8 +421,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				// If deactivating or from the previous pass - don't waste time.
 				if (!deactivating && indexPassCounter.get() == indexPass) {
 					try {
-						task.execute();						
-						searcherManager.maybeRefresh();
+						task.execute();
+						// Might have been closed while the task was executing
+						if (!deactivating) {
+							searcherManager.maybeRefresh();
+						}
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
