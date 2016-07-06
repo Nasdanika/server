@@ -14,6 +14,7 @@ test:
     - mv org.nasdanika.repository/target/repository $CIRCLE_ARTIFACTS    
 
     - mvn clean verify javadoc:javadoc
+    
     - mkdir $CIRCLE_ARTIFACTS/apidocs
     
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
@@ -84,6 +85,11 @@ test:
     - mv org.nasdanika.webtest/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
     - mv org.nasdanika.workspace.wizard/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
     
+    
+deployment:
+  staging:
+    branch: master
+    commands:      
     - wget http://nasdanika.org/commons-net-1.4.1.jar
     - wget http://nasdanika.org/jakarta-oro-2.0.8.jar    
     - ant -verbose -f ftp-upload.xml -lib commons-net-1.4.1.jar:jakarta-oro-2.0.8.jar -Dftp.server=$DEPLOY_FTP_SERVER -Dftp.user=$DEPLOY_FTP_USER -Dftp.password=$DEPLOY_FTP_PASSWORD -Dcircle.artifacts=$CIRCLE_ARTIFACTS
