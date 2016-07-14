@@ -1,15 +1,10 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
 import java.net.URL;
-import java.util.Collection;
-import java.util.Collections;
 
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.ParameterizedTestResult;
 
