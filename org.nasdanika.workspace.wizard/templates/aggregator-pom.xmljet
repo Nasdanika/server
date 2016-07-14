@@ -47,6 +47,12 @@
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/apidocs</link>						
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/apidocs</link>						
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/apidocs</link>
+						
+						<link>http://download.eclipse.org/modeling/emf/emf/javadoc/2.11</link>
+						<link>http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc</link>		
+						<link>http://stleary.github.io/JSON-java</link>			
+						<link>https://osgi.org/javadoc/r4v42/</link>
+						<link>http://seleniumhq.github.io/selenium/docs/api/java/</link>
 						<!--						
 						<link>http://docs.oracle.com/javase/8/docs/api</link>						
 						-->
