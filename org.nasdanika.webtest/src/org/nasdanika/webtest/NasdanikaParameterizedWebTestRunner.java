@@ -521,6 +521,12 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				}
 				ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
 				org.nasdanika.webtest.model.ParameterizedTestResult testResult = modelFactory.createParameterizedTestResult();
+				
+				WebTestUtil.titleAndDescriptionAndLinksToDescriptor(getTestClass(), testResult);
+				if (WebTestUtil.isBlank(testResult.getTitle())) {
+					testResult.setTitle(WebTestUtil.title(getTestClass().getName()));
+				}
+				testResult.setQualifiedName(getTestClass().getName());	
 								
 				List<Field> paramFields = new ArrayList<>();
 				for (Field f: getTestClass().getFields()) {

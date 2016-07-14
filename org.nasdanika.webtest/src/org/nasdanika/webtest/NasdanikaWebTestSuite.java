@@ -294,7 +294,12 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 				}				
 				org.nasdanika.webtest.model.TestSuiteResult testResult = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestSuiteResult();
 				objectMap.put(this, testResult);
-				WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getTestClass(), testResult);
+				WebTestUtil.titleAndDescriptionAndLinksToDescriptor(getTestClass(), testResult);
+				if (WebTestUtil.isBlank(testResult.getTitle())) {
+					testResult.setTitle(WebTestUtil.title(getTestClass().getName()));
+				}
+				testResult.setQualifiedName(getTestClass().getName());	
+								
 
 				for (TestResult tr: getChildren()) {
 					org.nasdanika.webtest.model.TestResult trModel = tr.toModel(screenshotsCollector, screenshotsDir, objectMap);

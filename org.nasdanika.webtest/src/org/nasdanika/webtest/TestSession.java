@@ -177,7 +177,8 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 		if (WebTestUtil.isBlank(testSession.getTitle())) {
 			testSession.setTitle(WebTestUtil.title(klass.getName()));
 		}
-		testSession.setQualifiedName(klass.getName());		
+		testSession.setQualifiedName(klass.getName());	
+		testSession.setTimestamp(System.currentTimeMillis());
 		
 		Map<String, ActorResult> actorResults = new HashMap<>();
 		Map<String, PageResult> pageResults = new HashMap<>();
