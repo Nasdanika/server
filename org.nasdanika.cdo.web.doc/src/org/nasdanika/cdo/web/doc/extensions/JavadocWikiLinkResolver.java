@@ -26,6 +26,10 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 	@Override
 	public String resolve(String spec, String docRoutePath, Map<Object, Object> environment) {
 		specTL.set(spec);
+		int hashIdx = spec.indexOf("#");
+		if (hashIdx != -1) {
+			spec = spec.substring(0, hashIdx);
+		}
 		for (Entry<String, String> location: locations.entrySet()) {
 			String key = location.getKey();
 			String value = location.getValue();
@@ -121,12 +125,44 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 		
 		return htmlFactory.collapsible(Bootstrap.Style.INFO, "Package map", true, packageMapTable);
 	}
-
+	
+	private boolean convertMethodSignature = true;
+	
+	public void setConvertMethodSignature(boolean convertMethodSignature) {
+		this.convertMethodSignature = convertMethodSignature;
+	}
+	
 	@Override
 	public Rendering render(String href, String content, String config, boolean isMissing) {
-		Rendering ret = new Rendering(href, content);
 		String spec = specTL.get();
-		if (spec!=null) {
+		int hashIdx = spec.indexOf("#");
+		if (hashIdx != -1) {
+			String fragment = spec.substring(hashIdx+1);
+			int firstParenthesisIdx = fragment.indexOf("(");
+			if (convertMethodSignature && firstParenthesisIdx > 0 && fragment.endsWith(")")) {
+				// Convert (type[,type]) to -type-type-						
+				StringBuilder fragmentBuilder = new StringBuilder(fragment.substring(0, firstParenthesisIdx)).append("-");
+				String[] pTypes = fragment.substring(firstParenthesisIdx+1, fragment.length()-1).split(",");
+				for (String pType: pTypes) {
+					pType = pType.trim();
+					int bIdx = pType.indexOf("[]");
+					if (bIdx == -1) {
+						fragmentBuilder.append(pType);
+					} else {
+						fragmentBuilder.append(pType.substring(0, bIdx));
+						for (int bc = bIdx; bc < pType.length(); bc+=2) {
+							fragmentBuilder.append(":A");
+						}
+					}
+					fragmentBuilder.append("-");
+				}
+				fragment = fragmentBuilder.toString();
+			} 
+			href += "#" + fragment;
+		}
+		
+		Rendering ret = new Rendering(href, content);
+		if (spec!=null && !content.equals(spec)) {
 			ret.withAttribute("title", spec);
 		}
 		ret.withAttribute("target", "javaDoc");

@@ -79,7 +79,13 @@ Resolves JavaDoc URL from the class/package name. Usage: ``[[javadoc>fully quali
 * ``[[javadoc>java.lang.String]]`` is rendered as [[javadoc>java.lang.String]]
 * ``[[javadoc>java.lang.String|java.lang.String]]`` is rendered as [[javadoc>java.lang.String|java.lang.String]]
 
-This resolver shall be configured by setting either ``location`` or ``packageMap`` properties. 
+The fully qualified name can contain a field/method fragment, e.g. ``java.lang.String#CASE_INSENSITIVE_ORDER`` or ``java.lang.String#compareTo(java.lang.String)``. In this case the URL is rendered with the field or method fragment. 
+
+This resolver shall be configured by setting ``location``, ``packageMap``, and ``convertMethodSignature`` properties. 
+
+##### Convert method signature
+
+If set to true (default) method signatures in fragments are converted to use dashes for parenthesis and commas, and ``:A`` for ``[]``, e.g. ``compareTo(java.lang.String)`` -> ``compareTo-java.lang.String-``.
 
 ##### Location
 When ``location`` property is used resolver downloads ``package-list`` file to map package names to documentation locations. Example: 
