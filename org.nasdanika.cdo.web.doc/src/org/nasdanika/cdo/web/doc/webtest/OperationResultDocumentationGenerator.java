@@ -1,67 +1,46 @@
-package org.nasdanika.cdo.web.doc.story;
+package org.nasdanika.cdo.web.doc.webtest;
 
 import java.net.URL;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.OperationResult;
 import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.ScreenshotEntry;
 
-class OperationResultDocumentationGenerator<T extends OperationResult> implements StoryElementDocumentationGenerator<T> {
+abstract class OperationResultDocumentationGenerator<T extends OperationResult> extends DescriptorDocumentationGenerator<T> {
 
-	protected StoryDocumentationGenerator storyDocumentationGenerator;
 
-	protected OperationResultDocumentationGenerator(StoryDocumentationGenerator storyDocumentationGenerator) {
-		this.storyDocumentationGenerator = storyDocumentationGenerator;
+	protected OperationResultDocumentationGenerator(TestResultsDocumentationGenerator testResultsDocumentationGenerator) {
+		super(testResultsDocumentationGenerator);
 	}
 
-	@Override
-	public void createToc(T operationResult, TocNode parent) {
-		try {
-			parent.createChild(
-					operationResult.getTitle(), 
-					storyDocumentationGenerator.getObjectPath(operationResult)+"/index.html",
-					getIcon(), 
-					null,
-					obj -> obj == operationResult);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	protected String getIcon() {
-		return null;
-	}
-			
-	@Override
-	public Object getContent(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
-		if (path.endsWith("/index.html")) {
-			return getIndex(obj, context, baseURL, urlPrefix, path).toString();
-		}
-		
-		return Action.NOT_FOUND;
-	}
-
-	protected Fragment getIndex(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
+	protected Fragment getIndex(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
+		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
-		Fragment ret = htmlFactory.fragment(
-			htmlFactory.tag(
-					TagName.h3, 
-					htmlFactory.tag(TagName.img).attribute("src", storyDocumentationGenerator.getDocRoute().getDocRoutePath()+getIcon()).style().margin().right("5px"),
-					StringEscapeUtils.escapeHtml4(obj.getTitle())));
 		
 		ret.content(htmlFactory.div("<B>Status: </B>", StringEscapeUtils.escapeHtml4(obj.getStatus().name())).style().margin().bottom("10px"));
 
 		String resultID = htmlFactory.nextId();
+		
+//		allScreenshots()
+//		getArguments()
+//		getChildren()
+//		getError()
+//		getFailure()
+//		getFinish()
+//		getInstanceAlias()
+//		getOperationName()
+//		getResult()
+//		getScreenshots()
+//		getStart()
+//		getStatus()		
 		
 		// TODO - description
 //		if (!CoreUtil.isBlank(obj.getDescription())) {
@@ -78,11 +57,12 @@ class OperationResultDocumentationGenerator<T extends OperationResult> implement
 		
 		try {
 			Screenshot prev = null;
+			boolean hasSlides = false;
 			for (ScreenshotEntry screenshotEntry: obj.allScreenshots()) {
 				Screenshot screenshot = screenshotEntry.getScreenshot();
 				if (prev != screenshot) {
 					prev = screenshot;
-					String imageLocation = storyDocumentationGenerator.resolveScreenshotLocation(screenshot);
+					String imageLocation = testResultsDocumentationGenerator.resolveScreenshotLocation(screenshot);
 					Tag imageTag = htmlFactory.tag(TagName.img).attribute("src", imageLocation).style("margin", "auto");
 					Tag link = htmlFactory.link(imageLocation, imageTag)
 							.attribute("data-lightbox", "test-"+resultID);
@@ -99,6 +79,7 @@ class OperationResultDocumentationGenerator<T extends OperationResult> implement
 		//					caption+=comment;		
 		//				}
 		//			}
+					hasSlides = true;
 					screenshotCarousel.slide()
 						.content(link);
 	//					.caption(htmlFactory.label(Bootstrap.Style.INFO, se.getComment()).style("opacity", "0.7"));
@@ -106,7 +87,9 @@ class OperationResultDocumentationGenerator<T extends OperationResult> implement
 			}
 			
 	//		testMethodResultWriter.write("<a name='carousel_"+screenshotCarousel.getId()+"'/>");
-			ret.content(screenshotCarousel);
+			if (hasSlides) {
+				ret.content(screenshotCarousel);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

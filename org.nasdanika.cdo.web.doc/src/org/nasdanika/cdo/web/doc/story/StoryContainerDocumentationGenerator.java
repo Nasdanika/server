@@ -4,12 +4,11 @@ import java.net.URL;
 import java.util.Collection;
 
 import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.story.Epic;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
 import org.nasdanika.web.HttpServletRequestContext;

@@ -1,10 +1,8 @@
 package org.nasdanika.cdo.web.doc.story;
 
 import java.net.URL;
-import java.util.Collection;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -60,11 +58,9 @@ class ScenarioDocumentationGenerator extends CatalogElementDocumentationGenerato
 		return ret;
 	}
 	
-	@Override
-	protected Collection<? extends EObject> getTocChildren(Scenario scenario) {
-		return storyDocumentationGenerator.findLinkedTestResults(scenario);
-	}
-
-	// TODO - link test results.
+//	@Override
+//	protected Collection<? extends EObject> getTocChildren(Scenario scenario) {
+//		return storyDocumentationGenerator.findLinkedTestResults(scenario);
+//	}
 	
 }

@@ -268,12 +268,12 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	
 	void genRow(HTMLFactory htmlFactory, Table methodTable) {
 		Row row = methodTable.row();
-		if (isFailure()) {
+		if (isPending()) {
+			row.style(Bootstrap.Style.DEFAULT);
+		} else if (isFailure()) {
 			row.style(Bootstrap.Style.DANGER);
 		} else if (failure!=null) {
 			row.style(Bootstrap.Style.WARNING);
-		} else if (isPending()) {
-			row.style(Bootstrap.Style.DEFAULT);
 		} else {
 			row.style(Bootstrap.Style.SUCCESS);
 		}
@@ -295,7 +295,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		}
 		
 		String methodDetailsLocation = "content/operation_"	+ id + ".html";
-		if (failure==null) {
+		if (failure==null || getRootCause() instanceof PendingException) {
 			if (isPending()) { // Only the first screenshot or no calls to actor/page methods.
 				Tag routeLink = htmlFactory.span(
 						htmlFactory.glyphicon(Glyphicon.time), 
@@ -335,6 +335,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	}
 
 	public boolean isPending() {
+		if (getRootCause() instanceof PendingException) {
+			return true;
+		}
 		Screenshot screenshot = getOperation().getAnnotation(Screenshot.class);
 		int expectedScreenshots = screenshot==null || Arrays.asList(screenshot.value()).contains(Screenshot.When.BEFORE) ? 2 : 1;
 		return allScreenshots().size()<expectedScreenshots && childResults.isEmpty();
@@ -342,7 +345,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		
 	void genRows(HTMLFactory htmlFactory, Table methodTable, Object carouselId, List<ScreenshotEntry> screenshots, int indent) {
 		Row row = methodTable.row();
-		if (isFailure()) {
+		if (isPending()) {
+			row.style(Bootstrap.Style.MUTED);
+		} else if (isFailure()) {
 			row.style(Bootstrap.Style.DANGER);
 		} else if (failure!=null) {
 			row.style(Bootstrap.Style.WARNING);
@@ -563,12 +568,12 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 			}
 		}
 		
-		if (isFailure()) {
+		if (isPending()) {
+			data.put("status", "PENDING");
+		} else if (isFailure()) {
 			data.put("status", "FAIL");
 		} else if (failure!=null) {
 			data.put("status", "ERROR");
-		} else if (isPending()) {
-			data.put("status", "PENDING");
 		} else {
 			data.put("status", "PASS");
 		}
@@ -712,12 +717,12 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 			}
 		}
 		
-		if (isFailure()) {
+		if (isPending()) {
+			model.setStatus(OperationStatus.PENDING);
+		} else if (isFailure()) {
 			model.setStatus(OperationStatus.FAIL);
 		} else if (failure!=null) {
 			model.setStatus(OperationStatus.ERROR);
-		} else if (isPending()) {
-			model.setStatus(OperationStatus.PENDING);
 		} else {
 			model.setStatus(OperationStatus.PASS);
 		}

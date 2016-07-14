@@ -2,11 +2,12 @@ package org.nasdanika.cdo.web.doc.story;
 
 import java.net.URL;
 
+import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.story.Catalog;
 import org.nasdanika.story.CatalogElement;
@@ -33,7 +34,7 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 				if (el instanceof Protagonist && ((Protagonist) el).getLinkTo() != null) {
 					continue;
 				}
-				StoryElementDocumentationGenerator<Object> elTocBuilderRoute = storyDocumentationGenerator.getStoryElementDocumentationGenerator(el.eClass());
+				DocumentationGenerator<Object> elTocBuilderRoute = storyDocumentationGenerator.getDocumentationGenerator(el.eClass());
 				if (elTocBuilderRoute != null) {
 					elTocBuilderRoute.createToc(el, catalogToc);
 				}

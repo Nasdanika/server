@@ -30,6 +30,6 @@ public @interface Description {
 	 * Description content (MIME) type. Text by default. 
 	 * @return
 	 */
-	String contentType() default "text";
+	String contentType() default "text/plain";
 	
 }

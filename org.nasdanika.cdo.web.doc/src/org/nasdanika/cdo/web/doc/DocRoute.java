@@ -83,6 +83,7 @@ import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver;
 import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator;
+import org.nasdanika.cdo.web.doc.webtest.TestResultsDocumentationGenerator;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.NasdanikaException;
 import org.nasdanika.html.Bootstrap;
@@ -125,7 +126,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private static final String DIAGRAM_PNG = "diagram.png";
 	private static final String INDEX_HTML = "index.html";
 	private static final String PACKAGE_SUMMARY_HTML = "package-summary.html";
-	private static final String MIME_TYPE_HTML = "text/html";
+	public static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
 	private static final String EPACKAGE_DOCUMENTATION_GENERATOR = "epackage-documentation-generator";
@@ -153,7 +154,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private static final String TOC_PATH = "/toc/";
 	
 	public static final String STORY_PATH = "/story/";
-	public static final String TEST_RESULT_PATH = "/test-result/";	
+	public static final String TEST_RESULTS_PATH = "/test-results/";	
 	
 	public static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
 	public static final int MARKDOWN_OPTIONS = 	Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS ^ Extensions.SUPPRESS_ALL_HTML;
@@ -955,7 +956,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	 * reset to false when loading is completed.
 	 */
 	private AtomicBoolean doLoad = new AtomicBoolean();
+	
+	// TODO - content provider extension?
 	private StoryDocumentationGenerator storyDocumentationGenerator;
+	private TestResultsDocumentationGenerator testResultsDocumentationGenerator;
 	
 	void scheduleReloading() {
 		if (loadTimer!=null && !doLoad.getAndSet(true)) {
@@ -1027,8 +1031,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		}
 		lock.writeLock().lock();
 		try {
-			// Load stories
-			storyDocumentationGenerator = new StoryDocumentationGenerator(this, storyModels, testResultsModels);
+			// Load stories & test results
+			storyDocumentationGenerator = new StoryDocumentationGenerator(this, storyModels);
+			testResultsDocumentationGenerator = new TestResultsDocumentationGenerator(this, testResultsModels);
 			
 			// TOC
 			tocRoot = new TocNode(null, null, null, null);
@@ -1083,6 +1088,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			}
 			
 			storyDocumentationGenerator.createRootTocEntries(tocRoot);	
+			testResultsDocumentationGenerator.createRootTocEntries(tocRoot);	
 			
 			synchronized (tocNodeFactories) {
 				for (TocNodeFactory tnf: tocNodeFactories) {
@@ -1657,6 +1663,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			return storyDocumentationGenerator.getContent(context, baseURL, urlPrefix, path);
 		}		
 		
+		if (path.startsWith(TEST_RESULTS_PATH)) {
+			return testResultsDocumentationGenerator.getContent(context, baseURL, urlPrefix, path);
+		}				
+		
 		// TODO - diagrams - package/classifier - session/global. Delegate to extensions. 
 		
 		// TODO - extensions
@@ -1783,6 +1793,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		if (storyDocumentationGenerator != null) {
 			storyDocumentationGenerator.close();
 		}
+		
+		if (testResultsDocumentationGenerator != null) {
+			testResultsDocumentationGenerator.close();
+		}
+		
 	}
 	
 	@Override
@@ -1867,14 +1882,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			}
 			if (content!=null) {
 				if (path.length>0) {
-					String contentType = "packages".equals(path[0]) ? "text/html" : getContentType(path[path.length-1]);
+					String contentType = "packages".equals(path[0]) ? MIME_TYPE_HTML : getContentType(path[path.length-1]);
 					if (contentType!=null) {
 						Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
 						if (tm!=null) {
 							for (Entry<String, ExtensionEntry<ContentFilter>> tme: tm.entrySet()) {
 								context.getResponse().setContentType(tme.getKey());
 								Object filteredContent = tme.getValue().extension.filter(content, this, new URL(requestURL), urlPrefix);
-								if ("text/html".equals(tme.getKey()) && filteredContent instanceof String) {
+								if (MIME_TYPE_HTML.equals(tme.getKey()) && filteredContent instanceof String) {
 									TocNode toc = tocRoot.find(pathStr);
 									if (doNavWrap && toc!=null) {
 										filteredContent = navWrap(context.adapt(HTMLFactory.class), toc, (String) filteredContent, prefix);
@@ -1884,7 +1899,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							}
 						}
 					}
-					if ("text/html".equals(contentType) && content instanceof String) {
+					if (MIME_TYPE_HTML.equals(contentType) && content instanceof String) {
 						TocNode toc = tocRoot.find(pathStr);
 						if (doNavWrap && toc!=null) {
 							content = navWrap(context.adapt(HTMLFactory.class), toc, (String) content, prefix);
@@ -2462,6 +2477,34 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 	
 	/**
+	 * Converts content from one type to another using registered content filters.
+	 * @param content
+	 * @param sourceContentType
+	 * @param targetContentType
+	 * @return
+	 * @throws Exception 
+	 */
+	public Object filterContent(
+			Object content, 
+			String sourceContentType, 
+			String targetContentType,
+			URL baseURL,
+			String urlPrefix) throws Exception {
+		if (sourceContentType.equals(targetContentType)) {
+			return content;
+		}
+		Map<String, ExtensionEntry<ContentFilter>> cfe = contentFilters.get(sourceContentType);
+		if (cfe == null) {
+			return null;
+		}
+		ExtensionEntry<ContentFilter> cf = cfe.get(targetContentType);
+		if (cf == null) {
+			return null;
+		}
+		return cf.extension.filter(content, this, baseURL, urlPrefix);
+	}
+	
+	/**
 	 * Iterates over registered {@link MarkdownPreProcessor}s. Invokes <code>match</code> for each pre-processor.
 	 * Selects the matching preprocessor with the earliest match region and invokes its pre-process method. If pre-processor
 	 * returns null, goes to the next pre-processor in the list. Otherwise continues with pre-processors which matched regions
@@ -2886,6 +2929,19 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	
 	/**
 	 * Helper method.
+	 * @param markdownSource
+	 * @return
+	 */
+	public String markdownToHtml(String markdownSource) {
+		try {
+			return markdownToHtml(new URL(baseURL), urlPrefix, markdownSource);
+		} catch (MalformedURLException e) {
+			return htmlFactory.span("Exception: "+e).bootstrap().text().color(Style.DANGER).toString();
+		}		
+	}
+	
+	/**
+	 * Helper method.
 	 * @param baseURL
 	 * @param urlPrefix
 	 * @param markdownSource
@@ -2895,6 +2951,18 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return htmlFactory.div(markdownToHtml(baseURL, urlPrefix, markdownSource)).addClass("markdown-body");
 	}
 	
+	/**
+	 * Helper method.
+	 * @param markdownSource
+	 * @return
+	 */
+	public Tag markdownToHtmlDiv(String markdownSource) {
+		try {
+			return markdownToHtmlDiv(new URL(baseURL), urlPrefix, markdownSource);
+		} catch (MalformedURLException e) {
+			return htmlFactory.div("Exception: "+e).bootstrap().text().color(Style.DANGER);
+		}					
+	}		
 
 	public String javaDocLink(String className, boolean qualified, boolean isArray) {
 		try {
@@ -2905,8 +2973,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"]]");
 		} catch (MalformedURLException e) {
 			return htmlFactory.span("Exception: "+e).bootstrap().text().color(Style.DANGER).toString();
-		}		
-				
+		}						
 	}
 	
 	public Tag bundleLink(Bundle bundle) {

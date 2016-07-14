@@ -6,6 +6,7 @@ import java.util.Collections;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
@@ -15,7 +16,7 @@ import org.nasdanika.story.CatalogElement;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 
-abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> implements StoryElementDocumentationGenerator<T> {
+abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> implements DocumentationGenerator<T> {
 
 	protected StoryDocumentationGenerator storyDocumentationGenerator;
 
@@ -34,7 +35,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					obj -> obj == catalogElement);
 
 			for (EObject el: getTocChildren(catalogElement)) {
-				StoryElementDocumentationGenerator<Object> elTocBuilderRoute = storyDocumentationGenerator.getStoryElementDocumentationGenerator(el.eClass());
+				DocumentationGenerator<Object> elTocBuilderRoute = storyDocumentationGenerator.getDocumentationGenerator(el.eClass());
 				if (elTocBuilderRoute != null) {
 					elTocBuilderRoute.createToc(el, catalogElementToc);
 				}

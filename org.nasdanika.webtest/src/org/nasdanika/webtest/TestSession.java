@@ -165,14 +165,20 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 	}
 	
 	/**
-	 * Writes test results model and screenshots to the specified output directory. The results model is written into "test-results.xml" file, and 
-	 * screenshots are stored in the "screenshots" sub-directory. 
+	 * Writes test results model and screenshots to the specified output directory.
 	 * @param outputDir
 	 * @throws IOException 
 	 */
 	public void writeModel(File outputDir, String modelFileName, String screenshotsDirName) throws IOException {		
 		org.nasdanika.webtest.model.TestSession testSession = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestSession();
 		testSession.setNode(InetAddress.getLocalHost().getHostName());
+		
+		WebTestUtil.titleAndDescriptionAndLinksToDescriptor(klass, testSession);
+		if (WebTestUtil.isBlank(testSession.getTitle())) {
+			testSession.setTitle(WebTestUtil.title(klass.getName()));
+		}
+		testSession.setQualifiedName(klass.getName());		
+		
 		Map<String, ActorResult> actorResults = new HashMap<>();
 		Map<String, PageResult> pageResults = new HashMap<>();
 		File screenshotsDir = new File(outputDir, screenshotsDirName);

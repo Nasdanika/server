@@ -3,12 +3,6 @@ package org.nasdanika.cdo.web.doc.story;
 import java.net.URL;
 
 import org.nasdanika.html.Fragment;
-import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Table;
-import org.nasdanika.html.Bootstrap.Style;
-import org.nasdanika.html.Tag.TagName;
-import org.nasdanika.story.Catalog;
-import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Role;
 import org.nasdanika.web.HttpServletRequestContext;
 
