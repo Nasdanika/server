@@ -140,7 +140,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 
 	private JSONObject toJSON(Map<Object, String> idMap) throws JSONException {
 		JSONObject data = new JSONObject();
-		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getActorInterface(), data);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToJSON(getActorInterface(), data);
 		if (getTitle()!=null) {
 			data.put("title", getTitle());
 		}
@@ -199,7 +199,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
 		org.nasdanika.webtest.model.ActorResult actorResult = modelFactory.createActorResult();
 		objectMap.put(this, actorResult);
-		WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getActorInterface(), actorResult);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(getActorInterface(), actorResult);
 		if (getTitle()!=null) {
 			actorResult.setTitle(getTitle());
 		}

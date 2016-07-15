@@ -52,7 +52,7 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 		pConnection.setDoOutput(true);
 		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 		JSONObject data = new JSONObject();
-		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(klass, data);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToJSON(klass, data);
 		data.put("size", publishSize());
 		data.put("node", InetAddress.getLocalHost().getHostName());
 		try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
@@ -173,11 +173,10 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 		org.nasdanika.webtest.model.TestSession testSession = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestSession();
 		testSession.setNode(InetAddress.getLocalHost().getHostName());
 		
-		WebTestUtil.titleAndDescriptionAndLinksToDescriptor(klass, testSession);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(klass, testSession);
 		if (WebTestUtil.isBlank(testSession.getTitle())) {
 			testSession.setTitle(WebTestUtil.title(klass.getName()));
 		}
-		testSession.setQualifiedName(klass.getName());	
 		testSession.setTimestamp(System.currentTimeMillis());
 		
 		Map<String, ActorResult> actorResults = new HashMap<>();

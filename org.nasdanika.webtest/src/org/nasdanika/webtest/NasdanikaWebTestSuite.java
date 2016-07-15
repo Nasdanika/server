@@ -230,7 +230,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 				pConnection.setDoOutput(true);
 				pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 				JSONObject data = new JSONObject();
-				WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getTestClass(), data);
+				WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToJSON(getTestClass(), data);
 				data.put("type", "suite");
 				try (Writer w = new OutputStreamWriter(pConnection.getOutputStream())) {
 					data.write(w);
@@ -294,12 +294,10 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 				}				
 				org.nasdanika.webtest.model.TestSuiteResult testResult = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestSuiteResult();
 				objectMap.put(this, testResult);
-				WebTestUtil.titleAndDescriptionAndLinksToDescriptor(getTestClass(), testResult);
+				WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(getTestClass(), testResult);
 				if (WebTestUtil.isBlank(testResult.getTitle())) {
 					testResult.setTitle(WebTestUtil.title(getTestClass().getName()));
 				}
-				testResult.setQualifiedName(getTestClass().getName());	
-								
 
 				for (TestResult tr: getChildren()) {
 					org.nasdanika.webtest.model.TestResult trModel = tr.toModel(screenshotsCollector, screenshotsDir, objectMap);

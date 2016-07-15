@@ -672,7 +672,7 @@ public class WebTestUtil {
 		new WaitAnnotations(pageMethod).doWait(driver);
 	}
 		
-	static void qualifiedNameAndTitleAndDescriptionToJSON(Class<?> klass, JSONObject target) throws JSONException {
+	static void qualifiedNameAndTitleAndDescriptionAndLinksToJSON(Class<?> klass, JSONObject target) throws JSONException {
 		target.put("qualifiedName", klass.getName());
 		titleAndDescriptionAndLinksToJSON(klass, target);
 		if (!target.has("title")) {
@@ -695,7 +695,7 @@ public class WebTestUtil {
 		}
 	}
 		
-	static void qualifiedNameAndTitleAndDescriptionToDescriptor(Class<?> klass, Descriptor target) {
+	static void qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(Class<?> klass, Descriptor target) {
 		target.setQualifiedName(klass.getName());
 		titleAndDescriptionAndLinksToDescriptor(klass, target);
 		if (isBlank(target.getTitle())) {

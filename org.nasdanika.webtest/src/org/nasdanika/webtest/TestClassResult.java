@@ -336,7 +336,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		pConnection.setDoOutput(true);
 		pConnection.setRequestProperty("Authorization", "Bearer "+securityToken);
 		JSONObject data = new JSONObject();
-		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getTestClass(), data);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToJSON(getTestClass(), data);
 		JSONObject stats = new JSONObject();
 		data.put("stats", stats);
 		for (Entry<TestStatus, Integer> ce: getStats().entrySet()) {
@@ -415,7 +415,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		}
 		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
 		org.nasdanika.webtest.model.TestClassResult testResult = modelFactory.createTestClassResult();
-		WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getTestClass(), testResult);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(getTestClass(), testResult);
 		
 		for (Entry<TestStatus, Integer> ce: getStats().entrySet()) {
 			testResult.getStats().put(ce.getKey().toString(), ce.getValue());

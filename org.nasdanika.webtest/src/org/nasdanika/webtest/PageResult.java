@@ -164,7 +164,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 
 	private JSONObject toJSON(Map<Object, String> idMap) throws JSONException {
 		JSONObject data = new JSONObject();
-		WebTestUtil.qualifiedNameAndTitleAndDescriptionToJSON(getPageInterface(), data);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToJSON(getPageInterface(), data);
 		if (getTitle()!=null) {
 			data.put("title", getTitle());
 		}
@@ -334,7 +334,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 	public org.nasdanika.webtest.model.PageResult toModel(File screenshotsDir, Map<Object, Object> objectMap) {
 		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
 		org.nasdanika.webtest.model.PageResult pageResult = modelFactory.createPageResult();
-		WebTestUtil.qualifiedNameAndTitleAndDescriptionToDescriptor(getPageInterface(), pageResult);
+		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(getPageInterface(), pageResult);
 		if (getTitle()!=null) {
 			pageResult.setTitle(getTitle());
 		}
