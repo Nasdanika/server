@@ -29,6 +29,20 @@ TOC entries can be mounted to:
 * Other topics and TOC's,
 * Bundles, components, EPackages, and EClassifiers as sub-nodes, text in the overview tab, or tabs. 
 
+### Story model
+
+Story model can be mounted to the documentation system with ``org.nasdanika.story.model`` extension point.
+
+### Test results
+
+[WebTest](https://github.com/Nasdanika/server/wiki/webtest) results model can be mounted to the documentation system with ``org.nasdanika.webtest.model.results`` extension point: 
+
+```xml
+<extension point="org.nasdanika.webtest.model.results">
+    <result model="model/NasdanikaBankTests.xml"></result>
+</extension>
+```
+
 ### Search
 
 Search is implemented with [Apache Lucene](https://lucene.apache.org/), query syntax is described [here](https://lucene.apache.org/core/5_3_1/queryparser/org/apache/lucene/queryparser/classic/package-summary.html#package_description).
