@@ -31,10 +31,12 @@ public class DocAppRouteRenderer {
   protected final String TEXT_16 = "/bundle/org.nasdanika.web.resources/js/underscore-min.js\")," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
   protected final String TEXT_17 = "/bundle/org.nasdanika.web.resources/js/backbone-min.js\")," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
   protected final String TEXT_18 = "/bundle/org.nasdanika.web.resources/bootstrap/js/bootstrap.min.js\")," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
-  protected final String TEXT_19 = "/bundle/org.nasdanika.web.resources/js/require.js\")," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script, htmlFactory.interpolate(getClass().getResource(\"require-config.js\"), \"base-url\", context.getContextURL()+\"/";
-  protected final String TEXT_20 = "/bundle/org.nasdanika.web.resources/js\"))," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
-  protected final String TEXT_21 = "/bundle/org.nasdanika.web.resources/js/lightbox.min.js\")," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
-  protected final String TEXT_22 = "/resources/highlight/highlight.pack.js\")), \t\t\t\t" + NL + "\t\t\t\tappPanel);" + NL + "\t\t" + NL + "\t\treturn new Action() {" + NL + "\t\t\t" + NL + "\t\t\t@Override" + NL + "\t\t\tpublic void close() throws Exception {" + NL + "\t\t\t\tapp.close();\t\t\t\t" + NL + "\t\t\t}" + NL + "\t\t\t" + NL + "\t\t\t@Override" + NL + "\t\t\tpublic Object execute() throws Exception {" + NL + "\t\t\t\treturn app.toString();" + NL + "\t\t\t}" + NL + "\t\t};" + NL + "\t\t" + NL + "\t}" + NL + "" + NL + "\t@Override" + NL + "\tpublic boolean canExecute() {" + NL + "\t\treturn true;" + NL + "\t}" + NL + "" + NL + "\t@Override" + NL + "\tpublic void close() throws Exception {" + NL + "\t\t// NOP" + NL + "\t}" + NL + "" + NL + "}";
+  protected final String TEXT_19 = "/bundle/org.nasdanika.web.resources/js/d3.min.js\"), \t\t\t\t" + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
+  protected final String TEXT_20 = "/bundle/org.nasdanika.web.resources/js/c3.min.js\"),\t\t\t\t\t\t\t\t\t\t\t\t" + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
+  protected final String TEXT_21 = "/bundle/org.nasdanika.web.resources/js/require.js\")," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script, htmlFactory.interpolate(getClass().getResource(\"require-config.js\"), \"base-url\", context.getContextURL()+\"/";
+  protected final String TEXT_22 = "/bundle/org.nasdanika.web.resources/js\"))," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
+  protected final String TEXT_23 = "/bundle/org.nasdanika.web.resources/js/lightbox.min.js\")," + NL + "\t\t\t\t\t\thtmlFactory.tag(TagName.script).attribute(\"src\", context.getContextURL()+\"/";
+  protected final String TEXT_24 = "/resources/highlight/highlight.pack.js\")), \t\t\t\t" + NL + "\t\t\t\tappPanel);" + NL + "\t\t" + NL + "\t\treturn new Action() {" + NL + "\t\t\t" + NL + "\t\t\t@Override" + NL + "\t\t\tpublic void close() throws Exception {" + NL + "\t\t\t\tapp.close();\t\t\t\t" + NL + "\t\t\t}" + NL + "\t\t\t" + NL + "\t\t\t@Override" + NL + "\t\t\tpublic Object execute() throws Exception {" + NL + "\t\t\t\treturn app.toString();" + NL + "\t\t\t}" + NL + "\t\t};" + NL + "\t\t" + NL + "\t}" + NL + "" + NL + "\t@Override" + NL + "\tpublic boolean canExecute() {" + NL + "\t\treturn true;" + NL + "\t}" + NL + "" + NL + "\t@Override" + NL + "\tpublic void close() throws Exception {" + NL + "\t\t// NOP" + NL + "\t}" + NL + "" + NL + "}";
 
 public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
   {
@@ -82,6 +84,10 @@ public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) th
     stringBuffer.append(TEXT_21);
     stringBuffer.append(wizard.getDocRoutePath());
     stringBuffer.append(TEXT_22);
+    stringBuffer.append(wizard.getDocRoutePath());
+    stringBuffer.append(TEXT_23);
+    stringBuffer.append(wizard.getDocRoutePath());
+    stringBuffer.append(TEXT_24);
     return stringBuffer.toString();
   }
 }
