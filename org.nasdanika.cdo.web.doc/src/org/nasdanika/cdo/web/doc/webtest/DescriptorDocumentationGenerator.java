@@ -3,13 +3,23 @@ package org.nasdanika.cdo.web.doc.webtest;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.common.util.BasicEMap;
+import org.eclipse.emf.common.util.EMap;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
+import org.json.JSONArray;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Glyphicon;
+import org.nasdanika.html.Container;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
@@ -18,6 +28,8 @@ import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.Description;
 import org.nasdanika.webtest.model.Descriptor;
+import org.nasdanika.webtest.model.OperationStatus;
+import org.nasdanika.webtest.model.TestClassResult;
 
 abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements DocumentationGenerator<T> {
 
@@ -88,7 +100,7 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 				StringEscapeUtils.escapeHtml4(getTitle(obj)));
 	}
 	
-	protected void qualifiedName(Descriptor obj, Fragment content, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
+	protected void qualifiedName(Descriptor obj, Container<?> content, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
 		
 		// Qualified name
 		String qualifiedName = obj.getQualifiedName();
@@ -115,12 +127,12 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 		}
 	}	
 	
-	protected void links(Descriptor obj, Fragment content, HttpServletRequestContext context, URL baseURL, String urlPrefix) throws Exception {
+	protected void links(Descriptor obj, Container<?> container, HttpServletRequestContext context, URL baseURL, String urlPrefix) throws Exception {
 //		getLinks() - TODO
 		
 	}
 	
-	protected void description(Descriptor obj, Fragment content, HttpServletRequestContext context, URL baseURL, String urlPrefix) throws Exception {
+	protected void description(Descriptor obj, Container<?> container, HttpServletRequestContext context, URL baseURL, String urlPrefix) throws Exception {
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		Description description = obj.getDescription();
 		if (description != null) {
@@ -136,10 +148,10 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 				html = testResultsDocumentationGenerator.getDocRoute().filterContent(StringEscapeUtils.escapeHtml4(descriptionText.toString()), "text/plain", DocRoute.MIME_TYPE_HTML, baseURL, urlPrefix);				
 			}
 			
-			content.content(html);
+			container.content(html);
 			
 			if (description.getUrl() != null) {
-				content.content(
+				container.content(
 						htmlFactory.div(
 								htmlFactory.link(description.getUrl(), descriptionText.toString().trim().length() == 0 ? "Description" : "Additional information...")
 									.attribute("target", "_blank")
@@ -151,5 +163,79 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 	protected enum Type { CLASS, CONSTRUCTOR, METHOD }
 	
 	protected abstract Type getType(Descriptor obj);
+	
+	protected EMap<OperationStatus, Integer> testResultStats(Descriptor obj) {
+		EMap<OperationStatus, Integer> ret = new BasicEMap<>();
+		if (obj instanceof TestClassResult) {
+			addStats((TestClassResult) obj, ret);
+		} else {		
+			TreeIterator<EObject> cit = obj.eAllContents();
+			while (cit.hasNext()) {
+				EObject next = cit.next();
+				if (next instanceof TestClassResult) {
+					addStats((TestClassResult) next, ret);					
+					cit.prune();
+				}
+			}
+		}		
+		return ret;
+	}
+
+	public void addStats(TestClassResult testClassResult, EMap<OperationStatus, Integer> ret) {
+		for (Entry<String, Integer> se: testClassResult.getStats()) {
+			if (se.getValue() != 0) {
+				Integer val = ret.get(se.getKey());
+				if (val == null) {
+					ret.put(OperationStatus.get(se.getKey()), se.getValue());
+				} else {
+					ret.put(OperationStatus.get(se.getKey()), se.getValue() + val);
+				}
+			}
+		};
+	}
+	
+	protected void statsChart(EMap<OperationStatus, Integer> sessionStats, Container<?> container) {	
+		HTMLFactory htmlFactory = testResultsDocumentationGenerator.getDocRoute().getHtmlFactory();
+		Tag chartDiv = htmlFactory.div().id("test_stats_chart_"+htmlFactory.nextId());
+		container.content(chartDiv);
+		JSONArray columns = new JSONArray();
+		sessionStats.sort(new Comparator<Entry<OperationStatus, Integer>>() {
+
+			@Override
+			public int compare(Entry<OperationStatus, Integer> o1, Entry<OperationStatus, Integer> o2) {				
+				return o1.getKey().getValue() - o2.getKey().getValue();
+			}
+			
+		});
+		for (Entry<OperationStatus, Integer> se: sessionStats) {
+			JSONArray statColumn = new JSONArray();
+			columns.put(statColumn);
+			statColumn.put(se.getKey().getName());
+			statColumn.put(se.getValue());
+		}
+		
+		Map<String, Object> env = new HashMap<>();
+		env.put("columns", columns.toString());
+		env.put("selector", "#"+chartDiv.getId());
+					
+		container.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(getClass().getResource("stats-chart.js"), env)));
+	}	
+	
+	protected static Tag operationStatusGlyph(OperationStatus operationStatus) {
+		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
+		switch (operationStatus) {
+		case ERROR:
+			return htmlFactory.glyphicon(Glyphicon.warning_sign);
+		case FAIL:
+			return htmlFactory.glyphicon(Glyphicon.remove);
+		case PASS:
+			return htmlFactory.glyphicon(Glyphicon.ok);
+		case PENDING:
+			return htmlFactory.glyphicon(Glyphicon.time);
+		default:
+			break;		
+		}
+		return null;		
+	}
 
 }

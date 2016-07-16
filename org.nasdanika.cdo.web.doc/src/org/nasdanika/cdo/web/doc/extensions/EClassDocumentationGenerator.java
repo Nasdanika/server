@@ -148,7 +148,7 @@ public class EClassDocumentationGenerator extends EModelElementDocumentationGene
 			hr.header("Description");
 			for (EClassifierKey st: subTypes) {
 				Row stRow = stTable.row();
-				String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(st.getNsURI().getBytes(/* UTF-8? */));
+				String packagePath = DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(st.getNsURI().getBytes(/* UTF-8? */));
 				stRow.cell(docRoute.getHtmlFactory().link(packagePath+"/"+st.getName(), st.getName()));
 				stRow.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, st.getDocumentation()));
 			}

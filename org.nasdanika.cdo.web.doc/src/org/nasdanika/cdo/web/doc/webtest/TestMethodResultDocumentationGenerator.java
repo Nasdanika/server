@@ -4,7 +4,6 @@ import java.net.URL;
 
 import org.nasdanika.html.Fragment;
 import org.nasdanika.web.HttpServletRequestContext;
-import org.nasdanika.webtest.model.ParameterizedTestResult;
 import org.nasdanika.webtest.model.TestMethodResult;
 
 public class TestMethodResultDocumentationGenerator extends MethodResultDocumentationGenerator<TestMethodResult> {

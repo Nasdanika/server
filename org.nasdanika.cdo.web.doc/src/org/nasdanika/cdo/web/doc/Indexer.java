@@ -20,7 +20,6 @@ import org.nasdanika.core.CoreUtil;
 
 public class Indexer {
 	
-//	private static final String INTERNAL_LINK_PREFIX = "#router/doc-content/";
 	private Set<String> processedPaths = new HashSet<>();
 	private Set<String> missingPaths = new TreeSet<>();
 	private Map<String, List<String>> linkMap = new HashMap<>();

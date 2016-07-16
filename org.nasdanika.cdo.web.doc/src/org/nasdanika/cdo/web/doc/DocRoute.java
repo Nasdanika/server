@@ -116,7 +116,7 @@ import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route, BundleListener, DocumentationContentProvider {
 		
-	static final String ROUTER_DOC_CONTENT_FRAGMENT_PREFIX = "#router/doc-content/";
+	public static final String ROUTER_DOC_CONTENT_FRAGMENT_PREFIX = "#router/doc-content/";
 	static final String COMPONENT_NAME = "component-name";
 	static final String BUNDLE_VERSION = "bundle-version";
 	private static final String BUNDLE_SYMBOLIC_NAME = "bundle-symbolic-name";

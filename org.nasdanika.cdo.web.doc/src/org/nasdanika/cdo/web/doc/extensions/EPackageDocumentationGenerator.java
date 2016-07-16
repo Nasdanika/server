@@ -100,7 +100,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 						
 		EPackage eSuperPackage = ePackage.getESuperPackage();
 		if (eSuperPackage!=null) {
-			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link("#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(eSuperPackage.getNsURI().getBytes(/* UTF-8? */)), getPackageIcon(docRoute), eSuperPackage.getName())));			
+			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(eSuperPackage.getNsURI().getBytes(/* UTF-8? */)), getPackageIcon(docRoute), eSuperPackage.getName())));			
 		}
 		
 		for (EAnnotation eAnnotation: ePackage.getEAnnotations()) {
@@ -212,7 +212,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			Tabs tabs) {
 		
 		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
-		String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */));
+		String packagePath = DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */));
 		List<EClassifier> pClassifiers = new ArrayList<>(ePackage.getEClassifiers());
 		Collections.sort(pClassifiers, new Comparator<EClassifier>() {
 
@@ -293,7 +293,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		subPackageTableHeaderRow.header("Description");
 		for (EPackage subPackage: ePackage.getESubpackages()) {
 			Row row = subPackageTable.row();
-			row.cell(htmlFactory.link("#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */)), subPackage.getName()));
+			row.cell(htmlFactory.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */)), subPackage.getName()));
 			row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, subPackage));			
 		}
 		

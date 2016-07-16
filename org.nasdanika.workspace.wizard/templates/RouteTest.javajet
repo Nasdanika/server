@@ -26,7 +26,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
 @Description("Tests <%=wizard.getJavaName()%>Route")
 public class <%=wizard.getJavaName()%>RouteTest implements WebTest<WebDriver> {
 	
-	private enum DriverType { firefox, chrome, ie, phantomjs } 
+	public enum DriverType { firefox, chrome, ie, phantomjs } 
 	
 	private WebDriver driver;
 		

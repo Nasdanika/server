@@ -128,7 +128,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		if (eClassifier==null) {
 			return "";
 		}
-		String packagePath = "#router/doc-content/"+registryPath+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */));
+		String packagePath = DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */));
 		return docRoute.getHtmlFactory().link(docRoute.tocLink(packagePath+"/"+eClassifier.getName()), (withIcon ? eClassifierIcon(docRoute.getHtmlFactory(), eClassifier, docRoute.getDocRoutePath()) : ""), eClassifier.getName()).toString();		
 	}
 

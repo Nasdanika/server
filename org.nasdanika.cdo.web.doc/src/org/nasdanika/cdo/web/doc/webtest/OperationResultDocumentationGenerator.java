@@ -25,7 +25,7 @@ abstract class OperationResultDocumentationGenerator<T extends OperationResult> 
 		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		
-		ret.content(htmlFactory.div("<B>Status: </B>", StringEscapeUtils.escapeHtml4(obj.getStatus().name())).style().margin().bottom("10px"));
+		ret.content(htmlFactory.div("<B>Status: </B>", operationStatusGlyph(obj.getStatus()), "&nbsp;", StringEscapeUtils.escapeHtml4(obj.getStatus().name())).style().margin().bottom("10px"));
 
 		String resultID = htmlFactory.nextId();
 		
@@ -40,13 +40,7 @@ abstract class OperationResultDocumentationGenerator<T extends OperationResult> 
 //		getResult()
 //		getScreenshots()
 //		getStart()
-//		getStatus()		
-		
-		// TODO - description
-//		if (!CoreUtil.isBlank(obj.getDescription())) {
-//			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getDescription()).style().margin().top("10px").style().margin().bottom("10px"));
-//		}
-		
+				
 		// Tab
 		// Screenshots
 		Carousel screenshotCarousel = htmlFactory.carousel()
