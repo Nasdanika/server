@@ -18,8 +18,10 @@ import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.core.CoreUtil;
-import org.nasdanika.html.Bootstrap.Glyphicon;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Container;
+import org.nasdanika.html.FontAwesome;
+import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
@@ -223,19 +225,24 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 	
 	protected static Tag operationStatusGlyph(OperationStatus operationStatus) {
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
-		switch (operationStatus) {
-		case ERROR:
-			return htmlFactory.glyphicon(Glyphicon.warning_sign);
+		FontAwesome<Tag> flask = htmlFactory.fontAwesome().webApplication(WebApplication.flask);
+		switch (operationStatus) {		
+		case ERROR:		
+			flask.style(Style.WARNING);
+			break;
 		case FAIL:
-			return htmlFactory.glyphicon(Glyphicon.remove);
+			flask.style(Style.DANGER);
+			break;
 		case PASS:
-			return htmlFactory.glyphicon(Glyphicon.ok);
+			flask.style(Style.SUCCESS);
+			break;
 		case PENDING:
-			return htmlFactory.glyphicon(Glyphicon.time);
+			flask.style(Style.MUTED);
+			break;
 		default:
 			break;		
 		}
-		return null;		
+		return flask.getTarget();		
 	}
 
 }
