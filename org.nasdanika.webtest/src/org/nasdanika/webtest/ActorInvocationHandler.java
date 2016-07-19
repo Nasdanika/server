@@ -33,7 +33,7 @@ class ActorInvocationHandler extends FilteringInvocationHandler<Actor<WebDriver>
     			if (delay>0) {
     				Thread.sleep(delay);
     			}
-				collector.beforeActorMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshot(), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args);
+				collector.beforeActorMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshotOrSketch(actorImplMethod, Screenshot.When.BEFORE), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args);
     		} else {
 				collector.beforeActorMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args);	    			
     		}
@@ -44,7 +44,7 @@ class ActorInvocationHandler extends FilteringInvocationHandler<Actor<WebDriver>
 	    			if (delay>0) {
 	    				Thread.sleep(delay);
 	    			}
-	    			collector.afterActorMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshot(), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, res, null);
+	    			collector.afterActorMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshotOrSketch(actorImplMethod, Screenshot.When.AFTER), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, res, null);
 	    		} else {
 	    			collector.afterActorMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, res, null);		    			
 	    		}
@@ -54,7 +54,7 @@ class ActorInvocationHandler extends FilteringInvocationHandler<Actor<WebDriver>
 	    			if (delay>0) {
 	    				Thread.sleep(delay);
 	    			}
-	    			collector.afterActorMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshot(), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, null, th);
+	    			collector.afterActorMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshotOrSketch(actorImplMethod, Screenshot.When.EXCEPTION), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, null, th);
 	    		} else {
 	    			collector.afterActorMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, null, th);		    			
 	    		}

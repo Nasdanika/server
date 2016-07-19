@@ -1,9 +1,16 @@
 package org.nasdanika.webtest;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.StringWriter;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.text.MessageFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -17,14 +24,18 @@ import org.junit.runners.BlockJUnit4ClassRunner;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
 import org.junit.runners.model.Statement;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.OutputType;
 import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.phantomjs.PhantomJSDriver;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.util.tracker.ServiceTracker;
+
+import net.sourceforge.plantuml.SourceStringReader;
 
 /**
  * Base class for test runners which report results to {@link Collector}.
@@ -98,6 +109,11 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				@Override
 				public void onScreenshot(byte[] screenshot, String comment) {}
 				
+				@Override
+				public AnnotatedElement getCurrentOperation() {
+					return null;
+				}
+				
 			};
 		};
 		
@@ -119,15 +135,133 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		return null;
 	}
 	
-	static byte[] takeScreenshot() {
+	static byte[] takeScreenshotOrSketch(Method method, Screenshot.When when) {
 		Object test = testThreadLocal.get();
 		if (test instanceof TakesScreenshot) { // To customize screenshot taking in some advanced situations
 			takeScreenshot((TakesScreenshot) test);
 		}
 		if (test instanceof WebTest) {
 			WebDriver webDriver = ((WebTest<?>) test).getWebDriver();
-			if (webDriver instanceof TakesScreenshot) {
+			if (method != null && webDriver instanceof SketchWebDriver) {
+				Sketch sketch = method.getAnnotation(Sketch.class);
+				if (sketch != null) {
+					Dimension windowSize = sketch.windowSize().length == 2 ? new Dimension(sketch.windowSize()[0], sketch.windowSize()[1]) : null;
+					switch (when) {
+					case AFTER:
+						String location = sketch.after();
+						if (location.trim().length() == 0) {
+							location = sketch.value();
+						}
+						if (location.trim().length() == 0) {
+							return null;
+						}
+						return takeSketch(method.getDeclaringClass(), location, windowSize);
+					case BEFORE:
+						return takeSketch(method.getDeclaringClass(), sketch.before(), windowSize);
+					case EXCEPTION:
+						return takeSketch(method.getDeclaringClass(), sketch.exception(), windowSize);
+					case DURING:
+					default:
+						return null;
+					}
+				}
+			} else if (webDriver instanceof TakesScreenshot) {
 				return takeScreenshot((TakesScreenshot) webDriver);
+			}
+		}
+		return null;
+	}
+	
+	private static byte[] takeSketch(Class<?> pageClass, Screenshot.When when) {
+		Sketch sketch = pageClass.getAnnotation(Sketch.class);
+		if (sketch != null) {
+			Dimension windowSize = sketch.windowSize().length == 2 ? new Dimension(sketch.windowSize()[0], sketch.windowSize()[1]) : null;
+			switch (when) {
+			case AFTER:
+				String location = sketch.after();
+				if (location.trim().length() == 0) {
+					location = sketch.value();
+				}
+				if (location.trim().length() == 0) {
+					return null;
+				}
+				return takeSketch(pageClass, location, windowSize);
+			case BEFORE:
+				return takeSketch(pageClass, sketch.before(), windowSize);
+			case EXCEPTION:
+				return takeSketch(pageClass, sketch.exception(), windowSize);
+			case DURING:
+			default:
+				return null;
+			}
+		}
+		return null;
+	}
+	
+	static byte[] takeSketch(Class<?> contextClass, String location, Dimension windowSize) {
+		if (location != null && location.trim().length() > 0) {
+			if (contextClass == null) {
+				Collector<WebDriver> collector = collectorThreadLocal.get();
+				if (collector != null) {
+					AnnotatedElement currentOperation = collector.getCurrentOperation();
+					if (currentOperation instanceof Class) {
+						contextClass = (Class<?>) currentOperation;
+					} else if (currentOperation instanceof Method) {
+						contextClass = ((Method) currentOperation).getDeclaringClass();
+					}
+				}
+			}
+			boolean isExternal = location.contains("://");
+			try {
+				URL resourceURL = isExternal ? new URL(location) : contextClass.getResource(location);
+				if (resourceURL == null) {
+					System.err.println("Sketch resource not found in the context of "+contextClass.getName()+": "+location);
+				} else {
+					if (location.toLowerCase().endsWith(".png")) {
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						try (InputStream in = resourceURL.openStream()) {
+							int b;
+							while ((b = in.read()) != -1) {
+								baos.write(b);
+							}
+						}
+						baos.close();
+						return baos.toByteArray();
+					}
+					
+					if (location.toLowerCase().endsWith(".plantuml")) {
+						StringWriter sw = new StringWriter();
+						try (Reader reader = new InputStreamReader(resourceURL.openStream())) {
+							int ch;
+							while ((ch = reader.read()) != -1) {
+								sw.write(ch);
+							}
+						}
+						sw.close();
+						SourceStringReader reader = new SourceStringReader(sw.toString());
+						ByteArrayOutputStream baos = new ByteArrayOutputStream();
+						reader.generateImage(baos);
+						baos.close();
+						return baos.toByteArray();
+					}
+					
+					if (!isExternal) {
+						System.err.println("Classloader sketch resource cannot be rendered. Context: "+contextClass.getName()+", location: "+location);						
+					} else {
+						PhantomJSDriver phantomJSDriver = new PhantomJSDriver();
+						try {
+							if (windowSize != null) {
+								phantomJSDriver.manage().window().setSize(windowSize);
+							}
+							phantomJSDriver.get(location);
+							return takeScreenshot(phantomJSDriver);
+						} finally {
+							phantomJSDriver.quit();
+						}
+					}
+				}
+			} catch (Exception e) {
+				System.err.println("Error taking sketch from '"+location+"': "+e);
 			}
 		}
 		return null;
@@ -309,7 +443,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshot(), capturePerformance());
+		    			collectorThreadLocal.get().beforeTestMethodScreenshot(takeScreenshotOrSketch(theMethod, Screenshot.When.BEFORE), capturePerformance());
 		    		} else {
 		    			collectorThreadLocal.get().beforeTestMethodScreenshot(null, capturePerformance());		    			
 		    		}
@@ -318,7 +452,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot(), capturePerformance());
+		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshotOrSketch(theMethod, Screenshot.When.AFTER), capturePerformance());
 		    		} else {
 		    			collectorThreadLocal.get().afterTestMethodScreenshot(null, capturePerformance());
 		    		}
@@ -327,7 +461,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		    			if (delay>0) {
 		    				Thread.sleep(delay);
 		    			}
-		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshot(), capturePerformance());
+		    			collectorThreadLocal.get().afterTestMethodScreenshot(takeScreenshotOrSketch(theMethod, Screenshot.When.EXCEPTION), capturePerformance());
 		    		} else {
 		    			collectorThreadLocal.get().afterTestMethodScreenshot(null, capturePerformance());		    			
 		    		}
@@ -417,7 +551,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					e.printStackTrace();
 				}
 			} 
-			if (driver instanceof TakesScreenshot) {
+			if (driver instanceof SketchWebDriver) {
+				((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeSketch(pageClass, Screenshot.When.BEFORE), WebTestUtil.capturePerformance(driver));				
+			} else if (driver instanceof TakesScreenshot) {
 				((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver));
 			}
 		} else {
@@ -446,7 +582,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				if (driver instanceof TakesScreenshot) {
+				if (driver instanceof SketchWebDriver) {
+					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeSketch(pageClass, Screenshot.When.AFTER), WebTestUtil.capturePerformance(driver), null);
+								} if (driver instanceof TakesScreenshot) {
 					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver), null);
 				}
 			} else {
@@ -461,7 +599,9 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 						e.printStackTrace();
 					}
 				}
-				if (driver instanceof TakesScreenshot) {
+				if (driver instanceof SketchWebDriver) {
+					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeSketch(pageClass, Screenshot.When.EXCEPTION), WebTestUtil.capturePerformance(driver), th);
+				} if (driver instanceof TakesScreenshot) {
 					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver), th);
 				}
 			} else {

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -255,6 +256,11 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 		currentOperationResult.afterPerformance = performance;
 	}
+	
+	@Override
+	public AnnotatedElement getCurrentOperation() {
+		return currentOperationResult == null ? null : currentOperationResult.operation;
+	}
 		
 	@Override
 	public Map<TestStatus, Integer> getStats() {
@@ -278,39 +284,6 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	public void close() throws Exception {
 		// NOP		
 	}
-//
-//	@Override
-//	public String getName() {
-//		return ReportGenerator.classTitle(klass);
-//	}
-//
-//	@Override
-//	public String getDescription() {
-//		Description description = klass.getAnnotation(Description.class);
-//		if (description==null) {
-//			return "";
-//		} 
-//		
-//		if (description.html()) {
-//			StringBuilder sb = new StringBuilder();
-//			for (String str: description.value()) {
-//				if (sb.length()>0) {
-//					sb.append(" ");
-//				}
-//				sb.append(str);
-//			}
-//			return sb.toString();
-//		}
-//		
-//		StringBuilder sb = new StringBuilder();
-//		for (String str: description.value()) {
-//			if (sb.length()>0) {
-//				sb.append(System.lineSeparator());
-//			}
-//			sb.append(StringEscapeUtils.escapeHtml4(str));
-//		}
-//		return "<pre>"+sb.append("</pre>");			
-//	}
 
 	@Override
 	public void setTest(Object test) {

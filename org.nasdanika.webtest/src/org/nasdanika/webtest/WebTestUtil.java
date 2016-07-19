@@ -6,6 +6,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.ArrayList;
@@ -26,6 +27,7 @@ import org.json.JSONObject;
 import org.nasdanika.webtest.model.Descriptor;
 import org.openqa.selenium.By;
 import org.openqa.selenium.ContextAware;
+import org.openqa.selenium.Dimension;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -236,8 +238,7 @@ public class WebTestUtil {
 			}
 
 			@Override
-			public void beforeTestMethod(Method method, int index,
-					Object[] parameters) {
+			public void beforeTestMethod(Method method, int index, Object[] parameters) {
 				for (Collector<D> c : collectors) {
 					c.beforeTestMethod(method, index, parameters);
 				}
@@ -327,6 +328,17 @@ public class WebTestUtil {
 				for (Collector<D> c : collectors) {
 					c.onScreenshot(screenshot, comment);
 				}
+			}
+			
+			@Override
+			public AnnotatedElement getCurrentOperation() {
+				for (Collector<D> c : collectors) {
+					AnnotatedElement ret = c.getCurrentOperation();
+					if (ret != null) {
+						return ret;
+					}
+				}
+				return null;
 			}
 		};
 	}
@@ -939,12 +951,29 @@ public class WebTestUtil {
 		return proxy;
 	}
 	
+	/**
+	 * Takes a <code>DURING</code> screenshot.
+	 * @param comment
+	 */
 	public static void takeScreenshot(String comment) {
-		byte[] ss = AbstractNasdanikaWebTestRunner.takeScreenshot();
+		byte[] ss = AbstractNasdanikaWebTestRunner.takeScreenshotOrSketch(null, null);
 		if (ss!=null) {
 			AbstractNasdanikaWebTestRunner.collectorThreadLocal.get().onScreenshot(ss, comment);
 		}
 	}
+	
+	/**
+	 * Loads a skets from <code>location</code> as specified in {@link Sketch} annotation JavaDoc and
+	 * stores it as <code>DURING</code> screenshot.
+	 * @param location
+	 * @param comment
+	 */
+	public static void takeSketch(String location, Dimension windowSize, String comment) {
+		byte[] ss = AbstractNasdanikaWebTestRunner.takeSketch(null, location, windowSize);
+		if (ss!=null) {
+			AbstractNasdanikaWebTestRunner.collectorThreadLocal.get().onScreenshot(ss, comment);
+		}
+	}	
 
 	/**
 	 * Creates a proxy for a page factory which in turn proxies pages created by the factory.
@@ -1088,6 +1117,32 @@ public class WebTestUtil {
 			}
 		} 
 	}
-	
+
+	/**
+	 * Creates a proxy instance of {@link SketchWebDriver}, which throws {@link PendingException} for all methods except the ones defined in {@link Object} class.
+	 * SketchWebDriver instances are "marker" or "discriminator" instances telling the page factory implementation to return pages which use {@link Sketch} annotation 
+	 * and telling the WebTest framework to use sketches defined in the Sketch annotation as screenshots. 
+	 * @return
+	 */
+	public static SketchWebDriver createSketchWebDriver() {
+		return (SketchWebDriver) Proxy.newProxyInstance(
+				SketchWebDriver.class.getClassLoader(), 
+				new Class[] { SketchWebDriver.class }, 
+				new InvocationHandler() {
+					
+					@Override
+					public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+						if (method.getDeclaringClass() == Object.class) {
+							return method.invoke(this, args);
+						}
+						
+						if ("quit".equals(method.getName()) && method.getParameterCount() == 0) {
+							return null;
+						}
+						
+						throw new PendingException(method.toString());
+					}
+				});
+	}
 	
 }

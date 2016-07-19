@@ -36,7 +36,7 @@ class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> 
     			if (delay>0) {
     				Thread.sleep(delay);
     			}
-				collector.beforePageMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshot(), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args);
+				collector.beforePageMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshotOrSketch(pageImplMethod, Screenshot.When.BEFORE), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args);
     		} else {
 				collector.beforePageMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args);
     		}
@@ -59,7 +59,7 @@ class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> 
 	    			if (delay>0) {
 	    				Thread.sleep(delay);
 	    			}
-	    			collector.afterPageMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshot(), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, res, null);
+	    			collector.afterPageMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshotOrSketch(pageImplMethod, Screenshot.When.AFTER), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, res, null);
 	    		} else {
 	    			collector.afterPageMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, res, null);
 	    		}
@@ -69,7 +69,7 @@ class PageInvocationHandler extends FilteringInvocationHandler<Page<WebDriver>> 
 	    			if (delay>0) {
 	    				Thread.sleep(delay);
 	    			}
-	    			collector.afterPageMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshot(), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, null, th);
+	    			collector.afterPageMethod(target, AbstractNasdanikaWebTestRunner.takeScreenshotOrSketch(pageImplMethod, Screenshot.When.EXCEPTION), AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, null, th);
 	    		} else {
 	    			collector.afterPageMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, null, th);		    			
 	    		}

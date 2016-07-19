@@ -12,6 +12,7 @@ Require-Bundle: org.nasdanika.webtest.model;bundle-version="0.1.0",
  org.apache.commons.lang3;bundle-version="3.3.2",
  org.junit;bundle-version="4.11.0";visibility:=reexport,
  org.openqa.selenium;bundle-version="2.47.1";visibility:=reexport,
- json;bundle-version="20160212.0.0"
+ json;bundle-version="20160212.0.0",
+ net.sourceforge.plantuml;bundle-version="8042.0.0"
 Export-Package: org.nasdanika.webtest
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

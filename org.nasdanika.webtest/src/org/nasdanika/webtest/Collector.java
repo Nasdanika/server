@@ -1,5 +1,6 @@
 package org.nasdanika.webtest;
 
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 
 import org.json.JSONObject;
@@ -48,5 +49,10 @@ public interface Collector<D extends WebDriver> extends AutoCloseable {
 	void afterTestMethod(Method method, Throwable th);
 	
 	void afterTestMethodScreenshot(byte[] screenshot, JSONObject performanceData);
+	
+	/**
+	 * @return Method for methods, Class for constructors.
+	 */
+	AnnotatedElement getCurrentOperation();
 		
 }
