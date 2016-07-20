@@ -13,5 +13,11 @@ import org.openqa.selenium.WebDriver;
  *
  */
 public interface SketchWebDriver extends WebDriver {
+	
+	/**
+	 * Selector to match {@link Sketch}.selector.
+	 * @return
+	 */
+	String getSelector();
 
 }

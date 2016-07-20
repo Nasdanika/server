@@ -1119,12 +1119,12 @@ public class WebTestUtil {
 	}
 
 	/**
-	 * Creates a proxy instance of {@link SketchWebDriver}, which throws {@link PendingException} for all methods except the ones defined in {@link Object} class.
+	 * Creates a proxy instance of {@link SketchWebDriver}, which throws {@link PendingException} for all methods except the ones defined in {@link Object} class, <code>quit()</code>, and <code>getSelector()</code>.
 	 * SketchWebDriver instances are "marker" or "discriminator" instances telling the page factory implementation to return pages which use {@link Sketch} annotation 
-	 * and telling the WebTest framework to use sketches defined in the Sketch annotation as screenshots. 
+	 * and telling the WebTest framework to use sketches defined in a Sketch annotation with matching selector as screenshots. 
 	 * @return
 	 */
-	public static SketchWebDriver createSketchWebDriver() {
+	public static SketchWebDriver createSketchWebDriver(final String selector) {
 		return (SketchWebDriver) Proxy.newProxyInstance(
 				SketchWebDriver.class.getClassLoader(), 
 				new Class[] { SketchWebDriver.class }, 
@@ -1138,6 +1138,12 @@ public class WebTestUtil {
 						
 						if ("quit".equals(method.getName()) && method.getParameterCount() == 0) {
 							return null;
+						}
+						
+						if (SketchWebDriver.class.isAssignableFrom(method.getDeclaringClass()) 
+								&& "getSelector".equals(method.getName())
+								&& method.getParameterCount() == 0) {
+							return selector;
 						}
 						
 						throw new PendingException(method.toString());

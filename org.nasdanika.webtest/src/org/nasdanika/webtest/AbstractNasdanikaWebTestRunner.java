@@ -135,6 +135,19 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		return null;
 	}
 	
+	private static Sketch matchSketch(AnnotatedElement element, SketchWebDriver sketchWebDriver) {
+		Sketches sketches = element.getAnnotation(Sketches.class);
+		if (sketches != null) {
+			for (Sketch sketch: sketches.value()) {
+				if (sketch.selector().equals(sketchWebDriver.getSelector()) || sketch.selector().trim().length() == 0) {
+					return sketch;
+				}
+			}
+		}
+			
+		return null;	
+	}
+	
 	static byte[] takeScreenshotOrSketch(Method method, Screenshot.When when) {
 		Object test = testThreadLocal.get();
 		if (test instanceof TakesScreenshot) { // To customize screenshot taking in some advanced situations
@@ -143,7 +156,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		if (test instanceof WebTest) {
 			WebDriver webDriver = ((WebTest<?>) test).getWebDriver();
 			if (method != null && webDriver instanceof SketchWebDriver) {
-				Sketch sketch = method.getAnnotation(Sketch.class);
+				Sketch sketch = matchSketch(method, (SketchWebDriver) webDriver);
 				if (sketch != null) {
 					Dimension windowSize = sketch.windowSize().length == 2 ? new Dimension(sketch.windowSize()[0], sketch.windowSize()[1]) : null;
 					switch (when) {
@@ -172,8 +185,8 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 		return null;
 	}
 	
-	private static byte[] takeSketch(Class<?> pageClass, Screenshot.When when) {
-		Sketch sketch = pageClass.getAnnotation(Sketch.class);
+	private static byte[] takeSketch(Class<?> pageClass, SketchWebDriver sketchWebDriver, Screenshot.When when) {
+		Sketch sketch = matchSketch(pageClass, sketchWebDriver);
 		if (sketch != null) {
 			Dimension windowSize = sketch.windowSize().length == 2 ? new Dimension(sketch.windowSize()[0], sketch.windowSize()[1]) : null;
 			switch (when) {
@@ -552,7 +565,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				}
 			} 
 			if (driver instanceof SketchWebDriver) {
-				((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeSketch(pageClass, Screenshot.When.BEFORE), WebTestUtil.capturePerformance(driver));				
+				((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeSketch(pageClass, (SketchWebDriver) driver, Screenshot.When.BEFORE), WebTestUtil.capturePerformance(driver));				
 			} else if (driver instanceof TakesScreenshot) {
 				((Collector<D>) collectorThreadLocal.get()).beforePageInitialization(pageClass, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver));
 			}
@@ -583,8 +596,8 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					}
 				}
 				if (driver instanceof SketchWebDriver) {
-					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeSketch(pageClass, Screenshot.When.AFTER), WebTestUtil.capturePerformance(driver), null);
-								} if (driver instanceof TakesScreenshot) {
+					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeSketch(pageClass, (SketchWebDriver) driver, Screenshot.When.AFTER), WebTestUtil.capturePerformance(driver), null);
+				} else if (driver instanceof TakesScreenshot) {
 					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver), null);
 				}
 			} else {
@@ -600,8 +613,8 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					}
 				}
 				if (driver instanceof SketchWebDriver) {
-					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeSketch(pageClass, Screenshot.When.EXCEPTION), WebTestUtil.capturePerformance(driver), th);
-				} if (driver instanceof TakesScreenshot) {
+					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeSketch(pageClass, (SketchWebDriver) driver, Screenshot.When.EXCEPTION), WebTestUtil.capturePerformance(driver), th);
+				} else if (driver instanceof TakesScreenshot) {
 					((Collector<D>) collectorThreadLocal.get()).afterPageInitialization(pageClass, page, takeScreenshot((TakesScreenshot) driver), WebTestUtil.capturePerformance(driver), th);
 				}
 			} else {

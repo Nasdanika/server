@@ -1,6 +1,7 @@
 package org.nasdanika.webtest;
 
 import java.lang.annotation.ElementType;
+import java.lang.annotation.Repeatable;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
@@ -14,6 +15,7 @@ import org.openqa.selenium.phantomjs.PhantomJSDriver;
  * @author Pavel Vlasov
  *
  */
+@Repeatable(Sketches.class)
 @Target({ElementType.METHOD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Sketch {
@@ -52,5 +54,11 @@ public @interface Sketch {
 	 * @return
 	 */
 	int[] windowSize() default {};
+	
+	/**
+	 * Selector to match {@link SketchWebDriver} selector. Blank selector matches any SketchWebDriver selector. 
+	 * @return
+	 */
+	String selector() default "";
 		
 }
