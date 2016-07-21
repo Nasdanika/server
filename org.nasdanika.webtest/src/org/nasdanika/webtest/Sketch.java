@@ -56,7 +56,7 @@ public @interface Sketch {
 	int[] windowSize() default {};
 	
 	/**
-	 * Selector to match {@link SketchWebDriver} selector. Blank selector matches any SketchWebDriver selector. 
+	 * Selector to match {@link SketchWebDriver} selector. Blank selector matches any SketchWebDriver selector. Sketch annotations are matched in the order of definition. 
 	 * @return
 	 */
 	String selector() default "";
