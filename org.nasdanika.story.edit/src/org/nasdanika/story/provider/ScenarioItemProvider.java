@@ -29,7 +29,7 @@ import org.nasdanika.story.StoryPackage;
  * @generated
  */
 public class ScenarioItemProvider 
-	extends CDOItemProviderAdapter
+	extends CDOItemProviderAdapterShim
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,

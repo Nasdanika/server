@@ -6,8 +6,10 @@ package org.nasdanika.story.provider;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.nasdanika.story.User;
 
@@ -98,5 +100,5 @@ public class UserItemProvider extends ActorItemProvider {
 	protected boolean shouldComposeCreationImage() {
 		return true;
 	}
-
+	
 }

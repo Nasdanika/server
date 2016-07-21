@@ -9,13 +9,13 @@
    <extension point="org.eclipse.ui.newWizards">
       <!-- @generated story -->
       <category
-            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            id="org.nasdanika.Wizard.category.ID"
             name="%_UI_Wizard_category"/>
       <wizard
             id="org.nasdanika.story.presentation.StoryModelWizardID"
             name="%_UI_StoryModelWizard_label"
             class="org.nasdanika.story.presentation.StoryModelWizard"
-            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            category="org.nasdanika.Wizard.category.ID"
             icon="icons/full/obj16/StoryModelFile.gif">
          <description>%_UI_StoryModelWizard_description</description>
          <selection class="org.eclipse.core.resources.IResource"/>

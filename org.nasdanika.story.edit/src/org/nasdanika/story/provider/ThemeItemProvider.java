@@ -31,7 +31,7 @@ import org.nasdanika.story.Theme;
  * @generated
  */
 public class ThemeItemProvider 
-	extends CDOItemProviderAdapter
+	extends CDOItemProviderAdapterShim
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,

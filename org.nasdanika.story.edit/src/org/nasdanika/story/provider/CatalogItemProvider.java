@@ -31,7 +31,7 @@ import org.nasdanika.story.StoryPackage;
  * @generated
  */
 public class CatalogItemProvider 
-	extends CDOItemProviderAdapter
+	extends CDOItemProviderAdapterShim
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
