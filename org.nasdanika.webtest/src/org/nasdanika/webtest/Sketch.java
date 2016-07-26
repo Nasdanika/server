@@ -30,7 +30,14 @@ public @interface Sketch {
 	 * Location of a sketch for the before screenshot. The location is resolved relative to the annotated method's declaring class, i.e. a sketch can be loaded from 
 	 * a classloader resource, if the location is relative, or from a regular URL. If the location ends with <code>.png</code> then it is treated as a PNG file and 
 	 * loaded AS-IS. If the location ends with <code>.plantuml</code> it is treated as a <a href="http://plantuml.com/">PlantUML</a> diagram specification, e.g. 
-	 * a <a href="http://plantuml.com/salt.html">Salt</a> wireframe. The specification gets rendered to a PNG file. Otherwise the location is treated as a web browser URL which is
+	 * a <a href="http://plantuml.com/salt.html">Salt</a> wireframe. The specification gets rendered to a PNG file. 
+	 * 
+	 * <P>
+	 * If location uses <code>bundle</code> protocol, then
+	 * screenshot loaded from an OSGi bundle. E.g. <code>bundle://org.nasdanika.bank.app/sketches/account-details-web.png</code> would load <code>sketches/account-details-web.png</code> resource
+	 * from <code>org.nasdanika.bank.app</code> bundle.
+	 * </P>
+	 * Otherwise the location is treated as a web browser URL which is
 	 * retrieved using {@link PhantomJSDriver} behind the scenes. In this case classloader resources cannot be used as locations. 
 	 * @return
 	 */

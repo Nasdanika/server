@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.json.JSONObject;
 import org.junit.runner.notification.RunNotifier;
 import org.junit.runners.BlockJUnit4ClassRunner;
@@ -44,6 +45,10 @@ import net.sourceforge.plantuml.SourceStringReader;
  */
 public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRunner implements TestResultSource {
 	
+	private static final String BUNDLE_SCHEME = "bundle";
+	
+	private static final String SCHEME_SEPARATOR = "://";
+
 	private static final int WAIT_FOR_SERVICE_TIMEOUT = 2000;
 
 	private static final int SCREENSHOT_ATTEMPTS = 5;
@@ -224,9 +229,22 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					}
 				}
 			}
-			boolean isExternal = location.contains("://");
+			
 			try {
-				URL resourceURL = isExternal ? new URL(location) : contextClass.getResource(location);
+				boolean isExternal;
+				URL resourceURL;
+				if (location.startsWith(BUNDLE_SCHEME+SCHEME_SEPARATOR)) {
+					isExternal = false;
+					int slashIdx = location.indexOf('/', BUNDLE_SCHEME.length()+SCHEME_SEPARATOR.length());
+					resourceURL = slashIdx == - 1 ? null : Platform.getBundle(location.substring(BUNDLE_SCHEME.length()+SCHEME_SEPARATOR.length(), slashIdx)).getEntry(location.substring(slashIdx));
+				} else if (location.contains(SCHEME_SEPARATOR)) {
+					isExternal = true;
+					resourceURL = new URL(location);
+				} else {
+					isExternal = false;
+					resourceURL = contextClass.getResource(location);
+				}
+				
 				if (resourceURL == null) {
 					System.err.println("Sketch resource not found in the context of "+contextClass.getName()+": "+location);
 				} else {
@@ -259,7 +277,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 					}
 					
 					if (!isExternal) {
-						System.err.println("Classloader sketch resource cannot be rendered. Context: "+contextClass.getName()+", location: "+location);						
+						System.err.println("Sketch resource cannot be rendered. Context: "+contextClass.getName()+", location: "+location);						
 					} else {
 						PhantomJSDriver phantomJSDriver = new PhantomJSDriver();
 						try {
