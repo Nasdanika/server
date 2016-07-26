@@ -3,11 +3,8 @@
 package org.nasdanika.cdo.boxing.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
@@ -133,28 +130,13 @@ public class ClassBoxImpl<T> extends CDOObjectImpl implements ClassBox<T> {
 			}
 		}
 		
-		List<Bundle> matching = new ArrayList<>();
-		for (Bundle bundle: FrameworkUtil.getBundle(this.getClass()).getBundleContext().getBundles()) {
-			if (bundleName.equals(bundle.getSymbolicName())) {
-				matching.add(bundle);
-			}
-		}
-		if (matching.isEmpty()) {
+		Bundle bundle = Platform.getBundle(bundleName);
+		if (bundle == null) {
 			throw new BoxingException("Cannot load "+getClassName()+" - defining bundle not found "+bundleName);
-		}
-		if (matching.size()>1) {
-			Collections.sort(matching, new Comparator<Bundle>() {
-
-				@Override
-				public int compare(Bundle o1, Bundle o2) {
-					return o2.getVersion().compareTo(o1.getVersion());
-				}
-				
-			});
 		}
 		
 		try {
-			return (Class<T>) matching.get(0).loadClass(getClassName());
+			return (Class<T>) bundle.loadClass(getClassName());
 		} catch (ClassNotFoundException e) {
 			throw new BoxingException(e);
 		}
