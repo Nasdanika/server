@@ -56,7 +56,7 @@ public class WikiLinkProcessor {
 		
 		interface Registry {
 			
-			LinkInfo getLinkInfo(String url);
+			LinkInfo getLinkInfo(String location);
 			
 		}
 		

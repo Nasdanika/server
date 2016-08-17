@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
-import java.net.URL;
+import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Collection;
 
@@ -57,14 +57,14 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 	}		
 	
 	@Override
-	protected Fragment getIndex(TestClassResult obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
+	protected Fragment getIndex(TestClassResult obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
 		HTMLFactory htmlFactory = testResultsDocumentationGenerator.getDocRoute().getHtmlFactory();		
 		EList<String> parameters = obj.getMethodResults().get(0).getParameters();
 		if (obj.eContainer() instanceof ParameterizedTestResult && !parameters.isEmpty()) {
 			Fragment ret = htmlFactory.fragment(header(obj));
 	
 			// Tabs
-//			links(obj, ret, context, baseURL, urlPrefix);
+//			links(obj, ret, context, baseURI, urlPrefix);
 			
 			ret.content(htmlFactory.tag(Tag.TagName.h4, "Parameters"));
 			Table parametersTable = htmlFactory.table().bordered();
@@ -77,7 +77,7 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 				Descriptor pd = parameterDescriptors.get(i);
 				Row pRow = parametersTableBody.row(pd.getTitle());
 				pRow.cell(StringEscapeUtils.escapeHtml4(parameters.get(i)));
-				description(pd, pRow.cell(), context, baseURL, urlPrefix);
+				description(pd, pRow.cell(), context, baseURI, urlPrefix);
 				String pqn = pd.getQualifiedName();
 				int cIdx = pqn.indexOf(":");
 				int lsIdx = pqn.substring(cIdx+1).lastIndexOf(' ');
@@ -87,13 +87,13 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 			}
 			
 			ret.content(htmlFactory.tag(Tag.TagName.h4, "Test methods"));
-			methodResults(obj, context, baseURL, urlPrefix, htmlFactory, ret);
+			methodResults(obj, context, baseURI, urlPrefix, htmlFactory, ret);
 						
 			return ret;
 		}
 				
-		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
-		methodResults(obj, context, baseURL, urlPrefix, htmlFactory, ret);
+		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
+		methodResults(obj, context, baseURI, urlPrefix, htmlFactory, ret);
 		return ret;
 	}
 
@@ -101,7 +101,7 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 	public void methodResults(
 			TestClassResult obj, 
 			HttpServletRequestContext context, 
-			URL baseURL, 
+			URI baseURI, 
 			String urlPrefix,
 			HTMLFactory htmlFactory, 
 			Fragment ret) throws Exception {
@@ -139,7 +139,7 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 			row.cell(htmlFactory.link(href, operationStatusGlyph(tmr.getStatus()), "&nbsp;", StringEscapeUtils.escapeHtml4(title)));				
 			Cell descriptionCell = row.cell();
 			if (docGen instanceof DescriptorDocumentationGenerator) {
-				((DescriptorDocumentationGenerator) docGen).description(tmr, descriptionCell, context, baseURL, urlPrefix);
+				((DescriptorDocumentationGenerator) docGen).description(tmr, descriptionCell, context, baseURI, urlPrefix);
 			}
 			
 			long duration = tmr.getFinish() - tmr.getStart();

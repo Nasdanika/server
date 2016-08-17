@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.net.URL;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -171,7 +171,7 @@ public abstract class AbstractModelDocumentationGenerator implements AutoCloseab
 		return modelElementToPathMap.get(eObject);		
 	}
 	
-	public Object getContent(HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {		
+	public Object getContent(HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) {		
 		if (path.startsWith(getModelPath()+"/")) {
 			Entry<EObject, String> entry = null;
 			for (Entry<EObject, String> candidate: modelElementToPathMap.entrySet()) {
@@ -189,7 +189,7 @@ public abstract class AbstractModelDocumentationGenerator implements AutoCloseab
 						return sedg.getContent(
 								entry.getKey(),
 								context == null ? context : context.shift(offset), 
-								baseURL, 
+								baseURI, 
 								urlPrefix, 
 								path);
 					} catch (Exception e) {
@@ -208,6 +208,16 @@ public abstract class AbstractModelDocumentationGenerator implements AutoCloseab
 		for (DocumentationGeneratorEntry tbr: getDocumentationGenerators()) {			
 			tbr.close();
 		}
+	}
+	
+	public java.net.URI getModelUri(EObject modelElement) throws URISyntaxException {
+		for (Entry<String, Resource> trre: modelResources.entrySet()) {
+			if (modelElement.eResource() == trre.getValue()) {
+				return new java.net.URI(getDocRoute().getDocRoutePath()+DocRoute.BUNDLE_PATH+trre.getKey()); 
+			}
+		}
+		
+		return null;		
 	}
 	
 }

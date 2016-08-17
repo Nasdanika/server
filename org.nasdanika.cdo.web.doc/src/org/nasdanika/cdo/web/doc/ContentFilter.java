@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.net.URL;
+import java.net.URI;
 
 /**
  * Converts content from one format to another.
@@ -9,6 +9,6 @@ import java.net.URL;
  */
 public interface ContentFilter {
 	
-	Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) throws Exception;
+	Object filter(Object content, DocRoute docRoute, URI baseURI, String urlPrefix) throws Exception;
 
 }

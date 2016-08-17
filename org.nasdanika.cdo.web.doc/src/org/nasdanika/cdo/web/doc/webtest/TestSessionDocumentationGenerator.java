@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
-import java.net.URL;
 import java.util.Date;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -104,15 +103,15 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 	}
 			
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	protected Fragment getIndex(TestSession obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
+	protected Fragment getIndex(TestSession obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
 		HTMLFactory htmlFactory = testResultsDocumentationGenerator.getDocRoute().getHtmlFactory();
 		Fragment ret = htmlFactory.fragment(header(obj));
 
-		qualifiedName(obj, ret, context, baseURL, urlPrefix, path);
+		qualifiedName(obj, ret, context, baseURI, urlPrefix, path);
 		ret.content(htmlFactory.div("<b>Node:</b> ", StringEscapeUtils.escapeHtml4(obj.getNode())));
 		ret.content(htmlFactory.div("<b>Time:</b> ", new Date(obj.getTimestamp())));
-		description(obj, ret, context, baseURL, urlPrefix);
-		links(obj, ret, context, baseURL, urlPrefix);
+		description(obj, ret, context, baseURI, urlPrefix);
+		links(obj, ret, context, baseURI, urlPrefix);
 		
 		Tabs tabs = htmlFactory.tabs().style().margin().top("5px");
 		if (!obj.getTestResults().isEmpty()) {
@@ -140,7 +139,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 				classRow.cell(htmlFactory.link(href, StringEscapeUtils.escapeHtml4(title)));				
 				Cell descriptionCell = classRow.cell();
 				if (docGen instanceof DescriptorDocumentationGenerator) {
-					((DescriptorDocumentationGenerator) docGen).description(tr, descriptionCell, context, baseURL, urlPrefix);
+					((DescriptorDocumentationGenerator) docGen).description(tr, descriptionCell, context, baseURI, urlPrefix);
 				}
 				
 				EMap<OperationStatus, Integer> trStats = testResultStats(tr);

@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc.extensions;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EDataType;
@@ -16,7 +16,7 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 	@Override
 	public String generate(
 			DocRoute docRoute, 
-			URL baseURL, 
+			URI baseURI, 
 			String urlPrefix,
 			String registryPath,
 			EDataType eDataType) {
@@ -40,12 +40,12 @@ public class EDataTypeDocumentationGenerator extends EModelElementDocumentationG
 		if (instanceClass.isPrimitive()) {
 			icDiv.content(instanceClass.getName());
 		} else {
-			icDiv.content(docRoute.markdownToHtml(baseURL, urlPrefix, "[[javadoc>"+eDataType.getInstanceClassName()+"|"+eDataType.getInstanceClassName()+"]]"));
+			icDiv.content(docRoute.markdownToHtml(baseURI, urlPrefix, "[[javadoc>"+eDataType.getInstanceClassName()+"|"+eDataType.getInstanceClassName()+"]]"));
 		}
 		if (isArray) {
 			icDiv.content("[]");
 		}
-		String doc = getModelDocumentation(docRoute, baseURL, urlPrefix, eDataType);
+		String doc = getModelDocumentation(docRoute, baseURI, urlPrefix, eDataType);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")

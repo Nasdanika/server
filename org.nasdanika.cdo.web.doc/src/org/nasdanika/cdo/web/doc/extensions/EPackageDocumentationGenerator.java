@@ -2,7 +2,7 @@ package org.nasdanika.cdo.web.doc.extensions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,7 +40,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 	@Override
 	public String generate(
 			DocRoute docRoute, 
-			URL baseURL,
+			URI baseURI,
 			String urlPrefix,
 			String registryPath,
 			EPackage ePackage) {
@@ -55,14 +55,14 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		Tabs tabs = htmlFactory.tabs();
 		ret.content(tabs);		
 		
-		tabs(docRoute, baseURL, urlPrefix, registryPath, ePackage, tabs);
+		tabs(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);
 		
 		return ret.toString();				
 	}
 
 	protected void documentationTab(
 			DocRoute docRoute, 
-			URL baseURL, 
+			URI baseURI, 
 			String urlPrefix, 
 			String registryPath,
 			EPackage ePackage, 
@@ -70,7 +70,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		
 		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
 		Fragment ret = htmlFactory.fragment();
-		String doc = getModelDocumentation(docRoute, baseURL, urlPrefix, ePackage);
+		String doc = getModelDocumentation(docRoute, baseURI, urlPrefix, ePackage);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")
@@ -120,16 +120,16 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 	
 	protected void tabs(
 			DocRoute docRoute, 
-			URL baseURL,
+			URI baseURI,
 			String urlPrefix,
 			String registryPath,
 			EPackage ePackage, 
 			Tabs tabs) {
 		
-		documentationTab(docRoute, baseURL, urlPrefix, registryPath, ePackage, tabs);		
+		documentationTab(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);		
 		diagramTab(ePackage, tabs);
-		subPackagesTab(docRoute, baseURL, urlPrefix, registryPath, ePackage, tabs);		
-		classifierTabs(docRoute, baseURL, urlPrefix, registryPath, ePackage, tabs);	
+		subPackagesTab(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);		
+		classifierTabs(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);	
 		sectionsTabs(docRoute, ePackage, tabs);						
 	}
 
@@ -205,7 +205,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 
 	protected void classifierTabs(
 			DocRoute docRoute, 
-			URL baseURL, 
+			URI baseURI, 
 			String urlPrefix, 
 			String registryPath,
 			EPackage ePackage, 
@@ -243,16 +243,16 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			if (eClassifier instanceof EClass) {
 				Row row = classTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
-				row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, eClassifier));
+				row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, eClassifier));
 			} else if (eClassifier instanceof EEnum) {
 				Row row = enumTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
-				row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, eClassifier));
+				row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, eClassifier));
 			} else {
 				Row row = dataTypeTable.row();
 				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
 				row.cell(eClassifier.getInstanceTypeName());
-				row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, eClassifier));
+				row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, eClassifier));
 			}
 		}
 		
@@ -281,7 +281,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 
 	protected void subPackagesTab(
 			DocRoute docRoute, 
-			URL baseURL, 
+			URI baseURI, 
 			String urlPrefix, String registryPath,
 			EPackage ePackage, 
 			Tabs tabs) {
@@ -294,7 +294,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		for (EPackage subPackage: ePackage.getESubpackages()) {
 			Row row = subPackageTable.row();
 			row.cell(htmlFactory.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */)), subPackage.getName()));
-			row.cell(getFirstDocSentence(docRoute, baseURL, urlPrefix, subPackage));			
+			row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, subPackage));			
 		}
 		
 		if (subPackageTable.rows().size()>1) {

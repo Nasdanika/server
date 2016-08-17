@@ -1,7 +1,5 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
-import java.net.URL;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Carousel;
@@ -21,8 +19,9 @@ abstract class OperationResultDocumentationGenerator<T extends OperationResult> 
 		super(testResultsDocumentationGenerator);
 	}
 
-	protected Fragment getIndex(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
-		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
+	@Override
+	protected Fragment getIndex(T obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
+		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		
 		ret.content(htmlFactory.div("<B>Status: </B>", operationStatusGlyph(obj.getStatus()), "&nbsp;", StringEscapeUtils.escapeHtml4(obj.getStatus().name())).style().margin().bottom("10px"));

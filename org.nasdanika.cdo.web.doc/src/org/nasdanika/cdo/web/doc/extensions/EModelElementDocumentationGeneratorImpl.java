@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc.extensions;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +43,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		
 	};
 	
-	public String getModelDocumentation(DocRoute docRoute, URL baseURL, String urlPrefix, EModelElement modelElement) {
+	public String getModelDocumentation(DocRoute docRoute, URI baseURI, String urlPrefix, EModelElement modelElement) {
 		EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
 		if (docAnn==null) {
 			return "";
@@ -52,7 +52,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		if (CoreUtil.isBlank(markdown)) {
 			return null;
 		}
-		return docRoute.markdownToHtml(baseURL, urlPrefix, markdown);		
+		return docRoute.markdownToHtml(baseURI, urlPrefix, markdown);		
 	}
 	
 	public void mountedModelElementDocumentation(DocRoute docRoute, EClassifier eClassifier, Fragment sink) {
@@ -80,8 +80,8 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 				
 	}
 	
-	public String getFirstDocSentence(DocRoute docRoute, URL baseURL, String urlPrefix, EModelElement modelElement) {
-		String html = getModelDocumentation(docRoute, baseURL, urlPrefix, modelElement);
+	public String getFirstDocSentence(DocRoute docRoute, URI baseURI, String urlPrefix, EModelElement modelElement) {
+		String html = getModelDocumentation(docRoute, baseURI, urlPrefix, modelElement);
 		if (CoreUtil.isBlank(html)) {
 			return "";
 		}
@@ -89,12 +89,12 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 		return docRoute.firstSentence(text);
 	}
 		
-	public String getFirstDocSentence(DocRoute docRoute, URL baseURL, String urlPrefix, String markdown) {
+	public String getFirstDocSentence(DocRoute docRoute, URI baseURI, String urlPrefix, String markdown) {
 		if (CoreUtil.isBlank(markdown)) {
 			return "";
 		}
 
-		String text = Jsoup.parse(docRoute.markdownToHtml(baseURL, urlPrefix, markdown)).text();
+		String text = Jsoup.parse(docRoute.markdownToHtml(baseURI, urlPrefix, markdown)).text();
 		return docRoute.firstSentence(text);
 	}
 		

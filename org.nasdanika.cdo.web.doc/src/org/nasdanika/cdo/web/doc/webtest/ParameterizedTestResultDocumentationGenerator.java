@@ -1,7 +1,5 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
-import java.net.URL;
-
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.EMap;
 import org.nasdanika.cdo.web.doc.DocRoute;
@@ -39,11 +37,11 @@ class ParameterizedTestResultDocumentationGenerator extends TestSuiteResultDocum
 	}
 	
 	@Override
-	protected Fragment getIndex(ParameterizedTestResult obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
+	protected Fragment getIndex(ParameterizedTestResult obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
 		HTMLFactory htmlFactory = testResultsDocumentationGenerator.getDocRoute().getHtmlFactory();
 		Fragment ret = htmlFactory.fragment(header(obj));
-		qualifiedName(obj, ret, context, baseURL, urlPrefix, path);		
-		description(obj, ret, context, baseURL, urlPrefix);
+		qualifiedName(obj, ret, context, baseURI, urlPrefix, path);		
+		description(obj, ret, context, baseURI, urlPrefix);
 
 //		links(obj, ret, context, baseURL, urlPrefix);		
 		
@@ -54,7 +52,7 @@ class ParameterizedTestResultDocumentationGenerator extends TestSuiteResultDocum
 		RowContainer<?> parametersTableBody = parametersTable.body();
 		for (Descriptor pd: obj.getParameterDescriptors()) {
 			Row pRow = parametersTableBody.row(pd.getTitle());
-			description(pd, pRow.cell(), context, baseURL, urlPrefix);
+			description(pd, pRow.cell(), context, baseURI, urlPrefix);
 			String pqn = pd.getQualifiedName();
 			int cIdx = pqn.indexOf(":");
 			int lsIdx = pqn.substring(cIdx+1).lastIndexOf(' ');

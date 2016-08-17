@@ -1,7 +1,6 @@
 package org.nasdanika.cdo.web.doc.extensions;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -16,12 +15,14 @@ public class IncludeMarkdownPreProcessor implements MarkdownPreProcessor {
 
 	public static class RegionImpl implements Region {
 
+		private static final String END_TOKEN = "}}";
+		private static final String START_TOKEN = "{{include>";
 		private final String content;
 		private int start;
 		private int end;
 
 		public RegionImpl(String content, int start, int end) {
-			this.content = content.substring("{{include>".length(), content.length()-"}}".length());
+			this.content = content.substring(START_TOKEN.length(), content.length()-END_TOKEN.length());
 			this.start = start;
 			this.end = end;
 		}
@@ -37,7 +38,7 @@ public class IncludeMarkdownPreProcessor implements MarkdownPreProcessor {
 		}
 
 		@Override
-		public String process(URL baseURL, String urlPrefix, Chain chain, DocRoute docRoute) {
+		public String process(URI baseURI, String urlPrefix, Chain chain, DocRoute docRoute) {
 			if (content == null || content.trim().length()==0) {
 				return null;
 			}
@@ -45,7 +46,7 @@ public class IncludeMarkdownPreProcessor implements MarkdownPreProcessor {
 			int idx = content.indexOf(':');
 			String theContent = content;
 			if (idx!=-1) {
-				Resolver resolver = docRoute.getResolverRegistry(baseURL, urlPrefix).getResolver(content.substring(0, idx));
+				Resolver resolver = docRoute.getResolverRegistry(baseURI, urlPrefix).getResolver(content.substring(0, idx));
 				if (resolver!=null) {
 					String href = resolver.resolve(content.substring(idx+1));
 					if (href!=null) {
@@ -53,15 +54,16 @@ public class IncludeMarkdownPreProcessor implements MarkdownPreProcessor {
 					}
 				}
 			}
-						
+					
 			try {
-				URL contentURL = new URL(baseURL, theContent);
-				String contentURLStr = contentURL.toString();
+				URI contentURI = baseURI.resolve(theContent);
+				String contentURLStr = contentURI.toString();
 				String absDocRoutePath = urlPrefix+docRoute.getDocRoutePath();
-				String contentToInclude = CoreUtil.stringify(contentURLStr.startsWith(absDocRoutePath) ? docRoute.getContent(null, contentURL, urlPrefix, contentURLStr.substring(absDocRoutePath.length())) : contentURL);
+				String contentToInclude = CoreUtil.stringify(contentURLStr.startsWith(absDocRoutePath) ? docRoute.getContent(null, contentURI, urlPrefix, contentURLStr.substring(absDocRoutePath.length())) : contentURI);
 				return contentToInclude==null ? null : chain.process(contentToInclude);
-			} catch (MalformedURLException e) {
-				return "(Include exception: "+e+")";
+			} catch (Exception e) {
+				System.err.println("Include exception in "+baseURI+": "+e);
+				return START_TOKEN+content+END_TOKEN;
 			}
 		}
 		

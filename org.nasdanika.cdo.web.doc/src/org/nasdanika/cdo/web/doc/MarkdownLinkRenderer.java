@@ -2,8 +2,7 @@ package org.nasdanika.cdo.web.doc;
 
 import static org.pegdown.FastEncoder.encode;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.URI;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo;
@@ -23,15 +22,15 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 	private WikiLinkProcessor wikiLinkProcessor;
 	private org.nasdanika.cdo.web.doc.WikiLinkProcessor.LinkInfo.Registry linkRegistry;
 	private org.nasdanika.cdo.web.doc.WikiLinkProcessor.Resolver.Registry resolverRegistry;
-	private URL baseURL;
+	private URI baseURI;
 
 	public MarkdownLinkRenderer(
-			URL baseURL, 
+			URI baseURI, 
 			Renderer.Registry rendererRegistry, 
 			Resolver.Registry resolverRegistry, 
 			LinkInfo.Registry linkRegistry,
 			URLRewriter urlRewriter) {
-		this.baseURL = baseURL;
+		this.baseURI = baseURI;
 		this.urlRewriter = urlRewriter;
 		if (this.urlRewriter==null) {
 			this.urlRewriter = new URLRewriter() {
@@ -87,12 +86,8 @@ public class MarkdownLinkRenderer extends LinkRenderer {
 		if (href!=null) {
 			if (rewriteURL && urlRewriter!=null) {
 				href = urlRewriter.rewrite(href);
-			} else if (baseURL != null) {
-				try {
-					href = new URL(baseURL, href).toString();
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-				}
+			} else if (baseURI != null) {
+				href = baseURI.resolve(href).toString();
 			}
 		}
 		

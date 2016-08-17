@@ -1,7 +1,5 @@
 package org.nasdanika.cdo.web.doc.story;
 
-import java.net.URL;
-
 import org.nasdanika.html.Fragment;
 import org.nasdanika.story.Persona;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -16,10 +14,16 @@ class PersonaDocumentationGenerator extends UserDocumentationGenerator<Persona> 
 	protected String getIcon() {
 		return "/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/user_gray.png";
 	}
+	
+	// Goal
+//	getDetails()
+//	getName()
 		
+	// getGoals(), getPicture()
+	
 	@Override
-	protected Fragment getIndex(Persona obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
-		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
+	protected Fragment getIndex(Persona obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) {
+		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		// TODO - picture, tabs: Goals, links to stories realizing the goals, context diagram
 //		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 //		ret.content(htmlFactory.tag(TagName.h4, "Contents"));

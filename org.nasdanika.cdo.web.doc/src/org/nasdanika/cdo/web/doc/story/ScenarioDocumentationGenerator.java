@@ -1,16 +1,19 @@
 package org.nasdanika.cdo.web.doc.story;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.story.Scenario;
 import org.nasdanika.web.HttpServletRequestContext;
 
-class ScenarioDocumentationGenerator extends CatalogElementDocumentationGenerator<Scenario> {
+class ScenarioDocumentationGenerator extends StateContainerDocumentationGenerator<Scenario> {
 
 	ScenarioDocumentationGenerator(StoryDocumentationGenerator storyDocumentationGenerator) {
 		super(storyDocumentationGenerator);
@@ -35,28 +38,41 @@ class ScenarioDocumentationGenerator extends CatalogElementDocumentationGenerato
 			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
 		}
 		
-		if (!CoreUtil.isBlank(obj.getContext())) {
-			ret.content(htmlFactory.tag(TagName.h4, "Given (Context)"));
-			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getContext()));
-		}
-		
-		if (!CoreUtil.isBlank(obj.getAction())) {
-			ret.content(htmlFactory.tag(TagName.h4, "When (Action)"));
-			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getAction()));
-		}
-		
-		if (!CoreUtil.isBlank(obj.getOutcome())) {
-			ret.content(htmlFactory.tag(TagName.h4, "Then (Outcome)"));
-			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getOutcome()));
-		}
-				
-		if (!CoreUtil.isBlank(obj.getDescription())) {
-			ret.content(htmlFactory.tag(TagName.h4, "Description"));
-			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getDescription()));
+		try {
+			URI modelURI = storyDocumentationGenerator.getModelUri(obj);
+			
+			if (!CoreUtil.isBlank(obj.getContext())) {
+				ret.content(htmlFactory.tag(TagName.h4, "Given (Context)"));
+				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getContext()));
+			}
+			
+			if (!CoreUtil.isBlank(obj.getAction())) {
+				ret.content(htmlFactory.tag(TagName.h4, "When (Action)"));
+				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getAction()));
+			}
+			
+			if (!CoreUtil.isBlank(obj.getOutcome())) {
+				ret.content(htmlFactory.tag(TagName.h4, "Then (Outcome)"));
+				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getOutcome()));
+			}
+					
+			if (!CoreUtil.isBlank(obj.getDescription())) {
+				ret.content(htmlFactory.tag(TagName.h4, "Description"));
+				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getDescription()));
+			}
+		} catch (URISyntaxException e) {
+			ret.content(htmlFactory.alert(Style.DANGER, false, e));
 		}
 		
 		return ret;
 	}
+	
+//	getAction()
+//	getContext()
+//	getContextStates()
+//	getOutcome()
+//	getOutcomeState()
+//	getSteps()	
 	
 //	@Override
 //	protected Collection<? extends EObject> getTocChildren(Scenario scenario) {

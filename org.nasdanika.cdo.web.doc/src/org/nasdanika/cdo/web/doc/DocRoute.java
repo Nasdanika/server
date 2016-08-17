@@ -6,7 +6,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1131,10 +1132,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					}
 					
 					try {
-						URL theBaseURL = new URL(baseURL);
+						URI theBaseURI = new URI(baseURL);
 						if (path.startsWith(PACKAGES_GLOBAL_PATH) || path.startsWith(PACKAGES_SESSION_PATH)) {
 							// Always HTML String for packages if not null.
-								final Object content = DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path);
+								final Object content = DocRoute.this.getContent(null, theBaseURI.resolve(DocRoute.this.docRoutePath+path), urlPrefix, path);
 								if (content instanceof String) { 
 									return new ContentEntry() {
 	
@@ -1156,7 +1157,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						String contentType = getContentType(fn);
 						if (contentType!=null) {
 							if (MIME_TYPE_HTML.equals(contentType)) {
-								final String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+								final String content = CoreUtil.stringify(DocRoute.this.getContent(null, theBaseURI.resolve(DocRoute.this.docRoutePath+path), urlPrefix, path));
 								return new ContentEntry() {
 
 									@Override
@@ -1175,9 +1176,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							ExtensionEntry<ContentFilter> extensionEntry = tm==null ? null : tm.get(MIME_TYPE_HTML);
 							ContentFilter cf = extensionEntry==null ? null : extensionEntry.extension;
 							if (cf!=null) {
-								String content = CoreUtil.stringify(DocRoute.this.getContent(null, new URL(theBaseURL, DocRoute.this.docRoutePath+path), urlPrefix, path));
+								String content = CoreUtil.stringify(DocRoute.this.getContent(null, theBaseURI.resolve(DocRoute.this.docRoutePath+path), urlPrefix, path));
 								if (content!=null) {
-									final String htmlContent = String.valueOf(cf.filter(content, DocRoute.this, new URL(urlPrefix+docRoutePath+path), urlPrefix));
+									final String htmlContent = String.valueOf(cf.filter(content, DocRoute.this, new URI(urlPrefix+docRoutePath+path), urlPrefix));
 									return new ContentEntry() {
 	
 										@Override
@@ -1544,7 +1545,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 	
 	@Override
-	public Object getContent(HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
+	public Object getContent(HttpServletRequestContext context, URI baseURI, String urlPrefix, String path) {
 		if (path.startsWith(PACKAGES_GLOBAL_PATH)) {
 			String[] subPath = path.substring(PACKAGES_GLOBAL_PATH.length()).split("/");
 			EPackage ePackage;
@@ -1557,10 +1558,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				return null;
 			}
 			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
-				return getEPackageContent(baseURL, urlPrefix, ePackage, docRoutePath+"/packages/global");
+				return getEPackageContent(baseURI, urlPrefix, ePackage, docRoutePath+"/packages/global");
 			}
 			EClassifier eClassifier = ePackage.getEClassifier(subPath[1]);
-			return eClassifier==null ? null : getEClassifierContent(baseURL, urlPrefix, eClassifier, docRoutePath+"/packages/global");
+			return eClassifier==null ? null : getEClassifierContent(baseURI, urlPrefix, eClassifier, docRoutePath+"/packages/global");
 		} 
 		
 		if (path.startsWith(PACKAGES_SESSION_PATH)) {
@@ -1578,10 +1579,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				return null;
 			}
 			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
-				return getEPackageContent(baseURL, urlPrefix, ePackage, docRoutePath+"/packages/session");
+				return getEPackageContent(baseURI, urlPrefix, ePackage, docRoutePath+"/packages/session");
 			}
 			EClassifier eClassifier = ePackage.getEClassifier(subPath[1]);
-			return eClassifier==null ? null : getEClassifierContent(baseURL, urlPrefix, eClassifier, docRoutePath+"/packages/global");				
+			return eClassifier==null ? null : getEClassifierContent(baseURI, urlPrefix, eClassifier, docRoutePath+"/packages/global");				
 		} 
 		
 		if (path.startsWith(BUNDLE_PATH)) {
@@ -1593,7 +1594,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			
 			// A hack to document extensions, need a better way in the future
 			if ("org.nasdanika.cdo.web.doc".equals(bundleId) && "extensions.html".equals(path.substring(idx+1))) {
-				return generateExtensionsDocumentation(baseURL, urlPrefix, path);
+				return generateExtensionsDocumentation(baseURI, urlPrefix, path);
 			}			
 			
 			for (Bundle targetBundle: bundleContext.getBundles()) {
@@ -1660,11 +1661,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		}
 		
 		if (path.startsWith(STORY_PATH)) {
-			return storyDocumentationGenerator.getContent(context, baseURL, urlPrefix, path);
+			return storyDocumentationGenerator.getContent(context, baseURI, urlPrefix, path);
 		}		
 		
 		if (path.startsWith(TEST_RESULTS_PATH)) {
-			return testResultsDocumentationGenerator.getContent(context, baseURL, urlPrefix, path);
+			return testResultsDocumentationGenerator.getContent(context, baseURI, urlPrefix, path);
 		}				
 		
 		// TODO - diagrams - package/classifier - session/global. Delegate to extensions. 
@@ -1713,12 +1714,12 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return collector;
 	}
 	
-	private Object getEClassifierContent(URL baseURL, String urlPrefix, EClassifier eClassifier, String registryPath) {
+	private Object getEClassifierContent(URI baseURI, String urlPrefix, EClassifier eClassifier, String registryPath) {
 		if (eClassifier instanceof EClass) {
 			for (EClassInheritanceElement cie: traverseEClassHierarchy((EClass) eClassifier, 0, 0, new TreeSet<EClassInheritanceElement>())) {
 				for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EClass>>> e: eClassDocumentationGenerators.entrySet()) {
 					if (e.getKey().match(cie.eClass)) {
-						return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, (EClass) eClassifier);						
+						return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, (EClass) eClassifier);						
 					}
 				}
 			}
@@ -1729,7 +1730,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		if (eClassifier instanceof EEnum) {
 			for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EEnum>>> e: eEnumDocumentationGenerators.entrySet()) {
 				if (e.getKey().match(eClassifier)) {
-					return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, (EEnum) eClassifier);						
+					return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, (EEnum) eClassifier);						
 				}
 			}
 			return "No matching generator";
@@ -1737,16 +1738,16 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 		for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EDataType>>> e: eDataTypeDocumentationGenerators.entrySet()) {
 			if (e.getKey().match(eClassifier)) {
-				return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, (EDataType) eClassifier);						
+				return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, (EDataType) eClassifier);						
 			}
 		}
 		return "No matching generator";
 	}
 
-	private Object getEPackageContent(URL baseURL, String urlPrefix, EPackage ePackage, String registryPath) {
+	private Object getEPackageContent(URI baseURI, String urlPrefix, EPackage ePackage, String registryPath) {
 		for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EPackage>>> e: ePackageDocumentationGenerators.entrySet()) {
 			if (e.getKey().match(ePackage)) {
-				return e.getValue().extension.generate(this, baseURL, urlPrefix, registryPath, ePackage);						
+				return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, ePackage);						
 			}
 		}
 		return "No matching generator";
@@ -1875,7 +1876,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
 			String prefix = docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath;			
 			String pathStr = "/"+StringUtils.join(path, "/");
-			Object content = getContent(context, new URL(requestURL), urlPrefix, pathStr);
+			Object content = getContent(context, new URI(requestURL), urlPrefix, pathStr);
 			// Sub-routes
 			if (content instanceof Action) {
 				return (Action) content;
@@ -1888,7 +1889,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						if (tm!=null) {
 							for (Entry<String, ExtensionEntry<ContentFilter>> tme: tm.entrySet()) {
 								context.getResponse().setContentType(tme.getKey());
-								Object filteredContent = tme.getValue().extension.filter(content, this, new URL(requestURL), urlPrefix);
+								Object filteredContent = tme.getValue().extension.filter(content, this, new URI(requestURL), urlPrefix);
 								if (MIME_TYPE_HTML.equals(tme.getKey()) && filteredContent instanceof String) {
 									TocNode toc = tocRoot.find(pathStr);
 									if (doNavWrap && toc!=null) {
@@ -1983,11 +1984,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return null;
 	}
 	
-	public String generateExtensionsDocumentation(URL baseURL, String urlPrefix, String path) {		
+	public String generateExtensionsDocumentation(URI baseURI, String urlPrefix, String path) {		
 		try {
 			Tabs ret = htmlFactory.tabs();
 			PegDownProcessor pegDownProcessor = new PegDownProcessor(MARKDOWN_OPTIONS);
-			LinkRenderer mlr = createMarkdownLinkRenderer(new URL(baseURL, path), urlPrefix);
+			LinkRenderer mlr = createMarkdownLinkRenderer(baseURI.resolve(path), urlPrefix);
 			synchronized (preProcessors) {
 				if (!preProcessors.isEmpty()) {
 					Table pluginTable = htmlFactory.table().bordered();
@@ -1998,7 +1999,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					for (ExtensionEntry<MarkdownPreProcessor> extensionEntry: preProcessors) {
 						Row rRow = pluginTable.row();
 						rRow.cell(extensionEntry.extension.getClass().getName());					
-						rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
+						rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURI, urlPrefix), mlr));
 						if (extensionEntry.extension instanceof ConfigurableExtension) {
 							rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 						} else {
@@ -2018,7 +2019,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					Row rRow = resolverTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<WikiLinkResolver> extensionEntry = wikiLinkResolverMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURI, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -2037,7 +2038,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					Row rRow = rendererTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<Renderer> extensionEntry = wikiLinkRendererMap.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURI, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -2063,7 +2064,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						}
 						typeRow.cell(extension);
 						if (isFirst) {
-							typeRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
+							typeRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURI, urlPrefix), mlr));
 						}
 						isFirst = false;
 					}
@@ -2088,7 +2089,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						}
 						filterRow.cell(toType);
 						ExtensionEntry<ContentFilter> extensionEntry = toFilters.get(toType);
-						filterRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
+						filterRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURI, urlPrefix), mlr));
 						if (extensionEntry.extension instanceof ConfigurableExtension) {
 							filterRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 						} else {
@@ -2110,7 +2111,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					Row rRow = rendererTable.row();
 					rRow.cell(StringEscapeUtils.escapeHtml4(rName));					
 					ExtensionEntry<EAnnotationRenderer> extensionEntry = eAnnotationRenderers.get(rName);
-					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURL, urlPrefix), mlr));
+					rRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(extensionEntry.description, baseURI, urlPrefix), mlr));
 					if (extensionEntry.extension instanceof ConfigurableExtension) {
 						rRow.cell(((ConfigurableExtension) extensionEntry.extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -2137,7 +2138,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					pRow.cell(StringEscapeUtils.escapeHtml4(pe.getKey().nsURI));					
 					pRow.cell(pe.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+pe.getValue().extension.getClass().getName()+"|"+pe.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(pe.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(pe.getValue().description, baseURI, urlPrefix), mlr));
 					if (pe.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) pe.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -2166,7 +2167,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					pRow.cell(StringEscapeUtils.escapeHtml4(ce.getKey().name));					
 					pRow.cell(ce.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+ce.getValue().extension.getClass().getName()+"|"+ce.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(ce.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(ce.getValue().description, baseURI, urlPrefix), mlr));
 					if (ce.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) ce.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -2195,7 +2196,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					pRow.cell(StringEscapeUtils.escapeHtml4(ee.getKey().name));					
 					pRow.cell(ee.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+ee.getValue().extension.getClass().getName()+"|"+ee.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(ee.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(ee.getValue().description, baseURI, urlPrefix), mlr));
 					if (ee.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) ee.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -2224,7 +2225,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					pRow.cell(StringEscapeUtils.escapeHtml4(dte.getKey().name));					
 					pRow.cell(dte.getKey().priority).style().text().align().center();
 					pRow.cell(pegDownProcessor.markdownToHtml("[[javadoc>"+dte.getValue().extension.getClass().getName()+"|"+dte.getValue().extension.getClass().getName()+"]]", mlr));					
-					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(dte.getValue().description, baseURL, urlPrefix), mlr));
+					pRow.cell(pegDownProcessor.markdownToHtml(preProcessMarkdown(dte.getValue().description, baseURI, urlPrefix), mlr));
 					if (dte.getValue().extension instanceof ConfigurableExtension) {
 						pRow.cell(((ConfigurableExtension) dte.getValue().extension).generateConfigurationDocumentation(htmlFactory));
 					} else {
@@ -2316,7 +2317,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 	}
 	
-	public LinkRenderer createMarkdownLinkRenderer(final URL baseURL, final String urlPrefix) {
+	public LinkRenderer createMarkdownLinkRenderer(final URI baseURI, final String urlPrefix) {
 		Renderer.Registry rendererRegistry = new Renderer.Registry() {
 
 			@Override
@@ -2329,7 +2330,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 		final String absDocRoutePath = urlPrefix+docRoutePath;	
 		final Map<Object, Object> env = new HashMap<>();
-		String baseURLStr = baseURL.toString();
+		String baseURLStr = baseURI.toString();
 		if (baseURLStr.startsWith(absDocRoutePath)) {
 			String relPath = baseURLStr.substring(absDocRoutePath.length());
 			for (TocNode toc = tocRoot==null ? null : tocRoot.find(relPath); toc!=null; toc = toc.getParent()) {
@@ -2382,44 +2383,23 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		LinkInfo.Registry linkRegistry = new LinkInfo.Registry() {
 			
 			@Override
-			public LinkInfo getLinkInfo(String url) {
-				try {
-					String absURL = new URL(baseURL, url).toString();
-					if (absURL.startsWith(absDocRoutePath)) {
-						String relPath = absURL.substring(absDocRoutePath.length());
-						final boolean isMissing = missingPaths!=null && missingPaths.contains(relPath);
-						final TocNode toc = tocRoot.find(relPath);						
-						if (toc==null) {
-							return new LinkInfo() {
-
-								@Override
-								public String getIconTag() {
-									return null;
-								}
-
-								@Override
-								public String getLabel() {
-									return null;
-								}
-
-								@Override
-								public boolean isMissing() {
-									return isMissing;
-								}
-								
-							};
-						}						
-						
+			public LinkInfo getLinkInfo(String location) {
+				String absURL = baseURI.resolve(location).toString();
+				if (absURL.startsWith(absDocRoutePath)) {
+					String relPath = absURL.substring(absDocRoutePath.length());
+					final boolean isMissing = missingPaths!=null && missingPaths.contains(relPath);
+					final TocNode toc = tocRoot.find(relPath);						
+					if (toc==null) {
 						return new LinkInfo() {
 
 							@Override
 							public String getIconTag() {
-								return CoreUtil.isBlank(toc.getIcon()) ? "" : htmlFactory.tag(TagName.img).attribute("src", docRoutePath+toc.getIcon()).style().margin().right("1px").style("vertical-align", "text-top").toString();
+								return null;
 							}
 
 							@Override
 							public String getLabel() {
-								return toc.getText();
+								return null;
 							}
 
 							@Override
@@ -2428,9 +2408,26 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							}
 							
 						};
-					}
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
+					}						
+					
+					return new LinkInfo() {
+
+						@Override
+						public String getIconTag() {
+							return CoreUtil.isBlank(toc.getIcon()) ? "" : htmlFactory.tag(TagName.img).attribute("src", docRoutePath+toc.getIcon()).style().margin().right("1px").style("vertical-align", "text-top").toString();
+						}
+
+						@Override
+						public String getLabel() {
+							return toc.getText();
+						}
+
+						@Override
+						public boolean isMissing() {
+							return isMissing;
+						}
+						
+					};
 				}
 				return null;
 			}
@@ -2440,40 +2437,35 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			
 			@Override
 			public String rewrite(String spec) {
-				try {
-					URL url = new URL(baseURL, spec);
-					String ret = url.toString();
-					if (ret.startsWith(urlPrefix)) {
-						String relURL = ret.substring(urlPrefix.length());
-						if (relURL.startsWith(docRoutePath)) {
-							if (relURL.startsWith(docRoutePath+"/packages/") || relURL.startsWith(docRoutePath+"/toc/")) {
-								return tocLink(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+relURL);								
+				URI uri = baseURI.resolve(spec);
+				String ret = uri.toString();
+				if (ret.startsWith(urlPrefix)) {
+					String relURL = ret.substring(urlPrefix.length());
+					if (relURL.startsWith(docRoutePath)) {
+						if (relURL.startsWith(docRoutePath+"/packages/") || relURL.startsWith(docRoutePath+"/toc/")) {
+							return tocLink(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+relURL);								
+						}
+						int idx = relURL.lastIndexOf('/');
+						String fn = idx==-1 ? relURL : relURL.substring(idx+1);
+						String contentType = getContentType(fn);
+						if (contentType!=null) {
+							if (!MIME_TYPE_HTML.equals(contentType)) {
+								Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
+								if (tm!=null && tm.containsKey(MIME_TYPE_HTML)) {
+									contentType = MIME_TYPE_HTML;
+								}
 							}
-							int idx = relURL.lastIndexOf('/');
-							String fn = idx==-1 ? relURL : relURL.substring(idx+1);
-							String contentType = getContentType(fn);
-							if (contentType!=null) {
-								if (!MIME_TYPE_HTML.equals(contentType)) {
-									Map<String, ExtensionEntry<ContentFilter>> tm = contentFilters.get(contentType);
-									if (tm!=null && tm.containsKey(MIME_TYPE_HTML)) {
-										contentType = MIME_TYPE_HTML;
-									}
-								}
-								if (MIME_TYPE_HTML.equals(contentType)) {
-									return tocLink(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+relURL);
-								}
+							if (MIME_TYPE_HTML.equals(contentType)) {
+								return tocLink(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+relURL);
 							}
 						}
 					}
-					return ret;
-				} catch (MalformedURLException e) {
-					e.printStackTrace();
-					return spec;
 				}
+				return ret;
 			}
 		};
 		
-		return new MarkdownLinkRenderer(baseURL, rendererRegistry, resolverRegistry, linkRegistry, urlRewriter);				
+		return new MarkdownLinkRenderer(baseURI, rendererRegistry, resolverRegistry, linkRegistry, urlRewriter);				
 	}
 	
 	/**
@@ -2488,7 +2480,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			Object content, 
 			String sourceContentType, 
 			String targetContentType,
-			URL baseURL,
+			URI baseURI,
 			String urlPrefix) throws Exception {
 		if (sourceContentType.equals(targetContentType)) {
 			return content;
@@ -2501,7 +2493,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		if (cf == null) {
 			return null;
 		}
-		return cf.extension.filter(content, this, baseURL, urlPrefix);
+		return cf.extension.filter(content, this, baseURI, urlPrefix);
 	}
 	
 	/**
@@ -2513,7 +2505,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	 * @param path
 	 * @return
 	 */
-	public String preProcessMarkdown(String content, final URL baseURL, final String urlPrefix) {		
+	public String preProcessMarkdown(String content, final URI baseURI, final String urlPrefix) {		
 		if (!preProcessMarkdown || content == null || content.length()==0) {
 			return "";			
 		}
@@ -2522,7 +2514,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			
 			@Override
 			public String process(String content) {
-				return preProcessMarkdown(CoreUtil.stringify(content), baseURL, urlPrefix);
+				return preProcessMarkdown(CoreUtil.stringify(content), baseURI, urlPrefix);
 			}
 			
 		};
@@ -2557,7 +2549,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					out.append(content.substring(start, regionStart));
 					start = regionStart;
 				}
-				String result = region.process(baseURL, urlPrefix, chain, this);
+				String result = region.process(baseURI, urlPrefix, chain, this);
 				if (result != null) {
 					out.append(result);
 					start = region.getEnd();
@@ -2570,10 +2562,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return out.toString();
 	}
 	
-	public Resolver.Registry getResolverRegistry(URL baseURL, String urlPrefix) {
+	public Resolver.Registry getResolverRegistry(URI baseURI, String urlPrefix) {
 		final String absDocRoutePath = urlPrefix+docRoutePath;	
 		final Map<Object, Object> env = new HashMap<>();
-		String baseURLStr = baseURL.toString();
+		String baseURLStr = baseURI.toString();
 		if (baseURLStr.startsWith(absDocRoutePath)) {
 			String relPath = baseURLStr.substring(absDocRoutePath.length());
 			for (TocNode toc = tocRoot==null ? null : tocRoot.find(relPath); toc!=null; toc = toc.getParent()) {
@@ -2918,13 +2910,13 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	
 	/**
 	 * Helper method.
-	 * @param baseURL
+	 * @param baseURI
 	 * @param urlPrefix
 	 * @param markdownSource
 	 * @return
 	 */
-	public String markdownToHtml(URL baseURL, String urlPrefix, String markdownSource) {
-		return CoreUtil.isBlank(markdownSource) ? "" : new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(preProcessMarkdown(markdownSource, baseURL, urlPrefix), createMarkdownLinkRenderer(baseURL, urlPrefix));
+	public String markdownToHtml(URI baseURI, String urlPrefix, String markdownSource) {
+		return CoreUtil.isBlank(markdownSource) ? "" : new PegDownProcessor(DocRoute.MARKDOWN_OPTIONS).markdownToHtml(preProcessMarkdown(markdownSource, baseURI, urlPrefix), createMarkdownLinkRenderer(baseURI, urlPrefix));
 	}
 	
 	/**
@@ -2934,21 +2926,21 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	 */
 	public String markdownToHtml(String markdownSource) {
 		try {
-			return markdownToHtml(new URL(baseURL), urlPrefix, markdownSource);
-		} catch (MalformedURLException e) {
+			return markdownToHtml(new URI(baseURL), urlPrefix, markdownSource);
+		} catch (URISyntaxException e) {
 			return htmlFactory.span("Exception: "+e).bootstrap().text().color(Style.DANGER).toString();
 		}		
 	}
 	
 	/**
 	 * Helper method.
-	 * @param baseURL
+	 * @param baseURI
 	 * @param urlPrefix
 	 * @param markdownSource
 	 * @return
 	 */
-	public Tag markdownToHtmlDiv(URL baseURL, String urlPrefix, String markdownSource) {
-		return htmlFactory.div(markdownToHtml(baseURL, urlPrefix, markdownSource)).addClass("markdown-body");
+	public Tag markdownToHtmlDiv(URI baseURI, String urlPrefix, String markdownSource) {
+		return htmlFactory.div(markdownToHtml(baseURI, urlPrefix, markdownSource)).addClass("markdown-body");
 	}
 	
 	/**
@@ -2958,8 +2950,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	 */
 	public Tag markdownToHtmlDiv(String markdownSource) {
 		try {
-			return markdownToHtmlDiv(new URL(baseURL), urlPrefix, markdownSource);
-		} catch (MalformedURLException e) {
+			return markdownToHtmlDiv(new URI(baseURL), urlPrefix, markdownSource);
+		} catch (URISyntaxException e) {
 			return htmlFactory.div("Exception: "+e).bootstrap().text().color(Style.DANGER);
 		}					
 	}		
@@ -2967,11 +2959,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	public String javaDocLink(String className, boolean qualified, boolean isArray) {
 		try {
 			if (qualified) {
-				return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"|"+className+"]]"+(isArray ? "[]" : ""));
+				return markdownToHtml(new URI(baseURL), urlPrefix, " [[javadoc>"+className+"|"+className+"]]"+(isArray ? "[]" : ""));
 			}
 			
-			return markdownToHtml(new URL(baseURL), urlPrefix, " [[javadoc>"+className+"]]");
-		} catch (MalformedURLException e) {
+			return markdownToHtml(new URI(baseURL), urlPrefix, " [[javadoc>"+className+"]]");
+		} catch (URISyntaxException e) {
 			return htmlFactory.span("Exception: "+e).bootstrap().text().color(Style.DANGER).toString();
 		}						
 	}
@@ -3018,8 +3010,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		}
 
 		try {
-			return firstSentence(Jsoup.parse(markdownToHtml(new URL(baseURL), urlPrefix, markdown)).text());
-		} catch (MalformedURLException e) {
+			return firstSentence(Jsoup.parse(markdownToHtml(new URI(baseURL), urlPrefix, markdown)).text());
+		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return "";
 		}

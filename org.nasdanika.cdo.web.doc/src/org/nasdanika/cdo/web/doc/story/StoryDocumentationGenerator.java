@@ -24,6 +24,7 @@ import org.nasdanika.story.User;
 public class StoryDocumentationGenerator extends AbstractModelDocumentationGenerator {
 			
 	private final List<DocumentationGeneratorEntry> documentationGenerators;
+	private final List<DiagramSpecGenerator> diagramSpecGenerators;
 	
 	{
 		List<DocumentationGeneratorEntry> tocBuilderRoutes = new ArrayList<>();
@@ -36,9 +37,23 @@ public class StoryDocumentationGenerator extends AbstractModelDocumentationGener
 		tocBuilderRoutes.add(new DocumentationGeneratorEntry(StoryPackage.eINSTANCE.getSystem(), new SystemDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new DocumentationGeneratorEntry(StoryPackage.eINSTANCE.getTheme(), new ThemeDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new DocumentationGeneratorEntry(StoryPackage.eINSTANCE.getUser(), new UserDocumentationGenerator<User>(this)));
+		tocBuilderRoutes.add(new DocumentationGeneratorEntry(StoryPackage.Literals.STATE, new StateDocumentationGenerator(this)));
 		
 		Collections.sort(tocBuilderRoutes);
 		this.documentationGenerators = Collections.unmodifiableList(tocBuilderRoutes);
+		
+		List<DiagramSpecGenerator> dsgl = new ArrayList<>();
+		dsgl.add(new ActivityDiagramSpecGenerator(this));
+		dsgl.add(new StateHierarchyDiagramSpecGenerator(this));
+		dsgl.add(new StateTransitionDiagramSpecGenerator(this));
+		dsgl.add(new UseCaseDiagramSpecGenerator(this));
+		
+		this.diagramSpecGenerators = Collections.unmodifiableList(dsgl);
+		
+	}
+	
+	List<DiagramSpecGenerator> getDiagramSpecGenerators() {
+		return diagramSpecGenerators;
 	}
 	
 	protected java.util.List<DocumentationGeneratorEntry> getDocumentationGenerators() {

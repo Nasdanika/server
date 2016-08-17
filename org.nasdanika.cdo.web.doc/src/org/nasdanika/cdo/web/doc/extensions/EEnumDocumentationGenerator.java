@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc.extensions;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -21,7 +21,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 	@Override
 	public String generate(
 			DocRoute docRoute,
-			URL baseURL, 
+			URI baseURI, 
 			String urlPrefix,
 			String registryPath,
 			EEnum eEnum) {
@@ -35,8 +35,8 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		Fragment ret = htmlFactory.fragment(htmlFactory.title("EEnum "+eEnum.getName()));
 		ret.content(htmlFactory.tag(TagName.h2, enumIcon, eEnum.getName()));
 		
-		ret.content(htmlFactory.div(docRoute.markdownToHtml(baseURL, urlPrefix, "enum [[javadoc>"+eEnum.getInstanceClassName()+"|"+eEnum.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
-		String doc = getModelDocumentation(docRoute, baseURL, urlPrefix, eEnum);
+		ret.content(htmlFactory.div(docRoute.markdownToHtml(baseURI, urlPrefix, "enum [[javadoc>"+eEnum.getInstanceClassName()+"|"+eEnum.getInstanceClassName()+"]]")).style("margin-bottom", "5px").style("font-family", "monospace"));
+		String doc = getModelDocumentation(docRoute, baseURI, urlPrefix, eEnum);
 		if (!CoreUtil.isBlank(doc)) {
 			ret.content(htmlFactory.div(doc)
 					.addClass("markdown-body")
@@ -54,7 +54,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 		ret.content(literalsAccordion);
 		
 		for (EEnumLiteral literal: eEnum.getELiterals()) {			
-			Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(docRoute, baseURL, urlPrefix, literal));
+			Fragment accordionFragment = htmlFactory.fragment(getModelDocumentation(docRoute, baseURI, urlPrefix, literal));
 			Table propTable = htmlFactory.table().bordered();
 			accordionFragment.content(propTable);
 			
@@ -69,7 +69,7 @@ public class EEnumDocumentationGenerator extends EModelElementDocumentationGener
 			for (EAnnotation ann: literal.getEAnnotations()) {
 				accordionFragment.content(documentAnnotation(docRoute, ann));
 			}
-			String firstDocSentence = getFirstDocSentence(docRoute, baseURL, urlPrefix, literal);
+			String firstDocSentence = getFirstDocSentence(docRoute, baseURI, urlPrefix, literal);
 			literalsAccordion.item(
 					"<b>"+literal.getName()+"</b> "+(CoreUtil.isBlank(firstDocSentence) ? "" : " - <I>"+firstDocSentence+"</I>"),
 					null,

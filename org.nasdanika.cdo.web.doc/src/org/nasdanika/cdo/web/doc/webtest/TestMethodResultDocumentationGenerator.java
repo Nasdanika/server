@@ -1,7 +1,5 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
-import java.net.URL;
-
 import org.nasdanika.html.Fragment;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.TestMethodResult;
@@ -28,8 +26,8 @@ public class TestMethodResultDocumentationGenerator extends MethodResultDocument
 	}
 	
 	@Override
-	protected Fragment getIndex(TestMethodResult obj, HttpServletRequestContext context, URL baseURL, String urlPrefix,	String path) throws Exception {
-		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
+	protected Fragment getIndex(TestMethodResult obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix,	String path) throws Exception {
+		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		
 		// getParameters()
 		

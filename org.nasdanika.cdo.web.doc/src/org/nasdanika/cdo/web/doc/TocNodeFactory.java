@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class TocNodeFactory {
 		ContentFilter textFilter = new ContentFilter() {
 
 			@Override
-			public Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) {
+			public Object filter(Object content, DocRoute docRoute, URI baseURI, String urlPrefix) {
 				return "<div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
 			}
 
@@ -51,7 +51,7 @@ public class TocNodeFactory {
 		ContentFilter markdownFilter = new ContentFilter() {
 
 			@Override
-			public Object filter(Object content, DocRoute docRoute, URL baseURL, String urlPrefix) {
+			public Object filter(Object content, DocRoute docRoute, URI baseURI, String urlPrefix) {
 				return "<H1>Cannot convert markdown to HTML</H1><div style=\"white-space:pre-wrap; font-family:monospace\">"+StringEscapeUtils.escapeHtml4(String.valueOf(content))+"</div>";
 			}
 
@@ -63,7 +63,7 @@ public class TocNodeFactory {
 			markdownFilter = ee==null ? null : ee.extension;
 		}
 		
-		URL baseURL = new URL(docBaseURL+"/bundle/"+contributorName+"/");
+		URI baseURI = new URI(docBaseURL+"/bundle/"+contributorName+"/");
 		name = iConfigurationElement.getAttribute("name");
 		id = iConfigurationElement.getAttribute("id");
 		if (id!=null) {
@@ -71,7 +71,7 @@ public class TocNodeFactory {
 		}
 		icon = iConfigurationElement.getAttribute("icon");
 		if (icon!=null) {
-			icon = new URL(baseURL, icon).toString();
+			icon = baseURI.resolve(icon).toString();
 			if (icon.startsWith(docBaseURL)) {
 				icon=icon.substring(docBaseURL.length());
 			}
@@ -89,13 +89,13 @@ public class TocNodeFactory {
 							content = contentElements[0].getValue();
 						}
 					} else {
-						content = (String) textFilter.filter(contentElements[0].getValue(), docRoute, baseURL, urlPrefix);
+						content = (String) textFilter.filter(contentElements[0].getValue(), docRoute, baseURI, urlPrefix);
 					}
 				} else {
-					content = (String) markdownFilter.filter(contentElements[0].getValue(), docRoute, baseURL, urlPrefix);
+					content = (String) markdownFilter.filter(contentElements[0].getValue(), docRoute, baseURI, urlPrefix);
 				}
 			} else {
-				location = new URL(baseURL, location).toString();
+				location = baseURI.resolve(location).toString();
 				if (location.startsWith(docBaseURL)) {
 					location = location.substring(docBaseURL.length());
 				}

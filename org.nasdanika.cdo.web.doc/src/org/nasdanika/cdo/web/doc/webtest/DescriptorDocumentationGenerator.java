@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
-import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -75,21 +74,21 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 	}
 			
 	@Override
-	public Object getContent(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
+	public Object getContent(T obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
 		if (path.endsWith("/index.html")) {
-			return getIndex(obj, context, baseURL, urlPrefix, path).toString();
+			return getIndex(obj, context, baseURI, urlPrefix, path).toString();
 		}
 		
 		return Action.NOT_FOUND;
 	}
 	
-	protected Fragment getIndex(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
+	protected Fragment getIndex(T obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		Fragment ret = htmlFactory.fragment(header(obj));
 
-		qualifiedName(obj, ret, context, baseURL, urlPrefix, path);		
-		description(obj, ret, context, baseURL, urlPrefix);
-		links(obj, ret, context, baseURL, urlPrefix);
+		qualifiedName(obj, ret, context, baseURI, urlPrefix, path);		
+		description(obj, ret, context, baseURI, urlPrefix);
+		links(obj, ret, context, baseURI, urlPrefix);
 		
 		return ret;
 	}
@@ -102,7 +101,7 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 				StringEscapeUtils.escapeHtml4(getTitle(obj)));
 	}
 	
-	protected void qualifiedName(Descriptor obj, Container<?> content, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
+	protected void qualifiedName(Descriptor obj, Container<?> content, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) {
 		
 		// Qualified name
 		String qualifiedName = obj.getQualifiedName();
@@ -120,7 +119,7 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 				int lastDotIdx = qualifiedName.substring(0, firstParenthesisIdx).lastIndexOf(".");
 				
 				String spec = qualifiedName.substring(lastSpaceIdx+1, lastDotIdx)+"#"+qualifiedName.substring(lastDotIdx+1, lastParenthesisIdx+1);
-				String html = testResultsDocumentationGenerator.getDocRoute().markdownToHtml(baseURL, urlPrefix, "[[javadoc>"+spec+"|"+qualifiedName+"]]");				
+				String html = testResultsDocumentationGenerator.getDocRoute().markdownToHtml(baseURI, urlPrefix, "[[javadoc>"+spec+"|"+qualifiedName+"]]");				
 				content.content(html);
 				break;
 			default:
@@ -129,12 +128,12 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 		}
 	}	
 	
-	protected void links(Descriptor obj, Container<?> container, HttpServletRequestContext context, URL baseURL, String urlPrefix) throws Exception {
+	protected void links(Descriptor obj, Container<?> container, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix) throws Exception {
 //		getLinks() - TODO
 		
 	}
 	
-	protected void description(Descriptor obj, Container<?> container, HttpServletRequestContext context, URL baseURL, String urlPrefix) throws Exception {
+	protected void description(Descriptor obj, Container<?> container, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix) throws Exception {
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		Description description = obj.getDescription();
 		if (description != null) {
@@ -145,9 +144,9 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 				}
 				descriptionText.append(de);
 			}
-			Object html = testResultsDocumentationGenerator.getDocRoute().filterContent(descriptionText.toString(), description.getContentType(), DocRoute.MIME_TYPE_HTML, baseURL, urlPrefix);
+			Object html = testResultsDocumentationGenerator.getDocRoute().filterContent(descriptionText.toString(), description.getContentType(), DocRoute.MIME_TYPE_HTML, baseURI, urlPrefix);
 			if (html == null) {
-				html = testResultsDocumentationGenerator.getDocRoute().filterContent(StringEscapeUtils.escapeHtml4(descriptionText.toString()), "text/plain", DocRoute.MIME_TYPE_HTML, baseURL, urlPrefix);				
+				html = testResultsDocumentationGenerator.getDocRoute().filterContent(StringEscapeUtils.escapeHtml4(descriptionText.toString()), "text/plain", DocRoute.MIME_TYPE_HTML, baseURI, urlPrefix);				
 			}
 			
 			container.content(html);

@@ -1,7 +1,7 @@
 package org.nasdanika.cdo.web.doc.extensions;
 
 import java.io.ByteArrayOutputStream;
-import java.net.URL;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,7 +54,7 @@ public class PlantUmlMarkdownPreProcessor implements MarkdownPreProcessor {
 		}
 
 		@Override
-		public String process(URL baseURL, String urlPrefix, Chain chain, DocRoute docRoute) {
+		public String process(URI baseURI, String urlPrefix, Chain chain, DocRoute docRoute) {
 			SourceStringReader reader = new SourceStringReader(content);
 			try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
 				// Write the first image to "os"

@@ -7,5 +7,10 @@ abstract class ActorDocumentationGenerator<T extends Actor> extends StoryContain
 	ActorDocumentationGenerator(StoryDocumentationGenerator storyDocumentationGenerator) {
 		super(storyDocumentationGenerator);
 	}
+	
+//	getRoles()
+//	getSubActors()
+//	getSuperActors()
 
+//	Protagonist.linkTo()	
 }

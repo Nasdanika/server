@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.List;
 
 /**
@@ -53,7 +53,7 @@ public interface MarkdownPreProcessor {
 		 * @param docRoute
 		 * @return Processed content or null if content could not be processed and shall be left AS-IS.
 		 */
-		String process(URL baseURL, String urlPrefix, Chain chain, DocRoute docRoute);	
+		String process(URI baseURI, String urlPrefix, Chain chain, DocRoute docRoute);	
 		
 	}
 

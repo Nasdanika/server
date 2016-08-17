@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.net.URL;
+import java.net.URI;
 
 import org.eclipse.emf.ecore.EModelElement;
 
@@ -10,7 +10,7 @@ public interface EModelElementDocumentationGenerator<T extends EModelElement> {
 	
 	String generate(
 			DocRoute docRoute,
-			URL baseURL,
+			URI baseURI,
 			String urlPrefix,
 			String registryPath,
 			T modelElement);	

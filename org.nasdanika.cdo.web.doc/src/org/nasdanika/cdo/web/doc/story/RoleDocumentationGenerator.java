@@ -1,7 +1,5 @@
 package org.nasdanika.cdo.web.doc.story;
 
-import java.net.URL;
-
 import org.nasdanika.html.Fragment;
 import org.nasdanika.story.Role;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -18,8 +16,8 @@ class RoleDocumentationGenerator extends StoryContainerDocumentationGenerator<Ro
 	}
 	
 	@Override
-	protected Fragment getIndex(Role obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
-		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
+	protected Fragment getIndex(Role obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) {
+		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		// TODO - tabs: actors in roles, sub-roles, super-roles, context diagram
 //		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 //		ret.content(htmlFactory.tag(TagName.h4, "Contents"));
@@ -35,5 +33,7 @@ class RoleDocumentationGenerator extends StoryContainerDocumentationGenerator<Ro
 		return ret;
 	}
 
+	// linkTo, sub-roles, super-roles
+	
 	// TODO - context diagram
 }

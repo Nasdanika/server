@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.web.doc.story;
 
-import java.net.URL;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -16,7 +17,7 @@ import org.nasdanika.story.Scenario;
 import org.nasdanika.story.Story;
 import org.nasdanika.web.HttpServletRequestContext;
 
-class UserStoryDocumentationGenerator extends CatalogElementDocumentationGenerator<Story> {
+class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerator<Story> {
 
 	UserStoryDocumentationGenerator(StoryDocumentationGenerator storyDocumentationGenerator) {
 		super(storyDocumentationGenerator);
@@ -33,7 +34,7 @@ class UserStoryDocumentationGenerator extends CatalogElementDocumentationGenerat
 	}
 	
 	
-	protected Fragment getIndex(Story obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
+	protected Fragment getIndex(Story obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) {
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		Fragment ret = htmlFactory.fragment(
 			htmlFactory.tag(
@@ -53,39 +54,48 @@ class UserStoryDocumentationGenerator extends CatalogElementDocumentationGenerat
 			ret.content(htmlFactory.div("<B>Status: </B>", htmlFactory.fontAwesome().webApplication(WebApplication.hourglass), " Pending"));
 		}
 		
-		if (!CoreUtil.isBlank(obj.getGoal())) {
-			ret.content(htmlFactory.tag(TagName.h4, "I want (Goal)"));
-			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getGoal()));
-		}
-		
-		if (!CoreUtil.isBlank(obj.getBenefit())) {
-			ret.content(htmlFactory.tag(TagName.h4, "So that (Benefit)"));
-			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getBenefit()));
-		}
-				
-		if (!CoreUtil.isBlank(obj.getDescription())) {
-			ret.content(htmlFactory.tag(TagName.h4, "Description"));
-			ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, obj.getDescription()));
-		}
-		
-		if (!obj.getScenarios().isEmpty()) {
-			ret.content(htmlFactory.tag(TagName.h4, "Scenarios"));
-			Table scenariosTable = htmlFactory.table().bordered();
-			ret.content(scenariosTable);
-			scenariosTable.header().headerRow("Name", "Given (Context)", "When (Action)", "Then (Outcome)").style(Style.PRIMARY);
-			for (Scenario scenario: obj.getScenarios()) {			
-				scenariosTable.body().row(
-						storyDocumentationGenerator.getDocRoute().findToc(scenario).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
-						storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, scenario.getContext()),
-						storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, scenario.getAction()),
-						storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(baseURL, urlPrefix, scenario.getOutcome()));
+		try {
+			URI modelURI = storyDocumentationGenerator.getModelUri(obj);
+			
+			if (!CoreUtil.isBlank(obj.getGoal())) {
+				ret.content(htmlFactory.tag(TagName.h4, "I want (Goal)"));
+				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getGoal()));
 			}
-		}
+			
+			if (!CoreUtil.isBlank(obj.getBenefit())) {
+				ret.content(htmlFactory.tag(TagName.h4, "So that (Benefit)"));
+				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getBenefit()));
+			}
+					
+			if (!CoreUtil.isBlank(obj.getDescription())) {
+				ret.content(htmlFactory.tag(TagName.h4, "Description"));
+				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getDescription()));
+			}
+			
+			if (!obj.getScenarios().isEmpty()) {
+				ret.content(htmlFactory.tag(TagName.h4, "Scenarios"));
+				Table scenariosTable = htmlFactory.table().bordered();
+				ret.content(scenariosTable);
+				scenariosTable.header().headerRow("Name", "Given (Context)", "When (Action)", "Then (Outcome)").style(Style.PRIMARY);
+				for (Scenario scenario: obj.getScenarios()) {			
+					scenariosTable.body().row(
+							storyDocumentationGenerator.getDocRoute().findToc(scenario).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
+							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getContext()),
+							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getAction()),
+							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getOutcome()));
+				}
+			}
+		} catch (URISyntaxException e) {
+			ret.content(htmlFactory.alert(Style.DANGER, false, e));
+		}			
 		
 		// TODO - themes (tags), dependencies, realized goals, context diagram, protagonists 
 		
 		return ret;
 	}
 	
-
+	// Parameter
+//	getDescription()
+//	getName()
+//	getType()
 }

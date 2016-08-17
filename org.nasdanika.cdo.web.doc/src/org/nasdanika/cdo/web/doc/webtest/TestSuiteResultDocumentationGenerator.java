@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
-import java.net.URL;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -28,8 +27,8 @@ class TestSuiteResultDocumentationGenerator<T extends TestSuiteResult> extends T
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	@Override
-	protected Fragment getIndex(T obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) throws Exception {
-		Fragment ret = super.getIndex(obj, context, baseURL, urlPrefix, path);
+	protected Fragment getIndex(T obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
+		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		
 		if (!obj.getChildren().isEmpty()) {
 			EMap<OperationStatus, Integer> suiteStats = testResultStats(obj);			
@@ -56,7 +55,7 @@ class TestSuiteResultDocumentationGenerator<T extends TestSuiteResult> extends T
 				childRow.cell(htmlFactory.link(href, StringEscapeUtils.escapeHtml4(title)));				
 				Cell descriptionCell = childRow.cell();
 				if (docGen instanceof DescriptorDocumentationGenerator) {
-					((DescriptorDocumentationGenerator) docGen).description(tr, descriptionCell, context, baseURL, urlPrefix);
+					((DescriptorDocumentationGenerator) docGen).description(tr, descriptionCell, context, baseURI, urlPrefix);
 				}
 				
 				EMap<OperationStatus, Integer> trStats = testResultStats(tr);
