@@ -35,7 +35,9 @@ public interface CatalogElement extends CDOObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Unique, in the containing resource, catalog element identifier. Identifiers are automatically generated when an element is added to a catalog.
+	 * Unique, in the containing resource, catalog element identifier. 
+	 * If catalog element ID contains ${parent} token then the token is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         
+	 * 
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Id</em>' attribute.
 	 * @see #setId(String)

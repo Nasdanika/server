@@ -17,6 +17,9 @@ import org.nasdanika.story.Persona;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Role;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
+import org.nasdanika.story.StateContainer;
+import org.nasdanika.story.Step;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
@@ -89,6 +92,14 @@ public class StoryAdapterFactory extends AdapterFactoryImpl {
 				return createCatalogElementAdapter();
 			}
 			@Override
+			public Adapter caseState(State object) {
+				return createStateAdapter();
+			}
+			@Override
+			public Adapter caseStateContainer(StateContainer object) {
+				return createStateContainerAdapter();
+			}
+			@Override
 			public Adapter caseStoryBase(StoryBase object) {
 				return createStoryBaseAdapter();
 			}
@@ -135,6 +146,10 @@ public class StoryAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseScenario(Scenario object) {
 				return createScenarioAdapter();
+			}
+			@Override
+			public Adapter caseStep(Step object) {
+				return createStepAdapter();
 			}
 			@Override
 			public Adapter caseConditionalProtagonist(ConditionalProtagonist object) {
@@ -365,6 +380,20 @@ public class StoryAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.story.Step <em>Step</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.story.Step
+	 * @generated
+	 */
+	public Adapter createStepAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.story.ConditionalProtagonist <em>Conditional Protagonist</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -403,6 +432,34 @@ public class StoryAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createParameterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.story.State <em>State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.story.State
+	 * @generated
+	 */
+	public Adapter createStateAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.story.StateContainer <em>State Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.story.StateContainer
+	 * @generated
+	 */
+	public Adapter createStateContainerAdapter() {
 		return null;
 	}
 

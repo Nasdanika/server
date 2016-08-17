@@ -22,6 +22,9 @@ import org.nasdanika.story.Persona;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Role;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
+import org.nasdanika.story.StateContainer;
+import org.nasdanika.story.Step;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
@@ -141,6 +144,13 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass stepEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass conditionalProtagonistEClass = null;
 
 	/**
@@ -156,6 +166,20 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * @generated
 	 */
 	private EClass parameterEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass stateEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass stateContainerEClass = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -577,6 +601,24 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getStory_StartStates() {
+		return (EReference)storyEClass.getEStructuralFeatures().get(10);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStory_EndStates() {
+		return (EReference)storyEClass.getEStructuralFeatures().get(11);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getScenario() {
 		return scenarioEClass;
 	}
@@ -595,8 +637,17 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getScenario_ContextStates() {
+		return (EReference)scenarioEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EAttribute getScenario_Action() {
-		return (EAttribute)scenarioEClass.getEStructuralFeatures().get(1);
+		return (EAttribute)scenarioEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -605,7 +656,79 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * @generated
 	 */
 	public EAttribute getScenario_Outcome() {
-		return (EAttribute)scenarioEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)scenarioEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getScenario_OutcomeState() {
+		return (EReference)scenarioEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getScenario_Steps() {
+		return (EReference)scenarioEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getStep() {
+		return stepEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStep_Name() {
+		return (EAttribute)stepEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStep_Description() {
+		return (EAttribute)stepEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getStep_Condition() {
+		return (EAttribute)stepEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStep_FromState() {
+		return (EReference)stepEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStep_ToState() {
+		return (EReference)stepEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -703,6 +826,42 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getState() {
+		return stateEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getState_SuperStates() {
+		return (EReference)stateEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getStateContainer() {
+		return stateContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getStateContainer_States() {
+		return (EReference)stateContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public StoryFactory getStoryFactory() {
 		return (StoryFactory)getEFactoryInstance();
 	}
@@ -734,6 +893,12 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		createEAttribute(catalogElementEClass, CATALOG_ELEMENT__NAME);
 		createEAttribute(catalogElementEClass, CATALOG_ELEMENT__DESCRIPTION);
 		createEOperation(catalogElementEClass, CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP);
+
+		stateEClass = createEClass(STATE);
+		createEReference(stateEClass, STATE__SUPER_STATES);
+
+		stateContainerEClass = createEClass(STATE_CONTAINER);
+		createEReference(stateContainerEClass, STATE_CONTAINER__STATES);
 
 		storyBaseEClass = createEClass(STORY_BASE);
 
@@ -776,11 +941,23 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		createEReference(storyEClass, STORY__PARAMETERS);
 		createEAttribute(storyEClass, STORY__COMPLETED);
 		createEReference(storyEClass, STORY__REALIZES);
+		createEReference(storyEClass, STORY__START_STATES);
+		createEReference(storyEClass, STORY__END_STATES);
 
 		scenarioEClass = createEClass(SCENARIO);
 		createEAttribute(scenarioEClass, SCENARIO__CONTEXT);
+		createEReference(scenarioEClass, SCENARIO__CONTEXT_STATES);
 		createEAttribute(scenarioEClass, SCENARIO__ACTION);
 		createEAttribute(scenarioEClass, SCENARIO__OUTCOME);
+		createEReference(scenarioEClass, SCENARIO__OUTCOME_STATE);
+		createEReference(scenarioEClass, SCENARIO__STEPS);
+
+		stepEClass = createEClass(STEP);
+		createEAttribute(stepEClass, STEP__NAME);
+		createEAttribute(stepEClass, STEP__DESCRIPTION);
+		createEAttribute(stepEClass, STEP__CONDITION);
+		createEReference(stepEClass, STEP__FROM_STATE);
+		createEReference(stepEClass, STEP__TO_STATE);
 
 		conditionalProtagonistEClass = createEClass(CONDITIONAL_PROTAGONIST);
 		createEReference(conditionalProtagonistEClass, CONDITIONAL_PROTAGONIST__PROTAGONIST);
@@ -828,8 +1005,10 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 
 		// Add supertypes to classes
 		catalogEClass.getESuperTypes().add(this.getCatalogElement());
-		storyBaseEClass.getESuperTypes().add(this.getCatalogElement());
-		storyContainerEClass.getESuperTypes().add(this.getCatalogElement());
+		stateEClass.getESuperTypes().add(this.getCatalogElement());
+		stateContainerEClass.getESuperTypes().add(this.getCatalogElement());
+		storyBaseEClass.getESuperTypes().add(this.getStateContainer());
+		storyContainerEClass.getESuperTypes().add(this.getStateContainer());
 		protagonistEClass.getESuperTypes().add(this.getStoryContainer());
 		roleEClass.getESuperTypes().add(this.getProtagonist());
 		actorEClass.getESuperTypes().add(this.getProtagonist());
@@ -840,7 +1019,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		epicEClass.getESuperTypes().add(this.getStoryBase());
 		themeEClass.getESuperTypes().add(this.getCatalogElement());
 		storyEClass.getESuperTypes().add(this.getStoryBase());
-		scenarioEClass.getESuperTypes().add(this.getCatalogElement());
+		scenarioEClass.getESuperTypes().add(this.getStateContainer());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(catalogEClass, Catalog.class, "Catalog", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -859,6 +1038,12 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(stateEClass, State.class, "State", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getState_SuperStates(), this.getState(), null, "superStates", null, 0, -1, State.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(stateContainerEClass, StateContainer.class, "StateContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getStateContainer_States(), this.getState(), null, "states", null, 0, -1, StateContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(storyBaseEClass, StoryBase.class, "StoryBase", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -901,11 +1086,23 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		initEReference(getStory_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStory_Completed(), theEcorePackage.getEBoolean(), "completed", null, 0, 1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStory_Realizes(), this.getGoal(), null, "realizes", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStory_StartStates(), this.getState(), null, "startStates", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStory_EndStates(), this.getState(), null, "endStates", null, 0, -1, Story.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(scenarioEClass, Scenario.class, "Scenario", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getScenario_Context(), theEcorePackage.getEString(), "context", null, 0, 1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getScenario_ContextStates(), this.getState(), null, "contextStates", null, 0, -1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getScenario_Action(), theEcorePackage.getEString(), "action", null, 0, 1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getScenario_Outcome(), theEcorePackage.getEString(), "outcome", null, 0, 1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getScenario_OutcomeState(), this.getState(), null, "outcomeState", null, 0, 1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getScenario_Steps(), this.getStep(), null, "steps", null, 0, -1, Scenario.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(stepEClass, Step.class, "Step", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getStep_Name(), ecorePackage.getEString(), "name", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStep_Description(), ecorePackage.getEString(), "description", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStep_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStep_FromState(), this.getState(), null, "fromState", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getStep_ToState(), this.getState(), null, "toState", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionalProtagonistEClass, ConditionalProtagonist.class, "ConditionalProtagonist", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getConditionalProtagonist_Protagonist(), this.getProtagonist(), null, "protagonist", null, 1, -1, ConditionalProtagonist.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -940,7 +1137,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		  (this, 
 		   source, 
 		   new String[] {
-			 "documentation", "Story model allows to capture agile (user) stories in the form of a model which can reference the domain model and be linked to the domain model, e.g. route operations may reference user stories they are used by. The story model can be used for documentation, to link test results to acceptance criteria (also as part of online documentation), and for story-based entitlements - operations reference stories, and users are granted entitlements execute stories, or users are granted roles, which in turn are linked to stories.\r\n\r\n![Class diagram](bundle:org.nasdanika.story/doc/story.png)"
+			 "documentation", "Story model allows to capture agile (user) stories in the form of a model which can reference the domain model and be linked to the domain model, e.g. route operations may reference user stories they are used by. The story model can be used for documentation, to link test results to acceptance criteria (also as part of online documentation), and for story-based entitlements - operations reference stories, and users are granted entitlements execute stories, or users are granted roles, which in turn are linked to stories.\r\n"
 		   });	
 		addAnnotation
 		  (catalogEClass, 
@@ -982,7 +1179,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		  (getCatalogElement_Id(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Unique, in the containing resource, catalog element identifier. Identifiers are automatically generated when an element is added to a catalog."
+			 "documentation", "Unique, in the containing resource, catalog element identifier. \r\nIf catalog element ID contains ${parent} token then the token is expanded to the parent element ID. If the parent element\'s id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         \r\n"
 		   });	
 		addAnnotation
 		  (getCatalogElement_Name(), 
@@ -995,6 +1192,30 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Element description. Supports markdown. Some catalog elements may hide description attribute."
+		   });	
+		addAnnotation
+		  (stateEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Interaction state, e.g. a web page. \r\nScenarios transition from their start state(s) (context, \"given\") \r\nto the end state (oucome, \"then\").\r\n\r\nStates can be useful when multiple scenarios share start/end states - it allows to clearly identify shared states."
+		   });	
+		addAnnotation
+		  (getState_SuperStates(), 
+		   source, 
+		   new String[] {
+			 "documentation", "States may form a multiple-inheritance hierarchy. Sub-states inherit \r\ninbound and outbound transitions (scenarios) of super-states.\r\n\r\nFor example, if all customer pages feature the same menu with links to, say, \r\nCustomer Service page, then a BaseCustomerPage state can be created and\r\n\"Customer Service scenario\" will start from this abstract state instead of multiple\r\nconcrete states, e.g. Accounts Summary or Account Details pages.\r\n"
+		   });	
+		addAnnotation
+		  (stateContainerEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Container of states."
+		   });	
+		addAnnotation
+		  (getStateContainer_States(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Story container may contain zero or more stories or epics."
 		   });	
 		addAnnotation
 		  (storyBaseEClass, 
@@ -1066,7 +1287,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		  (getActor_SuperActors(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Actors form a multiple inheritance hierarcy and may have zero or more super-actors. All stories and roles played by by a super-actor are also played by its sub-actors."
+			 "documentation", "Actors form a multiple inheritance hierarchy and may have zero or more super-actors. All stories and roles played by by a super-actor are also played by its sub-actors."
 		   });	
 		addAnnotation
 		  (userEClass, 
@@ -1171,10 +1392,28 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 			 "documentation", "Completed flag."
 		   });	
 		addAnnotation
+		  (getStory_StartStates(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Start state(s) for the story. E.g. Home page for Sign-in story."
+		   });	
+		addAnnotation
+		  (getStory_EndStates(), 
+		   source, 
+		   new String[] {
+			 "documentation", "End state(s) for the story. E.g. Accounts summary for Sign-in story."
+		   });	
+		addAnnotation
 		  (getScenario_Context(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Context (Given)."
+		   });	
+		addAnnotation
+		  (getScenario_ContextStates(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Context (Given) state(s), i.e. a start state(s) from which the scenario transitions to the \r\noutcome (then) end state.\r\n\r\nThere can be more than one start state, e.g. two different pages with a link which\r\ninitiates the scenario. Where it makes sense it is recommended to create super-states\r\nfor states which are context/start states for the same scenario(s)."
 		   });	
 		addAnnotation
 		  (getScenario_Action(), 
@@ -1187,6 +1426,36 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Outcome (then)."
+		   });	
+		addAnnotation
+		  (getScenario_OutcomeState(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Outcome (then) state, i.e. the end state to which the scenario transitions from\r\n the context/given/start state."
+		   });	
+		addAnnotation
+		  (stepEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Scenario step."
+		   });	
+		addAnnotation
+		  (getStep_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Step name."
+		   });	
+		addAnnotation
+		  (getStep_Description(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Step description. Supports markdown. "
+		   });	
+		addAnnotation
+		  (getStep_Condition(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Optional step condition."
 		   });	
 		addAnnotation
 		  (getConditionalProtagonist_Protagonist(), 

@@ -5,10 +5,12 @@ package org.nasdanika.story.provider;
 
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.common.util.ResourceLocator;
-import org.eclipse.emf.ecore.EStructuralFeature;
+
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -18,17 +20,17 @@ import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
-import org.nasdanika.story.Protagonist;
-import org.nasdanika.story.StoryFactory;
+
+import org.nasdanika.story.Step;
 import org.nasdanika.story.StoryPackage;
 
 /**
- * This is the item provider adapter for a {@link org.nasdanika.story.Protagonist} object.
+ * This is the item provider adapter for a {@link org.nasdanika.story.Step} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ProtagonistItemProvider 
+public class StepItemProvider 
 	extends CDOItemProviderAdapterShim
 	implements
 		IEditingDomainItemProvider,
@@ -42,7 +44,7 @@ public class ProtagonistItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ProtagonistItemProvider(AdapterFactory adapterFactory) {
+	public StepItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -57,34 +59,13 @@ public class ProtagonistItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addIdPropertyDescriptor(object);
 			addNamePropertyDescriptor(object);
 			addDescriptionPropertyDescriptor(object);
-			addLinkToPropertyDescriptor(object);
+			addConditionPropertyDescriptor(object);
+			addFromStatePropertyDescriptor(object);
+			addToStatePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Id feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addIdPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_CatalogElement_id_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_CatalogElement_id_feature", "_UI_CatalogElement_type"),
-				 StoryPackage.Literals.CATALOG_ELEMENT__ID,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
 	}
 
 	/**
@@ -98,9 +79,9 @@ public class ProtagonistItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_CatalogElement_name_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_CatalogElement_name_feature", "_UI_CatalogElement_type"),
-				 StoryPackage.Literals.CATALOG_ELEMENT__NAME,
+				 getString("_UI_Step_name_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Step_name_feature", "_UI_Step_type"),
+				 StoryPackage.Literals.STEP__NAME,
 				 true,
 				 false,
 				 false,
@@ -120,9 +101,9 @@ public class ProtagonistItemProvider
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_CatalogElement_description_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_CatalogElement_description_feature", "_UI_CatalogElement_type"),
-				 StoryPackage.Literals.CATALOG_ELEMENT__DESCRIPTION,
+				 getString("_UI_Step_description_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Step_description_feature", "_UI_Step_type"),
+				 StoryPackage.Literals.STEP__DESCRIPTION,
 				 true,
 				 true,
 				 false,
@@ -132,19 +113,41 @@ public class ProtagonistItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Link To feature.
+	 * This adds a property descriptor for the Condition feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addLinkToPropertyDescriptor(Object object) {
+	protected void addConditionPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Protagonist_linkTo_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Protagonist_linkTo_feature", "_UI_Protagonist_type"),
-				 StoryPackage.Literals.PROTAGONIST__LINK_TO,
+				 getString("_UI_Step_condition_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Step_condition_feature", "_UI_Step_type"),
+				 StoryPackage.Literals.STEP__CONDITION,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the From State feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addFromStatePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Step_fromState_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Step_fromState_feature", "_UI_Step_type"),
+				 StoryPackage.Literals.STEP__FROM_STATE,
 				 true,
 				 false,
 				 true,
@@ -154,45 +157,36 @@ public class ProtagonistItemProvider
 	}
 
 	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
+	 * This adds a property descriptor for the To State feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
-		if (childrenFeatures == null) {
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(StoryPackage.Literals.STATE_CONTAINER__STATES);
-			childrenFeatures.add(StoryPackage.Literals.STORY_CONTAINER__STORIES);
-		}
-		return childrenFeatures;
+	protected void addToStatePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Step_toState_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Step_toState_feature", "_UI_Step_type"),
+				 StoryPackage.Literals.STEP__TO_STATE,
+				 true,
+				 false,
+				 true,
+				 null,
+				 null,
+				 null));
 	}
 
 	/**
+	 * This returns Step.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
-	}
-
-	/**
-	 * This returns Protagonist.gif.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Protagonist"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("page_gear.png"));
 	}
 
 	/**
@@ -203,10 +197,10 @@ public class ProtagonistItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Protagonist)object).getName();
+		String label = ((Step)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Protagonist_type") :
-			getString("_UI_Protagonist_type") + " " + label;
+			getString("_UI_Step_type") :
+			getString("_UI_Step_type") + " " + label;
 	}
 	
 
@@ -221,15 +215,11 @@ public class ProtagonistItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(Protagonist.class)) {
-			case StoryPackage.PROTAGONIST__ID:
-			case StoryPackage.PROTAGONIST__NAME:
-			case StoryPackage.PROTAGONIST__DESCRIPTION:
+		switch (notification.getFeatureID(Step.class)) {
+			case StoryPackage.STEP__NAME:
+			case StoryPackage.STEP__DESCRIPTION:
+			case StoryPackage.STEP__CONDITION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case StoryPackage.PROTAGONIST__STATES:
-			case StoryPackage.PROTAGONIST__STORIES:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
 		super.notifyChanged(notification);
@@ -245,21 +235,6 @@ public class ProtagonistItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StoryPackage.Literals.STATE_CONTAINER__STATES,
-				 StoryFactory.eINSTANCE.createState()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StoryPackage.Literals.STORY_CONTAINER__STORIES,
-				 StoryFactory.eINSTANCE.createEpic()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StoryPackage.Literals.STORY_CONTAINER__STORIES,
-				 StoryFactory.eINSTANCE.createStory()));
 	}
 
 	/**
@@ -271,11 +246,6 @@ public class ProtagonistItemProvider
 	@Override
 	public ResourceLocator getResourceLocator() {
 		return StoryEditPlugin.INSTANCE;
-	}
-	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
 	}
 
 }

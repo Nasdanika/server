@@ -23,6 +23,9 @@ import org.nasdanika.story.Persona;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Role;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
+import org.nasdanika.story.StateContainer;
+import org.nasdanika.story.Step;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
@@ -114,6 +117,10 @@ public class StoryValidator extends EObjectValidator {
 				return validateCatalog((Catalog)value, diagnostics, context);
 			case StoryPackage.CATALOG_ELEMENT:
 				return validateCatalogElement((CatalogElement)value, diagnostics, context);
+			case StoryPackage.STATE:
+				return validateState((State)value, diagnostics, context);
+			case StoryPackage.STATE_CONTAINER:
+				return validateStateContainer((StateContainer)value, diagnostics, context);
 			case StoryPackage.STORY_BASE:
 				return validateStoryBase((StoryBase)value, diagnostics, context);
 			case StoryPackage.STORY_CONTAINER:
@@ -138,6 +145,8 @@ public class StoryValidator extends EObjectValidator {
 				return validateStory((Story)value, diagnostics, context);
 			case StoryPackage.SCENARIO:
 				return validateScenario((Scenario)value, diagnostics, context);
+			case StoryPackage.STEP:
+				return validateStep((Step)value, diagnostics, context);
 			case StoryPackage.CONDITIONAL_PROTAGONIST:
 				return validateConditionalProtagonist((ConditionalProtagonist)value, diagnostics, context);
 			case StoryPackage.GOAL:
@@ -430,6 +439,15 @@ public class StoryValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean validateStep(Step step, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint((EObject)step, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public boolean validateConditionalProtagonist(ConditionalProtagonist conditionalProtagonist, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint((EObject)conditionalProtagonist, diagnostics, context);
 	}
@@ -450,6 +468,44 @@ public class StoryValidator extends EObjectValidator {
 	 */
 	public boolean validateParameter(Parameter parameter, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint((EObject)parameter, diagnostics, context);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateState(State state, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)state, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)state, diagnostics, context);
+		if (result || diagnostics != null) result &= validateCatalogElement_validate(state, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateStateContainer(StateContainer stateContainer, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)stateContainer, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)stateContainer, diagnostics, context);
+		if (result || diagnostics != null) result &= validateCatalogElement_validate(stateContainer, diagnostics, context);
+		return result;
 	}
 
 	/**

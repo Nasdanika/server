@@ -16,6 +16,9 @@ import org.nasdanika.story.Persona;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Role;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
+import org.nasdanika.story.StateContainer;
+import org.nasdanika.story.Step;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryContainer;
@@ -93,9 +96,24 @@ public class StorySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case StoryPackage.STATE: {
+				State state = (State)theEObject;
+				T result = caseState(state);
+				if (result == null) result = caseCatalogElement(state);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case StoryPackage.STATE_CONTAINER: {
+				StateContainer stateContainer = (StateContainer)theEObject;
+				T result = caseStateContainer(stateContainer);
+				if (result == null) result = caseCatalogElement(stateContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case StoryPackage.STORY_BASE: {
 				StoryBase storyBase = (StoryBase)theEObject;
 				T result = caseStoryBase(storyBase);
+				if (result == null) result = caseStateContainer(storyBase);
 				if (result == null) result = caseCatalogElement(storyBase);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -103,6 +121,7 @@ public class StorySwitch<T> extends Switch<T> {
 			case StoryPackage.STORY_CONTAINER: {
 				StoryContainer storyContainer = (StoryContainer)theEObject;
 				T result = caseStoryContainer(storyContainer);
+				if (result == null) result = caseStateContainer(storyContainer);
 				if (result == null) result = caseCatalogElement(storyContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -111,6 +130,7 @@ public class StorySwitch<T> extends Switch<T> {
 				Protagonist protagonist = (Protagonist)theEObject;
 				T result = caseProtagonist(protagonist);
 				if (result == null) result = caseStoryContainer(protagonist);
+				if (result == null) result = caseStateContainer(protagonist);
 				if (result == null) result = caseCatalogElement(protagonist);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -120,6 +140,7 @@ public class StorySwitch<T> extends Switch<T> {
 				T result = caseRole(role);
 				if (result == null) result = caseProtagonist(role);
 				if (result == null) result = caseStoryContainer(role);
+				if (result == null) result = caseStateContainer(role);
 				if (result == null) result = caseCatalogElement(role);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -129,6 +150,7 @@ public class StorySwitch<T> extends Switch<T> {
 				T result = caseActor(actor);
 				if (result == null) result = caseProtagonist(actor);
 				if (result == null) result = caseStoryContainer(actor);
+				if (result == null) result = caseStateContainer(actor);
 				if (result == null) result = caseCatalogElement(actor);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -139,6 +161,7 @@ public class StorySwitch<T> extends Switch<T> {
 				if (result == null) result = caseActor(user);
 				if (result == null) result = caseProtagonist(user);
 				if (result == null) result = caseStoryContainer(user);
+				if (result == null) result = caseStateContainer(user);
 				if (result == null) result = caseCatalogElement(user);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -149,6 +172,7 @@ public class StorySwitch<T> extends Switch<T> {
 				if (result == null) result = caseActor(system);
 				if (result == null) result = caseProtagonist(system);
 				if (result == null) result = caseStoryContainer(system);
+				if (result == null) result = caseStateContainer(system);
 				if (result == null) result = caseCatalogElement(system);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -160,6 +184,7 @@ public class StorySwitch<T> extends Switch<T> {
 				if (result == null) result = caseActor(persona);
 				if (result == null) result = caseProtagonist(persona);
 				if (result == null) result = caseStoryContainer(persona);
+				if (result == null) result = caseStateContainer(persona);
 				if (result == null) result = caseCatalogElement(persona);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -169,6 +194,7 @@ public class StorySwitch<T> extends Switch<T> {
 				T result = caseEpic(epic);
 				if (result == null) result = caseStoryContainer(epic);
 				if (result == null) result = caseStoryBase(epic);
+				if (result == null) result = caseStateContainer(epic);
 				if (result == null) result = caseCatalogElement(epic);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -184,6 +210,7 @@ public class StorySwitch<T> extends Switch<T> {
 				Story story = (Story)theEObject;
 				T result = caseStory(story);
 				if (result == null) result = caseStoryBase(story);
+				if (result == null) result = caseStateContainer(story);
 				if (result == null) result = caseCatalogElement(story);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -191,7 +218,14 @@ public class StorySwitch<T> extends Switch<T> {
 			case StoryPackage.SCENARIO: {
 				Scenario scenario = (Scenario)theEObject;
 				T result = caseScenario(scenario);
+				if (result == null) result = caseStateContainer(scenario);
 				if (result == null) result = caseCatalogElement(scenario);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case StoryPackage.STEP: {
+				Step step = (Step)theEObject;
+				T result = caseStep(step);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -428,6 +462,21 @@ public class StorySwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Step</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Step</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseStep(Step object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Conditional Protagonist</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -469,6 +518,36 @@ public class StorySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseParameter(Parameter object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>State</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>State</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseState(State object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>State Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>State Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseStateContainer(StateContainer object) {
 		return null;
 	}
 

@@ -15,6 +15,8 @@ import org.nasdanika.story.Parameter;
 import org.nasdanika.story.Persona;
 import org.nasdanika.story.Role;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
+import org.nasdanika.story.Step;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryFactory;
 import org.nasdanika.story.StoryPackage;
@@ -66,6 +68,7 @@ public class StoryFactoryImpl extends EFactoryImpl implements StoryFactory {
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case StoryPackage.CATALOG: return (EObject)createCatalog();
+			case StoryPackage.STATE: return (EObject)createState();
 			case StoryPackage.ROLE: return (EObject)createRole();
 			case StoryPackage.USER: return (EObject)createUser();
 			case StoryPackage.SYSTEM: return (EObject)createSystem();
@@ -74,6 +77,7 @@ public class StoryFactoryImpl extends EFactoryImpl implements StoryFactory {
 			case StoryPackage.THEME: return (EObject)createTheme();
 			case StoryPackage.STORY: return (EObject)createStory();
 			case StoryPackage.SCENARIO: return (EObject)createScenario();
+			case StoryPackage.STEP: return (EObject)createStep();
 			case StoryPackage.CONDITIONAL_PROTAGONIST: return (EObject)createConditionalProtagonist();
 			case StoryPackage.GOAL: return (EObject)createGoal();
 			case StoryPackage.PARAMETER: return (EObject)createParameter();
@@ -177,6 +181,16 @@ public class StoryFactoryImpl extends EFactoryImpl implements StoryFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Step createStep() {
+		StepImpl step = new StepImpl();
+		return step;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public ConditionalProtagonist createConditionalProtagonist() {
 		ConditionalProtagonistImpl conditionalProtagonist = new ConditionalProtagonistImpl();
 		return conditionalProtagonist;
@@ -200,6 +214,16 @@ public class StoryFactoryImpl extends EFactoryImpl implements StoryFactory {
 	public Parameter createParameter() {
 		ParameterImpl parameter = new ParameterImpl();
 		return parameter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public State createState() {
+		StateImpl state = new StateImpl();
+		return state;
 	}
 
 	/**

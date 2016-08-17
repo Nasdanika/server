@@ -277,6 +277,29 @@ public class StoryItemProviderAdapterFactory extends StoryAdapterFactory impleme
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.story.Step} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected StepItemProvider stepItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.story.Step}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createStepAdapter() {
+		if (stepItemProvider == null) {
+			stepItemProvider = new StepItemProvider(this);
+		}
+
+		return stepItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.nasdanika.story.ConditionalProtagonist} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -343,6 +366,29 @@ public class StoryItemProviderAdapterFactory extends StoryAdapterFactory impleme
 		}
 
 		return parameterItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.story.State} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected StateItemProvider stateItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.story.State}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createStateAdapter() {
+		if (stateItemProvider == null) {
+			stateItemProvider = new StateItemProvider(this);
+		}
+
+		return stateItemProvider;
 	}
 
 	/**
@@ -445,6 +491,7 @@ public class StoryItemProviderAdapterFactory extends StoryAdapterFactory impleme
 	 */
 	public void dispose() {
 		if (catalogItemProvider != null) catalogItemProvider.dispose();
+		if (stateItemProvider != null) stateItemProvider.dispose();
 		if (roleItemProvider != null) roleItemProvider.dispose();
 		if (userItemProvider != null) userItemProvider.dispose();
 		if (systemItemProvider != null) systemItemProvider.dispose();
@@ -453,6 +500,7 @@ public class StoryItemProviderAdapterFactory extends StoryAdapterFactory impleme
 		if (themeItemProvider != null) themeItemProvider.dispose();
 		if (storyItemProvider != null) storyItemProvider.dispose();
 		if (scenarioItemProvider != null) scenarioItemProvider.dispose();
+		if (stepItemProvider != null) stepItemProvider.dispose();
 		if (conditionalProtagonistItemProvider != null) conditionalProtagonistItemProvider.dispose();
 		if (goalItemProvider != null) goalItemProvider.dispose();
 		if (parameterItemProvider != null) parameterItemProvider.dispose();

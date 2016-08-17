@@ -5,8 +5,6 @@ package org.nasdanika.story.provider;
 
 import java.util.Collection;
 import java.util.List;
-
-import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -227,6 +225,11 @@ public class CatalogItemProvider
 			(createChildParameter
 				(StoryPackage.Literals.CATALOG__ELEMENTS,
 				 StoryFactory.eINSTANCE.createCatalog()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(StoryPackage.Literals.CATALOG__ELEMENTS,
+				 StoryFactory.eINSTANCE.createState()));
 
 		newChildDescriptors.add
 			(createChildParameter

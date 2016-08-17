@@ -5,10 +5,12 @@ package org.nasdanika.story.provider;
 
 import java.util.Collection;
 import java.util.List;
+
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+
 import org.eclipse.emf.common.util.ResourceLocator;
-import org.eclipse.emf.ecore.EStructuralFeature;
+
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
@@ -18,17 +20,17 @@ import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
-import org.nasdanika.story.Protagonist;
-import org.nasdanika.story.StoryFactory;
+
+import org.nasdanika.story.State;
 import org.nasdanika.story.StoryPackage;
 
 /**
- * This is the item provider adapter for a {@link org.nasdanika.story.Protagonist} object.
+ * This is the item provider adapter for a {@link org.nasdanika.story.State} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class ProtagonistItemProvider 
+public class StateItemProvider 
 	extends CDOItemProviderAdapterShim
 	implements
 		IEditingDomainItemProvider,
@@ -42,7 +44,7 @@ public class ProtagonistItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ProtagonistItemProvider(AdapterFactory adapterFactory) {
+	public StateItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -60,7 +62,7 @@ public class ProtagonistItemProvider
 			addIdPropertyDescriptor(object);
 			addNamePropertyDescriptor(object);
 			addDescriptionPropertyDescriptor(object);
-			addLinkToPropertyDescriptor(object);
+			addSuperStatesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -132,19 +134,19 @@ public class ProtagonistItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Link To feature.
+	 * This adds a property descriptor for the Super States feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addLinkToPropertyDescriptor(Object object) {
+	protected void addSuperStatesPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Protagonist_linkTo_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Protagonist_linkTo_feature", "_UI_Protagonist_type"),
-				 StoryPackage.Literals.PROTAGONIST__LINK_TO,
+				 getString("_UI_State_superStates_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_State_superStates_feature", "_UI_State_type"),
+				 StoryPackage.Literals.STATE__SUPER_STATES,
 				 true,
 				 false,
 				 true,
@@ -154,45 +156,14 @@ public class ProtagonistItemProvider
 	}
 
 	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
+	 * This returns State.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
-		if (childrenFeatures == null) {
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(StoryPackage.Literals.STATE_CONTAINER__STATES);
-			childrenFeatures.add(StoryPackage.Literals.STORY_CONTAINER__STORIES);
-		}
-		return childrenFeatures;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
-	}
-
-	/**
-	 * This returns Protagonist.gif.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Protagonist"));
+		return overlayImage(object, StoryEditPlugin.INSTANCE.getIcon("page.png"));
 	}
 
 	/**
@@ -203,10 +174,10 @@ public class ProtagonistItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Protagonist)object).getName();
+		String label = ((State)object).getName();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Protagonist_type") :
-			getString("_UI_Protagonist_type") + " " + label;
+			getString("_UI_State_type") :
+			getString("_UI_State_type") + " " + label;
 	}
 	
 
@@ -221,15 +192,11 @@ public class ProtagonistItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(Protagonist.class)) {
-			case StoryPackage.PROTAGONIST__ID:
-			case StoryPackage.PROTAGONIST__NAME:
-			case StoryPackage.PROTAGONIST__DESCRIPTION:
+		switch (notification.getFeatureID(State.class)) {
+			case StoryPackage.STATE__ID:
+			case StoryPackage.STATE__NAME:
+			case StoryPackage.STATE__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case StoryPackage.PROTAGONIST__STATES:
-			case StoryPackage.PROTAGONIST__STORIES:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
 		super.notifyChanged(notification);
@@ -245,21 +212,6 @@ public class ProtagonistItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StoryPackage.Literals.STATE_CONTAINER__STATES,
-				 StoryFactory.eINSTANCE.createState()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StoryPackage.Literals.STORY_CONTAINER__STORIES,
-				 StoryFactory.eINSTANCE.createEpic()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(StoryPackage.Literals.STORY_CONTAINER__STORIES,
-				 StoryFactory.eINSTANCE.createStory()));
 	}
 
 	/**
@@ -271,11 +223,6 @@ public class ProtagonistItemProvider
 	@Override
 	public ResourceLocator getResourceLocator() {
 		return StoryEditPlugin.INSTANCE;
-	}
-	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
 	}
 
 }

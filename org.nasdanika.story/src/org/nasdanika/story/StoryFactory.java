@@ -103,6 +103,15 @@ public interface StoryFactory extends EFactory {
 	Scenario createScenario();
 
 	/**
+	 * Returns a new object of class '<em>Step</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Step</em>'.
+	 * @generated
+	 */
+	Step createStep();
+
+	/**
 	 * Returns a new object of class '<em>Conditional Protagonist</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -128,6 +137,15 @@ public interface StoryFactory extends EFactory {
 	 * @generated
 	 */
 	Parameter createParameter();
+
+	/**
+	 * Returns a new object of class '<em>State</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>State</em>'.
+	 * @generated
+	 */
+	State createState();
 
 	/**
 	 * Returns the package supported by this factory.

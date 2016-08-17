@@ -5,8 +5,6 @@ package org.nasdanika.story.provider;
 
 import java.util.Collection;
 import java.util.List;
-
-import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -144,6 +142,7 @@ public class EpicItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
+			childrenFeatures.add(StoryPackage.Literals.STATE_CONTAINER__STATES);
 			childrenFeatures.add(StoryPackage.Literals.STORY_CONTAINER__STORIES);
 		}
 		return childrenFeatures;
@@ -205,6 +204,7 @@ public class EpicItemProvider
 			case StoryPackage.EPIC__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
+			case StoryPackage.EPIC__STATES:
 			case StoryPackage.EPIC__STORIES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
@@ -222,6 +222,11 @@ public class EpicItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+
+		newChildDescriptors.add
+			(createChildParameter
+				(StoryPackage.Literals.STATE_CONTAINER__STATES,
+				 StoryFactory.eINSTANCE.createState()));
 
 		newChildDescriptors.add
 			(createChildParameter

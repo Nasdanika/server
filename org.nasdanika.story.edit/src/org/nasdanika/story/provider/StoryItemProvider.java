@@ -5,8 +5,6 @@ package org.nasdanika.story.provider;
 
 import java.util.Collection;
 import java.util.List;
-
-import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.util.ResourceLocator;
@@ -69,6 +67,8 @@ public class StoryItemProvider
 			addBenefitPropertyDescriptor(object);
 			addCompletedPropertyDescriptor(object);
 			addRealizesPropertyDescriptor(object);
+			addStartStatesPropertyDescriptor(object);
+			addEndStatesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -294,6 +294,50 @@ public class StoryItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Start States feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addStartStatesPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Story_startStates_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Story_startStates_feature", "_UI_Story_type"),
+				 StoryPackage.Literals.STORY__START_STATES,
+				 true,
+				 false,
+				 true,
+				 null,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the End States feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addEndStatesPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Story_endStates_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Story_endStates_feature", "_UI_Story_type"),
+				 StoryPackage.Literals.STORY__END_STATES,
+				 true,
+				 false,
+				 true,
+				 null,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -305,6 +349,7 @@ public class StoryItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
+			childrenFeatures.add(StoryPackage.Literals.STATE_CONTAINER__STATES);
 			childrenFeatures.add(StoryPackage.Literals.STORY__SCENARIOS);
 			childrenFeatures.add(StoryPackage.Literals.STORY__CONDITIONALPROTAGONISTS);
 			childrenFeatures.add(StoryPackage.Literals.STORY__PARAMETERS);
@@ -371,6 +416,7 @@ public class StoryItemProvider
 			case StoryPackage.STORY__COMPLETED:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
+			case StoryPackage.STORY__STATES:
 			case StoryPackage.STORY__SCENARIOS:
 			case StoryPackage.STORY__CONDITIONALPROTAGONISTS:
 			case StoryPackage.STORY__PARAMETERS:
@@ -390,6 +436,11 @@ public class StoryItemProvider
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
+
+		newChildDescriptors.add
+			(createChildParameter
+				(StoryPackage.Literals.STATE_CONTAINER__STATES,
+				 StoryFactory.eINSTANCE.createState()));
 
 		newChildDescriptors.add
 			(createChildParameter

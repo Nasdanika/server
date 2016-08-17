@@ -23,6 +23,8 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.nasdanika.story.Story#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.nasdanika.story.Story#isCompleted <em>Completed</em>}</li>
  *   <li>{@link org.nasdanika.story.Story#getRealizes <em>Realizes</em>}</li>
+ *   <li>{@link org.nasdanika.story.Story#getStartStates <em>Start States</em>}</li>
+ *   <li>{@link org.nasdanika.story.Story#getEndStates <em>End States</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.story.StoryPackage#getStory()
@@ -212,5 +214,35 @@ public interface Story extends StoryBase {
 	 * @generated
 	 */
 	EList<Goal> getRealizes();
+
+	/**
+	 * Returns the value of the '<em><b>Start States</b></em>' reference list.
+	 * The list contents are of type {@link org.nasdanika.story.State}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Start state(s) for the story. E.g. Home page for Sign-in story.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Start States</em>' reference list.
+	 * @see org.nasdanika.story.StoryPackage#getStory_StartStates()
+	 * @model
+	 * @generated
+	 */
+	EList<State> getStartStates();
+
+	/**
+	 * Returns the value of the '<em><b>End States</b></em>' reference list.
+	 * The list contents are of type {@link org.nasdanika.story.State}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * End state(s) for the story. E.g. Accounts summary for Sign-in story.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>End States</em>' reference list.
+	 * @see org.nasdanika.story.StoryPackage#getStory_EndStates()
+	 * @model
+	 * @generated
+	 */
+	EList<State> getEndStates();
 
 } // Story

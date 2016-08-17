@@ -2,7 +2,7 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="story" nsURI="urn:org.nasdanika.story" nsPrefix="org.nasdanika.story">
   <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-    <details key="documentation" value="Story model allows to capture agile (user) stories in the form of a model which can reference the domain model and be linked to the domain model, e.g. route operations may reference user stories they are used by. The story model can be used for documentation, to link test results to acceptance criteria (also as part of online documentation), and for story-based entitlements - operations reference stories, and users are granted entitlements execute stories, or users are granted roles, which in turn are linked to stories.&#xD;&#xA;&#xD;&#xA;![Class diagram](bundle:org.nasdanika.story/doc/story.png)"/>
+    <details key="documentation" value="Story model allows to capture agile (user) stories in the form of a model which can reference the domain model and be linked to the domain model, e.g. route operations may reference user stories they are used by. The story model can be used for documentation, to link test results to acceptance criteria (also as part of online documentation), and for story-based entitlements - operations reference stories, and users are granted entitlements execute stories, or users are granted roles, which in turn are linked to stories.&#xD;&#xA;"/>
   </eAnnotations>
   <eClassifiers xsi:type="ecore:EClass" name="Catalog" eSuperTypes="#//CatalogElement">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -54,14 +54,37 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="StoryBase" abstract="true" interface="true"
+  <eClassifiers xsi:type="ecore:EClass" name="State" eSuperTypes="#//CatalogElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Interaction state, e.g. a web page. &#xD;&#xA;Scenarios transition from their start state(s) (context, &quot;given&quot;) &#xD;&#xA;to the end state (oucome, &quot;then&quot;).&#xD;&#xA;&#xD;&#xA;States can be useful when multiple scenarios share start/end states - it allows to clearly identify shared states."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="superStates" upperBound="-1"
+        eType="#//State">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="States may form a multiple-inheritance hierarchy. Sub-states inherit &#xD;&#xA;inbound and outbound transitions (scenarios) of super-states.&#xD;&#xA;&#xD;&#xA;For example, if all customer pages feature the same menu with links to, say, &#xD;&#xA;Customer Service page, then a BaseCustomerPage state can be created and&#xD;&#xA;&quot;Customer Service scenario&quot; will start from this abstract state instead of multiple&#xD;&#xA;concrete states, e.g. Accounts Summary or Account Details pages.&#xD;&#xA;"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StateContainer" abstract="true" interface="true"
       eSuperTypes="#//CatalogElement">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Container of states."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="states" upperBound="-1"
+        eType="#//State" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Story container may contain zero or more stories or epics."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StoryBase" abstract="true" interface="true"
+      eSuperTypes="#//StateContainer">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Base interface for stories and epics"/>
     </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StoryContainer" abstract="true" interface="true"
-      eSuperTypes="#//CatalogElement">
+      eSuperTypes="#//StateContainer">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Container of stories."/>
     </eAnnotations>
@@ -118,7 +141,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="superActors" upperBound="-1"
         eType="#//Actor">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Actors form a multiple inheritance hierarcy and may have zero or more super-actors. All stories and roles played by by a super-actor are also played by its sub-actors."/>
+        <details key="documentation" value="Actors form a multiple inheritance hierarchy and may have zero or more super-actors. All stories and roles played by by a super-actor are also played by its sub-actors."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -218,11 +241,29 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="realizes" upperBound="-1"
         eType="#//Goal"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="startStates" upperBound="-1"
+        eType="#//State">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Start state(s) for the story. E.g. Home page for Sign-in story."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="endStates" upperBound="-1"
+        eType="#//State">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="End state(s) for the story. E.g. Accounts summary for Sign-in story."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Scenario" eSuperTypes="#//CatalogElement">
+  <eClassifiers xsi:type="ecore:EClass" name="Scenario" eSuperTypes="#//StateContainer">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Context (Given)."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contextStates" upperBound="-1"
+        eType="#//State">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Context (Given) state(s), i.e. a start state(s) from which the scenario transitions to the &#xD;&#xA;outcome (then) end state.&#xD;&#xA;&#xD;&#xA;There can be more than one start state, e.g. two different pages with a link which&#xD;&#xA;initiates the scenario. Where it makes sense it is recommended to create super-states&#xD;&#xA;for states which are context/start states for the same scenario(s)."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="action" eType="ecore:EDataType ../../org.eclipse.emf.ecore/model/Ecore.ecore#//EString">
@@ -235,10 +276,39 @@
         <details key="documentation" value="Outcome (then)."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="outcomeState" eType="#//State">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Outcome (then) state, i.e. the end state to which the scenario transitions from&#xD;&#xA; the context/given/start state."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="steps" upperBound="-1"
+        eType="#//Step" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Step">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Scenario step."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Step name."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Step description. Supports markdown. "/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Optional step condition."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="fromState" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="toState" eType="#//State"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConditionalProtagonist">
     <eStructuralFeatures xsi:type="ecore:EReference" name="protagonist" lowerBound="1"
-        upperBound="-1" eType="#//Protagonist">
+        eType="#//Protagonist">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="References one or more protagonists."/>
       </eAnnotations>

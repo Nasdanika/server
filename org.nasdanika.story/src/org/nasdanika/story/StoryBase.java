@@ -17,5 +17,5 @@ package org.nasdanika.story;
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface StoryBase extends CatalogElement {
+public interface StoryBase extends StateContainer {
 } // StoryBase

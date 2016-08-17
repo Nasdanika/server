@@ -22,6 +22,12 @@
         <genParameters ecoreParameter="story.ecore#//CatalogElement/validate/context"/>
       </genOperations>
     </genClasses>
+    <genClasses ecoreClass="story.ecore#//State">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//State/superStates"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="story.ecore#//StateContainer">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//StateContainer/states"/>
+    </genClasses>
     <genClasses image="false" ecoreClass="story.ecore#//StoryBase"/>
     <genClasses ecoreClass="story.ecore#//StoryContainer">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//StoryContainer/stories"/>
@@ -59,11 +65,23 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Story/parameters"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Story/completed"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Story/realizes"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Story/startStates"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Story/endStates"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//Scenario">
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//Scenario/context"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Scenario/contextStates"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//Scenario/action"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//Scenario/outcome"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Scenario/outcomeState"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference story.ecore#//Scenario/steps"/>
+    </genClasses>
+    <genClasses ecoreClass="story.ecore#//Step">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Step/name"/>
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute story.ecore#//Step/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Step/condition"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Step/fromState"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Step/toState"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//ConditionalProtagonist">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//ConditionalProtagonist/protagonist"/>

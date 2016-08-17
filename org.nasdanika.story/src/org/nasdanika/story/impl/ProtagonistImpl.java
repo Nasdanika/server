@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Protagonist;
+import org.nasdanika.story.State;
 import org.nasdanika.story.StoryBase;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.util.StoryValidator;
@@ -35,6 +36,7 @@ import org.nasdanika.story.util.StoryValidator;
  *   <li>{@link org.nasdanika.story.impl.ProtagonistImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ProtagonistImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ProtagonistImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ProtagonistImpl#getStates <em>States</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ProtagonistImpl#getStories <em>Stories</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ProtagonistImpl#getLinkTo <em>Link To</em>}</li>
  * </ul>
@@ -161,6 +163,16 @@ public abstract class ProtagonistImpl extends CDOObjectImpl implements Protagoni
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
+	public EList<State> getStates() {
+		return (EList<State>)eDynamicGet(StoryPackage.PROTAGONIST__STATES, StoryPackage.Literals.STATE_CONTAINER__STATES, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
 	public EList<StoryBase> getStories() {
 		return (EList<StoryBase>)eDynamicGet(StoryPackage.PROTAGONIST__STORIES, StoryPackage.Literals.STORY_CONTAINER__STORIES, true, true);
 	}
@@ -230,6 +242,8 @@ public abstract class ProtagonistImpl extends CDOObjectImpl implements Protagoni
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case StoryPackage.PROTAGONIST__STATES:
+				return ((InternalEList<?>)getStates()).basicRemove(otherEnd, msgs);
 			case StoryPackage.PROTAGONIST__STORIES:
 				return ((InternalEList<?>)getStories()).basicRemove(otherEnd, msgs);
 		}
@@ -250,6 +264,8 @@ public abstract class ProtagonistImpl extends CDOObjectImpl implements Protagoni
 				return getName();
 			case StoryPackage.PROTAGONIST__DESCRIPTION:
 				return getDescription();
+			case StoryPackage.PROTAGONIST__STATES:
+				return getStates();
 			case StoryPackage.PROTAGONIST__STORIES:
 				return getStories();
 			case StoryPackage.PROTAGONIST__LINK_TO:
@@ -276,6 +292,10 @@ public abstract class ProtagonistImpl extends CDOObjectImpl implements Protagoni
 				return;
 			case StoryPackage.PROTAGONIST__DESCRIPTION:
 				setDescription((String)newValue);
+				return;
+			case StoryPackage.PROTAGONIST__STATES:
+				getStates().clear();
+				getStates().addAll((Collection<? extends State>)newValue);
 				return;
 			case StoryPackage.PROTAGONIST__STORIES:
 				getStories().clear();
@@ -305,6 +325,9 @@ public abstract class ProtagonistImpl extends CDOObjectImpl implements Protagoni
 			case StoryPackage.PROTAGONIST__DESCRIPTION:
 				setDescription(DESCRIPTION_EDEFAULT);
 				return;
+			case StoryPackage.PROTAGONIST__STATES:
+				getStates().clear();
+				return;
 			case StoryPackage.PROTAGONIST__STORIES:
 				getStories().clear();
 				return;
@@ -329,6 +352,8 @@ public abstract class ProtagonistImpl extends CDOObjectImpl implements Protagoni
 				return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
 			case StoryPackage.PROTAGONIST__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? getDescription() != null : !DESCRIPTION_EDEFAULT.equals(getDescription());
+			case StoryPackage.PROTAGONIST__STATES:
+				return !getStates().isEmpty();
 			case StoryPackage.PROTAGONIST__STORIES:
 				return !getStories().isEmpty();
 			case StoryPackage.PROTAGONIST__LINK_TO:

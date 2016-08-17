@@ -3,7 +3,9 @@
 package org.nasdanika.story.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collection;
 import java.util.Map;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
@@ -11,10 +13,14 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.util.EObjectValidator;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
+import org.nasdanika.story.Step;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.util.StoryValidator;
 
@@ -29,9 +35,13 @@ import org.nasdanika.story.util.StoryValidator;
  *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getStates <em>States</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getContext <em>Context</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getContextStates <em>Context States</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getAction <em>Action</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getOutcome <em>Outcome</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getOutcomeState <em>Outcome State</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.ScenarioImpl#getSteps <em>Steps</em>}</li>
  * </ul>
  *
  * @generated
@@ -185,6 +195,16 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
+	public EList<State> getStates() {
+		return (EList<State>)eDynamicGet(StoryPackage.SCENARIO__STATES, StoryPackage.Literals.STATE_CONTAINER__STATES, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getContext() {
 		return (String)eDynamicGet(StoryPackage.SCENARIO__CONTEXT, StoryPackage.Literals.SCENARIO__CONTEXT, true, true);
 	}
@@ -196,6 +216,16 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 	 */
 	public void setContext(String newContext) {
 		eDynamicSet(StoryPackage.SCENARIO__CONTEXT, StoryPackage.Literals.SCENARIO__CONTEXT, newContext);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<State> getContextStates() {
+		return (EList<State>)eDynamicGet(StoryPackage.SCENARIO__CONTEXT_STATES, StoryPackage.Literals.SCENARIO__CONTEXT_STATES, true, true);
 	}
 
 	/**
@@ -237,6 +267,43 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public State getOutcomeState() {
+		return (State)eDynamicGet(StoryPackage.SCENARIO__OUTCOME_STATE, StoryPackage.Literals.SCENARIO__OUTCOME_STATE, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public State basicGetOutcomeState() {
+		return (State)eDynamicGet(StoryPackage.SCENARIO__OUTCOME_STATE, StoryPackage.Literals.SCENARIO__OUTCOME_STATE, false, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOutcomeState(State newOutcomeState) {
+		eDynamicSet(StoryPackage.SCENARIO__OUTCOME_STATE, StoryPackage.Literals.SCENARIO__OUTCOME_STATE, newOutcomeState);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<Step> getSteps() {
+		return (EList<Step>)eDynamicGet(StoryPackage.SCENARIO__STEPS, StoryPackage.Literals.SCENARIO__STEPS, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public boolean validate(DiagnosticChain diagnostics, Map<Object, Object> context) {
@@ -270,6 +337,22 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 	 * @generated
 	 */
 	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case StoryPackage.SCENARIO__STATES:
+				return ((InternalEList<?>)getStates()).basicRemove(otherEnd, msgs);
+			case StoryPackage.SCENARIO__STEPS:
+				return ((InternalEList<?>)getSteps()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case StoryPackage.SCENARIO__ID:
@@ -278,12 +361,21 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 				return getName();
 			case StoryPackage.SCENARIO__DESCRIPTION:
 				return getDescription();
+			case StoryPackage.SCENARIO__STATES:
+				return getStates();
 			case StoryPackage.SCENARIO__CONTEXT:
 				return getContext();
+			case StoryPackage.SCENARIO__CONTEXT_STATES:
+				return getContextStates();
 			case StoryPackage.SCENARIO__ACTION:
 				return getAction();
 			case StoryPackage.SCENARIO__OUTCOME:
 				return getOutcome();
+			case StoryPackage.SCENARIO__OUTCOME_STATE:
+				if (resolve) return getOutcomeState();
+				return basicGetOutcomeState();
+			case StoryPackage.SCENARIO__STEPS:
+				return getSteps();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -293,6 +385,7 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -305,14 +398,29 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 			case StoryPackage.SCENARIO__DESCRIPTION:
 				setDescription((String)newValue);
 				return;
+			case StoryPackage.SCENARIO__STATES:
+				getStates().clear();
+				getStates().addAll((Collection<? extends State>)newValue);
+				return;
 			case StoryPackage.SCENARIO__CONTEXT:
 				setContext((String)newValue);
+				return;
+			case StoryPackage.SCENARIO__CONTEXT_STATES:
+				getContextStates().clear();
+				getContextStates().addAll((Collection<? extends State>)newValue);
 				return;
 			case StoryPackage.SCENARIO__ACTION:
 				setAction((String)newValue);
 				return;
 			case StoryPackage.SCENARIO__OUTCOME:
 				setOutcome((String)newValue);
+				return;
+			case StoryPackage.SCENARIO__OUTCOME_STATE:
+				setOutcomeState((State)newValue);
+				return;
+			case StoryPackage.SCENARIO__STEPS:
+				getSteps().clear();
+				getSteps().addAll((Collection<? extends Step>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -335,14 +443,26 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 			case StoryPackage.SCENARIO__DESCRIPTION:
 				setDescription(DESCRIPTION_EDEFAULT);
 				return;
+			case StoryPackage.SCENARIO__STATES:
+				getStates().clear();
+				return;
 			case StoryPackage.SCENARIO__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
+				return;
+			case StoryPackage.SCENARIO__CONTEXT_STATES:
+				getContextStates().clear();
 				return;
 			case StoryPackage.SCENARIO__ACTION:
 				setAction(ACTION_EDEFAULT);
 				return;
 			case StoryPackage.SCENARIO__OUTCOME:
 				setOutcome(OUTCOME_EDEFAULT);
+				return;
+			case StoryPackage.SCENARIO__OUTCOME_STATE:
+				setOutcomeState((State)null);
+				return;
+			case StoryPackage.SCENARIO__STEPS:
+				getSteps().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -362,12 +482,20 @@ public class ScenarioImpl extends CDOObjectImpl implements Scenario {
 				return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
 			case StoryPackage.SCENARIO__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? getDescription() != null : !DESCRIPTION_EDEFAULT.equals(getDescription());
+			case StoryPackage.SCENARIO__STATES:
+				return !getStates().isEmpty();
 			case StoryPackage.SCENARIO__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? getContext() != null : !CONTEXT_EDEFAULT.equals(getContext());
+			case StoryPackage.SCENARIO__CONTEXT_STATES:
+				return !getContextStates().isEmpty();
 			case StoryPackage.SCENARIO__ACTION:
 				return ACTION_EDEFAULT == null ? getAction() != null : !ACTION_EDEFAULT.equals(getAction());
 			case StoryPackage.SCENARIO__OUTCOME:
 				return OUTCOME_EDEFAULT == null ? getOutcome() != null : !OUTCOME_EDEFAULT.equals(getOutcome());
+			case StoryPackage.SCENARIO__OUTCOME_STATE:
+				return basicGetOutcomeState() != null;
+			case StoryPackage.SCENARIO__STEPS:
+				return !getSteps().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

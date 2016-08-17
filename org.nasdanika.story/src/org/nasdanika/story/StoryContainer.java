@@ -24,7 +24,7 @@ import org.eclipse.emf.common.util.EList;
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface StoryContainer extends CatalogElement {
+public interface StoryContainer extends StateContainer {
 	/**
 	 * Returns the value of the '<em><b>Stories</b></em>' containment reference list.
 	 * The list contents are of type {@link org.nasdanika.story.StoryBase}.

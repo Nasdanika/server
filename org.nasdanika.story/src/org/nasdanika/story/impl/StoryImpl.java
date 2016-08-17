@@ -24,6 +24,7 @@ import org.nasdanika.story.Goal;
 import org.nasdanika.story.Parameter;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
 import org.nasdanika.story.Story;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.Theme;
@@ -40,6 +41,7 @@ import org.nasdanika.story.util.StoryValidator;
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.StoryImpl#getStates <em>States</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getScenarios <em>Scenarios</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getDepends <em>Depends</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getThemes <em>Themes</em>}</li>
@@ -50,6 +52,8 @@ import org.nasdanika.story.util.StoryValidator;
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#isCompleted <em>Completed</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StoryImpl#getRealizes <em>Realizes</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.StoryImpl#getStartStates <em>Start States</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.StoryImpl#getEndStates <em>End States</em>}</li>
  * </ul>
  *
  * @generated
@@ -204,6 +208,16 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
+	public EList<State> getStates() {
+		return (EList<State>)eDynamicGet(StoryPackage.STORY__STATES, StoryPackage.Literals.STATE_CONTAINER__STATES, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
 	public EList<Scenario> getScenarios() {
 		return (EList<Scenario>)eDynamicGet(StoryPackage.STORY__SCENARIOS, StoryPackage.Literals.STORY__SCENARIOS, true, true);
 	}
@@ -325,6 +339,26 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<State> getStartStates() {
+		return (EList<State>)eDynamicGet(StoryPackage.STORY__START_STATES, StoryPackage.Literals.STORY__START_STATES, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<State> getEndStates() {
+		return (EList<State>)eDynamicGet(StoryPackage.STORY__END_STATES, StoryPackage.Literals.STORY__END_STATES, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public boolean validate(DiagnosticChain diagnostics, Map<Object, Object> context) {
@@ -360,6 +394,8 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case StoryPackage.STORY__STATES:
+				return ((InternalEList<?>)getStates()).basicRemove(otherEnd, msgs);
 			case StoryPackage.STORY__SCENARIOS:
 				return ((InternalEList<?>)getScenarios()).basicRemove(otherEnd, msgs);
 			case StoryPackage.STORY__CONDITIONALPROTAGONISTS:
@@ -384,6 +420,8 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 				return getName();
 			case StoryPackage.STORY__DESCRIPTION:
 				return getDescription();
+			case StoryPackage.STORY__STATES:
+				return getStates();
 			case StoryPackage.STORY__SCENARIOS:
 				return getScenarios();
 			case StoryPackage.STORY__DEPENDS:
@@ -404,6 +442,10 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 				return isCompleted();
 			case StoryPackage.STORY__REALIZES:
 				return getRealizes();
+			case StoryPackage.STORY__START_STATES:
+				return getStartStates();
+			case StoryPackage.STORY__END_STATES:
+				return getEndStates();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -425,6 +467,10 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 				return;
 			case StoryPackage.STORY__DESCRIPTION:
 				setDescription((String)newValue);
+				return;
+			case StoryPackage.STORY__STATES:
+				getStates().clear();
+				getStates().addAll((Collection<? extends State>)newValue);
 				return;
 			case StoryPackage.STORY__SCENARIOS:
 				getScenarios().clear();
@@ -463,6 +509,14 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 				getRealizes().clear();
 				getRealizes().addAll((Collection<? extends Goal>)newValue);
 				return;
+			case StoryPackage.STORY__START_STATES:
+				getStartStates().clear();
+				getStartStates().addAll((Collection<? extends State>)newValue);
+				return;
+			case StoryPackage.STORY__END_STATES:
+				getEndStates().clear();
+				getEndStates().addAll((Collection<? extends State>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -483,6 +537,9 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 				return;
 			case StoryPackage.STORY__DESCRIPTION:
 				setDescription(DESCRIPTION_EDEFAULT);
+				return;
+			case StoryPackage.STORY__STATES:
+				getStates().clear();
 				return;
 			case StoryPackage.STORY__SCENARIOS:
 				getScenarios().clear();
@@ -514,6 +571,12 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 			case StoryPackage.STORY__REALIZES:
 				getRealizes().clear();
 				return;
+			case StoryPackage.STORY__START_STATES:
+				getStartStates().clear();
+				return;
+			case StoryPackage.STORY__END_STATES:
+				getEndStates().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -532,6 +595,8 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 				return NAME_EDEFAULT == null ? getName() != null : !NAME_EDEFAULT.equals(getName());
 			case StoryPackage.STORY__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? getDescription() != null : !DESCRIPTION_EDEFAULT.equals(getDescription());
+			case StoryPackage.STORY__STATES:
+				return !getStates().isEmpty();
 			case StoryPackage.STORY__SCENARIOS:
 				return !getScenarios().isEmpty();
 			case StoryPackage.STORY__DEPENDS:
@@ -552,6 +617,10 @@ public class StoryImpl extends CDOObjectImpl implements Story {
 				return isCompleted() != COMPLETED_EDEFAULT;
 			case StoryPackage.STORY__REALIZES:
 				return !getRealizes().isEmpty();
+			case StoryPackage.STORY__START_STATES:
+				return !getStartStates().isEmpty();
+			case StoryPackage.STORY__END_STATES:
+				return !getEndStates().isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

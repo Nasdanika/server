@@ -63,7 +63,7 @@ public interface Actor extends Protagonist {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Actors form a multiple inheritance hierarcy and may have zero or more super-actors. All stories and roles played by by a super-actor are also played by its sub-actors.
+	 * Actors form a multiple inheritance hierarchy and may have zero or more super-actors. All stories and roles played by by a super-actor are also played by its sub-actors.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Super Actors</em>' reference list.
 	 * @see org.nasdanika.story.StoryPackage#getActor_SuperActors()

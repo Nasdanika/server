@@ -23,7 +23,6 @@ import org.eclipse.emf.ecore.EReference;
  * <!-- begin-model-doc -->
  * Story model allows to capture agile (user) stories in the form of a model which can reference the domain model and be linked to the domain model, e.g. route operations may reference user stories they are used by. The story model can be used for documentation, to link test results to acceptance criteria (also as part of online documentation), and for story-based entitlements - operations reference stories, and users are granted entitlements execute stories, or users are granted roles, which in turn are linked to stories.
  * 
- * ![Class diagram](bundle:org.nasdanika.story/doc/story.png)
  * <!-- end-model-doc -->
  * @see org.nasdanika.story.StoryFactory
  * @model kind="package"
@@ -137,6 +136,176 @@ public interface StoryPackage extends EPackage {
 	int CATALOG = 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.story.StoryBase <em>Base</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.StoryBase
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStoryBase()
+	 * @generated
+	 */
+	int STORY_BASE = 4;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.StoryContainer <em>Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.StoryContainer
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStoryContainer()
+	 * @generated
+	 */
+	int STORY_CONTAINER = 5;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.ProtagonistImpl <em>Protagonist</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.ProtagonistImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getProtagonist()
+	 * @generated
+	 */
+	int PROTAGONIST = 6;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.RoleImpl <em>Role</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.RoleImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getRole()
+	 * @generated
+	 */
+	int ROLE = 7;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.ActorImpl <em>Actor</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.ActorImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getActor()
+	 * @generated
+	 */
+	int ACTOR = 8;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.UserImpl <em>User</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.UserImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getUser()
+	 * @generated
+	 */
+	int USER = 9;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.SystemImpl <em>System</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.SystemImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getSystem()
+	 * @generated
+	 */
+	int SYSTEM = 10;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.PersonaImpl <em>Persona</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.PersonaImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getPersona()
+	 * @generated
+	 */
+	int PERSONA = 11;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.EpicImpl <em>Epic</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.EpicImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getEpic()
+	 * @generated
+	 */
+	int EPIC = 12;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.ThemeImpl <em>Theme</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.ThemeImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getTheme()
+	 * @generated
+	 */
+	int THEME = 13;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.StoryImpl <em>Story</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.StoryImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStory()
+	 * @generated
+	 */
+	int STORY = 14;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.ScenarioImpl <em>Scenario</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.ScenarioImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getScenario()
+	 * @generated
+	 */
+	int SCENARIO = 15;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.ConditionalProtagonistImpl <em>Conditional Protagonist</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.ConditionalProtagonistImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getConditionalProtagonist()
+	 * @generated
+	 */
+	int CONDITIONAL_PROTAGONIST = 17;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.GoalImpl <em>Goal</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.GoalImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getGoal()
+	 * @generated
+	 */
+	int GOAL = 18;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.ParameterImpl <em>Parameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.ParameterImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getParameter()
+	 * @generated
+	 */
+	int PARAMETER = 19;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.impl.StateImpl <em>State</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.impl.StateImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getState()
+	 * @generated
+	 */
+	int STATE = 2;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.story.StateContainer <em>State Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.story.StateContainer
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStateContainer()
+	 * @generated
+	 */
+	int STATE_CONTAINER = 3;
+
+	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -200,23 +369,13 @@ public interface StoryPackage extends EPackage {
 	int CATALOG_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.StoryBase <em>Base</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.StoryBase
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStoryBase()
-	 * @generated
-	 */
-	int STORY_BASE = 2;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_BASE__ID = CATALOG_ELEMENT__ID;
+	int STATE__ID = CATALOG_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -225,7 +384,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_BASE__NAME = CATALOG_ELEMENT__NAME;
+	int STATE__NAME = CATALOG_ELEMENT__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -234,7 +393,142 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_BASE__DESCRIPTION = CATALOG_ELEMENT__DESCRIPTION;
+	int STATE__DESCRIPTION = CATALOG_ELEMENT__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Super States</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE__SUPER_STATES = CATALOG_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>State</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>State</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_CONTAINER__ID = CATALOG_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_CONTAINER__NAME = CATALOG_ELEMENT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_CONTAINER__DESCRIPTION = CATALOG_ELEMENT__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_CONTAINER__STATES = CATALOG_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>State Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_CONTAINER_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>State Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STATE_CONTAINER_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY_BASE__ID = STATE_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY_BASE__NAME = STATE_CONTAINER__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY_BASE__DESCRIPTION = STATE_CONTAINER__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY_BASE__STATES = STATE_CONTAINER__STATES;
 
 	/**
 	 * The number of structural features of the '<em>Base</em>' class.
@@ -243,7 +537,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_BASE_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 0;
+	int STORY_BASE_FEATURE_COUNT = STATE_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -252,7 +546,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_BASE___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+	int STORY_BASE___VALIDATE__DIAGNOSTICCHAIN_MAP = STATE_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Base</em>' class.
@@ -261,17 +555,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_BASE_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.story.StoryContainer <em>Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.StoryContainer
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStoryContainer()
-	 * @generated
-	 */
-	int STORY_CONTAINER = 3;
+	int STORY_BASE_OPERATION_COUNT = STATE_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -280,7 +564,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_CONTAINER__ID = CATALOG_ELEMENT__ID;
+	int STORY_CONTAINER__ID = STATE_CONTAINER__ID;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -289,7 +573,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_CONTAINER__NAME = CATALOG_ELEMENT__NAME;
+	int STORY_CONTAINER__NAME = STATE_CONTAINER__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -298,7 +582,16 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_CONTAINER__DESCRIPTION = CATALOG_ELEMENT__DESCRIPTION;
+	int STORY_CONTAINER__DESCRIPTION = STATE_CONTAINER__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY_CONTAINER__STATES = STATE_CONTAINER__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -307,7 +600,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_CONTAINER__STORIES = CATALOG_ELEMENT_FEATURE_COUNT + 0;
+	int STORY_CONTAINER__STORIES = STATE_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Container</em>' class.
@@ -316,7 +609,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_CONTAINER_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 1;
+	int STORY_CONTAINER_FEATURE_COUNT = STATE_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -325,7 +618,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+	int STORY_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP = STATE_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Container</em>' class.
@@ -334,17 +627,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_CONTAINER_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.ProtagonistImpl <em>Protagonist</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.ProtagonistImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getProtagonist()
-	 * @generated
-	 */
-	int PROTAGONIST = 4;
+	int STORY_CONTAINER_OPERATION_COUNT = STATE_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -372,6 +655,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROTAGONIST__DESCRIPTION = STORY_CONTAINER__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTAGONIST__STATES = STORY_CONTAINER__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -419,16 +711,6 @@ public interface StoryPackage extends EPackage {
 	int PROTAGONIST_OPERATION_COUNT = STORY_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.RoleImpl <em>Role</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.RoleImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getRole()
-	 * @generated
-	 */
-	int ROLE = 5;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -454,6 +736,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int ROLE__DESCRIPTION = PROTAGONIST__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ROLE__STATES = PROTAGONIST__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -519,16 +810,6 @@ public interface StoryPackage extends EPackage {
 	int ROLE_OPERATION_COUNT = PROTAGONIST_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.ActorImpl <em>Actor</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.ActorImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getActor()
-	 * @generated
-	 */
-	int ACTOR = 6;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -554,6 +835,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int ACTOR__DESCRIPTION = PROTAGONIST__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR__STATES = PROTAGONIST__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -628,16 +918,6 @@ public interface StoryPackage extends EPackage {
 	int ACTOR_OPERATION_COUNT = PROTAGONIST_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.UserImpl <em>User</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.UserImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getUser()
-	 * @generated
-	 */
-	int USER = 7;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -663,6 +943,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int USER__DESCRIPTION = ACTOR__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int USER__STATES = ACTOR__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -737,16 +1026,6 @@ public interface StoryPackage extends EPackage {
 	int USER_OPERATION_COUNT = ACTOR_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.SystemImpl <em>System</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.SystemImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getSystem()
-	 * @generated
-	 */
-	int SYSTEM = 8;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -772,6 +1051,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int SYSTEM__DESCRIPTION = ACTOR__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SYSTEM__STATES = ACTOR__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -846,16 +1134,6 @@ public interface StoryPackage extends EPackage {
 	int SYSTEM_OPERATION_COUNT = ACTOR_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.PersonaImpl <em>Persona</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.PersonaImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getPersona()
-	 * @generated
-	 */
-	int PERSONA = 9;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -881,6 +1159,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int PERSONA__DESCRIPTION = USER__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSONA__STATES = USER__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -973,16 +1260,6 @@ public interface StoryPackage extends EPackage {
 	int PERSONA_OPERATION_COUNT = USER_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.EpicImpl <em>Epic</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.EpicImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getEpic()
-	 * @generated
-	 */
-	int EPIC = 10;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1008,6 +1285,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int EPIC__DESCRIPTION = STORY_CONTAINER__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EPIC__STATES = STORY_CONTAINER__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Stories</b></em>' containment reference list.
@@ -1044,16 +1330,6 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int EPIC_OPERATION_COUNT = STORY_CONTAINER_OPERATION_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.ThemeImpl <em>Theme</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.ThemeImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getTheme()
-	 * @generated
-	 */
-	int THEME = 11;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1119,16 +1395,6 @@ public interface StoryPackage extends EPackage {
 	int THEME_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.StoryImpl <em>Story</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.StoryImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStory()
-	 * @generated
-	 */
-	int STORY = 12;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1154,6 +1420,15 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int STORY__DESCRIPTION = STORY_BASE__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY__STATES = STORY_BASE__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Scenarios</b></em>' containment reference list.
@@ -1246,13 +1521,31 @@ public interface StoryPackage extends EPackage {
 	int STORY__REALIZES = STORY_BASE_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Start States</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY__START_STATES = STORY_BASE_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>End States</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STORY__END_STATES = STORY_BASE_FEATURE_COUNT + 11;
+
+	/**
 	 * The number of structural features of the '<em>Story</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STORY_FEATURE_COUNT = STORY_BASE_FEATURE_COUNT + 10;
+	int STORY_FEATURE_COUNT = STORY_BASE_FEATURE_COUNT + 12;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1273,23 +1566,13 @@ public interface StoryPackage extends EPackage {
 	int STORY_OPERATION_COUNT = STORY_BASE_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.ScenarioImpl <em>Scenario</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.ScenarioImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getScenario()
-	 * @generated
-	 */
-	int SCENARIO = 13;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO__ID = CATALOG_ELEMENT__ID;
+	int SCENARIO__ID = STATE_CONTAINER__ID;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1298,7 +1581,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO__NAME = CATALOG_ELEMENT__NAME;
+	int SCENARIO__NAME = STATE_CONTAINER__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -1307,7 +1590,16 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO__DESCRIPTION = CATALOG_ELEMENT__DESCRIPTION;
+	int SCENARIO__DESCRIPTION = STATE_CONTAINER__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>States</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCENARIO__STATES = STATE_CONTAINER__STATES;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -1316,7 +1608,16 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO__CONTEXT = CATALOG_ELEMENT_FEATURE_COUNT + 0;
+	int SCENARIO__CONTEXT = STATE_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Context States</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCENARIO__CONTEXT_STATES = STATE_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Action</b></em>' attribute.
@@ -1325,7 +1626,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO__ACTION = CATALOG_ELEMENT_FEATURE_COUNT + 1;
+	int SCENARIO__ACTION = STATE_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Outcome</b></em>' attribute.
@@ -1334,7 +1635,25 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO__OUTCOME = CATALOG_ELEMENT_FEATURE_COUNT + 2;
+	int SCENARIO__OUTCOME = STATE_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Outcome State</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCENARIO__OUTCOME_STATE = STATE_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Steps</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCENARIO__STEPS = STATE_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Scenario</em>' class.
@@ -1343,7 +1662,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO_FEATURE_COUNT = CATALOG_ELEMENT_FEATURE_COUNT + 3;
+	int SCENARIO_FEATURE_COUNT = STATE_CONTAINER_FEATURE_COUNT + 6;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -1352,7 +1671,7 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO___VALIDATE__DIAGNOSTICCHAIN_MAP = CATALOG_ELEMENT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+	int SCENARIO___VALIDATE__DIAGNOSTICCHAIN_MAP = STATE_CONTAINER___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Scenario</em>' class.
@@ -1361,17 +1680,80 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCENARIO_OPERATION_COUNT = CATALOG_ELEMENT_OPERATION_COUNT + 0;
+	int SCENARIO_OPERATION_COUNT = STATE_CONTAINER_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.ConditionalProtagonistImpl <em>Conditional Protagonist</em>}' class.
+	 * The meta object id for the '{@link org.nasdanika.story.impl.StepImpl <em>Step</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.ConditionalProtagonistImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getConditionalProtagonist()
+	 * @see org.nasdanika.story.impl.StepImpl
+	 * @see org.nasdanika.story.impl.StoryPackageImpl#getStep()
 	 * @generated
 	 */
-	int CONDITIONAL_PROTAGONIST = 14;
+	int STEP = 16;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP__DESCRIPTION = 1;
+
+	/**
+	 * The feature id for the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP__CONDITION = 2;
+
+	/**
+	 * The feature id for the '<em><b>From State</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP__FROM_STATE = 3;
+
+	/**
+	 * The feature id for the '<em><b>To State</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP__TO_STATE = 4;
+
+	/**
+	 * The number of structural features of the '<em>Step</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP_FEATURE_COUNT = 5;
+
+	/**
+	 * The number of operations of the '<em>Step</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP_OPERATION_COUNT = 0;
 
 	/**
 	 * The feature id for the '<em><b>Protagonist</b></em>' reference list.
@@ -1410,16 +1792,6 @@ public interface StoryPackage extends EPackage {
 	int CONDITIONAL_PROTAGONIST_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.GoalImpl <em>Goal</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.GoalImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getGoal()
-	 * @generated
-	 */
-	int GOAL = 15;
-
-	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1454,16 +1826,6 @@ public interface StoryPackage extends EPackage {
 	 * @ordered
 	 */
 	int GOAL_OPERATION_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.nasdanika.story.impl.ParameterImpl <em>Parameter</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.story.impl.ParameterImpl
-	 * @see org.nasdanika.story.impl.StoryPackageImpl#getParameter()
-	 * @generated
-	 */
-	int PARAMETER = 16;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -1916,6 +2278,28 @@ public interface StoryPackage extends EPackage {
 	EReference getStory_Realizes();
 
 	/**
+	 * Returns the meta object for the reference list '{@link org.nasdanika.story.Story#getStartStates <em>Start States</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Start States</em>'.
+	 * @see org.nasdanika.story.Story#getStartStates()
+	 * @see #getStory()
+	 * @generated
+	 */
+	EReference getStory_StartStates();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.nasdanika.story.Story#getEndStates <em>End States</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>End States</em>'.
+	 * @see org.nasdanika.story.Story#getEndStates()
+	 * @see #getStory()
+	 * @generated
+	 */
+	EReference getStory_EndStates();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.story.Scenario <em>Scenario</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1935,6 +2319,17 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getScenario_Context();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.nasdanika.story.Scenario#getContextStates <em>Context States</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Context States</em>'.
+	 * @see org.nasdanika.story.Scenario#getContextStates()
+	 * @see #getScenario()
+	 * @generated
+	 */
+	EReference getScenario_ContextStates();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Scenario#getAction <em>Action</em>}'.
@@ -1957,6 +2352,93 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getScenario_Outcome();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.story.Scenario#getOutcomeState <em>Outcome State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Outcome State</em>'.
+	 * @see org.nasdanika.story.Scenario#getOutcomeState()
+	 * @see #getScenario()
+	 * @generated
+	 */
+	EReference getScenario_OutcomeState();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.story.Scenario#getSteps <em>Steps</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Steps</em>'.
+	 * @see org.nasdanika.story.Scenario#getSteps()
+	 * @see #getScenario()
+	 * @generated
+	 */
+	EReference getScenario_Steps();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.story.Step <em>Step</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Step</em>'.
+	 * @see org.nasdanika.story.Step
+	 * @generated
+	 */
+	EClass getStep();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Step#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.nasdanika.story.Step#getName()
+	 * @see #getStep()
+	 * @generated
+	 */
+	EAttribute getStep_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Step#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.nasdanika.story.Step#getDescription()
+	 * @see #getStep()
+	 * @generated
+	 */
+	EAttribute getStep_Description();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Step#getCondition <em>Condition</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Condition</em>'.
+	 * @see org.nasdanika.story.Step#getCondition()
+	 * @see #getStep()
+	 * @generated
+	 */
+	EAttribute getStep_Condition();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.story.Step#getFromState <em>From State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>From State</em>'.
+	 * @see org.nasdanika.story.Step#getFromState()
+	 * @see #getStep()
+	 * @generated
+	 */
+	EReference getStep_FromState();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.story.Step#getToState <em>To State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>To State</em>'.
+	 * @see org.nasdanika.story.Step#getToState()
+	 * @see #getStep()
+	 * @generated
+	 */
+	EReference getStep_ToState();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.story.ConditionalProtagonist <em>Conditional Protagonist</em>}'.
@@ -2064,6 +2546,48 @@ public interface StoryPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getParameter_Description();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.story.State <em>State</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>State</em>'.
+	 * @see org.nasdanika.story.State
+	 * @generated
+	 */
+	EClass getState();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.nasdanika.story.State#getSuperStates <em>Super States</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Super States</em>'.
+	 * @see org.nasdanika.story.State#getSuperStates()
+	 * @see #getState()
+	 * @generated
+	 */
+	EReference getState_SuperStates();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.story.StateContainer <em>State Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>State Container</em>'.
+	 * @see org.nasdanika.story.StateContainer
+	 * @generated
+	 */
+	EClass getStateContainer();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.story.StateContainer#getStates <em>States</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>States</em>'.
+	 * @see org.nasdanika.story.StateContainer#getStates()
+	 * @see #getStateContainer()
+	 * @generated
+	 */
+	EReference getStateContainer_States();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2419,6 +2943,22 @@ public interface StoryPackage extends EPackage {
 		EReference STORY__REALIZES = eINSTANCE.getStory_Realizes();
 
 		/**
+		 * The meta object literal for the '<em><b>Start States</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STORY__START_STATES = eINSTANCE.getStory_StartStates();
+
+		/**
+		 * The meta object literal for the '<em><b>End States</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STORY__END_STATES = eINSTANCE.getStory_EndStates();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.story.impl.ScenarioImpl <em>Scenario</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2437,6 +2977,14 @@ public interface StoryPackage extends EPackage {
 		EAttribute SCENARIO__CONTEXT = eINSTANCE.getScenario_Context();
 
 		/**
+		 * The meta object literal for the '<em><b>Context States</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SCENARIO__CONTEXT_STATES = eINSTANCE.getScenario_ContextStates();
+
+		/**
 		 * The meta object literal for the '<em><b>Action</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2451,6 +2999,72 @@ public interface StoryPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute SCENARIO__OUTCOME = eINSTANCE.getScenario_Outcome();
+
+		/**
+		 * The meta object literal for the '<em><b>Outcome State</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SCENARIO__OUTCOME_STATE = eINSTANCE.getScenario_OutcomeState();
+
+		/**
+		 * The meta object literal for the '<em><b>Steps</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference SCENARIO__STEPS = eINSTANCE.getScenario_Steps();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.story.impl.StepImpl <em>Step</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.story.impl.StepImpl
+		 * @see org.nasdanika.story.impl.StoryPackageImpl#getStep()
+		 * @generated
+		 */
+		EClass STEP = eINSTANCE.getStep();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STEP__NAME = eINSTANCE.getStep_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STEP__DESCRIPTION = eINSTANCE.getStep_Description();
+
+		/**
+		 * The meta object literal for the '<em><b>Condition</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STEP__CONDITION = eINSTANCE.getStep_Condition();
+
+		/**
+		 * The meta object literal for the '<em><b>From State</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STEP__FROM_STATE = eINSTANCE.getStep_FromState();
+
+		/**
+		 * The meta object literal for the '<em><b>To State</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STEP__TO_STATE = eINSTANCE.getStep_ToState();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.story.impl.ConditionalProtagonistImpl <em>Conditional Protagonist</em>}' class.
@@ -2537,6 +3151,42 @@ public interface StoryPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PARAMETER__DESCRIPTION = eINSTANCE.getParameter_Description();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.story.impl.StateImpl <em>State</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.story.impl.StateImpl
+		 * @see org.nasdanika.story.impl.StoryPackageImpl#getState()
+		 * @generated
+		 */
+		EClass STATE = eINSTANCE.getState();
+
+		/**
+		 * The meta object literal for the '<em><b>Super States</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STATE__SUPER_STATES = eINSTANCE.getState_SuperStates();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.story.StateContainer <em>State Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.story.StateContainer
+		 * @see org.nasdanika.story.impl.StoryPackageImpl#getStateContainer()
+		 * @generated
+		 */
+		EClass STATE_CONTAINER = eINSTANCE.getStateContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>States</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference STATE_CONTAINER__STATES = eINSTANCE.getStateContainer_States();
 
 	}
 
