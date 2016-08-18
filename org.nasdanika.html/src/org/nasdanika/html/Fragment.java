@@ -8,4 +8,10 @@ public interface Fragment extends Container<Fragment>, Producer {
 		
 	List<Object> getContent();
 	
+	/**
+	 * 
+	 * @return Factory used to create this fragment.
+	 */
+	HTMLFactory getFactory();	
+	
 }

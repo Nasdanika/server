@@ -2,18 +2,24 @@ package org.nasdanika.cdo.web.doc.story;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
+import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
 import org.nasdanika.story.Story;
 import org.nasdanika.web.HttpServletRequestContext;
 
@@ -32,30 +38,36 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 	protected Collection<? extends EObject> getTocChildren(Story story) {
 		return story.getScenarios();
 	}
-	
-	
-	protected Fragment getIndex(Story obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) {
-		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
-		Fragment ret = htmlFactory.fragment(
-			htmlFactory.tag(
-					TagName.h3, 
-					htmlFactory.tag(TagName.img).attribute("src", storyDocumentationGenerator.getDocRoute().getDocRoutePath()+getIcon()).style().margin().right("5px"),
-					StringEscapeUtils.escapeHtml4(obj.getName()),
-					" (", obj.eClass().getName(), ")"));
 		
-		String resolvedID = StoryDocumentationGenerator.resolveCatalogElementID(obj);
-		if (!CoreUtil.isBlank(resolvedID)) {
-			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
-		}
-		
+	@Override
+	protected Fragment indexHeader(Story obj, HttpServletRequestContext context, URI baseURI, String urlPrefix,	String path) {
+		Fragment ret = super.indexHeader(obj, context, baseURI, urlPrefix, path);
+		HTMLFactory htmlFactory = ret.getFactory();
 		if (obj.isCompleted()) {
-			ret.content(htmlFactory.div("<B>Status: </B>", htmlFactory.fontAwesome().webApplication(WebApplication.check), " Completed"));
+			ret.content(htmlFactory.div("<B>Status: </B>", htmlFactory.fontAwesome().webApplication(WebApplication.check), " Completed").style().margin().bottom("15px"));
 		} else {
-			ret.content(htmlFactory.div("<B>Status: </B>", htmlFactory.fontAwesome().webApplication(WebApplication.hourglass), " Pending"));
+			ret.content(htmlFactory.div("<B>Status: </B>", htmlFactory.fontAwesome().webApplication(WebApplication.hourglass), " Pending").style().margin().bottom("15px"));
 		}
 		
 		try {
 			URI modelURI = storyDocumentationGenerator.getModelUri(obj);
+			
+			List<Protagonist> protagonists = new ArrayList<>();
+			if (obj.eContainer() instanceof Protagonist) {
+				protagonists.add((Protagonist) obj.eContainer());
+			}
+			protagonists.addAll(obj.getProtagonists());
+			
+			if (!protagonists.isEmpty()) {
+				ret.content(htmlFactory.tag(TagName.h4, "As a (Protagonist/Role)"));
+				Iterator<Protagonist> pit = protagonists.iterator();
+				while (pit.hasNext()) {
+					ret.content(storyDocumentationGenerator.getDocRoute().findToc(pit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+					if (pit.hasNext()) {
+						ret.content(", ");
+					}
+				}
+			}						
 			
 			if (!CoreUtil.isBlank(obj.getGoal())) {
 				ret.content(htmlFactory.tag(TagName.h4, "I want (Goal)"));
@@ -72,30 +84,93 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getDescription()));
 			}
 			
-			if (!obj.getScenarios().isEmpty()) {
-				ret.content(htmlFactory.tag(TagName.h4, "Scenarios"));
-				Table scenariosTable = htmlFactory.table().bordered();
-				ret.content(scenariosTable);
-				scenariosTable.header().headerRow("Name", "Given (Context)", "When (Action)", "Then (Outcome)").style(Style.PRIMARY);
-				for (Scenario scenario: obj.getScenarios()) {			
-					scenariosTable.body().row(
-							storyDocumentationGenerator.getDocRoute().findToc(scenario).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
-							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getContext()),
-							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getAction()),
-							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getOutcome()));
-				}
-			}
 		} catch (URISyntaxException e) {
 			ret.content(htmlFactory.alert(Style.DANGER, false, e));
 		}			
-		
-		// TODO - themes (tags), dependencies, realized goals, context diagram, protagonists 
-		
 		return ret;
 	}
 	
-	// Parameter
-//	getDescription()
-//	getName()
-//	getType()
+	@Override
+	protected void indexTabs(Story obj, HttpServletRequestContext context, URI baseURI, String urlPrefix, String path, Tabs tabs) {
+		super.indexTabs(obj, context, baseURI, urlPrefix, path, tabs);
+		HTMLFactory htmlFactory = tabs.getFactory();
+		if (!obj.getScenarios().isEmpty()) {
+			try {
+				List<Object[]> rows = new ArrayList<>();
+				boolean hasContextStates = false;
+				boolean hasContexts = false;
+				boolean hasOutcomeStates = false;
+				boolean hasOutcomes = false;
+				
+				URI modelURI = storyDocumentationGenerator.getModelUri(obj);
+				for (Scenario scenario: obj.getScenarios()) {			
+					Fragment contextStatesFragment = tabs.getFactory().fragment();
+					Iterator<State> sit = scenario.getContextStates().iterator();
+					while (sit.hasNext()) {
+						hasContextStates = true;
+						contextStatesFragment.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+						if (sit.hasNext()) {
+							contextStatesFragment.content(", ");
+						}
+					}
+					
+					String scenarioContext = scenario.getContext();
+					hasContexts = hasContexts || !CoreUtil.isBlank(scenarioContext);
+					String scenarioOutcome = scenario.getOutcome();
+					hasOutcomes = hasOutcomes || !CoreUtil.isBlank(scenarioOutcome);
+					hasOutcomeStates = hasOutcomeStates || scenario.getOutcomeState() != null;
+					rows.add(new Object[] {
+							storyDocumentationGenerator.getDocRoute().findToc(scenario).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
+							contextStatesFragment,
+							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenarioContext),
+							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getAction()),
+							scenario.getOutcomeState() == null ? "" : storyDocumentationGenerator.getDocRoute().findToc(scenario.getOutcomeState()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
+							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenarioOutcome)
+					});
+				}
+				
+				Table scenariosTable = htmlFactory.table().bordered();
+				Row headerRow = scenariosTable.header().headerRow("Name").style(Style.PRIMARY);
+				if (hasContextStates) {
+					headerRow.header("Context state(s)");
+				}
+				if (hasContexts) {
+					headerRow.header("Given (Context)");
+				}
+				headerRow.header("When (Action)");
+				if (hasOutcomeStates) {
+					headerRow.header("Outcome state");
+				}
+				if (hasOutcomes) {
+					headerRow.header("Then (Outcome)");
+				}
+				
+				for (Object[] ra: rows) {			
+					Row scenarioRow = scenariosTable.body().row(ra[0]);
+					if (hasContextStates) {
+						scenarioRow.cell(ra[1]);
+					}
+					if (hasContexts) {
+						scenarioRow.cell(ra[2]);
+					}
+					scenarioRow.cell(ra[3]);
+					if (hasOutcomeStates) {
+						scenarioRow.cell(ra[4]);
+					}
+					if (hasOutcomes) {
+						scenarioRow.cell(ra[5]);
+					}					
+				}
+				tabs.item("Scenarios", scenariosTable);
+			} catch (URISyntaxException e) {
+				tabs.item("Scenarios", htmlFactory.alert(Style.DANGER, false, e));
+			}
+		}	
+	
+		// TODO - Parameters
+		//		getDescription()
+		//		getName()
+		//		getType()
+		
+	}	
 }

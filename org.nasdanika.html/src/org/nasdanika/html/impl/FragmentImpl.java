@@ -76,4 +76,9 @@ class FragmentImpl implements Fragment {
 		return produce(0);
 	}
 
+	@Override
+	public HTMLFactory getFactory() {
+		return factory;
+	}
+
 }

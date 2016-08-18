@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.web.doc.story;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -30,7 +29,6 @@ import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
-import org.nasdanika.web.ValueAction;
 
 import net.sourceforge.plantuml.SourceStringReader;
 
@@ -86,16 +84,27 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 		return Action.NOT_FOUND;
 	}
 	
-//	getDescription()
-//	getId()
-//	getName()
-
 	protected Fragment getIndex(
 			T obj, 
 			HttpServletRequestContext context, 
 			java.net.URI baseURI, 
 			String urlPrefix, 
 			String path) {
+		
+		Fragment ret = indexHeader(obj, context, baseURI, urlPrefix, path);		
+		Tabs tabs = ret.getFactory().tabs().style().margin().top("15px");
+		indexTabs(obj, context, baseURI, urlPrefix, path, tabs);
+		ret.content(tabs);
+		return ret;
+	}
+
+	protected Fragment indexHeader(
+			T obj, 
+			HttpServletRequestContext context, 
+			java.net.URI baseURI, 
+			String urlPrefix, 
+			String path) {
+
 		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 		Fragment ret = htmlFactory.fragment(
 			htmlFactory.tag(
@@ -108,14 +117,10 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 		if (!CoreUtil.isBlank(resolvedID)) {
 			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
 		}
-		
-		Tabs tabs = htmlFactory.tabs();
-		tabs(obj, context, baseURI, urlPrefix, path, tabs);
-		ret.content(tabs);
 		return ret;
 	}
 	
-	protected void tabs(
+	protected void indexTabs(
 			T obj, 
 			HttpServletRequestContext context, 
 			java.net.URI baseURI, 
@@ -125,6 +130,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 		
 		descriptionTab(obj, context, baseURI, urlPrefix, path, tabs);
 		diagramTab(obj, tabs);
+		// TODO - links, e.g. test results, pages, actors, ...
 	}
 	
 	protected void descriptionTab(

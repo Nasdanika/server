@@ -52,7 +52,7 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 	}
 	
 	@Override
-	protected void tabs(
+	protected void indexTabs(
 			Catalog obj, 
 			HttpServletRequestContext context, 
 			URI baseURI, 
