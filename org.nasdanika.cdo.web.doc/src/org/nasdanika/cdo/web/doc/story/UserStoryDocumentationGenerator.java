@@ -96,84 +96,21 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 	@Override
 	protected void indexTabs(Story obj, HttpServletRequestContext context, URI baseURI, String urlPrefix, String path, Tabs tabs) {
 		super.indexTabs(obj, context, baseURI, urlPrefix, path, tabs);
-		HTMLFactory htmlFactory = tabs.getFactory();
-		if (!obj.getScenarios().isEmpty()) {
-			try {
-				List<Object[]> rows = new ArrayList<>();
-				boolean hasContextStates = false;
-				boolean hasContexts = false;
-				boolean hasOutcomeStates = false;
-				boolean hasOutcomes = false;
-				
-				URI modelURI = storyDocumentationGenerator.getModelUri(obj);
-				for (Scenario scenario: obj.getScenarios()) {			
-					Fragment contextStatesFragment = tabs.getFactory().fragment();
-					Iterator<State> sit = scenario.getContextStates().iterator();
-					while (sit.hasNext()) {
-						hasContextStates = true;
-						contextStatesFragment.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
-						if (sit.hasNext()) {
-							contextStatesFragment.content(", ");
-						}
-					}
-					
-					String scenarioContext = scenario.getContext();
-					hasContexts = hasContexts || !CoreUtil.isBlank(scenarioContext);
-					String scenarioOutcome = scenario.getOutcome();
-					hasOutcomes = hasOutcomes || !CoreUtil.isBlank(scenarioOutcome);
-					hasOutcomeStates = hasOutcomeStates || scenario.getOutcomeState() != null;
-					rows.add(new Object[] {
-							storyDocumentationGenerator.getDocRoute().findToc(scenario).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
-							contextStatesFragment,
-							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenarioContext),
-							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getAction()),
-							scenario.getOutcomeState() == null ? "" : storyDocumentationGenerator.getDocRoute().findToc(scenario.getOutcomeState()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
-							storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenarioOutcome)
-					});
-				}
-				
-				Table scenariosTable = htmlFactory.table().bordered();
-				Row headerRow = scenariosTable.header().headerRow("Name").style(Style.PRIMARY);
-				if (hasContextStates) {
-					headerRow.header("Context state(s)");
-				}
-				if (hasContexts) {
-					headerRow.header("Given (Context)");
-				}
-				headerRow.header("When (Action)");
-				if (hasOutcomeStates) {
-					headerRow.header("Outcome state");
-				}
-				if (hasOutcomes) {
-					headerRow.header("Then (Outcome)");
-				}
-				
-				for (Object[] ra: rows) {			
-					Row scenarioRow = scenariosTable.body().row(ra[0]);
-					if (hasContextStates) {
-						scenarioRow.cell(ra[1]);
-					}
-					if (hasContexts) {
-						scenarioRow.cell(ra[2]);
-					}
-					scenarioRow.cell(ra[3]);
-					if (hasOutcomeStates) {
-						scenarioRow.cell(ra[4]);
-					}
-					if (hasOutcomes) {
-						scenarioRow.cell(ra[5]);
-					}					
-				}
+		try {
+			URI modelURI = storyDocumentationGenerator.getModelUri(obj);				
+			Table scenariosTable = scenariosTable(obj.getScenarios(), urlPrefix, modelURI, true, true);
+			if (scenariosTable != null) {
 				tabs.item("Scenarios", scenariosTable);
-			} catch (URISyntaxException e) {
-				tabs.item("Scenarios", htmlFactory.alert(Style.DANGER, false, e));
 			}
-		}	
+		} catch (URISyntaxException e) {
+			tabs.item("Scenarios", tabs.getFactory().alert(Style.DANGER, false, e));
+		}
 	
 		// TODO - Parameters
 		//		getDescription()
 		//		getName()
 		//		getType()
 		
-	}	
+	}
+
 }

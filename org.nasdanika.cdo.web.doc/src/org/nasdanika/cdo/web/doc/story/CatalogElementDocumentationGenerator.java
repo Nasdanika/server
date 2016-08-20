@@ -1,11 +1,14 @@
 package org.nasdanika.cdo.web.doc.story;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,18 +24,42 @@ import org.nasdanika.html.Form;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.Select;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.story.CatalogElement;
+import org.nasdanika.story.Scenario;
+import org.nasdanika.story.State;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 
 import net.sourceforge.plantuml.SourceStringReader;
 
 abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> implements DocumentationGenerator<T> {
+	
+	static final Comparator<CatalogElement> CATALOG_ELEMENT_NAME_COMPARATOR = new Comparator<CatalogElement>() {
+
+		@Override
+		public int compare(CatalogElement o1, CatalogElement o2) {
+			if (o1 == o2) {
+				return 0;
+			}
+			if (o1.getName() == null) {
+				return o2.getName() == null ? o1.hashCode()-o2.hashCode() : 1;
+			}
+			
+			if (o2.getName() == null) {
+				return -1;
+			}
+			
+			int cmp = o1.getName().compareTo(o2.getName());
+			return cmp == 0 ? o1.hashCode() - o2.hashCode() : cmp;
+		}
+	};
 
 	protected StoryDocumentationGenerator storyDocumentationGenerator;
 
@@ -285,5 +312,84 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 			}
 		}
 	}
+	
+	protected Table scenariosTable(
+			Collection<Scenario> scenarios, 
+			String urlPrefix,
+			URI modelURI,
+			boolean contextStatesColumn,
+			boolean outcomeStatesColumn) {
+		
+		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
+		if (scenarios.isEmpty()) {
+			return null;
+		}
+		
+		List<Object[]> rows = new ArrayList<>();
+		boolean hasContextStates = false;
+		boolean hasContexts = false;
+		boolean hasOutcomeStates = false;
+		boolean hasOutcomes = false;
+		
+		for (Scenario scenario: scenarios) {			
+			Fragment contextStatesFragment = htmlFactory.fragment();
+			Iterator<State> sit = scenario.getContextStates().iterator();
+			while (sit.hasNext()) {
+				hasContextStates = contextStatesColumn;
+				contextStatesFragment.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+				if (sit.hasNext()) {
+					contextStatesFragment.content(", ");
+				}
+			}
+			
+			String scenarioContext = scenario.getContext();
+			hasContexts = hasContexts || !CoreUtil.isBlank(scenarioContext);
+			String scenarioOutcome = scenario.getOutcome();
+			hasOutcomes = hasOutcomes || !CoreUtil.isBlank(scenarioOutcome);
+			hasOutcomeStates = hasOutcomeStates || (scenario.getOutcomeState() != null && outcomeStatesColumn);
+			rows.add(new Object[] {
+					storyDocumentationGenerator.getDocRoute().findToc(scenario).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
+					contextStatesFragment,
+					storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenarioContext),
+					storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenario.getAction()),
+					scenario.getOutcomeState() == null ? "" : storyDocumentationGenerator.getDocRoute().findToc(scenario.getOutcomeState()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
+					storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, scenarioOutcome)
+			});
+		}
+		
+		Table scenariosTable = htmlFactory.table().bordered();
+		Row headerRow = scenariosTable.header().headerRow("Name").style(Style.PRIMARY);
+		if (hasContextStates) {
+			headerRow.header("Context state(s)");
+		}
+		if (hasContexts) {
+			headerRow.header("Given (Context)");
+		}
+		headerRow.header("When (Action)");
+		if (hasOutcomeStates) {
+			headerRow.header("Outcome state");
+		}
+		if (hasOutcomes) {
+			headerRow.header("Then (Outcome)");
+		}
+		
+		for (Object[] ra: rows) {			
+			Row scenarioRow = scenariosTable.body().row(ra[0]);
+			if (hasContextStates) {
+				scenarioRow.cell(ra[1]);
+			}
+			if (hasContexts) {
+				scenarioRow.cell(ra[2]);
+			}
+			scenarioRow.cell(ra[3]);
+			if (hasOutcomeStates) {
+				scenarioRow.cell(ra[4]);
+			}
+			if (hasOutcomes) {
+				scenarioRow.cell(ra[5]);
+			}					
+		}
+		return scenariosTable;
+	}		
 		
 }
