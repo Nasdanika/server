@@ -29,7 +29,7 @@ class StateHierarchyDiagramSpecGenerator implements DiagramSpecGenerator {
 	}
 
 	@Override
-	public void diagramSpec(EObject obj, StringBuilder specBuilder) {
+	public void diagramSpec(EObject obj, int depth, Direction direction, StringBuilder specBuilder) {
 		specBuilder.append("note \"TODO: "+getLabel()+"\" as TODO_NOTE").append(System.lineSeparator());		
 	}
 

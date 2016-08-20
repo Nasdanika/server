@@ -169,7 +169,11 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 				specBuilder.append("scale ").append(width).append(" width").append(System.lineSeparator());
 			}
 			
-			diagramSpecGenerator.diagramSpec(obj, specBuilder);
+			diagramSpecGenerator.diagramSpec(
+					obj,
+					Integer.parseInt(context.getRequest().getParameter("depth")),					
+					DiagramSpecGenerator.Direction.valueOf(context.getRequest().getParameter("direction")), 
+					specBuilder);
 			
 			specBuilder.append("@enduml").append(System.lineSeparator());
 	//		System.out.println(specBuilder);

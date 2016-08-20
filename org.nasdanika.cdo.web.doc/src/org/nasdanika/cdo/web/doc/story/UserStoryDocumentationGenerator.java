@@ -53,8 +53,11 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 			URI modelURI = storyDocumentationGenerator.getModelUri(obj);
 			
 			List<Protagonist> protagonists = new ArrayList<>();
-			if (obj.eContainer() instanceof Protagonist) {
-				protagonists.add((Protagonist) obj.eContainer());
+			for (EObject container = obj.eContainer(); container!=null; container = container.eContainer()) {
+				if (container instanceof Protagonist) {
+					protagonists.add((Protagonist) container);
+					break;
+				}
 			}
 			protagonists.addAll(obj.getProtagonists());
 			

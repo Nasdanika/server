@@ -7,8 +7,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
