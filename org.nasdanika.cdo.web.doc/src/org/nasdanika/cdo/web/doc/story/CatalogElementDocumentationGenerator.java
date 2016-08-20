@@ -228,7 +228,10 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 						.style().padding().right("5px");
 				}			
 				
-				Select directionSelect = htmlFactory.select().knockout().value("direction");
+				Select directionSelect = htmlFactory.select()
+						.knockout().value("direction")
+						.knockout().disable("view() == 'activity'");
+						
 				directionSelect.option("in", false, false, "In");
 				directionSelect.option("out", false, false, "Out");
 				directionSelect.option("both", true, false, "Both");
@@ -236,7 +239,10 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					.style().border().right("dashed 1px silver")
 					.style().padding().right("5px");
 		
-				Select depthSelect = htmlFactory.select().knockout().value("depth");
+				Select depthSelect = htmlFactory.select()
+						.knockout().value("depth")
+						.knockout().disable("view() == 'activity'");
+				
 				for (int i=0; i<10; ++i) {
 					depthSelect.option(String.valueOf(i), i==1, false, String.valueOf(i));
 				}
@@ -245,7 +251,10 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					.style().border().right("dashed 1px silver")
 					.style().padding().right("5px");		
 					
-				Input leftToRightDirectionCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("leftToRightDirection");
+				Input leftToRightDirectionCheckbox = htmlFactory.input(InputType.checkbox)
+						.knockout().checked("leftToRightDirection")
+						.knockout().disable("view() == 'activity'");
+				
 				diagramConfigurationForm.formGroup("Left to right", leftToRightDirectionCheckbox, "Diagram direction")				
 					.style().border().right("dashed 1px silver")
 					.style().padding().right("5px");
