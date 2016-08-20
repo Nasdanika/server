@@ -27,21 +27,13 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 
 	@Override
 	public boolean hasDiagram(EObject obj) {
-		if (obj instanceof Role) {
-			return true;
-		}
-		
-		if (obj instanceof Protagonist) {
-			return true;
-		}
-		
-		if (obj instanceof Story) {
+		if (isDiagramElement(obj)) {
 			return true;
 		}
 		
 		TreeIterator<EObject> tit = obj.eAllContents();
 		while (tit.hasNext()) {
-			if (hasDiagram(tit.next())) {
+			if (isDiagramElement(tit.next())) {
 				return true;
 			}
 		}
@@ -184,7 +176,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 					specBuilder
 						.append("(DE")
 						.append(idMap.get(diagramElement))
-						.append(") ..> (DE")
+						.append(") .d.> (DE")
 						.append(idMap.get(dep))
 						.append(")")
 						.append(System.lineSeparator());
@@ -204,7 +196,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 					specBuilder
 						.append("(DE")
 						.append(idMap.get(pt))
-						.append(") -> DE")
+						.append(") -r-> DE")
 						.append(idMap.get(diagramElement))
 						.append(System.lineSeparator());
 				}
@@ -218,7 +210,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 					specBuilder
 						.append("DE")
 						.append(idMap.get(diagramElement))
-						.append(" -|> DE")
+						.append(" -u-|> DE")
 						.append(idMap.get(sr))
 						.append(System.lineSeparator());
 				}
@@ -228,7 +220,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 					specBuilder
 						.append("DE")
 						.append(idMap.get(sr))
-						.append(" -|> DE")
+						.append(" -u-|> DE")
 						.append(idMap.get(diagramElement))
 						.append(System.lineSeparator());
 				}
@@ -242,7 +234,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 					specBuilder
 						.append("DE")
 						.append(idMap.get(diagramElement))
-						.append(" ..|> DE")
+						.append(" .u.|> DE")
 						.append(idMap.get(sr))
 						.append(System.lineSeparator());
 				}
@@ -252,7 +244,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 					specBuilder
 						.append("DE")
 						.append(idMap.get(sa))
-						.append(" -|> DE")
+						.append(" -u-|> DE")
 						.append(idMap.get(diagramElement))
 						.append(System.lineSeparator());
 				}
@@ -262,7 +254,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 					specBuilder
 						.append("DE")
 						.append(idMap.get(diagramElement))
-						.append(" -|> DE")
+						.append(" -u-|> DE")
 						.append(idMap.get(sa))
 						.append(System.lineSeparator());
 				}

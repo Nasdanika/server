@@ -4,16 +4,14 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.Bootstrap.Style;
-import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Scenario;
 import org.nasdanika.story.State;
 import org.nasdanika.web.HttpServletRequestContext;
