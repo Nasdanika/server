@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.web.doc.DependencyTracer;
 import org.nasdanika.story.Scenario;
 import org.nasdanika.story.State;
+import org.nasdanika.story.Story;
 
 class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 
@@ -23,7 +24,6 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 	public StateTransitionDiagramSpecGenerator(StoryDocumentationGenerator storyDocumentationGenerator) {
 		this.storyDocumentationGenerator = storyDocumentationGenerator;
 	}
-
 
 	@Override
 	public boolean hasDiagram(EObject obj) {
@@ -76,7 +76,7 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 	}; 		
 	
 	private static boolean isDiagramElement(EObject obj) {
-		return obj instanceof State;
+		return obj instanceof State || obj instanceof Scenario;
 	}	
 	
 	private static class StateEntry {
@@ -95,6 +95,10 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 		Set<EObject> diagramElements = new HashSet<EObject>();
 		if (isDiagramElement(obj)) {
 			diagramElements.add(obj);			
+			if (obj instanceof Scenario) {
+				diagramElements.addAll(((Scenario) obj).getContextStates());
+				diagramElements.add(((Scenario) obj).getOutcomeState());
+			}
 		}
 		
 		TreeIterator<EObject> tit = obj.eAllContents();
@@ -102,6 +106,10 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 			EObject next = tit.next();
 			if (isDiagramElement(next)) {
 				diagramElements.add(next);
+				if (next instanceof Scenario) {
+					diagramElements.addAll(((Scenario) next).getContextStates());
+					diagramElements.add(((Scenario) next).getOutcomeState());
+				}
 			}
 		}
 		
@@ -150,10 +158,31 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 			if (de instanceof State) {
 				diagramElementDefinition((State) de, deMap, specBuilder);
 			}
-		}		
+		}
+		if (obj instanceof Story) {
+			for (State state: ((Story) obj).getStartStates()) {
+				if (state != null && deMap.containsKey(state)) {
+					specBuilder
+						.append("[*] --> DE")
+						.append(deMap.get(state).id)
+						.append(System.lineSeparator());
+				}
+			}
+		}
 		for (EObject de: diagramElements) {
 			if (de instanceof State) {
 				diagramElementRelations((State) de, deMap, specBuilder);
+			}
+		}
+		if (obj instanceof Story) {
+			for (State state: ((Story) obj).getEndStates()) {
+				if (state != null && deMap.containsKey(state)) {
+					specBuilder
+						.append("DE")
+						.append(deMap.get(state).id)
+						.append(" --> [*]")
+						.append(System.lineSeparator());
+				}
 			}
 		}		
 	}
@@ -180,7 +209,7 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 					.append(os.getName())
 					.append(System.lineSeparator());
 			}
-		}
+		}		
 	}
 
 	@Override

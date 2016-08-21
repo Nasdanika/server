@@ -267,11 +267,11 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					.style().padding().right("5px");
 		
 				Select depthSelect = htmlFactory.select()
-						.knockout().value("depth")
+						.knockout().value("depth", 0)
 						.knockout().disable("view() == 'activity'");
 				
 				for (int i=0; i<10; ++i) {
-					depthSelect.option(String.valueOf(i), i==1, false, String.valueOf(i));
+					depthSelect.option(String.valueOf(i), i==0, false, String.valueOf(i));
 				}
 				depthSelect.option("-1", false, false, "&infin;");
 				diagramConfigurationForm.formGroup("Depth", depthSelect, "Dependency depth")

@@ -70,7 +70,18 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 						ret.content(", ");
 					}
 				}
-			}						
+			}	
+			
+			if (!obj.getStartStates().isEmpty()) {
+				ret.content(htmlFactory.tag(TagName.h4, "Start states"));
+				Iterator<State> sit = obj.getStartStates().iterator();
+				while (sit.hasNext()) {
+					ret.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+					if (sit.hasNext()) {
+						ret.content(", ");
+					}
+				}				
+			}
 			
 			if (!CoreUtil.isBlank(obj.getGoal())) {
 				ret.content(htmlFactory.tag(TagName.h4, "I want (Goal)"));
@@ -81,7 +92,18 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 				ret.content(htmlFactory.tag(TagName.h4, "So that (Benefit)"));
 				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getBenefit()));
 			}
-					
+
+			if (!obj.getEndStates().isEmpty()) {
+				ret.content(htmlFactory.tag(TagName.h4, "End states"));
+				Iterator<State> sit = obj.getEndStates().iterator();
+				while (sit.hasNext()) {
+					ret.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+					if (sit.hasNext()) {
+						ret.content(", ");
+					}
+				}				
+			}
+											
 			if (!CoreUtil.isBlank(obj.getDescription())) {
 				ret.content(htmlFactory.tag(TagName.h4, "Description"));
 				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getDescription()));
