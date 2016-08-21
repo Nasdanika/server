@@ -3,7 +3,7 @@ define(['jquery', 'knockout', 'domReady!'], function(jQuery, ko, doc) {
 		
 		this.view = ko.observable(view);
 		this.direction = ko.observable("both");
-		this.depth = ko.observable(1);
+		this.depth = ko.observable(0);
 		this.leftToRightDirection = ko.observable(false);
 		this.fitWidth = ko.observable(false);
 
