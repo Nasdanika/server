@@ -87,6 +87,7 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 		
 		int id;
 		List<Scenario> outboundScenarios = new ArrayList<>();
+		List<Scenario> inboundScenarios = new ArrayList<>();
 	}		
 
 	@SuppressWarnings("unchecked")
@@ -145,6 +146,9 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 					if (((Scenario) next).getContextStates().contains(e.getKey())) {
 						e.getValue().outboundScenarios.add((Scenario) next);
 					}
+					if (((Scenario) next).getOutcomeState() == e.getKey()) {
+						e.getValue().inboundScenarios.add((Scenario) next);
+					}
 				}
 			}
 		}
@@ -188,6 +192,13 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 	}
 	
 	protected void diagramElementDefinition(State diagramElement, Map<State, StateEntry> deMap, StringBuilder specBuilder) {
+		if (diagramElement.eContainer() instanceof Scenario) {
+			// Private state, display only if has inbound/outbound scenarios (which it shall not generally)
+			if (deMap.get(diagramElement).inboundScenarios.isEmpty() && deMap.get(diagramElement).outboundScenarios.isEmpty()) {
+				return;
+			}
+		}
+		
 		specBuilder
 			.append("state \"")
 			.append(diagramElement.getName())

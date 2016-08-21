@@ -49,6 +49,24 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 			ret.content(htmlFactory.div("<B>Status: </B>", htmlFactory.fontAwesome().webApplication(WebApplication.hourglass), " Pending").style().margin().bottom("15px"));
 		}
 		
+		return ret;
+	}
+	
+	@Override
+	protected void indexTabs(Story obj, HttpServletRequestContext context, URI baseURI, String urlPrefix, String path, Tabs tabs) {
+		overviewTab(obj, context, baseURI, urlPrefix, path, tabs);
+		super.indexTabs(obj, context, baseURI, urlPrefix, path, tabs);		
+		scenariosTab(obj, context, baseURI, urlPrefix, path, tabs);
+	
+		// TODO - Parameters
+		//		getDescription()
+		//		getName()
+		//		getType()
+		
+	}
+
+	protected void overviewTab(Story obj, HttpServletRequestContext context, URI baseURI, String urlPrefix, String path, Tabs tabs) {
+		Fragment overviewTabContent = tabs.getFactory().fragment();
 		try {
 			URI modelURI = storyDocumentationGenerator.getModelUri(obj);
 			
@@ -62,62 +80,61 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 			protagonists.addAll(obj.getProtagonists());
 			
 			if (!protagonists.isEmpty()) {
-				ret.content(htmlFactory.tag(TagName.h4, "As a (Protagonist/Role)"));
+				overviewTabContent.content(tabs.getFactory().tag(TagName.h4, "As a (Protagonist/Role)"));
 				Iterator<Protagonist> pit = protagonists.iterator();
 				while (pit.hasNext()) {
-					ret.content(storyDocumentationGenerator.getDocRoute().findToc(pit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+					overviewTabContent.content(storyDocumentationGenerator.getDocRoute().findToc(pit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
 					if (pit.hasNext()) {
-						ret.content(", ");
+						overviewTabContent.content(", ");
 					}
 				}
 			}	
 			
 			if (!obj.getStartStates().isEmpty()) {
-				ret.content(htmlFactory.tag(TagName.h4, "Start states"));
+				overviewTabContent.content(tabs.getFactory().tag(TagName.h4, "Start states"));
 				Iterator<State> sit = obj.getStartStates().iterator();
 				while (sit.hasNext()) {
-					ret.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+					overviewTabContent.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
 					if (sit.hasNext()) {
-						ret.content(", ");
+						overviewTabContent.content(", ");
 					}
 				}				
 			}
 			
 			if (!CoreUtil.isBlank(obj.getGoal())) {
-				ret.content(htmlFactory.tag(TagName.h4, "I want (Goal)"));
-				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getGoal()));
+				overviewTabContent.content(tabs.getFactory().tag(TagName.h4, "I want (Goal)"));
+				overviewTabContent.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getGoal()));
 			}
 			
 			if (!CoreUtil.isBlank(obj.getBenefit())) {
-				ret.content(htmlFactory.tag(TagName.h4, "So that (Benefit)"));
-				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getBenefit()));
+				overviewTabContent.content(tabs.getFactory().tag(TagName.h4, "So that (Benefit)"));
+				overviewTabContent.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getBenefit()));
 			}
 
 			if (!obj.getEndStates().isEmpty()) {
-				ret.content(htmlFactory.tag(TagName.h4, "End states"));
+				overviewTabContent.content(tabs.getFactory().tag(TagName.h4, "End states"));
 				Iterator<State> sit = obj.getEndStates().iterator();
 				while (sit.hasNext()) {
-					ret.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
+					overviewTabContent.content(storyDocumentationGenerator.getDocRoute().findToc(sit.next()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()));
 					if (sit.hasNext()) {
-						ret.content(", ");
+						overviewTabContent.content(", ");
 					}
 				}				
 			}
 											
 			if (!CoreUtil.isBlank(obj.getDescription())) {
-				ret.content(htmlFactory.tag(TagName.h4, "Description"));
-				ret.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getDescription()));
+				overviewTabContent.content(tabs.getFactory().tag(TagName.h4, "Description"));
+				overviewTabContent.content(storyDocumentationGenerator.getDocRoute().markdownToHtmlDiv(modelURI, urlPrefix, obj.getDescription()));
 			}
 			
 		} catch (URISyntaxException e) {
-			ret.content(htmlFactory.alert(Style.DANGER, false, e));
-		}			
-		return ret;
+			overviewTabContent.content(tabs.getFactory().alert(Style.DANGER, false, e));
+		}	
+		
+		tabs.item("Overview", overviewTabContent);
 	}
-	
-	@Override
-	protected void indexTabs(Story obj, HttpServletRequestContext context, URI baseURI, String urlPrefix, String path, Tabs tabs) {
-		super.indexTabs(obj, context, baseURI, urlPrefix, path, tabs);
+
+	protected void scenariosTab(Story obj, HttpServletRequestContext context, URI baseURI, String urlPrefix, String path, Tabs tabs) {
 		try {
 			URI modelURI = storyDocumentationGenerator.getModelUri(obj);				
 			Table scenariosTable = scenariosTable(obj.getScenarios(), urlPrefix, modelURI, true, true);
@@ -127,12 +144,17 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 		} catch (URISyntaxException e) {
 			tabs.item("Scenarios", tabs.getFactory().alert(Style.DANGER, false, e));
 		}
+	}
 	
-		// TODO - Parameters
-		//		getDescription()
-		//		getName()
-		//		getType()
-		
+	@Override
+	protected void descriptionTab(
+			Story obj, 
+			HttpServletRequestContext context, 
+			URI baseURI, 
+			String urlPrefix,
+			String path, 
+			Tabs tabs) {
+		// NOP - description is in overview tab
 	}
 
 }
