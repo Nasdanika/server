@@ -82,6 +82,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Step/condition"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Step/fromState"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//Step/toState"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute story.ecore#//Step/id"/>
     </genClasses>
     <genClasses ecoreClass="story.ecore#//ConditionalProtagonist">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference story.ecore#//ConditionalProtagonist/protagonist"/>

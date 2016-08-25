@@ -40,7 +40,7 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Unique, in the containing resource, catalog element identifier. &#xD;&#xA;If catalog element ID contains ${parent} token then the token is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         &#xD;&#xA;"/>
+        <details key="documentation" value="Catalog element identifier. The ID shall be unique for the element type in the&#xD;&#xA;containing resource, i.e. it is possible to have State and Scenario have the same ID,&#xD;&#xA;but two states or two scenarios shall not have duplicate ID's.&#xD;&#xA;&#xD;&#xA;If catalog element ID contains ${parent} token then the token&#xD;&#xA;is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         &#xD;&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
@@ -305,6 +305,11 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="fromState" eType="#//State"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toState" eType="#//State"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Unique, in the containing resource, step identifier. &#xD;&#xA;If ID contains ${parent} token then the token is expanded to the scenario ID. &#xD;&#xA;If the scenario ID is blank, then token expansion fails and the &#xD;&#xA;step ID with the parent token is also considered blank.                         &#xD;&#xA;"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConditionalProtagonist">
     <eStructuralFeatures xsi:type="ecore:EReference" name="protagonist" lowerBound="1"

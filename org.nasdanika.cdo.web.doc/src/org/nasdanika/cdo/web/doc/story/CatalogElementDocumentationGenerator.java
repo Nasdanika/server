@@ -140,7 +140,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					StringEscapeUtils.escapeHtml4(obj.getName()),
 					" (", obj.eClass().getName(), ")"));
 		
-		String resolvedID = StoryDocumentationGenerator.resolveCatalogElementID(obj);
+		String resolvedID = StoryDocumentationGenerator.resolveModelElementID(obj);
 		if (!CoreUtil.isBlank(resolvedID)) {
 			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
 		}

@@ -3,7 +3,6 @@
 package org.nasdanika.story;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,19 +24,29 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface ConditionalProtagonist extends CDOObject {
 	/**
-	 * Returns the value of the '<em><b>Protagonist</b></em>' reference list.
-	 * The list contents are of type {@link org.nasdanika.story.Protagonist}.
+	 * Returns the value of the '<em><b>Protagonist</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * References one or more protagonists.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Protagonist</em>' reference list.
+	 * @return the value of the '<em>Protagonist</em>' reference.
+	 * @see #setProtagonist(Protagonist)
 	 * @see org.nasdanika.story.StoryPackage#getConditionalProtagonist_Protagonist()
 	 * @model required="true"
 	 * @generated
 	 */
-	EList<Protagonist> getProtagonist();
+	Protagonist getProtagonist();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.story.ConditionalProtagonist#getProtagonist <em>Protagonist</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Protagonist</em>' reference.
+	 * @see #getProtagonist()
+	 * @generated
+	 */
+	void setProtagonist(Protagonist value);
 
 	/**
 	 * Returns the value of the '<em><b>Condition</b></em>' attribute.

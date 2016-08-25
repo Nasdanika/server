@@ -35,8 +35,12 @@ public interface CatalogElement extends CDOObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Unique, in the containing resource, catalog element identifier. 
-	 * If catalog element ID contains ${parent} token then the token is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         
+	 * Catalog element identifier. The ID shall be unique for the element type in the
+	 * containing resource, i.e. it is possible to have State and Scenario have the same ID,
+	 * but two states or two scenarios shall not have duplicate ID's.
+	 * 
+	 * If catalog element ID contains ${parent} token then the token
+	 * is expanded to the parent element ID. If the parent element's id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         
 	 * 
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Id</em>' attribute.

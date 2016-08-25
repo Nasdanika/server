@@ -22,6 +22,7 @@ import org.eclipse.emf.cdo.CDOObject;
  *   <li>{@link org.nasdanika.story.Step#getCondition <em>Condition</em>}</li>
  *   <li>{@link org.nasdanika.story.Step#getFromState <em>From State</em>}</li>
  *   <li>{@link org.nasdanika.story.Step#getToState <em>To State</em>}</li>
+ *   <li>{@link org.nasdanika.story.Step#getId <em>Id</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.story.StoryPackage#getStep()
@@ -156,5 +157,34 @@ public interface Step extends CDOObject {
 	 * @generated
 	 */
 	void setToState(State value);
+
+	/**
+	 * Returns the value of the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Unique, in the containing resource, step identifier. 
+	 * If ID contains ${parent} token then the token is expanded to the scenario ID. 
+	 * If the scenario ID is blank, then token expansion fails and the 
+	 * step ID with the parent token is also considered blank.                         
+	 * 
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Id</em>' attribute.
+	 * @see #setId(String)
+	 * @see org.nasdanika.story.StoryPackage#getStep_Id()
+	 * @model
+	 * @generated
+	 */
+	String getId();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.story.Step#getId <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Id</em>' attribute.
+	 * @see #getId()
+	 * @generated
+	 */
+	void setId(String value);
 
 } // Step

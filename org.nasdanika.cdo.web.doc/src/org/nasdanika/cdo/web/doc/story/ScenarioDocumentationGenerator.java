@@ -2,14 +2,12 @@ package org.nasdanika.cdo.web.doc.story;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.Iterator;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
-import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag.TagName;
@@ -29,24 +27,6 @@ class ScenarioDocumentationGenerator extends StateContainerDocumentationGenerato
 		return "/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/document_todo.png";
 	}
 	
-	protected Fragment getIndex(Scenario obj, HttpServletRequestContext context, URL baseURL, String urlPrefix, String path) {
-		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
-		Fragment ret = htmlFactory.fragment(
-			htmlFactory.tag(
-					TagName.h3, 
-					htmlFactory.tag(TagName.img).attribute("src", storyDocumentationGenerator.getDocRoute().getDocRoutePath()+getIcon()).style().margin().right("5px"),
-					StringEscapeUtils.escapeHtml4(obj.getName()),
-					" (", obj.eClass().getName(), ")"));
-		
-		String resolvedID = StoryDocumentationGenerator.resolveCatalogElementID(obj);
-		if (!CoreUtil.isBlank(resolvedID)) {
-			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
-		}
-		
-		
-		return ret;
-	}
-	
 	@Override
 	protected void indexTabs(Scenario obj, HttpServletRequestContext context, URI baseURI, String urlPrefix, String path, Tabs tabs) {
 		
@@ -62,8 +42,7 @@ class ScenarioDocumentationGenerator extends StateContainerDocumentationGenerato
 					if (sit.hasNext()) {
 						overview.content(", ");
 					}
-				}
-				
+				}				
 			}
 			
 			if (!CoreUtil.isBlank(obj.getContext())) {
@@ -101,10 +80,12 @@ class ScenarioDocumentationGenerator extends StateContainerDocumentationGenerato
 			try {
 				URI modelURI = storyDocumentationGenerator.getModelUri(obj);
 				Table stepsTable = tabs.getFactory().table().bordered();
-				stepsTable.header().headerRow("Name", "From state", "Condition", "To state", "Description").style(Style.PRIMARY);
+				stepsTable.header().headerRow("Name", "ID", "From state", "Condition", "To state", "Description").style(Style.PRIMARY);
 				for (Step step: obj.getSteps()) {
+					String resolvedID = StoryDocumentationGenerator.resolveModelElementID(step);
 					stepsTable.row(
 							StringEscapeUtils.escapeHtml4(step.getName()),
+							CoreUtil.isBlank(resolvedID) ? "" : StringEscapeUtils.escapeHtml4(resolvedID),
 							step.getFromState() == null ? "" : storyDocumentationGenerator.getDocRoute().findToc(step.getFromState()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
 							StringEscapeUtils.escapeHtml4(step.getCondition()),
 							step.getToState() == null ? "" : storyDocumentationGenerator.getDocRoute().findToc(step.getToState()).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),

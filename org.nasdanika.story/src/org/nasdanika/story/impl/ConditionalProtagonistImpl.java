@@ -2,8 +2,6 @@
  */
 package org.nasdanika.story.impl;
 
-import java.util.Collection;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.story.ConditionalProtagonist;
@@ -70,8 +68,26 @@ public class ConditionalProtagonistImpl extends CDOObjectImpl implements Conditi
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Protagonist> getProtagonist() {
-		return (EList<Protagonist>)eDynamicGet(StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST, StoryPackage.Literals.CONDITIONAL_PROTAGONIST__PROTAGONIST, true, true);
+	public Protagonist getProtagonist() {
+		return (Protagonist)eDynamicGet(StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST, StoryPackage.Literals.CONDITIONAL_PROTAGONIST__PROTAGONIST, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Protagonist basicGetProtagonist() {
+		return (Protagonist)eDynamicGet(StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST, StoryPackage.Literals.CONDITIONAL_PROTAGONIST__PROTAGONIST, false, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setProtagonist(Protagonist newProtagonist) {
+		eDynamicSet(StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST, StoryPackage.Literals.CONDITIONAL_PROTAGONIST__PROTAGONIST, newProtagonist);
 	}
 
 	/**
@@ -101,7 +117,8 @@ public class ConditionalProtagonistImpl extends CDOObjectImpl implements Conditi
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST:
-				return getProtagonist();
+				if (resolve) return getProtagonist();
+				return basicGetProtagonist();
 			case StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION:
 				return getCondition();
 		}
@@ -118,8 +135,7 @@ public class ConditionalProtagonistImpl extends CDOObjectImpl implements Conditi
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST:
-				getProtagonist().clear();
-				getProtagonist().addAll((Collection<? extends Protagonist>)newValue);
+				setProtagonist((Protagonist)newValue);
 				return;
 			case StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION:
 				setCondition((String)newValue);
@@ -137,7 +153,7 @@ public class ConditionalProtagonistImpl extends CDOObjectImpl implements Conditi
 	public void eUnset(int featureID) {
 		switch (featureID) {
 			case StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST:
-				getProtagonist().clear();
+				setProtagonist((Protagonist)null);
 				return;
 			case StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION:
 				setCondition(CONDITION_EDEFAULT);
@@ -155,7 +171,7 @@ public class ConditionalProtagonistImpl extends CDOObjectImpl implements Conditi
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
 			case StoryPackage.CONDITIONAL_PROTAGONIST__PROTAGONIST:
-				return !getProtagonist().isEmpty();
+				return basicGetProtagonist() != null;
 			case StoryPackage.CONDITIONAL_PROTAGONIST__CONDITION:
 				return CONDITION_EDEFAULT == null ? getCondition() != null : !CONDITION_EDEFAULT.equals(getCondition());
 		}

@@ -736,6 +736,15 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getStep_Id() {
+		return (EAttribute)stepEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getConditionalProtagonist() {
 		return conditionalProtagonistEClass;
 	}
@@ -958,6 +967,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		createEAttribute(stepEClass, STEP__CONDITION);
 		createEReference(stepEClass, STEP__FROM_STATE);
 		createEReference(stepEClass, STEP__TO_STATE);
+		createEAttribute(stepEClass, STEP__ID);
 
 		conditionalProtagonistEClass = createEClass(CONDITIONAL_PROTAGONIST);
 		createEReference(conditionalProtagonistEClass, CONDITIONAL_PROTAGONIST__PROTAGONIST);
@@ -1103,9 +1113,10 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		initEAttribute(getStep_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStep_FromState(), this.getState(), null, "fromState", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getStep_ToState(), this.getState(), null, "toState", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getStep_Id(), ecorePackage.getEString(), "id", null, 0, 1, Step.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(conditionalProtagonistEClass, ConditionalProtagonist.class, "ConditionalProtagonist", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getConditionalProtagonist_Protagonist(), this.getProtagonist(), null, "protagonist", null, 1, -1, ConditionalProtagonist.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConditionalProtagonist_Protagonist(), this.getProtagonist(), null, "protagonist", null, 1, 1, ConditionalProtagonist.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getConditionalProtagonist_Condition(), theEcorePackage.getEString(), "condition", null, 0, 1, ConditionalProtagonist.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(goalEClass, Goal.class, "Goal", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1179,7 +1190,7 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		  (getCatalogElement_Id(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Unique, in the containing resource, catalog element identifier. \r\nIf catalog element ID contains ${parent} token then the token is expanded to the parent element ID. If the parent element\'s id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         \r\n"
+			 "documentation", "Catalog element identifier. The ID shall be unique for the element type in the\r\ncontaining resource, i.e. it is possible to have State and Scenario have the same ID,\r\nbut two states or two scenarios shall not have duplicate ID\'s.\r\n\r\nIf catalog element ID contains ${parent} token then the token\r\nis expanded to the parent element ID. If the parent element\'s id is blank, then token expansion fails and the element ID with the parent token is also considered blank.                         \r\n"
 		   });	
 		addAnnotation
 		  (getCatalogElement_Name(), 
@@ -1456,6 +1467,12 @@ public class StoryPackageImpl extends EPackageImpl implements StoryPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Optional step condition."
+		   });	
+		addAnnotation
+		  (getStep_Id(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Unique, in the containing resource, step identifier. \r\nIf ID contains ${parent} token then the token is expanded to the scenario ID. \r\nIf the scenario ID is blank, then token expansion fails and the \r\nstep ID with the parent token is also considered blank.                         \r\n"
 		   });	
 		addAnnotation
 		  (getConditionalProtagonist_Protagonist(), 

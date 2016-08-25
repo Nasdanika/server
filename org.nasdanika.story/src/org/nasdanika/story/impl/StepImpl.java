@@ -23,6 +23,7 @@ import org.nasdanika.story.StoryPackage;
  *   <li>{@link org.nasdanika.story.impl.StepImpl#getCondition <em>Condition</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StepImpl#getFromState <em>From State</em>}</li>
  *   <li>{@link org.nasdanika.story.impl.StepImpl#getToState <em>To State</em>}</li>
+ *   <li>{@link org.nasdanika.story.impl.StepImpl#getId <em>Id</em>}</li>
  * </ul>
  *
  * @generated
@@ -57,6 +58,16 @@ public class StepImpl extends CDOObjectImpl implements Step {
 	 * @ordered
 	 */
 	protected static final String CONDITION_EDEFAULT = null;
+
+	/**
+	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ID_EDEFAULT = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -200,6 +211,24 @@ public class StepImpl extends CDOObjectImpl implements Step {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getId() {
+		return (String)eDynamicGet(StoryPackage.STEP__ID, StoryPackage.Literals.STEP__ID, true, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setId(String newId) {
+		eDynamicSet(StoryPackage.STEP__ID, StoryPackage.Literals.STEP__ID, newId);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -215,6 +244,8 @@ public class StepImpl extends CDOObjectImpl implements Step {
 			case StoryPackage.STEP__TO_STATE:
 				if (resolve) return getToState();
 				return basicGetToState();
+			case StoryPackage.STEP__ID:
+				return getId();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -241,6 +272,9 @@ public class StepImpl extends CDOObjectImpl implements Step {
 				return;
 			case StoryPackage.STEP__TO_STATE:
 				setToState((State)newValue);
+				return;
+			case StoryPackage.STEP__ID:
+				setId((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -269,6 +303,9 @@ public class StepImpl extends CDOObjectImpl implements Step {
 			case StoryPackage.STEP__TO_STATE:
 				setToState((State)null);
 				return;
+			case StoryPackage.STEP__ID:
+				setId(ID_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -291,6 +328,8 @@ public class StepImpl extends CDOObjectImpl implements Step {
 				return basicGetFromState() != null;
 			case StoryPackage.STEP__TO_STATE:
 				return basicGetToState() != null;
+			case StoryPackage.STEP__ID:
+				return ID_EDEFAULT == null ? getId() != null : !ID_EDEFAULT.equals(getId());
 		}
 		return super.eIsSet(featureID);
 	}

@@ -18,6 +18,7 @@ import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Protagonist;
+import org.nasdanika.story.Step;
 import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.User;
 
@@ -76,11 +77,16 @@ public class StoryDocumentationGenerator extends AbstractModelDocumentationGener
 	
 	private static final Pattern PARENT_ID_TOKEN_PATTERN = Pattern.compile("\\$\\{parent\\}");		
 	
-	static String resolveCatalogElementID(CatalogElement catalogElement) {
-		if (catalogElement == null) {
+	static String resolveModelElementID(EObject modelElement) {
+		if (modelElement == null) {
 			return null;
 		}
-		String id = catalogElement.getId();
+		String id = null;
+		if (modelElement instanceof CatalogElement) {
+			id = ((CatalogElement) modelElement).getId();
+		} else if (modelElement instanceof Step) {
+			id = ((Step) modelElement).getId();			
+		}
 		if (CoreUtil.isBlank(id)) {
 			return null;
 		}
@@ -88,11 +94,11 @@ public class StoryDocumentationGenerator extends AbstractModelDocumentationGener
 		StringBuilder output = new StringBuilder();
 		int i = 0;
 		while (matcher.find()) {
-			EObject container = catalogElement.eContainer();
+			EObject container = modelElement.eContainer();
 			if (!(container instanceof CatalogElement)) {
 				return null;
 			}
-			String parentID = resolveCatalogElementID((CatalogElement) container);
+			String parentID = resolveModelElementID((CatalogElement) container);
 			if (CoreUtil.isBlank(parentID)) {
 				return null;
 			}
@@ -103,14 +109,46 @@ public class StoryDocumentationGenerator extends AbstractModelDocumentationGener
 		return output.toString();
 	}
 	
-	public String findCatalogElement(String location, String id) {
+	/**
+	 * Finds model element by ID and type.
+	 * @param location Model location.
+	 * @param type Model element type in the form <code>Classifier name@package namespace URI</code>. If null, any type matches.
+	 * Type can specify a sub-type of the actual element type, e.g. Protagonist would match Actor or User.
+	 * @param id Model element ID.
+	 * @return Model element path.
+	 */
+	public String findModelElement(
+			String location,
+			String type,
+			String id) {
 		Resource res = modelResources.get(location);
 		if (res != null) {
 			TreeIterator<EObject> cit = res.getAllContents();
 			while (cit.hasNext()) {
 				EObject next = cit.next();
-				if (next instanceof CatalogElement && id.equals(resolveCatalogElementID((CatalogElement) next))) {
-					return modelElementToPathMap.get(next);
+				String modelElementID = resolveModelElementID(next);
+				if (id.equals(modelElementID)) {
+					String path = modelElementToPathMap.get(next);
+					if (CoreUtil.isBlank(type)) {
+						return path;
+					}
+					
+					int atIdx = type.indexOf("@");
+					if (atIdx == -1) {
+						return null; // Invalid format
+					}
+					String classifierName = type.substring(0, atIdx);
+					String namespaceURI = type.substring(atIdx+1);
+					EClass eClass = next.eClass();
+					if (eClass.getName().equals(classifierName) && eClass.getEPackage().getNsURI().equals(namespaceURI)) {
+						return path; 
+					}
+					
+					for (EClass sc: eClass.getEAllSuperTypes()) {
+						if (sc.getName().equals(classifierName) && sc.getEPackage().getNsURI().equals(namespaceURI)) {
+							return path; 
+						}						
+					}					
 				}
 			}
 		}

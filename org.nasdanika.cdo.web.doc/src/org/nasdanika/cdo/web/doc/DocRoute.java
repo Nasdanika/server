@@ -3000,8 +3000,19 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		if (CoreUtil.isBlank(spec)) {
 			return null;
 		}
-		int idx = spec.indexOf("#");		
-		return idx==-1 ? null : storyDocumentationGenerator.findCatalogElement(spec.substring(0, idx), spec.substring(idx+1));
+		int dashIdx = spec.indexOf("#");		
+		if (dashIdx==-1) {
+			return null;
+		}
+		
+		String location = spec.substring(0, dashIdx);
+		String id = spec.substring(dashIdx+1);
+		
+		int cIdx = id.indexOf(":");
+		return storyDocumentationGenerator.findModelElement(
+				location, 
+				cIdx == -1 ? id : id.substring(0, cIdx),
+				cIdx == -1 ? null : id.substring(cIdx+1));		
 	}
 	
 	public String firstMarkdownSentence(String markdown) {

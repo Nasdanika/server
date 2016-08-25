@@ -1738,13 +1738,22 @@ public interface StoryPackage extends EPackage {
 	int STEP__TO_STATE = 4;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STEP__ID = 5;
+
+	/**
 	 * The number of structural features of the '<em>Step</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int STEP_FEATURE_COUNT = 5;
+	int STEP_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Step</em>' class.
@@ -1756,7 +1765,7 @@ public interface StoryPackage extends EPackage {
 	int STEP_OPERATION_COUNT = 0;
 
 	/**
-	 * The feature id for the '<em><b>Protagonist</b></em>' reference list.
+	 * The feature id for the '<em><b>Protagonist</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2441,6 +2450,17 @@ public interface StoryPackage extends EPackage {
 	EReference getStep_ToState();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.story.Step#getId <em>Id</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Id</em>'.
+	 * @see org.nasdanika.story.Step#getId()
+	 * @see #getStep()
+	 * @generated
+	 */
+	EAttribute getStep_Id();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.story.ConditionalProtagonist <em>Conditional Protagonist</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2451,10 +2471,10 @@ public interface StoryPackage extends EPackage {
 	EClass getConditionalProtagonist();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.nasdanika.story.ConditionalProtagonist#getProtagonist <em>Protagonist</em>}'.
+	 * Returns the meta object for the reference '{@link org.nasdanika.story.ConditionalProtagonist#getProtagonist <em>Protagonist</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Protagonist</em>'.
+	 * @return the meta object for the reference '<em>Protagonist</em>'.
 	 * @see org.nasdanika.story.ConditionalProtagonist#getProtagonist()
 	 * @see #getConditionalProtagonist()
 	 * @generated
@@ -3067,6 +3087,14 @@ public interface StoryPackage extends EPackage {
 		EReference STEP__TO_STATE = eINSTANCE.getStep_ToState();
 
 		/**
+		 * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute STEP__ID = eINSTANCE.getStep_Id();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.story.impl.ConditionalProtagonistImpl <em>Conditional Protagonist</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3077,7 +3105,7 @@ public interface StoryPackage extends EPackage {
 		EClass CONDITIONAL_PROTAGONIST = eINSTANCE.getConditionalProtagonist();
 
 		/**
-		 * The meta object literal for the '<em><b>Protagonist</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Protagonist</b></em>' reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

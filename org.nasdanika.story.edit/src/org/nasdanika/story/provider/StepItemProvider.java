@@ -64,6 +64,7 @@ public class StepItemProvider
 			addConditionPropertyDescriptor(object);
 			addFromStatePropertyDescriptor(object);
 			addToStatePropertyDescriptor(object);
+			addIdPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -179,6 +180,28 @@ public class StepItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Id feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIdPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Step_id_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Step_id_feature", "_UI_Step_type"),
+				 StoryPackage.Literals.STEP__ID,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns Step.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -219,6 +242,7 @@ public class StepItemProvider
 			case StoryPackage.STEP__NAME:
 			case StoryPackage.STEP__DESCRIPTION:
 			case StoryPackage.STEP__CONDITION:
+			case StoryPackage.STEP__ID:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}
