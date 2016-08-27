@@ -255,7 +255,8 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 		URI uri = URI.createFileURI(modelFile.getAbsolutePath());
 		Resource resource = resourceSet.createResource(uri);		
 		resource.getContents().add(testSession);
-		resource.save(null);				
+		resource.save(null);	
+		System.out.println("Test session model for "+testSession.getQualifiedName()+" saved to "+modelFile.getAbsolutePath());
 	}
 		
 }
