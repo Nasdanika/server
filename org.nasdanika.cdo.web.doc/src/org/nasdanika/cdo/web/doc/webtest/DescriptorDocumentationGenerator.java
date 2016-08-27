@@ -48,7 +48,8 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 					testResultsDocumentationGenerator.getObjectPath(descriptor)+"/index.html",
 					getIcon(descriptor), 
 					null,
-					obj -> obj == descriptor);
+					obj -> obj == descriptor, 
+					false);
 			
 			for (EObject el: getTocChildren(descriptor)) {
 				DocumentationGenerator<Object> elTocBuilderRoute = testResultsDocumentationGenerator.getDocumentationGenerator(el.eClass());

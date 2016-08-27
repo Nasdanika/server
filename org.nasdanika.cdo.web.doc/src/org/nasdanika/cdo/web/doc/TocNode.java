@@ -33,6 +33,7 @@ public class TocNode {
 	private String content;
 	private String tocId;
 	private Predicate<Object> predicate;
+	private boolean hidden; 
 			
 	public String getContent() {
 		return content;
@@ -68,7 +69,9 @@ public class TocNode {
 			String icon, 
 			AtomicLong counter,
 			String tocId,
-			Predicate<Object> objectPredicate) {
+			Predicate<Object> objectPredicate,
+			boolean hidden) {
+		
 		this.text = text;
 		this.href = href;
 		this.icon = icon;
@@ -85,16 +88,27 @@ public class TocNode {
 		this.predicate = objectPredicate == null ? obj->false : objectPredicate; 
 	}
 		
-	public TocNode(String text, String href, String icon, Predicate<Object> objectPredicate) {
-		this(text, href, icon, new AtomicLong(), null, objectPredicate);
+	public TocNode(
+			String text, 
+			String href, 
+			String icon, 
+			Predicate<Object> objectPredicate, 
+			boolean hidden) {
+		this(text, href, icon, new AtomicLong(), null, objectPredicate, hidden);
 	}
 
 	public List<TocNode> getChildren() {
 		return children;
 	}
 	
-	public TocNode createChild(String text, String href, String icon, String tocId, Predicate<Object> objectPredicate) {
-		TocNode child = new TocNode(text, href, icon, counter, tocId, objectPredicate);
+	public TocNode createChild(
+			String text, 
+			String href, 
+			String icon, 
+			String tocId, 
+			Predicate<Object> objectPredicate,
+			boolean hidden) {
+		TocNode child = new TocNode(text, href, icon, counter, tocId, objectPredicate, hidden);
 		children.add(child);
 		child.parent = this;
 		return child;
@@ -160,9 +174,11 @@ public class TocNode {
 		ret.put("id", id);
 		JSONArray jsonChildren = new JSONArray();
 		for (TocNode child: children) {
-			JSONObject jsonChild = child.toJSON(contextURL);
-			if (jsonChild!=null) {
-				jsonChildren.put(jsonChild);
+			if (!child.isHidden()) {
+				JSONObject jsonChild = child.toJSON(contextURL);
+				if (jsonChild!=null) {
+					jsonChildren.put(jsonChild);
+				}
 			}
 		}
 		if (jsonChildren.length()>0) {
@@ -176,6 +192,10 @@ public class TocNode {
 		for (TocNode child: children) {
 			child.accept(visitor);
 		}
+	}
+	
+	public boolean isHidden() {
+		return hidden;
 	}
 	
 	public static final Comparator<TocNode> NAME_COMPARATOR = new Comparator<TocNode>() {

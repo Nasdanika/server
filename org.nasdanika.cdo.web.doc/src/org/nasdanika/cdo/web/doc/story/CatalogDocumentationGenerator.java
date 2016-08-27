@@ -31,7 +31,8 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 					storyDocumentationGenerator.getObjectPath(catalog)+"/index.html",
 					getIcon(), 
 					null,
-					obj->obj == catalog);
+					obj->obj == catalog, 
+					false);
 			
 			for (CatalogElement el: sortByName(catalog.getElements())) {
 				if (el instanceof Protagonist && ((Protagonist) el).getLinkTo() != null) {

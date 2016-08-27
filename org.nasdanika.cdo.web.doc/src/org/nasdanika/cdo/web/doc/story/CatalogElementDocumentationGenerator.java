@@ -81,7 +81,8 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					storyDocumentationGenerator.getObjectPath(catalogElement)+"/index.html",
 					getIcon(), 
 					null,
-					obj -> obj == catalogElement);
+					obj -> obj == catalogElement, 
+					false);
 
 			for (EObject el: getTocChildren(catalogElement)) {
 				DocumentationGenerator<Object> elTocBuilderRoute = storyDocumentationGenerator.getDocumentationGenerator(el.eClass());

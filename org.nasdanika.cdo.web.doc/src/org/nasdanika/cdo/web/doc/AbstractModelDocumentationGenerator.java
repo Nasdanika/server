@@ -153,7 +153,7 @@ public abstract class AbstractModelDocumentationGenerator implements AutoCloseab
 	protected abstract String getTocRootName();
 
 	public void createRootTocEntries(TocNode tocRoot) {
-		TocNode modelToc = tocRoot.createChild(getTocRootName(), null, null, null, null);
+		TocNode modelToc = tocRoot.createChild(getTocRootName(), null, null, null, null, false);
 		for (Resource storyResource: modelResources.values()) {
 			for (EObject root: storyResource.getContents()) {
 				DocumentationGenerator<Object> tocBuilderRoute = getDocumentationGenerator(root.eClass());

@@ -37,7 +37,8 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 					testResultsDocumentationGenerator.getObjectPath(testSession)+"/index.html",
 					getIcon(), 
 					null,
-					obj -> obj == testSession);
+					obj -> obj == testSession, 
+					false);
 			
 			if (!testSession.getActorResults().isEmpty()) {
 				TocNode actorsNode = testSessionNode.createChild(
@@ -45,7 +46,8 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 						null, 
 						null, 
 						null, 
-						null);
+						null, 
+						false);
 				
 				for (ActorResult ar: testSession.getActorResults()) {
 					DocumentationGenerator<Object> docGen = testResultsDocumentationGenerator.getDocumentationGenerator(ar.eClass());
@@ -63,7 +65,8 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 						null, 
 						null, 
 						null, 
-						null);
+						null, 
+						false);
 				
 				for (PageResult pr: testSession.getPageResults()) {
 					DocumentationGenerator<Object> docGen = testResultsDocumentationGenerator.getDocumentationGenerator(pr.eClass());
@@ -81,7 +84,8 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 						null, 
 						null, 
 						null, 
-						null);
+						null, 
+						false);
 				
 				for (TestResult tr: testSession.getTestResults()) {
 					DocumentationGenerator<Object> docGen = testResultsDocumentationGenerator.getDocumentationGenerator(tr.eClass());

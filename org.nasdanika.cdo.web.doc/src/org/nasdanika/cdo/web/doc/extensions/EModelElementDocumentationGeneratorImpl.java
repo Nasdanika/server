@@ -58,7 +58,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 	public void mountedModelElementDocumentation(DocRoute docRoute, EClassifier eClassifier, Fragment sink) {
 		
 		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
-		TocNode elementDoc = new TocNode(null, null, null, null);
+		TocNode elementDoc = new TocNode(null, null, null, null, false);
 		
 		synchronized (packageTocNodeFactories) {
 			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(eClassifier.getEPackage().getNsURI());
@@ -167,7 +167,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 	
 	protected void sections(DocRoute docRoute, EClassifier eClassifier, Tabs tabs) {		
 		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();
-		TocNode sections = new TocNode(null, null, null, null);
+		TocNode sections = new TocNode(null, null, null, null, false);
 		
 		synchronized (packageTocNodeFactories) {
 			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(eClassifier.getEPackage().getNsURI());

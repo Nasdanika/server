@@ -1037,15 +1037,16 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			testResultsDocumentationGenerator = new TestResultsDocumentationGenerator(this, testResultsModels);
 			
 			// TOC
-			tocRoot = new TocNode(null, null, null, null);
-			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null, null);
+			tocRoot = new TocNode(null, null, null, null, false);
+			TocNode packagesToc = tocRoot.createChild("Packages", null, null, null, null, false);
 			if (isGlobalRegistry()) {
 				TocNode globalPackageRegistryToc = packagesToc.createChild(
 						"Global", 
 						null, 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/database.png", 
 						null, 
-						null);
+						null, 
+						false);
 				createPackageRegistryToc(EPackage.Registry.INSTANCE, globalPackageRegistryToc, "/packages/global");
 			}
 			
@@ -1055,13 +1056,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						null, 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/database_yellow.png", 
 						null,
-						null);
+						null, 
+						false);
 				createPackageRegistryToc(cdoSessionProvider.getSession().getPackageRegistry(), sessionPackageRegistryToc, "/packages/session");				
 			}
 			
 			// Bundles
 			if (bundleToc) {
-				TocNode bundlesToc = tocRoot.createChild("Bundles", BUNDLE_INFO_PATH+"summary.html", null, null, null);
+				TocNode bundlesToc = tocRoot.createChild("Bundles", BUNDLE_INFO_PATH+"summary.html", null, null, null, false);
 				Bundle[] bundles = bundleContext.getBundles().clone();
 				Arrays.sort(bundles, BUNDLE_COMPARATOR);
 				final Map<String, Object> rootBucket = new TreeMap<String, Object>();
@@ -1266,7 +1268,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						BUNDLE_INFO_PATH+bundle.getBundleId()+"/index.html", 
 						"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
 						null,
-						obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()));	
+						obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()), 
+						false);
+				
 				if (scrService != null) {
 					Component[] components = scrService.getComponents(bundle);
 					if (components != null) {
@@ -1280,7 +1284,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 									COMPONENT_INFO_PATH+component.getId()+"/index.html", 
 									"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
 									null,
-									obj->obj instanceof Component && ((Component) obj).getId() == component.getId());
+									obj->obj instanceof Component && ((Component) obj).getId() == component.getId(), 
+									false);
 
 							synchronized (bundleTocNodeFactories) {
 								BundleTocNodeFactoryEntry be = matchVersion(bundle);
@@ -1313,10 +1318,10 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				Map<String, Object> subBucket = (Map<String, Object>) e.getValue();
 				if (subBucket.size()==1) {
 					if (!singlePath(subBucket, parentToc, localName)) {
-						createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null, null));						
+						createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null, null, false));						
 					}
 				} else {
-					createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null, null));						
+					createBundlesToc(subBucket, parentToc.createChild(localName, null, null, null, null, false));						
 				}
 			}
 		}		
@@ -1357,7 +1362,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							BUNDLE_INFO_PATH+bundle.getBundleId()+"/index.html", 
 							"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/box_closed.png", 
 							null,
-							obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()));
+							obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()), 
+							false);
+					
 					if (scrService != null) {
 						Component[] components = scrService.getComponents(bundle);
 						if (components != null) {
@@ -1371,7 +1378,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 										COMPONENT_INFO_PATH+component.getId()+"/index.html", 
 										"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
 										null,
-										obj->obj instanceof Component && ((Component) obj).getId() == component.getId());
+										obj->obj instanceof Component && ((Component) obj).getId() == component.getId(), 
+										false);
 							}
 						}
 					}
@@ -1447,7 +1455,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, 
 				"/resources/images/EPackage.gif", 
 				null,
-				obj->obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(ePackage.getNsURI()));
+				obj->obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(ePackage.getNsURI()), 
+				false);
 		List<EPackage> subPackages = new ArrayList<>(ePackage.getESubpackages());
 		Collections.sort(subPackages, new Comparator<EPackage>() {
 
@@ -1498,7 +1507,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					href, 
 					"/resources/images/EClass.gif", 
 					null,
-					predicate);
+					predicate, 
+					false);
+			
 			EClassifierKey subTypeKey = new EClassifierKey((EClass) eClassifier);
 			for (EClass sc: ((EClass) eClassifier).getESuperTypes()) {
 				EClassifierKey superTypeKey = new EClassifierKey(sc);
@@ -1517,14 +1528,16 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					href, 
 					"/resources/images/EEnum.gif", 
 					null,
-					predicate);
+					predicate, 
+					false);
 		} else {
 			cToc = parent.createChild(
 					eClassifier.getName(), 
 					href, 
 					"/resources/images/EDataType.gif", 
 					null,
-					predicate);
+					predicate, 
+					false);
 		}
 		
 		synchronized (packageTocNodeFactories) {
@@ -2857,7 +2870,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 	public void mountedDocumentation(Bundle bundle, String componentName, Fragment sink) {
 		
-		TocNode elementDoc = new TocNode(null, null, null, null);
+		TocNode elementDoc = new TocNode(null, null, null, null, false);
 		
 		synchronized (bundleTocNodeFactories) {
 			BundleTocNodeFactoryEntry be = matchVersion(bundle);
@@ -2879,7 +2892,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 	
 	protected void sections(Bundle bundle, String componentName, Tabs tabs) {		
-		TocNode sections = new TocNode(null, null, null, null);
+		TocNode sections = new TocNode(null, null, null, null, false);
 		
 		synchronized (bundleTocNodeFactories) {
 			BundleTocNodeFactoryEntry be = matchVersion(bundle);
