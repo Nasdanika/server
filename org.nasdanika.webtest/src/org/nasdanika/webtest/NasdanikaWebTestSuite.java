@@ -69,6 +69,7 @@ public class NasdanikaWebTestSuite extends Suite implements TestResultSource, Te
 		public void execute(Runnable command) {
 			command.run();
 		}
+		
 	};
 	
 	@Override

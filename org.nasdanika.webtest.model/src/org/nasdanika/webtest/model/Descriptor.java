@@ -22,6 +22,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.nasdanika.webtest.model.Descriptor#getTitle <em>Title</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.Descriptor#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.Descriptor#getLinks <em>Links</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.Descriptor#getCategory <em>Category</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.webtest.model.ModelPackage#getDescriptor()
@@ -134,5 +135,21 @@ public interface Descriptor extends EObject {
 	 * @generated
 	 */
 	EList<Link> getLinks();
+
+	/**
+	 * Returns the value of the '<em><b>Category</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Category</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Category</em>' attribute list.
+	 * @see org.nasdanika.webtest.model.ModelPackage#getDescriptor_Category()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getCategory();
 
 } // Descriptor

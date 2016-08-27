@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.nasdanika.webtest.model.Description;
@@ -30,6 +31,7 @@ import org.nasdanika.webtest.model.ModelPackage;
  *   <li>{@link org.nasdanika.webtest.model.impl.DescriptorImpl#getTitle <em>Title</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.DescriptorImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.DescriptorImpl#getLinks <em>Links</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.DescriptorImpl#getCategory <em>Category</em>}</li>
  * </ul>
  *
  * @generated
@@ -94,6 +96,16 @@ public class DescriptorImpl extends MinimalEObjectImpl.Container implements Desc
 	 * @ordered
 	 */
 	protected EList<Link> links;
+
+	/**
+	 * The cached value of the '{@link #getCategory() <em>Category</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategory()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> category;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -216,6 +228,18 @@ public class DescriptorImpl extends MinimalEObjectImpl.Container implements Desc
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<String> getCategory() {
+		if (category == null) {
+			category = new EDataTypeUniqueEList<String>(String.class, this, ModelPackage.DESCRIPTOR__CATEGORY);
+		}
+		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -243,6 +267,8 @@ public class DescriptorImpl extends MinimalEObjectImpl.Container implements Desc
 				return getDescription();
 			case ModelPackage.DESCRIPTOR__LINKS:
 				return getLinks();
+			case ModelPackage.DESCRIPTOR__CATEGORY:
+				return getCategory();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -269,6 +295,10 @@ public class DescriptorImpl extends MinimalEObjectImpl.Container implements Desc
 				getLinks().clear();
 				getLinks().addAll((Collection<? extends Link>)newValue);
 				return;
+			case ModelPackage.DESCRIPTOR__CATEGORY:
+				getCategory().clear();
+				getCategory().addAll((Collection<? extends String>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -293,6 +323,9 @@ public class DescriptorImpl extends MinimalEObjectImpl.Container implements Desc
 			case ModelPackage.DESCRIPTOR__LINKS:
 				getLinks().clear();
 				return;
+			case ModelPackage.DESCRIPTOR__CATEGORY:
+				getCategory().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -313,6 +346,8 @@ public class DescriptorImpl extends MinimalEObjectImpl.Container implements Desc
 				return description != null;
 			case ModelPackage.DESCRIPTOR__LINKS:
 				return links != null && !links.isEmpty();
+			case ModelPackage.DESCRIPTOR__CATEGORY:
+				return category != null && !category.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -331,6 +366,8 @@ public class DescriptorImpl extends MinimalEObjectImpl.Container implements Desc
 		result.append(qualifiedName);
 		result.append(", title: ");
 		result.append(title);
+		result.append(", category: ");
+		result.append(category);
 		result.append(')');
 		return result.toString();
 	}

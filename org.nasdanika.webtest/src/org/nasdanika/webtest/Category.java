@@ -6,7 +6,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotation for grouping actors and pages into categories.
+ * Annotation for grouping tests, actors and pages into categories.
+ * Category can be hierachical with forward slash (/) separating elements.
  * @author Pavel Vlasov
  *
  */
@@ -18,6 +19,6 @@ public @interface Category {
 	 * Category path.
 	 * @return
 	 */
-	String[] value() default {};
+	String value();
 	
 }

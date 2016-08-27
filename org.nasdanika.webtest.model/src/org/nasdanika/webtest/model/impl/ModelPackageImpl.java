@@ -353,6 +353,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getDescriptor_Category() {
+		return (EAttribute)descriptorEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getDescription() {
 		return descriptionEClass;
 	}
@@ -1236,6 +1245,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(descriptorEClass, DESCRIPTOR__TITLE);
 		createEReference(descriptorEClass, DESCRIPTOR__DESCRIPTION);
 		createEReference(descriptorEClass, DESCRIPTOR__LINKS);
+		createEAttribute(descriptorEClass, DESCRIPTOR__CATEGORY);
 
 		descriptionEClass = createEClass(DESCRIPTION);
 		createEAttribute(descriptionEClass, DESCRIPTION__URL);
@@ -1411,6 +1421,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getDescriptor_Title(), ecorePackage.getEString(), "title", null, 0, 1, org.nasdanika.webtest.model.Descriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDescriptor_Description(), this.getDescription(), null, "description", null, 0, 1, org.nasdanika.webtest.model.Descriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDescriptor_Links(), this.getLink(), null, "links", null, 0, -1, org.nasdanika.webtest.model.Descriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDescriptor_Category(), ecorePackage.getEString(), "category", null, 0, -1, org.nasdanika.webtest.model.Descriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(descriptionEClass, Description.class, "Description", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getDescription_Url(), ecorePackage.getEString(), "url", null, 0, 1, Description.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

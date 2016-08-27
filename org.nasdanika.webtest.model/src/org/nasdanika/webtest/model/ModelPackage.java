@@ -108,13 +108,22 @@ public interface ModelPackage extends EPackage {
 	int DESCRIPTOR__LINKS = 3;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DESCRIPTOR__CATEGORY = 4;
+
+	/**
 	 * The number of structural features of the '<em>Descriptor</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DESCRIPTOR_FEATURE_COUNT = 4;
+	int DESCRIPTOR_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Descriptor</em>' class.
@@ -225,6 +234,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int TEST_SESSION__LINKS = DESCRIPTOR__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_SESSION__CATEGORY = DESCRIPTOR__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Test Results</b></em>' containment reference list.
@@ -345,6 +363,15 @@ public interface ModelPackage extends EPackage {
 	int TEST_RESULT__LINKS = DESCRIPTOR__LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_RESULT__CATEGORY = DESCRIPTOR__CATEGORY;
+
+	/**
 	 * The feature id for the '<em><b>Page Results</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -425,6 +452,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int TEST_CLASS_RESULT__LINKS = TEST_RESULT__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_CLASS_RESULT__CATEGORY = TEST_RESULT__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Page Results</b></em>' containment reference list.
@@ -573,6 +609,15 @@ public interface ModelPackage extends EPackage {
 	int TEST_SUITE_RESULT__LINKS = TEST_RESULT__LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_SUITE_RESULT__CATEGORY = TEST_RESULT__CATEGORY;
+
+	/**
 	 * The feature id for the '<em><b>Page Results</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -662,6 +707,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int PARAMETERIZED_TEST_RESULT__LINKS = TEST_SUITE_RESULT__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETERIZED_TEST_RESULT__CATEGORY = TEST_SUITE_RESULT__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Page Results</b></em>' containment reference list.
@@ -954,6 +1008,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int OPERATION_RESULT__LINKS = DESCRIPTOR__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_RESULT__CATEGORY = DESCRIPTOR__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
@@ -1256,6 +1319,15 @@ public interface ModelPackage extends EPackage {
 	int PROXYING_RESULT__LINKS = OPERATION_RESULT__LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__CATEGORY = OPERATION_RESULT__CATEGORY;
+
+	/**
 	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1428,6 +1500,15 @@ public interface ModelPackage extends EPackage {
 	int METHOD_RESULT__LINKS = OPERATION_RESULT__LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_RESULT__CATEGORY = OPERATION_RESULT__CATEGORY;
+
+	/**
 	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1598,6 +1679,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int PAGE_METHOD_RESULT__LINKS = METHOD_RESULT__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE_METHOD_RESULT__CATEGORY = METHOD_RESULT__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
@@ -1781,6 +1871,15 @@ public interface ModelPackage extends EPackage {
 	int INITIALIZATION_RESULT__LINKS = PAGE_METHOD_RESULT__LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int INITIALIZATION_RESULT__CATEGORY = PAGE_METHOD_RESULT__CATEGORY;
+
+	/**
 	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1960,6 +2059,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int ACTOR_METHOD_RESULT__LINKS = METHOD_RESULT__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR_METHOD_RESULT__CATEGORY = METHOD_RESULT__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
@@ -2143,6 +2251,15 @@ public interface ModelPackage extends EPackage {
 	int TEST_METHOD_RESULT__LINKS = METHOD_RESULT__LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_METHOD_RESULT__CATEGORY = METHOD_RESULT__CATEGORY;
+
+	/**
 	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2324,6 +2441,15 @@ public interface ModelPackage extends EPackage {
 	int COVERAGE__LINKS = DESCRIPTOR__LINKS;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COVERAGE__CATEGORY = DESCRIPTOR__CATEGORY;
+
+	/**
 	 * The feature id for the '<em><b>Invocations</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2395,6 +2521,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int ACTOR_RESULT__LINKS = DESCRIPTOR__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR_RESULT__CATEGORY = DESCRIPTOR__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Results</b></em>' reference list.
@@ -2495,6 +2630,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int PAGE_RESULT__LINKS = DESCRIPTOR__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE_RESULT__CATEGORY = DESCRIPTOR__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Results</b></em>' reference list.
@@ -2604,6 +2748,15 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int WEB_ELEMENT__LINKS = DESCRIPTOR__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WEB_ELEMENT__CATEGORY = DESCRIPTOR__CATEGORY;
 
 	/**
 	 * The feature id for the '<em><b>Locators</b></em>' containment reference list.
@@ -2807,6 +2960,17 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getDescriptor_Links();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.webtest.model.Descriptor#getCategory <em>Category</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Category</em>'.
+	 * @see org.nasdanika.webtest.model.Descriptor#getCategory()
+	 * @see #getDescriptor()
+	 * @generated
+	 */
+	EAttribute getDescriptor_Category();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.Description <em>Description</em>}'.
@@ -3891,6 +4055,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EReference DESCRIPTOR__LINKS = eINSTANCE.getDescriptor_Links();
+
+		/**
+		 * The meta object literal for the '<em><b>Category</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute DESCRIPTOR__CATEGORY = eINSTANCE.getDescriptor_Category();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.DescriptionImpl <em>Description</em>}' class.

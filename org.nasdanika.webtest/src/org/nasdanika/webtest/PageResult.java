@@ -189,7 +189,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher, InstanceTr
 			for (Field we: this.webElements) {
 				JSONObject webElement = new JSONObject(); 
 				webElements.put(webElement);
-				WebTestUtil.titleAndDescriptionAndLinksToJSON(we, webElement);
+				WebTestUtil.titleAndDescriptionAndLinksAndCategoryToJSON(we, webElement);
 				if (!webElement.has("title")) {
 					webElement.put("title", WebTestUtil.title(we.getName()));
 				}
@@ -300,7 +300,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher, InstanceTr
 		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
 			JSONObject coverageEntry = new JSONObject();
 			coverage.put(coverageEntry);
-			WebTestUtil.titleAndDescriptionAndLinksToJSON(ce.getKey(), coverageEntry);
+			WebTestUtil.titleAndDescriptionAndLinksAndCategoryToJSON(ce.getKey(), coverageEntry);
 			if (!coverageEntry.has("title")) {
 				coverageEntry.put("title", WebTestUtil.title(ce.getKey().getName()));
 			}
@@ -357,7 +357,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher, InstanceTr
 			for (Field we: this.webElements) {
 				WebElement webElement = modelFactory.createWebElement();
 				pageResult.getWebElements().add(webElement);
-				WebTestUtil.titleAndDescriptionAndLinksToDescriptor(we, webElement);
+				WebTestUtil.titleAndDescriptionAndLinksAndCategoryToDescriptor(we, webElement);
 				if (WebTestUtil.isBlank(webElement.getTitle())) {
 					webElement.setTitle(WebTestUtil.title(we.getName()));
 				}

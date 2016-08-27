@@ -163,7 +163,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher, InstanceT
 		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
 			JSONObject coverageEntry = new JSONObject();
 			coverage.put(coverageEntry);
-			WebTestUtil.titleAndDescriptionAndLinksToJSON(ce.getKey(), coverageEntry);
+			WebTestUtil.titleAndDescriptionAndLinksAndCategoryToJSON(ce.getKey(), coverageEntry);
 			if (!coverageEntry.has("title")) {
 				coverageEntry.put("title", WebTestUtil.title(ce.getKey().getName()));
 			}
@@ -218,7 +218,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher, InstanceT
 		}
 		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
 			Coverage coverage = modelFactory.createCoverage();
-			WebTestUtil.titleAndDescriptionAndLinksToDescriptor(ce.getKey(), coverage);
+			WebTestUtil.titleAndDescriptionAndLinksAndCategoryToDescriptor(ce.getKey(), coverage);
 			if (WebTestUtil.isBlank(coverage.getTitle())) {
 				coverage.setTitle(WebTestUtil.title(ce.getKey().getName()));
 			}

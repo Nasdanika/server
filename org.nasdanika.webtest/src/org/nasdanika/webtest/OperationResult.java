@@ -541,7 +541,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 
 	private JSONObject toJSON(boolean publishPerformance, Map<Object, String> idMap) throws JSONException, Exception {
 		JSONObject data = new JSONObject();
-		WebTestUtil.titleAndDescriptionAndLinksToJSON(getOperation(), data);
+		WebTestUtil.titleAndDescriptionAndLinksAndCategoryToJSON(getOperation(), data);
 		data.put("operationName", getOperationName());
 		if (!data.has("title")) {
 			data.put("title", WebTestUtil.title(getOperationName()));
@@ -723,7 +723,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		M model = createModel();				
 		objectMap.put(this, model);
 		
-		WebTestUtil.titleAndDescriptionAndLinksToDescriptor(getOperation(), model);
+		WebTestUtil.titleAndDescriptionAndLinksAndCategoryToDescriptor(getOperation(), model);
 		model.setOperationName(getOperationName());
 		if (WebTestUtil.isBlank(model.getTitle())) {
 			model.setTitle(WebTestUtil.title(getOperationName()));

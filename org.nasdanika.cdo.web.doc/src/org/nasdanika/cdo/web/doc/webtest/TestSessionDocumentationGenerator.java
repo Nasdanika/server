@@ -1,8 +1,15 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
@@ -79,23 +86,75 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 				}				
 			}
 			if (!testSession.getTestResults().isEmpty()) {
-				TocNode testsNode = testSessionNode.createChild(
-						"Tests", 
-						null, 
-						null, 
-						null, 
-						null, 
-						false);
 				
-				for (TestResult tr: testSession.getTestResults()) {
-					DocumentationGenerator<Object> docGen = testResultsDocumentationGenerator.getDocumentationGenerator(tr.eClass());
-					if (docGen != null) {
-						docGen.createToc(tr, testsNode);
+				class Category {
+					String name;
+					Map<String, Category> subCategories = new TreeMap<>();
+					List<TestResult> testResults = new ArrayList<>();
+					
+					int depth;
+					
+					void createToc(TocNode parent) {
+						TocNode categoryNode = parent.createChild(
+								name, 
+								null, 
+								null, 
+								null, 
+								null, 
+								false);
+						
+						for (Category sc: subCategories.values()) {
+							sc.createToc(categoryNode);
+						}
+						
+						Collections.sort(testResults, new Comparator<TestResult>() {
+
+							@Override
+							public int compare(TestResult o1, TestResult o2) {
+								int cmp = o1.getTitle().compareTo(o2.getTitle());								
+								return cmp == 0 ? o1.getQualifiedName().compareTo(o2.getQualifiedName()) : cmp;
+							}
+							
+						});
+						
+						for (TestResult tr: testResults) {
+							DocumentationGenerator<Object> docGen = testResultsDocumentationGenerator.getDocumentationGenerator(tr.eClass());
+							if (docGen != null) {
+								docGen.createToc(tr, categoryNode);
+							}
+						}
+						
+						if (categoryNode.getChildren().isEmpty()) {
+							testSessionNode.getChildren().remove(categoryNode);
+						}				
+					}
+					
+					void addTestResult(TestResult tr) {
+						if (tr.getCategory().size() == depth) {
+							testResults.add(tr);
+						} else {
+							String scName = tr.getCategory().get(depth);
+							Category sc = subCategories.get(scName);
+							if (sc == null) {
+								sc = new Category();
+								sc.name = scName;
+								sc.depth = depth + 1;
+								subCategories.put(scName, sc);
+							}
+							sc.addTestResult(tr);
+						}
 					}
 				}
-				if (testsNode.getChildren().isEmpty()) {
-					testSessionNode.getChildren().remove(testsNode);
-				}				
+				
+				Category root = new Category();
+				root.name = "Tests";
+				
+				for (TestResult tr: testSession.getTestResults()) {
+					root.addTestResult(tr);
+				}
+				
+				root.createToc(testSessionNode);
+				
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -118,7 +177,8 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 		links(obj, ret, context, baseURI, urlPrefix);
 		
 		Tabs tabs = htmlFactory.tabs().style().margin().top("5px");
-		if (!obj.getTestResults().isEmpty()) {
+		List<TestResult> testResults = new ArrayList<>(obj.getTestResults());
+		if (!testResults.isEmpty()) {
 			EMap<OperationStatus, Integer> sessionStats = testResultStats(obj);			
 			Fragment testsTabContent = htmlFactory.fragment();
 			
@@ -128,19 +188,38 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 			testsTabContent.content(resultsTable);
 			Row header = resultsTable.header().row().style(Bootstrap.Style.INFO);
 			header.header(htmlFactory.glyphicon(Glyphicon.search), "&nbsp;Test(s)");
+			header.header("Category");
 			header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
 			for (OperationStatus status: OperationStatus.values()) {
 				if (sessionStats.containsKey(status)) {
 					header.header(operationStatusGlyph(status), "&nbsp;", status.getName()).style("text-align", "center").attribute("nowrap", "true");
 				}
 			}
-			for (TestResult tr: obj.getTestResults()) {
+			
+			Collections.sort(testResults, new Comparator<TestResult>() {
+
+				@Override
+				public int compare(TestResult o1, TestResult o2) {
+					int cmp = o1.getTitle().compareTo(o2.getTitle());								
+					return cmp == 0 ? o1.getQualifiedName().compareTo(o2.getQualifiedName()) : cmp;
+				}
+				
+			});
+			
+			for (TestResult tr: testResults) {
 				Row classRow = resultsTable.body().row();
 				String objectPath = testResultsDocumentationGenerator.getObjectPath(tr);
 				DocumentationGenerator<Object> docGen = testResultsDocumentationGenerator.getDocumentationGenerator(tr.eClass());
 				String title = docGen instanceof DescriptorDocumentationGenerator ? ((DescriptorDocumentationGenerator) docGen).getTitle(tr) : tr.getTitle(); 
 				String href = DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+testResultsDocumentationGenerator.getDocRoute().getDocRoutePath()+objectPath+"/index.html";
-				classRow.cell(htmlFactory.link(href, StringEscapeUtils.escapeHtml4(title)));				
+				classRow.cell(htmlFactory.link(href, StringEscapeUtils.escapeHtml4(title)));		
+				Cell categoryCell = classRow.cell();
+				for (String ce: tr.getCategory()) {
+					if (!categoryCell.isEmpty()) {
+						categoryCell.content(" / ");
+					}
+					categoryCell.content(ce);
+				}
 				Cell descriptionCell = classRow.cell();
 				if (docGen instanceof DescriptorDocumentationGenerator) {
 					((DescriptorDocumentationGenerator) docGen).description(tr, descriptionCell, context, baseURI, urlPrefix);
@@ -161,7 +240,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 				}
 			}
 			Row totalsRow = resultsTable.row().style(Bootstrap.Style.INFO);
-			totalsRow.cell("Total").colspan(2);
+			totalsRow.cell("Total").colspan(3);
 			for (OperationStatus status: OperationStatus.values()) {
 				if (sessionStats.containsKey(status)) {
 					totalsRow.cell(sessionStats.get(status)).attribute("align", "center");

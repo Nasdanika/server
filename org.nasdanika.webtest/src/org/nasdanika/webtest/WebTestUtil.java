@@ -686,7 +686,7 @@ public class WebTestUtil {
 		
 	static void qualifiedNameAndTitleAndDescriptionAndLinksToJSON(Class<?> klass, JSONObject target) throws JSONException {
 		target.put("qualifiedName", klass.getName());
-		titleAndDescriptionAndLinksToJSON(klass, target);
+		titleAndDescriptionAndLinksAndCategoryToJSON(klass, target);
 		if (!target.has("title")) {
 			String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
 			StringBuilder titleBuilder = new StringBuilder();
@@ -709,7 +709,7 @@ public class WebTestUtil {
 		
 	static void qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(Class<?> klass, Descriptor target) {
 		target.setQualifiedName(klass.getName());
-		titleAndDescriptionAndLinksToDescriptor(klass, target);
+		titleAndDescriptionAndLinksAndCategoryToDescriptor(klass, target);
 		if (isBlank(target.getTitle())) {
 			String className = klass.getName().substring(klass.getName().lastIndexOf('.')+1);		
 			StringBuilder titleBuilder = new StringBuilder();
@@ -748,20 +748,22 @@ public class WebTestUtil {
 		return titleBuilder.toString();
 	}
 
-	static void titleAndDescriptionAndLinksToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
+	static void titleAndDescriptionAndLinksAndCategoryToJSON(AnnotatedElement annotated, JSONObject target) throws JSONException {
 		Title title = annotated.getAnnotation(Title.class);
 		toJSON(title, target);
 		toJSON(annotated.getAnnotation(Description.class), target);
 		toJSON(annotated.getAnnotation(Links.class), target);
 		toJSON(annotated.getAnnotation(Link.class), target);
+		toJSON(annotated.getAnnotation(Category.class), target);
 	}
 
-	static void titleAndDescriptionAndLinksToDescriptor(AnnotatedElement annotated, Descriptor target) {
+	static void titleAndDescriptionAndLinksAndCategoryToDescriptor(AnnotatedElement annotated, Descriptor target) {
 		Title title = annotated.getAnnotation(Title.class);
 		toDescriptor(title, target);
 		toDescriptor(annotated.getAnnotation(Description.class), target);
 		toDescriptor(annotated.getAnnotation(Links.class), target);
 		toDescriptor(annotated.getAnnotation(Link.class), target);
+		toDescriptor(annotated.getAnnotation(Category.class), target);
 	}
 
 	static void toJSON(Title title, JSONObject target) throws JSONException {
@@ -796,6 +798,7 @@ public class WebTestUtil {
 				JSONObject linkObj = new JSONObject();
 				linkObj.put("value", link.value());
 				linkObj.put("type", link.type());
+				linkObj.put("comment", link.comment());
 				linksArray.put(linkObj);
 			}
 		}
@@ -808,9 +811,20 @@ public class WebTestUtil {
 			JSONObject linkObj = new JSONObject();
 			linkObj.put("value", link.value());
 			linkObj.put("type", link.type());
+			linkObj.put("comment", link.comment());
 			linksArray.put(linkObj);
 		}
-	}	
+	}
+	
+	static void toJSON(Category category, JSONObject target) throws JSONException {
+		if (category!=null) {
+			JSONArray categoryArray = new JSONArray();
+			target.put("category", categoryArray);
+			for (String ce: category.value().split("/")) {
+				categoryArray.put(ce);				
+			}
+		}
+	}		
 	
 	static void toDescriptor(Title title, Descriptor target) {
 		if (title!=null) {
@@ -847,6 +861,15 @@ public class WebTestUtil {
 			linkModel.setType(link.type());
 			linkModel.setValue(link.value());
 			linkModel.setComment(link.comment());
+		}
+	}
+
+	static void toDescriptor(Category category, Descriptor target) {
+		if (category!=null) {			
+			target.getCategory().clear();
+			for (String ce: category.value().split("/")){
+				target.getCategory().add(ce);
+			}
 		}
 	}
 
