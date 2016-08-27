@@ -20,13 +20,18 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.WeakHashMap;
+import java.util.concurrent.Executor;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.ecore.EObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.nasdanika.cdo.boxing.BoxUtil;
+import org.nasdanika.cdo.boxing.Boxer;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.HTMLFactory;
@@ -45,7 +50,7 @@ import org.openqa.selenium.WebDriverException;
  * @author Pavel Vlasov
  *
  */
-public abstract class OperationResult<O extends AnnotatedElement, M extends org.nasdanika.webtest.model.OperationResult> implements HttpPublisher, DirectoryPublisher {
+public abstract class OperationResult<O extends AnnotatedElement, M extends org.nasdanika.webtest.model.OperationResult> implements HttpPublisher, DirectoryPublisher, InstanceTracker {
 
 	final O operation;
 	
@@ -677,7 +682,44 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		return ret;
 	}
 	
-	public M toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {
+	protected EObject box(Object obj, org.nasdanika.core.Context context) {
+		if (target instanceof Boxer) {
+			return ((Boxer) target).box(obj, context);
+		}
+		return BoxUtil.box(obj, context);
+	}
+	
+	/**
+	 * If object is instance of one of the keys in the object map, then the value is returned.
+	 * Otherwise obj is returned.
+	 * @param obj
+	 * @param objectMap
+	 * @return
+	 */
+	protected Object resolveModel(Object obj, Map<Object, Object> objectMap) {
+		for (Entry<Object, Object> e: objectMap.entrySet()) {
+			if (e.getKey() instanceof InstanceTracker && ((InstanceTracker) e.getKey()).isInstance(obj)) {
+				return e.getValue();
+			}
+		}
+		return obj;
+	}
+	
+	/**
+	 * Stores operation result to a model element.
+	 * @param screenshotsCollector Collector of screenshots.
+	 * @param screenshotsDir Directory where to store screenshots.
+	 * @param objectMap Map of web test results to corresponding model elements.
+	 * @param executor Executor allows to post tasks which are to be executed later after the 
+	 * model elements are created for all results and added to the model.
+	 * @return
+	 */
+	public M toModel(
+			List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, 
+			File screenshotsDir, 
+			Map<Object, Object> objectMap,
+			org.nasdanika.core.Context context,
+			Executor executor) {
 		M model = createModel();				
 		objectMap.put(this, model);
 		
@@ -687,25 +729,38 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 			model.setTitle(WebTestUtil.title(getOperationName()));
 		}
 		model.setQualifiedName(operation.toString());
-		if (arguments!=null) {
-			// Simplistic approach for now
-			for (int i=0; i<arguments.length; ++i) {
-				OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
-				if (arguments[i]!=null) {
-					operationArgument.setType(arguments[i].getClass().getName());
-					operationArgument.setValue(arguments[i].toString());
+		
+		// Later execution for proper boxing of references.
+		executor.execute(new Runnable() {
+
+			@Override
+			public void run() {
+				if (arguments!=null) {
+					// Simplistic approach for now
+					for (int i=0; i<arguments.length; ++i) {
+						OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
+						operationArgument.setMasked(maskedArguments[i]);
+						if (arguments[i]!=null) {
+							operationArgument.setType(arguments[i].getClass().getName());
+							if (!operationArgument.isMasked()) {
+								operationArgument.setValue(box(resolveModel(arguments[i], objectMap), context));
+							}
+						}
+						model.getArguments().add(operationArgument);
+					}
 				}
-				operationArgument.setMasked(maskedArguments[i]);
-				model.getArguments().add(operationArgument);
+				if (result!=null) {
+					OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
+					operationArgument.setMasked(operation.getAnnotation(Mask.class)!=null);
+					operationArgument.setType(result.getClass().getName());
+					if (!operationArgument.isMasked()) {
+						operationArgument.setValue(box(resolveModel(result, objectMap), context));
+					}
+					model.getArguments().add(operationArgument);
+				}
 			}
-		}
-		if (result!=null) {
-			OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
-			operationArgument.setType(result.getClass().getName());
-			operationArgument.setValue(result.toString());
-			operationArgument.setMasked(operation.getAnnotation(Mask.class)!=null);
-			model.getArguments().add(operationArgument);
-		}
+			
+		});
 		if (instanceAlias!=null) {
 			model.setInstanceAlias(instanceAlias);
 		}
@@ -746,7 +801,12 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		extraModelInfo(model);
 	
 		for (OperationResult<?,?> child: getChildren()) {
-			org.nasdanika.webtest.model.OperationResult childModel = child.toModel(screenshotsCollector, screenshotsDir, objectMap);
+			org.nasdanika.webtest.model.OperationResult childModel = child.toModel(
+					screenshotsCollector, 
+					screenshotsDir, 
+					objectMap,
+					context,
+					executor);
 			if (childModel!=null) {
 				model.getChildren().add(childModel);
 			}
@@ -755,6 +815,11 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	}
 	
 	protected abstract M createModel();
+	
+	@Override
+	public boolean isInstance(Object obj) {
+		return obj == target;
+	}
 
 	@Override
 	public String publish(

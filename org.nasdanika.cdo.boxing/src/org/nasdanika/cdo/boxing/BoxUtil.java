@@ -1,6 +1,6 @@
 package org.nasdanika.cdo.boxing;
 
-import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.Context;
 
 public class BoxUtil {
@@ -9,15 +9,15 @@ public class BoxUtil {
 		// Singleton
 	}
 
-	public static <T> CDOObject box(T obj, Context context) {
-		if (obj instanceof CDOObject) {
-			CDOObject cdoObj = (CDOObject) obj;
-			if (cdoObj.eContainer()==null) {
-				return cdoObj;
+	public static EObject box(Object obj, Context context) {
+		if (obj instanceof EObject) {
+			EObject eObj = (EObject) obj;
+			if (eObj.eContainer()==null) {
+				return eObj;
 			}
 			
 			ReferenceBox rBox = BoxingFactory.eINSTANCE.createReferenceBox();
-			rBox.setTarget(cdoObj);
+			rBox.setTarget(eObj);
 			return rBox;		
 		} 
 		
@@ -26,11 +26,11 @@ public class BoxUtil {
 		}
 		
 		try {
-			CDOObject cdoObj = context.convert(obj, CDOObject.class);
-			if (cdoObj==null) {
-				throw new BoxingException("Cannot convert "+obj+" to CDOObject");
+			EObject eObj = context.convert(obj, EObject.class);
+			if (eObj==null) {
+				throw new BoxingException("Cannot convert "+obj+" to EObject");
 			}
-			return cdoObj;
+			return eObj;
 		} catch (BoxingException ex) {
 			throw ex;
 		} catch (Exception ex) {

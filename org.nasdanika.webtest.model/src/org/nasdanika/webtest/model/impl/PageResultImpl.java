@@ -31,6 +31,7 @@ import org.nasdanika.webtest.model.WebElement;
  *   <li>{@link org.nasdanika.webtest.model.impl.PageResultImpl#getCoverage <em>Coverage</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.PageResultImpl#getWebElements <em>Web Elements</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.PageResultImpl#isProxy <em>Proxy</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.PageResultImpl#isDelegate <em>Delegate</em>}</li>
  * </ul>
  *
  * @generated
@@ -85,6 +86,26 @@ public class PageResultImpl extends DescriptorImpl implements PageResult {
 	 * @ordered
 	 */
 	protected boolean proxy = PROXY_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isDelegate() <em>Delegate</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDelegate()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DELEGATE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDelegate() <em>Delegate</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDelegate()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean delegate = DELEGATE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -167,6 +188,27 @@ public class PageResultImpl extends DescriptorImpl implements PageResult {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isDelegate() {
+		return delegate;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDelegate(boolean newDelegate) {
+		boolean oldDelegate = delegate;
+		delegate = newDelegate;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.PAGE_RESULT__DELEGATE, oldDelegate, delegate));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -211,6 +253,8 @@ public class PageResultImpl extends DescriptorImpl implements PageResult {
 				return getWebElements();
 			case ModelPackage.PAGE_RESULT__PROXY:
 				return isProxy();
+			case ModelPackage.PAGE_RESULT__DELEGATE:
+				return isDelegate();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -239,6 +283,9 @@ public class PageResultImpl extends DescriptorImpl implements PageResult {
 			case ModelPackage.PAGE_RESULT__PROXY:
 				setProxy((Boolean)newValue);
 				return;
+			case ModelPackage.PAGE_RESULT__DELEGATE:
+				setDelegate((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -263,6 +310,9 @@ public class PageResultImpl extends DescriptorImpl implements PageResult {
 			case ModelPackage.PAGE_RESULT__PROXY:
 				setProxy(PROXY_EDEFAULT);
 				return;
+			case ModelPackage.PAGE_RESULT__DELEGATE:
+				setDelegate(DELEGATE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -283,6 +333,8 @@ public class PageResultImpl extends DescriptorImpl implements PageResult {
 				return webElements != null && !webElements.isEmpty();
 			case ModelPackage.PAGE_RESULT__PROXY:
 				return proxy != PROXY_EDEFAULT;
+			case ModelPackage.PAGE_RESULT__DELEGATE:
+				return delegate != DELEGATE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -299,6 +351,8 @@ public class PageResultImpl extends DescriptorImpl implements PageResult {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (proxy: ");
 		result.append(proxy);
+		result.append(", delegate: ");
+		result.append(delegate);
 		result.append(')');
 		return result.toString();
 	}

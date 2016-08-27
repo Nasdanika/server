@@ -60,6 +60,12 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 			return cmp == 0 ? o1.hashCode() - o2.hashCode() : cmp;
 		}
 	};
+		
+	static <T extends CatalogElement> List<T> sortByName(Collection<T> toSort) {
+		List<T> ret = new ArrayList<T>(toSort);
+		Collections.sort(ret, CATALOG_ELEMENT_NAME_COMPARATOR);
+		return ret;
+	}	
 
 	protected StoryDocumentationGenerator storyDocumentationGenerator;
 
@@ -331,7 +337,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 		boolean hasOutcomeStates = false;
 		boolean hasOutcomes = false;
 		
-		for (Scenario scenario: scenarios) {			
+		for (Scenario scenario: sortByName(scenarios)) {			
 			Fragment contextStatesFragment = htmlFactory.fragment();
 			Iterator<State> sit = scenario.getContextStates().iterator();
 			while (sit.hasNext()) {

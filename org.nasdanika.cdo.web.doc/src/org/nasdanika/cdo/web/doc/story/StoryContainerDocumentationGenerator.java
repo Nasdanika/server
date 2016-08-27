@@ -3,9 +3,11 @@ package org.nasdanika.cdo.web.doc.story;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap.Style;
@@ -29,7 +31,7 @@ abstract class StoryContainerDocumentationGenerator<T extends StoryContainer> ex
 	@Override
 	protected Collection<? extends EObject> getTocChildren(T storyContainer) {
 		Collection<EObject> ret = new ArrayList<>(super.getTocChildren(storyContainer));
-		ret.addAll(storyContainer.getStories());
+		ret.addAll(sortByName(storyContainer.getStories()));
 		return ret;
 	}
 	
@@ -44,7 +46,7 @@ abstract class StoryContainerDocumentationGenerator<T extends StoryContainer> ex
 						
 		if (!obj.getStories().isEmpty()) {
 			List<Object[]> rows = new ArrayList<>();
-			for (StoryBase storyBase: obj.getStories()) {
+			for (StoryBase storyBase: sortByName(obj.getStories())) {
 				Fragment protagonistsFragment = null;
 				if (storyBase instanceof Story) {
 					List<Protagonist> protagonists = new ArrayList<>();

@@ -20,6 +20,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.nasdanika.webtest.model.Link#getValue <em>Value</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.Link#getType <em>Type</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.Link#getComment <em>Comment</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.webtest.model.ModelPackage#getLink()
@@ -84,5 +85,30 @@ public interface Link extends EObject {
 	 * @generated
 	 */
 	void setType(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Comment</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Optional link type to differentiate between links if there is more than one.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Comment</em>' attribute.
+	 * @see #setComment(String)
+	 * @see org.nasdanika.webtest.model.ModelPackage#getLink_Comment()
+	 * @model
+	 * @generated
+	 */
+	String getComment();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.webtest.model.Link#getComment <em>Comment</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Comment</em>' attribute.
+	 * @see #getComment()
+	 * @generated
+	 */
+	void setComment(String value);
 
 } // Link

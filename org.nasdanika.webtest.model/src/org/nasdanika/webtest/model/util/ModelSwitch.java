@@ -22,6 +22,7 @@ import org.nasdanika.webtest.model.OperationResult;
 import org.nasdanika.webtest.model.PageMethodResult;
 import org.nasdanika.webtest.model.PageResult;
 import org.nasdanika.webtest.model.ParameterizedTestResult;
+import org.nasdanika.webtest.model.ProxyingResult;
 import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.ScreenshotEntry;
 import org.nasdanika.webtest.model.StackTraceEntry;
@@ -183,6 +184,23 @@ public class ModelSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case ModelPackage.PROXYING_RESULT: {
+				ProxyingResult proxyingResult = (ProxyingResult)theEObject;
+				T result = caseProxyingResult(proxyingResult);
+				if (result == null) result = caseOperationResult(proxyingResult);
+				if (result == null) result = caseDescriptor(proxyingResult);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ModelPackage.PAGE_METHOD_RESULT: {
+				PageMethodResult pageMethodResult = (PageMethodResult)theEObject;
+				T result = casePageMethodResult(pageMethodResult);
+				if (result == null) result = caseMethodResult(pageMethodResult);
+				if (result == null) result = caseOperationResult(pageMethodResult);
+				if (result == null) result = caseDescriptor(pageMethodResult);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case ModelPackage.INITIALIZATION_RESULT: {
 				InitializationResult initializationResult = (InitializationResult)theEObject;
 				T result = caseInitializationResult(initializationResult);
@@ -207,15 +225,6 @@ public class ModelSwitch<T> extends Switch<T> {
 				if (result == null) result = caseMethodResult(actorMethodResult);
 				if (result == null) result = caseOperationResult(actorMethodResult);
 				if (result == null) result = caseDescriptor(actorMethodResult);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case ModelPackage.PAGE_METHOD_RESULT: {
-				PageMethodResult pageMethodResult = (PageMethodResult)theEObject;
-				T result = casePageMethodResult(pageMethodResult);
-				if (result == null) result = caseMethodResult(pageMethodResult);
-				if (result == null) result = caseOperationResult(pageMethodResult);
-				if (result == null) result = caseDescriptor(pageMethodResult);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -479,6 +488,21 @@ public class ModelSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseStackTraceEntry(StackTraceEntry object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Proxying Result</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Proxying Result</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseProxyingResult(ProxyingResult object) {
 		return null;
 	}
 

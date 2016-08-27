@@ -19,6 +19,7 @@ import org.nasdanika.webtest.model.ModelPackage;
  * <ul>
  *   <li>{@link org.nasdanika.webtest.model.impl.LinkImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.LinkImpl#getType <em>Type</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.LinkImpl#getComment <em>Comment</em>}</li>
  * </ul>
  *
  * @generated
@@ -63,6 +64,26 @@ public class LinkImpl extends MinimalEObjectImpl.Container implements Link {
 	 * @ordered
 	 */
 	protected String type = TYPE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getComment() <em>Comment</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getComment()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String COMMENT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getComment() <em>Comment</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getComment()
+	 * @generated
+	 * @ordered
+	 */
+	protected String comment = COMMENT_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -130,6 +151,27 @@ public class LinkImpl extends MinimalEObjectImpl.Container implements Link {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getComment() {
+		return comment;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setComment(String newComment) {
+		String oldComment = comment;
+		comment = newComment;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.LINK__COMMENT, oldComment, comment));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -137,6 +179,8 @@ public class LinkImpl extends MinimalEObjectImpl.Container implements Link {
 				return getValue();
 			case ModelPackage.LINK__TYPE:
 				return getType();
+			case ModelPackage.LINK__COMMENT:
+				return getComment();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -154,6 +198,9 @@ public class LinkImpl extends MinimalEObjectImpl.Container implements Link {
 				return;
 			case ModelPackage.LINK__TYPE:
 				setType((String)newValue);
+				return;
+			case ModelPackage.LINK__COMMENT:
+				setComment((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -173,6 +220,9 @@ public class LinkImpl extends MinimalEObjectImpl.Container implements Link {
 			case ModelPackage.LINK__TYPE:
 				setType(TYPE_EDEFAULT);
 				return;
+			case ModelPackage.LINK__COMMENT:
+				setComment(COMMENT_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -189,6 +239,8 @@ public class LinkImpl extends MinimalEObjectImpl.Container implements Link {
 				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 			case ModelPackage.LINK__TYPE:
 				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
+			case ModelPackage.LINK__COMMENT:
+				return COMMENT_EDEFAULT == null ? comment != null : !COMMENT_EDEFAULT.equals(comment);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -207,6 +259,8 @@ public class LinkImpl extends MinimalEObjectImpl.Container implements Link {
 		result.append(value);
 		result.append(", type: ");
 		result.append(type);
+		result.append(", comment: ");
+		result.append(comment);
 		result.append(')');
 		return result.toString();
 	}

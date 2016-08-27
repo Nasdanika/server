@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 /**
  * Base interface for test results
@@ -29,6 +30,11 @@ public interface TestResult extends HttpPublisher, DirectoryPublisher {
 	 * @param objectMap Maps web test objects (e.g. screenshots) to model objects.
 	 * @return
 	 */
-	org.nasdanika.webtest.model.TestResult toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap);
+	org.nasdanika.webtest.model.TestResult toModel(
+			List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, 
+			File screenshotsDir, 
+			Map<Object, Object> objectMap,
+			org.nasdanika.core.Context context,
+			Executor executor);
 
 }

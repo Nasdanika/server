@@ -13,6 +13,6 @@ Export-Package: org.nasdanika.cdo.boxing,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.cdo;visibility:=reexport,
- org.nasdanika.core;bundle-version="0.1.0",
- org.nasdanika.cdo;bundle-version="0.1.0"
+ org.nasdanika.core;bundle-version="0.1.0";visibility:=reexport,
+ org.nasdanika.cdo;bundle-version="0.1.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy

@@ -27,4 +27,8 @@ public @interface Link {
 	 */
 	String type() default "";
 	
+	/**
+	 * @return Optional comment.
+	 */
+	String comment() default "";
 }

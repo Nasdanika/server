@@ -11,14 +11,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.json.JSONObject;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Publishes test results to HTTP report server, directory, or bundle.
@@ -194,9 +198,25 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 			}
 		}
 		Map<Object, Object> objectMap = new IdentityHashMap<>();
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		org.nasdanika.core.Context context = new org.nasdanika.core.ContextImpl(bundle.getBundleContext());
+		LinkedList<Runnable> commands = new LinkedList<>();
+		Executor executor = new Executor() {
+			
+			@Override
+			public void execute(Runnable command) {
+				commands.add(command);				
+			}
+		};
 		// objectMap.put(this, testSession);
 		for (TestResult tr: testResults) {
-			org.nasdanika.webtest.model.TestResult trModel = tr.toModel(testSession.getScreenshots(), screenshotsDir, objectMap);
+			org.nasdanika.webtest.model.TestResult trModel = tr.toModel(
+					testSession.getScreenshots(), 
+					screenshotsDir, 
+					objectMap,
+					context,
+					executor);
+			
 			if (trModel!=null) {
 				testSession.getTestResults().add(trModel);
 				for (ActorResult car: tr.getActorResults()) {
@@ -224,6 +244,10 @@ class TestSession implements HttpPublisher, DirectoryPublisher {
 		
 		for (ActorResult ar: actorResults.values()) {
 			testSession.getActorResults().add(ar.toModel(screenshotsDir, objectMap));
+		}
+		
+		while (!commands.isEmpty()) {
+			commands.remove().run();
 		}
 		
 		File modelFile = new File(outputDir, modelFileName);

@@ -9,6 +9,7 @@ import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ import org.openqa.selenium.support.How;
  * @author Pavel Vlasov
  *
  */
-public class PageResult implements HttpPublisher, DirectoryPublisher {
+public class PageResult implements HttpPublisher, DirectoryPublisher, InstanceTracker {
 
 	private final Class<? extends Page<WebDriver>> pageClass;
 	
@@ -331,9 +332,10 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 		return path;
 	}
 
-	public org.nasdanika.webtest.model.PageResult toModel(File screenshotsDir, Map<Object, Object> objectMap) {
+	org.nasdanika.webtest.model.PageResult toModel(File screenshotsDir, Map<Object, Object> objectMap) {
 		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
 		org.nasdanika.webtest.model.PageResult pageResult = modelFactory.createPageResult();
+		objectMap.put(this, pageResult);
 		WebTestUtil.qualifiedNameAndTitleAndDescriptionAndLinksToDescriptor(getPageInterface(), pageResult);
 		if (getTitle()!=null) {
 			pageResult.setTitle(getTitle());
@@ -342,6 +344,7 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 			pageResult.setQualifiedName(getPageKey());
 		}
 		pageResult.setProxy(isProxy());		
+		pageResult.setDelegate(Delegate.class.isAssignableFrom(getPageInterface()));
 		for (OperationResult<?,?> r: getResults()) {
 			org.nasdanika.webtest.model.PageMethodResult modelResult = (PageMethodResult) objectMap.get(r);
 			if (modelResult == null) {
@@ -440,5 +443,17 @@ public class PageResult implements HttpPublisher, DirectoryPublisher {
 		}
 		return pageResult;
 	}	
-		
+
+	
+	private Collection<Page<?>> pages = new ArrayList<>();
+	
+	void addInstance(Page<?> page) {
+		pages.add(page);
+	}
+
+	@Override
+	public boolean isInstance(Object obj) {
+		return pages.contains(obj);
+	}				
+	
 }

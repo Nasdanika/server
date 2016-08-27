@@ -27,6 +27,7 @@ import org.nasdanika.webtest.model.OperationStatus;
 import org.nasdanika.webtest.model.PageMethodResult;
 import org.nasdanika.webtest.model.PageResult;
 import org.nasdanika.webtest.model.ParameterizedTestResult;
+import org.nasdanika.webtest.model.ProxyingResult;
 import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.ScreenshotEntry;
 import org.nasdanika.webtest.model.ScreenshotType;
@@ -96,10 +97,11 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 			case ModelPackage.OPERATION_RESULT: return createOperationResult();
 			case ModelPackage.THROWABLE: return createThrowable();
 			case ModelPackage.STACK_TRACE_ENTRY: return createStackTraceEntry();
+			case ModelPackage.PROXYING_RESULT: return createProxyingResult();
+			case ModelPackage.PAGE_METHOD_RESULT: return createPageMethodResult();
 			case ModelPackage.INITIALIZATION_RESULT: return createInitializationResult();
 			case ModelPackage.METHOD_RESULT: return createMethodResult();
 			case ModelPackage.ACTOR_METHOD_RESULT: return createActorMethodResult();
-			case ModelPackage.PAGE_METHOD_RESULT: return createPageMethodResult();
 			case ModelPackage.TEST_METHOD_RESULT: return createTestMethodResult();
 			case ModelPackage.COVERAGE: return createCoverage();
 			case ModelPackage.ACTOR_RESULT: return createActorResult();
@@ -284,6 +286,16 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	public StackTraceEntry createStackTraceEntry() {
 		StackTraceEntryImpl stackTraceEntry = new StackTraceEntryImpl();
 		return stackTraceEntry;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ProxyingResult createProxyingResult() {
+		ProxyingResultImpl proxyingResult = new ProxyingResultImpl();
+		return proxyingResult;
 	}
 
 	/**

@@ -219,11 +219,6 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Captures operation argument value and type."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Argument value converted to string. '******' for masked parameters."/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Argument type, java.lang.String for masked parameters."/>
@@ -234,6 +229,8 @@
         <details key="documentation" value="True for masked parameters."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ScreenshotType">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -404,6 +401,22 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ProxyingResult" eSuperTypes="#//OperationResult">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Result of page constructor invocation by WebTestUtil.initElements() methods &#xD;&#xA;which take class name as an argument."/>
+    </eAnnotations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PageMethodResult" eSuperTypes="#//MethodResult">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Result of page method invocation."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="pageResult" eType="#//PageResult"
+        eOpposite="#//PageResult/results">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="References page result this invocation belongs to."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InitializationResult" eSuperTypes="#//PageMethodResult">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Result of page constructor invocation by WebTestUtil.initElements() methods &#xD;&#xA;which take class name as an argument."/>
@@ -422,17 +435,6 @@
         eOpposite="#//ActorResult/results">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="References actor result this invocation belongs to."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="PageMethodResult" eSuperTypes="#//MethodResult">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Result of page method invocation."/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="pageResult" eType="#//PageResult"
-        eOpposite="#//PageResult/results">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="References page result this invocation belongs to."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -478,6 +480,11 @@
         <details key="documentation" value="True if actor class is a proxy."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="delegate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="True if actor class is a proxy."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PageResult" eSuperTypes="#//Descriptor">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -504,6 +511,11 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="proxy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="'true' if page class is a proxy."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="delegate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="True if actor class is a proxy."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -543,6 +555,11 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Optional link type to differentiate between links if there is more than one."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Optional link type to differentiate between links if there is more than one."/>
       </eAnnotations>

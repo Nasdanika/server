@@ -1,6 +1,10 @@
 package org.nasdanika.cdo.web.doc.story;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
@@ -29,7 +33,7 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 					null,
 					obj->obj == catalog);
 			
-			for (CatalogElement el: catalog.getElements()) {
+			for (CatalogElement el: sortByName(catalog.getElements())) {
 				if (el instanceof Protagonist && ((Protagonist) el).getLinkTo() != null) {
 					continue;
 				}
@@ -69,7 +73,7 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 		if (!obj.getElements().isEmpty()) {
 			Table contentTable = HTMLFactory.INSTANCE.table().bordered();
 			contentTable.header().headerRow("Element", "Type", "Summary").style(Style.PRIMARY);
-			for (CatalogElement catalogElement: obj.getElements()) {			
+			for (CatalogElement catalogElement: sortByName(obj.getElements())) {			
 				contentTable.body().row(
 						storyDocumentationGenerator.getDocRoute().findToc(catalogElement).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
 						catalogElement.eClass().getName(),

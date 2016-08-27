@@ -65,9 +65,9 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Screenshot/entries"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//OperationArgument">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//OperationArgument/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//OperationArgument/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//OperationArgument/masked"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EReference model.ecore#//OperationArgument/value"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//ScreenshotEntry">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ScreenshotEntry/type"/>
@@ -101,13 +101,14 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//StackTraceEntry/lineNumber"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//StackTraceEntry/native"/>
     </genClasses>
+    <genClasses ecoreClass="model.ecore#//ProxyingResult"/>
+    <genClasses ecoreClass="model.ecore#//PageMethodResult">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PageMethodResult/pageResult"/>
+    </genClasses>
     <genClasses ecoreClass="model.ecore#//InitializationResult"/>
     <genClasses ecoreClass="model.ecore#//MethodResult"/>
     <genClasses ecoreClass="model.ecore#//ActorMethodResult">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ActorMethodResult/actorResult"/>
-    </genClasses>
-    <genClasses ecoreClass="model.ecore#//PageMethodResult">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PageMethodResult/pageResult"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//TestMethodResult">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//TestMethodResult/parameters"/>
@@ -119,12 +120,14 @@
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ActorResult/results"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ActorResult/coverage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ActorResult/proxy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ActorResult/delegate"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//PageResult">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PageResult/results"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PageResult/coverage"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PageResult/webElements"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PageResult/proxy"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PageResult/delegate"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//WebElement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//WebElement/locators"/>
@@ -136,6 +139,7 @@
     <genClasses ecoreClass="model.ecore#//Link">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Link/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Link/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Link/comment"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -77,14 +77,18 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		return pages.values();
 	}
 	
-	private void onPageClass(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements, String title) {
+	private PageResult onPageClass(Class<? extends Page<WebDriver>> pageClass, List<Field> webElements, String title) {
 		String pageKey = pageClass.getName();
 		if (Proxy.isProxyClass(pageClass) && title!=null) {
 			pageKey+=":"+title;
 		}
-		if (!pages.containsKey(pageKey)) {
-			pages.put(pageKey, new PageResult(pageClass, webElements, title));
-		}		
+		if (pages.containsKey(pageKey)) {
+			return pages.get(pageKey);
+		}
+		
+		PageResult pr = new PageResult(pageClass, webElements, title);
+		pages.put(pageKey, pr);
+		return pr;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -95,17 +99,25 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			onPageClass(pageClass, page.webElements(), ((MixInInvocationHandler<?, ?>) Proxy.getInvocationHandler(page)).getTitle());
 		} else {
 			onPageClass(pageClass, page.webElements(), pageClass.getAnnotation(Title.class)==null ? null : pageClass.getAnnotation(Title.class).value());
-		}				
+		}	
+		
+		new ProxyingResult(
+				idGenerator.genId(pageClass.getName(), "_proxy"),
+				pageClass, 
+				currentOperationResult).setInstance(page);
 	}
 	
-	private void onActorClass(Class<? extends Actor<WebDriver>> actorClass, String title) {
+	private ActorResult onActorClass(Class<? extends Actor<WebDriver>> actorClass, String title) {
 		String actorKey = actorClass.getName();
 		if (Proxy.isProxyClass(actorClass) && title!=null) {
 			actorKey+=":"+title;
 		}
-		if (!actors.containsKey(actorKey)) {
-			actors.put(actorKey, new ActorResult(actorClass, title));
-		}		
+		if (actors.containsKey(actorKey)) {
+			return actors.get(actorKey);
+		}
+		ActorResult ar = new ActorResult(actorClass, title);
+		actors.put(actorKey, ar);
+		return ar;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -113,10 +125,15 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	public void onActorProxying(Actor<WebDriver> actor) {
 		Class<? extends Actor<WebDriver>> actorClass = (Class<? extends Actor<WebDriver>>) actor.getClass();
 		if (Proxy.isProxyClass(actorClass) && Proxy.getInvocationHandler(actor) instanceof MixInInvocationHandler) {
-			onActorClass(actorClass, ((MixInInvocationHandler<?, ?>) Proxy.getInvocationHandler(actor)).getTitle());
+			onActorClass(actorClass, ((MixInInvocationHandler<?, ?>) Proxy.getInvocationHandler(actor)).getTitle()).addInstance(actor);
 		} else {
-			onActorClass(actorClass, actorClass.getAnnotation(Title.class)==null ? null : actorClass.getAnnotation(Title.class).value());
+			onActorClass(actorClass, actorClass.getAnnotation(Title.class)==null ? null : actorClass.getAnnotation(Title.class).value()).addInstance(actor);
 		}										
+		new ProxyingResult(
+				idGenerator.genId(actorClass.getName(), "_proxy"),
+				actorClass, 
+				currentOperationResult).setInstance(actor);
+
 	}
 	
 	/**
@@ -382,7 +399,13 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 
 	@Override
-	public org.nasdanika.webtest.model.TestResult toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {		
+	public org.nasdanika.webtest.model.TestResult toModel(
+			List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, 
+			File screenshotsDir, 
+			Map<Object, Object> objectMap,
+			org.nasdanika.core.Context context,
+			Executor executor) {
+		
 		if (getTestMethodResults().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
 			return null; 
 		}
@@ -395,7 +418,13 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		}
 		objectMap.put(this, testResult);
 		for (TestMethodResult mr: getTestMethodResults()) {
-			org.nasdanika.webtest.model.TestMethodResult mrModel = mr.toModel(screenshotsCollector, screenshotsDir, objectMap);
+			org.nasdanika.webtest.model.TestMethodResult mrModel = mr.toModel(
+					screenshotsCollector, 
+					screenshotsDir, 
+					objectMap,
+					context,
+					executor);
+			
 			if (mrModel!=null) {
 				testResult.getMethodResults().add(mrModel);
 			}				

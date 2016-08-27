@@ -835,10 +835,7 @@ public class WebTestUtil {
 	static void toDescriptor(Links links, Descriptor target) {
 		if (links!=null) {
 			for (Link link: links.value()) {
-				org.nasdanika.webtest.model.Link linkModel = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createLink();
-				target.getLinks().add(linkModel);
-				linkModel.setType(link.type());
-				linkModel.setValue(link.value());
+				toDescriptor(link, target);
 			}
 		}
 	}
@@ -849,6 +846,7 @@ public class WebTestUtil {
 			target.getLinks().add(linkModel);
 			linkModel.setType(link.type());
 			linkModel.setValue(link.value());
+			linkModel.setComment(link.comment());
 		}
 	}
 

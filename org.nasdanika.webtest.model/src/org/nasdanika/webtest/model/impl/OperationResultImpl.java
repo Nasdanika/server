@@ -20,9 +20,7 @@ import org.nasdanika.webtest.model.ModelPackage;
 import org.nasdanika.webtest.model.OperationArgument;
 import org.nasdanika.webtest.model.OperationResult;
 import org.nasdanika.webtest.model.OperationStatus;
-import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.ScreenshotEntry;
-import org.nasdanika.webtest.model.TestSession;
 
 /**
  * <!-- begin-user-doc -->

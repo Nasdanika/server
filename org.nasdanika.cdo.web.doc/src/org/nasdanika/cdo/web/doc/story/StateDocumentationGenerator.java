@@ -71,7 +71,7 @@ class StateDocumentationGenerator extends CatalogElementDocumentationGenerator<S
 		if (!superStates.isEmpty()) {
 			Table contentTable = HTMLFactory.INSTANCE.table().bordered();
 			contentTable.header().headerRow("State", "Summary").style(Style.PRIMARY);
-			for (State superState: superStates) {			
+			for (State superState: sortByName(superStates)) {			
 				contentTable.body().row(
 						storyDocumentationGenerator.getDocRoute().findToc(superState).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
 						storyDocumentationGenerator.getDocRoute().firstMarkdownSentence(superState.getDescription()));
@@ -82,7 +82,7 @@ class StateDocumentationGenerator extends CatalogElementDocumentationGenerator<S
 		if (!subStates.isEmpty()) {
 			Table contentTable = HTMLFactory.INSTANCE.table().bordered();
 			contentTable.header().headerRow("State", "Summary").style(Style.PRIMARY);
-			for (State subState: subStates) {			
+			for (State subState: sortByName(subStates)) {			
 				contentTable.body().row(
 						storyDocumentationGenerator.getDocRoute().findToc(subState).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
 						storyDocumentationGenerator.getDocRoute().firstMarkdownSentence(subState.getDescription()));

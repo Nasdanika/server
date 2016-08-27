@@ -20,7 +20,7 @@ abstract class StateContainerDocumentationGenerator<T extends StateContainer> ex
 
 	@Override
 	protected Collection<? extends EObject> getTocChildren(T storyContainer) {
-		return storyContainer.getStates();
+		return sortByName(storyContainer.getStates());
 	}
 	
 	@Override
@@ -30,7 +30,7 @@ abstract class StateContainerDocumentationGenerator<T extends StateContainer> ex
 			HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
 			Table statesTable = htmlFactory.table().bordered();
 			statesTable.header().headerRow("Name", "Summary").style(Style.PRIMARY);
-			for (State state: obj.getStates()) {			
+			for (State state: sortByName(obj.getStates())) {			
 				statesTable.body().row(
 						storyDocumentationGenerator.getDocRoute().findToc(state).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
 						storyDocumentationGenerator.getDocRoute().firstMarkdownSentence(state.getDescription()));

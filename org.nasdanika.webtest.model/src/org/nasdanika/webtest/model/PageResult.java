@@ -21,6 +21,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.nasdanika.webtest.model.PageResult#getCoverage <em>Coverage</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.PageResult#getWebElements <em>Web Elements</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.PageResult#isProxy <em>Proxy</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.PageResult#isDelegate <em>Delegate</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.webtest.model.ModelPackage#getPageResult()
@@ -115,5 +116,30 @@ public interface PageResult extends Descriptor {
 	 * @generated
 	 */
 	void setProxy(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Delegate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * True if actor class is a proxy.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Delegate</em>' attribute.
+	 * @see #setDelegate(boolean)
+	 * @see org.nasdanika.webtest.model.ModelPackage#getPageResult_Delegate()
+	 * @model
+	 * @generated
+	 */
+	boolean isDelegate();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.webtest.model.PageResult#isDelegate <em>Delegate</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Delegate</em>' attribute.
+	 * @see #isDelegate()
+	 * @generated
+	 */
+	void setDelegate(boolean value);
 
 } // PageResult

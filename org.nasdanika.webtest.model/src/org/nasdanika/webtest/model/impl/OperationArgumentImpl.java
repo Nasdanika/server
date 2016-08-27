@@ -3,7 +3,10 @@
 package org.nasdanika.webtest.model.impl;
 
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.nasdanika.webtest.model.ModelPackage;
@@ -17,34 +20,14 @@ import org.nasdanika.webtest.model.OperationArgument;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.webtest.model.impl.OperationArgumentImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationArgumentImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationArgumentImpl#isMasked <em>Masked</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.OperationArgumentImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class OperationArgumentImpl extends MinimalEObjectImpl.Container implements OperationArgument {
-	/**
-	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String VALUE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected String value = VALUE_EDEFAULT;
-
 	/**
 	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -86,6 +69,16 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	protected boolean masked = MASKED_EDEFAULT;
 
 	/**
+	 * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected EObject value;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -109,7 +102,7 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getValue() {
+	public EObject getValue() {
 		return value;
 	}
 
@@ -118,11 +111,47 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setValue(String newValue) {
-		String oldValue = value;
+	public NotificationChain basicSetValue(EObject newValue, NotificationChain msgs) {
+		EObject oldValue = value;
 		value = newValue;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_ARGUMENT__VALUE, oldValue, value));
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_ARGUMENT__VALUE, oldValue, newValue);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setValue(EObject newValue) {
+		if (newValue != value) {
+			NotificationChain msgs = null;
+			if (value != null)
+				msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ModelPackage.OPERATION_ARGUMENT__VALUE, null, msgs);
+			if (newValue != null)
+				msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ModelPackage.OPERATION_ARGUMENT__VALUE, null, msgs);
+			msgs = basicSetValue(newValue, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_ARGUMENT__VALUE, newValue, newValue));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case ModelPackage.OPERATION_ARGUMENT__VALUE:
+				return basicSetValue(null, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -175,12 +204,12 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ModelPackage.OPERATION_ARGUMENT__VALUE:
-				return getValue();
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				return getType();
 			case ModelPackage.OPERATION_ARGUMENT__MASKED:
 				return isMasked();
+			case ModelPackage.OPERATION_ARGUMENT__VALUE:
+				return getValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -193,14 +222,14 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ModelPackage.OPERATION_ARGUMENT__VALUE:
-				setValue((String)newValue);
-				return;
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				setType((String)newValue);
 				return;
 			case ModelPackage.OPERATION_ARGUMENT__MASKED:
 				setMasked((Boolean)newValue);
+				return;
+			case ModelPackage.OPERATION_ARGUMENT__VALUE:
+				setValue((EObject)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -214,14 +243,14 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ModelPackage.OPERATION_ARGUMENT__VALUE:
-				setValue(VALUE_EDEFAULT);
-				return;
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				setType(TYPE_EDEFAULT);
 				return;
 			case ModelPackage.OPERATION_ARGUMENT__MASKED:
 				setMasked(MASKED_EDEFAULT);
+				return;
+			case ModelPackage.OPERATION_ARGUMENT__VALUE:
+				setValue((EObject)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -235,12 +264,12 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ModelPackage.OPERATION_ARGUMENT__VALUE:
-				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 			case ModelPackage.OPERATION_ARGUMENT__TYPE:
 				return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
 			case ModelPackage.OPERATION_ARGUMENT__MASKED:
 				return masked != MASKED_EDEFAULT;
+			case ModelPackage.OPERATION_ARGUMENT__VALUE:
+				return value != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -255,9 +284,7 @@ public class OperationArgumentImpl extends MinimalEObjectImpl.Container implemen
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (value: ");
-		result.append(value);
-		result.append(", type: ");
+		result.append(" (type: ");
 		result.append(type);
 		result.append(", masked: ");
 		result.append(masked);

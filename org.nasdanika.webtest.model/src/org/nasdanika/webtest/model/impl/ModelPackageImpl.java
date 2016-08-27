@@ -27,6 +27,7 @@ import org.nasdanika.webtest.model.OperationStatus;
 import org.nasdanika.webtest.model.PageMethodResult;
 import org.nasdanika.webtest.model.PageResult;
 import org.nasdanika.webtest.model.ParameterizedTestResult;
+import org.nasdanika.webtest.model.ProxyingResult;
 import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.ScreenshotEntry;
 import org.nasdanika.webtest.model.ScreenshotType;
@@ -142,6 +143,13 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	private EClass stackTraceEntryEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass proxyingResultEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -624,8 +632,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getOperationArgument_Value() {
-		return (EAttribute)operationArgumentEClass.getEStructuralFeatures().get(0);
+	public EReference getOperationArgument_Value() {
+		return (EReference)operationArgumentEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -634,7 +642,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	public EAttribute getOperationArgument_Type() {
-		return (EAttribute)operationArgumentEClass.getEStructuralFeatures().get(1);
+		return (EAttribute)operationArgumentEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -643,7 +651,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	public EAttribute getOperationArgument_Masked() {
-		return (EAttribute)operationArgumentEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)operationArgumentEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -903,6 +911,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getProxyingResult() {
+		return proxyingResultEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getInitializationResult() {
 		return initializationResultEClass;
 	}
@@ -1029,6 +1046,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getActorResult_Delegate() {
+		return (EAttribute)actorResultEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPageResult() {
 		return pageResultEClass;
 	}
@@ -1067,6 +1093,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 */
 	public EAttribute getPageResult_Proxy() {
 		return (EAttribute)pageResultEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPageResult_Delegate() {
+		return (EAttribute)pageResultEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1139,6 +1174,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 */
 	public EAttribute getLink_Type() {
 		return (EAttribute)linkEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getLink_Comment() {
+		return (EAttribute)linkEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1232,9 +1276,9 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEReference(screenshotEClass, SCREENSHOT__ENTRIES);
 
 		operationArgumentEClass = createEClass(OPERATION_ARGUMENT);
-		createEAttribute(operationArgumentEClass, OPERATION_ARGUMENT__VALUE);
 		createEAttribute(operationArgumentEClass, OPERATION_ARGUMENT__TYPE);
 		createEAttribute(operationArgumentEClass, OPERATION_ARGUMENT__MASKED);
+		createEReference(operationArgumentEClass, OPERATION_ARGUMENT__VALUE);
 
 		screenshotEntryEClass = createEClass(SCREENSHOT_ENTRY);
 		createEAttribute(screenshotEntryEClass, SCREENSHOT_ENTRY__TYPE);
@@ -1268,15 +1312,17 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(stackTraceEntryEClass, STACK_TRACE_ENTRY__LINE_NUMBER);
 		createEAttribute(stackTraceEntryEClass, STACK_TRACE_ENTRY__NATIVE);
 
+		proxyingResultEClass = createEClass(PROXYING_RESULT);
+
+		pageMethodResultEClass = createEClass(PAGE_METHOD_RESULT);
+		createEReference(pageMethodResultEClass, PAGE_METHOD_RESULT__PAGE_RESULT);
+
 		initializationResultEClass = createEClass(INITIALIZATION_RESULT);
 
 		methodResultEClass = createEClass(METHOD_RESULT);
 
 		actorMethodResultEClass = createEClass(ACTOR_METHOD_RESULT);
 		createEReference(actorMethodResultEClass, ACTOR_METHOD_RESULT__ACTOR_RESULT);
-
-		pageMethodResultEClass = createEClass(PAGE_METHOD_RESULT);
-		createEReference(pageMethodResultEClass, PAGE_METHOD_RESULT__PAGE_RESULT);
 
 		testMethodResultEClass = createEClass(TEST_METHOD_RESULT);
 		createEAttribute(testMethodResultEClass, TEST_METHOD_RESULT__PARAMETERS);
@@ -1288,12 +1334,14 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEReference(actorResultEClass, ACTOR_RESULT__RESULTS);
 		createEReference(actorResultEClass, ACTOR_RESULT__COVERAGE);
 		createEAttribute(actorResultEClass, ACTOR_RESULT__PROXY);
+		createEAttribute(actorResultEClass, ACTOR_RESULT__DELEGATE);
 
 		pageResultEClass = createEClass(PAGE_RESULT);
 		createEReference(pageResultEClass, PAGE_RESULT__RESULTS);
 		createEReference(pageResultEClass, PAGE_RESULT__COVERAGE);
 		createEReference(pageResultEClass, PAGE_RESULT__WEB_ELEMENTS);
 		createEAttribute(pageResultEClass, PAGE_RESULT__PROXY);
+		createEAttribute(pageResultEClass, PAGE_RESULT__DELEGATE);
 
 		webElementEClass = createEClass(WEB_ELEMENT);
 		createEReference(webElementEClass, WEB_ELEMENT__LOCATORS);
@@ -1305,6 +1353,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		linkEClass = createEClass(LINK);
 		createEAttribute(linkEClass, LINK__VALUE);
 		createEAttribute(linkEClass, LINK__TYPE);
+		createEAttribute(linkEClass, LINK__COMMENT);
 
 		// Create enums
 		operationStatusEEnum = createEEnum(OPERATION_STATUS);
@@ -1345,10 +1394,11 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		testSuiteResultEClass.getESuperTypes().add(this.getTestResult());
 		parameterizedTestResultEClass.getESuperTypes().add(this.getTestSuiteResult());
 		operationResultEClass.getESuperTypes().add(this.getDescriptor());
+		proxyingResultEClass.getESuperTypes().add(this.getOperationResult());
+		pageMethodResultEClass.getESuperTypes().add(this.getMethodResult());
 		initializationResultEClass.getESuperTypes().add(this.getPageMethodResult());
 		methodResultEClass.getESuperTypes().add(this.getOperationResult());
 		actorMethodResultEClass.getESuperTypes().add(this.getMethodResult());
-		pageMethodResultEClass.getESuperTypes().add(this.getMethodResult());
 		testMethodResultEClass.getESuperTypes().add(this.getMethodResult());
 		coverageEClass.getESuperTypes().add(this.getDescriptor());
 		actorResultEClass.getESuperTypes().add(this.getDescriptor());
@@ -1401,9 +1451,9 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEReference(getScreenshot_Entries(), this.getScreenshotEntry(), this.getScreenshotEntry_Screenshot(), "entries", null, 0, -1, Screenshot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(operationArgumentEClass, OperationArgument.class, "OperationArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getOperationArgument_Value(), ecorePackage.getEString(), "value", null, 0, 1, OperationArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getOperationArgument_Type(), ecorePackage.getEString(), "type", null, 0, 1, OperationArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getOperationArgument_Masked(), ecorePackage.getEBoolean(), "masked", null, 0, 1, OperationArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getOperationArgument_Value(), ecorePackage.getEObject(), null, "value", null, 0, 1, OperationArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(screenshotEntryEClass, ScreenshotEntry.class, "ScreenshotEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getScreenshotEntry_Type(), this.getScreenshotType(), "type", null, 0, 1, ScreenshotEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1438,15 +1488,17 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getStackTraceEntry_LineNumber(), ecorePackage.getEInt(), "lineNumber", null, 0, 1, StackTraceEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getStackTraceEntry_Native(), ecorePackage.getEBoolean(), "native", null, 0, 1, StackTraceEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(proxyingResultEClass, ProxyingResult.class, "ProxyingResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(pageMethodResultEClass, PageMethodResult.class, "PageMethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPageMethodResult_PageResult(), this.getPageResult(), this.getPageResult_Results(), "pageResult", null, 0, 1, PageMethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
 		initEClass(initializationResultEClass, InitializationResult.class, "InitializationResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(methodResultEClass, MethodResult.class, "MethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(actorMethodResultEClass, ActorMethodResult.class, "ActorMethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getActorMethodResult_ActorResult(), this.getActorResult(), this.getActorResult_Results(), "actorResult", null, 0, 1, ActorMethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(pageMethodResultEClass, PageMethodResult.class, "PageMethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPageMethodResult_PageResult(), this.getPageResult(), this.getPageResult_Results(), "pageResult", null, 0, 1, PageMethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(testMethodResultEClass, TestMethodResult.class, "TestMethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTestMethodResult_Parameters(), ecorePackage.getEString(), "parameters", null, 0, -1, TestMethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1458,12 +1510,14 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEReference(getActorResult_Results(), this.getActorMethodResult(), this.getActorMethodResult_ActorResult(), "results", null, 0, -1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getActorResult_Coverage(), this.getCoverage(), null, "coverage", null, 0, -1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getActorResult_Proxy(), ecorePackage.getEBoolean(), "proxy", null, 0, 1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getActorResult_Delegate(), ecorePackage.getEBoolean(), "delegate", null, 0, 1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(pageResultEClass, PageResult.class, "PageResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPageResult_Results(), this.getPageMethodResult(), this.getPageMethodResult_PageResult(), "results", null, 0, -1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPageResult_Coverage(), this.getCoverage(), null, "coverage", null, 0, -1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPageResult_WebElements(), this.getWebElement(), null, "webElements", null, 0, -1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPageResult_Proxy(), ecorePackage.getEBoolean(), "proxy", null, 0, 1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPageResult_Delegate(), ecorePackage.getEBoolean(), "delegate", null, 0, 1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(webElementEClass, WebElement.class, "WebElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getWebElement_Locators(), this.getLocator(), null, "locators", null, 0, -1, WebElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1475,6 +1529,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEClass(linkEClass, Link.class, "Link", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLink_Value(), ecorePackage.getEString(), "value", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLink_Type(), ecorePackage.getEString(), "type", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLink_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(operationStatusEEnum, OperationStatus.class, "OperationStatus");
@@ -1752,12 +1807,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 			 "documentation", "Captures operation argument value and type."
 		   });	
 		addAnnotation
-		  (getOperationArgument_Value(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Argument value converted to string. \'******\' for masked parameters."
-		   });	
-		addAnnotation
 		  (getOperationArgument_Type(), 
 		   source, 
 		   new String[] {
@@ -1962,6 +2011,24 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 			 "documentation", "\'true\' for native methods."
 		   });	
 		addAnnotation
+		  (proxyingResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of page constructor invocation by WebTestUtil.initElements() methods \r\nwhich take class name as an argument."
+		   });	
+		addAnnotation
+		  (pageMethodResultEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Result of page method invocation."
+		   });	
+		addAnnotation
+		  (getPageMethodResult_PageResult(), 
+		   source, 
+		   new String[] {
+			 "documentation", "References page result this invocation belongs to."
+		   });	
+		addAnnotation
 		  (initializationResultEClass, 
 		   source, 
 		   new String[] {
@@ -1984,18 +2051,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "References actor result this invocation belongs to."
-		   });	
-		addAnnotation
-		  (pageMethodResultEClass, 
-		   source, 
-		   new String[] {
-			 "documentation", "Result of page method invocation."
-		   });	
-		addAnnotation
-		  (getPageMethodResult_PageResult(), 
-		   source, 
-		   new String[] {
-			 "documentation", "References page result this invocation belongs to."
 		   });	
 		addAnnotation
 		  (testMethodResultEClass, 
@@ -2046,6 +2101,12 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 			 "documentation", "True if actor class is a proxy."
 		   });	
 		addAnnotation
+		  (getActorResult_Delegate(), 
+		   source, 
+		   new String[] {
+			 "documentation", "True if actor class is a proxy."
+		   });	
+		addAnnotation
 		  (pageResultEClass, 
 		   source, 
 		   new String[] {
@@ -2074,6 +2135,12 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "\'true\' if page class is a proxy."
+		   });	
+		addAnnotation
+		  (getPageResult_Delegate(), 
+		   source, 
+		   new String[] {
+			 "documentation", "True if actor class is a proxy."
 		   });	
 		addAnnotation
 		  (webElementEClass, 
@@ -2119,6 +2186,12 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   });	
 		addAnnotation
 		  (getLink_Type(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Optional link type to differentiate between links if there is more than one."
+		   });	
+		addAnnotation
+		  (getLink_Comment(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Optional link type to differentiate between links if there is more than one."

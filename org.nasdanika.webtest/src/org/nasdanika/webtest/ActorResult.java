@@ -8,6 +8,7 @@ import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,7 @@ import org.openqa.selenium.WebDriver;
  * @author Pavel Vlasov
  *
  */
-public class ActorResult implements HttpPublisher, DirectoryPublisher {
+public class ActorResult implements HttpPublisher, DirectoryPublisher, InstanceTracker {
 
 	private final Class<? extends Actor<WebDriver>> actorClass;
 	
@@ -195,7 +196,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 		return path;
 	}
 
-	public org.nasdanika.webtest.model.ActorResult toModel(File screenshotsDir, Map<Object, Object> objectMap) {
+	org.nasdanika.webtest.model.ActorResult toModel(File screenshotsDir, Map<Object, Object> objectMap) {
 		ModelFactory modelFactory = org.nasdanika.webtest.model.ModelFactory.eINSTANCE;
 		org.nasdanika.webtest.model.ActorResult actorResult = modelFactory.createActorResult();
 		objectMap.put(this, actorResult);
@@ -203,6 +204,7 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 		if (getTitle()!=null) {
 			actorResult.setTitle(getTitle());
 		}
+		actorResult.setDelegate(Delegate.class.isAssignableFrom(getActorInterface()));
 		actorResult.setProxy(isProxy());
 		if (isProxy()) {
 			actorResult.setQualifiedName(getActorKey());
@@ -225,6 +227,17 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher {
 			actorResult.getCoverage().add(coverage);
 		}		
 		return actorResult;
+	}
+	
+	private Collection<Actor<?>> actors = new ArrayList<>();
+	
+	void addInstance(Actor<?> actor) {
+		actors.add(actor);
+	}
+
+	@Override
+	public boolean isInstance(Object obj) {
+		return actors.contains(obj);
 	}				
 
 }

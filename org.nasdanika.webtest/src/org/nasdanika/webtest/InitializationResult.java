@@ -14,8 +14,9 @@ public class InitializationResult extends OperationResult<Class<?>, org.nasdanik
 	}
 	
 	protected String getOperationName() {
-		String oName = operation.getName();
-		return oName.substring(oName.lastIndexOf('.')+1)+"::init";
+		return operation.getName()+"::init";
+//		String oName = operation.getName();
+//		return oName.substring(oName.lastIndexOf('.')+1)+"::init";
 	}
 	
 	@Override

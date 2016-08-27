@@ -139,6 +139,15 @@ public interface ModelFactory extends EFactory {
 	StackTraceEntry createStackTraceEntry();
 
 	/**
+	 * Returns a new object of class '<em>Proxying Result</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Proxying Result</em>'.
+	 * @generated
+	 */
+	ProxyingResult createProxyingResult();
+
+	/**
 	 * Returns a new object of class '<em>Initialization Result</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

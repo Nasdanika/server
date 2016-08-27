@@ -323,5 +323,5 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		modelScreenshotEntry.setScreenshot(screenshot);
 		return modelScreenshotEntry;
 	}	
-		
+
 }

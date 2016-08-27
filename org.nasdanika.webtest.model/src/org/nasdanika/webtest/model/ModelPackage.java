@@ -801,22 +801,13 @@ public interface ModelPackage extends EPackage {
 	int OPERATION_ARGUMENT = 9;
 
 	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int OPERATION_ARGUMENT__VALUE = 0;
-
-	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPERATION_ARGUMENT__TYPE = 1;
+	int OPERATION_ARGUMENT__TYPE = 0;
 
 	/**
 	 * The feature id for the '<em><b>Masked</b></em>' attribute.
@@ -825,7 +816,16 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int OPERATION_ARGUMENT__MASKED = 2;
+	int OPERATION_ARGUMENT__MASKED = 1;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int OPERATION_ARGUMENT__VALUE = 2;
 
 	/**
 	 * The number of structural features of the '<em>Operation Argument</em>' class.
@@ -1210,6 +1210,178 @@ public interface ModelPackage extends EPackage {
 	int STACK_TRACE_ENTRY_OPERATION_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.webtest.model.impl.ProxyingResultImpl <em>Proxying Result</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.webtest.model.impl.ProxyingResultImpl
+	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getProxyingResult()
+	 * @generated
+	 */
+	int PROXYING_RESULT = 14;
+
+	/**
+	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__QUALIFIED_NAME = OPERATION_RESULT__QUALIFIED_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Title</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__TITLE = OPERATION_RESULT__TITLE;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__DESCRIPTION = OPERATION_RESULT__DESCRIPTION;
+
+	/**
+	 * The feature id for the '<em><b>Links</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__LINKS = OPERATION_RESULT__LINKS;
+
+	/**
+	 * The feature id for the '<em><b>Screenshots</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__SCREENSHOTS = OPERATION_RESULT__SCREENSHOTS;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__CHILDREN = OPERATION_RESULT__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Operation Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__OPERATION_NAME = OPERATION_RESULT__OPERATION_NAME;
+
+	/**
+	 * The feature id for the '<em><b>Failure</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__FAILURE = OPERATION_RESULT__FAILURE;
+
+	/**
+	 * The feature id for the '<em><b>Error</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__ERROR = OPERATION_RESULT__ERROR;
+
+	/**
+	 * The feature id for the '<em><b>Start</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__START = OPERATION_RESULT__START;
+
+	/**
+	 * The feature id for the '<em><b>Finish</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__FINISH = OPERATION_RESULT__FINISH;
+
+	/**
+	 * The feature id for the '<em><b>Status</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__STATUS = OPERATION_RESULT__STATUS;
+
+	/**
+	 * The feature id for the '<em><b>Arguments</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__ARGUMENTS = OPERATION_RESULT__ARGUMENTS;
+
+	/**
+	 * The feature id for the '<em><b>Result</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__RESULT = OPERATION_RESULT__RESULT;
+
+	/**
+	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT__INSTANCE_ALIAS = OPERATION_RESULT__INSTANCE_ALIAS;
+
+	/**
+	 * The number of structural features of the '<em>Proxying Result</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT_FEATURE_COUNT = OPERATION_RESULT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>All Screenshots</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT___ALL_SCREENSHOTS = OPERATION_RESULT___ALL_SCREENSHOTS;
+
+	/**
+	 * The number of operations of the '<em>Proxying Result</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROXYING_RESULT_OPERATION_COUNT = OPERATION_RESULT_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.model.impl.MethodResultImpl <em>Method Result</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1217,7 +1389,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getMethodResult()
 	 * @generated
 	 */
-	int METHOD_RESULT = 15;
+	int METHOD_RESULT = 17;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -1389,7 +1561,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getPageMethodResult()
 	 * @generated
 	 */
-	int PAGE_METHOD_RESULT = 17;
+	int PAGE_METHOD_RESULT = 15;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -1570,7 +1742,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getInitializationResult()
 	 * @generated
 	 */
-	int INITIALIZATION_RESULT = 14;
+	int INITIALIZATION_RESULT = 16;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -1751,7 +1923,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getActorMethodResult()
 	 * @generated
 	 */
-	int ACTOR_METHOD_RESULT = 16;
+	int ACTOR_METHOD_RESULT = 18;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -1932,7 +2104,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getTestMethodResult()
 	 * @generated
 	 */
-	int TEST_METHOD_RESULT = 18;
+	int TEST_METHOD_RESULT = 19;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2113,7 +2285,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getCoverage()
 	 * @generated
 	 */
-	int COVERAGE = 19;
+	int COVERAGE = 20;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2186,7 +2358,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getActorResult()
 	 * @generated
 	 */
-	int ACTOR_RESULT = 20;
+	int ACTOR_RESULT = 21;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2252,13 +2424,22 @@ public interface ModelPackage extends EPackage {
 	int ACTOR_RESULT__PROXY = DESCRIPTOR_FEATURE_COUNT + 2;
 
 	/**
+	 * The feature id for the '<em><b>Delegate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR_RESULT__DELEGATE = DESCRIPTOR_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>Actor Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTOR_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 3;
+	int ACTOR_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of operations of the '<em>Actor Result</em>' class.
@@ -2277,7 +2458,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getPageResult()
 	 * @generated
 	 */
-	int PAGE_RESULT = 21;
+	int PAGE_RESULT = 22;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2352,13 +2533,22 @@ public interface ModelPackage extends EPackage {
 	int PAGE_RESULT__PROXY = DESCRIPTOR_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Delegate</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE_RESULT__DELEGATE = DESCRIPTOR_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>Page Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 4;
+	int PAGE_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of operations of the '<em>Page Result</em>' class.
@@ -2377,7 +2567,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getWebElement()
 	 * @generated
 	 */
-	int WEB_ELEMENT = 22;
+	int WEB_ELEMENT = 23;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2450,7 +2640,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getLocator()
 	 * @generated
 	 */
-	int LOCATOR = 23;
+	int LOCATOR = 24;
 
 	/**
 	 * The feature id for the '<em><b>How</b></em>' attribute.
@@ -2496,7 +2686,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getLink()
 	 * @generated
 	 */
-	int LINK = 24;
+	int LINK = 25;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2517,13 +2707,22 @@ public interface ModelPackage extends EPackage {
 	int LINK__TYPE = 1;
 
 	/**
+	 * The feature id for the '<em><b>Comment</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LINK__COMMENT = 2;
+
+	/**
 	 * The number of structural features of the '<em>Link</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LINK_FEATURE_COUNT = 2;
+	int LINK_FEATURE_COUNT = 3;
 
 	/**
 	 * The number of operations of the '<em>Link</em>' class.
@@ -2542,7 +2741,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getOperationStatus()
 	 * @generated
 	 */
-	int OPERATION_STATUS = 25;
+	int OPERATION_STATUS = 26;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.model.ScreenshotType <em>Screenshot Type</em>}' enum.
@@ -2552,7 +2751,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getScreenshotType()
 	 * @generated
 	 */
-	int SCREENSHOT_TYPE = 26;
+	int SCREENSHOT_TYPE = 27;
 
 
 	/**
@@ -2944,15 +3143,15 @@ public interface ModelPackage extends EPackage {
 	EClass getOperationArgument();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.OperationArgument#getValue <em>Value</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.webtest.model.OperationArgument#getValue <em>Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @return the meta object for the containment reference '<em>Value</em>'.
 	 * @see org.nasdanika.webtest.model.OperationArgument#getValue()
 	 * @see #getOperationArgument()
 	 * @generated
 	 */
-	EAttribute getOperationArgument_Value();
+	EReference getOperationArgument_Value();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.OperationArgument#getType <em>Type</em>}'.
@@ -3280,6 +3479,16 @@ public interface ModelPackage extends EPackage {
 	EAttribute getStackTraceEntry_Native();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.ProxyingResult <em>Proxying Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Proxying Result</em>'.
+	 * @see org.nasdanika.webtest.model.ProxyingResult
+	 * @generated
+	 */
+	EClass getProxyingResult();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.InitializationResult <em>Initialization Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3427,6 +3636,17 @@ public interface ModelPackage extends EPackage {
 	EAttribute getActorResult_Proxy();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.ActorResult#isDelegate <em>Delegate</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Delegate</em>'.
+	 * @see org.nasdanika.webtest.model.ActorResult#isDelegate()
+	 * @see #getActorResult()
+	 * @generated
+	 */
+	EAttribute getActorResult_Delegate();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.PageResult <em>Page Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3479,6 +3699,17 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getPageResult_Proxy();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.PageResult#isDelegate <em>Delegate</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Delegate</em>'.
+	 * @see org.nasdanika.webtest.model.PageResult#isDelegate()
+	 * @see #getPageResult()
+	 * @generated
+	 */
+	EAttribute getPageResult_Delegate();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.WebElement <em>Web Element</em>}'.
@@ -3564,6 +3795,17 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getLink_Type();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.Link#getComment <em>Comment</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Comment</em>'.
+	 * @see org.nasdanika.webtest.model.Link#getComment()
+	 * @see #getLink()
+	 * @generated
+	 */
+	EAttribute getLink_Comment();
 
 	/**
 	 * Returns the meta object for enum '{@link org.nasdanika.webtest.model.OperationStatus <em>Operation Status</em>}'.
@@ -3917,12 +4159,12 @@ public interface ModelPackage extends EPackage {
 		EClass OPERATION_ARGUMENT = eINSTANCE.getOperationArgument();
 
 		/**
-		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute OPERATION_ARGUMENT__VALUE = eINSTANCE.getOperationArgument_Value();
+		EReference OPERATION_ARGUMENT__VALUE = eINSTANCE.getOperationArgument_Value();
 
 		/**
 		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
@@ -4173,6 +4415,16 @@ public interface ModelPackage extends EPackage {
 		EAttribute STACK_TRACE_ENTRY__NATIVE = eINSTANCE.getStackTraceEntry_Native();
 
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.ProxyingResultImpl <em>Proxying Result</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.webtest.model.impl.ProxyingResultImpl
+		 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getProxyingResult()
+		 * @generated
+		 */
+		EClass PROXYING_RESULT = eINSTANCE.getProxyingResult();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.InitializationResultImpl <em>Initialization Result</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4299,6 +4551,14 @@ public interface ModelPackage extends EPackage {
 		EAttribute ACTOR_RESULT__PROXY = eINSTANCE.getActorResult_Proxy();
 
 		/**
+		 * The meta object literal for the '<em><b>Delegate</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTOR_RESULT__DELEGATE = eINSTANCE.getActorResult_Delegate();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.PageResultImpl <em>Page Result</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4339,6 +4599,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PAGE_RESULT__PROXY = eINSTANCE.getPageResult_Proxy();
+
+		/**
+		 * The meta object literal for the '<em><b>Delegate</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PAGE_RESULT__DELEGATE = eINSTANCE.getPageResult_Delegate();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.WebElementImpl <em>Web Element</em>}' class.
@@ -4409,6 +4677,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute LINK__TYPE = eINSTANCE.getLink_Type();
+
+		/**
+		 * The meta object literal for the '<em><b>Comment</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute LINK__COMMENT = eINSTANCE.getLink_Comment();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.OperationStatus <em>Operation Status</em>}' enum.

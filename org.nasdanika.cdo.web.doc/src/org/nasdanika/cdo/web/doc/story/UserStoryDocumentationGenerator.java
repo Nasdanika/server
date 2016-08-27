@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +22,7 @@ import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Scenario;
 import org.nasdanika.story.State;
 import org.nasdanika.story.Story;
+import org.nasdanika.story.StoryBase;
 import org.nasdanika.web.HttpServletRequestContext;
 
 class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerator<Story> {
@@ -35,8 +37,10 @@ class UserStoryDocumentationGenerator extends StateContainerDocumentationGenerat
 	}
 
 	@Override
-	protected Collection<? extends EObject> getTocChildren(Story story) {
-		return story.getScenarios();
+	protected Collection<? extends EObject> getTocChildren(Story story) {		
+		Collection<EObject> ret = new ArrayList<>(super.getTocChildren(story));
+		ret.addAll(sortByName(story.getScenarios()));
+		return ret;
 	}
 		
 	@Override

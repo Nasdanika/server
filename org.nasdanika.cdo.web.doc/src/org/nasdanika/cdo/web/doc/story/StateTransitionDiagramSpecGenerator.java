@@ -98,7 +98,10 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 			diagramElements.add(obj);			
 			if (obj instanceof Scenario) {
 				diagramElements.addAll(((Scenario) obj).getContextStates());
-				diagramElements.add(((Scenario) obj).getOutcomeState());
+				State outcomeState = ((Scenario) obj).getOutcomeState();
+				if (outcomeState != null) {
+					diagramElements.add(outcomeState);
+				}
 			}
 		}
 		
@@ -176,6 +179,11 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 		for (EObject de: diagramElements) {
 			if (de instanceof State) {
 				diagramElementRelations((State) de, deMap, specBuilder);
+			} else if (de instanceof Scenario && ((Scenario) de).getContextStates().isEmpty() && ((Scenario) de).getOutcomeState() == null) {
+				specBuilder
+					.append("[*] --> [*] : ")
+					.append(((Scenario) de).getName())
+					.append(System.lineSeparator());								
 			}
 		}
 		if (obj instanceof Story) {
@@ -210,7 +218,14 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 
 	protected void diagramElementRelations(State diagramElement, Map<State, StateEntry> deMap, StringBuilder specBuilder) {
 		for (Scenario os: deMap.get(diagramElement).outboundScenarios) {
-			if (os.getOutcomeState() != null && deMap.containsKey(os.getOutcomeState())) {
+			if (os.getOutcomeState() == null) {
+				specBuilder
+					.append("DE")
+					.append(deMap.get(diagramElement).id)
+					.append(" --> [*] : ")
+					.append(os.getName())
+					.append(System.lineSeparator());				
+			} else if (deMap.containsKey(os.getOutcomeState())) {
 				specBuilder
 					.append("DE")
 					.append(deMap.get(diagramElement).id)
@@ -220,7 +235,19 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 					.append(os.getName())
 					.append(System.lineSeparator());
 			}
+		}
+		
+		for (Scenario os: deMap.get(diagramElement).inboundScenarios) {
+			if (os.getContextStates().isEmpty()) {
+				specBuilder
+					.append("[*] --> DE")
+					.append(deMap.get(diagramElement).id)
+					.append(" : ")
+					.append(os.getName())
+					.append(System.lineSeparator());				
+			}
 		}		
+		
 	}
 
 	@Override

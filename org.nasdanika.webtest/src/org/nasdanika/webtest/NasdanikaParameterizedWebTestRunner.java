@@ -515,7 +515,13 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 			}
 
 			@Override
-			public org.nasdanika.webtest.model.TestResult toModel(List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, File screenshotsDir, Map<Object, Object> objectMap) {
+			public org.nasdanika.webtest.model.TestResult toModel(
+					List<org.nasdanika.webtest.model.Screenshot> screenshotsCollector, 
+					File screenshotsDir, 
+					Map<Object, Object> objectMap,
+					org.nasdanika.core.Context context,
+					Executor executor) {
+				
 				if (getChildren().isEmpty() && getActorResults().isEmpty() && getPageResults().isEmpty()) {
 					return null; // No reason to publish.
 				}
@@ -586,7 +592,13 @@ public class NasdanikaParameterizedWebTestRunner extends Suite implements TestRe
 				
 				objectMap.put(this, testResult);
 				for (TestResult tr: getChildren()) {
-					org.nasdanika.webtest.model.TestResult trModel = tr.toModel(screenshotsCollector, screenshotsDir, objectMap);
+					org.nasdanika.webtest.model.TestResult trModel = tr.toModel(
+							screenshotsCollector, 
+							screenshotsDir, 
+							objectMap,
+							context,
+							executor);
+					
 					if (trModel!=null) {
 						testResult.getChildren().add(trModel);
 					}

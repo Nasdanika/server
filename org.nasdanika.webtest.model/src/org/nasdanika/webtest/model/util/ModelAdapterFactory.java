@@ -23,6 +23,7 @@ import org.nasdanika.webtest.model.OperationResult;
 import org.nasdanika.webtest.model.PageMethodResult;
 import org.nasdanika.webtest.model.PageResult;
 import org.nasdanika.webtest.model.ParameterizedTestResult;
+import org.nasdanika.webtest.model.ProxyingResult;
 import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.ScreenshotEntry;
 import org.nasdanika.webtest.model.StackTraceEntry;
@@ -146,6 +147,14 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 				return createStackTraceEntryAdapter();
 			}
 			@Override
+			public Adapter caseProxyingResult(ProxyingResult object) {
+				return createProxyingResultAdapter();
+			}
+			@Override
+			public Adapter casePageMethodResult(PageMethodResult object) {
+				return createPageMethodResultAdapter();
+			}
+			@Override
 			public Adapter caseInitializationResult(InitializationResult object) {
 				return createInitializationResultAdapter();
 			}
@@ -156,10 +165,6 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseActorMethodResult(ActorMethodResult object) {
 				return createActorMethodResultAdapter();
-			}
-			@Override
-			public Adapter casePageMethodResult(PageMethodResult object) {
-				return createPageMethodResultAdapter();
 			}
 			@Override
 			public Adapter caseTestMethodResult(TestMethodResult object) {
@@ -402,6 +407,20 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createStackTraceEntryAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.webtest.model.ProxyingResult <em>Proxying Result</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.webtest.model.ProxyingResult
+	 * @generated
+	 */
+	public Adapter createProxyingResultAdapter() {
 		return null;
 	}
 
