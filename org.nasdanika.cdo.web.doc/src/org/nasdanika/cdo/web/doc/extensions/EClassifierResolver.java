@@ -8,9 +8,6 @@ import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 
 public class EClassifierResolver implements WikiLinkResolver {
 
-	private static final String PACKAGES_GLOBAL = "/packages/global/";
-	private static final String PACKAGES_SESSION = "/packages/session/";
-
 	@Override
 	public String resolve(String spec, String docRoutePath, Map<Object, Object> environment) {
 		int idx = spec.indexOf("@");
@@ -20,19 +17,19 @@ public class EClassifierResolver implements WikiLinkResolver {
 			if (contextModelElementPath==null) {
 				DocRoute docRoute = (DocRoute) environment.get(DocRoute.class);
 				if (docRoute.isSessionRegistry()) {
-					return docRoutePath+PACKAGES_SESSION+classifierPath;
+					return docRoutePath+DocRoute.PACKAGES_SESSION_PATH+classifierPath;
 				}
 				if (docRoute.isGlobalRegistry()) {
-					return docRoutePath+PACKAGES_GLOBAL+classifierPath;					
+					return docRoutePath+DocRoute.PACKAGES_GLOBAL_PATH+classifierPath;					
 				}
 			} else {
-				int packagesIdx = contextModelElementPath.lastIndexOf(PACKAGES_SESSION);
+				int packagesIdx = contextModelElementPath.lastIndexOf(DocRoute.PACKAGES_SESSION_PATH);
 				if (packagesIdx!=-1) {
-					return contextModelElementPath.substring(0, packagesIdx+PACKAGES_SESSION.length())+classifierPath; 
+					return contextModelElementPath.substring(0, packagesIdx+DocRoute.PACKAGES_SESSION_PATH.length())+classifierPath; 
 				}
-				packagesIdx = contextModelElementPath.lastIndexOf(PACKAGES_GLOBAL);
+				packagesIdx = contextModelElementPath.lastIndexOf(DocRoute.PACKAGES_GLOBAL_PATH);
 				if (packagesIdx!=-1) {
-					return contextModelElementPath.substring(0, packagesIdx+PACKAGES_GLOBAL.length())+classifierPath; 
+					return contextModelElementPath.substring(0, packagesIdx+DocRoute.PACKAGES_GLOBAL_PATH.length())+classifierPath; 
 				}
 			}
 		}

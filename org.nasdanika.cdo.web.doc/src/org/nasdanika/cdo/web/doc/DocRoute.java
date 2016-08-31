@@ -150,8 +150,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	public static final String BUNDLE_INFO_PATH = "/bundle-info/";
 	public static final String COMPONENT_INFO_PATH = "/component-info/";	
 	private static final String PACKAGES_PATH = "/packages/";
-	private static final String PACKAGES_SESSION_PATH = PACKAGES_PATH + "session/";
-	private static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
+	public static final String PACKAGES_SESSION_PATH = PACKAGES_PATH + "session/";
+	public static final String PACKAGES_GLOBAL_PATH = PACKAGES_PATH + "global/";
 	private static final String TOC_PATH = "/toc/";
 	
 	public static final String STORY_PATH = "/story/";
