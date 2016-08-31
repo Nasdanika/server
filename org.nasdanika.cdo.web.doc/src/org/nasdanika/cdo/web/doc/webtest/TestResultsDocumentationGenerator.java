@@ -80,7 +80,7 @@ public class TestResultsDocumentationGenerator extends AbstractModelDocumentatio
 		return null;		
 	}
 	
-	private boolean match(EClass eClass, String str) {
+	private static boolean match(EClass eClass, String str) {
 		if (CoreUtil.isBlank(str)) {
 			return true;
 		}
@@ -134,5 +134,10 @@ public class TestResultsDocumentationGenerator extends AbstractModelDocumentatio
 		}
 		return ret;
 	}	
+	
+	EObject resolveLink(org.nasdanika.webtest.model.Link link) {
+		return storyDocumentationGenerator == null ? null : storyDocumentationGenerator.resolveLink(link.getType(), link.getValue());
+	}
+	
 	
 }

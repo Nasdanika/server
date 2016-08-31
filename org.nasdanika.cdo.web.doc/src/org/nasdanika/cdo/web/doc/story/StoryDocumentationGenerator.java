@@ -10,7 +10,9 @@ import java.util.regex.Pattern;
 
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.nasdanika.cdo.web.doc.AbstractModelDocumentationGenerator;
 import org.nasdanika.cdo.web.doc.DocRoute;
@@ -218,5 +220,40 @@ public class StoryDocumentationGenerator extends AbstractModelDocumentationGener
 			}
 		}
 	}	
+	
+	public EObject resolveLink(String type, String location) {
+		int idx = location.indexOf("#");
+		if (idx != -1) {
+			Resource res = modelResources.get(location.substring(0, idx));
+			if (res != null) {
+				EClass eType = null;
+				if (!CoreUtil.isBlank(type)) {
+					int atIdx = type.indexOf("@");
+					if (atIdx == -1) {
+						return null;
+					}
+					EPackage pkg = res.getResourceSet().getPackageRegistry().getEPackage(type.substring(atIdx+1));
+					if (pkg == null) {
+						return null;
+					}
+					EClassifier classifier = pkg.getEClassifier(type.substring(0, atIdx));
+					if (classifier instanceof EClass) {
+						eType = (EClass) classifier;
+					} else {
+						return null;
+					}
+				}
+				TreeIterator<EObject> rit = res.getAllContents();
+				while (rit.hasNext()) {
+					EObject next = rit.next();
+					String id = resolveModelElementID(next);
+					if (!CoreUtil.isBlank(id) && id.equals(location.substring(idx+1)) && (eType == null || eType.isInstance(next))) {
+						return next;
+					}
+				}
+			}
+		}
+		return null;
+	}
 	
 }

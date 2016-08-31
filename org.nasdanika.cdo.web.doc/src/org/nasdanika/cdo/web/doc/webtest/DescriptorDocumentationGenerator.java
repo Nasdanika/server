@@ -7,15 +7,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.BasicEMap;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.json.JSONArray;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
+import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator.Link;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Container;
@@ -23,6 +26,7 @@ import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.Action;
@@ -129,7 +133,28 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 		}
 	}	
 	
-	protected void links(Descriptor obj, Container<?> container, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix) throws Exception {
+	protected void links(
+			Descriptor obj, 
+			Container<?> container, 
+			HttpServletRequestContext context, 
+			java.net.URI baseURI, 
+			String urlPrefix) throws Exception {
+		
+		if (!obj.getLinks().isEmpty()) {
+			Table linksTable = HTMLFactory.INSTANCE.table().bordered();
+			linksTable.header().headerRow("Source", "Type", "Comment").style(Style.PRIMARY);
+			for (org.nasdanika.webtest.model.Link link: obj.getLinks()) {
+				EObject target = testResultsDocumentationGenerator.resolveLink(link);
+				linksTable.body().row(
+						target == null ? StringEscapeUtils.escapeHtml4(link.getValue()) : testResultsDocumentationGenerator.getDocRoute().findToc(target).getLink(testResultsDocumentationGenerator.getDocRoute().getDocRoutePath()),
+						target == null ? StringEscapeUtils.escapeHtml4(link.getType()) : eClassLink(target.eClass()),
+						StringEscapeUtils.escapeHtml4(link.getComment()));
+			}
+			
+			container.content(
+					HTMLFactory.INSTANCE.tag(TagName.h4, "Links"),
+					linksTable);						
+		}
 //		getLinks() - TODO
 		
 	}
@@ -245,4 +270,10 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 		return flask.getTarget();		
 	}
 
+	
+	protected Object eClassLink(EClass eClass) {
+		String classifierPath = Hex.encodeHexString(eClass.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClass.getName();
+		return HTMLFactory.INSTANCE.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+testResultsDocumentationGenerator.getDocRoute().getDocRoutePath()+DocRoute.PACKAGES_GLOBAL_PATH+classifierPath, eClass.getName());		
+	}
+	
 }

@@ -204,7 +204,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 				linksTable.body().row(
 						link.getLink(),
 						eClassLink(link.getType()),
-						link.getComment());
+						StringEscapeUtils.escapeHtml4(link.getComment()));
 			}
 			
 			tabs.item("Links", linksTable);
