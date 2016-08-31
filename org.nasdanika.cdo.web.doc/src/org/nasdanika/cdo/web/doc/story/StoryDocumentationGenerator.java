@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Tag;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Step;
@@ -23,6 +25,50 @@ import org.nasdanika.story.StoryPackage;
 import org.nasdanika.story.User;
 
 public class StoryDocumentationGenerator extends AbstractModelDocumentationGenerator {
+
+	public interface Link {
+		
+		/**
+		 * HTML link (anchor)
+		 * @return
+		 */
+		Tag getLink();
+		
+		EClass getType();
+		
+		String getComment();
+		
+	}
+	
+	public interface LinkProvider {
+				
+		List<Link> getLinks(EClass linkType, String location);
+		
+	}
+	
+	private LinkProvider linkProvider;
+	
+	public void setLinkProvider(LinkProvider linkProvider) {
+		this.linkProvider = linkProvider;
+	}
+	
+	List<Link> getLinks(EObject storyElement) {
+		if (linkProvider == null) {
+			return Collections.emptyList();
+		}
+		String id = resolveModelElementID(storyElement);
+		if (CoreUtil.isBlank(id)) {
+			return Collections.emptyList();			
+		}
+		
+		for (Entry<String, Resource> mre: modelResources.entrySet()) {
+			if (storyElement.eResource() == mre.getValue()) {
+				return linkProvider.getLinks(storyElement.eClass(), mre.getKey()+"#"+id);
+			}
+		}
+				
+		return Collections.emptyList();
+	}
 			
 	private final List<DocumentationGeneratorEntry> documentationGenerators;
 	private final List<DiagramSpecGenerator> diagramSpecGenerators;

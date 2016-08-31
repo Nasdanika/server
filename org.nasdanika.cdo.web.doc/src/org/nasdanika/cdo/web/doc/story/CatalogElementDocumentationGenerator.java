@@ -12,11 +12,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
+import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator.Link;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.FontAwesome.Spinner;
@@ -145,7 +148,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					TagName.h3, 
 					htmlFactory.tag(TagName.img).attribute("src", storyDocumentationGenerator.getDocRoute().getDocRoutePath()+getIcon()).style().margin().right("5px"),
 					StringEscapeUtils.escapeHtml4(obj.getName()),
-					" (", obj.eClass().getName(), ")"));
+					" (", eClassLink(obj.eClass()).toString().trim(), ")"));
 		
 		String resolvedID = StoryDocumentationGenerator.resolveModelElementID(obj);
 		if (!CoreUtil.isBlank(resolvedID)) {
@@ -164,7 +167,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 		
 		descriptionTab(obj, context, baseURI, urlPrefix, path, tabs);
 		diagramTab(obj, tabs);
-		// TODO - links, e.g. test results, pages, actors, ...
+		linksTab(obj, context, baseURI, urlPrefix, path, tabs);
 	}
 	
 	protected void descriptionTab(
@@ -183,6 +186,30 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 			}
 		}
 	}
+	
+	protected void linksTab(
+			T obj, 
+			HttpServletRequestContext context, 
+			java.net.URI baseURI, 
+			String urlPrefix, 
+			String path, 
+			Tabs tabs) {
+		
+		List<Link> links = storyDocumentationGenerator.getLinks(obj);
+		if (!links.isEmpty()) {
+			Table linksTable = HTMLFactory.INSTANCE.table().bordered();
+			linksTable.header().headerRow("Source", "Type", "Comment").style(Style.PRIMARY);
+			// TODO - sort
+			for (Link link: links) {			
+				linksTable.body().row(
+						link.getLink(),
+						eClassLink(link.getType()),
+						link.getComment());
+			}
+			
+			tabs.item("Links", linksTable);
+		}
+	}	
 		
 	protected Action generateDiagram(
 			T obj,
@@ -397,6 +424,11 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 			}					
 		}
 		return scenariosTable;
-	}		
+	}	
+	
+	protected Object eClassLink(EClass eClass) {
+		String classifierPath = Hex.encodeHexString(eClass.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClass.getName();
+		return HTMLFactory.INSTANCE.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+storyDocumentationGenerator.getDocRoute().getDocRoutePath()+DocRoute.PACKAGES_GLOBAL_PATH+classifierPath, eClass.getName());		
+	}
 		
 }

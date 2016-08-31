@@ -67,6 +67,7 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 
 		descriptionTab(obj, context, baseURI, urlPrefix, path, tabs);
 		contentTab(obj, context, baseURI, urlPrefix, path, tabs);
+		linksTab(obj, context, baseURI, urlPrefix, path, tabs);
 		diagramTab(obj, tabs);
 	}
 	
@@ -77,7 +78,7 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 			for (CatalogElement catalogElement: sortByName(obj.getElements())) {			
 				contentTable.body().row(
 						storyDocumentationGenerator.getDocRoute().findToc(catalogElement).getLink(storyDocumentationGenerator.getDocRoute().getDocRoutePath()),
-						catalogElement.eClass().getName(),
+						eClassLink(catalogElement.eClass()),
 						storyDocumentationGenerator.getDocRoute().firstMarkdownSentence(catalogElement.getDescription()));
 			}
 			tabs.item("Content", contentTable);

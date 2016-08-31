@@ -7,16 +7,26 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.nasdanika.cdo.web.doc.AbstractModelDocumentationGenerator;
 import org.nasdanika.cdo.web.doc.DocRoute;
+import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator;
+import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator.Link;
+import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Tag;
+import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.ModelPackage;
 import org.nasdanika.webtest.model.Screenshot;
 import org.nasdanika.webtest.model.TestSuiteResult;
 
-public class TestResultsDocumentationGenerator extends AbstractModelDocumentationGenerator {
+public class TestResultsDocumentationGenerator extends AbstractModelDocumentationGenerator implements StoryDocumentationGenerator.LinkProvider {
 			
 	private final List<DocumentationGeneratorEntry> documentationGenerators;
+	private StoryDocumentationGenerator storyDocumentationGenerator;
 	
 	{
 		List<DocumentationGeneratorEntry> tocBuilderRoutes = new ArrayList<>();
@@ -38,8 +48,15 @@ public class TestResultsDocumentationGenerator extends AbstractModelDocumentatio
 		return documentationGenerators;
 	};
 	
-	public TestResultsDocumentationGenerator(DocRoute docRoute, Collection<String> testResultsModels) {
+	public TestResultsDocumentationGenerator(
+			DocRoute docRoute, 
+			Collection<String> testResultsModels,
+			StoryDocumentationGenerator storyDocumentationGenerator) {
 		super(docRoute, testResultsModels);
+		this.storyDocumentationGenerator = storyDocumentationGenerator;
+		if (storyDocumentationGenerator != null) {
+			storyDocumentationGenerator.setLinkProvider(this);
+		}
 	}
 	
 	@Override
@@ -61,6 +78,61 @@ public class TestResultsDocumentationGenerator extends AbstractModelDocumentatio
 		}
 		
 		return null;		
+	}
+	
+	private boolean match(EClass eClass, String str) {
+		if (CoreUtil.isBlank(str)) {
+			return true;
+		}
+		
+		String linkTypeStr = eClass.getName()+"@"+eClass.getEPackage().getNsURI();
+		if (linkTypeStr.equals(str)) {
+			return true;
+		}
+		
+		for (EClass sc: eClass.getESuperTypes()) {
+			if (match(sc, str)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	@Override
+	public List<Link> getLinks(EClass linkType, String location) {
+		List<Link> ret = new ArrayList<>();
+		TreeIterator<Notifier> cit = resourceSet.getAllContents();
+		while (cit.hasNext()) {
+			Notifier next = cit.next();
+			if (next instanceof Descriptor) {
+				for (org.nasdanika.webtest.model.Link link: ((Descriptor) next).getLinks()) {
+					if (link.getValue().equals(location) && match(linkType, link.getType())) {
+						ret.add(new Link() {
+							
+							private Tag ref = getDocRoute().findToc(next).getLink(getDocRoute().getDocRoutePath());
+
+							@Override
+							public Tag getLink() {
+								return ref;
+							}
+
+							@Override
+							public EClass getType() {
+								return ((EObject) next).eClass();
+							}
+
+							@Override
+							public String getComment() {
+								return link.getComment();
+							}
+							
+						});
+					}
+				}
+			}
+		}
+		return ret;
 	}	
 	
 }

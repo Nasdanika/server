@@ -167,8 +167,16 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 			}
 		}
 		if (obj instanceof Story) {
-			for (State state: ((Story) obj).getStartStates()) {
-				if (state != null && deMap.containsKey(state)) {
+			Z: for (State state: ((Story) obj).getStartStates()) {
+				StateEntry se = deMap.get(state);
+				if (se != null) {
+					for (Scenario is: se.inboundScenarios) {
+						if (is.getContextStates().isEmpty()) {
+							// There is a scenario transitioning from Start
+							// No need in implied transition.
+							continue Z; 
+						}
+					}
 					specBuilder
 						.append("[*] --> DE")
 						.append(deMap.get(state).id)

@@ -1034,7 +1034,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		try {
 			// Load stories & test results
 			storyDocumentationGenerator = new StoryDocumentationGenerator(this, storyModels);
-			testResultsDocumentationGenerator = new TestResultsDocumentationGenerator(this, testResultsModels);
+			testResultsDocumentationGenerator = new TestResultsDocumentationGenerator(this, testResultsModels, storyDocumentationGenerator);
 			
 			// TOC
 			tocRoot = new TocNode(null, null, null, null, false);
