@@ -9,18 +9,23 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
+import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.ActorResult;
 import org.nasdanika.webtest.model.Descriptor;
@@ -183,42 +188,65 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 			
 			statsChart(sessionStats, testsTabContent);	
 			
+			Collections.sort(testResults, new Comparator<TestResult>() {
+
+				@Override
+				public int compare(TestResult o1, TestResult o2) {
+					EList<String> c1 = o1.getCategory();
+					EList<String> c2 = o2.getCategory();
+					
+					for (int i = 0; i < Math.min(c1.size(), c2.size()); ++i) {
+						int cmp = c1.get(i).compareTo(c2.get(i));
+						if (cmp != 0) {
+							return cmp;
+						}
+					}
+					
+					int cmp = c1.size() - c2.size();
+					if (cmp != 0) {
+						return cmp;
+					}
+					
+					cmp = o1.getTitle().compareTo(o2.getTitle());								
+					return cmp == 0 ? o1.getQualifiedName().compareTo(o2.getQualifiedName()) : cmp;
+				}
+				
+			});
+			
+			String prevCategoryStr = null;
+
 			Table resultsTable = htmlFactory.table().bordered();
 			testsTabContent.content(resultsTable);
 			Row header = resultsTable.header().row().style(Bootstrap.Style.INFO);
 			header.header(htmlFactory.glyphicon(Glyphicon.search), "&nbsp;Test(s)");
-			header.header("Category");
 			header.header(htmlFactory.glyphicon(Glyphicon.file), "&nbsp;Description");
 			for (OperationStatus status: OperationStatus.values()) {
 				if (sessionStats.containsKey(status)) {
 					header.header(operationStatusGlyph(status), "&nbsp;", status.getName()).style("text-align", "center").attribute("nowrap", "true");
 				}
 			}
-			
-			Collections.sort(testResults, new Comparator<TestResult>() {
-
-				@Override
-				public int compare(TestResult o1, TestResult o2) {
-					int cmp = o1.getTitle().compareTo(o2.getTitle());								
-					return cmp == 0 ? o1.getQualifiedName().compareTo(o2.getQualifiedName()) : cmp;
+			for (TestResult tr: testResults) {
+				StringBuilder categoryStrBuilder = new StringBuilder();
+				for (String ce: tr.getCategory()) {
+					if (categoryStrBuilder.length() > 0) {
+						categoryStrBuilder.append(" / ");
+					}
+					categoryStrBuilder.append(ce);
 				}
 				
-			});
-			
-			for (TestResult tr: testResults) {
+				if (prevCategoryStr == null || !categoryStrBuilder.toString().equals(prevCategoryStr)) {
+					prevCategoryStr = categoryStrBuilder.toString();
+					if (!CoreUtil.isBlank(prevCategoryStr)) {
+						resultsTable.row().header(StringEscapeUtils.escapeHtml4(prevCategoryStr)).colspan(4).style().background().color().bootstrapColor(Color.GRAY_LIGHTER);
+					}
+				}
+				
 				Row classRow = resultsTable.body().row();
 				String objectPath = testResultsDocumentationGenerator.getObjectPath(tr);
 				DocumentationGenerator<Object> docGen = testResultsDocumentationGenerator.getDocumentationGenerator(tr.eClass());
 				String title = docGen instanceof DescriptorDocumentationGenerator ? ((DescriptorDocumentationGenerator) docGen).getTitle(tr) : tr.getTitle(); 
 				String href = DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+testResultsDocumentationGenerator.getDocRoute().getDocRoutePath()+objectPath+"/index.html";
 				classRow.cell(htmlFactory.link(href, StringEscapeUtils.escapeHtml4(title)));		
-				Cell categoryCell = classRow.cell();
-				for (String ce: tr.getCategory()) {
-					if (!categoryCell.isEmpty()) {
-						categoryCell.content(" / ");
-					}
-					categoryCell.content(ce);
-				}
 				Cell descriptionCell = classRow.cell();
 				if (docGen instanceof DescriptorDocumentationGenerator) {
 					((DescriptorDocumentationGenerator) docGen).description(tr, descriptionCell, context, baseURI, urlPrefix);
@@ -239,7 +267,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 				}
 			}
 			Row totalsRow = resultsTable.row().style(Bootstrap.Style.INFO);
-			totalsRow.cell("Total").colspan(3);
+			totalsRow.cell("Total").colspan(2);
 			for (OperationStatus status: OperationStatus.values()) {
 				if (sessionStats.containsKey(status)) {
 					totalsRow.cell(sessionStats.get(status)).attribute("align", "center");

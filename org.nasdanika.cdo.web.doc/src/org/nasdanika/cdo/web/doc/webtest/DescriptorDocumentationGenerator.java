@@ -211,11 +211,12 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 	public void addStats(TestClassResult testClassResult, EMap<OperationStatus, Integer> ret) {
 		for (Entry<String, Integer> se: testClassResult.getStats()) {
 			if (se.getValue() != 0) {
-				Integer val = ret.get(se.getKey());
+				OperationStatus osKey = OperationStatus.get(se.getKey());
+				Integer val = ret.get(osKey);
 				if (val == null) {
-					ret.put(OperationStatus.get(se.getKey()), se.getValue());
+					ret.put(osKey, se.getValue());
 				} else {
-					ret.put(OperationStatus.get(se.getKey()), se.getValue() + val);
+					ret.put(osKey, se.getValue() + val);
 				}
 			}
 		};
