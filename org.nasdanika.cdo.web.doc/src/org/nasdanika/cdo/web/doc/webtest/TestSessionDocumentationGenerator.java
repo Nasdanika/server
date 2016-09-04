@@ -18,14 +18,12 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
-import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.webtest.model.ActorResult;
 import org.nasdanika.webtest.model.Descriptor;
@@ -237,7 +235,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 				if (prevCategoryStr == null || !categoryStrBuilder.toString().equals(prevCategoryStr)) {
 					prevCategoryStr = categoryStrBuilder.toString();
 					if (!CoreUtil.isBlank(prevCategoryStr)) {
-						resultsTable.row().header(StringEscapeUtils.escapeHtml4(prevCategoryStr)).colspan(4).style().background().color().bootstrapColor(Color.GRAY_LIGHTER);
+						resultsTable.body().row().header(StringEscapeUtils.escapeHtml4(prevCategoryStr)).colspan(4).style().background().color().bootstrapColor(Color.GRAY_LIGHTER);
 					}
 				}
 				

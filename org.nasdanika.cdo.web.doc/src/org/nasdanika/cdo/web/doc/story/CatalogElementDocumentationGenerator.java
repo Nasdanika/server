@@ -152,7 +152,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 		
 		String resolvedID = StoryDocumentationGenerator.resolveModelElementID(obj);
 		if (!CoreUtil.isBlank(resolvedID)) {
-			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID)).style().margin().bottom("10px"));
+			ret.content(htmlFactory.div("<B>ID: </B>", StringEscapeUtils.escapeHtml4(resolvedID+" ("+storyDocumentationGenerator.getModelLocation(obj)+")")).style().margin().bottom("10px"));
 		}
 		return ret;
 	}

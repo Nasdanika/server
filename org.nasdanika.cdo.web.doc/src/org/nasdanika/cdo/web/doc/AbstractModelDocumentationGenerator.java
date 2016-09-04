@@ -211,13 +211,19 @@ public abstract class AbstractModelDocumentationGenerator implements AutoCloseab
 	}
 	
 	public java.net.URI getModelUri(EObject modelElement) throws URISyntaxException {
+		String modelLocation = getModelLocation(modelElement);
+		return modelLocation == null ? null : new java.net.URI(getDocRoute().getDocRoutePath()+DocRoute.BUNDLE_PATH+modelLocation); 
+	}
+	
+	public String getModelLocation(EObject modelElement) {
 		for (Entry<String, Resource> trre: modelResources.entrySet()) {
 			if (modelElement.eResource() == trre.getValue()) {
-				return new java.net.URI(getDocRoute().getDocRoutePath()+DocRoute.BUNDLE_PATH+trre.getKey()); 
+				return trre.getKey(); 
 			}
 		}
 		
 		return null;		
 	}
+
 	
 }
