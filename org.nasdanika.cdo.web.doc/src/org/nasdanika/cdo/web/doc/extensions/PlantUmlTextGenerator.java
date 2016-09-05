@@ -2,7 +2,6 @@ package org.nasdanika.cdo.web.doc.extensions;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -20,6 +19,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.nasdanika.cdo.web.doc.DependencyTracer;
+import org.nasdanika.cdo.web.doc.DocRoute;
 
 /**
  * This code is based on net.sourceforge.plantuml.text.AbstractDiagramTextProvider and 
@@ -29,6 +30,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
  *
  */
 public class PlantUmlTextGenerator {
+	
+	public enum RelationshipDirection { in, out, both } 
 	
 	// TODO - support of packages and fully qualified names -> get rid of Logical name?
 	
@@ -112,48 +115,76 @@ public class PlantUmlTextGenerator {
 		
 	// --- ECore ---
 	
-	/**
-	 * Appends core classifiers, their related classifiers, and relationships
-	 * @param coreClassifiers
-	 * @throws IOException 
-	 */
-	public void appendWithRelationships(EClassifier... coreClassifiers) throws IOException {
-		appendWithRelationships(Arrays.asList(coreClassifiers));
-	}
+	
+	private static DependencyTracer<EClassifier> OUT_DEPENDENCY_TRACER = new DependencyTracer<EClassifier>() {
+
+		@Override
+		protected Iterable<EClassifier> getDependencies(EClassifier obj) {
+			Collection<EClassifier> ret = new HashSet<>();
+			if (obj instanceof EClass) {
+				ret.addAll(((EClass) obj).getESuperTypes());
+				for (EReference ref: ((EClass) obj).getEReferences()) {
+					ret.add(ref.getEReferenceType());
+				}
+			}
+			return ret;
+		}
+		
+	};
+		
+	private DependencyTracer<EClassifier> inDependencyTracer = new DependencyTracer<EClassifier>() {
+
+		@Override
+		protected Iterable<EClassifier> getDependencies(EClassifier obj) {
+			Collection<EClassifier> ret = new HashSet<>();
+			if (obj instanceof EClass) {
+				ret.addAll(getSubTypes((EClass) obj));
+				ret.addAll(getReferrers((EClass) obj));
+			}
+			return ret;
+		}
+		
+	};
+	
+	
 	
 	/**
 	 * Appends core classifiers, their related classifiers, and relationships
 	 * @param coreClassifiers
 	 * @throws IOException 
 	 */
-	public void appendWithRelationships(Iterable<EClassifier> coreClassifiers) throws IOException {
+	@SuppressWarnings("unchecked")
+	public void appendWithRelationships(
+			Iterable<EClassifier> coreClassifiers,
+			RelationshipDirection direction,
+			int depth) throws IOException {
 		Set<EClassifier> coreSet = new HashSet<>();
 		for (EClassifier cc: coreClassifiers) {
 			if (coreSet.add(cc)) {
 				append(cc);
 			}
 		}
-
+				
 		Set<EClassifier> relatedSet = new HashSet<>();
-		for (EClassifier cc: coreSet) {
-			if (cc instanceof EClass) {
-				for (EClass st: ((EClass) cc).getESuperTypes()) {
-					if (!coreSet.contains(st) && relatedSet.add(st)) {
-						append(st, "#DDDDDD");
-					}
-				}
-				for (EClass st: getSubTypes((EClass) cc)) {
-					if (!coreSet.contains(st) && relatedSet.add(st)) {
-						append(st, "#DDDDDD");
-					}
-				}
-				for (EReference ref: ((EClass) cc).getEReferences()) {
-					EClass refType = ref.getEReferenceType();
-					if (!coreSet.contains(refType) && relatedSet.add(refType)) {
-						append(refType, "#DDDDDD");
-					}
-				}
-			}			
+		
+		switch (direction) {
+		case both:
+			relatedSet = inDependencyTracer.trace(coreSet, depth, OUT_DEPENDENCY_TRACER);
+			break;
+		case in:
+			relatedSet = inDependencyTracer.trace(coreSet, depth);
+			break;
+		case out:
+			relatedSet = OUT_DEPENDENCY_TRACER.trace(coreSet, depth);
+			break;
+		default:
+			break;		
+		}
+		
+		for (EClassifier rc: relatedSet) {
+			if (!coreSet.contains(rc)) {
+				append(rc, "#DDDDDD");
+			}
 		}
 		
 		Set<EClassifier> allClassifiers = new HashSet<>(coreSet);
@@ -181,9 +212,7 @@ public class PlantUmlTextGenerator {
 					} 
 				}
 			}
-		}
-		
-		
+		}				
 	}
 	
 	protected static String getMultiplicity(EStructuralFeature feature) {
@@ -257,10 +286,18 @@ public class PlantUmlTextGenerator {
 	}
 	
 	/**
-	 * In situations where subtypes of a given type are know this method can be overridden. 
+	 * In situations where subtypes of a given type are known this method can be overridden. 
 	 * @return
 	 */
-	protected Iterable<EClass> getSubTypes(EClass eClass) {
+	protected Collection<EClass> getSubTypes(EClass eClass) {
+		return Collections.emptySet();
+	}
+	
+	/**
+	 * In situations where classes referencing this class are known this method can be overridden. 
+	 * @return
+	 */
+	protected Collection<EClass> getReferrers(EClass eClass) {
 		return Collections.emptySet();
 	}
 	
@@ -291,24 +328,36 @@ public class PlantUmlTextGenerator {
 		// TODO - Generics
 		String modifiers = eClass.isAbstract() && !eClass.isInterface() ? "abstract" : null;
 		appendClassStart(modifiers, eClass.isInterface() ? "interface" : "class", qualifiedName(eClass)+(background==null ? "" : " "+background));
-		for (EAttribute attribute: eClass.getEAttributes()) {			
-			EClassifier eType = attribute.getEType();
-			if (eType != null) {
-				appendAttribute(null, null, getTypeName(eType), attribute.getName());
-			}						
-		}
-		for (EOperation op : eClass.getEOperations()) {
-			Collection<String> parameters = new ArrayList<String>();
-			for (EParameter parameter : op.getEParameters()) {
-				String paramString = parameter.getName();
-				if (parameter.getEType() != null) {
-					paramString = parameter.getEType().getName() + " " + paramString;
-				}
-				parameters.add(paramString);
+		if (isAppendAttributes(eClass)) {
+			for (EAttribute attribute: eClass.getEAttributes()) {			
+				EClassifier eType = attribute.getEType();
+				if (eType != null) {
+					appendAttribute(null, null, getTypeName(eType), attribute.getName());
+				}						
 			}
-			appendOperation(null, null, getTypeName(op.getEType()), op.getName(), parameters);
+		}
+		if (isAppendOperations(eClass)) {
+			for (EOperation op : eClass.getEOperations()) {
+				Collection<String> parameters = new ArrayList<String>();
+				for (EParameter parameter : op.getEParameters()) {
+					String paramString = parameter.getName();
+					if (parameter.getEType() != null) {
+						paramString = parameter.getEType().getName() + " " + paramString;
+					}
+					parameters.add(paramString);
+				}
+				appendOperation(null, null, getTypeName(op.getEType()), op.getName(), parameters);
+			}
 		}
 		appendClassEnd();
+	}
+	
+	protected boolean isAppendAttributes(EClass eClass) {
+		return true;
+	}
+	
+	protected boolean isAppendOperations(EClass eClass) {
+		return true;
 	}
 
 	public void append(EDataType dataType) throws IOException {

@@ -15,12 +15,14 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.web.HttpServletRequestContext;
 
 public class EEnumDocumentationGenerator extends EModelElementDocumentationGeneratorImpl<EEnum> {
 
 	@Override
 	public String generate(
 			DocRoute docRoute,
+			HttpServletRequestContext context, 
 			URI baseURI, 
 			String urlPrefix,
 			String registryPath,

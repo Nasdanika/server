@@ -57,8 +57,7 @@ public abstract class DependencyTracer<T> {
 				}
 			}
 		}
-	}		
-	
+	}			
 	
 	/**
 	 * @param obj

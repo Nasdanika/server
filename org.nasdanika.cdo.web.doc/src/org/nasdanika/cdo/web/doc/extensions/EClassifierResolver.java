@@ -13,7 +13,7 @@ public class EClassifierResolver implements WikiLinkResolver {
 		int idx = spec.indexOf("@");
 		String contextModelElementPath = (String) environment.get(DocRoute.CONTEXT_MODEL_ELEMENT_PATH_KEY);
 		if (idx!=-1) { 
-			String classifierPath = Hex.encodeHexString(spec.substring(idx+1).trim().getBytes(/* UTF-8? */))+"/"+spec.substring(0, idx).trim();
+			String classifierPath = Hex.encodeHexString(spec.substring(idx+1).trim().getBytes(/* UTF-8? */))+"/"+spec.substring(0, idx).trim()+".html";
 			if (contextModelElementPath==null) {
 				DocRoute docRoute = (DocRoute) environment.get(DocRoute.class);
 				if (docRoute.isSessionRegistry()) {

@@ -11,6 +11,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.nasdanika.cdo.web.doc.ConfigurableExtension;
+import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 import org.nasdanika.html.Bootstrap;
@@ -34,7 +35,7 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 			String key = location.getKey();
 			String value = location.getValue();
 			if (key.equals(spec)) { // Package
-				return value+spec.replace('.', '/')+"/package-summary.html";
+				return value+spec.replace('.', '/')+"/"+DocRoute.PACKAGE_SUMMARY_HTML;
 			}
 			
 			int idx = spec.lastIndexOf('.');
@@ -50,7 +51,7 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 				value+="/";
 			}
 			if (key.equals(spec)) { // Package
-				return value+spec.replace('.', '/')+"/package-summary.html";
+				return value+spec.replace('.', '/')+"/"+DocRoute.PACKAGE_SUMMARY_HTML;
 			}
 			
 			if (spec.startsWith(key+".")) { // Class
@@ -161,11 +162,15 @@ public class JavadocWikiLinkResolver implements WikiLinkResolver, ConfigurableEx
 			href += "#" + fragment;
 		}
 		
-		Rendering ret = new Rendering(href, content);
+		Rendering ret = new Rendering(isMissing ? "#" : href, content);
 		if (spec!=null && !content.equals(spec)) {
 			ret.withAttribute("title", spec);
 		}
-		ret.withAttribute("target", "javaDoc");
+		if (isMissing) {
+			ret.withAttribute("style", "color:red;border-bottom:1px dashed");
+		} else {
+			ret.withAttribute("target", "javaDoc");
+		}
 		specTL.set(null);
 		return ret;
 	}

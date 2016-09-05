@@ -427,7 +427,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 	}	
 	
 	protected Object eClassLink(EClass eClass) {
-		String classifierPath = Hex.encodeHexString(eClass.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClass.getName();
+		String classifierPath = Hex.encodeHexString(eClass.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClass.getName()+".html";
 		return HTMLFactory.INSTANCE.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+storyDocumentationGenerator.getDocRoute().getDocRoutePath()+DocRoute.PACKAGES_GLOBAL_PATH+classifierPath, eClass.getName());		
 	}
 		

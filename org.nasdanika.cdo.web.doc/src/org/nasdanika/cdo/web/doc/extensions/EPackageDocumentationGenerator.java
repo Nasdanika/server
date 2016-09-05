@@ -1,14 +1,15 @@
 package org.nasdanika.cdo.web.doc.extensions;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -19,32 +20,132 @@ import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocRoute.PackageTocNodeFactoryEntry;
+import org.nasdanika.cdo.web.doc.EClassifierKey;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.cdo.web.doc.TocNodeFactory;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.FontAwesome.Spinner;
+import org.nasdanika.html.Form;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.RowContainer.Row;
+import org.nasdanika.html.Select;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.web.Action;
+import org.nasdanika.web.HttpServletRequestContext;
 
-import net.sourceforge.plantuml.FileFormat;
-import net.sourceforge.plantuml.FileFormatOption;
 import net.sourceforge.plantuml.SourceStringReader;
 
 public class EPackageDocumentationGenerator extends EModelElementDocumentationGeneratorImpl<EPackage> {
 
 	@Override
-	public String generate(
+	public Object generate(
 			DocRoute docRoute, 
+			HttpServletRequestContext context, 
 			URI baseURI,
 			String urlPrefix,
 			String registryPath,
 			EPackage ePackage) {
 		
+		String uriStr = baseURI.toString();
+		
+		if (uriStr.endsWith(".html")) {
+			return generatePage(docRoute, baseURI, urlPrefix, registryPath, ePackage);
+		}
+		
+		if (uriStr.endsWith(".png")) {
+			try {
+				StringBuilder sb = new StringBuilder();
+				PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb) {
+					
+					@Override
+					protected Collection<EClass> getSubTypes(EClass eClass) {
+						Set<EClassifierKey> subTypes = docRoute.getInheritanceMap().get(new EClassifierKey(eClass));
+						if (subTypes==null || subTypes.isEmpty()) {
+							return super.getSubTypes(eClass);
+						}
+						
+						Set<EClass> ret = new HashSet<EClass>();
+						for (EClassifierKey stKey: subTypes) {
+							EClassifier st = docRoute.getEClassifier(stKey);
+							if (st instanceof EClass) {
+								ret.add((EClass) st);
+							}
+						}
+						return ret;
+					}
+					
+					@Override
+					protected Collection<EClass> getReferrers(EClass eClass) {
+						Set<EClassifierKey> referrers = docRoute.getReferrersMap().get(new EClassifierKey(eClass));
+						if (referrers==null || referrers.isEmpty()) {
+							return super.getSubTypes(eClass);
+						}
+						
+						Set<EClass> ret = new HashSet<EClass>();
+						for (EClassifierKey refKey: referrers) {
+							EClassifier ref = docRoute.getEClassifier(refKey);
+							if (ref instanceof EClass) {
+								ret.add((EClass) ref);
+							}
+						}
+						return ret;
+					}
+					
+					@Override
+					protected boolean isAppendAttributes(EClass eClass) {
+						return Boolean.parseBoolean(context.getRequest().getParameter("members"));
+					}
+					
+					@Override
+					protected boolean isAppendOperations(EClass eClass) {
+						return Boolean.parseBoolean(context.getRequest().getParameter("members"));
+					}
+										
+				};
+				gen.appendStartUml();
+				
+				if (Boolean.TRUE.toString().equals(context.getRequest().getParameter("leftToRightDirection"))) {
+					sb.append("left to right direction").append(System.lineSeparator());
+				}
+				
+				String width = context.getRequest().getParameter("width");
+				if (width != null) {
+					sb.append("scale ").append(width).append(" width").append(System.lineSeparator());
+				}
+												
+				gen.appendWithRelationships(
+						ePackage.getEClassifiers(),
+						PlantUmlTextGenerator.RelationshipDirection.valueOf(context.getRequest().getParameter("direction")),						
+						Integer.parseInt(context.getRequest().getParameter("depth")));
+				
+				
+				gen.appendEndUml();
+				SourceStringReader reader = new SourceStringReader(sb.toString());
+				context.getResponse().setContentType("image/png");
+				reader.generateImage(context.getResponse().getOutputStream());
+				return Action.NOP;
+			} catch (Exception e) {
+				e.printStackTrace();
+				return Action.INTERNAL_SERVER_ERROR;
+			}			
+		}
+		
+		return Action.NOT_FOUND;
+	}
+		
+	private Object generatePage(
+			DocRoute docRoute, 
+			URI baseURI,
+			String urlPrefix,
+			String registryPath,
+			EPackage ePackage) {
 		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
 		
 		// TODO - path?
@@ -100,7 +201,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 						
 		EPackage eSuperPackage = ePackage.getESuperPackage();
 		if (eSuperPackage!=null) {
-			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(eSuperPackage.getNsURI().getBytes(/* UTF-8? */)), getPackageIcon(docRoute), eSuperPackage.getName())));			
+			ret.content(htmlFactory.div("<B>Parent:</B> ", htmlFactory.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(eSuperPackage.getNsURI().getBytes(/* UTF-8? */))+"/"+DocRoute.PACKAGE_SUMMARY_HTML, getPackageIcon(docRoute), eSuperPackage.getName())));			
 		}
 		
 		for (EAnnotation eAnnotation: ePackage.getEAnnotations()) {
@@ -127,7 +228,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 			Tabs tabs) {
 		
 		documentationTab(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);		
-		diagramTab(ePackage, tabs);
+		diagramTab(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);
 		subPackagesTab(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);		
 		classifierTabs(docRoute, baseURI, urlPrefix, registryPath, ePackage, tabs);	
 		sectionsTabs(docRoute, ePackage, tabs);						
@@ -161,46 +262,82 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		}
 	}
 
-	protected void diagramTab(EPackage ePackage, Tabs tabs) {
-		try {
-			StringBuilder sb = new StringBuilder();
-			PlantUmlTextGenerator gen = new PlantUmlTextGenerator(sb);
-//			{
-//				
-//				@Override
-//				protected Iterable<EClass> getSubTypes(EClass eClass) {
-//					Set<EClassifierKey> subTypes = docRoute.getInheritanceMap().get(new EClassifierKey(eClass));
-//					if (subTypes==null || subTypes.isEmpty()) {
-//						return super.getSubTypes(eClass);
-//					}
-//					
-//					Set<EClass> ret = new HashSet<EClass>();
-//					for (EClassifierKey stKey: subTypes) {
-//						EClassifier st = docRoute.getEClassifier(stKey);
-//						if (st instanceof EClass) {
-//							ret.add((EClass) st);
-//						}
-//					}
-//					return ret;
-//				}
-//				
-//			};
-			gen.appendStartUml();
-			gen.appendWithRelationships(ePackage.getEClassifiers());
-			gen.appendEndUml();
-			SourceStringReader reader = new SourceStringReader(sb.toString());
-			try (final ByteArrayOutputStream os = new ByteArrayOutputStream()) {
-				// Write the first image to "os"
-				reader.generateImage(os, new FileFormatOption(FileFormat.SVG));
-				os.close();
-	
-				// The XML is stored into svg
-				final String svg = new String(os.toByteArray(), Charset.forName("UTF-8"));
-				tabs.item("Diagram", svg);
-			}
-		} catch (IOException e) {
-			e.printStackTrace();
+	protected void diagramTab(
+			DocRoute docRoute, 
+			URI baseURI, 
+			String urlPrefix, 
+			String registryPath, 
+			EPackage ePackage,
+			Tabs tabs) {
+
+		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
+		String idBase = ePackage.getName()+"-diagram-"+htmlFactory.nextId();
+		Tag contextDiagramApp = htmlFactory.div().id(idBase + "-app");
+		
+		contextDiagramApp.content(htmlFactory.spinnerOverlay(Spinner.cog).id(idBase+"-overlay"));
+		
+		Form diagramConfigurationForm = htmlFactory.form()
+				.inline(true, false)
+				.style().border("1px silver solid")
+				.style().border().top("none")
+				.style().padding("3px")
+				.style().margin().bottom("3px");
+		
+		contextDiagramApp.content(diagramConfigurationForm);
+
+		Select directionSelect = htmlFactory.select().knockout().value("direction");
+				
+		directionSelect.option("in", false, false, "In");
+		directionSelect.option("out", false, false, "Out");
+		directionSelect.option("both", true, false, "Both");
+		diagramConfigurationForm.formGroup("Direction", directionSelect, "Related elements to display")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+
+		Select depthSelect = htmlFactory.select().knockout().value("depth");
+		
+		for (int i=0; i<10; ++i) {
+			depthSelect.option(String.valueOf(i), i==0, false, String.valueOf(i));
 		}
+		depthSelect.option("-1", false, false, "&infin;");
+		diagramConfigurationForm.formGroup("Depth", depthSelect, "Dependency depth")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		Input membersCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("members");
+		diagramConfigurationForm.formGroup("Members", membersCheckbox, "Show class references")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");		
+					
+		Input leftToRightDirectionCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("leftToRightDirection");
+		
+		diagramConfigurationForm.formGroup("Left to right", leftToRightDirectionCheckbox, "Diagram direction")				
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		Input fitWidthCheckbox = htmlFactory.input(InputType.checkbox).knockout().checked("fitWidth");
+		diagramConfigurationForm.formGroup("Fit width", fitWidthCheckbox, "Scale diagram to fit width")
+			.style().border().right("dashed 1px silver")
+			.style().padding().right("5px");
+		
+		Tag img = htmlFactory.tag(TagName.img)
+				.knockout().attr("diagramAttributes")
+				.knockout().event("{ load : imageLoaded }");
+		
+		Tag diagramDiv = htmlFactory.div(img);
+		
+		contextDiagramApp.content(diagramDiv);
+				
+		Map<String, Object> scriptEnv = new HashMap<>();
+		scriptEnv.put("docRoutePath", docRoute.getDocRoutePath());
+		scriptEnv.put("id-base", idBase);
+		scriptEnv.put("depth", 0);
+		
+		String packagePath = registryPath+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */));		
+		scriptEnv.put("diagram-url", packagePath+"/"+DocRoute.PACKAGE_SUMMARY_PNG);
+		
+		String script = htmlFactory.interpolate(getClass().getResource("ECoreDiagramAppLoader.js"), scriptEnv);
+		tabs.item("Diagram", htmlFactory.fragment(contextDiagramApp, htmlFactory.tag(TagName.script, script)));
 	}
 
 	protected void classifierTabs(
@@ -242,15 +379,15 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		for (EClassifier eClassifier: pClassifiers) {
 			if (eClassifier instanceof EClass) {
 				Row row = classTable.row();
-				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
+				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName()+".html", eClassifier.getName()));
 				row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, eClassifier));
 			} else if (eClassifier instanceof EEnum) {
 				Row row = enumTable.row();
-				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
+				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName()+".html", eClassifier.getName()));
 				row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, eClassifier));
 			} else {
 				Row row = dataTypeTable.row();
-				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName(), eClassifier.getName()));
+				row.cell(htmlFactory.link(packagePath+"/"+eClassifier.getName()+".html", eClassifier.getName()));
 				row.cell(eClassifier.getInstanceTypeName());
 				row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, eClassifier));
 			}
@@ -293,7 +430,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		subPackageTableHeaderRow.header("Description");
 		for (EPackage subPackage: ePackage.getESubpackages()) {
 			Row row = subPackageTable.row();
-			row.cell(htmlFactory.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */)), subPackage.getName()));
+			row.cell(htmlFactory.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(subPackage.getNsURI().getBytes(/* UTF-8? */))+"/"+DocRoute.PACKAGE_SUMMARY_HTML, subPackage.getName()));
 			row.cell(getFirstDocSentence(docRoute, baseURI, urlPrefix, subPackage));			
 		}
 		

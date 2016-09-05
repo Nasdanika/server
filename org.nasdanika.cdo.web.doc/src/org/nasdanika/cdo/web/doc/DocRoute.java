@@ -74,6 +74,7 @@ import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
+import org.eclipse.emf.ecore.EReference;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -126,7 +127,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	public static final String NS_URI = "ns-uri";
 	private static final String DIAGRAM_PNG = "diagram.png";
 	private static final String INDEX_HTML = "index.html";
-	private static final String PACKAGE_SUMMARY_HTML = "package-summary.html";
+	public static final String PACKAGE_SUMMARY_HTML = "package-summary.html";
+	public static final String PACKAGE_SUMMARY_PNG = "package-summary.png";
 	public static final String MIME_TYPE_HTML = "text/html";
 	private static final String WIKI_LINK_RENDERER = "wiki-link-renderer";
 	private static final String WIKI_LINK_RESOLVER = "wiki-link-resolver";
@@ -361,9 +363,18 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private List<TocNodeFactory> tocNodeFactories = new ArrayList<>();
 	
 	private Map<EClassifierKey,Set<EClassifierKey>> inheritanceMap = new ConcurrentHashMap<>(); 
+	private Map<EClassifierKey,Set<EClassifierKey>> referrersMap = new ConcurrentHashMap<>(); 
 	
 	public Map<EClassifierKey, Set<EClassifierKey>> getInheritanceMap() {
 		return inheritanceMap;
+	}
+	
+	/**
+	 * Key - class, value - a set of EClasses which reference this class
+	 * @return
+	 */
+	public Map<EClassifierKey, Set<EClassifierKey>> getReferrersMap() {
+		return referrersMap;
 	}
 	
 	public static class PackageTocNodeFactoryEntry {
@@ -1498,7 +1509,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 
 	private void createEClassifierToc(TocNode parent, EClassifier eClassifier, String prefix) {
-		String href = prefix+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClassifier.getName();
+		String href = prefix+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */))+"/"+eClassifier.getName()+".html";
 		TocNode cToc;
 		Predicate<Object> predicate = obj->obj instanceof EClassifier && ((EClassifier) obj).getName().equals(eClassifier.getName()) && ((EClassifier) obj).getEPackage().getNsURI().equals(eClassifier.getEPackage().getNsURI());
 		if (eClassifier instanceof EClass) {
@@ -1510,7 +1521,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					predicate, 
 					false);
 			
-			EClassifierKey subTypeKey = new EClassifierKey((EClass) eClassifier);
+			EClassifierKey eClassKey = new EClassifierKey((EClass) eClassifier);
 			for (EClass sc: ((EClass) eClassifier).getESuperTypes()) {
 				EClassifierKey superTypeKey = new EClassifierKey(sc);
 				Set<EClassifierKey> subTypes = inheritanceMap.get(superTypeKey);
@@ -1518,7 +1529,17 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					subTypes = new TreeSet<>();
 					inheritanceMap.put(superTypeKey, subTypes);
 				}
-				subTypes.add(subTypeKey);
+				subTypes.add(eClassKey);
+			}
+			
+			for (EReference ref: ((EClass) eClassifier).getEReferences()) {
+				EClassifierKey targetKey = new EClassifierKey(ref.getEReferenceType());
+				Set<EClassifierKey> referrers = referrersMap.get(targetKey);
+				if (referrers==null) {
+					referrers = new TreeSet<>();
+					referrersMap.put(targetKey, referrers);
+				}
+				referrers.add(eClassKey);				
 			}
 			
 			storyDocumentationGenerator.createEClassTocEntries((EClass) eClassifier, cToc);
@@ -1570,11 +1591,12 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			if (ePackage==null) {
 				return null;
 			}
-			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
-				return getEPackageContent(baseURI, urlPrefix, ePackage, docRoutePath+"/packages/global");
+			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1]) || PACKAGE_SUMMARY_PNG.equals(subPath[1])) {
+				return getEPackageContent(context, baseURI, urlPrefix, ePackage, docRoutePath+"/packages/global");
 			}
-			EClassifier eClassifier = ePackage.getEClassifier(subPath[1]);
-			return eClassifier==null ? null : getEClassifierContent(baseURI, urlPrefix, eClassifier, docRoutePath+"/packages/global");
+			int dotIdx = subPath[1].lastIndexOf(".");
+			EClassifier eClassifier = ePackage.getEClassifier(subPath[1].substring(0, dotIdx));
+			return eClassifier==null ? null : getEClassifierContent(context, baseURI, urlPrefix, eClassifier, docRoutePath+"/packages/global");
 		} 
 		
 		if (path.startsWith(PACKAGES_SESSION_PATH)) {
@@ -1591,11 +1613,12 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			if (ePackage==null) {
 				return null;
 			}
-			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1])) {
-				return getEPackageContent(baseURI, urlPrefix, ePackage, docRoutePath+"/packages/session");
+			if (subPath.length==1 || PACKAGE_SUMMARY_HTML.equals(subPath[1]) || PACKAGE_SUMMARY_PNG.equals(subPath[1])) {
+				return getEPackageContent(context, baseURI, urlPrefix, ePackage, docRoutePath+"/packages/session");
 			}
-			EClassifier eClassifier = ePackage.getEClassifier(subPath[1]);
-			return eClassifier==null ? null : getEClassifierContent(baseURI, urlPrefix, eClassifier, docRoutePath+"/packages/global");				
+			int dotIdx = subPath[1].lastIndexOf(".");
+			EClassifier eClassifier = ePackage.getEClassifier(subPath[1].substring(0, dotIdx));
+			return eClassifier==null ? null : getEClassifierContent(context, baseURI, urlPrefix, eClassifier, docRoutePath+"/packages/global");				
 		} 
 		
 		if (path.startsWith(BUNDLE_PATH)) {
@@ -1727,12 +1750,17 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return collector;
 	}
 	
-	private Object getEClassifierContent(URI baseURI, String urlPrefix, EClassifier eClassifier, String registryPath) {
+	private Object getEClassifierContent(
+			HttpServletRequestContext context, 
+			URI baseURI, 
+			String urlPrefix, 
+			EClassifier eClassifier, 
+			String registryPath) {
 		if (eClassifier instanceof EClass) {
 			for (EClassInheritanceElement cie: traverseEClassHierarchy((EClass) eClassifier, 0, 0, new TreeSet<EClassInheritanceElement>())) {
 				for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EClass>>> e: eClassDocumentationGenerators.entrySet()) {
 					if (e.getKey().match(cie.eClass)) {
-						return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, (EClass) eClassifier);						
+						return e.getValue().extension.generate(this, context, baseURI, urlPrefix, registryPath, (EClass) eClassifier);						
 					}
 				}
 			}
@@ -1743,7 +1771,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		if (eClassifier instanceof EEnum) {
 			for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EEnum>>> e: eEnumDocumentationGenerators.entrySet()) {
 				if (e.getKey().match(eClassifier)) {
-					return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, (EEnum) eClassifier);						
+					return e.getValue().extension.generate(this, context, baseURI, urlPrefix, registryPath, (EEnum) eClassifier);						
 				}
 			}
 			return "No matching generator";
@@ -1751,16 +1779,21 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 		for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EDataType>>> e: eDataTypeDocumentationGenerators.entrySet()) {
 			if (e.getKey().match(eClassifier)) {
-				return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, (EDataType) eClassifier);						
+				return e.getValue().extension.generate(this, context, baseURI, urlPrefix, registryPath, (EDataType) eClassifier);						
 			}
 		}
 		return "No matching generator";
 	}
 
-	private Object getEPackageContent(URI baseURI, String urlPrefix, EPackage ePackage, String registryPath) {
+	private Object getEPackageContent(
+			HttpServletRequestContext context,
+			URI baseURI, 
+			String urlPrefix, 
+			EPackage ePackage, 
+			String registryPath) {
 		for (Entry<EModelElementDocumentationGeneratorKey, ExtensionEntry<EModelElementDocumentationGenerator<EPackage>>> e: ePackageDocumentationGenerators.entrySet()) {
 			if (e.getKey().match(ePackage)) {
-				return e.getValue().extension.generate(this, baseURI, urlPrefix, registryPath, ePackage);						
+				return e.getValue().extension.generate(this, context, baseURI, urlPrefix, registryPath, ePackage);						
 			}
 		}
 		return "No matching generator";

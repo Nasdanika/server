@@ -217,6 +217,7 @@ link resolvers, e.g. ``bundle`` schema.
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.edit/apidocs"/>
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.editor/apidocs"/>
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.sca/apidocs"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.story/apidocs"/>
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.tools.design/apidocs"/>
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.web/apidocs"/>
          <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/apidocs"/>

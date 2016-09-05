@@ -14,14 +14,14 @@ public class EPackageResolver implements WikiLinkResolver {
 		if (contextModelElementPath==null) {
 			DocRoute docRoute = (DocRoute) environment.get(DocRoute.class);
 			if (docRoute.isSessionRegistry()) {
-				return docRoutePath+"/packages/session/"+Hex.encodeHexString(spec.trim().getBytes(/* UTF-8? */))+"/package-summary.html";
+				return docRoutePath+"/packages/session/"+Hex.encodeHexString(spec.trim().getBytes(/* UTF-8? */))+"/"+DocRoute.PACKAGE_SUMMARY_HTML;
 			}
 			if (docRoute.isGlobalRegistry()) {
-				return docRoutePath+"/packages/global/"+Hex.encodeHexString(spec.trim().getBytes(/* UTF-8? */))+"/package-summary.html";					
+				return docRoutePath+"/packages/global/"+Hex.encodeHexString(spec.trim().getBytes(/* UTF-8? */))+"/"+DocRoute.PACKAGE_SUMMARY_HTML;					
 			}
 			return spec;
 		}
-		String relativePath = "../"+Hex.encodeHexString(spec.trim().getBytes(/* UTF-8? */))+"/package-summary.html";
+		String relativePath = "../"+Hex.encodeHexString(spec.trim().getBytes(/* UTF-8? */))+"/"+DocRoute.PACKAGE_SUMMARY_HTML;
 		return contextModelElementPath+"/"+relativePath;
 	}
 

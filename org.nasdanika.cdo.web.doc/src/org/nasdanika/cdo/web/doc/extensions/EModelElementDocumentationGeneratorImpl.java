@@ -129,7 +129,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 			return "";
 		}
 		String packagePath = DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+registryPath+"/"+Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */));
-		return docRoute.getHtmlFactory().link(docRoute.tocLink(packagePath+"/"+eClassifier.getName()), (withIcon ? eClassifierIcon(docRoute.getHtmlFactory(), eClassifier, docRoute.getDocRoutePath()) : ""), eClassifier.getName()).toString();		
+		return docRoute.getHtmlFactory().link(docRoute.tocLink(packagePath+"/"+eClassifier.getName()+".html"), (withIcon ? eClassifierIcon(docRoute.getHtmlFactory(), eClassifier, docRoute.getDocRoutePath()) : ""), eClassifier.getName()).toString();		
 	}
 
 	protected static String eClassifierIcon(HTMLFactory htmlFactory, EClassifier eClassifier, String docRoutePath) {

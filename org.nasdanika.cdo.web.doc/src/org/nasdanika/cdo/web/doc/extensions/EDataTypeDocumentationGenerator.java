@@ -10,12 +10,14 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.web.HttpServletRequestContext;
 
 public class EDataTypeDocumentationGenerator extends EModelElementDocumentationGeneratorImpl<EDataType> {
 
 	@Override
 	public String generate(
 			DocRoute docRoute, 
+			HttpServletRequestContext context, 
 			URI baseURI, 
 			String urlPrefix,
 			String registryPath,
