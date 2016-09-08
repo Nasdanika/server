@@ -41,17 +41,24 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 	}
 	
 	@Override
+	protected String getIcon(TestClassResult descriptor) {
+		if (descriptor.eContainer() instanceof ParameterizedTestResult && !descriptor.getMethodResults().get(0).getParameters().isEmpty()) {		
+			return "/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/wrench.png";
+		}
+		return super.getIcon(descriptor);
+	}
+	
+	@Override
 	protected String getTitle(TestClassResult obj) {
 		EList<String> parameters = obj.getMethodResults().get(0).getParameters();
 		if (obj.eContainer() instanceof ParameterizedTestResult && !parameters.isEmpty()) {
-			StringBuilder titleBuilder = new StringBuilder();
+			String ret = null;
 			for (String prm: parameters) {
-				if (titleBuilder.length() > 0) {
-					titleBuilder.append(", ");
+				if (prm != null) {
+					ret = prm;
 				}
-				titleBuilder.append(prm);
 			}
-			return titleBuilder.toString();
+			return ret;
 		}
 		return super.getTitle(obj);
 	}		

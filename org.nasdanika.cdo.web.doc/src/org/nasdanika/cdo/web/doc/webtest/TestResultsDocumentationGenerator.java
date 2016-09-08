@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.nasdanika.cdo.web.doc.AbstractModelDocumentationGenerator;
 import org.nasdanika.cdo.web.doc.DocRoute;
+import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator;
 import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator.Link;
 import org.nasdanika.core.CoreUtil;
@@ -108,26 +109,29 @@ public class TestResultsDocumentationGenerator extends AbstractModelDocumentatio
 			if (next instanceof Descriptor) {
 				for (org.nasdanika.webtest.model.Link link: ((Descriptor) next).getLinks()) {
 					if (link.getValue().equals(location) && match(linkType, link.getType())) {
-						ret.add(new Link() {
+						TocNode nextToc = getDocRoute().findToc(next);
+						if (nextToc != null) {
+							Tag ref = nextToc.getLink(getDocRoute().getDocRoutePath());
 							
-							private Tag ref = getDocRoute().findToc(next).getLink(getDocRoute().getDocRoutePath());
-
-							@Override
-							public Tag getLink() {
-								return ref;
-							}
-
-							@Override
-							public EClass getType() {
-								return ((EObject) next).eClass();
-							}
-
-							@Override
-							public String getComment() {
-								return link.getComment();
-							}
-							
-						});
+							ret.add(new Link() {
+								
+								@Override
+								public Tag getLink() {
+									return ref;
+								}
+	
+								@Override
+								public EClass getType() {
+									return ((EObject) next).eClass();
+								}
+	
+								@Override
+								public String getComment() {
+									return link.getComment();
+								}
+								
+							});
+						}
 					}
 				}
 			}

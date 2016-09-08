@@ -226,6 +226,15 @@ public class TocNode {
 	
 	public Tag getLink(String docRoutePath) {
 		String iconTag = CoreUtil.isBlank(getIcon()) ? "" : HTMLFactory.INSTANCE.tag(TagName.img).attribute("src", docRoutePath+getIcon()).style().margin().right("3px").style("vertical-align", "text-top").toString();
-		return HTMLFactory.INSTANCE.link("javascript:"+DocRoute.tocNodeSelectScript(getId()), iconTag, StringEscapeUtils.escapeHtml4(getText()));
+		StringBuilder path = new StringBuilder();
+		for (TocNode pe: getPath()) {
+			if (path.length() > 0) {
+				path.append(" / ");
+			}
+			if (pe.getText() != null) {
+				path.append(pe.getText());
+			}
+		}
+		return HTMLFactory.INSTANCE.link("javascript:"+DocRoute.tocNodeSelectScript(getId()), iconTag, StringEscapeUtils.escapeHtml4(getText())).attribute("title", path);
 	}
 }
