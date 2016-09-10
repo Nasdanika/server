@@ -118,6 +118,12 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				public AnnotatedElement getCurrentOperation() {
 					return null;
 				}
+
+				@Override
+				public void setPending() {}
+
+				@Override
+				public void setUnsupportedParameterValue() {}
 				
 			};
 		};

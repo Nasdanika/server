@@ -54,5 +54,9 @@ public interface Collector<D extends WebDriver> extends AutoCloseable {
 	 * @return Method for methods, Class for constructors.
 	 */
 	AnnotatedElement getCurrentOperation();
+
+	void setPending();
+
+	void setUnsupportedParameterValue();
 		
 }

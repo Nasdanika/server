@@ -286,8 +286,11 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			ret.put(ts, 0);
 		}
 		for (TestMethodResult tmr: testMethodResults) {
+			if (tmr.isUnsupportedParameterValue()) {
+				continue;
+			}
 			TestStatus status;
-			if (tmr.failure==null) {
+			if (tmr.getFailure()==null) {
 				status = tmr.isPending() ? TestStatus.Pending : TestStatus.Pass;
 			} else {
 				status = tmr.isFailure() ? TestStatus.Fail : TestStatus.Error;
@@ -418,6 +421,10 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		}
 		objectMap.put(this, testResult);
 		for (TestMethodResult mr: getTestMethodResults()) {
+			// Ignore test results which have thrown UnsupportedParameterValueException
+			if (mr.isUnsupportedParameterValue()) {
+				continue;
+			}
 			org.nasdanika.webtest.model.TestMethodResult mrModel = mr.toModel(
 					screenshotsCollector, 
 					screenshotsDir, 
@@ -443,6 +450,26 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			}
 		}
 		return testResult;
+	}
+
+	@Override
+	public void setPending() {
+		for (OperationResult<?,?> or = currentOperationResult; or != null; or = or.parent) {
+			if (or instanceof TestMethodResult) {
+				((TestMethodResult) or).setPending(true);
+				return;
+			}
+		}		
+	}
+
+	@Override
+	public void setUnsupportedParameterValue() {
+		for (OperationResult<?,?> or = currentOperationResult; or != null; or = or.parent) {
+			if (or instanceof TestMethodResult) {
+				((TestMethodResult) or).setUnsupportedParameterValue(true);
+				return;
+			}
+		}
 	}
 	
 }

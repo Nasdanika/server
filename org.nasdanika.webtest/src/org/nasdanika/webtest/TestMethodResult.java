@@ -66,5 +66,25 @@ public class TestMethodResult extends MethodResult<org.nasdanika.webtest.model.T
 	protected org.nasdanika.webtest.model.TestMethodResult createModel() {
 		return org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createTestMethodResult();
 	}	
+	
+	private boolean isPending;
+	
+	public void setPending(boolean isPending) {
+		this.isPending = isPending;
+	}
+	
+	public boolean isPending() {
+		return isPending || super.isPending();
+	}
+	
+	private boolean isUnsupportedParameterValue;
 
+	public void setUnsupportedParameterValue(boolean isUnsupportedParameterValue) {
+		this.isUnsupportedParameterValue = isUnsupportedParameterValue;
+	}
+	
+	public boolean isUnsupportedParameterValue() {
+		return isUnsupportedParameterValue;
+	}
+	
 }

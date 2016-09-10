@@ -340,6 +340,20 @@ public class WebTestUtil {
 				}
 				return null;
 			}
+
+			@Override
+			public void setPending() {
+				for (Collector<D> c : collectors) {
+					c.setPending();
+				}
+			}
+
+			@Override
+			public void setUnsupportedParameterValue() {
+				for (Collector<D> c : collectors) {
+					c.setUnsupportedParameterValue();
+				}
+			}
 		};
 	}
 
@@ -1138,6 +1152,20 @@ public class WebTestUtil {
 			}
 		} 
 	}
+	
+	/**
+	 * Sets status of current test to pending.
+	 */
+	public static void setPending() {
+		AbstractNasdanikaWebTestRunner.collectorThreadLocal.get().setPending();		
+	}
+	
+	/**
+	 * Sets status of current test to "UnsupportedParameterValue" so it is not included into reports.
+	 */
+	public static void setUnsupportedParameterValue() {
+		AbstractNasdanikaWebTestRunner.collectorThreadLocal.get().setUnsupportedParameterValue();		
+	}
 
 	/**
 	 * Creates a proxy instance of {@link SketchWebDriver}, which throws {@link PendingException} for all methods except the ones defined in {@link Object} class, <code>quit()</code>, and <code>getSelector()</code>.
@@ -1166,8 +1194,8 @@ public class WebTestUtil {
 								&& method.getParameterCount() == 0) {
 							return selector;
 						}
-						
-						throw new PendingException(method.toString());
+
+						throw new UnsupportedOperationException();
 					}
 				});
 	}
