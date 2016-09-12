@@ -77,14 +77,14 @@ public class TestMethodResult extends MethodResult<org.nasdanika.webtest.model.T
 		return isPending || super.isPending();
 	}
 	
-	private boolean isUnsupportedParameterValue;
+	private boolean ignore;
 
-	public void setUnsupportedParameterValue(boolean isUnsupportedParameterValue) {
-		this.isUnsupportedParameterValue = isUnsupportedParameterValue;
+	public void setIgnore(boolean ignore) {
+		this.ignore = ignore;
 	}
 	
-	public boolean isUnsupportedParameterValue() {
-		return isUnsupportedParameterValue;
+	public boolean isIgnore() {
+		return ignore;
 	}
 	
 }

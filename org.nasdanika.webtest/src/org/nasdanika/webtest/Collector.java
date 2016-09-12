@@ -57,6 +57,6 @@ public interface Collector<D extends WebDriver> extends AutoCloseable {
 
 	void setPending();
 
-	void setUnsupportedParameterValue();
+	void setIgnore();
 		
 }

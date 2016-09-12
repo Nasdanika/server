@@ -123,7 +123,7 @@ public abstract class AbstractNasdanikaWebTestRunner extends BlockJUnit4ClassRun
 				public void setPending() {}
 
 				@Override
-				public void setUnsupportedParameterValue() {}
+				public void setIgnore() {}
 				
 			};
 		};

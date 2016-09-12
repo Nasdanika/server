@@ -349,9 +349,9 @@ public class WebTestUtil {
 			}
 
 			@Override
-			public void setUnsupportedParameterValue() {
+			public void setIgnore() {
 				for (Collector<D> c : collectors) {
-					c.setUnsupportedParameterValue();
+					c.setIgnore();
 				}
 			}
 		};
@@ -1161,10 +1161,10 @@ public class WebTestUtil {
 	}
 	
 	/**
-	 * Sets status of current test to "UnsupportedParameterValue" so it is not included into reports.
+	 * Sets status of current test to ignore so it is not included into reports.
 	 */
-	public static void setUnsupportedParameterValue() {
-		AbstractNasdanikaWebTestRunner.collectorThreadLocal.get().setUnsupportedParameterValue();		
+	public static void ignore() {
+		AbstractNasdanikaWebTestRunner.collectorThreadLocal.get().setIgnore();		
 	}
 
 	/**

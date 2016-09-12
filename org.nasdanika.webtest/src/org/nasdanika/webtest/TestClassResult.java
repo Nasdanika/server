@@ -286,7 +286,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			ret.put(ts, 0);
 		}
 		for (TestMethodResult tmr: testMethodResults) {
-			if (tmr.isUnsupportedParameterValue()) {
+			if (tmr.isIgnore()) {
 				continue;
 			}
 			TestStatus status;
@@ -422,7 +422,7 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 		objectMap.put(this, testResult);
 		for (TestMethodResult mr: getTestMethodResults()) {
 			// Ignore test results which have thrown UnsupportedParameterValueException
-			if (mr.isUnsupportedParameterValue()) {
+			if (mr.isIgnore()) {
 				continue;
 			}
 			org.nasdanika.webtest.model.TestMethodResult mrModel = mr.toModel(
@@ -463,10 +463,10 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	}
 
 	@Override
-	public void setUnsupportedParameterValue() {
+	public void setIgnore() {
 		for (OperationResult<?,?> or = currentOperationResult; or != null; or = or.parent) {
 			if (or instanceof TestMethodResult) {
-				((TestMethodResult) or).setUnsupportedParameterValue(true);
+				((TestMethodResult) or).setIgnore(true);
 				return;
 			}
 		}
