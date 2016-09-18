@@ -264,8 +264,7 @@ class ParameterizedTestResultDocumentationGenerator extends TestSuiteResultDocum
 		Fragment ret = htmlFactory.fragment(header(obj));
 		qualifiedName(obj, ret, context, baseURI, urlPrefix, path);		
 		description(obj, ret, context, baseURI, urlPrefix);
-
-//		links(obj, ret, context, baseURL, urlPrefix);		
+		links(obj, ret, context, baseURI, urlPrefix);
 		
 		ret.content(htmlFactory.tag(Tag.TagName.h4, "Parameters"));
 		Table parametersTable = htmlFactory.table().bordered();

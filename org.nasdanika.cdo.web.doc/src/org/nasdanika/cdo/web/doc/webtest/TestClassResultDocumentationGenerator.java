@@ -5,6 +5,7 @@ import java.text.MessageFormat;
 import java.util.Collection;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
 import org.eclipse.emf.ecore.EObject;
@@ -66,12 +67,9 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 	@Override
 	protected Fragment getIndex(TestClassResult obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
 		HTMLFactory htmlFactory = testResultsDocumentationGenerator.getDocRoute().getHtmlFactory();		
-		EList<String> parameters = obj.getMethodResults().get(0).getParameters();
+		EList<String> parameters = obj.getMethodResults().isEmpty() ? ECollections.emptyEList() : obj.getMethodResults().get(0).getParameters();
+		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		if (obj.eContainer() instanceof ParameterizedTestResult && !parameters.isEmpty()) {
-			Fragment ret = htmlFactory.fragment(header(obj));
-	
-			// Tabs
-//			links(obj, ret, context, baseURI, urlPrefix);
 			
 			ret.content(htmlFactory.tag(Tag.TagName.h4, "Parameters"));
 			Table parametersTable = htmlFactory.table().bordered();
@@ -79,7 +77,6 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 			parametersTable.header().headerRow("Title", "Value", "Description", "Field", "Type").style(Bootstrap.Style.INFO);
 			RowContainer<?> parametersTableBody = parametersTable.body();
 			EList<Descriptor> parameterDescriptors = ((ParameterizedTestResult) obj.eContainer()).getParameterDescriptors();
-			parameters = obj.getMethodResults().get(0).getParameters();
 			for (int i=0; i<parameterDescriptors.size(); ++i) {
 				Descriptor pd = parameterDescriptors.get(i);
 				Row pRow = parametersTableBody.row(pd.getTitle());
@@ -99,7 +96,6 @@ class TestClassResultDocumentationGenerator extends TestResultDocumentationGener
 			return ret;
 		}
 				
-		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
 		methodResults(obj, context, baseURI, urlPrefix, htmlFactory, ret);
 		return ret;
 	}
