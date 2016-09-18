@@ -7,7 +7,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -18,10 +20,13 @@ import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator;
 import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator.Link;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Fragment;
+import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.ModelPackage;
 import org.nasdanika.webtest.model.Screenshot;
+import org.nasdanika.webtest.model.TestMethodResult;
 import org.nasdanika.webtest.model.TestSuiteResult;
 
 public class TestResultsDocumentationGenerator extends AbstractModelDocumentationGenerator implements StoryDocumentationGenerator.LinkProvider {
@@ -111,13 +116,27 @@ public class TestResultsDocumentationGenerator extends AbstractModelDocumentatio
 					if (link.getValue().equals(location) && match(linkType, link.getType())) {
 						TocNode nextToc = getDocRoute().findToc(next);
 						if (nextToc != null) {
-							Tag ref = nextToc.getLink(getDocRoute().getDocRoutePath());
+							Fragment linkRef = HTMLFactory.INSTANCE.fragment(nextToc.getLink(getDocRoute().getDocRoutePath()));
+							
+							if (next instanceof TestMethodResult) {
+								EList<String> parameters = ((TestMethodResult) next).getParameters();
+								if (!parameters.isEmpty()) {
+									linkRef.content(" (");
+									for (int i=0; i<parameters.size(); ++i) {
+										if (i>0) {
+											linkRef.content(", ");
+										}
+										linkRef.content(StringEscapeUtils.escapeHtml4(parameters.get(i)));
+									}
+									linkRef.content(")");
+								}
+							}
 							
 							ret.add(new Link() {
 								
 								@Override
-								public Tag getLink() {
-									return ref;
+								public Object getLink() {
+									return linkRef;
 								}
 	
 								@Override

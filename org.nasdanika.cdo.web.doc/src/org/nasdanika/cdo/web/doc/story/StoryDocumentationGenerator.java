@@ -19,7 +19,6 @@ import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.core.CoreUtil;
-import org.nasdanika.html.Tag;
 import org.nasdanika.story.CatalogElement;
 import org.nasdanika.story.Protagonist;
 import org.nasdanika.story.Step;
@@ -34,7 +33,7 @@ public class StoryDocumentationGenerator extends AbstractModelDocumentationGener
 		 * HTML link (anchor)
 		 * @return
 		 */
-		Tag getLink();
+		Object getLink();
 		
 		EClass getType();
 		
