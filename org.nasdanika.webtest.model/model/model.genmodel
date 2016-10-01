@@ -94,6 +94,8 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Throwable/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Throwable/message"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Throwable/stackTrace"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Throwable/supressed"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Throwable/cause"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//StackTraceEntry">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//StackTraceEntry/className"/>

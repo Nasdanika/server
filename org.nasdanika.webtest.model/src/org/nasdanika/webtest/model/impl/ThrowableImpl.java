@@ -27,6 +27,8 @@ import org.nasdanika.webtest.model.StackTraceEntry;
  *   <li>{@link org.nasdanika.webtest.model.impl.ThrowableImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.ThrowableImpl#getMessage <em>Message</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.ThrowableImpl#getStackTrace <em>Stack Trace</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.ThrowableImpl#getSupressed <em>Supressed</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.ThrowableImpl#getCause <em>Cause</em>}</li>
  * </ul>
  *
  * @generated
@@ -81,6 +83,26 @@ public class ThrowableImpl extends MinimalEObjectImpl.Container implements org.n
 	 * @ordered
 	 */
 	protected EList<StackTraceEntry> stackTrace;
+
+	/**
+	 * The cached value of the '{@link #getSupressed() <em>Supressed</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getSupressed()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<org.nasdanika.webtest.model.Throwable> supressed;
+
+	/**
+	 * The cached value of the '{@link #getCause() <em>Cause</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCause()
+	 * @generated
+	 * @ordered
+	 */
+	protected org.nasdanika.webtest.model.Throwable cause;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -160,11 +182,70 @@ public class ThrowableImpl extends MinimalEObjectImpl.Container implements org.n
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<org.nasdanika.webtest.model.Throwable> getSupressed() {
+		if (supressed == null) {
+			supressed = new EObjectContainmentEList<org.nasdanika.webtest.model.Throwable>(org.nasdanika.webtest.model.Throwable.class, this, ModelPackage.THROWABLE__SUPRESSED);
+		}
+		return supressed;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public org.nasdanika.webtest.model.Throwable getCause() {
+		return cause;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public NotificationChain basicSetCause(org.nasdanika.webtest.model.Throwable newCause, NotificationChain msgs) {
+		org.nasdanika.webtest.model.Throwable oldCause = cause;
+		cause = newCause;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ModelPackage.THROWABLE__CAUSE, oldCause, newCause);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCause(org.nasdanika.webtest.model.Throwable newCause) {
+		if (newCause != cause) {
+			NotificationChain msgs = null;
+			if (cause != null)
+				msgs = ((InternalEObject)cause).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ModelPackage.THROWABLE__CAUSE, null, msgs);
+			if (newCause != null)
+				msgs = ((InternalEObject)newCause).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ModelPackage.THROWABLE__CAUSE, null, msgs);
+			msgs = basicSetCause(newCause, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.THROWABLE__CAUSE, newCause, newCause));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ModelPackage.THROWABLE__STACK_TRACE:
 				return ((InternalEList<?>)getStackTrace()).basicRemove(otherEnd, msgs);
+			case ModelPackage.THROWABLE__SUPRESSED:
+				return ((InternalEList<?>)getSupressed()).basicRemove(otherEnd, msgs);
+			case ModelPackage.THROWABLE__CAUSE:
+				return basicSetCause(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -183,6 +264,10 @@ public class ThrowableImpl extends MinimalEObjectImpl.Container implements org.n
 				return getMessage();
 			case ModelPackage.THROWABLE__STACK_TRACE:
 				return getStackTrace();
+			case ModelPackage.THROWABLE__SUPRESSED:
+				return getSupressed();
+			case ModelPackage.THROWABLE__CAUSE:
+				return getCause();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -206,6 +291,13 @@ public class ThrowableImpl extends MinimalEObjectImpl.Container implements org.n
 				getStackTrace().clear();
 				getStackTrace().addAll((Collection<? extends StackTraceEntry>)newValue);
 				return;
+			case ModelPackage.THROWABLE__SUPRESSED:
+				getSupressed().clear();
+				getSupressed().addAll((Collection<? extends org.nasdanika.webtest.model.Throwable>)newValue);
+				return;
+			case ModelPackage.THROWABLE__CAUSE:
+				setCause((org.nasdanika.webtest.model.Throwable)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -227,6 +319,12 @@ public class ThrowableImpl extends MinimalEObjectImpl.Container implements org.n
 			case ModelPackage.THROWABLE__STACK_TRACE:
 				getStackTrace().clear();
 				return;
+			case ModelPackage.THROWABLE__SUPRESSED:
+				getSupressed().clear();
+				return;
+			case ModelPackage.THROWABLE__CAUSE:
+				setCause((org.nasdanika.webtest.model.Throwable)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -245,6 +343,10 @@ public class ThrowableImpl extends MinimalEObjectImpl.Container implements org.n
 				return MESSAGE_EDEFAULT == null ? message != null : !MESSAGE_EDEFAULT.equals(message);
 			case ModelPackage.THROWABLE__STACK_TRACE:
 				return stackTrace != null && !stackTrace.isEmpty();
+			case ModelPackage.THROWABLE__SUPRESSED:
+				return supressed != null && !supressed.isEmpty();
+			case ModelPackage.THROWABLE__CAUSE:
+				return cause != null;
 		}
 		return super.eIsSet(featureID);
 	}

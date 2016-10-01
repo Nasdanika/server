@@ -1182,13 +1182,31 @@ public interface ModelPackage extends EPackage {
 	int THROWABLE__STACK_TRACE = 2;
 
 	/**
+	 * The feature id for the '<em><b>Supressed</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int THROWABLE__SUPRESSED = 3;
+
+	/**
+	 * The feature id for the '<em><b>Cause</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int THROWABLE__CAUSE = 4;
+
+	/**
 	 * The number of structural features of the '<em>Throwable</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int THROWABLE_FEATURE_COUNT = 3;
+	int THROWABLE_FEATURE_COUNT = 5;
 
 	/**
 	 * The number of operations of the '<em>Throwable</em>' class.
@@ -3578,6 +3596,28 @@ public interface ModelPackage extends EPackage {
 	EReference getThrowable_StackTrace();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.webtest.model.Throwable#getSupressed <em>Supressed</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Supressed</em>'.
+	 * @see org.nasdanika.webtest.model.Throwable#getSupressed()
+	 * @see #getThrowable()
+	 * @generated
+	 */
+	EReference getThrowable_Supressed();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.webtest.model.Throwable#getCause <em>Cause</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Cause</em>'.
+	 * @see org.nasdanika.webtest.model.Throwable#getCause()
+	 * @see #getThrowable()
+	 * @generated
+	 */
+	EReference getThrowable_Cause();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.StackTraceEntry <em>Stack Trace Entry</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4535,6 +4575,22 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EReference THROWABLE__STACK_TRACE = eINSTANCE.getThrowable_StackTrace();
+
+		/**
+		 * The meta object literal for the '<em><b>Supressed</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference THROWABLE__SUPRESSED = eINSTANCE.getThrowable_Supressed();
+
+		/**
+		 * The meta object literal for the '<em><b>Cause</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference THROWABLE__CAUSE = eINSTANCE.getThrowable_Cause();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.StackTraceEntryImpl <em>Stack Trace Entry</em>}' class.

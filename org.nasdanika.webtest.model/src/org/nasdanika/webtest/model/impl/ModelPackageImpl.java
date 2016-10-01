@@ -866,6 +866,24 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getThrowable_Supressed() {
+		return (EReference)throwableEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getThrowable_Cause() {
+		return (EReference)throwableEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getStackTraceEntry() {
 		return stackTraceEntryEClass;
 	}
@@ -1314,6 +1332,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(throwableEClass, THROWABLE__TYPE);
 		createEAttribute(throwableEClass, THROWABLE__MESSAGE);
 		createEReference(throwableEClass, THROWABLE__STACK_TRACE);
+		createEReference(throwableEClass, THROWABLE__SUPRESSED);
+		createEReference(throwableEClass, THROWABLE__CAUSE);
 
 		stackTraceEntryEClass = createEClass(STACK_TRACE_ENTRY);
 		createEAttribute(stackTraceEntryEClass, STACK_TRACE_ENTRY__CLASS_NAME);
@@ -1491,6 +1511,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getThrowable_Type(), ecorePackage.getEString(), "type", null, 0, 1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getThrowable_Message(), ecorePackage.getEString(), "message", null, 0, 1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getThrowable_StackTrace(), this.getStackTraceEntry(), null, "stackTrace", null, 0, -1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getThrowable_Supressed(), this.getThrowable(), null, "supressed", null, 0, -1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getThrowable_Cause(), this.getThrowable(), null, "cause", null, 0, 1, org.nasdanika.webtest.model.Throwable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(stackTraceEntryEClass, StackTraceEntry.class, "StackTraceEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getStackTraceEntry_ClassName(), ecorePackage.getEString(), "className", null, 0, 1, StackTraceEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1981,6 +2003,18 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   });	
 		addAnnotation
 		  (getThrowable_StackTrace(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Stack trace."
+		   });	
+		addAnnotation
+		  (getThrowable_Supressed(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Stack trace."
+		   });	
+		addAnnotation
+		  (getThrowable_Cause(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Stack trace."

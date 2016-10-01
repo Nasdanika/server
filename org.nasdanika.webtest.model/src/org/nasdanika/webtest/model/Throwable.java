@@ -21,6 +21,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.nasdanika.webtest.model.Throwable#getType <em>Type</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.Throwable#getMessage <em>Message</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.Throwable#getStackTrace <em>Stack Trace</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.Throwable#getSupressed <em>Supressed</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.Throwable#getCause <em>Cause</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.webtest.model.ModelPackage#getThrowable()
@@ -104,5 +106,45 @@ public interface Throwable extends EObject {
 	 * @generated
 	 */
 	EList<StackTraceEntry> getStackTrace();
+
+	/**
+	 * Returns the value of the '<em><b>Supressed</b></em>' containment reference list.
+	 * The list contents are of type {@link org.nasdanika.webtest.model.Throwable}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Stack trace.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Supressed</em>' containment reference list.
+	 * @see org.nasdanika.webtest.model.ModelPackage#getThrowable_Supressed()
+	 * @model containment="true"
+	 * @generated
+	 */
+	EList<Throwable> getSupressed();
+
+	/**
+	 * Returns the value of the '<em><b>Cause</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Stack trace.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Cause</em>' containment reference.
+	 * @see #setCause(Throwable)
+	 * @see org.nasdanika.webtest.model.ModelPackage#getThrowable_Cause()
+	 * @model containment="true"
+	 * @generated
+	 */
+	Throwable getCause();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.webtest.model.Throwable#getCause <em>Cause</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Cause</em>' containment reference.
+	 * @see #getCause()
+	 * @generated
+	 */
+	void setCause(Throwable value);
 
 } // Throwable
