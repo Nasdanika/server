@@ -3,6 +3,8 @@ package org.nasdanika.webtest;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -37,11 +39,25 @@ public class FilteringInvocationHandler<T> implements InvocationHandler {
 				Array.set(obj, i, filter(Array.get(obj, i)));
 			}			
 		} else if (obj instanceof List) {
+			// A workaround for unmodifiable and singleton lists from Collections class.
+			if (obj.getClass().getName().equals(Collections.class.getName()+"$SingletonList")) {
+				return Collections.singletonList(filter(((List<?>) obj).get(0)));
+			}
+			
+			if (obj.getClass().getName().equals(Collections.class.getName()+"$UnmodifiableList")) {
+				ArrayList<Object> al = new ArrayList<>();
+				for (Object e: ((List<?>) obj)) {
+					al.add(filter(e));
+				}
+				return Collections.unmodifiableList(al);
+			}
+			
 			ListIterator<Object> lit = ((List<Object>) obj).listIterator();
 			while (lit.hasNext()) {
 				lit.set(filter(lit.next()));
 			}
 		} else if (obj instanceof Map) {
+			// TODO - singleton and unmodifiable maps
 			for (Entry<?, Object> e: ((Map<?, Object>) obj).entrySet()) {
 				e.setValue(filter(e.getValue()));
 			}

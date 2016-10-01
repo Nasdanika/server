@@ -321,6 +321,7 @@ public class ScreenshotEntry implements Runnable, HttpPublisher, DirectoryPublis
 		modelScreenshotEntry.setComment(getComment());
 		modelScreenshotEntry.setType(ScreenshotType.valueOf(getWhen().name()));				
 		modelScreenshotEntry.setScreenshot(screenshot);
+		modelScreenshotEntry.setSeqNo(seqNo);
 		return modelScreenshotEntry;
 	}	
 

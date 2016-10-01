@@ -2338,7 +2338,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 		String path = href.substring(prefix.length());
 		TocNode toc = tocRoot.find(path);
-		if (toc==null) {
+		if (toc==null || toc.isHidden()) {
 			return href;
 		}
 		return "javascript:"+tocNodeSelectScript(toc.getId());

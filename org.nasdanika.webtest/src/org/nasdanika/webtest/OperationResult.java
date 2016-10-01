@@ -11,6 +11,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Member;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.MessageFormat;
@@ -26,11 +27,9 @@ import java.util.concurrent.Executor;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.eclipse.emf.ecore.EObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.nasdanika.cdo.boxing.BoxUtil;
 import org.nasdanika.cdo.boxing.Boxer;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Glyphicon;
@@ -69,7 +68,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	private String id;
 	
 	private Object[] arguments;
-	private boolean[] maskedArguments;	
+	private boolean[] maskedArguments;
+	private Boxer[] argumentBoxers;
+	private Boxer resultBoxer;
 	
 	public Object[] getArguments() {
 		return arguments;
@@ -136,15 +137,24 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	OperationResult(String id, O operation, Object[] arguments, OperationResult<?,?> parent) {
 		this.id = id;
 		this.operation = operation;
+		ReportValue rva = operation.getAnnotation(ReportValue.class);
+		if (rva != null) {
+			try {
+				resultBoxer = rva.value().newInstance();
+			} catch (InstantiationException | IllegalAccessException e) {
+				setFailure(e);
+			}
+		}
 		if (arguments!=null) {
 			this.arguments = Arrays.copyOf(arguments, arguments.length);	
 			this.maskedArguments = new boolean[arguments.length];
-			Annotation[][] pa = null;
+			this.argumentBoxers = new Boxer[arguments.length];			
+			Annotation[][] pa = null;			
 			if (operation instanceof Constructor) {
 				pa = ((Constructor<?>) operation).getParameterAnnotations();
 			} else if (operation instanceof Method) {
 				pa = ((Method) operation).getParameterAnnotations();				
-			}
+			}			
 			if (pa!=null) {
 				for (int i=0; i<pa.length; ++i) {
 					for (int j=0; j<pa[i].length; ++j) {
@@ -152,6 +162,12 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 							this.arguments[i] = "*****";
 							this.maskedArguments[i] = true;
 							break;
+						} else if (pa[i][j] instanceof ReportValue) {
+							try {
+								this.argumentBoxers[i] = ((ReportValue) pa[i][j]).value().newInstance();
+							} catch (InstantiationException | IllegalAccessException e) {
+								setFailure(e);
+							}
 						}
 					}
 				}
@@ -191,7 +207,15 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 	
 	JSONObject afterPerformance;
 
-	Throwable failure;
+	private Throwable failure;
+	
+	void setFailure(Throwable f) {
+		if (this.failure == null) {
+			this.failure = f;
+		} else {
+			this.failure.addSuppressed(f);
+		}		
+	}
 	
 	public Throwable getFailure() {
 		return failure;
@@ -643,6 +667,12 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 			stackTraceEntry.setMethodName(ste.getMethodName());
 			stackTraceEntry.setNative(ste.isNativeMethod());
 		}
+		if (th.getCause() != null) {
+			ret.setCause(toModel(th.getCause()));
+		}
+		for (Throwable s: th.getSuppressed()) {
+			ret.getSupressed().add(toModel(s));
+		}
 		return ret;
 	}
 	
@@ -679,13 +709,6 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		return ret;
 	}
 	
-	protected EObject box(Object obj, org.nasdanika.core.Context context) {
-		if (target instanceof Boxer) {
-			return ((Boxer) target).box(obj, context);
-		}
-		return BoxUtil.box(obj, context);
-	}
-	
 	/**
 	 * If object is instance of one of the keys in the object map, then the value is returned.
 	 * Otherwise obj is returned.
@@ -700,6 +723,25 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 			}
 		}
 		return obj;
+	}
+	
+	/**
+	 * Expands proxy types to a list of implemented interfaces
+	 * @param type
+	 * @return
+	 */
+	private String typeName(Class<?> type) {
+		if (Proxy.isProxyClass(type)) {
+			StringBuilder sb = new StringBuilder();
+			for (Class<?> i: type.getInterfaces()) {
+				if (sb.length() > 0) {
+					sb.append(",");
+				}
+				sb.append(i.getName());
+			}
+			return sb.toString();
+		}
+		return type.getName();
 	}
 	
 	/**
@@ -738,9 +780,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 						OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
 						operationArgument.setMasked(maskedArguments[i]);
 						if (arguments[i]!=null) {
-							operationArgument.setType(arguments[i].getClass().getName());
-							if (!operationArgument.isMasked()) {
-								operationArgument.setValue(box(resolveModel(arguments[i], objectMap), context));
+							operationArgument.setType(typeName(arguments[i].getClass()));
+							if (argumentBoxers[i] != null) {
+								operationArgument.setValue(argumentBoxers[i].box(resolveModel(arguments[i], objectMap), context));
 							}
 						}
 						model.getArguments().add(operationArgument);
@@ -749,9 +791,9 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 				if (result!=null) {
 					OperationArgument operationArgument = org.nasdanika.webtest.model.ModelFactory.eINSTANCE.createOperationArgument();
 					operationArgument.setMasked(operation.getAnnotation(Mask.class)!=null);
-					operationArgument.setType(result.getClass().getName());
-					if (!operationArgument.isMasked()) {
-						operationArgument.setValue(box(resolveModel(result, objectMap), context));
+					operationArgument.setType(typeName(result.getClass()));
+					if (resultBoxer != null) {
+						operationArgument.setValue(resultBoxer.box(resolveModel(result, objectMap), context));
 					}
 					model.getArguments().add(operationArgument);
 				}

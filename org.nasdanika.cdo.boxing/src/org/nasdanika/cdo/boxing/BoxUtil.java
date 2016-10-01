@@ -4,6 +4,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.Context;
 
 public class BoxUtil {
+	
+	public static final Boxer BOXER = (obj, context) -> BoxUtil.box(obj, context); 
 
 	private BoxUtil() {
 		// Singleton

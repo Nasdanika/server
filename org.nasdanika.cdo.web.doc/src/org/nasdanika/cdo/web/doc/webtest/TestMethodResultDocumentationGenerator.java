@@ -64,4 +64,8 @@ public class TestMethodResultDocumentationGenerator extends MethodResultDocument
 		return ret;
 	}
 
+	@Override
+	protected boolean isTocHidden(TestMethodResult obj) {
+		return false;
+	}
 }

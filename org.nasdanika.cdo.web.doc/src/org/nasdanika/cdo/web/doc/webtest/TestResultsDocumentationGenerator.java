@@ -22,7 +22,6 @@ import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator.Link;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
-import org.nasdanika.html.Tag;
 import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.ModelPackage;
 import org.nasdanika.webtest.model.Screenshot;
@@ -44,7 +43,9 @@ public class TestResultsDocumentationGenerator extends AbstractModelDocumentatio
 		tocBuilderRoutes.add(new DocumentationGeneratorEntry(ModelPackage.eINSTANCE.getTestSuiteResult(), new TestSuiteResultDocumentationGenerator<TestSuiteResult>(this)));		
 		tocBuilderRoutes.add(new DocumentationGeneratorEntry(ModelPackage.eINSTANCE.getParameterizedTestResult(), new ParameterizedTestResultDocumentationGenerator(this)));
 		tocBuilderRoutes.add(new DocumentationGeneratorEntry(ModelPackage.eINSTANCE.getTestMethodResult(), new TestMethodResultDocumentationGenerator(this)));		
-				
+		tocBuilderRoutes.add(new DocumentationGeneratorEntry(ModelPackage.Literals.PROXYING_RESULT, new ProxyingResultDocumentationGenerator(this)));						
+		tocBuilderRoutes.add(new DocumentationGeneratorEntry(ModelPackage.Literals.ACTOR_METHOD_RESULT, new ActorMethodResultDocumentationGenerator(this)));						
+		tocBuilderRoutes.add(new DocumentationGeneratorEntry(ModelPackage.Literals.PAGE_METHOD_RESULT, new PageMethodResultDocumentationGenerator(this)));						
 		
 		Collections.sort(tocBuilderRoutes);
 		this.documentationGenerators = Collections.unmodifiableList(tocBuilderRoutes);

@@ -86,6 +86,7 @@ public class TocNode {
 			}
 		}
 		this.predicate = objectPredicate == null ? obj->false : objectPredicate; 
+		this.hidden = hidden;
 	}
 		
 	public TocNode(
@@ -235,6 +236,8 @@ public class TocNode {
 				path.append(pe.getText());
 			}
 		}
-		return HTMLFactory.INSTANCE.link("javascript:"+DocRoute.tocNodeSelectScript(getId()), iconTag, StringEscapeUtils.escapeHtml4(getText())).attribute("title", path);
+		
+		String linkRef = isHidden() ? DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+href : "javascript:"+DocRoute.tocNodeSelectScript(getId());
+		return HTMLFactory.INSTANCE.link(linkRef, iconTag, StringEscapeUtils.escapeHtml4(getText())).attribute("title", path);
 	}
 }

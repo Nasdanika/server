@@ -172,14 +172,18 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	public void afterActorMethod(Actor<WebDriver> actor, byte[] screenshot, JSONObject performance, Method method, Object[] args, Object result, Throwable th) {
 		if (currentOperationResult instanceof ActorMethodResult && method.equals(currentOperationResult.operation)) {
 			currentOperationResult.setInstance(actor);
-			currentOperationResult.failure = th;
+			currentOperationResult.setFailure(th);
 			currentOperationResult.result = result;			
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			IllegalStateException illegalStateException = new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			if (th != null) {
+				illegalStateException.addSuppressed(th);
+			}
+			throw illegalStateException;
 		}
 	}
 	
@@ -203,13 +207,17 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 			JSONObject performance, 
 			Throwable th) {
 		if (currentOperationResult instanceof InitializationResult && pageClass.equals(currentOperationResult.operation)) {
-			currentOperationResult.failure = th;
+			currentOperationResult.setFailure(th);
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			IllegalStateException illegalStateException = new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			if (th != null) {
+				illegalStateException.addSuppressed(th);
+			}
+			throw illegalStateException;
 		}
 	}
 	@Override
@@ -228,14 +236,18 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	public void afterPageMethod(Page<WebDriver> page, byte[] screenshot, JSONObject performance, Method method, Object[] args, Object result, Throwable th) {
 		if (currentOperationResult instanceof PageMethodResult && method.equals(currentOperationResult.operation)) {
 			currentOperationResult.setInstance(page);
-			currentOperationResult.failure = th;
+			currentOperationResult.setFailure(th);
 			currentOperationResult.result = result;
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult.screenshots.add(createScreenshotEntry(currentOperationResult, screenshot, Screenshot.When.AFTER));
 			currentOperationResult.afterPerformance = performance;
 			currentOperationResult = currentOperationResult.parent;
 		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			IllegalStateException illegalStateException = new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			if (th != null) {
+				illegalStateException.addSuppressed(th);
+			}
+			throw illegalStateException;
 		}
 	}
 	
@@ -260,11 +272,15 @@ public class TestClassResult implements Collector<WebDriver>, TestResult {
 	@Override
 	public void afterTestMethod(Method method, Throwable th) {
 		if (currentOperationResult instanceof TestMethodResult && method.equals(currentOperationResult.operation)) {
-			currentOperationResult.failure = th;
+			currentOperationResult.setFailure(th);
 			currentOperationResult.finish = System.currentTimeMillis();
 			currentOperationResult = currentOperationResult.parent;
 		} else {
-			throw new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			IllegalStateException illegalStateException = new IllegalStateException("Stack corruption - unexpected current method: "+currentOperationResult);
+			if (th != null) {
+				illegalStateException.addSuppressed(th);
+			}
+			throw illegalStateException;
 		}
 	}
 	

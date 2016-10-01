@@ -5,18 +5,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.nasdanika.cdo.boxing.Boxer;
+
 /**
- * This annotation instructs the test runner to mask argument value or method return value.
- * The annotation shall be placed on the Page/Actor interface method or method parameter, not
- * implementation.
- * 
- * Use {@link ReportValue} instead.
+ * This annotation instructs the test runner to store argument value or method return value to the report model.
  * @author Pavel Vlasov
  *
  */
-@Deprecated
 @Target({ElementType.PARAMETER, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Mask {
+public @interface ReportValue {
+	
+	/**
+	 * Boxer to use to store argument value to the model.
+	 */
+	Class<? extends Boxer> value() default DefaultArgumentBoxer.class;
 		
 }

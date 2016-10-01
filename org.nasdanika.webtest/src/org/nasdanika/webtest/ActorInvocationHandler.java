@@ -39,7 +39,7 @@ class ActorInvocationHandler extends FilteringInvocationHandler<Actor<WebDriver>
     		}
 			
 			try {
-				Object res = method.invoke(target, args);
+				Object res = filter(method.invoke(target, args));
 	    		if (AbstractNasdanikaWebTestRunner.shallTakeAfterScreenshot(screenshotAnnotation)) {
 	    			if (delay>0) {
 	    				Thread.sleep(delay);
@@ -48,7 +48,7 @@ class ActorInvocationHandler extends FilteringInvocationHandler<Actor<WebDriver>
 	    		} else {
 	    			collector.afterActorMethod(target, null, AbstractNasdanikaWebTestRunner.capturePerformance(), method, args, res, null);		    			
 	    		}
-	    		return filter(res);
+	    		return res;
 			} catch (Throwable th) {
 	    		if (AbstractNasdanikaWebTestRunner.shallTakeExceptionScreenshot(screenshotAnnotation)) {
 	    			if (delay>0) {

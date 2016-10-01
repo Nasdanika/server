@@ -12,7 +12,7 @@ class PageResultDocumentationGenerator extends DescriptorDocumentationGenerator<
 	}
 
 	protected String getIcon(PageResult pageResult) {
-		return "/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/user.png";
+		return "/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/page.png";
 	}
 
 	@Override

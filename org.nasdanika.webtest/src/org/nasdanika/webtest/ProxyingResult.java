@@ -11,6 +11,7 @@ public class ProxyingResult extends OperationResult<Class<?>, org.nasdanika.webt
 
 	ProxyingResult(String id, Class<?> klass, OperationResult<?,?> parent) {
 		super(id, klass, null, parent);
+		finish = System.currentTimeMillis();
 	}
 	
 	protected String getOperationName() {

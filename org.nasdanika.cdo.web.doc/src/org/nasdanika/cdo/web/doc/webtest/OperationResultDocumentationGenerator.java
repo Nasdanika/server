@@ -1,10 +1,18 @@
 package org.nasdanika.cdo.web.doc.webtest;
 
+import java.util.Collection;
+
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.cdo.web.doc.TocNode;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Carousel;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.RowContainer;
+import org.nasdanika.html.RowContainer.Row;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -14,19 +22,20 @@ import org.nasdanika.webtest.model.ScreenshotEntry;
 
 abstract class OperationResultDocumentationGenerator<T extends OperationResult> extends DescriptorDocumentationGenerator<T> {
 
-
 	protected OperationResultDocumentationGenerator(TestResultsDocumentationGenerator testResultsDocumentationGenerator) {
 		super(testResultsDocumentationGenerator);
-	}
+	}		
 
 	@Override
 	protected Fragment getIndex(T obj, HttpServletRequestContext context, java.net.URI baseURI, String urlPrefix, String path) throws Exception {
 		Fragment ret = super.getIndex(obj, context, baseURI, urlPrefix, path);
-		HTMLFactory htmlFactory = HTMLFactory.INSTANCE;
+		HTMLFactory htmlFactory = ret.getFactory();
 		
 		ret.content(htmlFactory.div("<B>Status: </B>", operationStatusGlyph(obj.getStatus()), "&nbsp;", StringEscapeUtils.escapeHtml4(obj.getStatus().name())).style().margin().bottom("10px"));
 
 		String resultID = htmlFactory.nextId();
+		
+		Tabs tabs = htmlFactory.tabs();
 		
 //		allScreenshots()
 //		getArguments()
@@ -37,9 +46,9 @@ abstract class OperationResultDocumentationGenerator<T extends OperationResult> 
 //		getInstanceAlias()
 //		getOperationName()
 //		getResult()
-//		getScreenshots()
 //		getStart()
 				
+		
 		// Tab
 		// Screenshots
 		Carousel screenshotCarousel = htmlFactory.carousel()
@@ -81,13 +90,23 @@ abstract class OperationResultDocumentationGenerator<T extends OperationResult> 
 			
 	//		testMethodResultWriter.write("<a name='carousel_"+screenshotCarousel.getId()+"'/>");
 			if (hasSlides) {
-				ret.content(screenshotCarousel);
+				tabs.item("Screenshots", screenshotCarousel);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
+		if (!obj.getChildren().isEmpty()) {
+			Table childrenTable = htmlFactory.table().bordered();
+			childrenTable.header().headerRow("Instance", "Method", "Duration").style(Bootstrap.Style.INFO);
+			for (OperationResult ch: obj.getChildren()) {
+				generateCallsRows(ch, 0, childrenTable.body());
+			}
+			tabs.item("Calls", childrenTable);						
+		}
+		
 		// Video
+//		getScreenshots() -> SWF, speech generation (Mary TTS)
 		
 		// Tab
 		// Calls
@@ -139,8 +158,37 @@ abstract class OperationResultDocumentationGenerator<T extends OperationResult> 
 //			testMethodResultWriter.write("</script>");				
 //		}
 		
+		if (!tabs.isEmpty()) {
+			ret.content(tabs);
+		}
 		
 		return ret;
+	}
+	
+	protected void generateCallsRows(OperationResult operationResult, int indent, RowContainer<?> rowContainer) {
+		StringBuilder ib = new StringBuilder();
+		for (int i=0; i<indent*4; ++i) {
+			ib.append("&nbsp");
+		}
+		Row row = rowContainer.row();
+		row.cell(operationResult.getInstanceAlias()).style().text().align().center();
+		TocNode toc = testResultsDocumentationGenerator.getDocRoute().findToc(operationResult);
+		row.cell(ib, toc == null ? operationResult.getTitle() : toc.getLink(testResultsDocumentationGenerator.getDocRoute().getDocRoutePath()));
+		row.cell(operationResult.getFinish() - operationResult.getStart()).style().text().align().right();
+		
+		for (OperationResult child: operationResult.getChildren()) {
+			generateCallsRows(child, indent+1, rowContainer);
+		}
+	}
+	
+	@Override
+	protected Collection<? extends EObject> getTocChildren(T operationResult) {
+		return operationResult.getChildren();
+	}
+	
+	@Override
+	protected boolean isTocHidden(T operationResult) {
+		return true;
 	}
 
 }

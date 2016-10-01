@@ -18,7 +18,6 @@ import org.json.JSONArray;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.DocumentationGenerator;
 import org.nasdanika.cdo.web.doc.TocNode;
-import org.nasdanika.cdo.web.doc.story.StoryDocumentationGenerator.Link;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Container;
@@ -53,17 +52,23 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 					getIcon(descriptor), 
 					null,
 					obj -> obj == descriptor, 
-					false);
+					isTocHidden(descriptor));
 			
 			for (EObject el: getTocChildren(descriptor)) {
 				DocumentationGenerator<Object> elTocBuilderRoute = testResultsDocumentationGenerator.getDocumentationGenerator(el.eClass());
-				if (elTocBuilderRoute != null) {
+				if (elTocBuilderRoute == null) {
+					System.err.println("[WARNING] No TOC builder for "+el.eClass().getName());
+				} else {
 					elTocBuilderRoute.createToc(el, descriptorToc);
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	protected boolean isTocHidden(T descriptor) {
+		return false;
 	}
 
 	protected String getTitle(T descriptor) {
