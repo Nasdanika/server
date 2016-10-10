@@ -17,9 +17,20 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.10.4</version>
 				<configuration>
-	  	        	<reportOutputDirectory>${basedir}/../<%=wizard.getDocArtifactId()%>/apidocs</reportOutputDirectory>
+				    <% if (wizard.getJavadocReportOutputDirectory() != null) { %>
+	  	        		<reportOutputDirectory><%=wizard.getJavadocReportOutputDirectory()%></reportOutputDirectory>
+	  	            <% } %>
 					<linksource>true</linksource>
 					<failOnError>false</failOnError>
+					
+			        <doclet>ch.raffael.doclets.pegdown.PegdownDoclet</doclet>
+			        <docletArtifact>
+			          <groupId>ch.raffael.pegdown-doclet</groupId>
+			          <artifactId>pegdown-doclet</artifactId>
+			          <version>1.1</version>
+			        </docletArtifact>
+			        <useStandardDocletOptions>true</useStandardDocletOptions>
+			        
 		            <links>
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.boxing/apidocs</link>						
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.function/apidocs</link>						

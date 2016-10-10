@@ -630,4 +630,8 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		return generalInformationPage.getLocationPath();
 	}
 
+	public String getJavadocReportOutputDirectory() {
+		return null;
+	}
+
 }

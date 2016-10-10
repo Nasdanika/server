@@ -16,7 +16,7 @@ public class ProductParentPomRenderer {
   protected final String TEXT_1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + NL + "<project" + NL + "\txsi:schemaLocation=\"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd\"" + NL + "\txmlns=\"http://maven.apache.org/POM/4.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\">" + NL + "\t<modelVersion>4.0.0</modelVersion>" + NL + "\t<groupId>";
   protected final String TEXT_2 = "</groupId>" + NL + "\t<artifactId>";
   protected final String TEXT_3 = "</artifactId>" + NL + "\t<version>";
-  protected final String TEXT_4 = "-SNAPSHOT</version>" + NL + "\t<packaging>pom</packaging>" + NL + "" + NL + "\t<!-- tycho requires maven >= 3.0 -->" + NL + "\t<prerequisites>" + NL + "\t\t<maven>3.0</maven>" + NL + "\t</prerequisites>" + NL + "\t" + NL + "\t<properties>" + NL + "\t\t<tycho-version>0.25.0</tycho-version>" + NL + "\t</properties>" + NL + "" + NL + "\t<repositories>" + NL + "\t\t<repository>" + NL + "\t\t\t<id>";
+  protected final String TEXT_4 = "-SNAPSHOT</version>" + NL + "\t<packaging>pom</packaging>" + NL + "" + NL + "\t<!-- tycho requires maven >= 3.0 -->" + NL + "\t<prerequisites>" + NL + "\t\t<maven>3.0</maven>" + NL + "\t</prerequisites>" + NL + "\t" + NL + "\t<properties>" + NL + "\t\t<tycho-version>0.26.0</tycho-version>" + NL + "\t</properties>" + NL + "" + NL + "\t<repositories>" + NL + "\t\t<repository>" + NL + "\t\t\t<id>";
   protected final String TEXT_5 = "-repo</id>" + NL + "\t\t\t<url>http://localhost:8080</url>" + NL + "\t\t\t<layout>p2</layout>" + NL + "\t\t</repository>\t\t" + NL + "\t\t";
   protected final String TEXT_6 = NL + "\t\t\t<repository>" + NL + "\t\t\t\t<id>";
   protected final String TEXT_7 = "</id>" + NL + "\t\t\t\t<url>";

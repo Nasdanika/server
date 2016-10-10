@@ -2,19 +2,16 @@ package org.nasdanika.workspace.wizard;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.lang3.StringUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
@@ -26,14 +23,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SubMonitor;
-import org.eclipse.emf.codegen.ecore.Generator;
 import org.eclipse.emf.codegen.ecore.genmodel.provider.GenModelEditPlugin;
-import org.eclipse.emf.codegen.util.CodeGenUtil;
-import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.edit.ui.provider.ExtendedImageRegistry;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IPackageFragment;
@@ -72,7 +64,7 @@ import org.osgi.framework.FrameworkUtil;
  * Wizard to create projects for a Nasdanika Foundation Server based application.
  */
 
-public class WorkspaceWizard extends AbstractWorkspaceWizard {
+public class WorkspaceWizard extends ModelingWorkspaceWizard {
 	private ProjectsPage projectsPage;
 	private ApplicationConfigurationPage applicationConfigurationPage;
 	
@@ -96,26 +88,14 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 	public void modifyWorkspace(IProgressMonitor progressMonitor) throws Exception {
         SubMonitor progress = SubMonitor.convert(progressMonitor, 180);
 
-        SubMonitor superProgress = progress.newChild(40);
+        SubMonitor superProgress = progress.newChild(60);
 		super.modifyWorkspace(superProgress);
 
-		executeProgressTask(
-				progress.newChild(10), 
-				"Generating model project", 
-				10, 
-				(monitor)->generateModelProject(monitor));
-		
 		executeProgressTask(
 				progress.newChild(10), 
 				"Generating application project", 
 				10, 
 				(monitor)->generateApplicationProject(monitor));
-		
-		executeProgressTask(
-				progress.newChild(10), 
-				"Generating feature project", 
-				10, 
-				(monitor)->generateFeatureProject(monitor));
 		
 		executeProgressTask(
 				progress.newChild(10), 
@@ -734,7 +714,7 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		return getGroupId()+".product.parent";
 	}
 	
-	private void generateFeatureProject(IProgressMonitor progressMonitor) throws Exception {
+	protected void generateFeatureProject(IProgressMonitor progressMonitor) throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(getGroupId()+".feature");
 		
@@ -990,16 +970,14 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 	
 	@Override
 	public Map<String, String> getRepositories() {
-//		return Collections.singletonMap("nasdanika-server", "http://www.nasdanika.org/server/repository");
 		
-		Map<String, String> repoMap = new LinkedHashMap<>();
+		Map<String, String> repoMap = super.getRepositories();
 		
 		// Kinda bad style, load from a properties file?
 		repoMap.put("nasdanika-server", "http://www.nasdanika.org/server/repository");
-		repoMap.put("neon", "http://download.eclipse.org/releases/neon");
-		repoMap.put("orbit", "http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository");
 		repoMap.put("jetty", "http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517");
 		repoMap.put("maven-osgi", "http://www.nasdanika.org/maven-osgi");
+		
 		return repoMap;
 	}
 	
@@ -1050,79 +1028,10 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		
 		return ret;
 	}	
-
-	private void generateModelProject(IProgressMonitor progressMonitor) throws Exception {
-		if (projectsPage.btnModel.getSelection()) {
-			IPath genModelContainerPath = ResourcesPlugin.getWorkspace().getRoot().getProject(getModelArtifactId()).getFullPath().append("src");
-			IPath locationPath = getLocationPath();
-			IPath genModelProjectLocation = Platform.getLocation().equals(locationPath) ? null : locationPath.append(getModelArtifactId());
-			IProject project = Generator.createEMFProject(
-					new Path(genModelContainerPath.toString()),
-					genModelProjectLocation, Collections.<IProject> emptyList(),
-					progressMonitor, Generator.EMF_MODEL_PROJECT_STYLE| Generator.EMF_PLUGIN_PROJECT_STYLE);
 	
-			IWorkingSet[] workingSets = getSelectedWorkingSets();
-			if (workingSets != null) {
-				workbench.getWorkingSetManager().addToWorkingSets(project, workingSets);
-			}
-	
-			CodeGenUtil.EclipseUtil.findOrCreateContainer(
-					new Path("/" + genModelContainerPath.segment(0) + "/model"), 
-					true,
-					genModelProjectLocation, 
-					progressMonitor);
-	
-			PrintStream manifest = new PrintStream(
-					URIConverter.INSTANCE.createOutputStream(
-							URI.createPlatformResourceURI("/"
-									+ genModelContainerPath.segment(0)
-									+ "/META-INF/MANIFEST.MF", true), null), false,
-					"UTF-8");
-			manifest.println("Manifest-Version: 1.0");
-			manifest.println("Bundle-ManifestVersion: 2");
-			manifest.print("Bundle-Name: ");
-			manifest.println(genModelContainerPath.segment(0));
-			manifest.print("Bundle-SymbolicName: ");
-			manifest.print(CodeGenUtil.validPluginID(genModelContainerPath.segment(0)));
-			manifest.println("; singleton:=true");
-			manifest.println("Bundle-Version: "+getVersion()+".qualifier");
-			manifest.println(BUNDLE_REQUIRED_EXECUTION_ENVIRONMENT);;
-			manifest.print("Require-Bundle: ");
-
-			String[] requiredBundles = getRequiredBundles();
-			for (int i = 0, size = requiredBundles.length; i < size;) {
-				manifest.print(requiredBundles[i]);
-				if (++i == size) {
-					manifest.println();
-					break;
-				} else {
-					manifest.println(",");
-					manifest.print(" ");
-				}
-			}
-			manifest.close();
-			
-			addMaven2NatureAndBuilder(progressMonitor, project);
-			
-			PrintStream pom = new PrintStream(
-					URIConverter.INSTANCE.createOutputStream(
-							URI.createPlatformResourceURI("/"
-									+ genModelContainerPath.segment(0)
-									+ "/pom.xml", true), null), false,
-					"UTF-8");
-			
-			pom.print(new ModelPomRenderer().generate(this));
-			pom.close();
-			
-			project.getFile("model/"+getDashedName()+".ecore").create(new ByteArrayInputStream(new ModelRenderer().generate(this).getBytes()), false, progressMonitor);
-			project.getFile("model/"+getDashedName()+".genmodel").create(new ByteArrayInputStream(new GenModelRenderer().generate(this).getBytes()), false, progressMonitor);
-			
-			project.getFile("build.properties").create(new ByteArrayInputStream(new ModelBuildPropertiesRenderer().generate(this).getBytes()), false, progressMonitor);
-		}		
-	}
-
-	protected String[] getRequiredBundles() {
-		return new String[] { "org.eclipse.emf.ecore" };
+	@Override
+	protected boolean shallGenerateModelProject() {
+		return projectsPage.btnModel.getSelection();
 	}
 
 	public String getModelArtifactId() {		
@@ -1229,10 +1138,6 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		if (projectsPage.btnPageImpl.getSelection()) {
 			ret.add(getPageImplArtifactId());
 		}
-
-		if (projectsPage.btnModel.getSelection()) {
-			ret.add(getModelArtifactId());
-		}
 				
 		if (projectsPage.btnApplication.getSelection()) {
 			ret.add(getApplicationArtifactId());
@@ -1266,10 +1171,6 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 				(applicationConfigurationPage.btnRepository.getSelection()
 						|| applicationConfigurationPage.btnRoutingServlet.getSelection()
 						|| applicationConfigurationPage.btnWebContent.getSelection());
-	}
-
-	public Object getTargetVersion() {		
-		return FrameworkUtil.getBundle(this.getClass()).getVersion().toString();
 	}
 
 	public boolean isIncludeNasdanika() {
@@ -1374,20 +1275,9 @@ public class WorkspaceWizard extends AbstractWorkspaceWizard {
 		project.getProject().getFile("pom.xml").create(new ByteArrayInputStream(new DocPomRenderer().generate(this).getBytes()), false, progressMonitor);		
 	}
 	
-	public String getModelPackageName() {
-		String modelID = getModelArtifactId();
-		int idx = modelID.lastIndexOf('.');
-		return idx == -1 ? modelID : modelID.substring(idx+1);
-	}
-
-	public String getGenModelPackagePrefix() {
-		return StringUtils.capitalize(getModelPackageName());
-	}	
-	
-	public String getGenModelBasePackageName() {
-		String modelID = getModelArtifactId();
-		int idx = modelID.lastIndexOf('.');
-		return idx == -1 ? "" : modelID.substring(0, idx);
+	@Override
+	public String getJavadocReportOutputDirectory() {
+  		return "${project.build.directory}/../"+getDocArtifactId()+"/apidocs";        		
 	}
 		
 }

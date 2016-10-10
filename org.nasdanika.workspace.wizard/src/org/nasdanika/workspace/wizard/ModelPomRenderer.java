@@ -21,7 +21,7 @@ public class ModelPomRenderer {
   protected final String TEXT_6 = "-SNAPSHOT</version>" + NL + "  \t<relativePath>../";
   protected final String TEXT_7 = "</relativePath>" + NL + "  </parent>" + NL + "</project>";
 
-public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
+public String generate(org.nasdanika.workspace.wizard.ModelingWorkspaceWizard wizard) throws Exception
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);

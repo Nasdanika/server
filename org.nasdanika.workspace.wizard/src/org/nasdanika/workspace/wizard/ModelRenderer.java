@@ -20,7 +20,7 @@ public class ModelRenderer {
   protected final String TEXT_5 = "\"/>" + NL + "</ecore:EPackage>";
   protected final String TEXT_6 = NL;
 
-public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
+public String generate(org.nasdanika.workspace.wizard.ModelingWorkspaceWizard wizard) throws Exception
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);

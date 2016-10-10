@@ -1,4 +1,4 @@
-<%@ jet package="org.nasdanika.workspace.wizard" class="ModelRenderer" skeleton="Renderer.skeleton" %>
+<%@ jet package="org.nasdanika.workspace.wizard" class="ModelRenderer" skeleton="ModelingRenderer.skeleton" %>
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
     name="<%=wizard.getModelPackageName()%>" nsURI="urn:<%=wizard.getModelArtifactId()%>" nsPrefix="<%=wizard.getModelArtifactId()%>">

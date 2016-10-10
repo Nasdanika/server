@@ -16,7 +16,7 @@ public class ModelBuildPropertiesRenderer {
   protected final String TEXT_1 = "bin.includes = .,\\" + NL + "               model/,\\" + NL + "               META-INF/" + NL + "jars.compile.order = ." + NL + "source.. = src/";
   protected final String TEXT_2 = NL;
 
-public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
+public String generate(org.nasdanika.workspace.wizard.ModelingWorkspaceWizard wizard) throws Exception
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);

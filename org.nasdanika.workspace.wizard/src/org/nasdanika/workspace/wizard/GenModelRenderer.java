@@ -25,7 +25,7 @@ public class GenModelRenderer {
   protected final String TEXT_10 = "\"/>" + NL + "  </genPackages>" + NL + "</genmodel:GenModel>";
   protected final String TEXT_11 = NL;
 
-public String generate(org.nasdanika.workspace.wizard.WorkspaceWizard wizard) throws Exception
+public String generate(org.nasdanika.workspace.wizard.ModelingWorkspaceWizard wizard) throws Exception
   {
     final StringBuffer stringBuffer = new StringBuffer();
     stringBuffer.append(TEXT_1);
