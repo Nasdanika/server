@@ -3,11 +3,9 @@
       id="org.nasdanika.workspace.wizard.feature"
       label="Nasdanika Workspace Wizards"
       version="0.1.0.qualifier"
-      provider-name="Nasdanika LLC"
-      license-feature="org.nasdanika.feature"
-      license-feature-version="0.1.0">
+      provider-name="Nasdanika LLC">
 
-   <description url="http://www.example.com/description">
+   <description>
       This feature provides two wizards:
 1) Nasdanika Application Workspace Wizard generates plugin projects
 which together constitute a Nasdanika Foundation Server based
@@ -17,7 +15,14 @@ application - model, application, feature, repository, tests, UI driver, parent,
    </description>
 
    <copyright>
-      %copyright
+      Copyright (c) 2013-2015 Nasdanika LLC.
+All rights reserved. This program and the accompanying materials
+are made available under the terms of the Eclipse Public License v1.0
+which accompanies this distribution, and is available at
+http://www.eclipse.org/legal/epl-v10.html
+
+Contributors:
+     Nasdanika LLC.
    </copyright>
 
    <license url="http://www.eclipse.org/legal/epl-v10.html">
