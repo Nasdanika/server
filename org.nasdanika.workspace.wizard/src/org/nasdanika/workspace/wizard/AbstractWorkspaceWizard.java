@@ -634,4 +634,8 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 		return null;
 	}
 
+	public boolean isNasdanikaJavadocLinks() {
+		return false;
+	}
+
 }

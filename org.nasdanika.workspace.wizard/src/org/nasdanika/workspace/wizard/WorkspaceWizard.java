@@ -1279,5 +1279,10 @@ public class WorkspaceWizard extends ModelingWorkspaceWizard {
 	public String getJavadocReportOutputDirectory() {
   		return "${project.build.directory}/../"+getDocArtifactId()+"/apidocs";        		
 	}
+	
+	@Override
+	public boolean isNasdanikaJavadocLinks() {
+		return true;
+	}
 		
 }

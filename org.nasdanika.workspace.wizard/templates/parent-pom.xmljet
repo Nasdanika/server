@@ -51,41 +51,7 @@
 			        <useStandardDocletOptions>true</useStandardDocletOptions>
 			        
 		            <links>
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.boxing/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.function/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.h2/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.promise/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.sca.edit/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.scheduler/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.edit/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security.editor/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web.doc/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.core/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.function.cdo/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.function/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.html/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.design/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.edit/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca.editor/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.sca/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.story/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.tools.design/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.web/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.model/apidocs</link>						
-						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/apidocs</link>
-						<link>http://download.eclipse.org/modeling/emf/emf/javadoc/2.11</link>
-						<link>http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc</link>
-						<link>http://stleary.github.io/JSON-java</link>			
-						
-						<!--						
-						<link>http://docs.oracle.com/javase/8/docs/api</link>						
-						-->
+<%@ include file="javadoc-links.inc" %>		            
 		            </links>
 					<detectLinks>true</detectLinks>					
 				</configuration>
