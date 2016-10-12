@@ -12,12 +12,12 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
-import org.nasdanika.webtest.model.Coverage;
 import org.nasdanika.webtest.model.Description;
 import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.InitializationResult;
 import org.nasdanika.webtest.model.Link;
 import org.nasdanika.webtest.model.Locator;
+import org.nasdanika.webtest.model.Method;
 import org.nasdanika.webtest.model.MethodResult;
 import org.nasdanika.webtest.model.ModelFactory;
 import org.nasdanika.webtest.model.ModelPackage;
@@ -103,12 +103,12 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 			case ModelPackage.METHOD_RESULT: return createMethodResult();
 			case ModelPackage.ACTOR_METHOD_RESULT: return createActorMethodResult();
 			case ModelPackage.TEST_METHOD_RESULT: return createTestMethodResult();
-			case ModelPackage.COVERAGE: return createCoverage();
 			case ModelPackage.ACTOR_RESULT: return createActorResult();
 			case ModelPackage.PAGE_RESULT: return createPageResult();
 			case ModelPackage.WEB_ELEMENT: return createWebElement();
 			case ModelPackage.LOCATOR: return createLocator();
 			case ModelPackage.LINK: return createLink();
+			case ModelPackage.METHOD: return createMethod();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -353,16 +353,6 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Coverage createCoverage() {
-		CoverageImpl coverage = new CoverageImpl();
-		return coverage;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public ActorResult createActorResult() {
 		ActorResultImpl actorResult = new ActorResultImpl();
 		return actorResult;
@@ -406,6 +396,16 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	public Link createLink() {
 		LinkImpl link = new LinkImpl();
 		return link;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Method createMethod() {
+		MethodImpl method = new MethodImpl();
+		return method;
 	}
 
 	/**

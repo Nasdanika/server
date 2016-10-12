@@ -1626,13 +1626,22 @@ public interface ModelPackage extends EPackage {
 	int METHOD_RESULT__INSTANCE_ALIAS = OPERATION_RESULT__INSTANCE_ALIAS;
 
 	/**
+	 * The feature id for the '<em><b>Method</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_RESULT__METHOD = OPERATION_RESULT_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Method Result</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_RESULT_FEATURE_COUNT = OPERATION_RESULT_FEATURE_COUNT + 0;
+	int METHOD_RESULT_FEATURE_COUNT = OPERATION_RESULT_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>All Screenshots</em>' operation.
@@ -1807,13 +1816,13 @@ public interface ModelPackage extends EPackage {
 	int PAGE_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
 
 	/**
-	 * The feature id for the '<em><b>Page Result</b></em>' reference.
+	 * The feature id for the '<em><b>Method</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_METHOD_RESULT__PAGE_RESULT = METHOD_RESULT_FEATURE_COUNT + 0;
+	int PAGE_METHOD_RESULT__METHOD = METHOD_RESULT__METHOD;
 
 	/**
 	 * The number of structural features of the '<em>Page Method Result</em>' class.
@@ -1822,7 +1831,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_METHOD_RESULT_FEATURE_COUNT = METHOD_RESULT_FEATURE_COUNT + 1;
+	int PAGE_METHOD_RESULT_FEATURE_COUNT = METHOD_RESULT_FEATURE_COUNT + 0;
 
 	/**
 	 * The operation id for the '<em>All Screenshots</em>' operation.
@@ -1997,13 +2006,13 @@ public interface ModelPackage extends EPackage {
 	int INITIALIZATION_RESULT__INSTANCE_ALIAS = PAGE_METHOD_RESULT__INSTANCE_ALIAS;
 
 	/**
-	 * The feature id for the '<em><b>Page Result</b></em>' reference.
+	 * The feature id for the '<em><b>Method</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INITIALIZATION_RESULT__PAGE_RESULT = PAGE_METHOD_RESULT__PAGE_RESULT;
+	int INITIALIZATION_RESULT__METHOD = PAGE_METHOD_RESULT__METHOD;
 
 	/**
 	 * The number of structural features of the '<em>Initialization Result</em>' class.
@@ -2187,13 +2196,13 @@ public interface ModelPackage extends EPackage {
 	int ACTOR_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
 
 	/**
-	 * The feature id for the '<em><b>Actor Result</b></em>' reference.
+	 * The feature id for the '<em><b>Method</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTOR_METHOD_RESULT__ACTOR_RESULT = METHOD_RESULT_FEATURE_COUNT + 0;
+	int ACTOR_METHOD_RESULT__METHOD = METHOD_RESULT__METHOD;
 
 	/**
 	 * The number of structural features of the '<em>Actor Method Result</em>' class.
@@ -2202,7 +2211,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTOR_METHOD_RESULT_FEATURE_COUNT = METHOD_RESULT_FEATURE_COUNT + 1;
+	int ACTOR_METHOD_RESULT_FEATURE_COUNT = METHOD_RESULT_FEATURE_COUNT + 0;
 
 	/**
 	 * The operation id for the '<em>All Screenshots</em>' operation.
@@ -2377,6 +2386,15 @@ public interface ModelPackage extends EPackage {
 	int TEST_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
 
 	/**
+	 * The feature id for the '<em><b>Method</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_METHOD_RESULT__METHOD = METHOD_RESULT__METHOD;
+
+	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2413,88 +2431,6 @@ public interface ModelPackage extends EPackage {
 	int TEST_METHOD_RESULT_OPERATION_COUNT = METHOD_RESULT_OPERATION_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.webtest.model.impl.CoverageImpl <em>Coverage</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.webtest.model.impl.CoverageImpl
-	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getCoverage()
-	 * @generated
-	 */
-	int COVERAGE = 20;
-
-	/**
-	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE__QUALIFIED_NAME = DESCRIPTOR__QUALIFIED_NAME;
-
-	/**
-	 * The feature id for the '<em><b>Title</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE__TITLE = DESCRIPTOR__TITLE;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE__DESCRIPTION = DESCRIPTOR__DESCRIPTION;
-
-	/**
-	 * The feature id for the '<em><b>Links</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE__LINKS = DESCRIPTOR__LINKS;
-
-	/**
-	 * The feature id for the '<em><b>Category</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE__CATEGORY = DESCRIPTOR__CATEGORY;
-
-	/**
-	 * The feature id for the '<em><b>Invocations</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE__INVOCATIONS = DESCRIPTOR_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Coverage</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of operations of the '<em>Coverage</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COVERAGE_OPERATION_COUNT = DESCRIPTOR_OPERATION_COUNT + 0;
-
-	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.model.impl.ActorResultImpl <em>Actor Result</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2502,7 +2438,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getActorResult()
 	 * @generated
 	 */
-	int ACTOR_RESULT = 21;
+	int ACTOR_RESULT = 20;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2550,31 +2486,13 @@ public interface ModelPackage extends EPackage {
 	int ACTOR_RESULT__CATEGORY = DESCRIPTOR__CATEGORY;
 
 	/**
-	 * The feature id for the '<em><b>Results</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ACTOR_RESULT__RESULTS = DESCRIPTOR_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ACTOR_RESULT__COVERAGE = DESCRIPTOR_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Proxy</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTOR_RESULT__PROXY = DESCRIPTOR_FEATURE_COUNT + 2;
+	int ACTOR_RESULT__PROXY = DESCRIPTOR_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Delegate</b></em>' attribute.
@@ -2583,7 +2501,16 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTOR_RESULT__DELEGATE = DESCRIPTOR_FEATURE_COUNT + 3;
+	int ACTOR_RESULT__DELEGATE = DESCRIPTOR_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Methods</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTOR_RESULT__METHODS = DESCRIPTOR_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Actor Result</em>' class.
@@ -2592,7 +2519,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTOR_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 4;
+	int ACTOR_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of operations of the '<em>Actor Result</em>' class.
@@ -2611,7 +2538,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getPageResult()
 	 * @generated
 	 */
-	int PAGE_RESULT = 22;
+	int PAGE_RESULT = 21;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2659,31 +2586,13 @@ public interface ModelPackage extends EPackage {
 	int PAGE_RESULT__CATEGORY = DESCRIPTOR__CATEGORY;
 
 	/**
-	 * The feature id for the '<em><b>Results</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PAGE_RESULT__RESULTS = DESCRIPTOR_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Coverage</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PAGE_RESULT__COVERAGE = DESCRIPTOR_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Web Elements</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_RESULT__WEB_ELEMENTS = DESCRIPTOR_FEATURE_COUNT + 2;
+	int PAGE_RESULT__WEB_ELEMENTS = DESCRIPTOR_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Proxy</b></em>' attribute.
@@ -2692,7 +2601,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_RESULT__PROXY = DESCRIPTOR_FEATURE_COUNT + 3;
+	int PAGE_RESULT__PROXY = DESCRIPTOR_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Delegate</b></em>' attribute.
@@ -2701,7 +2610,16 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_RESULT__DELEGATE = DESCRIPTOR_FEATURE_COUNT + 4;
+	int PAGE_RESULT__DELEGATE = DESCRIPTOR_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Methods</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PAGE_RESULT__METHODS = DESCRIPTOR_FEATURE_COUNT + 3;
 
 	/**
 	 * The number of structural features of the '<em>Page Result</em>' class.
@@ -2710,7 +2628,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 5;
+	int PAGE_RESULT_FEATURE_COUNT = DESCRIPTOR_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of operations of the '<em>Page Result</em>' class.
@@ -2729,7 +2647,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getWebElement()
 	 * @generated
 	 */
-	int WEB_ELEMENT = 23;
+	int WEB_ELEMENT = 22;
 
 	/**
 	 * The feature id for the '<em><b>Qualified Name</b></em>' attribute.
@@ -2811,7 +2729,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getLocator()
 	 * @generated
 	 */
-	int LOCATOR = 24;
+	int LOCATOR = 23;
 
 	/**
 	 * The feature id for the '<em><b>How</b></em>' attribute.
@@ -2857,7 +2775,7 @@ public interface ModelPackage extends EPackage {
 	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getLink()
 	 * @generated
 	 */
-	int LINK = 25;
+	int LINK = 24;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2903,6 +2821,79 @@ public interface ModelPackage extends EPackage {
 	 * @ordered
 	 */
 	int LINK_OPERATION_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.webtest.model.impl.MethodImpl <em>Method</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.webtest.model.impl.MethodImpl
+	 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getMethod()
+	 * @generated
+	 */
+	int METHOD = 25;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Parameter Types</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD__PARAMETER_TYPES = 1;
+
+	/**
+	 * The feature id for the '<em><b>Return Type</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD__RETURN_TYPE = 2;
+
+	/**
+	 * The feature id for the '<em><b>Exception Types</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD__EXCEPTION_TYPES = 3;
+
+	/**
+	 * The feature id for the '<em><b>Results</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD__RESULTS = 4;
+
+	/**
+	 * The number of structural features of the '<em>Method</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_FEATURE_COUNT = 5;
+
+	/**
+	 * The number of operations of the '<em>Method</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int METHOD_OPERATION_COUNT = 0;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.webtest.model.OperationStatus <em>Operation Status</em>}' enum.
@@ -3713,6 +3704,17 @@ public interface ModelPackage extends EPackage {
 	EClass getMethodResult();
 
 	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.webtest.model.MethodResult#getMethod <em>Method</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Method</em>'.
+	 * @see org.nasdanika.webtest.model.MethodResult#getMethod()
+	 * @see #getMethodResult()
+	 * @generated
+	 */
+	EReference getMethodResult_Method();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.ActorMethodResult <em>Actor Method Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3723,17 +3725,6 @@ public interface ModelPackage extends EPackage {
 	EClass getActorMethodResult();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.nasdanika.webtest.model.ActorMethodResult#getActorResult <em>Actor Result</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Actor Result</em>'.
-	 * @see org.nasdanika.webtest.model.ActorMethodResult#getActorResult()
-	 * @see #getActorMethodResult()
-	 * @generated
-	 */
-	EReference getActorMethodResult_ActorResult();
-
-	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.PageMethodResult <em>Page Method Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3742,17 +3733,6 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getPageMethodResult();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.nasdanika.webtest.model.PageMethodResult#getPageResult <em>Page Result</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Page Result</em>'.
-	 * @see org.nasdanika.webtest.model.PageMethodResult#getPageResult()
-	 * @see #getPageMethodResult()
-	 * @generated
-	 */
-	EReference getPageMethodResult_PageResult();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.TestMethodResult <em>Test Method Result</em>}'.
@@ -3776,27 +3756,6 @@ public interface ModelPackage extends EPackage {
 	EAttribute getTestMethodResult_Parameters();
 
 	/**
-	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.Coverage <em>Coverage</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Coverage</em>'.
-	 * @see org.nasdanika.webtest.model.Coverage
-	 * @generated
-	 */
-	EClass getCoverage();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.Coverage#getInvocations <em>Invocations</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Invocations</em>'.
-	 * @see org.nasdanika.webtest.model.Coverage#getInvocations()
-	 * @see #getCoverage()
-	 * @generated
-	 */
-	EAttribute getCoverage_Invocations();
-
-	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.ActorResult <em>Actor Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3805,28 +3764,6 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getActorResult();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.nasdanika.webtest.model.ActorResult#getResults <em>Results</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Results</em>'.
-	 * @see org.nasdanika.webtest.model.ActorResult#getResults()
-	 * @see #getActorResult()
-	 * @generated
-	 */
-	EReference getActorResult_Results();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.webtest.model.ActorResult#getCoverage <em>Coverage</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Coverage</em>'.
-	 * @see org.nasdanika.webtest.model.ActorResult#getCoverage()
-	 * @see #getActorResult()
-	 * @generated
-	 */
-	EReference getActorResult_Coverage();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.ActorResult#isProxy <em>Proxy</em>}'.
@@ -3851,6 +3788,17 @@ public interface ModelPackage extends EPackage {
 	EAttribute getActorResult_Delegate();
 
 	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.webtest.model.ActorResult#getMethods <em>Methods</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Methods</em>'.
+	 * @see org.nasdanika.webtest.model.ActorResult#getMethods()
+	 * @see #getActorResult()
+	 * @generated
+	 */
+	EReference getActorResult_Methods();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.PageResult <em>Page Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3859,28 +3807,6 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getPageResult();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.nasdanika.webtest.model.PageResult#getResults <em>Results</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Results</em>'.
-	 * @see org.nasdanika.webtest.model.PageResult#getResults()
-	 * @see #getPageResult()
-	 * @generated
-	 */
-	EReference getPageResult_Results();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.webtest.model.PageResult#getCoverage <em>Coverage</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Coverage</em>'.
-	 * @see org.nasdanika.webtest.model.PageResult#getCoverage()
-	 * @see #getPageResult()
-	 * @generated
-	 */
-	EReference getPageResult_Coverage();
 
 	/**
 	 * Returns the meta object for the containment reference list '{@link org.nasdanika.webtest.model.PageResult#getWebElements <em>Web Elements</em>}'.
@@ -3914,6 +3840,17 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getPageResult_Delegate();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.webtest.model.PageResult#getMethods <em>Methods</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Methods</em>'.
+	 * @see org.nasdanika.webtest.model.PageResult#getMethods()
+	 * @see #getPageResult()
+	 * @generated
+	 */
+	EReference getPageResult_Methods();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.WebElement <em>Web Element</em>}'.
@@ -4010,6 +3947,71 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getLink_Comment();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.webtest.model.Method <em>Method</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Method</em>'.
+	 * @see org.nasdanika.webtest.model.Method
+	 * @generated
+	 */
+	EClass getMethod();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.Method#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.nasdanika.webtest.model.Method#getName()
+	 * @see #getMethod()
+	 * @generated
+	 */
+	EAttribute getMethod_Name();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.webtest.model.Method#getParameterTypes <em>Parameter Types</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Parameter Types</em>'.
+	 * @see org.nasdanika.webtest.model.Method#getParameterTypes()
+	 * @see #getMethod()
+	 * @generated
+	 */
+	EAttribute getMethod_ParameterTypes();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.Method#getReturnType <em>Return Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Return Type</em>'.
+	 * @see org.nasdanika.webtest.model.Method#getReturnType()
+	 * @see #getMethod()
+	 * @generated
+	 */
+	EAttribute getMethod_ReturnType();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.webtest.model.Method#getExceptionTypes <em>Exception Types</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Exception Types</em>'.
+	 * @see org.nasdanika.webtest.model.Method#getExceptionTypes()
+	 * @see #getMethod()
+	 * @generated
+	 */
+	EAttribute getMethod_ExceptionTypes();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.nasdanika.webtest.model.Method#getResults <em>Results</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Results</em>'.
+	 * @see org.nasdanika.webtest.model.Method#getResults()
+	 * @see #getMethod()
+	 * @generated
+	 */
+	EReference getMethod_Results();
 
 	/**
 	 * Returns the meta object for enum '{@link org.nasdanika.webtest.model.OperationStatus <em>Operation Status</em>}'.
@@ -4673,6 +4675,14 @@ public interface ModelPackage extends EPackage {
 		EClass METHOD_RESULT = eINSTANCE.getMethodResult();
 
 		/**
+		 * The meta object literal for the '<em><b>Method</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference METHOD_RESULT__METHOD = eINSTANCE.getMethodResult_Method();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.ActorMethodResultImpl <em>Actor Method Result</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4683,14 +4693,6 @@ public interface ModelPackage extends EPackage {
 		EClass ACTOR_METHOD_RESULT = eINSTANCE.getActorMethodResult();
 
 		/**
-		 * The meta object literal for the '<em><b>Actor Result</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ACTOR_METHOD_RESULT__ACTOR_RESULT = eINSTANCE.getActorMethodResult_ActorResult();
-
-		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.PageMethodResultImpl <em>Page Method Result</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4699,14 +4701,6 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EClass PAGE_METHOD_RESULT = eINSTANCE.getPageMethodResult();
-
-		/**
-		 * The meta object literal for the '<em><b>Page Result</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PAGE_METHOD_RESULT__PAGE_RESULT = eINSTANCE.getPageMethodResult_PageResult();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.TestMethodResultImpl <em>Test Method Result</em>}' class.
@@ -4727,24 +4721,6 @@ public interface ModelPackage extends EPackage {
 		EAttribute TEST_METHOD_RESULT__PARAMETERS = eINSTANCE.getTestMethodResult_Parameters();
 
 		/**
-		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.CoverageImpl <em>Coverage</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.webtest.model.impl.CoverageImpl
-		 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getCoverage()
-		 * @generated
-		 */
-		EClass COVERAGE = eINSTANCE.getCoverage();
-
-		/**
-		 * The meta object literal for the '<em><b>Invocations</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COVERAGE__INVOCATIONS = eINSTANCE.getCoverage_Invocations();
-
-		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.ActorResultImpl <em>Actor Result</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4753,22 +4729,6 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EClass ACTOR_RESULT = eINSTANCE.getActorResult();
-
-		/**
-		 * The meta object literal for the '<em><b>Results</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ACTOR_RESULT__RESULTS = eINSTANCE.getActorResult_Results();
-
-		/**
-		 * The meta object literal for the '<em><b>Coverage</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference ACTOR_RESULT__COVERAGE = eINSTANCE.getActorResult_Coverage();
 
 		/**
 		 * The meta object literal for the '<em><b>Proxy</b></em>' attribute feature.
@@ -4787,6 +4747,14 @@ public interface ModelPackage extends EPackage {
 		EAttribute ACTOR_RESULT__DELEGATE = eINSTANCE.getActorResult_Delegate();
 
 		/**
+		 * The meta object literal for the '<em><b>Methods</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference ACTOR_RESULT__METHODS = eINSTANCE.getActorResult_Methods();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.PageResultImpl <em>Page Result</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -4795,22 +4763,6 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EClass PAGE_RESULT = eINSTANCE.getPageResult();
-
-		/**
-		 * The meta object literal for the '<em><b>Results</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PAGE_RESULT__RESULTS = eINSTANCE.getPageResult_Results();
-
-		/**
-		 * The meta object literal for the '<em><b>Coverage</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PAGE_RESULT__COVERAGE = eINSTANCE.getPageResult_Coverage();
 
 		/**
 		 * The meta object literal for the '<em><b>Web Elements</b></em>' containment reference list feature.
@@ -4835,6 +4787,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PAGE_RESULT__DELEGATE = eINSTANCE.getPageResult_Delegate();
+
+		/**
+		 * The meta object literal for the '<em><b>Methods</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PAGE_RESULT__METHODS = eINSTANCE.getPageResult_Methods();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.WebElementImpl <em>Web Element</em>}' class.
@@ -4913,6 +4873,56 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute LINK__COMMENT = eINSTANCE.getLink_Comment();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.webtest.model.impl.MethodImpl <em>Method</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.webtest.model.impl.MethodImpl
+		 * @see org.nasdanika.webtest.model.impl.ModelPackageImpl#getMethod()
+		 * @generated
+		 */
+		EClass METHOD = eINSTANCE.getMethod();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute METHOD__NAME = eINSTANCE.getMethod_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Parameter Types</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute METHOD__PARAMETER_TYPES = eINSTANCE.getMethod_ParameterTypes();
+
+		/**
+		 * The meta object literal for the '<em><b>Return Type</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute METHOD__RETURN_TYPE = eINSTANCE.getMethod_ReturnType();
+
+		/**
+		 * The meta object literal for the '<em><b>Exception Types</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute METHOD__EXCEPTION_TYPES = eINSTANCE.getMethod_ExceptionTypes();
+
+		/**
+		 * The meta object literal for the '<em><b>Results</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference METHOD__RESULTS = eINSTANCE.getMethod_Results();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.webtest.model.OperationStatus <em>Operation Status</em>}' enum.

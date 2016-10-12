@@ -105,32 +105,25 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//StackTraceEntry/native"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//ProxyingResult"/>
-    <genClasses ecoreClass="model.ecore#//PageMethodResult">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PageMethodResult/pageResult"/>
-    </genClasses>
+    <genClasses ecoreClass="model.ecore#//PageMethodResult"/>
     <genClasses ecoreClass="model.ecore#//InitializationResult"/>
-    <genClasses ecoreClass="model.ecore#//MethodResult"/>
-    <genClasses ecoreClass="model.ecore#//ActorMethodResult">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ActorMethodResult/actorResult"/>
+    <genClasses ecoreClass="model.ecore#//MethodResult">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//MethodResult/method"/>
     </genClasses>
+    <genClasses ecoreClass="model.ecore#//ActorMethodResult"/>
     <genClasses ecoreClass="model.ecore#//TestMethodResult">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//TestMethodResult/parameters"/>
     </genClasses>
-    <genClasses ecoreClass="model.ecore#//Coverage">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Coverage/invocations"/>
-    </genClasses>
     <genClasses ecoreClass="model.ecore#//ActorResult">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//ActorResult/results"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ActorResult/coverage"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ActorResult/proxy"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//ActorResult/delegate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//ActorResult/methods"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//PageResult">
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//PageResult/results"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PageResult/coverage"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PageResult/webElements"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PageResult/proxy"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//PageResult/delegate"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//PageResult/methods"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//WebElement">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//WebElement/locators"/>
@@ -143,6 +136,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Link/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Link/type"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Link/comment"/>
+    </genClasses>
+    <genClasses ecoreClass="model.ecore#//Method">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Method/name"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Method/parameterTypes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Method/returnType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//Method/exceptionTypes"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference model.ecore#//Method/results"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

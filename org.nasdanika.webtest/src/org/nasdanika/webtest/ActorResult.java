@@ -17,7 +17,6 @@ import java.util.Map.Entry;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.nasdanika.webtest.model.Coverage;
 import org.nasdanika.webtest.model.ModelFactory;
 import org.openqa.selenium.WebDriver;
 
@@ -209,23 +208,38 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher, InstanceT
 		if (isProxy()) {
 			actorResult.setQualifiedName(getActorKey());
 		}
+		
+		for (Method method: getActorInterface().getMethods()) {
+			if (Actor.class.isAssignableFrom(method.getDeclaringClass()) && Actor.class != method.getDeclaringClass()) {
+				org.nasdanika.webtest.model.Method modelMethod = modelFactory.createMethod();
+				modelMethod.setName(method.getName());
+				for (Class<?> pt: method.getParameterTypes()) {
+					modelMethod.getParameterTypes().add(pt.getName());
+				}
+				for (Class<?> et: method.getExceptionTypes()) {
+					modelMethod.getExceptionTypes().add(et.getName());
+				}
+				actorResult.getMethods().add(modelMethod);
+			}
+		}
+		
 		for (OperationResult<?,?> r: getResults()) {
 			org.nasdanika.webtest.model.ActorMethodResult amrModel = (org.nasdanika.webtest.model.ActorMethodResult) objectMap.get(r);
 			if (amrModel==null) {
 				throw new IllegalStateException("Actor method result model not found in the object map");
 			}
-			actorResult.getResults().add(amrModel);
+			findMethod(actorResult, (Method) r.getOperation()).getResults().add(amrModel);
 		}
-		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
-			Coverage coverage = modelFactory.createCoverage();
-			WebTestUtil.titleAndDescriptionAndLinksAndCategoryToDescriptor(ce.getKey(), coverage);
-			if (WebTestUtil.isBlank(coverage.getTitle())) {
-				coverage.setTitle(WebTestUtil.title(ce.getKey().getName()));
-			}
-			coverage.setQualifiedName(ce.getKey().toString());
-			coverage.setInvocations(ce.getValue());
-			actorResult.getCoverage().add(coverage);
-		}		
+//		for (Entry<Method, Integer> ce: getCoverage().entrySet()) {
+//			Coverage coverage = modelFactory.createCoverage();
+//			WebTestUtil.titleAndDescriptionAndLinksAndCategoryToDescriptor(ce.getKey(), coverage);
+//			if (WebTestUtil.isBlank(coverage.getTitle())) {
+//				coverage.setTitle(WebTestUtil.title(ce.getKey().getName()));
+//			}
+//			coverage.setQualifiedName(ce.getKey().toString());
+//			coverage.setInvocations(ce.getValue());
+//			actorResult.getCoverage().add(coverage);
+//		}		
 		return actorResult;
 	}
 	
@@ -238,6 +252,21 @@ public class ActorResult implements HttpPublisher, DirectoryPublisher, InstanceT
 	@Override
 	public boolean isInstance(Object obj) {
 		return actors.contains(obj);
-	}				
+	}		
+	
+	private org.nasdanika.webtest.model.Method findMethod(org.nasdanika.webtest.model.ActorResult actorResult, Method method) {
+		Z: for (org.nasdanika.webtest.model.Method mm: actorResult.getMethods()) {
+			Class<?>[] pt = method.getParameterTypes();
+			if (mm.getName().equals(method.getName()) && pt.length == mm.getParameterTypes().size()) {
+				for (int i=0; i<pt.length; ++i) {
+					if (!pt[i].getName().equals(mm.getParameterTypes().get(i))) {
+						continue Z;
+					}
+				}
+				return mm;
+			}
+		}
+		throw new IllegalArgumentException("Not found: "+method);
+	}	
 
 }

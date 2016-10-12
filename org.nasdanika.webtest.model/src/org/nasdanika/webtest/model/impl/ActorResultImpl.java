@@ -11,11 +11,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.EObjectWithInverseResolvingEList;
 import org.eclipse.emf.ecore.util.InternalEList;
-import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
-import org.nasdanika.webtest.model.Coverage;
+import org.nasdanika.webtest.model.Method;
 import org.nasdanika.webtest.model.ModelPackage;
 
 /**
@@ -26,35 +24,14 @@ import org.nasdanika.webtest.model.ModelPackage;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.webtest.model.impl.ActorResultImpl#getResults <em>Results</em>}</li>
- *   <li>{@link org.nasdanika.webtest.model.impl.ActorResultImpl#getCoverage <em>Coverage</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.ActorResultImpl#isProxy <em>Proxy</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.ActorResultImpl#isDelegate <em>Delegate</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.ActorResultImpl#getMethods <em>Methods</em>}</li>
  * </ul>
  *
  * @generated
  */
 public class ActorResultImpl extends DescriptorImpl implements ActorResult {
-	/**
-	 * The cached value of the '{@link #getResults() <em>Results</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getResults()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<ActorMethodResult> results;
-
-	/**
-	 * The cached value of the '{@link #getCoverage() <em>Coverage</em>}' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getCoverage()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<Coverage> coverage;
-
 	/**
 	 * The default value of the '{@link #isProxy() <em>Proxy</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -96,6 +73,16 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	protected boolean delegate = DELEGATE_EDEFAULT;
 
 	/**
+	 * The cached value of the '{@link #getMethods() <em>Methods</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getMethods()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<Method> methods;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -112,30 +99,6 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	@Override
 	protected EClass eStaticClass() {
 		return ModelPackage.Literals.ACTOR_RESULT;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<ActorMethodResult> getResults() {
-		if (results == null) {
-			results = new EObjectWithInverseResolvingEList<ActorMethodResult>(ActorMethodResult.class, this, ModelPackage.ACTOR_RESULT__RESULTS, ModelPackage.ACTOR_METHOD_RESULT__ACTOR_RESULT);
-		}
-		return results;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<Coverage> getCoverage() {
-		if (coverage == null) {
-			coverage = new EObjectContainmentEList<Coverage>(Coverage.class, this, ModelPackage.ACTOR_RESULT__COVERAGE);
-		}
-		return coverage;
 	}
 
 	/**
@@ -185,14 +148,11 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
-	@Override
-	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case ModelPackage.ACTOR_RESULT__RESULTS:
-				return ((InternalEList<InternalEObject>)(InternalEList<?>)getResults()).basicAdd(otherEnd, msgs);
+	public EList<Method> getMethods() {
+		if (methods == null) {
+			methods = new EObjectContainmentEList<Method>(Method.class, this, ModelPackage.ACTOR_RESULT__METHODS);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
+		return methods;
 	}
 
 	/**
@@ -203,10 +163,8 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
-			case ModelPackage.ACTOR_RESULT__RESULTS:
-				return ((InternalEList<?>)getResults()).basicRemove(otherEnd, msgs);
-			case ModelPackage.ACTOR_RESULT__COVERAGE:
-				return ((InternalEList<?>)getCoverage()).basicRemove(otherEnd, msgs);
+			case ModelPackage.ACTOR_RESULT__METHODS:
+				return ((InternalEList<?>)getMethods()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -219,14 +177,12 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case ModelPackage.ACTOR_RESULT__RESULTS:
-				return getResults();
-			case ModelPackage.ACTOR_RESULT__COVERAGE:
-				return getCoverage();
 			case ModelPackage.ACTOR_RESULT__PROXY:
 				return isProxy();
 			case ModelPackage.ACTOR_RESULT__DELEGATE:
 				return isDelegate();
+			case ModelPackage.ACTOR_RESULT__METHODS:
+				return getMethods();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -240,19 +196,15 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case ModelPackage.ACTOR_RESULT__RESULTS:
-				getResults().clear();
-				getResults().addAll((Collection<? extends ActorMethodResult>)newValue);
-				return;
-			case ModelPackage.ACTOR_RESULT__COVERAGE:
-				getCoverage().clear();
-				getCoverage().addAll((Collection<? extends Coverage>)newValue);
-				return;
 			case ModelPackage.ACTOR_RESULT__PROXY:
 				setProxy((Boolean)newValue);
 				return;
 			case ModelPackage.ACTOR_RESULT__DELEGATE:
 				setDelegate((Boolean)newValue);
+				return;
+			case ModelPackage.ACTOR_RESULT__METHODS:
+				getMethods().clear();
+				getMethods().addAll((Collection<? extends Method>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -266,17 +218,14 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case ModelPackage.ACTOR_RESULT__RESULTS:
-				getResults().clear();
-				return;
-			case ModelPackage.ACTOR_RESULT__COVERAGE:
-				getCoverage().clear();
-				return;
 			case ModelPackage.ACTOR_RESULT__PROXY:
 				setProxy(PROXY_EDEFAULT);
 				return;
 			case ModelPackage.ACTOR_RESULT__DELEGATE:
 				setDelegate(DELEGATE_EDEFAULT);
+				return;
+			case ModelPackage.ACTOR_RESULT__METHODS:
+				getMethods().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -290,14 +239,12 @@ public class ActorResultImpl extends DescriptorImpl implements ActorResult {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case ModelPackage.ACTOR_RESULT__RESULTS:
-				return results != null && !results.isEmpty();
-			case ModelPackage.ACTOR_RESULT__COVERAGE:
-				return coverage != null && !coverage.isEmpty();
 			case ModelPackage.ACTOR_RESULT__PROXY:
 				return proxy != PROXY_EDEFAULT;
 			case ModelPackage.ACTOR_RESULT__DELEGATE:
 				return delegate != DELEGATE_EDEFAULT;
+			case ModelPackage.ACTOR_RESULT__METHODS:
+				return methods != null && !methods.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

@@ -193,15 +193,6 @@ public interface ModelFactory extends EFactory {
 	TestMethodResult createTestMethodResult();
 
 	/**
-	 * Returns a new object of class '<em>Coverage</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Coverage</em>'.
-	 * @generated
-	 */
-	Coverage createCoverage();
-
-	/**
 	 * Returns a new object of class '<em>Actor Result</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -245,6 +236,15 @@ public interface ModelFactory extends EFactory {
 	 * @generated
 	 */
 	Link createLink();
+
+	/**
+	 * Returns a new object of class '<em>Method</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Method</em>'.
+	 * @generated
+	 */
+	Method createMethod();
 
 	/**
 	 * Returns the package supported by this factory.

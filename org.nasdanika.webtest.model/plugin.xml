@@ -11,8 +11,7 @@
       <!-- @generated model -->
       <package
             uri="urn:org.nasdanika.webtest.model"
-            class="org.nasdanika.webtest.model.ModelPackage"
-            genModel="model/model.genmodel"/>
+            class="org.nasdanika.webtest.model.ModelPackage"/>
    </extension>
 
 </plugin>

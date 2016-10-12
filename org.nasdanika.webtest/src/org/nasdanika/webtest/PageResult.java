@@ -345,12 +345,27 @@ public class PageResult implements HttpPublisher, DirectoryPublisher, InstanceTr
 		}
 		pageResult.setProxy(isProxy());		
 		pageResult.setDelegate(Delegate.class.isAssignableFrom(getPageInterface()));
+				
+		for (Method method: getPageInterface().getMethods()) {
+			if (Page.class.isAssignableFrom(method.getDeclaringClass()) && Page.class != method.getDeclaringClass()) {
+				org.nasdanika.webtest.model.Method modelMethod = modelFactory.createMethod();
+				modelMethod.setName(method.getName());
+				for (Class<?> pt: method.getParameterTypes()) {
+					modelMethod.getParameterTypes().add(pt.getName());
+				}
+				for (Class<?> et: method.getExceptionTypes()) {
+					modelMethod.getExceptionTypes().add(et.getName());
+				}
+				pageResult.getMethods().add(modelMethod);
+			}
+		}
+		
 		for (OperationResult<?,?> r: getResults()) {
 			org.nasdanika.webtest.model.PageMethodResult modelResult = (PageMethodResult) objectMap.get(r);
 			if (modelResult == null) {
 				throw new IllegalStateException("Operation result is not yet published");
 			}
-			pageResult.getResults().add(modelResult);
+			findMethod(pageResult, (Method) r.getOperation()).getResults().add(modelResult);
 		}
 		
 		if (this.webElements!=null) {
@@ -455,5 +470,20 @@ public class PageResult implements HttpPublisher, DirectoryPublisher, InstanceTr
 	public boolean isInstance(Object obj) {
 		return pages.contains(obj);
 	}				
+	
+	private org.nasdanika.webtest.model.Method findMethod(org.nasdanika.webtest.model.PageResult pageResult, Method method) {
+		Z: for (org.nasdanika.webtest.model.Method mm: pageResult.getMethods()) {
+			Class<?>[] pt = method.getParameterTypes();
+			if (mm.getName().equals(method.getName()) && pt.length == mm.getParameterTypes().size()) {
+				for (int i=0; i<pt.length; ++i) {
+					if (!pt[i].getName().equals(mm.getParameterTypes().get(i))) {
+						continue Z;
+					}
+				}
+				return mm;
+			}
+		}
+		throw new IllegalArgumentException("Not found: "+method);
+	}
 	
 }

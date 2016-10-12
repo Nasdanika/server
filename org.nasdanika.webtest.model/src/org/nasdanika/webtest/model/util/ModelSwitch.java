@@ -9,12 +9,12 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
-import org.nasdanika.webtest.model.Coverage;
 import org.nasdanika.webtest.model.Description;
 import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.InitializationResult;
 import org.nasdanika.webtest.model.Link;
 import org.nasdanika.webtest.model.Locator;
+import org.nasdanika.webtest.model.Method;
 import org.nasdanika.webtest.model.MethodResult;
 import org.nasdanika.webtest.model.ModelPackage;
 import org.nasdanika.webtest.model.OperationArgument;
@@ -237,13 +237,6 @@ public class ModelSwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ModelPackage.COVERAGE: {
-				Coverage coverage = (Coverage)theEObject;
-				T result = caseCoverage(coverage);
-				if (result == null) result = caseDescriptor(coverage);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case ModelPackage.ACTOR_RESULT: {
 				ActorResult actorResult = (ActorResult)theEObject;
 				T result = caseActorResult(actorResult);
@@ -274,6 +267,12 @@ public class ModelSwitch<T> extends Switch<T> {
 			case ModelPackage.LINK: {
 				Link link = (Link)theEObject;
 				T result = caseLink(link);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ModelPackage.METHOD: {
+				Method method = (Method)theEObject;
+				T result = caseMethod(method);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -582,21 +581,6 @@ public class ModelSwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Coverage</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Coverage</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseCoverage(Coverage object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Actor Result</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -668,6 +652,21 @@ public class ModelSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseLink(Link object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Method</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Method</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMethod(Method object) {
 		return null;
 	}
 

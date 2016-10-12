@@ -10,12 +10,12 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
-import org.nasdanika.webtest.model.Coverage;
 import org.nasdanika.webtest.model.Description;
 import org.nasdanika.webtest.model.Descriptor;
 import org.nasdanika.webtest.model.InitializationResult;
 import org.nasdanika.webtest.model.Link;
 import org.nasdanika.webtest.model.Locator;
+import org.nasdanika.webtest.model.Method;
 import org.nasdanika.webtest.model.MethodResult;
 import org.nasdanika.webtest.model.ModelPackage;
 import org.nasdanika.webtest.model.OperationArgument;
@@ -171,10 +171,6 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 				return createTestMethodResultAdapter();
 			}
 			@Override
-			public Adapter caseCoverage(Coverage object) {
-				return createCoverageAdapter();
-			}
-			@Override
 			public Adapter caseActorResult(ActorResult object) {
 				return createActorResultAdapter();
 			}
@@ -193,6 +189,10 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseLink(Link object) {
 				return createLinkAdapter();
+			}
+			@Override
+			public Adapter caseMethod(Method object) {
+				return createMethodAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -495,20 +495,6 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.webtest.model.Coverage <em>Coverage</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.webtest.model.Coverage
-	 * @generated
-	 */
-	public Adapter createCoverageAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.webtest.model.ActorResult <em>Actor Result</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -575,6 +561,20 @@ public class ModelAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createLinkAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.webtest.model.Method <em>Method</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.webtest.model.Method
+	 * @generated
+	 */
+	public Adapter createMethodAdapter() {
 		return null;
 	}
 

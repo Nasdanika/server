@@ -424,12 +424,6 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Result of page method invocation."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="pageResult" eType="#//PageResult"
-        eOpposite="#//PageResult/results">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="References page result this invocation belongs to."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="InitializationResult" eSuperTypes="#//PageMethodResult">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -440,17 +434,13 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Result of method invocation."/>
     </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="method" eType="#//Method"
+        eOpposite="#//Method/results"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ActorMethodResult" eSuperTypes="#//MethodResult">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Result of actor method invocation."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="actorResult" eType="#//ActorResult"
-        eOpposite="#//ActorResult/results">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="References actor result this invocation belongs to."/>
-      </eAnnotations>
-    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="TestMethodResult" eSuperTypes="#//MethodResult">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -463,32 +453,10 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Coverage" eSuperTypes="#//Descriptor">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Operation coverage entry."/>
-    </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="invocations" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Number of invocations."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ActorResult" eSuperTypes="#//Descriptor">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Results collected for actor invocations."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="results" upperBound="-1"
-        eType="#//ActorMethodResult" eOpposite="#//ActorMethodResult/actorResult">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Actor method invocations."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="coverage" upperBound="-1"
-        eType="#//Coverage" containment="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Method coverage."/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="proxy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="True if actor class is a proxy."/>
@@ -499,23 +467,13 @@
         <details key="documentation" value="True if actor class is a proxy."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="methods" upperBound="-1"
+        eType="#//Method" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PageResult" eSuperTypes="#//Descriptor">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Result of page class interactions."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="results" upperBound="-1"
-        eType="#//PageMethodResult" eOpposite="#//PageMethodResult/pageResult">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Page methods invocation results."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="coverage" upperBound="-1"
-        eType="#//Coverage" containment="true">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Page methods coverage."/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="webElements" upperBound="-1"
         eType="#//WebElement" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -532,6 +490,8 @@
         <details key="documentation" value="True if actor class is a proxy."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="methods" upperBound="-1"
+        eType="#//Method" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="WebElement" eSuperTypes="#//Descriptor">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -578,5 +538,18 @@
         <details key="documentation" value="Optional link type to differentiate between links if there is more than one."/>
       </eAnnotations>
     </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Method">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Actor or Page method."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parameterTypes" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="returnType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="exceptionTypes" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="results" upperBound="-1"
+        eType="#//MethodResult" eOpposite="#//MethodResult/method"/>
   </eClassifiers>
 </ecore:EPackage>

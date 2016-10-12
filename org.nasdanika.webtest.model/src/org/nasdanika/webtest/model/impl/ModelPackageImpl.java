@@ -13,11 +13,11 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.webtest.model.ActorMethodResult;
 import org.nasdanika.webtest.model.ActorResult;
-import org.nasdanika.webtest.model.Coverage;
 import org.nasdanika.webtest.model.Description;
 import org.nasdanika.webtest.model.InitializationResult;
 import org.nasdanika.webtest.model.Link;
 import org.nasdanika.webtest.model.Locator;
+import org.nasdanika.webtest.model.Method;
 import org.nasdanika.webtest.model.MethodResult;
 import org.nasdanika.webtest.model.ModelFactory;
 import org.nasdanika.webtest.model.ModelPackage;
@@ -191,13 +191,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass coverageEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass actorResultEClass = null;
 
 	/**
@@ -227,6 +220,13 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	private EClass linkEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass methodEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -965,6 +965,15 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getMethodResult_Method() {
+		return (EReference)methodResultEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getActorMethodResult() {
 		return actorMethodResultEClass;
 	}
@@ -974,26 +983,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getActorMethodResult_ActorResult() {
-		return (EReference)actorMethodResultEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getPageMethodResult() {
 		return pageMethodResultEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getPageMethodResult_PageResult() {
-		return (EReference)pageMethodResultEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1019,24 +1010,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getCoverage() {
-		return coverageEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getCoverage_Invocations() {
-		return (EAttribute)coverageEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getActorResult() {
 		return actorResultEClass;
 	}
@@ -1046,26 +1019,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getActorResult_Results() {
-		return (EReference)actorResultEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getActorResult_Coverage() {
-		return (EReference)actorResultEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getActorResult_Proxy() {
-		return (EAttribute)actorResultEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)actorResultEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1074,7 +1029,16 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	public EAttribute getActorResult_Delegate() {
-		return (EAttribute)actorResultEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)actorResultEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getActorResult_Methods() {
+		return (EReference)actorResultEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1091,7 +1055,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getPageResult_Results() {
+	public EReference getPageResult_WebElements() {
 		return (EReference)pageResultEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -1100,26 +1064,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getPageResult_Coverage() {
-		return (EReference)pageResultEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getPageResult_WebElements() {
-		return (EReference)pageResultEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getPageResult_Proxy() {
-		return (EAttribute)pageResultEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)pageResultEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1128,7 +1074,16 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	public EAttribute getPageResult_Delegate() {
-		return (EAttribute)pageResultEClass.getEStructuralFeatures().get(4);
+		return (EAttribute)pageResultEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPageResult_Methods() {
+		return (EReference)pageResultEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -1210,6 +1165,60 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 */
 	public EAttribute getLink_Comment() {
 		return (EAttribute)linkEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getMethod() {
+		return methodEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMethod_Name() {
+		return (EAttribute)methodEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMethod_ParameterTypes() {
+		return (EAttribute)methodEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMethod_ReturnType() {
+		return (EAttribute)methodEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMethod_ExceptionTypes() {
+		return (EAttribute)methodEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getMethod_Results() {
+		return (EReference)methodEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1345,33 +1354,27 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		proxyingResultEClass = createEClass(PROXYING_RESULT);
 
 		pageMethodResultEClass = createEClass(PAGE_METHOD_RESULT);
-		createEReference(pageMethodResultEClass, PAGE_METHOD_RESULT__PAGE_RESULT);
 
 		initializationResultEClass = createEClass(INITIALIZATION_RESULT);
 
 		methodResultEClass = createEClass(METHOD_RESULT);
+		createEReference(methodResultEClass, METHOD_RESULT__METHOD);
 
 		actorMethodResultEClass = createEClass(ACTOR_METHOD_RESULT);
-		createEReference(actorMethodResultEClass, ACTOR_METHOD_RESULT__ACTOR_RESULT);
 
 		testMethodResultEClass = createEClass(TEST_METHOD_RESULT);
 		createEAttribute(testMethodResultEClass, TEST_METHOD_RESULT__PARAMETERS);
 
-		coverageEClass = createEClass(COVERAGE);
-		createEAttribute(coverageEClass, COVERAGE__INVOCATIONS);
-
 		actorResultEClass = createEClass(ACTOR_RESULT);
-		createEReference(actorResultEClass, ACTOR_RESULT__RESULTS);
-		createEReference(actorResultEClass, ACTOR_RESULT__COVERAGE);
 		createEAttribute(actorResultEClass, ACTOR_RESULT__PROXY);
 		createEAttribute(actorResultEClass, ACTOR_RESULT__DELEGATE);
+		createEReference(actorResultEClass, ACTOR_RESULT__METHODS);
 
 		pageResultEClass = createEClass(PAGE_RESULT);
-		createEReference(pageResultEClass, PAGE_RESULT__RESULTS);
-		createEReference(pageResultEClass, PAGE_RESULT__COVERAGE);
 		createEReference(pageResultEClass, PAGE_RESULT__WEB_ELEMENTS);
 		createEAttribute(pageResultEClass, PAGE_RESULT__PROXY);
 		createEAttribute(pageResultEClass, PAGE_RESULT__DELEGATE);
+		createEReference(pageResultEClass, PAGE_RESULT__METHODS);
 
 		webElementEClass = createEClass(WEB_ELEMENT);
 		createEReference(webElementEClass, WEB_ELEMENT__LOCATORS);
@@ -1384,6 +1387,13 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(linkEClass, LINK__VALUE);
 		createEAttribute(linkEClass, LINK__TYPE);
 		createEAttribute(linkEClass, LINK__COMMENT);
+
+		methodEClass = createEClass(METHOD);
+		createEAttribute(methodEClass, METHOD__NAME);
+		createEAttribute(methodEClass, METHOD__PARAMETER_TYPES);
+		createEAttribute(methodEClass, METHOD__RETURN_TYPE);
+		createEAttribute(methodEClass, METHOD__EXCEPTION_TYPES);
+		createEReference(methodEClass, METHOD__RESULTS);
 
 		// Create enums
 		operationStatusEEnum = createEEnum(OPERATION_STATUS);
@@ -1430,7 +1440,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		methodResultEClass.getESuperTypes().add(this.getOperationResult());
 		actorMethodResultEClass.getESuperTypes().add(this.getMethodResult());
 		testMethodResultEClass.getESuperTypes().add(this.getMethodResult());
-		coverageEClass.getESuperTypes().add(this.getDescriptor());
 		actorResultEClass.getESuperTypes().add(this.getDescriptor());
 		pageResultEClass.getESuperTypes().add(this.getDescriptor());
 		webElementEClass.getESuperTypes().add(this.getDescriptor());
@@ -1524,33 +1533,27 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEClass(proxyingResultEClass, ProxyingResult.class, "ProxyingResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(pageMethodResultEClass, PageMethodResult.class, "PageMethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPageMethodResult_PageResult(), this.getPageResult(), this.getPageResult_Results(), "pageResult", null, 0, 1, PageMethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(initializationResultEClass, InitializationResult.class, "InitializationResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(methodResultEClass, MethodResult.class, "MethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getMethodResult_Method(), this.getMethod(), this.getMethod_Results(), "method", null, 0, 1, MethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(actorMethodResultEClass, ActorMethodResult.class, "ActorMethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getActorMethodResult_ActorResult(), this.getActorResult(), this.getActorResult_Results(), "actorResult", null, 0, 1, ActorMethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(testMethodResultEClass, TestMethodResult.class, "TestMethodResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getTestMethodResult_Parameters(), ecorePackage.getEString(), "parameters", null, 0, -1, TestMethodResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(coverageEClass, Coverage.class, "Coverage", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getCoverage_Invocations(), ecorePackage.getEInt(), "invocations", null, 0, 1, Coverage.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
 		initEClass(actorResultEClass, ActorResult.class, "ActorResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getActorResult_Results(), this.getActorMethodResult(), this.getActorMethodResult_ActorResult(), "results", null, 0, -1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getActorResult_Coverage(), this.getCoverage(), null, "coverage", null, 0, -1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getActorResult_Proxy(), ecorePackage.getEBoolean(), "proxy", null, 0, 1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getActorResult_Delegate(), ecorePackage.getEBoolean(), "delegate", null, 0, 1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getActorResult_Methods(), this.getMethod(), null, "methods", null, 0, -1, ActorResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(pageResultEClass, PageResult.class, "PageResult", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPageResult_Results(), this.getPageMethodResult(), this.getPageMethodResult_PageResult(), "results", null, 0, -1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPageResult_Coverage(), this.getCoverage(), null, "coverage", null, 0, -1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPageResult_WebElements(), this.getWebElement(), null, "webElements", null, 0, -1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPageResult_Proxy(), ecorePackage.getEBoolean(), "proxy", null, 0, 1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPageResult_Delegate(), ecorePackage.getEBoolean(), "delegate", null, 0, 1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPageResult_Methods(), this.getMethod(), null, "methods", null, 0, -1, PageResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(webElementEClass, WebElement.class, "WebElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getWebElement_Locators(), this.getLocator(), null, "locators", null, 0, -1, WebElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1563,6 +1566,13 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getLink_Value(), ecorePackage.getEString(), "value", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLink_Type(), ecorePackage.getEString(), "type", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getLink_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Link.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(methodEClass, Method.class, "Method", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getMethod_Name(), ecorePackage.getEString(), "name", null, 0, 1, Method.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMethod_ParameterTypes(), ecorePackage.getEString(), "parameterTypes", null, 0, -1, Method.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMethod_ReturnType(), ecorePackage.getEString(), "returnType", null, 0, 1, Method.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getMethod_ExceptionTypes(), ecorePackage.getEString(), "exceptionTypes", null, 0, -1, Method.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getMethod_Results(), this.getMethodResult(), this.getMethodResult_Method(), "results", null, 0, -1, Method.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize enums and add enum literals
 		initEEnum(operationStatusEEnum, OperationStatus.class, "OperationStatus");
@@ -2068,12 +2078,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 			 "documentation", "Result of page method invocation."
 		   });	
 		addAnnotation
-		  (getPageMethodResult_PageResult(), 
-		   source, 
-		   new String[] {
-			 "documentation", "References page result this invocation belongs to."
-		   });	
-		addAnnotation
 		  (initializationResultEClass, 
 		   source, 
 		   new String[] {
@@ -2092,12 +2096,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 			 "documentation", "Result of actor method invocation."
 		   });	
 		addAnnotation
-		  (getActorMethodResult_ActorResult(), 
-		   source, 
-		   new String[] {
-			 "documentation", "References actor result this invocation belongs to."
-		   });	
-		addAnnotation
 		  (testMethodResultEClass, 
 		   source, 
 		   new String[] {
@@ -2110,34 +2108,10 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 			 "documentation", "Names of test parameters"
 		   });	
 		addAnnotation
-		  (coverageEClass, 
-		   source, 
-		   new String[] {
-			 "documentation", "Operation coverage entry."
-		   });	
-		addAnnotation
-		  (getCoverage_Invocations(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Number of invocations."
-		   });	
-		addAnnotation
 		  (actorResultEClass, 
 		   source, 
 		   new String[] {
 			 "documentation", "Results collected for actor invocations."
-		   });	
-		addAnnotation
-		  (getActorResult_Results(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Actor method invocations."
-		   });	
-		addAnnotation
-		  (getActorResult_Coverage(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Method coverage."
 		   });	
 		addAnnotation
 		  (getActorResult_Proxy(), 
@@ -2156,18 +2130,6 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Result of page class interactions."
-		   });	
-		addAnnotation
-		  (getPageResult_Results(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Page methods invocation results."
-		   });	
-		addAnnotation
-		  (getPageResult_Coverage(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Page methods coverage."
 		   });	
 		addAnnotation
 		  (getPageResult_WebElements(), 
@@ -2240,6 +2202,12 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Optional link type to differentiate between links if there is more than one."
+		   });	
+		addAnnotation
+		  (methodEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Actor or Page method."
 		   });
 	}
 
