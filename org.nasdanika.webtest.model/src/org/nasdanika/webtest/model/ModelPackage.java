@@ -1109,13 +1109,13 @@ public interface ModelPackage extends EPackage {
 	int OPERATION_RESULT__RESULT = DESCRIPTOR_FEATURE_COUNT + 9;
 
 	/**
-	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * The feature id for the '<em><b>Instance Alias Path</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int OPERATION_RESULT__INSTANCE_ALIAS = DESCRIPTOR_FEATURE_COUNT + 10;
+	int OPERATION_RESULT__INSTANCE_ALIAS_PATH = DESCRIPTOR_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Operation Result</em>' class.
@@ -1436,13 +1436,13 @@ public interface ModelPackage extends EPackage {
 	int PROXYING_RESULT__RESULT = OPERATION_RESULT__RESULT;
 
 	/**
-	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * The feature id for the '<em><b>Instance Alias Path</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROXYING_RESULT__INSTANCE_ALIAS = OPERATION_RESULT__INSTANCE_ALIAS;
+	int PROXYING_RESULT__INSTANCE_ALIAS_PATH = OPERATION_RESULT__INSTANCE_ALIAS_PATH;
 
 	/**
 	 * The number of structural features of the '<em>Proxying Result</em>' class.
@@ -1617,13 +1617,13 @@ public interface ModelPackage extends EPackage {
 	int METHOD_RESULT__RESULT = OPERATION_RESULT__RESULT;
 
 	/**
-	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * The feature id for the '<em><b>Instance Alias Path</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int METHOD_RESULT__INSTANCE_ALIAS = OPERATION_RESULT__INSTANCE_ALIAS;
+	int METHOD_RESULT__INSTANCE_ALIAS_PATH = OPERATION_RESULT__INSTANCE_ALIAS_PATH;
 
 	/**
 	 * The feature id for the '<em><b>Method</b></em>' reference.
@@ -1807,13 +1807,13 @@ public interface ModelPackage extends EPackage {
 	int PAGE_METHOD_RESULT__RESULT = METHOD_RESULT__RESULT;
 
 	/**
-	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * The feature id for the '<em><b>Instance Alias Path</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PAGE_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
+	int PAGE_METHOD_RESULT__INSTANCE_ALIAS_PATH = METHOD_RESULT__INSTANCE_ALIAS_PATH;
 
 	/**
 	 * The feature id for the '<em><b>Method</b></em>' reference.
@@ -1997,13 +1997,13 @@ public interface ModelPackage extends EPackage {
 	int INITIALIZATION_RESULT__RESULT = PAGE_METHOD_RESULT__RESULT;
 
 	/**
-	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * The feature id for the '<em><b>Instance Alias Path</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int INITIALIZATION_RESULT__INSTANCE_ALIAS = PAGE_METHOD_RESULT__INSTANCE_ALIAS;
+	int INITIALIZATION_RESULT__INSTANCE_ALIAS_PATH = PAGE_METHOD_RESULT__INSTANCE_ALIAS_PATH;
 
 	/**
 	 * The feature id for the '<em><b>Method</b></em>' reference.
@@ -2187,13 +2187,13 @@ public interface ModelPackage extends EPackage {
 	int ACTOR_METHOD_RESULT__RESULT = METHOD_RESULT__RESULT;
 
 	/**
-	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * The feature id for the '<em><b>Instance Alias Path</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTOR_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
+	int ACTOR_METHOD_RESULT__INSTANCE_ALIAS_PATH = METHOD_RESULT__INSTANCE_ALIAS_PATH;
 
 	/**
 	 * The feature id for the '<em><b>Method</b></em>' reference.
@@ -2377,13 +2377,13 @@ public interface ModelPackage extends EPackage {
 	int TEST_METHOD_RESULT__RESULT = METHOD_RESULT__RESULT;
 
 	/**
-	 * The feature id for the '<em><b>Instance Alias</b></em>' attribute.
+	 * The feature id for the '<em><b>Instance Alias Path</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_METHOD_RESULT__INSTANCE_ALIAS = METHOD_RESULT__INSTANCE_ALIAS;
+	int TEST_METHOD_RESULT__INSTANCE_ALIAS_PATH = METHOD_RESULT__INSTANCE_ALIAS_PATH;
 
 	/**
 	 * The feature id for the '<em><b>Method</b></em>' reference.
@@ -3523,15 +3523,15 @@ public interface ModelPackage extends EPackage {
 	EReference getOperationResult_Result();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.webtest.model.OperationResult#getInstanceAlias <em>Instance Alias</em>}'.
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.webtest.model.OperationResult#getInstanceAliasPath <em>Instance Alias Path</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Instance Alias</em>'.
-	 * @see org.nasdanika.webtest.model.OperationResult#getInstanceAlias()
+	 * @return the meta object for the attribute list '<em>Instance Alias Path</em>'.
+	 * @see org.nasdanika.webtest.model.OperationResult#getInstanceAliasPath()
 	 * @see #getOperationResult()
 	 * @generated
 	 */
-	EAttribute getOperationResult_InstanceAlias();
+	EAttribute getOperationResult_InstanceAliasPath();
 
 	/**
 	 * Returns the meta object for the '{@link org.nasdanika.webtest.model.OperationResult#allScreenshots() <em>All Screenshots</em>}' operation.
@@ -4529,12 +4529,12 @@ public interface ModelPackage extends EPackage {
 		EReference OPERATION_RESULT__RESULT = eINSTANCE.getOperationResult_Result();
 
 		/**
-		 * The meta object literal for the '<em><b>Instance Alias</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Instance Alias Path</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute OPERATION_RESULT__INSTANCE_ALIAS = eINSTANCE.getOperationResult_InstanceAlias();
+		EAttribute OPERATION_RESULT__INSTANCE_ALIAS_PATH = eINSTANCE.getOperationResult_InstanceAliasPath();
 
 		/**
 		 * The meta object literal for the '<em><b>All Screenshots</b></em>' operation.

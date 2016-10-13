@@ -346,9 +346,10 @@
         <details key="documentation" value="Operation return value, if any."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="instanceAlias" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="instanceAliasPath" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Instance alias can be used to differentiate between several instances of the same&#xD;&#xA;type participating in a test."/>
+        <details key="documentation" value="Instance alias can be used to differentiate between several instances of the same&#xD;&#xA;type participating in a test.&#xD;&#xA;&#xD;&#xA;Alias path would be a size of 1 for top-level actors/pages and more than one for delegates."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
