@@ -75,7 +75,7 @@ public class MemoryCDOSessionProvider implements AutoCloseable, CDOSessionProvid
 		LifecycleUtil.activate(connector);
 			
 	    // Create configuration
-	    CDONet4jSessionConfiguration configuration = CDONet4jUtil.createNet4jSessionConfiguration();
+	    CDONet4jSessionConfiguration configuration = createNet4jSessionConfiguration();
 	    		
 	    configuration.setConnector(connector);
 		configuration.setRepositoryName(repository.getName());
@@ -86,6 +86,10 @@ public class MemoryCDOSessionProvider implements AutoCloseable, CDOSessionProvid
 	    for (CDOSessionInitializer initializer: cdoSessionInitializers) {
 	    	initializer.init(session);
 	    }
+	}
+
+	protected CDONet4jSessionConfiguration createNet4jSessionConfiguration() {
+		return CDONet4jUtil.createNet4jSessionConfiguration();
 	}
 
 	@Override
