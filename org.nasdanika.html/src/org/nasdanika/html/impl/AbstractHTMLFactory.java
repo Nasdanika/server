@@ -313,7 +313,7 @@ public abstract class AbstractHTMLFactory implements HTMLFactory {
 	private static final Pattern EXPANDER_PATTERN = Pattern.compile("\\{\\{(.+?)\\}\\}");	
 	
 	/**
-	 * Expands tokens in the form of <code>${token name}</code> to their values.
+	 * Expands tokens in the form of <code>{{token name}}</code> to their values.
 	 * If a token is not found expansion is not processed.
 	 * @param input
 	 * @param env
