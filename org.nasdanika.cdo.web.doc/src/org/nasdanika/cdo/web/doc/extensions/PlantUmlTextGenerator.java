@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.nasdanika.cdo.web.doc.DependencyTracer;
-import org.nasdanika.cdo.web.doc.DocRoute;
 
 /**
  * This code is based on net.sourceforge.plantuml.text.AbstractDiagramTextProvider and 
@@ -332,7 +331,7 @@ public class PlantUmlTextGenerator {
 			for (EAttribute attribute: eClass.getEAttributes()) {			
 				EClassifier eType = attribute.getEType();
 				if (eType != null) {
-					appendAttribute(null, null, getTypeName(eType), attribute.getName());
+					appendAttribute(null, null, getTypeName(eType) + (attribute.isMany() ? "[]" : ""), attribute.getName());
 				}						
 			}
 		}
