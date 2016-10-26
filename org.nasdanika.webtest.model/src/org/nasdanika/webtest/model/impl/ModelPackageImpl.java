@@ -812,7 +812,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getOperationResult_InstanceAliasPath() {
+	public EAttribute getOperationResult_InstanceAlias() {
 		return (EAttribute)operationResultEClass.getEStructuralFeatures().get(10);
 	}
 
@@ -1334,7 +1334,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(operationResultEClass, OPERATION_RESULT__STATUS);
 		createEReference(operationResultEClass, OPERATION_RESULT__ARGUMENTS);
 		createEReference(operationResultEClass, OPERATION_RESULT__RESULT);
-		createEAttribute(operationResultEClass, OPERATION_RESULT__INSTANCE_ALIAS_PATH);
+		createEAttribute(operationResultEClass, OPERATION_RESULT__INSTANCE_ALIAS);
 		createEOperation(operationResultEClass, OPERATION_RESULT___ALL_SCREENSHOTS);
 
 		throwableEClass = createEClass(THROWABLE);
@@ -1512,7 +1512,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getOperationResult_Status(), this.getOperationStatus(), "status", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOperationResult_Arguments(), this.getOperationArgument(), null, "arguments", null, 0, -1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getOperationResult_Result(), this.getOperationArgument(), null, "result", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getOperationResult_InstanceAliasPath(), ecorePackage.getEString(), "instanceAliasPath", null, 0, -1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getOperationResult_InstanceAlias(), ecorePackage.getEString(), "instanceAlias", null, 0, 1, OperationResult.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEOperation(getOperationResult__AllScreenshots(), this.getScreenshotEntry(), "allScreenshots", 0, -1, IS_UNIQUE, IS_ORDERED);
 
@@ -1988,7 +1988,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 			 "documentation", "Operation return value, if any."
 		   });	
 		addAnnotation
-		  (getOperationResult_InstanceAliasPath(), 
+		  (getOperationResult_InstanceAlias(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Instance alias can be used to differentiate between several instances of the same\r\ntype participating in a test.\r\n\r\nAlias path would be a size of 1 for top-level actors/pages and more than one for delegates."

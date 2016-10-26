@@ -7,8 +7,6 @@ package org.nasdanika.webtest;
  * @author Pavel Vlasov
  *
  */
-public interface Delegate<T> {
+public interface Delegate {
 	
-	T getDelegatedBy();
-
 }

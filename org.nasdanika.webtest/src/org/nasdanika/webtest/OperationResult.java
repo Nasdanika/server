@@ -76,7 +76,7 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		return arguments;
 	}
 		
-	private List<String> instanceAliasPath = new ArrayList<>();
+	private String instanceAlias;
 	
 	private static long instanceCounter;
 	
@@ -87,32 +87,32 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 		}
 		
 	};
-		
+	
+	
 	/**
 	 * Sets operation instance.
 	 * @param instance
 	 */
 	public void setInstance(Object instance) {
-		for (Object inst = instance; inst != null; inst = inst instanceof Delegate ? ((Delegate<?>) inst).getDelegatedBy() : null) {
+		if (instance!=null) {
 			Map<Class<?>, Map<Object, String>> instanceAliasMap = instanceAliasMapThreadLocal.get();
-			Map<Object, String> instanceClassAliasMap = instanceAliasMap.get(inst.getClass());
+			Map<Object, String> instanceClassAliasMap = instanceAliasMap.get(instance.getClass());
 			if (instanceClassAliasMap == null) {
 				instanceClassAliasMap = new WeakHashMap<Object,String>();
-				instanceAliasMap.put(inst.getClass(), instanceClassAliasMap);
+				instanceAliasMap.put(instance.getClass(), instanceClassAliasMap);
 			}
 			
-			String instanceAlias = instanceClassAliasMap.get(inst);
+			instanceAlias = instanceClassAliasMap.get(instance);
 			if (instanceAlias==null) {
-				if (inst instanceof Aliased) {
-					instanceAlias = ((Aliased) inst).getAlias();
+				if (instance instanceof Aliased) {
+					instanceAlias = ((Aliased) instance).getAlias();
 				} else {
-					String cName = inst.getClass().getName();					
+					String cName = instance.getClass().getName();					
 					int lastDotIdx = cName.lastIndexOf('.');
 					instanceAlias = cName.substring(lastDotIdx+1, lastDotIdx+2)+Long.toString(instanceCounter++);
 				}
-				instanceClassAliasMap.put(inst, instanceAlias);
+				instanceClassAliasMap.put(instance, instanceAlias);
 			}
-			instanceAliasPath.add(instanceAlias);
 		}
 	}
 	
@@ -800,8 +800,8 @@ public abstract class OperationResult<O extends AnnotatedElement, M extends org.
 			}
 			
 		});
-		for (String a: instanceAliasPath) {
-			model.getInstanceAliasPath().add(a);
+		if (instanceAlias!=null) {
+			model.setInstanceAlias(instanceAlias);
 		}
 		if (hasOwnFailure()) {
 			if (isFailure()) {

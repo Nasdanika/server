@@ -171,14 +171,7 @@ abstract class OperationResultDocumentationGenerator<T extends OperationResult> 
 			ib.append("&nbsp");
 		}
 		Row row = rowContainer.row();
-		StringBuilder aliasPathBuilder = new StringBuilder();
-		for (String ape: operationResult.getInstanceAliasPath()) {
-			if (aliasPathBuilder.length() > 0) {
-				aliasPathBuilder.append(" / ");
-			}
-			aliasPathBuilder.append(ape);
-		}
-		row.cell(aliasPathBuilder).style().text().align().center();
+		row.cell(operationResult.getInstanceAlias()).style().text().align().center();
 		TocNode toc = testResultsDocumentationGenerator.getDocRoute().findToc(operationResult);
 		row.cell(ib, toc == null ? operationResult.getTitle() : toc.getLink(testResultsDocumentationGenerator.getDocRoute().getDocRoutePath()));
 		row.cell(operationResult.getFinish() - operationResult.getStart()).style().text().align().right();

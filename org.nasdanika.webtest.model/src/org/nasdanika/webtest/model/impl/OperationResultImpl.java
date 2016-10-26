@@ -14,7 +14,6 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 import org.nasdanika.webtest.model.ModelPackage;
@@ -41,7 +40,7 @@ import org.nasdanika.webtest.model.ScreenshotEntry;
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getStatus <em>Status</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getArguments <em>Arguments</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getResult <em>Result</em>}</li>
- *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getInstanceAliasPath <em>Instance Alias Path</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.impl.OperationResultImpl#getInstanceAlias <em>Instance Alias</em>}</li>
  * </ul>
  *
  * @generated
@@ -188,14 +187,24 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 	protected OperationArgument result;
 
 	/**
-	 * The cached value of the '{@link #getInstanceAliasPath() <em>Instance Alias Path</em>}' attribute list.
+	 * The default value of the '{@link #getInstanceAlias() <em>Instance Alias</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getInstanceAliasPath()
+	 * @see #getInstanceAlias()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<String> instanceAliasPath;
+	protected static final String INSTANCE_ALIAS_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getInstanceAlias() <em>Instance Alias</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInstanceAlias()
+	 * @generated
+	 * @ordered
+	 */
+	protected String instanceAlias = INSTANCE_ALIAS_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -470,11 +479,20 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<String> getInstanceAliasPath() {
-		if (instanceAliasPath == null) {
-			instanceAliasPath = new EDataTypeEList<String>(String.class, this, ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS_PATH);
-		}
-		return instanceAliasPath;
+	public String getInstanceAlias() {
+		return instanceAlias;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setInstanceAlias(String newInstanceAlias) {
+		String oldInstanceAlias = instanceAlias;
+		instanceAlias = newInstanceAlias;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS, oldInstanceAlias, instanceAlias));
 	}
 
 	/**
@@ -560,8 +578,8 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 				return getArguments();
 			case ModelPackage.OPERATION_RESULT__RESULT:
 				return getResult();
-			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS_PATH:
-				return getInstanceAliasPath();
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				return getInstanceAlias();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -608,9 +626,8 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 			case ModelPackage.OPERATION_RESULT__RESULT:
 				setResult((OperationArgument)newValue);
 				return;
-			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS_PATH:
-				getInstanceAliasPath().clear();
-				getInstanceAliasPath().addAll((Collection<? extends String>)newValue);
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				setInstanceAlias((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -654,8 +671,8 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 			case ModelPackage.OPERATION_RESULT__RESULT:
 				setResult((OperationArgument)null);
 				return;
-			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS_PATH:
-				getInstanceAliasPath().clear();
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				setInstanceAlias(INSTANCE_ALIAS_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -689,8 +706,8 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 				return arguments != null && !arguments.isEmpty();
 			case ModelPackage.OPERATION_RESULT__RESULT:
 				return result != null;
-			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS_PATH:
-				return instanceAliasPath != null && !instanceAliasPath.isEmpty();
+			case ModelPackage.OPERATION_RESULT__INSTANCE_ALIAS:
+				return INSTANCE_ALIAS_EDEFAULT == null ? instanceAlias != null : !INSTANCE_ALIAS_EDEFAULT.equals(instanceAlias);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -727,8 +744,8 @@ public class OperationResultImpl extends DescriptorImpl implements OperationResu
 		result.append(finish);
 		result.append(", status: ");
 		result.append(status);
-		result.append(", instanceAliasPath: ");
-		result.append(instanceAliasPath);
+		result.append(", instanceAlias: ");
+		result.append(instanceAlias);
 		result.append(')');
 		return result.toString();
 	}

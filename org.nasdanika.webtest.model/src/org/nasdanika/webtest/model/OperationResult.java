@@ -27,7 +27,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.nasdanika.webtest.model.OperationResult#getStatus <em>Status</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.OperationResult#getArguments <em>Arguments</em>}</li>
  *   <li>{@link org.nasdanika.webtest.model.OperationResult#getResult <em>Result</em>}</li>
- *   <li>{@link org.nasdanika.webtest.model.OperationResult#getInstanceAliasPath <em>Instance Alias Path</em>}</li>
+ *   <li>{@link org.nasdanika.webtest.model.OperationResult#getInstanceAlias <em>Instance Alias</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult()
@@ -299,8 +299,7 @@ public interface OperationResult extends Descriptor {
 	void setResult(OperationArgument value);
 
 	/**
-	 * Returns the value of the '<em><b>Instance Alias Path</b></em>' attribute list.
-	 * The list contents are of type {@link java.lang.String}.
+	 * Returns the value of the '<em><b>Instance Alias</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
@@ -309,12 +308,23 @@ public interface OperationResult extends Descriptor {
 	 * 
 	 * Alias path would be a size of 1 for top-level actors/pages and more than one for delegates.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Instance Alias Path</em>' attribute list.
-	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_InstanceAliasPath()
+	 * @return the value of the '<em>Instance Alias</em>' attribute.
+	 * @see #setInstanceAlias(String)
+	 * @see org.nasdanika.webtest.model.ModelPackage#getOperationResult_InstanceAlias()
 	 * @model unique="false"
 	 * @generated
 	 */
-	EList<String> getInstanceAliasPath();
+	String getInstanceAlias();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.webtest.model.OperationResult#getInstanceAlias <em>Instance Alias</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Instance Alias</em>' attribute.
+	 * @see #getInstanceAlias()
+	 * @generated
+	 */
+	void setInstanceAlias(String value);
 
 	/**
 	 * <!-- begin-user-doc -->

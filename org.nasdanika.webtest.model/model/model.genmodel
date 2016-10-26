@@ -87,7 +87,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//OperationResult/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EReference model.ecore#//OperationResult/arguments"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//OperationResult/result"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//OperationResult/instanceAliasPath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute model.ecore#//OperationResult/instanceAlias"/>
       <genOperations ecoreOperation="model.ecore#//OperationResult/allScreenshots"/>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Throwable">
