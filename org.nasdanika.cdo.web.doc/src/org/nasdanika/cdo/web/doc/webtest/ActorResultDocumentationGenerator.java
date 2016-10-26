@@ -29,5 +29,10 @@ class ActorResultDocumentationGenerator extends DescriptorDocumentationGenerator
 	protected Type getType(Descriptor obj) {
 		return Type.CLASS;
 	}
+	
+	@Override
+	protected boolean isTocHidden(ActorResult actorResult) {
+		return actorResult.isDelegate();
+	}
 
 }
