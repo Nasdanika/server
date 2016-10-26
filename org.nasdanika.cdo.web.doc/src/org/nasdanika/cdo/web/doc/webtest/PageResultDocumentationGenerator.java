@@ -31,5 +31,10 @@ class PageResultDocumentationGenerator extends DescriptorDocumentationGenerator<
 	protected Type getType(Descriptor obj) {
 		return Type.CLASS;
 	}
+	
+	@Override
+	protected boolean isTocHidden(PageResult pageResult) {
+		return pageResult.isDelegate();
+	}
 
 }
