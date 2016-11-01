@@ -1411,8 +1411,12 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 	
 	private boolean hasDuplicateName(EPackage ePackage, Collection<EPackage> ePackages) {
-		for (EPackage otherPackage: ePackages) {
-			if (otherPackage != ePackage && otherPackage.getName().equals(ePackage.getName())) {
+		for (EPackage otherPackage: ePackages) {			
+			if (otherPackage != ePackage 
+					&& isIncluded(otherPackage) 
+					&& isIncluded(ePackage) 
+					&& otherPackage.getName().equals(ePackage.getName())) {
+				
 				return true;
 			}
 		}
@@ -1435,7 +1439,6 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			return true;
 		}
 		
-		boolean included = false;
 		for (Pattern p: packageIncludes) {
 			if (p.matcher(ePackage.getNsURI()).matches()) {
 				return true;
