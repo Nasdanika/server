@@ -196,7 +196,7 @@ public class TocNode {
 	}
 	
 	public boolean isHidden() {
-		return hidden;
+		return hidden || (parent != null && parent.isHidden());
 	}
 	
 	public static final Comparator<TocNode> NAME_COMPARATOR = new Comparator<TocNode>() {

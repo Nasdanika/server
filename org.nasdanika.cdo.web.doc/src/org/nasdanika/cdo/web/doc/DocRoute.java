@@ -1988,7 +1988,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					Tag childList = htmlFactory.tag(TagName.ul);
 					fragment.content(childList);
 					for (TocNode ch: toc.getChildren()) {
-						childList.content(htmlFactory.tag(TagName.li, htmlFactory.link(prefix+ch.getHref(), StringEscapeUtils.escapeHtml4(ch.getText()))));
+						if (!ch.isHidden()) {
+							childList.content(htmlFactory.tag(TagName.li, htmlFactory.link(prefix+ch.getHref(), StringEscapeUtils.escapeHtml4(ch.getText()))));
+						}
 					}										
 				} else {
 					fragment.content(toc.getContent());
@@ -2325,7 +2327,13 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				} else {
 					bcContent = htmlFactory.tag(TagName.img).attribute("src", getDocRoutePath()+pathElement.getIcon()).style().margin().right("3px") + pathElement.getText();
 				}
-				breadcrumbs.item(pathElement==toc ? null : "javascript:"+tocNodeSelectScript(pathElement.getId()), bcContent); // prefix+pathElement.getHref()
+				if (pathElement==toc) {
+					breadcrumbs.item(null, bcContent); 					
+				} else if (toc.isHidden()) {
+					breadcrumbs.item(prefix+pathElement.getHref(), bcContent); 					
+				} else {
+					breadcrumbs.item("javascript:"+tocNodeSelectScript(pathElement.getId()), bcContent); 
+				}
 			}
 		}
 		
