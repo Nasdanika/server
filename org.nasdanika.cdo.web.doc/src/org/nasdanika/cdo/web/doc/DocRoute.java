@@ -1419,6 +1419,32 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		return false;
 	}
 	
+	/**
+	 * @param ePackage
+	 * @return true if package nsUri does not match any exclude patterns and matches an include pattern,
+	 * if the list of include patterns is not empty.
+	 */
+	private boolean isIncluded(EPackage ePackage) {
+		for (Pattern p: packageExcludes) {
+			if (p.matcher(ePackage.getNsURI()).matches()) {
+				return false;
+			}
+		}
+		
+		if (packageIncludes.isEmpty()) {
+			return true;
+		}
+		
+		boolean included = false;
+		for (Pattern p: packageIncludes) {
+			if (p.matcher(ePackage.getNsURI()).matches()) {
+				return true;
+			}
+		}				
+
+		return false;
+	}
+	
 	private void createPackageRegistryToc(Registry registry, TocNode owner, String prefix) {
 		List<EPackage> packages = new ArrayList<>();
 		for (String nsURI: registry.keySet()) {			
@@ -1438,36 +1464,21 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			}
 			
 		});
-		Z: for (EPackage ePackage: packages) {
-			for (Pattern p: packageExcludes) {
-				if (p.matcher(ePackage.getNsURI()).matches()) {
-					continue Z;
-				}
-			}
-			if (!packageIncludes.isEmpty()) {
-				boolean included = false;
-				for (Pattern p: packageIncludes) {
-					if (p.matcher(ePackage.getNsURI()).matches()) {
-						included = true;
-						break;
-					}
-				}				
-				if (!included) {
-					continue Z;
-				}
-			}
+		for (EPackage ePackage: packages) {
 			createEPackageToc(owner, ePackage, prefix, hasDuplicateName(ePackage, packages));
 		}
 	}
 		
 	private void createEPackageToc(TocNode parent, EPackage ePackage, String prefix, boolean hasDuplicateName) {
+		String nsURI = ePackage.getNsURI();
 		TocNode ePackageToc = parent.createChild(
 				ePackage.getName() + (hasDuplicateName ? " ("+StringEscapeUtils.escapeHtml4(ePackage.getNsURI())+")" : ""), 
 				prefix+"/"+Hex.encodeHexString(ePackage.getNsURI().getBytes(/* UTF-8? */))+"/"+PACKAGE_SUMMARY_HTML, 
 				"/resources/images/EPackage.gif", 
 				null,
-				obj->obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(ePackage.getNsURI()), 
-				false);
+				obj->obj instanceof EPackage && ((EPackage) obj).getNsURI().equals(nsURI), 
+				!isIncluded(ePackage));
+		
 		List<EPackage> subPackages = new ArrayList<>(ePackage.getESubpackages());
 		Collections.sort(subPackages, new Comparator<EPackage>() {
 
