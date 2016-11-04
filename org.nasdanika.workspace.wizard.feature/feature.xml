@@ -11,7 +11,7 @@
 which together constitute a Nasdanika Foundation Server based
 application - model, application, feature, repository, tests, UI driver, parent, aggregator.
 
-1) Nasdanika Modeling Workspace Wizard generates modeling, feature, repository, parent, and aggregator projects.
+2) Nasdanika Modeling Workspace Wizard generates modeling, feature, repository, parent, and aggregator projects.
    </description>
 
    <copyright>

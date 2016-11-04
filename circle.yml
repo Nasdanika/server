@@ -50,6 +50,7 @@ test:
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.performance
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
+    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.provisioning
     
     - mv org.nasdanika.cdo.boxing/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
     - mv org.nasdanika.cdo.function/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
@@ -84,6 +85,7 @@ test:
     - mv org.nasdanika.webtest.performance/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.performance
     - mv org.nasdanika.webtest/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
     - mv org.nasdanika.workspace.wizard/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
+    - mv org.nasdanika.provisioning/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.provisioning
     
     
 deployment:

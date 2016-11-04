@@ -80,5 +80,8 @@
 		<module>org.nasdanika.tools.design</module>
 		<module>org.nasdanika.tools.feature</module>
 
+		<module>org.nasdanika.provisioning</module>
+		<module>org.nasdanika.provisioning.feature</module>
+
 	</modules>
 </project>
