@@ -194,6 +194,9 @@ public class AutoUpdateComponent {
 			IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
 			
 			addRepository(metadataManager, artifactManager, location);
+			
+			configurator.applyConfiguration();
+			
 			for (IProfile profile: registry.getProfiles()) {
 				System.out.println("[Provisioning] Profile: "+profile.getProfileId());
 				
@@ -218,10 +221,9 @@ public class AutoUpdateComponent {
 					sortedInstalledFeatures.put(iu.getId(), iu);
 				}										
 				
-				final ProvisioningSession session = new ProvisioningSession(agent);		
-				final UpdateOperation operation = new UpdateOperation(session);
+				ProvisioningSession session = new ProvisioningSession(agent);		
+				UpdateOperation operation = new UpdateOperation(session);
 				operation.setProfileId(profile.getProfileId());
-				
 				
 				System.out.println("[Provisioning] Available/Installed features:");
 				for (Entry<String, IInstallableUnit> afe: sortedAvailableFeatures.entrySet()) {
@@ -245,8 +247,21 @@ public class AutoUpdateComponent {
 						IStatus planStatus = plan.getStatus();
 						if (planStatus.isOK()) {
 							ProfileModificationJob job = new ProfileModificationJob("Install", session, profile.getProfileId(), plan, context);
-							job.schedule();
-							job.join();
+							IStatus jobStatus = job.runModal(monitor);
+							System.out.println("Profile modification completed");
+							printStatus(jobStatus, 1);
+							if (jobStatus.isOK()) {
+								System.out.println("Applying configuration ");
+								try {
+									// TODO Does not work properly - OSGi runtime is not updated.
+									// New configuration gets applied after restart.
+									configurator.applyConfiguration(); 
+									System.out.println("Done applying configuration");
+								} catch (IOException e) {
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+							}
 //							IStatus status = engine.perform(plan, monitor);
 //							System.out.println("[Provisioning] \t\tUpdate status");
 //							printStatus(status, 2);
@@ -265,30 +280,6 @@ public class AutoUpdateComponent {
 			agent.stop();
 		}
 	}
-	
-	void configureJob(Job job) {
-	
-		// Register a job change listener to track
-		// installation progress and notify user upon success
-		job.addJobChangeListener(new JobChangeAdapter() {
-			@Override
-			public void done(IJobChangeEvent event) {
-				System.out.println("Job done: "+event);
-				printStatus(event.getResult(), 1);
-				if (event.getResult().isOK()) {
-					System.out.println("Applying configuration ");
-					try {
-						configurator.applyConfiguration();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				super.done(event);
-			}
-		});
-	
-	}	
 	
 	private void printStatus(IStatus status, int indent) {
 		System.out.print("[Provisioning]");
