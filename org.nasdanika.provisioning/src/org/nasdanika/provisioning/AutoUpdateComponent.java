@@ -3,9 +3,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -16,10 +19,8 @@ import java.util.TreeMap;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-//import org.eclipse.equinox.internal.provisional.configurator.Configurator;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
-//import org.eclipse.equinox.p2.engine.IEngine;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.IProvisioningPlan;
@@ -38,7 +39,6 @@ import org.eclipse.equinox.p2.repository.IRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
 import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
-import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -69,7 +69,6 @@ import org.osgi.service.component.ComponentContext;
 public class AutoUpdateComponent {
 	
 	private IProvisioningAgentProvider provisioningAgentProvider;
-//	private Configurator configurator;
 	private Set<String> features = new HashSet<>();
 	
 	private IProgressMonitor monitor = new NullProgressMonitor() {
@@ -99,10 +98,6 @@ public class AutoUpdateComponent {
 	public void setProvisioningAgentProvider(IProvisioningAgentProvider provisioningAgentProvider) {
 		this.provisioningAgentProvider = provisioningAgentProvider;
 	}
-	
-//	public void setConfigurator(Configurator configurator) {
-//		this.configurator = configurator;
-//	}
 	
 	public void activate(ComponentContext context) throws Exception {
 		System.out.println("[Provisioning] Activating auto-update component");
@@ -148,6 +143,7 @@ public class AutoUpdateComponent {
 			}
 		} else if (locations instanceof String[]) {
 			String[] la = (String[]) locations;
+			long offset = updateInterval/la.length;
 			for (int i=0; i< la.length; ++i) {
 				String loc = la[i];
 				try {
@@ -158,13 +154,12 @@ public class AutoUpdateComponent {
 							try {
 								checkForUpdates(loc);
 							} catch (Exception e) {
-								// TODO Auto-generated catch block
+								// TODO Better reporting
 								e.printStackTrace();
 							}					
 						}
 						
 					};
-					long offset = updateInterval/la.length;
 					timer.schedule(checkForUpdatesTask, updateInterval + offset*i, updateInterval);
 				} catch (Exception e) {
 					System.out.println("[Provisioning] Failed to load repository from location "+loc+": "+e);
@@ -178,23 +173,25 @@ public class AutoUpdateComponent {
 		timer.cancel();
 	}
 	
-	private IMetadataRepository addRepository(IMetadataRepositoryManager metadataManager, IArtifactRepositoryManager artifactManager, String locationStr) throws Exception  {
-		URI location = new URI(locationStr.trim());
-//		metadataManager.loadRepository(location, loggerMonitor);
-		IMetadataRepository ret = metadataManager.loadRepository(location, monitor);
-		artifactManager.addRepository(location);		
-		return ret;
-	}
-	
-	private class InstallableUnitEntry {
+	private class InstallableUnitInfo {
 		
 		IInstallableUnit installableUnit;
 		
-		Set<IArtifactKey> toUpdate = new HashSet<>();
+		private class ArtifactInfo {
+			public ArtifactInfo(IArtifactKey ak) {
+				this.artifactKey = ak;
+			}
+			IArtifactKey artifactKey;
+			Bundle bundle;
+			boolean active;
+		}
 		
-		InstallableUnitEntry(IMetadataRepositoryManager metadataManager, IInstallableUnit iu) {
+		List<ArtifactInfo> toUpdate = new ArrayList<>();
+		
+		InstallableUnitInfo(IMetadataRepositoryManager metadataManager, IInstallableUnit iu) {
 			this.installableUnit = iu;
 			collectToUpdate(metadataManager, iu, new HashSet<>());
+			Collections.reverse(toUpdate);
 		}
 		
 		private void collectToUpdate(IMetadataRepositoryManager metadataManager, IInstallableUnit iu, Set<String> inspected) {
@@ -204,6 +201,13 @@ public class AutoUpdateComponent {
 				if (!"true".equals(groupProperty) && "plugin".equals(localizationProperty)) { // Plugin bundles only
 					Z: for (IArtifactKey ak: iu.getArtifacts()) {
 						if ("osgi.bundle".equals(ak.getClassifier())) {
+							for (ArtifactInfo eai: toUpdate) {
+								// No duplicate artifact ID's. Assuming singletons.
+								if (eai.artifactKey.getId().equals(ak.getId())) {
+									continue Z;
+								}
+ 							}
+							ArtifactInfo ai = new ArtifactInfo(ak);
 							for (Bundle bundle: bundleContext.getBundles()) {
 								if (bundle != null && bundle.getSymbolicName() != null && bundle.getSymbolicName().equals(ak.getId())) {
 									Version bundleVersion = Version.createOSGi(
@@ -214,10 +218,12 @@ public class AutoUpdateComponent {
 									if (bundleVersion.compareTo(ak.getVersion()) >= 0) {
 										continue Z; // Already installed 
 									}
+									ai.bundle = bundle;
+									ai.active = bundle.getState() == Bundle.ACTIVE;
 								}
-							}						
+							}	
+							toUpdate.add(ai);
 						}
-						toUpdate.add(ak);
 					}
 				}
 				for (IRequirement req: iu.getRequirements()) {
@@ -243,7 +249,9 @@ public class AutoUpdateComponent {
 			IMetadataRepositoryManager metadataManager = (IMetadataRepositoryManager) agent.getService(IMetadataRepositoryManager.SERVICE_NAME);
 			IArtifactRepositoryManager artifactManager = (IArtifactRepositoryManager) agent.getService(IArtifactRepositoryManager.SERVICE_NAME);
 			
-			addRepository(metadataManager, artifactManager, location);
+			URI location1 = new URI(location.trim());
+			metadataManager.loadRepository(location1, monitor);
+			artifactManager.addRepository(location1);
 			
 			URI uri = new URI(location); 
 			System.out.println("[Provisioning] Checking for updates at "+uri);
@@ -251,19 +259,16 @@ public class AutoUpdateComponent {
 			
 			java.util.Collection<IInstallableUnit> af = metadataManager.query(QueryUtil.createIUGroupQuery(), monitor).toSet();
 			
-			Map<String, InstallableUnitEntry> sortedAvailableFeatures = new TreeMap<>();
+			Map<String, InstallableUnitInfo> sortedAvailableFeatures = new TreeMap<>();
 			for (IInstallableUnit iu: af) {
 				if (features.isEmpty() || features.contains(iu.getId())) {
-					sortedAvailableFeatures.put(iu.getId(), new InstallableUnitEntry(metadataManager, iu));
+					sortedAvailableFeatures.put(iu.getId(), new InstallableUnitInfo(metadataManager, iu));
 				}
 			}						
 						
 			for (IProfile profile: registry.getProfiles()) {
 				System.out.println("[Provisioning] Profile: "+profile.getProfileId());
 				
-				/* 1. configure update operation */
-	//			final UpdateOperation operation = new UpdateOperation(session);
-						
 				Collection<IInstallableUnit> installed = profile.query(QueryUtil.createIUAnyQuery(), monitor).toUnmodifiableSet();
 				Map<String, IInstallableUnit> sortedInstalledFeatures = new TreeMap<>();
 				for (IInstallableUnit iu: installed) {
@@ -276,7 +281,7 @@ public class AutoUpdateComponent {
 				
 				
 				System.out.println("[Provisioning] Available/Installed features:");
-				for (Entry<String, InstallableUnitEntry> afe: sortedAvailableFeatures.entrySet()) {
+				for (Entry<String, InstallableUnitInfo> afe: sortedAvailableFeatures.entrySet()) {
 					IInstallableUnit installedFeature = sortedInstalledFeatures.get(afe.getKey());
 					System.out.println(
 							"[Provisioning] \t" + 
@@ -303,56 +308,36 @@ public class AutoUpdateComponent {
 							printStatus(jobStatus, 1);
 							if (jobStatus.isOK()) {
 								System.out.println("[Provisioning] Applying configuration ");
-								try {									
-//									IAgentLocation agentLocation = (IAgentLocation) agent.getService(IAgentLocation.SERVICE_NAME);
-//									URI bundlePool = agentLocation.getDataArea(".."); // Guess from browsing the product directory structure.
-									
-									for (URI repositoryUri: artifactManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_SYSTEM)) {
-										System.out.println("[Provisioning] \t Artifact repository "+repositoryUri);
-										IArtifactRepository artifactRepository = artifactManager.loadRepository(repositoryUri, monitor);									
-										if (artifactRepository instanceof IFileArtifactRepository) {
-											IFileArtifactRepository fileArtifactRepository = (IFileArtifactRepository) artifactRepository;	
-											Z: for (IArtifactKey artifact: afe.getValue().toUpdate) {
-												File artifactFile = fileArtifactRepository.getArtifactFile(artifact);
-												if (fileArtifactRepository.contains(artifact)) {
-													for (Bundle existingBundle: bundleContext.getBundles()) {
-														if (artifact.getId().equals(existingBundle.getSymbolicName())) {
-															System.out.println("[Provisioning] \t\tUpdating bundle "+existingBundle.getSymbolicName()+" from "+existingBundle.getVersion()+" to "+artifact.getVersion());
-															boolean isActive = existingBundle.getState() == Bundle.ACTIVE;
-															if (isActive) {
-																existingBundle.stop();
-															}
-															try (InputStream artifactStream = new FileInputStream(artifactFile)) {
-																existingBundle.update(artifactStream);
-															}
-															if (isActive) {
-																existingBundle.start();
-															}
-															continue Z;
-														}
-													}
-													
-													System.out.println("[Provisioning] \t\tInstalling "+artifact.getId()+" "+artifact.getVersion());				
+								for (URI repositoryUri: artifactManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_SYSTEM)) {
+									System.out.println("[Provisioning] \t Artifact repository "+repositoryUri);
+									IArtifactRepository artifactRepository = artifactManager.loadRepository(repositoryUri, monitor);									
+									if (artifactRepository instanceof IFileArtifactRepository) {
+										IFileArtifactRepository fileArtifactRepository = (IFileArtifactRepository) artifactRepository;	
+										for (InstallableUnitInfo.ArtifactInfo artifactInfo: afe.getValue().toUpdate) {
+											if (fileArtifactRepository.contains(artifactInfo.artifactKey)) {
+												File artifactFile = fileArtifactRepository.getArtifactFile(artifactInfo.artifactKey);
+												if (artifactInfo.bundle == null) {
+													System.out.println("[Provisioning] \t\tInstalling "+artifactInfo.artifactKey.getId()+" "+artifactInfo.artifactKey.getVersion());				
 													URI artifactFileUri = artifactFile.toURI();
-													bundleContext.installBundle(artifactFileUri.toString());
-													for (Bundle newBundle: bundleContext.getBundles()) {
-														if (artifact.getId().equals(newBundle.getSymbolicName()) && newBundle.getState() != Bundle.ACTIVE) {
-															System.out.println("[Provisioning] \t\tStarting "+newBundle.getSymbolicName()+" "+newBundle.getVersion());				
-															newBundle.start();
-														}
+													bundleContext.installBundle(artifactFileUri.toString()).start();
+												} else {
+													System.out.println("[Provisioning] \t\tUpdating bundle "+artifactInfo.bundle.getSymbolicName()+" from "+artifactInfo.bundle.getVersion()+" to "+artifactInfo.artifactKey.getVersion());
+													if (artifactInfo.bundle.getState() == Bundle.ACTIVE) {
+														artifactInfo.bundle.stop();
+													}
+													try (InputStream artifactStream = new FileInputStream(artifactFile)) {
+														artifactInfo.bundle.update(artifactStream);
+													}
+													if (artifactInfo.active) {
+														artifactInfo.bundle.start();
 													}
 												}													
-											}
-											System.out.println("[Provisioning] Done applying configuration");
-										} else {
-											System.out.println("[Provisioning] Cannot apply configuration - artifact repository is not a file artifact repository.");										
+											}													
 										}
+										System.out.println("[Provisioning] Done applying configuration");
+									} else {
+										System.out.println("[Provisioning] Cannot apply configuration - artifact repository is not a file artifact repository.");										
 									}
-									// This doesn't work
-									// configurator.applyConfiguration();
-								} catch (Exception e) {
-									// TODO Auto-generated catch block
-									e.printStackTrace();
 								}
 							}							
 						} else { 
