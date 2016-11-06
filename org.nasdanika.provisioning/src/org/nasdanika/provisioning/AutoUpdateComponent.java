@@ -1,14 +1,9 @@
 package org.nasdanika.provisioning;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import java.io.IOException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Map;
@@ -21,37 +16,61 @@ import java.util.TreeMap;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.equinox.internal.provisional.configurator.Configurator;
+//import org.eclipse.equinox.internal.provisional.configurator.Configurator;
 import org.eclipse.equinox.p2.core.IProvisioningAgent;
 import org.eclipse.equinox.p2.core.IProvisioningAgentProvider;
-import org.eclipse.equinox.p2.engine.IEngine;
+//import org.eclipse.equinox.p2.engine.IEngine;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.engine.IProvisioningPlan;
 import org.eclipse.equinox.p2.engine.ProvisioningContext;
+import org.eclipse.equinox.p2.metadata.IArtifactKey;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.IRequirement;
+import org.eclipse.equinox.p2.metadata.Version;
 import org.eclipse.equinox.p2.operations.ProfileModificationJob;
 import org.eclipse.equinox.p2.operations.ProvisioningSession;
 import org.eclipse.equinox.p2.operations.UpdateOperation;
 import org.eclipse.equinox.p2.planner.IPlanner;
 import org.eclipse.equinox.p2.planner.IProfileChangeRequest;
-import org.eclipse.equinox.p2.query.IQuery;
-import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
+import org.eclipse.equinox.p2.repository.IRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IArtifactRepository;
 import org.eclipse.equinox.p2.repository.artifact.IArtifactRepositoryManager;
+import org.eclipse.equinox.p2.repository.artifact.IFileArtifactRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepository;
 import org.eclipse.equinox.p2.repository.metadata.IMetadataRepositoryManager;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.component.ComponentContext;
 
+/**
+ * Checks for new features/updates in the provided repositories. Installs/updates features found and applies changes to the running
+ * OSGi environment. New bundles get installed and started. Existing bundles get updated and re-started only if the were started before. 
+ * 
+ * 
+ * <h3>Properties</h3>
+ * <UL>
+ *   <LI><code>locations</code> - required, shall be a single or multi-value string and contain a list of repository URL's to
+ * check for new/updated features.</LI> 
+ * 
+ *   <LI><code>update-interval</code> - required, long, single value - interval to check for updates in seconds.
+ *  
+ *   <LI><code>features</code> - optional, single or multi-value string. This property shall contain a list of feature ID's to consider for installation/update. If this property is not set then all 
+ * features are considered.</LI>
 
+ * </UL>
+ * 
+ * <h3>References</h3>
+ * The component shall be configured with {@link IProvisioningAgentProvider} reference.    
+ * @author Pavel Vlasov
+ *
+ */
 public class AutoUpdateComponent {
 	
 	private IProvisioningAgentProvider provisioningAgentProvider;
-	private Configurator configurator;
-	private Set<String> installableUnits = new HashSet<>();
+//	private Configurator configurator;
+	private Set<String> features = new HashSet<>();
 	
 	private IProgressMonitor monitor = new NullProgressMonitor() {
 		public void beginTask(String name, int totalWork) {
@@ -75,32 +94,34 @@ public class AutoUpdateComponent {
 		
 	};
 	private Timer timer;
+	private BundleContext bundleContext;
 	
 	public void setProvisioningAgentProvider(IProvisioningAgentProvider provisioningAgentProvider) {
 		this.provisioningAgentProvider = provisioningAgentProvider;
 	}
 	
-	public void setConfigurator(Configurator configurator) {
-		this.configurator = configurator;
-	}
+//	public void setConfigurator(Configurator configurator) {
+//		this.configurator = configurator;
+//	}
 	
 	public void activate(ComponentContext context) throws Exception {
 		System.out.println("[Provisioning] Activating auto-update component");
+		this.bundleContext = context.getBundleContext();
 		
 		Long updateInterval = (Long) context.getProperties().get("update-interval")*1000;
 		timer = new Timer();
 		
 		Object locations = context.getProperties().get("locations");
 		
-		Object ius =  context.getProperties().get("installable-units");
-		if (ius instanceof String) {
-			installableUnits.add((String) ius);
-		} else if (ius instanceof String[]) {
-			for (String iu: (String[]) ius) {
-				installableUnits.add(iu);				
+		Object fs =  context.getProperties().get("features");
+		if (fs instanceof String) {
+			features.add((String) fs);
+		} else if (fs instanceof String[]) {
+			for (String iu: (String[]) fs) {
+				features.add(iu);				
 			}
 		}
-		
+				
 		scheduleUpdates(updateInterval, locations);
 	}
 
@@ -165,19 +186,48 @@ public class AutoUpdateComponent {
 		return ret;
 	}
 	
-	private java.util.Collection<IInstallableUnit> getAvailableFeatures(IMetadataRepositoryManager metadataManager) {
-		IQuery<IInstallableUnit> query = QueryUtil.createIUGroupQuery(); 
-		IQueryResult<IInstallableUnit> result = metadataManager.query(query, monitor);
-		return result.toSet();
-	}	
-	
-	public java.util.Collection<IInstallableUnit> getInstalled(IProfile profile) {
-		if (profile == null) {
-			return Collections.emptyList();
+	private class InstallableUnitEntry {
+		
+		IInstallableUnit installableUnit;
+		
+		Set<IArtifactKey> toUpdate = new HashSet<>();
+		
+		InstallableUnitEntry(IMetadataRepositoryManager metadataManager, IInstallableUnit iu) {
+			this.installableUnit = iu;
+			collectToUpdate(metadataManager, iu, new HashSet<>());
 		}
-//		IQuery query = new IUProfilePropertyQuery(PROP_TOAST_ROOT, "true");
-		IQueryResult<IInstallableUnit> result = profile.query(QueryUtil.createIUAnyQuery(), monitor);
-		return result.toUnmodifiableSet();
+		
+		private void collectToUpdate(IMetadataRepositoryManager metadataManager, IInstallableUnit iu, Set<String> inspected) {
+			if (inspected.add(iu.getId())) {
+				String groupProperty = iu.getProperty(QueryUtil.PROP_TYPE_GROUP);
+				String localizationProperty = iu.getProperty("org.eclipse.equinox.p2.bundle.localization");
+				if (!"true".equals(groupProperty) && "plugin".equals(localizationProperty)) { // Plugin bundles only
+					Z: for (IArtifactKey ak: iu.getArtifacts()) {
+						if ("osgi.bundle".equals(ak.getClassifier())) {
+							for (Bundle bundle: bundleContext.getBundles()) {
+								if (bundle != null && bundle.getSymbolicName() != null && bundle.getSymbolicName().equals(ak.getId())) {
+									Version bundleVersion = Version.createOSGi(
+											bundle.getVersion().getMajor(),
+											bundle.getVersion().getMinor(),
+											bundle.getVersion().getMicro(),
+											bundle.getVersion().getQualifier());
+									if (bundleVersion.compareTo(ak.getVersion()) >= 0) {
+										continue Z; // Already installed 
+									}
+								}
+							}						
+						}
+						toUpdate.add(ak);
+					}
+				}
+				for (IRequirement req: iu.getRequirements()) {
+					for (IInstallableUnit reqiu: metadataManager.query(QueryUtil.createMatchQuery(req.getMatches()), monitor)) {
+						collectToUpdate(metadataManager, reqiu, inspected);
+					}			
+				}			
+			}
+		}				
+				
 	}
 	
 	private void checkForUpdates(String location) throws Exception {		
@@ -185,7 +235,7 @@ public class AutoUpdateComponent {
 		try {			
 			IProfileRegistry registry = (IProfileRegistry) agent.getService(IProfileRegistry.SERVICE_NAME);
 			IPlanner planner = (IPlanner) agent.getService(IPlanner.SERVICE_NAME);
-			IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
+//			IEngine engine = (IEngine) agent.getService(IEngine.SERVICE_NAME);
 
 			System.out.println();
 			System.out.println();
@@ -195,80 +245,116 @@ public class AutoUpdateComponent {
 			
 			addRepository(metadataManager, artifactManager, location);
 			
-			configurator.applyConfiguration();
+			URI uri = new URI(location); 
+			System.out.println("[Provisioning] Checking for updates at "+uri);
+			metadataManager.refreshRepository(uri, monitor);
 			
+			java.util.Collection<IInstallableUnit> af = metadataManager.query(QueryUtil.createIUGroupQuery(), monitor).toSet();
+			
+			Map<String, InstallableUnitEntry> sortedAvailableFeatures = new TreeMap<>();
+			for (IInstallableUnit iu: af) {
+				if (features.isEmpty() || features.contains(iu.getId())) {
+					sortedAvailableFeatures.put(iu.getId(), new InstallableUnitEntry(metadataManager, iu));
+				}
+			}						
+						
 			for (IProfile profile: registry.getProfiles()) {
 				System.out.println("[Provisioning] Profile: "+profile.getProfileId());
 				
 				/* 1. configure update operation */
 	//			final UpdateOperation operation = new UpdateOperation(session);
 						
-				URI uri = new URI(location); 
-				System.out.println("[Provisioning] Checking for updates at "+uri);
-				metadataManager.refreshRepository(uri, monitor);
-				
-				java.util.Collection<IInstallableUnit> af = getAvailableFeatures(metadataManager);
-				System.out.println("[Provisioning] Available features:");
-				
-				Map<String, IInstallableUnit> sortedAvailableFeatures = new TreeMap<>();
-				for (IInstallableUnit iu: af) {
-					sortedAvailableFeatures.put(iu.getId(), iu);
-				}	
-				
-				Collection<IInstallableUnit> installed = getInstalled(profile);
+				Collection<IInstallableUnit> installed = profile.query(QueryUtil.createIUAnyQuery(), monitor).toUnmodifiableSet();
 				Map<String, IInstallableUnit> sortedInstalledFeatures = new TreeMap<>();
 				for (IInstallableUnit iu: installed) {
 					sortedInstalledFeatures.put(iu.getId(), iu);
 				}										
 				
-				ProvisioningSession session = new ProvisioningSession(agent);		
-				UpdateOperation operation = new UpdateOperation(session);
+				final ProvisioningSession session = new ProvisioningSession(agent);		
+				final UpdateOperation operation = new UpdateOperation(session);
 				operation.setProfileId(profile.getProfileId());
 				
+				
 				System.out.println("[Provisioning] Available/Installed features:");
-				for (Entry<String, IInstallableUnit> afe: sortedAvailableFeatures.entrySet()) {
-					System.out.println("[Provisioning] \t"+afe.getKey());
-					System.out.println("[Provisioning] \t\t"+afe.getValue().getProperty(IInstallableUnit.PROP_NAME));
-					System.out.println("[Provisioning] \t\tAvailable version: "+afe.getValue().getVersion());
+				for (Entry<String, InstallableUnitEntry> afe: sortedAvailableFeatures.entrySet()) {
 					IInstallableUnit installedFeature = sortedInstalledFeatures.get(afe.getKey());
-					System.out.println("[Provisioning] \t\tInstalled version: "+(installedFeature == null ? "N/A" : installedFeature.getVersion()));
-					System.out.println();
+					System.out.println(
+							"[Provisioning] \t" + 
+							afe.getKey() + " " + 
+							afe.getValue().installableUnit.getVersion() + "/" +
+							(installedFeature == null ? "N/A" : installedFeature.getVersion()) +" - " +
+							afe.getValue().installableUnit.getProperty(IInstallableUnit.PROP_NAME));
 					
-					if (installedFeature == null || installedFeature.getVersion().compareTo(afe.getValue().getVersion()) < 0) {
+					if (installedFeature == null || installedFeature.getVersion().compareTo(afe.getValue().installableUnit.getVersion()) < 0) {
 						System.out.println("[Provisioning] \t\tUpdating...");
 						IProfileChangeRequest request = planner.createChangeRequest(profile);
-						request.add(afe.getValue());
+						request.add(afe.getValue().installableUnit);
 						if (installedFeature != null) {
 							request.remove(installedFeature);
 						}
-						request.setInstallableUnitProfileProperty(afe.getValue(), "auto-update", new Date().toString());
+						request.setInstallableUnitProfileProperty(afe.getValue().installableUnit, "auto-update", new Date().toString());
 						ProvisioningContext context = new ProvisioningContext(agent);
 						IProvisioningPlan plan = planner.getProvisioningPlan(request, context, monitor);
 						IStatus planStatus = plan.getStatus();
 						if (planStatus.isOK()) {
 							ProfileModificationJob job = new ProfileModificationJob("Install", session, profile.getProfileId(), plan, context);
 							IStatus jobStatus = job.runModal(monitor);
-							System.out.println("Profile modification completed");
+							System.out.println("[Provisioning] Profile modification completed");
 							printStatus(jobStatus, 1);
 							if (jobStatus.isOK()) {
-								System.out.println("Applying configuration ");
-								try {
-									// TODO Does not work properly - OSGi runtime is not updated.
-									// New configuration gets applied after restart.
-									configurator.applyConfiguration(); 
-									System.out.println("Done applying configuration");
-								} catch (IOException e) {
+								System.out.println("[Provisioning] Applying configuration ");
+								try {									
+//									IAgentLocation agentLocation = (IAgentLocation) agent.getService(IAgentLocation.SERVICE_NAME);
+//									URI bundlePool = agentLocation.getDataArea(".."); // Guess from browsing the product directory structure.
+									
+									for (URI repositoryUri: artifactManager.getKnownRepositories(IRepositoryManager.REPOSITORIES_SYSTEM)) {
+										System.out.println("[Provisioning] \t Artifact repository "+repositoryUri);
+										IArtifactRepository artifactRepository = artifactManager.loadRepository(repositoryUri, monitor);									
+										if (artifactRepository instanceof IFileArtifactRepository) {
+											IFileArtifactRepository fileArtifactRepository = (IFileArtifactRepository) artifactRepository;	
+											Z: for (IArtifactKey artifact: afe.getValue().toUpdate) {
+												File artifactFile = fileArtifactRepository.getArtifactFile(artifact);
+												if (fileArtifactRepository.contains(artifact)) {
+													for (Bundle existingBundle: bundleContext.getBundles()) {
+														if (artifact.getId().equals(existingBundle.getSymbolicName())) {
+															System.out.println("[Provisioning] \t\tUpdating bundle "+existingBundle.getSymbolicName()+" from "+existingBundle.getVersion()+" to "+artifact.getVersion());
+															boolean isActive = existingBundle.getState() == Bundle.ACTIVE;
+															if (isActive) {
+																existingBundle.stop();
+															}
+															try (InputStream artifactStream = new FileInputStream(artifactFile)) {
+																existingBundle.update(artifactStream);
+															}
+															if (isActive) {
+																existingBundle.start();
+															}
+															continue Z;
+														}
+													}
+													
+													System.out.println("[Provisioning] \t\tInstalling "+artifact.getId()+" "+artifact.getVersion());				
+													URI artifactFileUri = artifactFile.toURI();
+													bundleContext.installBundle(artifactFileUri.toString());
+													for (Bundle newBundle: bundleContext.getBundles()) {
+														if (artifact.getId().equals(newBundle.getSymbolicName()) && newBundle.getState() != Bundle.ACTIVE) {
+															System.out.println("[Provisioning] \t\tStarting "+newBundle.getSymbolicName()+" "+newBundle.getVersion());				
+															newBundle.start();
+														}
+													}
+												}													
+											}
+											System.out.println("[Provisioning] Done applying configuration");
+										} else {
+											System.out.println("[Provisioning] Cannot apply configuration - artifact repository is not a file artifact repository.");										
+										}
+									}
+									// This doesn't work
+									// configurator.applyConfiguration();
+								} catch (Exception e) {
 									// TODO Auto-generated catch block
 									e.printStackTrace();
 								}
-							}
-//							IStatus status = engine.perform(plan, monitor);
-//							System.out.println("[Provisioning] \t\tUpdate status");
-//							printStatus(status, 2);
-//							if (status.isOK()) {
-//								System.out.println("[Provisioning] \t\tApplying configuration...");
-//								configurator.applyConfiguration();								
-//							}
+							}							
 						} else { 
 							System.out.println("[Provisioning] \t\tUnable to update: ");
 							printStatus(planStatus, 2);
@@ -280,7 +366,7 @@ public class AutoUpdateComponent {
 			agent.stop();
 		}
 	}
-	
+
 	private void printStatus(IStatus status, int indent) {
 		System.out.print("[Provisioning]");
 		for (int i = 0; i < indent; ++i) {
