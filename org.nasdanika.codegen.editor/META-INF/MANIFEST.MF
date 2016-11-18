@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-SymbolicName: org.nasdanika.codegen.editor;singleton:=true
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.core.resources;visibility:=reexport,
+ org.nasdanika.codegen.edit;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport,
+ org.eclipse.emf.edit.ui;visibility:=reexport,
+ org.eclipse.ui.ide;visibility:=reexport,
+ org.eclipse.emfforms.editor;bundle-version="1.8.0",
+ org.eclipse.ui,
+ org.eclipse.jface
+Bundle-ManifestVersion: 2
+Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Export-Package: org.nasdanika.codegen.java.presentation,
+ org.nasdanika.codegen.maven.presentation,
+ org.nasdanika.codegen.presentation
+Bundle-Name: %pluginName
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Localization: plugin
+Bundle-Activator: org.nasdanika.codegen.presentation.CodegenEditorPlugin$Implementation
+
