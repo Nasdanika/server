@@ -12,6 +12,7 @@ test:
     
   post:
     - mv org.nasdanika.repository/target/repository $CIRCLE_ARTIFACTS    
+    - mv org.nasdanika.repository/target/org.nasdanika.repository-*.zip $CIRCLE_ARTIFACTS    
 
     - mvn clean verify javadoc:javadoc
     
