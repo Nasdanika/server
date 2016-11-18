@@ -1,50 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <site>
    <feature url="features/org.nasdanika.feature_0.1.0.qualifier.jar" id="org.nasdanika.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.server.jetty.feature_0.1.0.qualifier.jar" id="org.nasdanika.server.jetty.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.cdo.feature_0.1.0.qualifier.jar" id="org.nasdanika.cdo.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.equinox.feature_0.1.0.qualifier.jar" id="org.nasdanika.equinox.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.cdo.security.feature_0.1.0.qualifier.jar" id="org.nasdanika.cdo.security.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.workspace.wizard.feature_0.1.0.qualifier.jar" id="org.nasdanika.workspace.wizard.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.tools"/>
    </feature>
    <feature url="features/org.nasdanika.sca.feature_0.1.0.qualifier.jar" id="org.nasdanika.sca.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.tools"/>
    </feature>
    <feature url="features/org.nasdanika.webtest.feature_0.1.0.qualifier.jar" id="org.nasdanika.webtest.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.webtest.performance.feature_0.1.0.qualifier.jar" id="org.nasdanika.webtest.performance.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.tools.feature_0.1.0.qualifier.jar" id="org.nasdanika.tools.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.html.feature_0.1.0.qualifier.jar" id="org.nasdanika.html.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.story.feature_0.1.0.qualifier.jar" id="org.nasdanika.story.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.tools"/>
    </feature>
    <feature url="features/org.nasdanika.third-party.feature_0.1.0.201607160329.jar" id="org.nasdanika.third-party.feature" version="0.1.0.201607160329">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
    <feature url="features/org.nasdanika.provisioning.feature_0.1.0.qualifier.jar" id="org.nasdanika.provisioning.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.category"/>
+      <category name="org.nasdanika.server"/>
    </feature>
-   <category-def name="org.nasdanika.category" label="Nasdanika">
+   <feature url="features/org.nasdanika.codegen.feature_0.1.0.qualifier.jar" id="org.nasdanika.codegen.feature" version="0.1.0.qualifier">
+      <category name="org.nasdanika.tools"/>
+   </feature>
+   <category-def name="org.nasdanika.server" label="Server">
       <description>
-         Nasdanika features.
+         Bundles and features for building OSGi/Equinox server applications.
+      </description>
+   </category-def>
+   <category-def name="org.nasdanika.tools" label="Tools">
+      <description>
+         Eclipse IDE plug-ins.
       </description>
    </category-def>
 </site>
