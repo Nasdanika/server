@@ -161,8 +161,8 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Property createProperty() {
-		PropertyImpl property = new PropertyImpl();
+	public <T> Property<T> createProperty() {
+		PropertyImpl<T> property = new PropertyImpl<T>();
 		return property;
 	}
 

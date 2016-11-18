@@ -15,14 +15,12 @@ import org.nasdanika.codegen.Service;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.codegen.impl.ServiceImpl#getType <em>Type</em>}</li>
- *   <li>{@link org.nasdanika.codegen.impl.ServiceImpl#getImplementation <em>Implementation</em>}</li>
- *   <li>{@link org.nasdanika.codegen.impl.ServiceImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ServiceImpl#getServiceType <em>Service Type</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ServiceImpl<T> extends ConfigurableImpl implements Service<T> {
+public class ServiceImpl<T> extends ConfigurationItemImpl<T> implements Service<T> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -47,8 +45,8 @@ public class ServiceImpl<T> extends ConfigurableImpl implements Service<T> {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getType() {
-		return (String)eGet(CodegenPackage.Literals.SERVICE__TYPE, true);
+	public String getServiceType() {
+		return (String)eGet(CodegenPackage.Literals.SERVICE__SERVICE_TYPE, true);
 	}
 
 	/**
@@ -56,44 +54,8 @@ public class ServiceImpl<T> extends ConfigurableImpl implements Service<T> {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setType(String newType) {
-		eSet(CodegenPackage.Literals.SERVICE__TYPE, newType);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getImplementation() {
-		return (String)eGet(CodegenPackage.Literals.SERVICE__IMPLEMENTATION, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setImplementation(String newImplementation) {
-		eSet(CodegenPackage.Literals.SERVICE__IMPLEMENTATION, newImplementation);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getDescription() {
-		return (String)eGet(CodegenPackage.Literals.SERVICE__DESCRIPTION, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setDescription(String newDescription) {
-		eSet(CodegenPackage.Literals.SERVICE__DESCRIPTION, newDescription);
+	public void setServiceType(String newServiceType) {
+		eSet(CodegenPackage.Literals.SERVICE__SERVICE_TYPE, newServiceType);
 	}
 
 } //ServiceImpl

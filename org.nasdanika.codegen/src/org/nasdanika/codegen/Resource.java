@@ -2,7 +2,7 @@
  */
 package org.nasdanika.codegen;
 
-import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.core.resources.IResource;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,7 +22,7 @@ import org.eclipse.emf.cdo.CDOObject;
  * @extends CDOObject
  * @generated
  */
-public interface Resource extends CDOObject {
+public interface Resource<T extends IResource> extends ResourceGenerator<T> {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->

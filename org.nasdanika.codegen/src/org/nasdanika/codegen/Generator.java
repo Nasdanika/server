@@ -13,5 +13,5 @@ package org.nasdanika.codegen;
  * @model abstract="true" superTypes="org.nasdanika.codegen.IGenerator<T> org.nasdanika.codegen.ContextProvider"
  * @generated
  */
-public interface Generator<T> extends IGenerator<T>, ContextProvider {
+public interface Generator<T> extends IGenerator<T>, Configurable {
 } // Generator

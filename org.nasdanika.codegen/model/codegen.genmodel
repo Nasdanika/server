@@ -15,6 +15,7 @@
       <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Merge"/>
       <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Overwrite"/>
       <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Abort"/>
+      <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Confirm"/>
     </genEnums>
     <genDataTypes ecoreDataType="codegen.ecore#//Context"/>
     <genDataTypes ecoreDataType="codegen.ecore#//InputStream"/>
@@ -24,40 +25,43 @@
     <genDataTypes ecoreDataType="codegen.ecore#//IProject"/>
     <genDataTypes ecoreDataType="codegen.ecore#//IProjectNature"/>
     <genDataTypes ecoreDataType="codegen.ecore#//IWorkspaceRoot"/>
+    <genDataTypes ecoreDataType="codegen.ecore#//Exception"/>
+    <genDataTypes ecoreDataType="codegen.ecore#//IResource"/>
     <genClasses ecoreClass="codegen.ecore#//Configurable">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configurable/propertiesReferences"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Configurable/properties"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Configurable/services"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Configurable/configuration"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configurable/defaultPropertiesReferences"/>
+      <genOperations ecoreOperation="codegen.ecore#//Configurable/createContext">
+        <genParameters ecoreParameter="codegen.ecore#//Configurable/createContext/parent"/>
+      </genOperations>
+    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//ConfigurationItem">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//ConfigurationItem/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/valueType"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/default"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/description"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Service">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Service/T"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Service/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Service/implementation"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Service/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Service/serviceType"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Property">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//Property/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/value"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/type"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/description"/>
-    </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//ContextProvider">
-      <genOperations ecoreOperation="codegen.ecore#//ContextProvider/createContext">
-        <genParameters ecoreParameter="codegen.ecore#//ContextProvider/createContext/parent"/>
-        <genParameters ecoreParameter="codegen.ecore#//ContextProvider/createContext/withContainer"/>
-      </genOperations>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//IGenerator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//IGenerator/T"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Generator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Generator/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Generator/iterator"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Group">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Group/T"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Group/iterator"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Group/selector"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Group/members"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Generator/iterator"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//ResourceGenerator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//ResourceGenerator/T"/>
@@ -79,6 +83,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Project/reconcileAction"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Resource">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//Resource/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Resource/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Resource/reconcileAction"/>
     </genClasses>
@@ -106,6 +111,9 @@
     <genClasses ecoreClass="codegen.ecore#//Interpolator"/>
     <genClasses ecoreClass="codegen.ecore#//JavaTextFilter">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JavaTextFilter/className"/>
+    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//Provider">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//Provider/T"/>
     </genClasses>
     <nestedGenPackages prefix="Java" basePackage="org.nasdanika.codegen" disposableProviderFactory="true"
         ecorePackage="codegen.ecore#//java">

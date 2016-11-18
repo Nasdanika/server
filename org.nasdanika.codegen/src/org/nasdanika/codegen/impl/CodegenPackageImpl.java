@@ -26,6 +26,7 @@ import org.nasdanika.codegen.BinaryFile;
 import org.nasdanika.codegen.CodegenFactory;
 import org.nasdanika.codegen.CodegenPackage;
 import org.nasdanika.codegen.Configurable;
+import org.nasdanika.codegen.ConfigurationItem;
 import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.ContextProvider;
 import org.nasdanika.codegen.File;
@@ -39,6 +40,7 @@ import org.nasdanika.codegen.JavaTextGenerator;
 import org.nasdanika.codegen.Nature;
 import org.nasdanika.codegen.Project;
 import org.nasdanika.codegen.Property;
+import org.nasdanika.codegen.Provider;
 import org.nasdanika.codegen.ReconcileAction;
 import org.nasdanika.codegen.Resource;
 import org.nasdanika.codegen.ResourceGenerator;
@@ -73,6 +75,13 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * @generated
 	 */
 	private EClass configurableEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass configurationItemEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -247,6 +256,13 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass providerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EEnum reconcileActionEEnum = null;
 
 	/**
@@ -397,7 +413,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getConfigurable_Properties() {
+	public EReference getConfigurable_Configuration() {
 		return (EReference)configurableEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -406,8 +422,62 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getConfigurable_Services() {
-		return (EReference)configurableEClass.getEStructuralFeatures().get(2);
+	public EAttribute getConfigurable_DefaultPropertiesReferences() {
+		return (EAttribute)configurableEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getConfigurable__CreateContext__Context() {
+		return configurableEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getConfigurationItem() {
+		return configurationItemEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfigurationItem_ValueType() {
+		return (EAttribute)configurationItemEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfigurationItem_Value() {
+		return (EAttribute)configurationItemEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfigurationItem_Default() {
+		return (EAttribute)configurationItemEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfigurationItem_Description() {
+		return (EAttribute)configurationItemEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -424,26 +494,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getService_Type() {
+	public EAttribute getService_ServiceType() {
 		return (EAttribute)serviceEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getService_Implementation() {
-		return (EAttribute)serviceEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getService_Description() {
-		return (EAttribute)serviceEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -462,33 +514,6 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 */
 	public EAttribute getProperty_Name() {
 		return (EAttribute)propertyEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getProperty_Value() {
-		return (EAttribute)propertyEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getProperty_Type() {
-		return (EAttribute)propertyEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getProperty_Description() {
-		return (EAttribute)propertyEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -874,6 +899,15 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getProvider() {
+		return providerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EEnum getReconcileAction() {
 		return reconcileActionEEnum;
 	}
@@ -980,19 +1014,21 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		// Create classes and their features
 		configurableEClass = createEClass(CONFIGURABLE);
 		createEAttribute(configurableEClass, CONFIGURABLE__PROPERTIES_REFERENCES);
-		createEReference(configurableEClass, CONFIGURABLE__PROPERTIES);
-		createEReference(configurableEClass, CONFIGURABLE__SERVICES);
+		createEReference(configurableEClass, CONFIGURABLE__CONFIGURATION);
+		createEAttribute(configurableEClass, CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES);
+		createEOperation(configurableEClass, CONFIGURABLE___CREATE_CONTEXT__CONTEXT);
+
+		configurationItemEClass = createEClass(CONFIGURATION_ITEM);
+		createEAttribute(configurationItemEClass, CONFIGURATION_ITEM__VALUE_TYPE);
+		createEAttribute(configurationItemEClass, CONFIGURATION_ITEM__VALUE);
+		createEAttribute(configurationItemEClass, CONFIGURATION_ITEM__DEFAULT);
+		createEAttribute(configurationItemEClass, CONFIGURATION_ITEM__DESCRIPTION);
 
 		serviceEClass = createEClass(SERVICE);
-		createEAttribute(serviceEClass, SERVICE__TYPE);
-		createEAttribute(serviceEClass, SERVICE__IMPLEMENTATION);
-		createEAttribute(serviceEClass, SERVICE__DESCRIPTION);
+		createEAttribute(serviceEClass, SERVICE__SERVICE_TYPE);
 
 		propertyEClass = createEClass(PROPERTY);
 		createEAttribute(propertyEClass, PROPERTY__NAME);
-		createEAttribute(propertyEClass, PROPERTY__VALUE);
-		createEAttribute(propertyEClass, PROPERTY__TYPE);
-		createEAttribute(propertyEClass, PROPERTY__DESCRIPTION);
 
 		contextProviderEClass = createEClass(CONTEXT_PROVIDER);
 		createEOperation(contextProviderEClass, CONTEXT_PROVIDER___CREATE_CONTEXT__CONTEXT_BOOLEAN);
@@ -1058,6 +1094,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		javaTextFilterEClass = createEClass(JAVA_TEXT_FILTER);
 		createEAttribute(javaTextFilterEClass, JAVA_TEXT_FILTER__CLASS_NAME);
 
+		providerEClass = createEClass(PROVIDER);
+
 		// Create enums
 		reconcileActionEEnum = createEEnum(RECONCILE_ACTION);
 
@@ -1104,20 +1142,35 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		getESubpackages().add(theMavenPackage);
 
 		// Create type parameters
-		addETypeParameter(serviceEClass, "T");
+		ETypeParameter configurationItemEClass_T = addETypeParameter(configurationItemEClass, "T");
+		ETypeParameter serviceEClass_T = addETypeParameter(serviceEClass, "T");
+		ETypeParameter propertyEClass_T = addETypeParameter(propertyEClass, "T");
 		addETypeParameter(iGeneratorEClass, "T");
 		ETypeParameter generatorEClass_T = addETypeParameter(generatorEClass, "T");
 		ETypeParameter groupEClass_T = addETypeParameter(groupEClass, "T");
 		ETypeParameter resourceGeneratorEClass_T = addETypeParameter(resourceGeneratorEClass, "T");
+		addETypeParameter(providerEClass, "T");
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		serviceEClass.getESuperTypes().add(this.getConfigurable());
-		propertyEClass.getESuperTypes().add(this.getConfigurable());
+		EGenericType g1 = createEGenericType(this.getProvider());
+		EGenericType g2 = createEGenericType(configurationItemEClass_T);
+		g1.getETypeArguments().add(g2);
+		configurationItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getConfigurable());
+		configurationItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getConfigurationItem());
+		g2 = createEGenericType(serviceEClass_T);
+		g1.getETypeArguments().add(g2);
+		serviceEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getConfigurationItem());
+		g2 = createEGenericType(propertyEClass_T);
+		g1.getETypeArguments().add(g2);
+		propertyEClass.getEGenericSuperTypes().add(g1);
 		contextProviderEClass.getESuperTypes().add(this.getConfigurable());
-		EGenericType g1 = createEGenericType(this.getIGenerator());
-		EGenericType g2 = createEGenericType(generatorEClass_T);
+		g1 = createEGenericType(this.getIGenerator());
+		g2 = createEGenericType(generatorEClass_T);
 		g1.getETypeArguments().add(g2);
 		generatorEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getContextProvider());
@@ -1175,26 +1228,30 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		// Initialize classes, features, and operations; add parameters
 		initEClass(configurableEClass, Configurable.class, "Configurable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getConfigurable_PropertiesReferences(), ecorePackage.getEString(), "propertiesReferences", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getConfigurable_Properties(), this.getProperty(), null, "properties", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		g1 = createEGenericType(this.getService());
+		g1 = createEGenericType(this.getConfigurationItem());
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
-		initEReference(getConfigurable_Services(), g1, null, "services", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConfigurable_Configuration(), g1, null, "configuration", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurable_DefaultPropertiesReferences(), ecorePackage.getEString(), "defaultPropertiesReferences", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		EOperation op = initEOperation(getConfigurable__CreateContext__Context(), this.getContext(), "createContext", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getContext(), "parent", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(configurationItemEClass, ConfigurationItem.class, "ConfigurationItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getConfigurationItem_ValueType(), ecorePackage.getEString(), "valueType", null, 0, 1, ConfigurationItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationItem_Value(), ecorePackage.getEString(), "value", null, 0, 1, ConfigurationItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationItem_Default(), ecorePackage.getEBoolean(), "default", null, 0, 1, ConfigurationItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfigurationItem_Description(), ecorePackage.getEString(), "description", null, 0, 1, ConfigurationItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(serviceEClass, Service.class, "Service", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getService_Type(), ecorePackage.getEString(), "type", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getService_Implementation(), ecorePackage.getEString(), "implementation", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getService_Description(), ecorePackage.getEString(), "description", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getService_ServiceType(), ecorePackage.getEString(), "serviceType", null, 0, 1, Service.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(propertyEClass, Property.class, "Property", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getProperty_Name(), ecorePackage.getEString(), "name", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getProperty_Value(), ecorePackage.getEString(), "value", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getProperty_Type(), ecorePackage.getEString(), "type", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getProperty_Description(), ecorePackage.getEString(), "description", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(contextProviderEClass, ContextProvider.class, "ContextProvider", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		EOperation op = initEOperation(getContextProvider__CreateContext__Context_boolean(), this.getContext(), "createContext", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getContextProvider__CreateContext__Context_boolean(), this.getContext(), "createContext", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "parent", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEBoolean(), "withContainer", 0, 1, IS_UNIQUE, IS_ORDERED);
 
@@ -1262,12 +1319,15 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		initEClass(javaTextFilterEClass, JavaTextFilter.class, "JavaTextFilter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getJavaTextFilter_ClassName(), ecorePackage.getEString(), "className", null, 0, 1, JavaTextFilter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+		initEClass(providerEClass, Provider.class, "Provider", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
 		// Initialize enums and add enum literals
 		initEEnum(reconcileActionEEnum, ReconcileAction.class, "ReconcileAction");
 		addEEnumLiteral(reconcileActionEEnum, ReconcileAction.KEEP);
 		addEEnumLiteral(reconcileActionEEnum, ReconcileAction.MERGE);
 		addEEnumLiteral(reconcileActionEEnum, ReconcileAction.OVERWRITE);
 		addEEnumLiteral(reconcileActionEEnum, ReconcileAction.ABORT);
+		addEEnumLiteral(reconcileActionEEnum, ReconcileAction.CONFIRM);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

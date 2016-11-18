@@ -72,11 +72,15 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createConfigurableAdapter();
 			}
 			@Override
+			public <T> Adapter caseConfigurationItem(ConfigurationItem<T> object) {
+				return createConfigurationItemAdapter();
+			}
+			@Override
 			public <T> Adapter caseService(Service<T> object) {
 				return createServiceAdapter();
 			}
 			@Override
-			public Adapter caseProperty(Property object) {
+			public <T> Adapter caseProperty(Property<T> object) {
 				return createPropertyAdapter();
 			}
 			@Override
@@ -168,6 +172,10 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createJavaTextFilterAdapter();
 			}
 			@Override
+			public <T> Adapter caseProvider(Provider<T> object) {
+				return createProviderAdapter();
+			}
+			@Override
 			public Adapter defaultCase(EObject object) {
 				return createEObjectAdapter();
 			}
@@ -198,6 +206,20 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createConfigurableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.ConfigurationItem <em>Configuration Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.ConfigurationItem
+	 * @generated
+	 */
+	public Adapter createConfigurationItemAdapter() {
 		return null;
 	}
 
@@ -534,6 +556,20 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createJavaTextFilterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.Provider <em>Provider</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.Provider
+	 * @generated
+	 */
+	public Adapter createProviderAdapter() {
 		return null;
 	}
 

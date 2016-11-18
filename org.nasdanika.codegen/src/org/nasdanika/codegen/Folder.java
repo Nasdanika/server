@@ -22,7 +22,7 @@ import org.eclipse.emf.common.util.EList;
  * @model superTypes="org.nasdanika.codegen.Resource org.nasdanika.codegen.ResourceGenerator<org.nasdanika.codegen.IFolder>"
  * @generated
  */
-public interface Folder extends Resource, ResourceGenerator<IFolder> {
+public interface Folder extends Resource<IFolder> {
 	/**
 	 * Returns the value of the '<em><b>Children</b></em>' containment reference list.
 	 * The list contents are of type {@link org.nasdanika.codegen.Resource}.

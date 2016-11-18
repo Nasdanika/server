@@ -1,19 +1,19 @@
 package org.nasdanika.codegen;
 
 /**
- * Provides services.
+ * Provides configuration values.
  * @author Pavel Vlasov
  *
  * @param <T>
  */
-public interface ServiceProvider<T> {
+public interface Provider<T> {
 	
 	/**
-	 * Obtain service for a given context.
+	 * Obtain configuration value for a given context.
 	 * @param context
 	 * @return
 	 * @throws Exception
 	 */
-	T getService(Context context) throws Exception;
+	T get(Context context) throws Exception;
 
 }

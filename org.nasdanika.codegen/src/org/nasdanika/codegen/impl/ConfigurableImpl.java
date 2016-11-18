@@ -2,16 +2,15 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.codegen.CodegenPackage;
 import org.nasdanika.codegen.Configurable;
-import org.nasdanika.codegen.Property;
-import org.nasdanika.codegen.Service;
+import org.nasdanika.codegen.ConfigurationItem;
+import org.nasdanika.codegen.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -22,8 +21,8 @@ import org.nasdanika.codegen.Service;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.codegen.impl.ConfigurableImpl#getPropertiesReferences <em>Properties References</em>}</li>
- *   <li>{@link org.nasdanika.codegen.impl.ConfigurableImpl#getProperties <em>Properties</em>}</li>
- *   <li>{@link org.nasdanika.codegen.impl.ConfigurableImpl#getServices <em>Services</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ConfigurableImpl#getConfiguration <em>Configuration</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ConfigurableImpl#getDefaultPropertiesReferences <em>Default Properties References</em>}</li>
  * </ul>
  *
  * @generated
@@ -74,8 +73,8 @@ public abstract class ConfigurableImpl extends CDOObjectImpl implements Configur
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Property> getProperties() {
-		return (EList<Property>)eGet(CodegenPackage.Literals.CONFIGURABLE__PROPERTIES, true);
+	public EList<ConfigurationItem<Object>> getConfiguration() {
+		return (EList<ConfigurationItem<Object>>)eGet(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION, true);
 	}
 
 	/**
@@ -84,8 +83,26 @@ public abstract class ConfigurableImpl extends CDOObjectImpl implements Configur
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Service<Object>> getServices() {
-		return (EList<Service<Object>>)eGet(CodegenPackage.Literals.CONFIGURABLE__SERVICES, true);
+	public EList<String> getDefaultPropertiesReferences() {
+		return (EList<String>)eGet(CodegenPackage.Literals.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case CodegenPackage.CONFIGURABLE___CREATE_CONTEXT__CONTEXT:
+			try {
+				return createContext((Context)arguments.get(0));
+			} catch (Exception e) {
+				throw new InvocationTargetException(e);
+			}
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 } //ConfigurableImpl

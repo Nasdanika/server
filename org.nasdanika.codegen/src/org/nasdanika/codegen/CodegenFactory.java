@@ -37,7 +37,7 @@ public interface CodegenFactory extends EFactory {
 	 * @return a new object of class '<em>Property</em>'.
 	 * @generated
 	 */
-	Property createProperty();
+	<T> Property<T> createProperty();
 
 	/**
 	 * Returns a new object of class '<em>Group</em>'.

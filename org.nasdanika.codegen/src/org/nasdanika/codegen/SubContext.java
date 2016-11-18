@@ -101,4 +101,7 @@ public class SubContext implements Context {
 	
 	// TODO - Autocloseable - cascade-close sub-contexts (track them) and properties/services.
 	
+	// TODO - default properties and services
+	
+	// TODO - suppress properties and services
 }

@@ -16,8 +16,8 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.codegen.Configurable#getPropertiesReferences <em>Properties References</em>}</li>
- *   <li>{@link org.nasdanika.codegen.Configurable#getProperties <em>Properties</em>}</li>
- *   <li>{@link org.nasdanika.codegen.Configurable#getServices <em>Services</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.Configurable#getConfiguration <em>Configuration</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.Configurable#getDefaultPropertiesReferences <em>Default Properties References</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.codegen.CodegenPackage#getConfigurable()
@@ -43,35 +43,55 @@ public interface Configurable extends CDOObject {
 	EList<String> getPropertiesReferences();
 
 	/**
-	 * Returns the value of the '<em><b>Properties</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.codegen.Property}.
+	 * Returns the value of the '<em><b>Configuration</b></em>' containment reference list.
+	 * The list contents are of type {@link org.nasdanika.codegen.ConfigurationItem}&lt;java.lang.Object>.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Properties</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Configuration</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Properties</em>' containment reference list.
-	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_Properties()
-	 * @model containment="true"
+	 * @return the value of the '<em>Configuration</em>' containment reference list.
+	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_Configuration()
+	 * @model type="org.nasdanika.codegen.ConfigurationItem<org.eclipse.emf.ecore.EJavaObject>" containment="true"
 	 * @generated
 	 */
-	EList<Property> getProperties();
+	EList<ConfigurationItem<Object>> getConfiguration();
 
 	/**
-	 * Returns the value of the '<em><b>Services</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.codegen.Service}&lt;java.lang.Object>.
+	 * Returns the value of the '<em><b>Default Properties References</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Services</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Default Properties References</em>' attribute list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Services</em>' containment reference list.
-	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_Services()
-	 * @model type="org.nasdanika.codegen.Service<org.eclipse.emf.ecore.EJavaObject>" containment="true"
+	 * @return the value of the '<em>Default Properties References</em>' attribute list.
+	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_DefaultPropertiesReferences()
+	 * @model
 	 * @generated
 	 */
-	EList<Service<Object>> getServices();
+	EList<String> getDefaultPropertiesReferences();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model dataType="org.nasdanika.codegen.Context" parentDataType="org.nasdanika.codegen.Context"
+	 * @generated NOT
+	 */
+	default Context createContext(Context parent) throws Exception {
+		SubContext ret = parent.createSubContext();
+		for (ConfigurationItem<Object> ci: getConfiguration()) {
+			if (ci instanceof Property) {
+				ret.set(((Property<?>) ci).getName(), ci.get(ret));
+			} else {
+				@SuppressWarnings("unchecked")
+				Class<Object> serviceType = (Class<Object>) parent.getClassLoader().loadClass(((Service<?>) ci).getServiceType());
+				ret.set(serviceType, ci.get(ret));				
+			}
+		}		
+		return ret;
+	}
 
 } // Configurable

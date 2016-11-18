@@ -32,4 +32,13 @@ public interface Context { // TODO - Autocloseable
 		return this instanceof SubContext ? ((SubContext) this).createSubContext() : new SubContext(this);
 	}	
 	
+	/**
+	 * Interpolates input using this context properties.
+	 * @param input
+	 * @return Interpolated value.
+	 */
+	default String interpolate(String input) {
+		return CodegenUtil.interpolate(input, this);
+	}
+	
 }

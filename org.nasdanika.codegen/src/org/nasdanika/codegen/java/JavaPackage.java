@@ -79,22 +79,22 @@ public interface JavaPackage extends EPackage {
 	int JAVA_NATURE__PROPERTIES_REFERENCES = CodegenPackage.NATURE__PROPERTIES_REFERENCES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int JAVA_NATURE__PROPERTIES = CodegenPackage.NATURE__PROPERTIES;
+	int JAVA_NATURE__CONFIGURATION = CodegenPackage.NATURE__CONFIGURATION;
 
 	/**
-	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int JAVA_NATURE__SERVICES = CodegenPackage.NATURE__SERVICES;
+	int JAVA_NATURE__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.NATURE__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
 	 * The feature id for the '<em><b>Packagefragmentroots</b></em>' containment reference list.
@@ -113,6 +113,15 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int JAVA_NATURE_FEATURE_COUNT = CodegenPackage.NATURE_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_NATURE___CREATE_CONTEXT__CONTEXT = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.
@@ -152,22 +161,22 @@ public interface JavaPackage extends EPackage {
 	int PACKAGE_FRAGMENT_ROOT__PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__PROPERTIES_REFERENCES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_FRAGMENT_ROOT__PROPERTIES = CodegenPackage.GENERATOR__PROPERTIES;
+	int PACKAGE_FRAGMENT_ROOT__CONFIGURATION = CodegenPackage.GENERATOR__CONFIGURATION;
 
 	/**
-	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_FRAGMENT_ROOT__SERVICES = CodegenPackage.GENERATOR__SERVICES;
+	int PACKAGE_FRAGMENT_ROOT__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -195,6 +204,15 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int PACKAGE_FRAGMENT_ROOT_FEATURE_COUNT = CodegenPackage.GENERATOR_FEATURE_COUNT + 2;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_FRAGMENT_ROOT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.
@@ -234,22 +252,22 @@ public interface JavaPackage extends EPackage {
 	int PACKAGE_FRAGMENT__PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__PROPERTIES_REFERENCES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_FRAGMENT__PROPERTIES = CodegenPackage.GENERATOR__PROPERTIES;
+	int PACKAGE_FRAGMENT__CONFIGURATION = CodegenPackage.GENERATOR__CONFIGURATION;
 
 	/**
-	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PACKAGE_FRAGMENT__SERVICES = CodegenPackage.GENERATOR__SERVICES;
+	int PACKAGE_FRAGMENT__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -277,6 +295,15 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int PACKAGE_FRAGMENT_FEATURE_COUNT = CodegenPackage.GENERATOR_FEATURE_COUNT + 2;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_FRAGMENT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.
@@ -316,22 +343,22 @@ public interface JavaPackage extends EPackage {
 	int COMPILATION_UNIT__PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__PROPERTIES_REFERENCES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPILATION_UNIT__PROPERTIES = CodegenPackage.GENERATOR__PROPERTIES;
+	int COMPILATION_UNIT__CONFIGURATION = CodegenPackage.GENERATOR__CONFIGURATION;
 
 	/**
-	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPILATION_UNIT__SERVICES = CodegenPackage.GENERATOR__SERVICES;
+	int COMPILATION_UNIT__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -377,6 +404,15 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPILATION_UNIT_FEATURE_COUNT = CodegenPackage.GENERATOR_FEATURE_COUNT + 4;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.

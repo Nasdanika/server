@@ -3,16 +3,21 @@
 package org.nasdanika.codegen.impl;
 
 import org.eclipse.core.resources.IProject;
-
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
+import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Nature;
 import org.nasdanika.codegen.Project;
 import org.nasdanika.codegen.ReconcileAction;
 import org.nasdanika.codegen.Resource;
+import org.nasdanika.codegen.SubContext;
 
 /**
  * <!-- begin-user-doc -->
@@ -105,5 +110,32 @@ public class ProjectImpl extends ResourceGeneratorImpl<IProject> implements Proj
 	public void setReconcileAction(ReconcileAction newReconcileAction) {
 		eSet(CodegenPackage.Literals.PROJECT__RECONCILE_ACTION, newReconcileAction);
 	}
+	
+	@Override
+	public IProject generate(Context context, IProgressMonitor monitor) throws Exception {
+		IProject project = null; // TODO
+		SubContext pctx = context.createSubContext().set(IProject.class, project);
+		SubMonitor sm = SubMonitor.convert(monitor, getTotalWork());
+		for (Resource<?> res: getResources()) {
+			res.generate(pctx, sm.split(res.getTotalWork()));
+		}
+		for (Nature nature: getNatures()) {
+			nature.generate(pctx, sm.split(nature.getTotalWork()));
+		}
+		return project;
+	}
+
+	@Override
+	public int getTotalWork() {
+		int ret = 1;
+		for (Resource<?> res: getResources()) {
+			ret += res.getTotalWork();
+		}
+		for (Nature nature: getNatures()) {
+			ret += nature.getTotalWork();
+		}
+		return ret;
+	}
+	
 
 } //ProjectImpl

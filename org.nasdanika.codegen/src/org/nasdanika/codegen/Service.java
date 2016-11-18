@@ -12,92 +12,38 @@ package org.nasdanika.codegen;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.codegen.Service#getType <em>Type</em>}</li>
- *   <li>{@link org.nasdanika.codegen.Service#getImplementation <em>Implementation</em>}</li>
- *   <li>{@link org.nasdanika.codegen.Service#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.Service#getServiceType <em>Service Type</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.codegen.CodegenPackage#getService()
  * @model
  * @generated
  */
-public interface Service<T> extends Configurable {
+public interface Service<T> extends ConfigurationItem<T> {
 	/**
-	 * Returns the value of the '<em><b>Type</b></em>' attribute.
+	 * Returns the value of the '<em><b>Service Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Type</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Service Type</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Type</em>' attribute.
-	 * @see #setType(String)
-	 * @see org.nasdanika.codegen.CodegenPackage#getService_Type()
+	 * @return the value of the '<em>Service Type</em>' attribute.
+	 * @see #setServiceType(String)
+	 * @see org.nasdanika.codegen.CodegenPackage#getService_ServiceType()
 	 * @model
 	 * @generated
 	 */
-	String getType();
+	String getServiceType();
 
 	/**
-	 * Sets the value of the '{@link org.nasdanika.codegen.Service#getType <em>Type</em>}' attribute.
+	 * Sets the value of the '{@link org.nasdanika.codegen.Service#getServiceType <em>Service Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Type</em>' attribute.
-	 * @see #getType()
+	 * @param value the new value of the '<em>Service Type</em>' attribute.
+	 * @see #getServiceType()
 	 * @generated
 	 */
-	void setType(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Implementation</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Implementation</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Implementation</em>' attribute.
-	 * @see #setImplementation(String)
-	 * @see org.nasdanika.codegen.CodegenPackage#getService_Implementation()
-	 * @model
-	 * @generated
-	 */
-	String getImplementation();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.codegen.Service#getImplementation <em>Implementation</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Implementation</em>' attribute.
-	 * @see #getImplementation()
-	 * @generated
-	 */
-	void setImplementation(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Description</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Description</em>' attribute.
-	 * @see #setDescription(String)
-	 * @see org.nasdanika.codegen.CodegenPackage#getService_Description()
-	 * @model
-	 * @generated
-	 */
-	String getDescription();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.codegen.Service#getDescription <em>Description</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Description</em>' attribute.
-	 * @see #getDescription()
-	 * @generated
-	 */
-	void setDescription(String value);
+	void setServiceType(String value);
 
 } // Service

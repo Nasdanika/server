@@ -56,7 +56,15 @@ public enum ReconcileAction implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	ABORT(3, "Abort", "Abort");
+	ABORT(3, "Abort", "Abort"), /**
+	 * The '<em><b>Confirm</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #CONFIRM_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	CONFIRM(4, "Confirm", "Confirm");
 
 	/**
 	 * The '<em><b>Keep</b></em>' literal value.
@@ -119,6 +127,21 @@ public enum ReconcileAction implements Enumerator {
 	public static final int ABORT_VALUE = 3;
 
 	/**
+	 * The '<em><b>Confirm</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Confirm</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #CONFIRM
+	 * @model name="Confirm"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int CONFIRM_VALUE = 4;
+
+	/**
 	 * An array of all the '<em><b>Reconcile Action</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -130,6 +153,7 @@ public enum ReconcileAction implements Enumerator {
 			MERGE,
 			OVERWRITE,
 			ABORT,
+			CONFIRM,
 		};
 
 	/**
@@ -190,6 +214,7 @@ public enum ReconcileAction implements Enumerator {
 			case MERGE_VALUE: return MERGE;
 			case OVERWRITE_VALUE: return OVERWRITE;
 			case ABORT_VALUE: return ABORT;
+			case CONFIRM_VALUE: return CONFIRM;
 		}
 		return null;
 	}

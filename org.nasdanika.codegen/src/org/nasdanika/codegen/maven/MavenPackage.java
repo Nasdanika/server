@@ -76,22 +76,22 @@ public interface MavenPackage extends EPackage {
 	int MAVEN_NATURE__PROPERTIES_REFERENCES = CodegenPackage.NATURE__PROPERTIES_REFERENCES;
 
 	/**
-	 * The feature id for the '<em><b>Properties</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MAVEN_NATURE__PROPERTIES = CodegenPackage.NATURE__PROPERTIES;
+	int MAVEN_NATURE__CONFIGURATION = CodegenPackage.NATURE__CONFIGURATION;
 
 	/**
-	 * The feature id for the '<em><b>Services</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MAVEN_NATURE__SERVICES = CodegenPackage.NATURE__SERVICES;
+	int MAVEN_NATURE__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.NATURE__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
 	 * The number of structural features of the '<em>Nature</em>' class.
@@ -101,6 +101,15 @@ public interface MavenPackage extends EPackage {
 	 * @ordered
 	 */
 	int MAVEN_NATURE_FEATURE_COUNT = CodegenPackage.NATURE_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAVEN_NATURE___CREATE_CONTEXT__CONTEXT = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.
