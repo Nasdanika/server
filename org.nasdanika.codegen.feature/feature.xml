@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.nasdanika.codegen.feature"
+      label="Code Generation"
+      version="0.1.0.qualifier"
+      provider-name="Nasdanika LLC">
+
+   <description url="http://www.example.com/description">
+      Models and editors for code generation.
+   </description>
+
+   <copyright>
+      Nasdanika LLC.
+   </copyright>
+
+   <license>
+      Eclipse Public License.
+   </license>
+
+   <plugin
+         id="org.nasdanika.codegen"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.nasdanika.codegen.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.nasdanika.codegen.editor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>
