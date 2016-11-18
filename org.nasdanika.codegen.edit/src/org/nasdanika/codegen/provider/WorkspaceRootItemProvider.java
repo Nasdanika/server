@@ -84,11 +84,11 @@ public class WorkspaceRootItemProvider extends ResourceGeneratorItemProvider {
 	 * This returns WorkspaceRoot.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/WorkspaceRoot"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Workspace.gif"));
 	}
 
 	/**
@@ -137,6 +137,11 @@ public class WorkspaceRootItemProvider extends ResourceGeneratorItemProvider {
 			(createChildParameter
 				(CodegenPackage.Literals.WORKSPACE_ROOT__PROJECTS,
 				 CodegenFactory.eINSTANCE.createProject()));
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }

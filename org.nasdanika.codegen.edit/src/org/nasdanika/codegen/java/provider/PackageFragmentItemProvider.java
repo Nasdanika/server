@@ -114,11 +114,16 @@ public class PackageFragmentItemProvider extends GeneratorItemProvider {
 	 * This returns PackageFragment.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/PackageFragment"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/package.gif"));
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 	/**

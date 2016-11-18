@@ -137,11 +137,11 @@ public class ProjectItemProvider extends ResourceGeneratorItemProvider {
 	 * This returns Project.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Project"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Project.gif"));
 	}
 
 	/**
@@ -223,6 +223,11 @@ public class ProjectItemProvider extends ResourceGeneratorItemProvider {
 			(createChildParameter
 				(CodegenPackage.Literals.PROJECT__RESOURCES,
 				 CodegenFactory.eINSTANCE.createResourceReference()));
+	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
 	}
 
 }
