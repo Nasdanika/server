@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="codegen" nsURI="urn:org.nasdanika.codegen" nsPrefix="org.nasdanika.codegen">
+  <eClassifiers xsi:type="ecore:EClass" name="Configurable" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertiesReferences" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
+        eType="#//Property" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="services" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//Service">
+        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//Configurable">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="implementation" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Property" eSuperTypes="#//Configurable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ContextProvider" abstract="true" eSuperTypes="#//Configurable">
+    <eOperations name="createContext" eType="#//Context">
+      <eParameters name="parent" eType="#//Context"/>
+      <eParameters name="withContainer" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    </eOperations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IGenerator" instanceClassName="org.nasdanika.codegen.IGenerator"
+      abstract="true" interface="true">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Context" instanceClassName="org.nasdanika.codegen.Context"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Generator" abstract="true">
+    <eTypeParameters name="T"/>
+    <eGenericSuperTypes eClassifier="#//IGenerator">
+      <eTypeArguments eTypeParameter="#//Generator/T"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//ContextProvider"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Group">
+    <eTypeParameters name="T"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="iterator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="selector" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="members" upperBound="-1"
+        containment="true">
+      <eGenericType eClassifier="#//Generator">
+        <eTypeArguments eTypeParameter="#//Group/T"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//Generator">
+      <eTypeArguments eTypeParameter="#//Group/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ResourceGenerator" abstract="true">
+    <eTypeParameters name="T"/>
+    <eGenericSuperTypes eClassifier="#//Generator">
+      <eTypeArguments eTypeParameter="#//ResourceGenerator/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WorkspaceRoot">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="projects" upperBound="-1"
+        eType="#//Project" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//ResourceGenerator">
+      <eTypeArguments eClassifier="#//IWorkspaceRoot"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Folder">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//Resource" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//Resource"/>
+    <eGenericSuperTypes eClassifier="#//ResourceGenerator">
+      <eTypeArguments eClassifier="#//IFolder"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Nature" abstract="true">
+    <eGenericSuperTypes eClassifier="#//Generator">
+      <eTypeArguments eClassifier="#//IProjectNature"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="File" abstract="true">
+    <eGenericSuperTypes eClassifier="#//Resource"/>
+    <eGenericSuperTypes eClassifier="#//ResourceGenerator">
+      <eTypeArguments eClassifier="#//IFile"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextGenerator" abstract="true">
+    <eGenericSuperTypes eClassifier="#//Generator">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StreamGenerator" abstract="true">
+    <eGenericSuperTypes eClassifier="#//Generator">
+      <eTypeArguments eClassifier="#//InputStream"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="InputStream" instanceClassName="java.io.InputStream"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="Void" instanceClassName="java.lang.Void"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Project">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="natures" upperBound="-1"
+        eType="#//Nature" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
+        eType="#//Resource" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="reconcileAction" eType="#//ReconcileAction"
+        defaultValueLiteral="Merge"/>
+    <eGenericSuperTypes eClassifier="#//ResourceGenerator">
+      <eTypeArguments eClassifier="#//IProject"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Resource" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="reconcileAction" eType="#//ReconcileAction"
+        defaultValueLiteral="Merge"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BinaryFile" eSuperTypes="#//File">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="streamgenerator" lowerBound="1"
+        eType="#//StreamGenerator" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextFile" eSuperTypes="#//File">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="textgenerator" lowerBound="1"
+        eType="#//TextGenerator" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="IFile" instanceClassName="org.eclipse.core.resources.IFile"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IFolder" instanceClassName="org.eclipse.core.resources.IFolder"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IProject" instanceClassName="org.eclipse.core.resources.IProject"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IProjectNature" instanceClassName="org.eclipse.core.resources.IProjectNature"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IWorkspaceRoot" instanceClassName="org.eclipse.core.resources.IWorkspaceRoot"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="ReconcileAction">
+    <eLiterals name="Keep" literal="Keep"/>
+    <eLiterals name="Merge" value="1"/>
+    <eLiterals name="Overwrite" value="2"/>
+    <eLiterals name="Abort" value="3" literal="Abort"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ResourceReference" eSuperTypes="#//Resource">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Resource"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StaticText" eSuperTypes="#//TextGenerator">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="content" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextReference" eSuperTypes="#//TextGenerator">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="ref" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TextFilter" abstract="true" eSuperTypes="#//TextGenerator">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="textgenerator" lowerBound="1"
+        eType="#//TextGenerator" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaTextGenerator" eSuperTypes="#//TextGenerator">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Interpolator" eSuperTypes="#//TextFilter"/>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaTextFilter" eSuperTypes="#//TextFilter">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eSubpackages name="java" nsURI="urn:org.nasdanika.codegen.java" nsPrefix="org.nasdanika.codegen.java">
+    <eClassifiers xsi:type="ecore:EClass" name="JavaNature" eSuperTypes="#//Nature">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="packagefragmentroots"
+          upperBound="-1" eType="#//java/PackageFragmentRoot" containment="true"/>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EDataType" name="IJavaProject" instanceClassName="org.eclipse.jdt.core.IJavaProject"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="IPackageFragmentRoot" instanceClassName="org.eclipse.jdt.core.IPackageFragmentRoot"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="IPackageFragment" instanceClassName="org.eclipse.jdt.core.IPackageFragment"/>
+    <eClassifiers xsi:type="ecore:EDataType" name="ICompilationUnit" instanceClassName="org.eclipse.jdt.core.ICompilationUnit"/>
+    <eClassifiers xsi:type="ecore:EClass" name="PackageFragmentRoot">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="packagefragments" upperBound="-1"
+          eType="#//java/PackageFragment" containment="true"/>
+      <eGenericSuperTypes eClassifier="#//Generator">
+        <eTypeArguments eClassifier="#//java/IPackageFragmentRoot"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="PackageFragment">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="compilationunits" upperBound="-1"
+          eType="#//java/CompilationUnit" containment="true"/>
+      <eGenericSuperTypes eClassifier="#//Generator">
+        <eTypeArguments eClassifier="#//java/IPackageFragment"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="CompilationUnit">
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eStructuralFeatures xsi:type="ecore:EReference" name="sourceGenerator" upperBound="-1"
+          eType="#//TextGenerator" containment="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="merge" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="true"/>
+      <eStructuralFeatures xsi:type="ecore:EAttribute" name="format" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+          defaultValueLiteral="true"/>
+      <eGenericSuperTypes eClassifier="#//Generator">
+        <eTypeArguments eClassifier="#//java/ICompilationUnit"/>
+      </eGenericSuperTypes>
+    </eClassifiers>
+  </eSubpackages>
+  <eSubpackages name="maven" nsURI="urn:org.nasdanika.codegen.maven" nsPrefix="org.nasdanika.codegen.maven">
+    <eClassifiers xsi:type="ecore:EClass" name="MavenNature" eSuperTypes="#//Nature"/>
+  </eSubpackages>
+</ecore:EPackage>
