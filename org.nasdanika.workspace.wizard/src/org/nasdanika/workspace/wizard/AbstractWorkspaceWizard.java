@@ -407,8 +407,7 @@ public abstract class AbstractWorkspaceWizard extends Wizard implements INewWiza
 	public String getDocArtifactId() {
 		return getGroupId()+".doc";
 	}
-	
-	
+		
 	protected IJavaProject createPluginProject(
 			final String name,
 			Collection<String> requiredBundles,
