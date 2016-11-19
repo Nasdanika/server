@@ -2,14 +2,16 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
+import org.codehaus.janino.ScriptEvaluator;
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.codegen.CodegenPackage;
 import org.nasdanika.codegen.Configurable;
 import org.nasdanika.codegen.ConfigurationItem;
@@ -188,6 +190,47 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 				}
 		}
 		return super.eInvoke(operationID, arguments);
+	}
+	
+	/**
+	 * Creates iterable by evaluating iterator.
+	 * @param context
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected Iterable<Context> iterate(Context context) throws Exception {
+		String iterator = getIterator();
+		if (iterator == null || iterator.trim().length() == 0) {
+			return Collections.singleton(context);
+		}
+		
+		ScriptEvaluator se = new ScriptEvaluator(iterator);
+		se.setReturnType(Object.class);
+		se.setParameters(new String[] { "context", "generator" }, new Class[] { Context.class, this.getClass() });
+		se.setThrownExceptions(new Class[] { Exception.class });
+		se.setParentClassLoader(context.getClassLoader());
+		Object result = se.evaluate(new Object[] { context, this });
+		if (result == null || Boolean.FALSE.equals(result)) {
+			return Collections.emptySet();
+		}
+		
+		if (result instanceof Context) {
+			return Collections.singleton((Context) result);
+		}
+		
+		if (result instanceof Iterable) {
+			return (Iterable<Context>) result;
+		}
+				
+		if (result.getClass().isArray() && Context.class.isAssignableFrom(result.getClass().getComponentType())) {
+			List<Context> ret = new ArrayList<>();
+			for (int i=0; i<Array.getLength(result); ++i) {
+				ret.add((Context) Array.get(result, i));
+			}
+			return ret;
+		}
+		
+		throw new IllegalArgumentException("Unexpected iterator return value: "+result);
 	}
 
 } //GeneratorImpl

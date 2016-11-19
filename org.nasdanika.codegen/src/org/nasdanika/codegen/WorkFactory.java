@@ -14,6 +14,6 @@ public interface WorkFactory<T> {
 	 * @return
 	 * @throws Exception
 	 */
-	Work<T> create(Context context) throws Exception;
+	Work<T> createWork(Context context) throws Exception;
 
 }
