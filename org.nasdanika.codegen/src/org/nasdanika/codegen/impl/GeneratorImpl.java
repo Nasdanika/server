@@ -14,7 +14,6 @@ import org.nasdanika.codegen.CodegenPackage;
 import org.nasdanika.codegen.Configurable;
 import org.nasdanika.codegen.ConfigurationItem;
 import org.nasdanika.codegen.Context;
-import org.nasdanika.codegen.ContextProvider;
 import org.nasdanika.codegen.Generator;
 
 /**
@@ -28,6 +27,7 @@ import org.nasdanika.codegen.Generator;
  *   <li>{@link org.nasdanika.codegen.impl.GeneratorImpl#getPropertiesReferences <em>Properties References</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.GeneratorImpl#getConfiguration <em>Configuration</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.GeneratorImpl#getDefaultPropertiesReferences <em>Default Properties References</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.GeneratorImpl#getIterator <em>Iterator</em>}</li>
  * </ul>
  *
  * @generated
@@ -97,10 +97,8 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Context createContext(Context parent, boolean withContainer) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	public String getIterator() {
+		return (String)eGet(CodegenPackage.Literals.GENERATOR__ITERATOR, true);
 	}
 
 	/**
@@ -108,10 +106,17 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Context createContext(Context parent) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+	public void setIterator(String newIterator) {
+		eSet(CodegenPackage.Literals.GENERATOR__ITERATOR, newIterator);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public Context createContext(Context parent) throws Exception {
+		return Generator.super.createContext(parent);
 	}
 
 	/**
@@ -126,11 +131,6 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 				case CodegenPackage.GENERATOR__PROPERTIES_REFERENCES: return CodegenPackage.CONFIGURABLE__PROPERTIES_REFERENCES;
 				case CodegenPackage.GENERATOR__CONFIGURATION: return CodegenPackage.CONFIGURABLE__CONFIGURATION;
 				case CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES: return CodegenPackage.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES;
-				default: return -1;
-			}
-		}
-		if (baseClass == ContextProvider.class) {
-			switch (derivedFeatureID) {
 				default: return -1;
 			}
 		}
@@ -152,11 +152,6 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 				default: return -1;
 			}
 		}
-		if (baseClass == ContextProvider.class) {
-			switch (baseFeatureID) {
-				default: return -1;
-			}
-		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
@@ -173,12 +168,6 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 				default: return -1;
 			}
 		}
-		if (baseClass == ContextProvider.class) {
-			switch (baseOperationID) {
-				case CodegenPackage.CONTEXT_PROVIDER___CREATE_CONTEXT__CONTEXT_BOOLEAN: return CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT_BOOLEAN;
-				default: return -1;
-			}
-		}
 		return super.eDerivedOperationID(baseOperationID, baseClass);
 	}
 
@@ -190,10 +179,13 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT_BOOLEAN:
-				return createContext((Context)arguments.get(0), (Boolean)arguments.get(1));
 			case CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT:
-				return createContext((Context)arguments.get(0));
+				try {
+					return createContext((Context)arguments.get(0));
+				}
+				catch (Throwable throwable) {
+					throw new InvocationTargetException(throwable);
+				}
 		}
 		return super.eInvoke(operationID, arguments);
 	}

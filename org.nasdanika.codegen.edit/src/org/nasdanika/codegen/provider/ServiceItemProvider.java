@@ -23,7 +23,7 @@ import org.nasdanika.codegen.Service;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ServiceItemProvider extends ConfigurableItemProvider {
+public class ServiceItemProvider extends ConfigurationItemItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -45,71 +45,25 @@ public class ServiceItemProvider extends ConfigurableItemProvider {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addTypePropertyDescriptor(object);
-			addImplementationPropertyDescriptor(object);
-			addDescriptionPropertyDescriptor(object);
+			addServiceTypePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Type feature.
+	 * This adds a property descriptor for the Service Type feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addTypePropertyDescriptor(Object object) {
+	protected void addServiceTypePropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Service_type_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Service_type_feature", "_UI_Service_type"),
-				 CodegenPackage.Literals.SERVICE__TYPE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Implementation feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addImplementationPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Service_implementation_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Service_implementation_feature", "_UI_Service_type"),
-				 CodegenPackage.Literals.SERVICE__IMPLEMENTATION,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Description feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addDescriptionPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Service_description_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Service_description_feature", "_UI_Service_type"),
-				 CodegenPackage.Literals.SERVICE__DESCRIPTION,
+				 getString("_UI_Service_serviceType_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Service_serviceType_feature", "_UI_Service_type"),
+				 CodegenPackage.Literals.SERVICE__SERVICE_TYPE,
 				 true,
 				 false,
 				 false,
@@ -142,7 +96,7 @@ public class ServiceItemProvider extends ConfigurableItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Service<?>)object).getType();
+		String label = ((Service<?>)object).getValueType();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Service_type") :
 			getString("_UI_Service_type") + " " + label;
@@ -161,9 +115,7 @@ public class ServiceItemProvider extends ConfigurableItemProvider {
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Service.class)) {
-			case CodegenPackage.SERVICE__TYPE:
-			case CodegenPackage.SERVICE__IMPLEMENTATION:
-			case CodegenPackage.SERVICE__DESCRIPTION:
+			case CodegenPackage.SERVICE__SERVICE_TYPE:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IFile;
  *
  *
  * @see org.nasdanika.codegen.CodegenPackage#getFile()
- * @model abstract="true" superTypes="org.nasdanika.codegen.Resource org.nasdanika.codegen.ResourceGenerator<org.nasdanika.codegen.IFile>"
+ * @model abstract="true" superTypes="org.nasdanika.codegen.Resource<org.nasdanika.codegen.IFile>"
  * @generated
  */
 public interface File extends Resource<IFile> {

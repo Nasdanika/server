@@ -91,7 +91,7 @@ public class TextReferenceItemProvider extends TextGeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((TextReference)object).getRef();
+		String label = ((TextReference)object).getIterator();
 		return label == null || label.length() == 0 ?
 			getString("_UI_TextReference_type") :
 			getString("_UI_TextReference_type") + " " + label;

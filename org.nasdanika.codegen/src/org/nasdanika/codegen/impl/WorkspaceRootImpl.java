@@ -2,6 +2,8 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -59,7 +61,8 @@ public class WorkspaceRootImpl extends ResourceGeneratorImpl<IWorkspaceRoot> imp
 	}
 
 	@Override
-	public IWorkspaceRoot generate(Context context, IProgressMonitor monitor) throws Exception {
+	public List<IWorkspaceRoot> generate(Context context, IProgressMonitor monitor) throws Exception {
+		777 - Iterator
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		SubContext wsc = context.createSubContext().set(IWorkspaceRoot.class, root);
 		SubMonitor sm = SubMonitor.convert(monitor, getTotalWork());

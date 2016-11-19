@@ -41,7 +41,7 @@
       <eTypeArguments eTypeParameter="#//Property/T"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IGenerator" instanceClassName="org.nasdanika.codegen.IGenerator"
+  <eClassifiers xsi:type="ecore:EClass" name="WorkFactory" instanceClassName="org.nasdanika.codegen.WorkFactory"
       abstract="true" interface="true">
     <eTypeParameters name="T"/>
   </eClassifiers>
@@ -49,8 +49,10 @@
   <eClassifiers xsi:type="ecore:EClass" name="Generator" abstract="true">
     <eTypeParameters name="T"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="iterator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eGenericSuperTypes eClassifier="#//IGenerator">
-      <eTypeArguments eTypeParameter="#//Generator/T"/>
+    <eGenericSuperTypes eClassifier="#//WorkFactory">
+      <eTypeArguments eClassifier="#//List">
+        <eTypeArguments eTypeParameter="#//Generator/T"/>
+      </eTypeArguments>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//Configurable"/>
   </eClassifiers>
@@ -82,7 +84,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Folder">
     <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
-        eType="#//Resource" containment="true"/>
+        containment="true">
+      <eGenericType eClassifier="#//Resource">
+        <eTypeArguments eClassifier="#//IResource"/>
+      </eGenericType>
+    </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//Resource">
       <eTypeArguments eClassifier="#//IFolder"/>
     </eGenericSuperTypes>
@@ -114,7 +120,11 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="natures" upperBound="-1"
         eType="#//Nature" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="resources" upperBound="-1"
-        eType="#//Resource" containment="true"/>
+        containment="true">
+      <eGenericType eClassifier="#//Resource">
+        <eTypeArguments eClassifier="#//IResource"/>
+      </eGenericType>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="reconcileAction" eType="#//ReconcileAction"
         defaultValueLiteral="Merge"/>
     <eGenericSuperTypes eClassifier="#//ResourceGenerator">
@@ -150,8 +160,15 @@
     <eLiterals name="Abort" value="3" literal="Abort"/>
     <eLiterals name="Confirm" value="4"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ResourceReference" eSuperTypes="#//Resource">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="#//Resource"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ResourceReference">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target">
+      <eGenericType eClassifier="#//Resource">
+        <eTypeArguments eClassifier="#//IResource"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//Resource">
+      <eTypeArguments eClassifier="#//IResource"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="StaticText" eSuperTypes="#//TextGenerator">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="content" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -176,6 +193,9 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="Exception" instanceClassName="java.lang.Exception"/>
   <eClassifiers xsi:type="ecore:EDataType" name="IResource" instanceClassName="org.eclipse.core.resources.IFolder"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List">
+    <eTypeParameters name="T"/>
+  </eClassifiers>
   <eSubpackages name="java" nsURI="urn:org.nasdanika.codegen.java" nsPrefix="org.nasdanika.codegen.java">
     <eClassifiers xsi:type="ecore:EClass" name="JavaNature" eSuperTypes="#//Nature">
       <eStructuralFeatures xsi:type="ecore:EReference" name="packagefragmentroots"

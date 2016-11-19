@@ -8,9 +8,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 
 import org.nasdanika.codegen.Configurable;
-import org.nasdanika.codegen.ContextProvider;
 import org.nasdanika.codegen.Generator;
-import org.nasdanika.codegen.IGenerator;
+import org.nasdanika.codegen.WorkFactory;
 import org.nasdanika.codegen.Nature;
 
 import org.nasdanika.codegen.java.*;
@@ -78,7 +77,6 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseNature(javaNature);
 				if (result == null) result = caseGenerator(javaNature);
 				if (result == null) result = caseIGenerator(javaNature);
-				if (result == null) result = caseContextProvider(javaNature);
 				if (result == null) result = caseConfigurable(javaNature);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -88,7 +86,6 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				T1 result = casePackageFragmentRoot(packageFragmentRoot);
 				if (result == null) result = caseGenerator(packageFragmentRoot);
 				if (result == null) result = caseIGenerator(packageFragmentRoot);
-				if (result == null) result = caseContextProvider(packageFragmentRoot);
 				if (result == null) result = caseConfigurable(packageFragmentRoot);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -98,7 +95,6 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				T1 result = casePackageFragment(packageFragment);
 				if (result == null) result = caseGenerator(packageFragment);
 				if (result == null) result = caseIGenerator(packageFragment);
-				if (result == null) result = caseContextProvider(packageFragment);
 				if (result == null) result = caseConfigurable(packageFragment);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -108,7 +104,6 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				T1 result = caseCompilationUnit(compilationUnit);
 				if (result == null) result = caseGenerator(compilationUnit);
 				if (result == null) result = caseIGenerator(compilationUnit);
-				if (result == null) result = caseContextProvider(compilationUnit);
 				if (result == null) result = caseConfigurable(compilationUnit);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -188,7 +183,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseIGenerator(IGenerator<T> object) {
+	public <T> T1 caseIGenerator(WorkFactory<T> object) {
 		return null;
 	}
 
@@ -204,21 +199,6 @@ public class JavaSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseConfigurable(Configurable object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Context Provider</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Context Provider</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseContextProvider(ContextProvider object) {
 		return null;
 	}
 

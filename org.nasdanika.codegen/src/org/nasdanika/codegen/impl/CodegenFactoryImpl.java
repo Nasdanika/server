@@ -4,6 +4,7 @@ package org.nasdanika.codegen.impl;
 
 import java.io.InputStream;
 
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -110,6 +111,12 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 				return createIProjectNatureFromString(eDataType, initialValue);
 			case CodegenPackage.IWORKSPACE_ROOT:
 				return createIWorkspaceRootFromString(eDataType, initialValue);
+			case CodegenPackage.EXCEPTION:
+				return createExceptionFromString(eDataType, initialValue);
+			case CodegenPackage.IRESOURCE:
+				return createIResourceFromString(eDataType, initialValue);
+			case CodegenPackage.LIST:
+				return createListFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -141,6 +148,12 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 				return convertIProjectNatureToString(eDataType, instanceValue);
 			case CodegenPackage.IWORKSPACE_ROOT:
 				return convertIWorkspaceRootToString(eDataType, instanceValue);
+			case CodegenPackage.EXCEPTION:
+				return convertExceptionToString(eDataType, instanceValue);
+			case CodegenPackage.IRESOURCE:
+				return convertIResourceToString(eDataType, instanceValue);
+			case CodegenPackage.LIST:
+				return convertListToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -448,6 +461,60 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 */
 	public String convertIWorkspaceRootToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Exception createExceptionFromString(EDataType eDataType, String initialValue) {
+		return (Exception)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertExceptionToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public IFolder createIResourceFromString(EDataType eDataType, String initialValue) {
+		return (IFolder)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertIResourceToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public List<?> createListFromString(EDataType eDataType, String initialValue) {
+		return (List<?>)super.createFromString(initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertListToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(instanceValue);
 	}
 
 	/**

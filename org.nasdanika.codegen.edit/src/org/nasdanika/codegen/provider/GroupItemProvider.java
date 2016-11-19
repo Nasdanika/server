@@ -52,32 +52,9 @@ public class GroupItemProvider extends GeneratorItemProvider {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addIteratorPropertyDescriptor(object);
 			addSelectorPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Iterator feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addIteratorPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Group_iterator_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Group_iterator_feature", "_UI_Group_type"),
-				 CodegenPackage.Literals.GROUP__ITERATOR,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
 	}
 
 	/**
@@ -170,7 +147,6 @@ public class GroupItemProvider extends GeneratorItemProvider {
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Group.class)) {
-			case CodegenPackage.GROUP__ITERATOR:
 			case CodegenPackage.GROUP__SELECTOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
@@ -221,6 +197,11 @@ public class GroupItemProvider extends GeneratorItemProvider {
 			(createChildParameter
 				(CodegenPackage.Literals.GROUP__MEMBERS,
 				 CodegenFactory.eINSTANCE.createTextFile()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.GROUP__MEMBERS,
+				 CodegenFactory.eINSTANCE.createResourceReference()));
 
 		newChildDescriptors.add
 			(createChildParameter

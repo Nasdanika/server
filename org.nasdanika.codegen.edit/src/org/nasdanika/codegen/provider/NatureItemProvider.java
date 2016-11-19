@@ -10,6 +10,7 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.nasdanika.codegen.Nature;
 
 /**
  * This is the item provider adapter for a {@link org.nasdanika.codegen.Nature} object.
@@ -62,7 +63,10 @@ public class NatureItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_Nature_type");
+		String label = ((Nature)object).getIterator();
+		return label == null || label.length() == 0 ?
+			getString("_UI_Nature_type") :
+			getString("_UI_Nature_type") + " " + label;
 	}
 	
 

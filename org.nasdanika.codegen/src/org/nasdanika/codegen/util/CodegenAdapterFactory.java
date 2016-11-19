@@ -84,11 +84,7 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createPropertyAdapter();
 			}
 			@Override
-			public Adapter caseContextProvider(ContextProvider object) {
-				return createContextProviderAdapter();
-			}
-			@Override
-			public <T> Adapter caseIGenerator(IGenerator<T> object) {
+			public <T> Adapter caseIGenerator(WorkFactory<T> object) {
 				return createIGeneratorAdapter();
 			}
 			@Override
@@ -132,7 +128,7 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createProjectAdapter();
 			}
 			@Override
-			public Adapter caseResource(Resource object) {
+			public <T> Adapter caseResource(Resource<T> object) {
 				return createResourceAdapter();
 			}
 			@Override
@@ -252,27 +248,13 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.ContextProvider <em>Context Provider</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.WorkFactory <em>IGenerator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.ContextProvider
-	 * @generated
-	 */
-	public Adapter createContextProviderAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.IGenerator <em>IGenerator</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.IGenerator
+	 * @see org.nasdanika.codegen.WorkFactory
 	 * @generated
 	 */
 	public Adapter createIGeneratorAdapter() {

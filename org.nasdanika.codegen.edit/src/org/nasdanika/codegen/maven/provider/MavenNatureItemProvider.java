@@ -13,6 +13,7 @@ import org.eclipse.emf.common.util.ResourceLocator;
 
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 
+import org.nasdanika.codegen.maven.MavenNature;
 import org.nasdanika.codegen.provider.CodegenEditPlugin;
 import org.nasdanika.codegen.provider.NatureItemProvider;
 
@@ -67,7 +68,10 @@ public class MavenNatureItemProvider extends NatureItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_MavenNature_type");
+		String label = ((MavenNature)object).getIterator();
+		return label == null || label.length() == 0 ?
+			getString("_UI_MavenNature_type") :
+			getString("_UI_MavenNature_type") + " " + label;
 	}
 	
 

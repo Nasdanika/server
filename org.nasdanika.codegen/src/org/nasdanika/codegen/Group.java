@@ -13,7 +13,6 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.codegen.Group#getIterator <em>Iterator</em>}</li>
  *   <li>{@link org.nasdanika.codegen.Group#getSelector <em>Selector</em>}</li>
  *   <li>{@link org.nasdanika.codegen.Group#getMembers <em>Members</em>}</li>
  * </ul>
@@ -23,32 +22,6 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface Group<T> extends Generator<T> {
-	/**
-	 * Returns the value of the '<em><b>Iterator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Iterator</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Iterator</em>' attribute.
-	 * @see #setIterator(String)
-	 * @see org.nasdanika.codegen.CodegenPackage#getGroup_Iterator()
-	 * @model
-	 * @generated
-	 */
-	String getIterator();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.codegen.Group#getIterator <em>Iterator</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Iterator</em>' attribute.
-	 * @see #getIterator()
-	 * @generated
-	 */
-	void setIterator(String value);
-
 	/**
 	 * Returns the value of the '<em><b>Selector</b></em>' attribute.
 	 * <!-- begin-user-doc -->

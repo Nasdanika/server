@@ -10,6 +10,7 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.nasdanika.codegen.StreamGenerator;
 
 /**
  * This is the item provider adapter for a {@link org.nasdanika.codegen.StreamGenerator} object.
@@ -62,7 +63,10 @@ public class StreamGeneratorItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_StreamGenerator_type");
+		String label = ((StreamGenerator)object).getIterator();
+		return label == null || label.length() == 0 ?
+			getString("_UI_StreamGenerator_type") :
+			getString("_UI_StreamGenerator_type") + " " + label;
 	}
 	
 

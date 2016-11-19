@@ -10,9 +10,8 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 
 import org.nasdanika.codegen.Configurable;
-import org.nasdanika.codegen.ContextProvider;
 import org.nasdanika.codegen.Generator;
-import org.nasdanika.codegen.IGenerator;
+import org.nasdanika.codegen.WorkFactory;
 import org.nasdanika.codegen.Nature;
 
 import org.nasdanika.codegen.java.*;
@@ -90,16 +89,12 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 				return createCompilationUnitAdapter();
 			}
 			@Override
-			public <T> Adapter caseIGenerator(IGenerator<T> object) {
+			public <T> Adapter caseIGenerator(WorkFactory<T> object) {
 				return createIGeneratorAdapter();
 			}
 			@Override
 			public Adapter caseConfigurable(Configurable object) {
 				return createConfigurableAdapter();
-			}
-			@Override
-			public Adapter caseContextProvider(ContextProvider object) {
-				return createContextProviderAdapter();
 			}
 			@Override
 			public <T> Adapter caseGenerator(Generator<T> object) {
@@ -186,13 +181,13 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.IGenerator <em>IGenerator</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.WorkFactory <em>IGenerator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.IGenerator
+	 * @see org.nasdanika.codegen.WorkFactory
 	 * @generated
 	 */
 	public Adapter createIGeneratorAdapter() {
@@ -210,20 +205,6 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createConfigurableAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.ContextProvider <em>Context Provider</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.ContextProvider
-	 * @generated
-	 */
-	public Adapter createContextProviderAdapter() {
 		return null;
 	}
 

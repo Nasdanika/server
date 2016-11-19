@@ -3,9 +3,6 @@
 package org.nasdanika.codegen.impl;
 
 import org.eclipse.emf.ecore.EClass;
-
-import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
 import org.nasdanika.codegen.CodegenPackage;
 import org.nasdanika.codegen.ReconcileAction;
 import org.nasdanika.codegen.Resource;
@@ -24,7 +21,7 @@ import org.nasdanika.codegen.Resource;
  *
  * @generated
  */
-public abstract class ResourceImpl extends CDOObjectImpl implements Resource {
+public abstract class ResourceImpl<T> extends ResourceGeneratorImpl<T> implements Resource<T> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -42,16 +39,6 @@ public abstract class ResourceImpl extends CDOObjectImpl implements Resource {
 	@Override
 	protected EClass eStaticClass() {
 		return CodegenPackage.Literals.RESOURCE;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected int eStaticFeatureCount() {
-		return 0;
 	}
 
 	/**

@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.codegen.CodegenPackage;
 import org.nasdanika.codegen.Configurable;
 import org.nasdanika.codegen.ConfigurationItem;
@@ -36,7 +37,7 @@ import org.nasdanika.codegen.Provider;
  *
  * @generated
  */
-public abstract class ConfigurationItemImpl<T> extends ConfigurableImpl implements ConfigurationItem<T> {
+public abstract class ConfigurationItemImpl<T> extends CDOObjectImpl implements ConfigurationItem<T> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -173,6 +174,17 @@ public abstract class ConfigurationItemImpl<T> extends ConfigurableImpl implemen
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Context createContext(Context parent) throws Exception {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == Configurable.class) {
@@ -229,11 +241,12 @@ public abstract class ConfigurationItemImpl<T> extends ConfigurableImpl implemen
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case CodegenPackage.CONFIGURATION_ITEM___CREATE_CONTEXT__CONTEXT:
-			try {
-				return createContext((Context)arguments.get(0));
-			} catch (Exception e) {
-				throw new InvocationTargetException(e);
-			}
+				try {
+					return createContext((Context)arguments.get(0));
+				}
+				catch (Throwable throwable) {
+					throw new InvocationTargetException(throwable);
+				}
 		}
 		return super.eInvoke(operationID, arguments);
 	}

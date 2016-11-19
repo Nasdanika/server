@@ -27,15 +27,15 @@ import org.eclipse.emf.edit.provider.ViewerNotification;
 
 import org.nasdanika.codegen.CodegenFactory;
 import org.nasdanika.codegen.CodegenPackage;
-import org.nasdanika.codegen.Generator;
+import org.nasdanika.codegen.ConfigurationItem;
 
 /**
- * This is the item provider adapter for a {@link org.nasdanika.codegen.Generator} object.
+ * This is the item provider adapter for a {@link org.nasdanika.codegen.ConfigurationItem} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class GeneratorItemProvider 
+public class ConfigurationItemItemProvider 
 	extends CDOItemProviderAdapter
 	implements
 		IEditingDomainItemProvider,
@@ -49,7 +49,7 @@ public class GeneratorItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public GeneratorItemProvider(AdapterFactory adapterFactory) {
+	public ConfigurationItemItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -66,7 +66,10 @@ public class GeneratorItemProvider
 
 			addPropertiesReferencesPropertyDescriptor(object);
 			addDefaultPropertiesReferencesPropertyDescriptor(object);
-			addIteratorPropertyDescriptor(object);
+			addValueTypePropertyDescriptor(object);
+			addValuePropertyDescriptor(object);
+			addDefaultPropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -116,19 +119,85 @@ public class GeneratorItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Iterator feature.
+	 * This adds a property descriptor for the Value Type feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addIteratorPropertyDescriptor(Object object) {
+	protected void addValueTypePropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Generator_iterator_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Generator_iterator_feature", "_UI_Generator_type"),
-				 CodegenPackage.Literals.GENERATOR__ITERATOR,
+				 getString("_UI_ConfigurationItem_valueType_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationItem_valueType_feature", "_UI_ConfigurationItem_type"),
+				 CodegenPackage.Literals.CONFIGURATION_ITEM__VALUE_TYPE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Value feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addValuePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationItem_value_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationItem_value_feature", "_UI_ConfigurationItem_type"),
+				 CodegenPackage.Literals.CONFIGURATION_ITEM__VALUE,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Default feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDefaultPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationItem_default_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationItem_default_feature", "_UI_ConfigurationItem_type"),
+				 CodegenPackage.Literals.CONFIGURATION_ITEM__DEFAULT,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Description feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDescriptionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_ConfigurationItem_description_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_ConfigurationItem_description_feature", "_UI_ConfigurationItem_type"),
+				 CodegenPackage.Literals.CONFIGURATION_ITEM__DESCRIPTION,
 				 true,
 				 false,
 				 false,
@@ -168,14 +237,14 @@ public class GeneratorItemProvider
 	}
 
 	/**
-	 * This returns Generator.gif.
+	 * This returns ConfigurationItem.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
 	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Generator"));
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/ConfigurationItem"));
 	}
 
 	/**
@@ -186,10 +255,10 @@ public class GeneratorItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Generator<?>)object).getIterator();
+		String label = ((ConfigurationItem<?>)object).getValueType();
 		return label == null || label.length() == 0 ?
-			getString("_UI_Generator_type") :
-			getString("_UI_Generator_type") + " " + label;
+			getString("_UI_ConfigurationItem_type") :
+			getString("_UI_ConfigurationItem_type") + " " + label;
 	}
 	
 
@@ -204,13 +273,16 @@ public class GeneratorItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(Generator.class)) {
-			case CodegenPackage.GENERATOR__PROPERTIES_REFERENCES:
-			case CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES:
-			case CodegenPackage.GENERATOR__ITERATOR:
+		switch (notification.getFeatureID(ConfigurationItem.class)) {
+			case CodegenPackage.CONFIGURATION_ITEM__PROPERTIES_REFERENCES:
+			case CodegenPackage.CONFIGURATION_ITEM__DEFAULT_PROPERTIES_REFERENCES:
+			case CodegenPackage.CONFIGURATION_ITEM__VALUE_TYPE:
+			case CodegenPackage.CONFIGURATION_ITEM__VALUE:
+			case CodegenPackage.CONFIGURATION_ITEM__DEFAULT:
+			case CodegenPackage.CONFIGURATION_ITEM__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case CodegenPackage.GENERATOR__CONFIGURATION:
+			case CodegenPackage.CONFIGURATION_ITEM__CONFIGURATION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}

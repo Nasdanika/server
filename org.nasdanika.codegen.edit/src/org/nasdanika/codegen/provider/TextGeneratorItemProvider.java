@@ -10,6 +10,7 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.nasdanika.codegen.TextGenerator;
 
 /**
  * This is the item provider adapter for a {@link org.nasdanika.codegen.TextGenerator} object.
@@ -62,7 +63,10 @@ public class TextGeneratorItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_TextGenerator_type");
+		String label = ((TextGenerator)object).getIterator();
+		return label == null || label.length() == 0 ?
+			getString("_UI_TextGenerator_type") :
+			getString("_UI_TextGenerator_type") + " " + label;
 	}
 	
 

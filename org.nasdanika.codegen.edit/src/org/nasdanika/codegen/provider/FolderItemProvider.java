@@ -10,10 +10,7 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EStructuralFeature;
-
-import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
 import org.nasdanika.codegen.CodegenFactory;
@@ -48,31 +45,8 @@ public class FolderItemProvider extends ResourceItemProvider {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addPropertiesReferencesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
-	}
-
-	/**
-	 * This adds a property descriptor for the Properties References feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addPropertiesReferencesPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Configurable_propertiesReferences_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Configurable_propertiesReferences_feature", "_UI_Configurable_type"),
-				 CodegenPackage.Literals.CONFIGURABLE__PROPERTIES_REFERENCES,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
 	}
 
 	/**
@@ -87,8 +61,6 @@ public class FolderItemProvider extends ResourceItemProvider {
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(CodegenPackage.Literals.CONFIGURABLE__PROPERTIES);
-			childrenFeatures.add(CodegenPackage.Literals.CONFIGURABLE__SERVICES);
 			childrenFeatures.add(CodegenPackage.Literals.FOLDER__CHILDREN);
 		}
 		return childrenFeatures;
@@ -145,11 +117,6 @@ public class FolderItemProvider extends ResourceItemProvider {
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Folder.class)) {
-			case CodegenPackage.FOLDER__PROPERTIES_REFERENCES:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
-				return;
-			case CodegenPackage.FOLDER__PROPERTIES:
-			case CodegenPackage.FOLDER__SERVICES:
 			case CodegenPackage.FOLDER__CHILDREN:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
@@ -167,16 +134,6 @@ public class FolderItemProvider extends ResourceItemProvider {
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(CodegenPackage.Literals.CONFIGURABLE__PROPERTIES,
-				 CodegenFactory.eINSTANCE.createProperty()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(CodegenPackage.Literals.CONFIGURABLE__SERVICES,
-				 CodegenFactory.eINSTANCE.createService()));
 
 		newChildDescriptors.add
 			(createChildParameter

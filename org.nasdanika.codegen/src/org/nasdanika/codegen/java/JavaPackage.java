@@ -97,6 +97,15 @@ public interface JavaPackage extends EPackage {
 	int JAVA_NATURE__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.NATURE__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_NATURE__ITERATOR = CodegenPackage.NATURE__ITERATOR;
+
+	/**
 	 * The feature id for the '<em><b>Packagefragmentroots</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -122,15 +131,6 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int JAVA_NATURE___CREATE_CONTEXT__CONTEXT = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT;
-
-	/**
-	 * The operation id for the '<em>Create Context</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int JAVA_NATURE___CREATE_CONTEXT__CONTEXT_BOOLEAN = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT_BOOLEAN;
 
 	/**
 	 * The number of operations of the '<em>Nature</em>' class.
@@ -179,6 +179,15 @@ public interface JavaPackage extends EPackage {
 	int PACKAGE_FRAGMENT_ROOT__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_FRAGMENT_ROOT__ITERATOR = CodegenPackage.GENERATOR__ITERATOR;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -213,15 +222,6 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int PACKAGE_FRAGMENT_ROOT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
-
-	/**
-	 * The operation id for the '<em>Create Context</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PACKAGE_FRAGMENT_ROOT___CREATE_CONTEXT__CONTEXT_BOOLEAN = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT_BOOLEAN;
 
 	/**
 	 * The number of operations of the '<em>Package Fragment Root</em>' class.
@@ -270,6 +270,15 @@ public interface JavaPackage extends EPackage {
 	int PACKAGE_FRAGMENT__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_FRAGMENT__ITERATOR = CodegenPackage.GENERATOR__ITERATOR;
+
+	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -304,15 +313,6 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int PACKAGE_FRAGMENT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
-
-	/**
-	 * The operation id for the '<em>Create Context</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PACKAGE_FRAGMENT___CREATE_CONTEXT__CONTEXT_BOOLEAN = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT_BOOLEAN;
 
 	/**
 	 * The number of operations of the '<em>Package Fragment</em>' class.
@@ -359,6 +359,15 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPILATION_UNIT__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPILATION_UNIT__ITERATOR = CodegenPackage.GENERATOR__ITERATOR;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -413,15 +422,6 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
-
-	/**
-	 * The operation id for the '<em>Create Context</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT_BOOLEAN = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT_BOOLEAN;
 
 	/**
 	 * The number of operations of the '<em>Compilation Unit</em>' class.

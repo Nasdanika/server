@@ -99,7 +99,10 @@ public class TextFilterItemProvider extends TextGeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		return getString("_UI_TextFilter_type");
+		String label = ((TextFilter)object).getIterator();
+		return label == null || label.length() == 0 ?
+			getString("_UI_TextFilter_type") :
+			getString("_UI_TextFilter_type") + " " + label;
 	}
 	
 

@@ -2,8 +2,6 @@
  */
 package org.nasdanika.codegen;
 
-import org.eclipse.core.resources.IResource;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Resource</b></em>'.
@@ -19,10 +17,9 @@ import org.eclipse.core.resources.IResource;
  *
  * @see org.nasdanika.codegen.CodegenPackage#getResource()
  * @model abstract="true"
- * @extends CDOObject
  * @generated
  */
-public interface Resource<T extends IResource> extends ResourceGenerator<T> {
+public interface Resource<T> extends ResourceGenerator<T> {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->

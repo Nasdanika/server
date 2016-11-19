@@ -91,7 +91,7 @@ public class StaticTextItemProvider extends TextGeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((StaticText)object).getContent();
+		String label = ((StaticText)object).getIterator();
 		return label == null || label.length() == 0 ?
 			getString("_UI_StaticText_type") :
 			getString("_UI_StaticText_type") + " " + label;

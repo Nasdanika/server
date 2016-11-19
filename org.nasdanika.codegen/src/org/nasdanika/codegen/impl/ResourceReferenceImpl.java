@@ -2,6 +2,7 @@
  */
 package org.nasdanika.codegen.impl;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
@@ -21,7 +22,7 @@ import org.nasdanika.codegen.ResourceReference;
  *
  * @generated
  */
-public class ResourceReferenceImpl extends ResourceImpl implements ResourceReference {
+public class ResourceReferenceImpl extends ResourceImpl<IFolder> implements ResourceReference {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -46,8 +47,9 @@ public class ResourceReferenceImpl extends ResourceImpl implements ResourceRefer
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Resource getTarget() {
-		return (Resource)eGet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, true);
+	@SuppressWarnings("unchecked")
+	public Resource<IFolder> getTarget() {
+		return (Resource<IFolder>)eGet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, true);
 	}
 
 	/**
@@ -55,7 +57,7 @@ public class ResourceReferenceImpl extends ResourceImpl implements ResourceRefer
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTarget(Resource newTarget) {
+	public void setTarget(Resource<IFolder> newTarget) {
 		eSet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, newTarget);
 	}
 

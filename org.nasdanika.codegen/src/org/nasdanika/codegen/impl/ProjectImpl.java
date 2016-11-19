@@ -2,9 +2,8 @@
  */
 package org.nasdanika.codegen.impl;
 
+import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.emf.common.util.EList;
@@ -89,8 +88,8 @@ public class ProjectImpl extends ResourceGeneratorImpl<IProject> implements Proj
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Resource> getResources() {
-		return (EList<Resource>)eGet(CodegenPackage.Literals.PROJECT__RESOURCES, true);
+	public EList<Resource<IFolder>> getResources() {
+		return (EList<Resource<IFolder>>)eGet(CodegenPackage.Literals.PROJECT__RESOURCES, true);
 	}
 
 	/**

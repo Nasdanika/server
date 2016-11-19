@@ -4,6 +4,7 @@ package org.nasdanika.codegen.impl;
 
 import java.io.InputStream;
 
+import java.util.List;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -28,12 +29,11 @@ import org.nasdanika.codegen.CodegenPackage;
 import org.nasdanika.codegen.Configurable;
 import org.nasdanika.codegen.ConfigurationItem;
 import org.nasdanika.codegen.Context;
-import org.nasdanika.codegen.ContextProvider;
 import org.nasdanika.codegen.File;
 import org.nasdanika.codegen.Folder;
 import org.nasdanika.codegen.Generator;
 import org.nasdanika.codegen.Group;
-import org.nasdanika.codegen.IGenerator;
+import org.nasdanika.codegen.WorkFactory;
 import org.nasdanika.codegen.Interpolator;
 import org.nasdanika.codegen.JavaTextFilter;
 import org.nasdanika.codegen.JavaTextGenerator;
@@ -96,13 +96,6 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * @generated
 	 */
 	private EClass propertyEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass contextProviderEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -322,6 +315,27 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	private EDataType iWorkspaceRootEDataType = null;
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType exceptionEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iResourceEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType listEDataType = null;
+
+	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
 	 * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
 	 * package URI value.
@@ -521,24 +535,6 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getContextProvider() {
-		return contextProviderEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EOperation getContextProvider__CreateContext__Context_boolean() {
-		return contextProviderEClass.getEOperations().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getIGenerator() {
 		return iGeneratorEClass;
 	}
@@ -557,6 +553,15 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getGenerator_Iterator() {
+		return (EAttribute)generatorEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getGroup() {
 		return groupEClass;
 	}
@@ -566,7 +571,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getGroup_Iterator() {
+	public EAttribute getGroup_Selector() {
 		return (EAttribute)groupEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -575,17 +580,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getGroup_Selector() {
-		return (EAttribute)groupEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EReference getGroup_Members() {
-		return (EReference)groupEClass.getEStructuralFeatures().get(2);
+		return (EReference)groupEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -989,6 +985,33 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getException() {
+		return exceptionEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIResource() {
+		return iResourceEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getList() {
+		return listEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public CodegenFactory getCodegenFactory() {
 		return (CodegenFactory)getEFactoryInstance();
 	}
@@ -1030,15 +1053,12 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		propertyEClass = createEClass(PROPERTY);
 		createEAttribute(propertyEClass, PROPERTY__NAME);
 
-		contextProviderEClass = createEClass(CONTEXT_PROVIDER);
-		createEOperation(contextProviderEClass, CONTEXT_PROVIDER___CREATE_CONTEXT__CONTEXT_BOOLEAN);
-
 		iGeneratorEClass = createEClass(IGENERATOR);
 
 		generatorEClass = createEClass(GENERATOR);
+		createEAttribute(generatorEClass, GENERATOR__ITERATOR);
 
 		groupEClass = createEClass(GROUP);
-		createEAttribute(groupEClass, GROUP__ITERATOR);
 		createEAttribute(groupEClass, GROUP__SELECTOR);
 		createEReference(groupEClass, GROUP__MEMBERS);
 
@@ -1108,6 +1128,9 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		iProjectEDataType = createEDataType(IPROJECT);
 		iProjectNatureEDataType = createEDataType(IPROJECT_NATURE);
 		iWorkspaceRootEDataType = createEDataType(IWORKSPACE_ROOT);
+		exceptionEDataType = createEDataType(EXCEPTION);
+		iResourceEDataType = createEDataType(IRESOURCE);
+		listEDataType = createEDataType(LIST);
 	}
 
 	/**
@@ -1149,7 +1172,9 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		ETypeParameter generatorEClass_T = addETypeParameter(generatorEClass, "T");
 		ETypeParameter groupEClass_T = addETypeParameter(groupEClass, "T");
 		ETypeParameter resourceGeneratorEClass_T = addETypeParameter(resourceGeneratorEClass, "T");
+		ETypeParameter resourceEClass_T = addETypeParameter(resourceEClass, "T");
 		addETypeParameter(providerEClass, "T");
+		addETypeParameter(listEDataType, "T");
 
 		// Set bounds for type parameters
 
@@ -1168,12 +1193,13 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g2 = createEGenericType(propertyEClass_T);
 		g1.getETypeArguments().add(g2);
 		propertyEClass.getEGenericSuperTypes().add(g1);
-		contextProviderEClass.getESuperTypes().add(this.getConfigurable());
 		g1 = createEGenericType(this.getIGenerator());
-		g2 = createEGenericType(generatorEClass_T);
+		g2 = createEGenericType(this.getList());
 		g1.getETypeArguments().add(g2);
+		EGenericType g3 = createEGenericType(generatorEClass_T);
+		g2.getETypeArguments().add(g3);
 		generatorEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getContextProvider());
+		g1 = createEGenericType(this.getConfigurable());
 		generatorEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getGenerator());
 		g2 = createEGenericType(groupEClass_T);
@@ -1188,8 +1214,6 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g1.getETypeArguments().add(g2);
 		workspaceRootEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getResource());
-		folderEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getResourceGenerator());
 		g2 = createEGenericType(this.getIFolder());
 		g1.getETypeArguments().add(g2);
 		folderEClass.getEGenericSuperTypes().add(g1);
@@ -1198,8 +1222,6 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g1.getETypeArguments().add(g2);
 		natureEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getResource());
-		fileEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getResourceGenerator());
 		g2 = createEGenericType(this.getIFile());
 		g1.getETypeArguments().add(g2);
 		fileEClass.getEGenericSuperTypes().add(g1);
@@ -1215,9 +1237,16 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g2 = createEGenericType(this.getIProject());
 		g1.getETypeArguments().add(g2);
 		projectEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getResourceGenerator());
+		g2 = createEGenericType(resourceEClass_T);
+		g1.getETypeArguments().add(g2);
+		resourceEClass.getEGenericSuperTypes().add(g1);
 		binaryFileEClass.getESuperTypes().add(this.getFile());
 		textFileEClass.getESuperTypes().add(this.getFile());
-		resourceReferenceEClass.getESuperTypes().add(this.getResource());
+		g1 = createEGenericType(this.getResource());
+		g2 = createEGenericType(this.getIResource());
+		g1.getETypeArguments().add(g2);
+		resourceReferenceEClass.getEGenericSuperTypes().add(g1);
 		staticTextEClass.getESuperTypes().add(this.getTextGenerator());
 		textReferenceEClass.getESuperTypes().add(this.getTextGenerator());
 		textFilterEClass.getESuperTypes().add(this.getTextGenerator());
@@ -1236,6 +1265,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 
 		EOperation op = initEOperation(getConfigurable__CreateContext__Context(), this.getContext(), "createContext", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "parent", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
 		initEClass(configurationItemEClass, ConfigurationItem.class, "ConfigurationItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getConfigurationItem_ValueType(), ecorePackage.getEString(), "valueType", null, 0, 1, ConfigurationItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1249,18 +1279,12 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		initEClass(propertyEClass, Property.class, "Property", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getProperty_Name(), ecorePackage.getEString(), "name", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(contextProviderEClass, ContextProvider.class, "ContextProvider", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-		op = initEOperation(getContextProvider__CreateContext__Context_boolean(), this.getContext(), "createContext", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getContext(), "parent", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEBoolean(), "withContainer", 0, 1, IS_UNIQUE, IS_ORDERED);
-
-		initEClass(iGeneratorEClass, IGenerator.class, "IGenerator", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEClass(iGeneratorEClass, WorkFactory.class, "IGenerator", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(generatorEClass, Generator.class, "Generator", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getGenerator_Iterator(), ecorePackage.getEString(), "iterator", null, 0, 1, Generator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(groupEClass, Group.class, "Group", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getGroup_Iterator(), ecorePackage.getEString(), "iterator", null, 0, 1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getGroup_Selector(), ecorePackage.getEString(), "selector", null, 0, 1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		g1 = createEGenericType(this.getGenerator());
 		g2 = createEGenericType(groupEClass_T);
@@ -1273,7 +1297,10 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		initEReference(getWorkspaceRoot_Projects(), this.getProject(), null, "projects", null, 0, -1, WorkspaceRoot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(folderEClass, Folder.class, "Folder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getFolder_Children(), this.getResource(), null, "children", null, 0, -1, Folder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getResource());
+		g2 = createEGenericType(this.getIResource());
+		g1.getETypeArguments().add(g2);
+		initEReference(getFolder_Children(), g1, null, "children", null, 0, -1, Folder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(natureEClass, Nature.class, "Nature", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
@@ -1286,7 +1313,10 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		initEClass(projectEClass, Project.class, "Project", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getProject_Name(), ecorePackage.getEString(), "name", null, 0, 1, Project.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getProject_Natures(), this.getNature(), null, "natures", null, 0, -1, Project.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getProject_Resources(), this.getResource(), null, "resources", null, 0, -1, Project.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getResource());
+		g2 = createEGenericType(this.getIResource());
+		g1.getETypeArguments().add(g2);
+		initEReference(getProject_Resources(), g1, null, "resources", null, 0, -1, Project.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getProject_ReconcileAction(), this.getReconcileAction(), "reconcileAction", "Merge", 0, 1, Project.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(resourceEClass, Resource.class, "Resource", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -1300,7 +1330,10 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		initEReference(getTextFile_Textgenerator(), this.getTextGenerator(), null, "textgenerator", null, 1, 1, TextFile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(resourceReferenceEClass, ResourceReference.class, "ResourceReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getResourceReference_Target(), this.getResource(), null, "target", null, 0, 1, ResourceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getResource());
+		g2 = createEGenericType(this.getIResource());
+		g1.getETypeArguments().add(g2);
+		initEReference(getResourceReference_Target(), g1, null, "target", null, 0, 1, ResourceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(staticTextEClass, StaticText.class, "StaticText", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getStaticText_Content(), ecorePackage.getEString(), "content", null, 0, 1, StaticText.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1338,6 +1371,9 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		initEDataType(iProjectEDataType, IProject.class, "IProject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iProjectNatureEDataType, IProjectNature.class, "IProjectNature", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iWorkspaceRootEDataType, IWorkspaceRoot.class, "IWorkspaceRoot", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(exceptionEDataType, Exception.class, "Exception", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(iResourceEDataType, IFolder.class, "IResource", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(listEDataType, List.class, "List", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);

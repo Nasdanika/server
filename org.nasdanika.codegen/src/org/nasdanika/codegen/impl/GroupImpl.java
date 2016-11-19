@@ -18,7 +18,6 @@ import org.nasdanika.codegen.Group;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.codegen.impl.GroupImpl#getIterator <em>Iterator</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.GroupImpl#getSelector <em>Selector</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.GroupImpl#getMembers <em>Members</em>}</li>
  * </ul>
@@ -43,24 +42,6 @@ public class GroupImpl<T> extends GeneratorImpl<T> implements Group<T> {
 	@Override
 	protected EClass eStaticClass() {
 		return CodegenPackage.Literals.GROUP;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getIterator() {
-		return (String)eGet(CodegenPackage.Literals.GROUP__ITERATOR, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setIterator(String newIterator) {
-		eSet(CodegenPackage.Literals.GROUP__ITERATOR, newIterator);
 	}
 
 	/**

@@ -92,15 +92,27 @@ public abstract class ConfigurableImpl extends CDOObjectImpl implements Configur
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Context createContext(Context parent) throws Exception {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case CodegenPackage.CONFIGURABLE___CREATE_CONTEXT__CONTEXT:
-			try {
-				return createContext((Context)arguments.get(0));
-			} catch (Exception e) {
-				throw new InvocationTargetException(e);
-			}
+				try {
+					return createContext((Context)arguments.get(0));
+				}
+				catch (Throwable throwable) {
+					throw new InvocationTargetException(throwable);
+				}
 		}
 		return super.eInvoke(operationID, arguments);
 	}

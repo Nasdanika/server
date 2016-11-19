@@ -23,7 +23,7 @@ import org.nasdanika.codegen.Property;
  * <!-- end-user-doc -->
  * @generated
  */
-public class PropertyItemProvider extends ConfigurableItemProvider {
+public class PropertyItemProvider extends ConfigurationItemItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -46,9 +46,6 @@ public class PropertyItemProvider extends ConfigurableItemProvider {
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
-			addValuePropertyDescriptor(object);
-			addTypePropertyDescriptor(object);
-			addDescriptionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -67,72 +64,6 @@ public class PropertyItemProvider extends ConfigurableItemProvider {
 				 getString("_UI_Property_name_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_Property_name_feature", "_UI_Property_type"),
 				 CodegenPackage.Literals.PROPERTY__NAME,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Value feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addValuePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Property_value_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Property_value_feature", "_UI_Property_type"),
-				 CodegenPackage.Literals.PROPERTY__VALUE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Type feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addTypePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Property_type_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Property_type_feature", "_UI_Property_type"),
-				 CodegenPackage.Literals.PROPERTY__TYPE,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Description feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addDescriptionPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Property_description_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Property_description_feature", "_UI_Property_type"),
-				 CodegenPackage.Literals.PROPERTY__DESCRIPTION,
 				 true,
 				 false,
 				 false,
@@ -165,7 +96,7 @@ public class PropertyItemProvider extends ConfigurableItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Property)object).getName();
+		String label = ((Property<?>)object).getName();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Property_type") :
 			getString("_UI_Property_type") + " " + label;
@@ -185,9 +116,6 @@ public class PropertyItemProvider extends ConfigurableItemProvider {
 
 		switch (notification.getFeatureID(Property.class)) {
 			case CodegenPackage.PROPERTY__NAME:
-			case CodegenPackage.PROPERTY__VALUE:
-			case CodegenPackage.PROPERTY__TYPE:
-			case CodegenPackage.PROPERTY__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

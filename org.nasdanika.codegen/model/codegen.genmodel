@@ -27,6 +27,9 @@
     <genDataTypes ecoreDataType="codegen.ecore#//IWorkspaceRoot"/>
     <genDataTypes ecoreDataType="codegen.ecore#//Exception"/>
     <genDataTypes ecoreDataType="codegen.ecore#//IResource"/>
+    <genDataTypes ecoreDataType="codegen.ecore#//List">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//List/T"/>
+    </genDataTypes>
     <genClasses ecoreClass="codegen.ecore#//Configurable">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configurable/propertiesReferences"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Configurable/configuration"/>
@@ -50,8 +53,8 @@
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Property/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/name"/>
     </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//IGenerator">
-      <genTypeParameters ecoreTypeParameter="codegen.ecore#//IGenerator/T"/>
+    <genClasses ecoreClass="codegen.ecore#//WorkFactory">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//WorkFactory/T"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Generator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Generator/T"/>
@@ -61,7 +64,6 @@
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Group/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Group/selector"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Group/members"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Generator/iterator"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//ResourceGenerator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//ResourceGenerator/T"/>

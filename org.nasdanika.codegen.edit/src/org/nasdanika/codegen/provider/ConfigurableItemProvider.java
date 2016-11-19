@@ -65,6 +65,7 @@ public class ConfigurableItemProvider
 			super.getPropertyDescriptors(object);
 
 			addPropertiesReferencesPropertyDescriptor(object);
+			addDefaultPropertiesReferencesPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -92,6 +93,28 @@ public class ConfigurableItemProvider
 	}
 
 	/**
+	 * This adds a property descriptor for the Default Properties References feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addDefaultPropertiesReferencesPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Configurable_defaultPropertiesReferences_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Configurable_defaultPropertiesReferences_feature", "_UI_Configurable_type"),
+				 CodegenPackage.Literals.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -103,8 +126,7 @@ public class ConfigurableItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(CodegenPackage.Literals.CONFIGURABLE__PROPERTIES);
-			childrenFeatures.add(CodegenPackage.Literals.CONFIGURABLE__SERVICES);
+			childrenFeatures.add(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION);
 		}
 		return childrenFeatures;
 	}
@@ -158,10 +180,10 @@ public class ConfigurableItemProvider
 
 		switch (notification.getFeatureID(Configurable.class)) {
 			case CodegenPackage.CONFIGURABLE__PROPERTIES_REFERENCES:
+			case CodegenPackage.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case CodegenPackage.CONFIGURABLE__PROPERTIES:
-			case CodegenPackage.CONFIGURABLE__SERVICES:
+			case CodegenPackage.CONFIGURABLE__CONFIGURATION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -181,13 +203,13 @@ public class ConfigurableItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.CONFIGURABLE__PROPERTIES,
-				 CodegenFactory.eINSTANCE.createProperty()));
+				(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION,
+				 CodegenFactory.eINSTANCE.createService()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.CONFIGURABLE__SERVICES,
-				 CodegenFactory.eINSTANCE.createService()));
+				(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION,
+				 CodegenFactory.eINSTANCE.createProperty()));
 	}
 
 	/**

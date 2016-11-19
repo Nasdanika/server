@@ -94,6 +94,15 @@ public interface MavenPackage extends EPackage {
 	int MAVEN_NATURE__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.NATURE__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAVEN_NATURE__ITERATOR = CodegenPackage.NATURE__ITERATOR;
+
+	/**
 	 * The number of structural features of the '<em>Nature</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -110,15 +119,6 @@ public interface MavenPackage extends EPackage {
 	 * @ordered
 	 */
 	int MAVEN_NATURE___CREATE_CONTEXT__CONTEXT = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT;
-
-	/**
-	 * The operation id for the '<em>Create Context</em>' operation.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MAVEN_NATURE___CREATE_CONTEXT__CONTEXT_BOOLEAN = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT_BOOLEAN;
 
 	/**
 	 * The number of operations of the '<em>Nature</em>' class.

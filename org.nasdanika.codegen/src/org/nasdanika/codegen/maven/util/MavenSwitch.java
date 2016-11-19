@@ -8,9 +8,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 
 import org.nasdanika.codegen.Configurable;
-import org.nasdanika.codegen.ContextProvider;
 import org.nasdanika.codegen.Generator;
-import org.nasdanika.codegen.IGenerator;
+import org.nasdanika.codegen.WorkFactory;
 import org.nasdanika.codegen.Nature;
 
 import org.nasdanika.codegen.maven.*;
@@ -78,7 +77,6 @@ public class MavenSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseNature(mavenNature);
 				if (result == null) result = caseGenerator(mavenNature);
 				if (result == null) result = caseIGenerator(mavenNature);
-				if (result == null) result = caseContextProvider(mavenNature);
 				if (result == null) result = caseConfigurable(mavenNature);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -113,7 +111,7 @@ public class MavenSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseIGenerator(IGenerator<T> object) {
+	public <T> T1 caseIGenerator(WorkFactory<T> object) {
 		return null;
 	}
 
@@ -129,21 +127,6 @@ public class MavenSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseConfigurable(Configurable object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Context Provider</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Context Provider</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseContextProvider(ContextProvider object) {
 		return null;
 	}
 
