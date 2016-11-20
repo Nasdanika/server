@@ -2,9 +2,13 @@
  */
 package org.nasdanika.codegen.java.impl;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.jdt.core.ICompilationUnit;
+import org.nasdanika.codegen.Context;
+import org.nasdanika.codegen.Work;
 import org.nasdanika.codegen.impl.GeneratorImpl;
 
 import org.nasdanika.codegen.java.CompilationUnit;
@@ -97,6 +101,12 @@ public class CompilationUnitImpl extends GeneratorImpl<ICompilationUnit> impleme
 	 */
 	public void setFormat(boolean newFormat) {
 		eSet(JavaPackage.Literals.COMPILATION_UNIT__FORMAT, newFormat);
+	}
+
+	@Override
+	public Work<List<ICompilationUnit>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } //CompilationUnitImpl

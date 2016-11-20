@@ -2,10 +2,16 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
+import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.StaticText;
+import org.nasdanika.codegen.Work;
 
 /**
  * <!-- begin-user-doc -->
@@ -56,6 +62,23 @@ public class StaticTextImpl extends GeneratorImpl<String> implements StaticText 
 	 */
 	public void setContent(String newContent) {
 		eSet(CodegenPackage.Literals.STATIC_TEXT__CONTENT, newContent);
+	}
+
+	@Override
+	public Work<List<String>> createWork(Context context) throws Exception {
+		return new Work<List<String>>() {
+			
+			@Override
+			public int size() {
+				return 1;
+			}
+			
+			@Override
+			public List<String> execute(IProgressMonitor monitor) throws Exception {
+				return Collections.singletonList(getContent());
+			}
+			
+		};
 	}
 
 } //StaticTextImpl

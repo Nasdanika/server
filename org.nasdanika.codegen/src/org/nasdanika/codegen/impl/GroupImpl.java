@@ -2,13 +2,17 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.util.List;
+
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
+import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Generator;
 import org.nasdanika.codegen.Group;
+import org.nasdanika.codegen.Work;
 
 /**
  * <!-- begin-user-doc -->
@@ -70,6 +74,12 @@ public class GroupImpl<T> extends GeneratorImpl<T> implements Group<T> {
 	@SuppressWarnings("unchecked")
 	public EList<Generator<T>> getMembers() {
 		return (EList<Generator<T>>)eGet(CodegenPackage.Literals.GROUP__MEMBERS, true);
+	}
+
+	@Override
+	public Work<List<T>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } //GroupImpl

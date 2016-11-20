@@ -2,10 +2,14 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
+import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Interpolator;
+import org.nasdanika.codegen.Work;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,6 +36,12 @@ public class InterpolatorImpl extends FilterImpl<String> implements Interpolator
 	@Override
 	protected EClass eStaticClass() {
 		return CodegenPackage.Literals.INTERPOLATOR;
+	}
+
+	@Override
+	public Work<List<String>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } //InterpolatorImpl

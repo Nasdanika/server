@@ -69,7 +69,7 @@
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Group">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Group/T"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Group/selector"/>
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute codegen.ecore#//Group/selector"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Group/members"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//ResourceGenerator">

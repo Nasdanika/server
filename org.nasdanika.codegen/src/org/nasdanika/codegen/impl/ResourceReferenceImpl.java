@@ -2,12 +2,20 @@
  */
 package org.nasdanika.codegen.impl;
 
-import org.eclipse.core.resources.IFolder;
-import org.eclipse.emf.ecore.EClass;
+import java.util.List;
+import java.util.Map;
 
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.DiagnosticChain;
+import org.eclipse.emf.ecore.EClass;
 import org.nasdanika.codegen.CodegenPackage;
+import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Resource;
 import org.nasdanika.codegen.ResourceReference;
+import org.nasdanika.codegen.Work;
+import org.nasdanika.codegen.util.CodegenValidator;
 
 /**
  * <!-- begin-user-doc -->
@@ -59,6 +67,27 @@ public class ResourceReferenceImpl extends ResourceImpl<IFolder> implements Reso
 	 */
 	public void setTarget(Resource<IFolder> newTarget) {
 		eSet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, newTarget);
+	}
+
+	@Override
+	public Work<List<IFolder>> createWork(Context context) throws Exception {
+		Resource<IFolder> target = getTarget();
+		return target == null ? null : target.createWork(context);
+	}
+	
+	@Override
+	public boolean validate(DiagnosticChain diagnostics, Map<Object, Object> context) {
+		boolean isValid = getTarget() != null;
+		if (diagnostics != null && !isValid) {
+			diagnostics.add
+				(new BasicDiagnostic
+					(Diagnostic.ERROR,
+					 CodegenValidator.DIAGNOSTIC_SOURCE,
+					 CodegenValidator.GENERATOR__VALIDATE,
+					 "Reference target is not set",
+					 new Object [] { this }));
+		}
+		return super.validate(diagnostics, context) && isValid;
 	}
 
 } //ResourceReferenceImpl

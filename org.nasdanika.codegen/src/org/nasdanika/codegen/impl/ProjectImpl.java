@@ -2,6 +2,8 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.util.List;
+
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -17,6 +19,7 @@ import org.nasdanika.codegen.Project;
 import org.nasdanika.codegen.ReconcileAction;
 import org.nasdanika.codegen.Resource;
 import org.nasdanika.codegen.SubContext;
+import org.nasdanika.codegen.Work;
 
 /**
  * <!-- begin-user-doc -->
@@ -110,30 +113,36 @@ public class ProjectImpl extends ResourceGeneratorImpl<IProject> implements Proj
 		eSet(CodegenPackage.Literals.PROJECT__RECONCILE_ACTION, newReconcileAction);
 	}
 	
-	@Override
-	public IProject generate(Context context, IProgressMonitor monitor) throws Exception {
-		IProject project = null; // TODO
-		SubContext pctx = context.createSubContext().set(IProject.class, project);
-		SubMonitor sm = SubMonitor.convert(monitor, getTotalWork());
-		for (Resource<?> res: getResources()) {
-			res.generate(pctx, sm.split(res.getTotalWork()));
-		}
-		for (Nature nature: getNatures()) {
-			nature.generate(pctx, sm.split(nature.getTotalWork()));
-		}
-		return project;
-	}
+//	@Override
+//	public IProject generate(Context context, IProgressMonitor monitor) throws Exception {
+//		IProject project = null; // TODO
+//		SubContext pctx = context.createSubContext().set(IProject.class, project);
+//		SubMonitor sm = SubMonitor.convert(monitor, getTotalWork());
+//		for (Resource<?> res: getResources()) {
+//			res.generate(pctx, sm.split(res.getTotalWork()));
+//		}
+//		for (Nature nature: getNatures()) {
+//			nature.generate(pctx, sm.split(nature.getTotalWork()));
+//		}
+//		return project;
+//	}
+//
+//	@Override
+//	public int getTotalWork() {
+//		int ret = 1;
+//		for (Resource<?> res: getResources()) {
+//			ret += res.getTotalWork();
+//		}
+//		for (Nature nature: getNatures()) {
+//			ret += nature.getTotalWork();
+//		}
+//		return ret;
+//	}
 
 	@Override
-	public int getTotalWork() {
-		int ret = 1;
-		for (Resource<?> res: getResources()) {
-			ret += res.getTotalWork();
-		}
-		for (Nature nature: getNatures()) {
-			ret += nature.getTotalWork();
-		}
-		return ret;
+	public Work<List<IProject>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 	
 

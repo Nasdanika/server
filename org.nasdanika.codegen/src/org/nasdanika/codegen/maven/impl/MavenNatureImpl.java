@@ -2,8 +2,12 @@
  */
 package org.nasdanika.codegen.maven.impl;
 
-import org.eclipse.emf.ecore.EClass;
+import java.util.List;
 
+import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.emf.ecore.EClass;
+import org.nasdanika.codegen.Context;
+import org.nasdanika.codegen.Work;
 import org.nasdanika.codegen.impl.NatureImpl;
 
 import org.nasdanika.codegen.maven.MavenNature;
@@ -34,6 +38,12 @@ public class MavenNatureImpl extends NatureImpl implements MavenNature {
 	@Override
 	protected EClass eStaticClass() {
 		return MavenPackage.Literals.MAVEN_NATURE;
+	}
+
+	@Override
+	public Work<List<IProjectNature>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } //MavenNatureImpl

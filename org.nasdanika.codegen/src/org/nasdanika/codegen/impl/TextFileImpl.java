@@ -2,10 +2,15 @@
  */
 package org.nasdanika.codegen.impl;
 
+import java.util.List;
+
+import org.eclipse.core.resources.IFile;
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
+import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.TextFile;
+import org.nasdanika.codegen.Work;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,6 +37,12 @@ public class TextFileImpl extends FileImpl<String> implements TextFile {
 	@Override
 	protected EClass eStaticClass() {
 		return CodegenPackage.Literals.TEXT_FILE;
+	}
+
+	@Override
+	public Work<List<IFile>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } //TextFileImpl

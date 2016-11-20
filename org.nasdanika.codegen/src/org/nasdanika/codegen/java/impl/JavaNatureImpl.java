@@ -2,10 +2,14 @@
  */
 package org.nasdanika.codegen.java.impl;
 
+import java.util.List;
+
+import org.eclipse.core.resources.IProjectNature;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
-
+import org.nasdanika.codegen.Context;
+import org.nasdanika.codegen.Work;
 import org.nasdanika.codegen.impl.NatureImpl;
 
 import org.nasdanika.codegen.java.JavaNature;
@@ -53,6 +57,12 @@ public class JavaNatureImpl extends NatureImpl implements JavaNature {
 	@SuppressWarnings("unchecked")
 	public EList<PackageFragmentRoot> getPackagefragmentroots() {
 		return (EList<PackageFragmentRoot>)eGet(JavaPackage.Literals.JAVA_NATURE__PACKAGEFRAGMENTROOTS, true);
+	}
+
+	@Override
+	public Work<List<IProjectNature>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } //JavaNatureImpl

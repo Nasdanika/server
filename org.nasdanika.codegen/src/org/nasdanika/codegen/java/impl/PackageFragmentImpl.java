@@ -2,12 +2,15 @@
  */
 package org.nasdanika.codegen.java.impl;
 
+import java.util.List;
+
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.jdt.core.IPackageFragment;
-
+import org.nasdanika.codegen.Context;
+import org.nasdanika.codegen.Work;
 import org.nasdanika.codegen.impl.GeneratorImpl;
 
 import org.nasdanika.codegen.java.CompilationUnit;
@@ -74,6 +77,12 @@ public class PackageFragmentImpl extends GeneratorImpl<IPackageFragment> impleme
 	@SuppressWarnings("unchecked")
 	public EList<CompilationUnit> getCompilationunits() {
 		return (EList<CompilationUnit>)eGet(JavaPackage.Literals.PACKAGE_FRAGMENT__COMPILATIONUNITS, true);
+	}
+
+	@Override
+	public Work<List<IPackageFragment>> createWork(Context context) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 } //PackageFragmentImpl

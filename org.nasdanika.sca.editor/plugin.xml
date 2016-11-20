@@ -10,13 +10,13 @@
       <!-- @generated sca -->
       <category
             name="Nasdanika"
-            id="org.nasdanika.Wizard.category.ID">
+            id="org.nasdanika">
       </category>
       <wizard
             id="org.nasdanika.sca.presentation.ScaModelWizardID"
             name="%_UI_ScaModelWizard_label"
             class="org.nasdanika.sca.presentation.ScaModelWizard"
-            category="org.nasdanika.Wizard.category.ID"
+            category="org.nasdanika"
             icon="icons/full/obj16/ScaModelFile.gif">
          <description>%_UI_ScaModelWizard_description</description>
          <selection class="org.eclipse.core.resources.IResource"/>

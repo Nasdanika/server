@@ -242,7 +242,7 @@
     <eTypeParameters name="T"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="Exception" instanceClassName="java.lang.Exception"/>
-  <eClassifiers xsi:type="ecore:EDataType" name="IResource" instanceClassName="org.eclipse.core.resources.IFolder"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="IResource" instanceClassName="org.eclipse.core.resources.IResource"/>
   <eClassifiers xsi:type="ecore:EDataType" name="List" instanceClassName="java.util.List">
     <eTypeParameters name="T"/>
   </eClassifiers>

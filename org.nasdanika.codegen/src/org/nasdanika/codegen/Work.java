@@ -7,7 +7,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *
  */
 public interface Work<T> {
-
+	
 	/**
 	 * @return Total number of work units in this item.
 	 */

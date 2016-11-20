@@ -6,17 +6,17 @@
          point="org.eclipse.ui.newWizards">
       <category
             name="Nasdanika"
-            id="org.nasdanika.Wizard.category.ID">
+            id="org.nasdanika">
       </category>
       <wizard
             name="Nasdanika Application Workspace"
             icon="icons/sample.gif"
-            category="org.nasdanika.Wizard.category.ID"
+            category="org.nasdanika"
             class="org.nasdanika.workspace.wizard.WorkspaceWizard"
             id="org.nasdanika.workspace.wizard.WorkspaceWizard">
       </wizard>
       <wizard
-            category="org.nasdanika.Wizard.category.ID"
+            category="org.nasdanika"
             class="org.nasdanika.workspace.wizard.ModelingWorkspaceWizard"
             icon="icons/sample.gif"
             id="org.nasdanika.workspace.wizard.ModelingWorkspaceWizard"
