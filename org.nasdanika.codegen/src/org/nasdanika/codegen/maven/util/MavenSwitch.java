@@ -76,7 +76,7 @@ public class MavenSwitch<T1> extends Switch<T1> {
 				T1 result = caseMavenNature(mavenNature);
 				if (result == null) result = caseNature(mavenNature);
 				if (result == null) result = caseGenerator(mavenNature);
-				if (result == null) result = caseIGenerator(mavenNature);
+				if (result == null) result = caseWorkFactory(mavenNature);
 				if (result == null) result = caseConfigurable(mavenNature);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -101,17 +101,17 @@ public class MavenSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>IGenerator</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Work Factory</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>IGenerator</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Work Factory</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseIGenerator(WorkFactory<T> object) {
+	public <T> T1 caseWorkFactory(WorkFactory<T> object) {
 		return null;
 	}
 

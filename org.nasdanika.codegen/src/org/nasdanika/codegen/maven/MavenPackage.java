@@ -121,6 +121,15 @@ public interface MavenPackage extends EPackage {
 	int MAVEN_NATURE___CREATE_CONTEXT__CONTEXT = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAVEN_NATURE___VALIDATE__DIAGNOSTICCHAIN_MAP = CodegenPackage.NATURE___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Nature</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

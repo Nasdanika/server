@@ -98,16 +98,16 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodegenPackage.IGENERATOR: {
-				WorkFactory<?> iGenerator = (WorkFactory<?>)theEObject;
-				T1 result = caseIGenerator(iGenerator);
+			case CodegenPackage.WORK_FACTORY: {
+				WorkFactory<?> workFactory = (WorkFactory<?>)theEObject;
+				T1 result = caseWorkFactory(workFactory);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case CodegenPackage.GENERATOR: {
 				Generator<?> generator = (Generator<?>)theEObject;
 				T1 result = caseGenerator(generator);
-				if (result == null) result = caseIGenerator(generator);
+				if (result == null) result = caseWorkFactory(generator);
 				if (result == null) result = caseConfigurable(generator);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -116,7 +116,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				Group<?> group = (Group<?>)theEObject;
 				T1 result = caseGroup(group);
 				if (result == null) result = caseGenerator(group);
-				if (result == null) result = caseIGenerator(group);
+				if (result == null) result = caseWorkFactory(group);
 				if (result == null) result = caseConfigurable(group);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -125,7 +125,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				ResourceGenerator<?> resourceGenerator = (ResourceGenerator<?>)theEObject;
 				T1 result = caseResourceGenerator(resourceGenerator);
 				if (result == null) result = caseGenerator(resourceGenerator);
-				if (result == null) result = caseIGenerator(resourceGenerator);
+				if (result == null) result = caseWorkFactory(resourceGenerator);
 				if (result == null) result = caseConfigurable(resourceGenerator);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -135,7 +135,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				T1 result = caseWorkspaceRoot(workspaceRoot);
 				if (result == null) result = caseResourceGenerator(workspaceRoot);
 				if (result == null) result = caseGenerator(workspaceRoot);
-				if (result == null) result = caseIGenerator(workspaceRoot);
+				if (result == null) result = caseWorkFactory(workspaceRoot);
 				if (result == null) result = caseConfigurable(workspaceRoot);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -146,7 +146,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseResource(folder);
 				if (result == null) result = caseResourceGenerator(folder);
 				if (result == null) result = caseGenerator(folder);
-				if (result == null) result = caseIGenerator(folder);
+				if (result == null) result = caseWorkFactory(folder);
 				if (result == null) result = caseConfigurable(folder);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -155,37 +155,19 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				Nature nature = (Nature)theEObject;
 				T1 result = caseNature(nature);
 				if (result == null) result = caseGenerator(nature);
-				if (result == null) result = caseIGenerator(nature);
+				if (result == null) result = caseWorkFactory(nature);
 				if (result == null) result = caseConfigurable(nature);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case CodegenPackage.FILE: {
-				File file = (File)theEObject;
+				File<?> file = (File<?>)theEObject;
 				T1 result = caseFile(file);
 				if (result == null) result = caseResource(file);
 				if (result == null) result = caseResourceGenerator(file);
 				if (result == null) result = caseGenerator(file);
-				if (result == null) result = caseIGenerator(file);
+				if (result == null) result = caseWorkFactory(file);
 				if (result == null) result = caseConfigurable(file);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case CodegenPackage.TEXT_GENERATOR: {
-				TextGenerator textGenerator = (TextGenerator)theEObject;
-				T1 result = caseTextGenerator(textGenerator);
-				if (result == null) result = caseGenerator(textGenerator);
-				if (result == null) result = caseIGenerator(textGenerator);
-				if (result == null) result = caseConfigurable(textGenerator);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case CodegenPackage.STREAM_GENERATOR: {
-				StreamGenerator streamGenerator = (StreamGenerator)theEObject;
-				T1 result = caseStreamGenerator(streamGenerator);
-				if (result == null) result = caseGenerator(streamGenerator);
-				if (result == null) result = caseIGenerator(streamGenerator);
-				if (result == null) result = caseConfigurable(streamGenerator);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -194,7 +176,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				T1 result = caseProject(project);
 				if (result == null) result = caseResourceGenerator(project);
 				if (result == null) result = caseGenerator(project);
-				if (result == null) result = caseIGenerator(project);
+				if (result == null) result = caseWorkFactory(project);
 				if (result == null) result = caseConfigurable(project);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -204,7 +186,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				T1 result = caseResource(resource);
 				if (result == null) result = caseResourceGenerator(resource);
 				if (result == null) result = caseGenerator(resource);
-				if (result == null) result = caseIGenerator(resource);
+				if (result == null) result = caseWorkFactory(resource);
 				if (result == null) result = caseConfigurable(resource);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -216,7 +198,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseResource(binaryFile);
 				if (result == null) result = caseResourceGenerator(binaryFile);
 				if (result == null) result = caseGenerator(binaryFile);
-				if (result == null) result = caseIGenerator(binaryFile);
+				if (result == null) result = caseWorkFactory(binaryFile);
 				if (result == null) result = caseConfigurable(binaryFile);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -228,7 +210,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseResource(textFile);
 				if (result == null) result = caseResourceGenerator(textFile);
 				if (result == null) result = caseGenerator(textFile);
-				if (result == null) result = caseIGenerator(textFile);
+				if (result == null) result = caseWorkFactory(textFile);
 				if (result == null) result = caseConfigurable(textFile);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -239,7 +221,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseResource(resourceReference);
 				if (result == null) result = caseResourceGenerator(resourceReference);
 				if (result == null) result = caseGenerator(resourceReference);
-				if (result == null) result = caseIGenerator(resourceReference);
+				if (result == null) result = caseWorkFactory(resourceReference);
 				if (result == null) result = caseConfigurable(resourceReference);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -247,62 +229,56 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 			case CodegenPackage.STATIC_TEXT: {
 				StaticText staticText = (StaticText)theEObject;
 				T1 result = caseStaticText(staticText);
-				if (result == null) result = caseTextGenerator(staticText);
 				if (result == null) result = caseGenerator(staticText);
-				if (result == null) result = caseIGenerator(staticText);
+				if (result == null) result = caseWorkFactory(staticText);
 				if (result == null) result = caseConfigurable(staticText);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodegenPackage.TEXT_REFERENCE: {
-				TextReference textReference = (TextReference)theEObject;
-				T1 result = caseTextReference(textReference);
-				if (result == null) result = caseTextGenerator(textReference);
-				if (result == null) result = caseGenerator(textReference);
-				if (result == null) result = caseIGenerator(textReference);
-				if (result == null) result = caseConfigurable(textReference);
+			case CodegenPackage.CONTENT_REFERENCE: {
+				ContentReference<?> contentReference = (ContentReference<?>)theEObject;
+				T1 result = caseContentReference(contentReference);
+				if (result == null) result = caseGenerator(contentReference);
+				if (result == null) result = caseWorkFactory(contentReference);
+				if (result == null) result = caseConfigurable(contentReference);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodegenPackage.TEXT_FILTER: {
-				TextFilter textFilter = (TextFilter)theEObject;
-				T1 result = caseTextFilter(textFilter);
-				if (result == null) result = caseTextGenerator(textFilter);
-				if (result == null) result = caseGenerator(textFilter);
-				if (result == null) result = caseIGenerator(textFilter);
-				if (result == null) result = caseConfigurable(textFilter);
+			case CodegenPackage.FILTER: {
+				Filter<?> filter = (Filter<?>)theEObject;
+				T1 result = caseFilter(filter);
+				if (result == null) result = caseGenerator(filter);
+				if (result == null) result = caseWorkFactory(filter);
+				if (result == null) result = caseConfigurable(filter);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodegenPackage.JAVA_TEXT_GENERATOR: {
-				JavaTextGenerator javaTextGenerator = (JavaTextGenerator)theEObject;
-				T1 result = caseJavaTextGenerator(javaTextGenerator);
-				if (result == null) result = caseTextGenerator(javaTextGenerator);
-				if (result == null) result = caseGenerator(javaTextGenerator);
-				if (result == null) result = caseIGenerator(javaTextGenerator);
-				if (result == null) result = caseConfigurable(javaTextGenerator);
+			case CodegenPackage.JAVA_GENERATOR: {
+				JavaGenerator<?> javaGenerator = (JavaGenerator<?>)theEObject;
+				T1 result = caseJavaGenerator(javaGenerator);
+				if (result == null) result = caseGenerator(javaGenerator);
+				if (result == null) result = caseWorkFactory(javaGenerator);
+				if (result == null) result = caseConfigurable(javaGenerator);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case CodegenPackage.INTERPOLATOR: {
 				Interpolator interpolator = (Interpolator)theEObject;
 				T1 result = caseInterpolator(interpolator);
-				if (result == null) result = caseTextFilter(interpolator);
-				if (result == null) result = caseTextGenerator(interpolator);
+				if (result == null) result = caseFilter(interpolator);
 				if (result == null) result = caseGenerator(interpolator);
-				if (result == null) result = caseIGenerator(interpolator);
+				if (result == null) result = caseWorkFactory(interpolator);
 				if (result == null) result = caseConfigurable(interpolator);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case CodegenPackage.JAVA_TEXT_FILTER: {
-				JavaTextFilter javaTextFilter = (JavaTextFilter)theEObject;
-				T1 result = caseJavaTextFilter(javaTextFilter);
-				if (result == null) result = caseTextFilter(javaTextFilter);
-				if (result == null) result = caseTextGenerator(javaTextFilter);
-				if (result == null) result = caseGenerator(javaTextFilter);
-				if (result == null) result = caseIGenerator(javaTextFilter);
-				if (result == null) result = caseConfigurable(javaTextFilter);
+			case CodegenPackage.JAVA_FILTER: {
+				JavaFilter<?> javaFilter = (JavaFilter<?>)theEObject;
+				T1 result = caseJavaFilter(javaFilter);
+				if (result == null) result = caseFilter(javaFilter);
+				if (result == null) result = caseGenerator(javaFilter);
+				if (result == null) result = caseWorkFactory(javaFilter);
+				if (result == null) result = caseConfigurable(javaFilter);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -377,17 +353,17 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>IGenerator</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Work Factory</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>IGenerator</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Work Factory</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseIGenerator(WorkFactory<T> object) {
+	public <T> T1 caseWorkFactory(WorkFactory<T> object) {
 		return null;
 	}
 
@@ -492,37 +468,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseFile(File object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Text Generator</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Text Generator</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseTextGenerator(TextGenerator object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Stream Generator</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Stream Generator</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseStreamGenerator(StreamGenerator object) {
+	public <C> T1 caseFile(File<C> object) {
 		return null;
 	}
 
@@ -617,47 +563,47 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Text Reference</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Content Reference</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Text Reference</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Content Reference</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseTextReference(TextReference object) {
+	public <T> T1 caseContentReference(ContentReference<T> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Text Filter</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Filter</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Text Filter</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Filter</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseTextFilter(TextFilter object) {
+	public <T> T1 caseFilter(Filter<T> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Java Text Generator</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Java Generator</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Java Text Generator</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Java Generator</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseJavaTextGenerator(JavaTextGenerator object) {
+	public <T> T1 caseJavaGenerator(JavaGenerator<T> object) {
 		return null;
 	}
 
@@ -677,17 +623,17 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Java Text Filter</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Java Filter</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Java Text Filter</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Java Filter</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseJavaTextFilter(JavaTextFilter object) {
+	public <T> T1 caseJavaFilter(JavaFilter<T> object) {
 		return null;
 	}
 

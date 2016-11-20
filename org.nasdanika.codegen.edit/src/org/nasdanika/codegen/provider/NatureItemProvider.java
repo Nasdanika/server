@@ -63,7 +63,7 @@ public class NatureItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Nature)object).getIterator();
+		String label = crop(((Nature)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_Nature_type") :
 			getString("_UI_Nature_type") + " " + label;

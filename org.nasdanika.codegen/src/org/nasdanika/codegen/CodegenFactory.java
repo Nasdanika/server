@@ -112,22 +112,22 @@ public interface CodegenFactory extends EFactory {
 	StaticText createStaticText();
 
 	/**
-	 * Returns a new object of class '<em>Text Reference</em>'.
+	 * Returns a new object of class '<em>Content Reference</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Text Reference</em>'.
+	 * @return a new object of class '<em>Content Reference</em>'.
 	 * @generated
 	 */
-	TextReference createTextReference();
+	<T> ContentReference<T> createContentReference();
 
 	/**
-	 * Returns a new object of class '<em>Java Text Generator</em>'.
+	 * Returns a new object of class '<em>Java Generator</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Java Text Generator</em>'.
+	 * @return a new object of class '<em>Java Generator</em>'.
 	 * @generated
 	 */
-	JavaTextGenerator createJavaTextGenerator();
+	<T> JavaGenerator<T> createJavaGenerator();
 
 	/**
 	 * Returns a new object of class '<em>Interpolator</em>'.
@@ -139,13 +139,13 @@ public interface CodegenFactory extends EFactory {
 	Interpolator createInterpolator();
 
 	/**
-	 * Returns a new object of class '<em>Java Text Filter</em>'.
+	 * Returns a new object of class '<em>Java Filter</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Java Text Filter</em>'.
+	 * @return a new object of class '<em>Java Filter</em>'.
 	 * @generated
 	 */
-	JavaTextFilter createJavaTextFilter();
+	<T> JavaFilter<T> createJavaFilter();
 
 	/**
 	 * Returns the package supported by this factory.

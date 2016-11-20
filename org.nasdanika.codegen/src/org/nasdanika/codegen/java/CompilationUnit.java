@@ -2,12 +2,9 @@
  */
 package org.nasdanika.codegen.java;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.jdt.core.ICompilationUnit;
 
 import org.nasdanika.codegen.Generator;
-import org.nasdanika.codegen.TextGenerator;
 
 /**
  * <!-- begin-user-doc -->
@@ -19,7 +16,6 @@ import org.nasdanika.codegen.TextGenerator;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.codegen.java.CompilationUnit#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.codegen.java.CompilationUnit#getSourceGenerator <em>Source Generator</em>}</li>
  *   <li>{@link org.nasdanika.codegen.java.CompilationUnit#isMerge <em>Merge</em>}</li>
  *   <li>{@link org.nasdanika.codegen.java.CompilationUnit#isFormat <em>Format</em>}</li>
  * </ul>
@@ -54,22 +50,6 @@ public interface CompilationUnit extends Generator<ICompilationUnit> {
 	 * @generated
 	 */
 	void setName(String value);
-
-	/**
-	 * Returns the value of the '<em><b>Source Generator</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.codegen.TextGenerator}.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Source Generator</em>' containment reference list isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Source Generator</em>' containment reference list.
-	 * @see org.nasdanika.codegen.java.JavaPackage#getCompilationUnit_SourceGenerator()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EList<TextGenerator> getSourceGenerator();
 
 	/**
 	 * Returns the value of the '<em><b>Merge</b></em>' attribute.

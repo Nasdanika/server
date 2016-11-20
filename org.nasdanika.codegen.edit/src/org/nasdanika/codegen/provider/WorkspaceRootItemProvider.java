@@ -99,7 +99,7 @@ public class WorkspaceRootItemProvider extends ResourceGeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((WorkspaceRoot)object).getIterator();
+		String label = crop(((WorkspaceRoot)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_WorkspaceRoot_type") :
 			getString("_UI_WorkspaceRoot_type") + " " + label;

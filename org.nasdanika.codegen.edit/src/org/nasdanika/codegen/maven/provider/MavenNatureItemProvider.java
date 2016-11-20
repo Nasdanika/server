@@ -68,7 +68,7 @@ public class MavenNatureItemProvider extends NatureItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((MavenNature)object).getIterator();
+		String label = crop(((MavenNature)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_MavenNature_type") :
 			getString("_UI_MavenNature_type") + " " + label;

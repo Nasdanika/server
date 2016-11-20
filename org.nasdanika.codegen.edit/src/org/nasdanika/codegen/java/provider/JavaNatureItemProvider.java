@@ -109,7 +109,7 @@ public class JavaNatureItemProvider extends NatureItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((JavaNature)object).getIterator();
+		String label = crop(((JavaNature)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_JavaNature_type") :
 			getString("_UI_JavaNature_type") + " " + label;

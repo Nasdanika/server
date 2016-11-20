@@ -2,14 +2,9 @@
  */
 package org.nasdanika.codegen.java.impl;
 
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.jdt.core.ICompilationUnit;
-
-import org.nasdanika.codegen.TextGenerator;
-
 import org.nasdanika.codegen.impl.GeneratorImpl;
 
 import org.nasdanika.codegen.java.CompilationUnit;
@@ -24,7 +19,6 @@ import org.nasdanika.codegen.java.JavaPackage;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.codegen.java.impl.CompilationUnitImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.codegen.java.impl.CompilationUnitImpl#getSourceGenerator <em>Source Generator</em>}</li>
  *   <li>{@link org.nasdanika.codegen.java.impl.CompilationUnitImpl#isMerge <em>Merge</em>}</li>
  *   <li>{@link org.nasdanika.codegen.java.impl.CompilationUnitImpl#isFormat <em>Format</em>}</li>
  * </ul>
@@ -67,16 +61,6 @@ public class CompilationUnitImpl extends GeneratorImpl<ICompilationUnit> impleme
 	 */
 	public void setName(String newName) {
 		eSet(JavaPackage.Literals.COMPILATION_UNIT__NAME, newName);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public EList<TextGenerator> getSourceGenerator() {
-		return (EList<TextGenerator>)eGet(JavaPackage.Literals.COMPILATION_UNIT__SOURCE_GENERATOR, true);
 	}
 
 	/**

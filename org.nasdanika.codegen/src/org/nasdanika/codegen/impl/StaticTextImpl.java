@@ -20,7 +20,7 @@ import org.nasdanika.codegen.StaticText;
  *
  * @generated
  */
-public class StaticTextImpl extends TextGeneratorImpl implements StaticText {
+public class StaticTextImpl extends GeneratorImpl<String> implements StaticText {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

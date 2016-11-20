@@ -16,10 +16,10 @@ package org.nasdanika.codegen;
  * </ul>
  *
  * @see org.nasdanika.codegen.CodegenPackage#getStaticText()
- * @model
+ * @model superTypes="org.nasdanika.codegen.Generator<org.eclipse.emf.ecore.EString>"
  * @generated
  */
-public interface StaticText extends TextGenerator {
+public interface StaticText extends Generator<String> {
 	/**
 	 * Returns the value of the '<em><b>Content</b></em>' attribute.
 	 * <!-- begin-user-doc -->

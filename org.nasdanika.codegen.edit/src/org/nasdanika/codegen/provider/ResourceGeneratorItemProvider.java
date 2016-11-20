@@ -63,7 +63,7 @@ public class ResourceGeneratorItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((ResourceGenerator<?>)object).getIterator();
+		String label = crop(((ResourceGenerator<?>)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_ResourceGenerator_type") :
 			getString("_UI_ResourceGenerator_type") + " " + label;

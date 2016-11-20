@@ -5,9 +5,6 @@ package org.nasdanika.codegen.provider;
 
 import java.util.Collection;
 import java.util.List;
-
-import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
-
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
@@ -36,7 +33,7 @@ import org.nasdanika.codegen.Configurable;
  * @generated
  */
 public class ConfigurableItemProvider 
-	extends CDOItemProviderAdapter
+	extends CDOItemProviderAdapterEx
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,

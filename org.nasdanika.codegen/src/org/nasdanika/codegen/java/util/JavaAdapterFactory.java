@@ -89,8 +89,8 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 				return createCompilationUnitAdapter();
 			}
 			@Override
-			public <T> Adapter caseIGenerator(WorkFactory<T> object) {
-				return createIGeneratorAdapter();
+			public <T> Adapter caseWorkFactory(WorkFactory<T> object) {
+				return createWorkFactoryAdapter();
 			}
 			@Override
 			public Adapter caseConfigurable(Configurable object) {
@@ -181,7 +181,7 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.WorkFactory <em>IGenerator</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.WorkFactory <em>Work Factory</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -190,7 +190,7 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 	 * @see org.nasdanika.codegen.WorkFactory
 	 * @generated
 	 */
-	public Adapter createIGeneratorAdapter() {
+	public Adapter createWorkFactoryAdapter() {
 		return null;
 	}
 

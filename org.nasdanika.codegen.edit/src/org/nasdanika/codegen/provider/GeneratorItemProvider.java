@@ -5,9 +5,6 @@ package org.nasdanika.codegen.provider;
 
 import java.util.Collection;
 import java.util.List;
-
-import org.eclipse.emf.cdo.edit.CDOItemProviderAdapter;
-
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
@@ -36,7 +33,7 @@ import org.nasdanika.codegen.Generator;
  * @generated
  */
 public class GeneratorItemProvider 
-	extends CDOItemProviderAdapter
+	extends CDOItemProviderAdapterEx
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -130,7 +127,7 @@ public class GeneratorItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_Generator_iterator_feature", "_UI_Generator_type"),
 				 CodegenPackage.Literals.GENERATOR__ITERATOR,
 				 true,
-				 false,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -186,7 +183,7 @@ public class GeneratorItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Generator<?>)object).getIterator();
+		String label = crop(((Generator<?>)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_Generator_type") :
 			getString("_UI_Generator_type") + " " + label;

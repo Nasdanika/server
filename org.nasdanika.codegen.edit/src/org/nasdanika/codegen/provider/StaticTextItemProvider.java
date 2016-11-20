@@ -23,7 +23,7 @@ import org.nasdanika.codegen.StaticText;
  * <!-- end-user-doc -->
  * @generated
  */
-public class StaticTextItemProvider extends TextGeneratorItemProvider {
+public class StaticTextItemProvider extends GeneratorItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -65,7 +65,7 @@ public class StaticTextItemProvider extends TextGeneratorItemProvider {
 				 getString("_UI_PropertyDescriptor_description", "_UI_StaticText_content_feature", "_UI_StaticText_type"),
 				 CodegenPackage.Literals.STATIC_TEXT__CONTENT,
 				 true,
-				 false,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -91,7 +91,7 @@ public class StaticTextItemProvider extends TextGeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((StaticText)object).getIterator();
+		String label = crop(((StaticText)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_StaticText_type") :
 			getString("_UI_StaticText_type") + " " + label;

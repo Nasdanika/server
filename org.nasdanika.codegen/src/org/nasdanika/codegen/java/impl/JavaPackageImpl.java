@@ -258,17 +258,8 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getCompilationUnit_SourceGenerator() {
-		return (EReference)compilationUnitEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getCompilationUnit_Merge() {
-		return (EAttribute)compilationUnitEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)compilationUnitEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -277,7 +268,7 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 	 * @generated
 	 */
 	public EAttribute getCompilationUnit_Format() {
-		return (EAttribute)compilationUnitEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)compilationUnitEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -357,7 +348,6 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 
 		compilationUnitEClass = createEClass(COMPILATION_UNIT);
 		createEAttribute(compilationUnitEClass, COMPILATION_UNIT__NAME);
-		createEReference(compilationUnitEClass, COMPILATION_UNIT__SOURCE_GENERATOR);
 		createEAttribute(compilationUnitEClass, COMPILATION_UNIT__MERGE);
 		createEAttribute(compilationUnitEClass, COMPILATION_UNIT__FORMAT);
 
@@ -427,7 +417,6 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 
 		initEClass(compilationUnitEClass, CompilationUnit.class, "CompilationUnit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCompilationUnit_Name(), ecorePackage.getEString(), "name", null, 0, 1, CompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getCompilationUnit_SourceGenerator(), theCodegenPackage.getTextGenerator(), null, "sourceGenerator", null, 0, -1, CompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCompilationUnit_Merge(), ecorePackage.getEBoolean(), "merge", "true", 0, 1, CompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCompilationUnit_Format(), ecorePackage.getEBoolean(), "format", "true", 0, 1, CompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

@@ -76,7 +76,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				T1 result = caseJavaNature(javaNature);
 				if (result == null) result = caseNature(javaNature);
 				if (result == null) result = caseGenerator(javaNature);
-				if (result == null) result = caseIGenerator(javaNature);
+				if (result == null) result = caseWorkFactory(javaNature);
 				if (result == null) result = caseConfigurable(javaNature);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -85,7 +85,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				PackageFragmentRoot packageFragmentRoot = (PackageFragmentRoot)theEObject;
 				T1 result = casePackageFragmentRoot(packageFragmentRoot);
 				if (result == null) result = caseGenerator(packageFragmentRoot);
-				if (result == null) result = caseIGenerator(packageFragmentRoot);
+				if (result == null) result = caseWorkFactory(packageFragmentRoot);
 				if (result == null) result = caseConfigurable(packageFragmentRoot);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -94,7 +94,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				PackageFragment packageFragment = (PackageFragment)theEObject;
 				T1 result = casePackageFragment(packageFragment);
 				if (result == null) result = caseGenerator(packageFragment);
-				if (result == null) result = caseIGenerator(packageFragment);
+				if (result == null) result = caseWorkFactory(packageFragment);
 				if (result == null) result = caseConfigurable(packageFragment);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -103,7 +103,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				CompilationUnit compilationUnit = (CompilationUnit)theEObject;
 				T1 result = caseCompilationUnit(compilationUnit);
 				if (result == null) result = caseGenerator(compilationUnit);
-				if (result == null) result = caseIGenerator(compilationUnit);
+				if (result == null) result = caseWorkFactory(compilationUnit);
 				if (result == null) result = caseConfigurable(compilationUnit);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -173,17 +173,17 @@ public class JavaSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>IGenerator</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Work Factory</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>IGenerator</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Work Factory</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseIGenerator(WorkFactory<T> object) {
+	public <T> T1 caseWorkFactory(WorkFactory<T> object) {
 		return null;
 	}
 

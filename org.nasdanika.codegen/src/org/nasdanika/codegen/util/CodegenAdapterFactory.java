@@ -84,8 +84,8 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createPropertyAdapter();
 			}
 			@Override
-			public <T> Adapter caseIGenerator(WorkFactory<T> object) {
-				return createIGeneratorAdapter();
+			public <T> Adapter caseWorkFactory(WorkFactory<T> object) {
+				return createWorkFactoryAdapter();
 			}
 			@Override
 			public <T> Adapter caseGenerator(Generator<T> object) {
@@ -112,16 +112,8 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createNatureAdapter();
 			}
 			@Override
-			public Adapter caseFile(File object) {
+			public <C> Adapter caseFile(File<C> object) {
 				return createFileAdapter();
-			}
-			@Override
-			public Adapter caseTextGenerator(TextGenerator object) {
-				return createTextGeneratorAdapter();
-			}
-			@Override
-			public Adapter caseStreamGenerator(StreamGenerator object) {
-				return createStreamGeneratorAdapter();
 			}
 			@Override
 			public Adapter caseProject(Project object) {
@@ -148,24 +140,24 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createStaticTextAdapter();
 			}
 			@Override
-			public Adapter caseTextReference(TextReference object) {
-				return createTextReferenceAdapter();
+			public <T> Adapter caseContentReference(ContentReference<T> object) {
+				return createContentReferenceAdapter();
 			}
 			@Override
-			public Adapter caseTextFilter(TextFilter object) {
-				return createTextFilterAdapter();
+			public <T> Adapter caseFilter(Filter<T> object) {
+				return createFilterAdapter();
 			}
 			@Override
-			public Adapter caseJavaTextGenerator(JavaTextGenerator object) {
-				return createJavaTextGeneratorAdapter();
+			public <T> Adapter caseJavaGenerator(JavaGenerator<T> object) {
+				return createJavaGeneratorAdapter();
 			}
 			@Override
 			public Adapter caseInterpolator(Interpolator object) {
 				return createInterpolatorAdapter();
 			}
 			@Override
-			public Adapter caseJavaTextFilter(JavaTextFilter object) {
-				return createJavaTextFilterAdapter();
+			public <T> Adapter caseJavaFilter(JavaFilter<T> object) {
+				return createJavaFilterAdapter();
 			}
 			@Override
 			public <T> Adapter caseProvider(Provider<T> object) {
@@ -248,7 +240,7 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.WorkFactory <em>IGenerator</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.WorkFactory <em>Work Factory</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
@@ -257,7 +249,7 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	 * @see org.nasdanika.codegen.WorkFactory
 	 * @generated
 	 */
-	public Adapter createIGeneratorAdapter() {
+	public Adapter createWorkFactoryAdapter() {
 		return null;
 	}
 
@@ -360,34 +352,6 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.TextGenerator <em>Text Generator</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.TextGenerator
-	 * @generated
-	 */
-	public Adapter createTextGeneratorAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.StreamGenerator <em>Stream Generator</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.StreamGenerator
-	 * @generated
-	 */
-	public Adapter createStreamGeneratorAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.Project <em>Project</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -472,44 +436,44 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.TextReference <em>Text Reference</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.ContentReference <em>Content Reference</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.TextReference
+	 * @see org.nasdanika.codegen.ContentReference
 	 * @generated
 	 */
-	public Adapter createTextReferenceAdapter() {
+	public Adapter createContentReferenceAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.TextFilter <em>Text Filter</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.Filter <em>Filter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.TextFilter
+	 * @see org.nasdanika.codegen.Filter
 	 * @generated
 	 */
-	public Adapter createTextFilterAdapter() {
+	public Adapter createFilterAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaTextGenerator <em>Java Text Generator</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaGenerator <em>Java Generator</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.JavaTextGenerator
+	 * @see org.nasdanika.codegen.JavaGenerator
 	 * @generated
 	 */
-	public Adapter createJavaTextGeneratorAdapter() {
+	public Adapter createJavaGeneratorAdapter() {
 		return null;
 	}
 
@@ -528,16 +492,16 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaTextFilter <em>Java Text Filter</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaFilter <em>Java Filter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.JavaTextFilter
+	 * @see org.nasdanika.codegen.JavaFilter
 	 * @generated
 	 */
-	public Adapter createJavaTextFilterAdapter() {
+	public Adapter createJavaFilterAdapter() {
 		return null;
 	}
 

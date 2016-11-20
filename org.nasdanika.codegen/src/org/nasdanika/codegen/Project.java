@@ -87,7 +87,7 @@ public interface Project extends ResourceGenerator<IProject> {
 
 	/**
 	 * Returns the value of the '<em><b>Reconcile Action</b></em>' attribute.
-	 * The default value is <code>"Merge"</code>.
+	 * The default value is <code>"Append"</code>.
 	 * The literals are from the enumeration {@link org.nasdanika.codegen.ReconcileAction}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -99,7 +99,7 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * @see org.nasdanika.codegen.ReconcileAction
 	 * @see #setReconcileAction(ReconcileAction)
 	 * @see org.nasdanika.codegen.CodegenPackage#getProject_ReconcileAction()
-	 * @model default="Merge"
+	 * @model default="Append"
 	 * @generated
 	 */
 	ReconcileAction getReconcileAction();

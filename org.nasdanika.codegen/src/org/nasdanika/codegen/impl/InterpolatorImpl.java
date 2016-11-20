@@ -14,7 +14,7 @@ import org.nasdanika.codegen.Interpolator;
  *
  * @generated
  */
-public class InterpolatorImpl extends TextFilterImpl implements Interpolator {
+public class InterpolatorImpl extends FilterImpl<String> implements Interpolator {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

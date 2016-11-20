@@ -302,49 +302,49 @@ public class CodegenItemProviderAdapterFactory extends CodegenAdapterFactory imp
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.TextReference} instances.
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.ContentReference} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected TextReferenceItemProvider textReferenceItemProvider;
+	protected ContentReferenceItemProvider contentReferenceItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.nasdanika.codegen.TextReference}.
+	 * This creates an adapter for a {@link org.nasdanika.codegen.ContentReference}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createTextReferenceAdapter() {
-		if (textReferenceItemProvider == null) {
-			textReferenceItemProvider = new TextReferenceItemProvider(this);
+	public Adapter createContentReferenceAdapter() {
+		if (contentReferenceItemProvider == null) {
+			contentReferenceItemProvider = new ContentReferenceItemProvider(this);
 		}
 
-		return textReferenceItemProvider;
+		return contentReferenceItemProvider;
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaTextGenerator} instances.
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaGenerator} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected JavaTextGeneratorItemProvider javaTextGeneratorItemProvider;
+	protected JavaGeneratorItemProvider javaGeneratorItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaTextGenerator}.
+	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaGenerator}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createJavaTextGeneratorAdapter() {
-		if (javaTextGeneratorItemProvider == null) {
-			javaTextGeneratorItemProvider = new JavaTextGeneratorItemProvider(this);
+	public Adapter createJavaGeneratorAdapter() {
+		if (javaGeneratorItemProvider == null) {
+			javaGeneratorItemProvider = new JavaGeneratorItemProvider(this);
 		}
 
-		return javaTextGeneratorItemProvider;
+		return javaGeneratorItemProvider;
 	}
 
 	/**
@@ -371,26 +371,26 @@ public class CodegenItemProviderAdapterFactory extends CodegenAdapterFactory imp
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaTextFilter} instances.
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaFilter} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected JavaTextFilterItemProvider javaTextFilterItemProvider;
+	protected JavaFilterItemProvider javaFilterItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaTextFilter}.
+	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaFilter}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createJavaTextFilterAdapter() {
-		if (javaTextFilterItemProvider == null) {
-			javaTextFilterItemProvider = new JavaTextFilterItemProvider(this);
+	public Adapter createJavaFilterAdapter() {
+		if (javaFilterItemProvider == null) {
+			javaFilterItemProvider = new JavaFilterItemProvider(this);
 		}
 
-		return javaTextFilterItemProvider;
+		return javaFilterItemProvider;
 	}
 
 	/**
@@ -502,10 +502,10 @@ public class CodegenItemProviderAdapterFactory extends CodegenAdapterFactory imp
 		if (textFileItemProvider != null) textFileItemProvider.dispose();
 		if (resourceReferenceItemProvider != null) resourceReferenceItemProvider.dispose();
 		if (staticTextItemProvider != null) staticTextItemProvider.dispose();
-		if (textReferenceItemProvider != null) textReferenceItemProvider.dispose();
-		if (javaTextGeneratorItemProvider != null) javaTextGeneratorItemProvider.dispose();
+		if (contentReferenceItemProvider != null) contentReferenceItemProvider.dispose();
+		if (javaGeneratorItemProvider != null) javaGeneratorItemProvider.dispose();
 		if (interpolatorItemProvider != null) interpolatorItemProvider.dispose();
-		if (javaTextFilterItemProvider != null) javaTextFilterItemProvider.dispose();
+		if (javaFilterItemProvider != null) javaFilterItemProvider.dispose();
 	}
 
 }

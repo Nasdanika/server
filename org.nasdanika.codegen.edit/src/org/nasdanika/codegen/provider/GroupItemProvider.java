@@ -128,7 +128,7 @@ public class GroupItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Group<?>)object).getIterator();
+		String label = crop(((Group<?>)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_Group_type") :
 			getString("_UI_Group_type") + " " + label;
@@ -211,12 +211,12 @@ public class GroupItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.GROUP__MEMBERS,
-				 CodegenFactory.eINSTANCE.createTextReference()));
+				 CodegenFactory.eINSTANCE.createContentReference()));
 
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.GROUP__MEMBERS,
-				 CodegenFactory.eINSTANCE.createJavaTextGenerator()));
+				 CodegenFactory.eINSTANCE.createJavaGenerator()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -226,7 +226,7 @@ public class GroupItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.GROUP__MEMBERS,
-				 CodegenFactory.eINSTANCE.createJavaTextFilter()));
+				 CodegenFactory.eINSTANCE.createJavaFilter()));
 
 		newChildDescriptors.add
 			(createChildParameter

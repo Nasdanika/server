@@ -76,10 +76,10 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 			case CodegenPackage.TEXT_FILE: return (EObject)createTextFile();
 			case CodegenPackage.RESOURCE_REFERENCE: return (EObject)createResourceReference();
 			case CodegenPackage.STATIC_TEXT: return (EObject)createStaticText();
-			case CodegenPackage.TEXT_REFERENCE: return (EObject)createTextReference();
-			case CodegenPackage.JAVA_TEXT_GENERATOR: return (EObject)createJavaTextGenerator();
+			case CodegenPackage.CONTENT_REFERENCE: return (EObject)createContentReference();
+			case CodegenPackage.JAVA_GENERATOR: return (EObject)createJavaGenerator();
 			case CodegenPackage.INTERPOLATOR: return (EObject)createInterpolator();
-			case CodegenPackage.JAVA_TEXT_FILTER: return (EObject)createJavaTextFilter();
+			case CodegenPackage.JAVA_FILTER: return (EObject)createJavaFilter();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -117,6 +117,8 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 				return createIResourceFromString(eDataType, initialValue);
 			case CodegenPackage.LIST:
 				return createListFromString(eDataType, initialValue);
+			case CodegenPackage.MERGER:
+				return createMergerFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -154,6 +156,8 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 				return convertIResourceToString(eDataType, instanceValue);
 			case CodegenPackage.LIST:
 				return convertListToString(eDataType, instanceValue);
+			case CodegenPackage.MERGER:
+				return convertMergerToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
 		}
@@ -264,9 +268,9 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public TextReference createTextReference() {
-		TextReferenceImpl textReference = new TextReferenceImpl();
-		return textReference;
+	public <T> ContentReference<T> createContentReference() {
+		ContentReferenceImpl<T> contentReference = new ContentReferenceImpl<T>();
+		return contentReference;
 	}
 
 	/**
@@ -274,9 +278,9 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public JavaTextGenerator createJavaTextGenerator() {
-		JavaTextGeneratorImpl javaTextGenerator = new JavaTextGeneratorImpl();
-		return javaTextGenerator;
+	public <T> JavaGenerator<T> createJavaGenerator() {
+		JavaGeneratorImpl<T> javaGenerator = new JavaGeneratorImpl<T>();
+		return javaGenerator;
 	}
 
 	/**
@@ -294,9 +298,9 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public JavaTextFilter createJavaTextFilter() {
-		JavaTextFilterImpl javaTextFilter = new JavaTextFilterImpl();
-		return javaTextFilter;
+	public <T> JavaFilter<T> createJavaFilter() {
+		JavaFilterImpl<T> javaFilter = new JavaFilterImpl<T>();
+		return javaFilter;
 	}
 
 	/**
@@ -514,6 +518,24 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * @generated
 	 */
 	public String convertListToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(instanceValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Merger<?> createMergerFromString(EDataType eDataType, String initialValue) {
+		return (Merger<?>)super.createFromString(initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertMergerToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(instanceValue);
 	}
 

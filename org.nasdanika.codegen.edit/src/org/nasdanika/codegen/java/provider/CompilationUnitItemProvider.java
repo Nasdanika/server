@@ -10,16 +10,10 @@ import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.common.util.ResourceLocator;
-
-import org.eclipse.emf.ecore.EStructuralFeature;
-
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
-
-import org.nasdanika.codegen.CodegenFactory;
-
 import org.nasdanika.codegen.java.CompilationUnit;
 import org.nasdanika.codegen.java.JavaPackage;
 
@@ -128,36 +122,6 @@ public class CompilationUnitItemProvider extends GeneratorItemProvider {
 	}
 
 	/**
-	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
-	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
-	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
-		if (childrenFeatures == null) {
-			super.getChildrenFeatures(object);
-			childrenFeatures.add(JavaPackage.Literals.COMPILATION_UNIT__SOURCE_GENERATOR);
-		}
-		return childrenFeatures;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	protected EStructuralFeature getChildFeature(Object object, Object child) {
-		// Check the type of the specified child object and return the proper feature to use for
-		// adding (see {@link AddCommand}) it as a child.
-
-		return super.getChildFeature(object, child);
-	}
-
-	/**
 	 * This returns CompilationUnit.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -205,9 +169,6 @@ public class CompilationUnitItemProvider extends GeneratorItemProvider {
 			case JavaPackage.COMPILATION_UNIT__FORMAT:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case JavaPackage.COMPILATION_UNIT__SOURCE_GENERATOR:
-				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
-				return;
 		}
 		super.notifyChanged(notification);
 	}
@@ -222,31 +183,6 @@ public class CompilationUnitItemProvider extends GeneratorItemProvider {
 	@Override
 	protected void collectNewChildDescriptors(Collection<Object> newChildDescriptors, Object object) {
 		super.collectNewChildDescriptors(newChildDescriptors, object);
-
-		newChildDescriptors.add
-			(createChildParameter
-				(JavaPackage.Literals.COMPILATION_UNIT__SOURCE_GENERATOR,
-				 CodegenFactory.eINSTANCE.createStaticText()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(JavaPackage.Literals.COMPILATION_UNIT__SOURCE_GENERATOR,
-				 CodegenFactory.eINSTANCE.createTextReference()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(JavaPackage.Literals.COMPILATION_UNIT__SOURCE_GENERATOR,
-				 CodegenFactory.eINSTANCE.createJavaTextGenerator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(JavaPackage.Literals.COMPILATION_UNIT__SOURCE_GENERATOR,
-				 CodegenFactory.eINSTANCE.createInterpolator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(JavaPackage.Literals.COMPILATION_UNIT__SOURCE_GENERATOR,
-				 CodegenFactory.eINSTANCE.createJavaTextFilter()));
 	}
 
 	/**

@@ -29,6 +29,14 @@ public enum ReconcileAction implements Enumerator {
 	KEEP(0, "Keep", "Keep"),
 
 	/**
+	 * The '<em><b>Append</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #APPEND_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	APPEND(1, "Append", "Append"), /**
 	 * The '<em><b>Merge</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -36,7 +44,7 @@ public enum ReconcileAction implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	MERGE(1, "Merge", "Merge"),
+	MERGE(2, "Merge", "Merge"),
 
 	/**
 	 * The '<em><b>Overwrite</b></em>' literal object.
@@ -46,25 +54,17 @@ public enum ReconcileAction implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	OVERWRITE(2, "Overwrite", "Overwrite"),
+	OVERWRITE(3, "Overwrite", "Overwrite"),
 
 	/**
-	 * The '<em><b>Abort</b></em>' literal object.
+	 * The '<em><b>Cancel</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #ABORT_VALUE
+	 * @see #CANCEL_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	ABORT(3, "Abort", "Abort"), /**
-	 * The '<em><b>Confirm</b></em>' literal object.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #CONFIRM_VALUE
-	 * @generated
-	 * @ordered
-	 */
-	CONFIRM(4, "Confirm", "Confirm");
+	CANCEL(4, "Cancel", "Cancel");
 
 	/**
 	 * The '<em><b>Keep</b></em>' literal value.
@@ -82,6 +82,21 @@ public enum ReconcileAction implements Enumerator {
 	public static final int KEEP_VALUE = 0;
 
 	/**
+	 * The '<em><b>Append</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Append</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #APPEND
+	 * @model name="Append"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int APPEND_VALUE = 1;
+
+	/**
 	 * The '<em><b>Merge</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -94,7 +109,7 @@ public enum ReconcileAction implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MERGE_VALUE = 1;
+	public static final int MERGE_VALUE = 2;
 
 	/**
 	 * The '<em><b>Overwrite</b></em>' literal value.
@@ -109,37 +124,22 @@ public enum ReconcileAction implements Enumerator {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int OVERWRITE_VALUE = 2;
+	public static final int OVERWRITE_VALUE = 3;
 
 	/**
-	 * The '<em><b>Abort</b></em>' literal value.
+	 * The '<em><b>Cancel</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>Abort</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>Cancel</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #ABORT
-	 * @model name="Abort"
+	 * @see #CANCEL
+	 * @model name="Cancel"
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ABORT_VALUE = 3;
-
-	/**
-	 * The '<em><b>Confirm</b></em>' literal value.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of '<em><b>Confirm</b></em>' literal object isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @see #CONFIRM
-	 * @model name="Confirm"
-	 * @generated
-	 * @ordered
-	 */
-	public static final int CONFIRM_VALUE = 4;
+	public static final int CANCEL_VALUE = 4;
 
 	/**
 	 * An array of all the '<em><b>Reconcile Action</b></em>' enumerators.
@@ -150,10 +150,10 @@ public enum ReconcileAction implements Enumerator {
 	private static final ReconcileAction[] VALUES_ARRAY =
 		new ReconcileAction[] {
 			KEEP,
+			APPEND,
 			MERGE,
 			OVERWRITE,
-			ABORT,
-			CONFIRM,
+			CANCEL,
 		};
 
 	/**
@@ -211,10 +211,10 @@ public enum ReconcileAction implements Enumerator {
 	public static ReconcileAction get(int value) {
 		switch (value) {
 			case KEEP_VALUE: return KEEP;
+			case APPEND_VALUE: return APPEND;
 			case MERGE_VALUE: return MERGE;
 			case OVERWRITE_VALUE: return OVERWRITE;
-			case ABORT_VALUE: return ABORT;
-			case CONFIRM_VALUE: return CONFIRM;
+			case CANCEL_VALUE: return CANCEL;
 		}
 		return null;
 	}

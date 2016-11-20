@@ -133,6 +133,15 @@ public interface JavaPackage extends EPackage {
 	int JAVA_NATURE___CREATE_CONTEXT__CONTEXT = CodegenPackage.NATURE___CREATE_CONTEXT__CONTEXT;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_NATURE___VALIDATE__DIAGNOSTICCHAIN_MAP = CodegenPackage.NATURE___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Nature</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -222,6 +231,15 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int PACKAGE_FRAGMENT_ROOT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_FRAGMENT_ROOT___VALIDATE__DIAGNOSTICCHAIN_MAP = CodegenPackage.GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Package Fragment Root</em>' class.
@@ -315,6 +333,15 @@ public interface JavaPackage extends EPackage {
 	int PACKAGE_FRAGMENT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PACKAGE_FRAGMENT___VALIDATE__DIAGNOSTICCHAIN_MAP = CodegenPackage.GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
 	 * The number of operations of the '<em>Package Fragment</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -379,22 +406,13 @@ public interface JavaPackage extends EPackage {
 	int COMPILATION_UNIT__NAME = CodegenPackage.GENERATOR_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Source Generator</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMPILATION_UNIT__SOURCE_GENERATOR = CodegenPackage.GENERATOR_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Merge</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMPILATION_UNIT__MERGE = CodegenPackage.GENERATOR_FEATURE_COUNT + 2;
+	int COMPILATION_UNIT__MERGE = CodegenPackage.GENERATOR_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Format</b></em>' attribute.
@@ -403,7 +421,7 @@ public interface JavaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPILATION_UNIT__FORMAT = CodegenPackage.GENERATOR_FEATURE_COUNT + 3;
+	int COMPILATION_UNIT__FORMAT = CodegenPackage.GENERATOR_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Compilation Unit</em>' class.
@@ -412,7 +430,7 @@ public interface JavaPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMPILATION_UNIT_FEATURE_COUNT = CodegenPackage.GENERATOR_FEATURE_COUNT + 4;
+	int COMPILATION_UNIT_FEATURE_COUNT = CodegenPackage.GENERATOR_FEATURE_COUNT + 3;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.
@@ -422,6 +440,15 @@ public interface JavaPackage extends EPackage {
 	 * @ordered
 	 */
 	int COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT = CodegenPackage.GENERATOR___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMPILATION_UNIT___VALIDATE__DIAGNOSTICCHAIN_MAP = CodegenPackage.GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Compilation Unit</em>' class.
@@ -578,17 +605,6 @@ public interface JavaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCompilationUnit_Name();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.codegen.java.CompilationUnit#getSourceGenerator <em>Source Generator</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Source Generator</em>'.
-	 * @see org.nasdanika.codegen.java.CompilationUnit#getSourceGenerator()
-	 * @see #getCompilationUnit()
-	 * @generated
-	 */
-	EReference getCompilationUnit_SourceGenerator();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.codegen.java.CompilationUnit#isMerge <em>Merge</em>}'.
@@ -766,14 +782,6 @@ public interface JavaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute COMPILATION_UNIT__NAME = eINSTANCE.getCompilationUnit_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Source Generator</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMPILATION_UNIT__SOURCE_GENERATOR = eINSTANCE.getCompilationUnit_SourceGenerator();
 
 		/**
 		 * The meta object literal for the '<em><b>Merge</b></em>' attribute feature.

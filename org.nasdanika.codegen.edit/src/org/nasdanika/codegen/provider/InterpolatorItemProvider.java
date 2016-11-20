@@ -18,7 +18,7 @@ import org.nasdanika.codegen.Interpolator;
  * <!-- end-user-doc -->
  * @generated
  */
-public class InterpolatorItemProvider extends TextFilterItemProvider {
+public class InterpolatorItemProvider extends FilterItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -63,7 +63,7 @@ public class InterpolatorItemProvider extends TextFilterItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Interpolator)object).getIterator();
+		String label = crop(((Interpolator)object).getIterator());
 		return label == null || label.length() == 0 ?
 			getString("_UI_Interpolator_type") :
 			getString("_UI_Interpolator_type") + " " + label;

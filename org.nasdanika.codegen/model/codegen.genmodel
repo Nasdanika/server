@@ -4,18 +4,18 @@
     modelName="Codegen" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
     reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
     complianceLevel="8.0" suppressGenModelAnnotations="false" copyrightFields="false"
-    providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter" operationReflection="true"
-    importOrganizing="true" decoration="Manual">
+    providerRootExtendsClass="org.nasdanika.codegen.provider.CDOItemProviderAdapterEx"
+    operationReflection="true" importOrganizing="true" decoration="Manual">
   <foreignModel>codegen.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Codegen" basePackage="org.nasdanika" disposableProviderFactory="true"
       fileExtensions="nsdgen" ecorePackage="codegen.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="codegen.ecore#//ReconcileAction">
       <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Keep"/>
+      <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Append"/>
       <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Merge"/>
       <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Overwrite"/>
-      <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Abort"/>
-      <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Confirm"/>
+      <genEnumLiterals ecoreEnumLiteral="codegen.ecore#//ReconcileAction/Cancel"/>
     </genEnums>
     <genDataTypes ecoreDataType="codegen.ecore#//Context"/>
     <genDataTypes ecoreDataType="codegen.ecore#//InputStream"/>
@@ -29,6 +29,9 @@
     <genDataTypes ecoreDataType="codegen.ecore#//IResource"/>
     <genDataTypes ecoreDataType="codegen.ecore#//List">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//List/T"/>
+    </genDataTypes>
+    <genDataTypes ecoreDataType="codegen.ecore#//Merger">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//Merger/T"/>
     </genDataTypes>
     <genClasses ecoreClass="codegen.ecore#//Configurable">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configurable/propertiesReferences"/>
@@ -58,7 +61,11 @@
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Generator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Generator/T"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Generator/iterator"/>
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute codegen.ecore#//Generator/iterator"/>
+      <genOperations ecoreOperation="codegen.ecore#//Generator/validate">
+        <genParameters ecoreParameter="codegen.ecore#//Generator/validate/diagnostics"/>
+        <genParameters ecoreParameter="codegen.ecore#//Generator/validate/context"/>
+      </genOperations>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Group">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Group/T"/>
@@ -75,9 +82,11 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Folder/children"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Nature"/>
-    <genClasses ecoreClass="codegen.ecore#//File"/>
-    <genClasses ecoreClass="codegen.ecore#//TextGenerator"/>
-    <genClasses ecoreClass="codegen.ecore#//StreamGenerator"/>
+    <genClasses ecoreClass="codegen.ecore#//File">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//File/C"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//File/merger"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//File/generator"/>
+    </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Project">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Project/name"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Project/natures"/>
@@ -89,30 +98,30 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Resource/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Resource/reconcileAction"/>
     </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//BinaryFile">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//BinaryFile/streamgenerator"/>
-    </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//TextFile">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//TextFile/textgenerator"/>
-    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//BinaryFile"/>
+    <genClasses ecoreClass="codegen.ecore#//TextFile"/>
     <genClasses ecoreClass="codegen.ecore#//ResourceReference">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codegen.ecore#//ResourceReference/target"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//StaticText">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//StaticText/content"/>
+      <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute codegen.ecore#//StaticText/content"/>
     </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//TextReference">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//TextReference/ref"/>
+    <genClasses ecoreClass="codegen.ecore#//ContentReference">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//ContentReference/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ContentReference/ref"/>
     </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//TextFilter">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//TextFilter/textgenerator"/>
+    <genClasses ecoreClass="codegen.ecore#//Filter">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//Filter/T"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Filter/generator"/>
     </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//JavaTextGenerator">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JavaTextGenerator/className"/>
+    <genClasses ecoreClass="codegen.ecore#//JavaGenerator">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//JavaGenerator/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JavaGenerator/className"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Interpolator"/>
-    <genClasses ecoreClass="codegen.ecore#//JavaTextFilter">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JavaTextFilter/className"/>
+    <genClasses ecoreClass="codegen.ecore#//JavaFilter">
+      <genTypeParameters ecoreTypeParameter="codegen.ecore#//JavaFilter/T"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JavaFilter/className"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Provider">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Provider/T"/>
@@ -136,7 +145,6 @@
       </genClasses>
       <genClasses ecoreClass="codegen.ecore#//java/CompilationUnit">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//java/CompilationUnit/name"/>
-        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//java/CompilationUnit/sourceGenerator"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//java/CompilationUnit/merge"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//java/CompilationUnit/format"/>
       </genClasses>
