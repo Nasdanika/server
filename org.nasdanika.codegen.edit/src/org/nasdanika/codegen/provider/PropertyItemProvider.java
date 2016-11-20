@@ -83,11 +83,6 @@ public class PropertyItemProvider extends ConfigurationItemItemProvider {
 		return overlayImage(object, getResourceLocator().getImage("full/obj16/Property"));
 	}
 	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
-	}
-
 	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
@@ -96,7 +91,7 @@ public class PropertyItemProvider extends ConfigurationItemItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Property<?>)object).getName();
+		String label = ((Property)object).getName();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Property_type") :
 			getString("_UI_Property_type") + " " + label;

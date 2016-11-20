@@ -2,9 +2,9 @@
  */
 package org.nasdanika.codegen;
 
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -71,7 +71,7 @@ public interface Project extends ResourceGenerator<IProject> {
 
 	/**
 	 * Returns the value of the '<em><b>Resources</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.codegen.Resource}&lt;org.eclipse.core.resources.IFolder>.
+	 * The list contents are of type {@link org.nasdanika.codegen.Resource}&lt;org.eclipse.core.resources.IResource>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Resources</em>' containment reference list isn't clear,
@@ -83,7 +83,7 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * @model type="org.nasdanika.codegen.Resource<org.nasdanika.codegen.IResource>" containment="true"
 	 * @generated
 	 */
-	EList<Resource<IFolder>> getResources();
+	EList<Resource<IResource>> getResources();
 
 	/**
 	 * Returns the value of the '<em><b>Reconcile Action</b></em>' attribute.

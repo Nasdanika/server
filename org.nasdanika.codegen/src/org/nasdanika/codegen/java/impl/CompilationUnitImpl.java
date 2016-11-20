@@ -29,7 +29,7 @@ import org.nasdanika.codegen.java.JavaPackage;
  *
  * @generated
  */
-public class CompilationUnitImpl extends GeneratorImpl<ICompilationUnit> implements CompilationUnit {
+public abstract class CompilationUnitImpl extends GeneratorImpl<ICompilationUnit> implements CompilationUnit {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

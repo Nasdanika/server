@@ -16,7 +16,7 @@ package org.nasdanika.codegen;
  * </ul>
  *
  * @see org.nasdanika.codegen.CodegenPackage#getJavaGenerator()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface JavaGenerator<T> extends Generator<T> {

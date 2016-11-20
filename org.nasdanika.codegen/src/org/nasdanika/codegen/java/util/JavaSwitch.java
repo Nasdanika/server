@@ -108,6 +108,26 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case JavaPackage.TEXT_COMPILATION_UNIT: {
+				TextCompilationUnit textCompilationUnit = (TextCompilationUnit)theEObject;
+				T1 result = caseTextCompilationUnit(textCompilationUnit);
+				if (result == null) result = caseCompilationUnit(textCompilationUnit);
+				if (result == null) result = caseGenerator(textCompilationUnit);
+				if (result == null) result = caseWorkFactory(textCompilationUnit);
+				if (result == null) result = caseConfigurable(textCompilationUnit);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case JavaPackage.STRUCTURED_COMPILATION_UNIT: {
+				StructuredCompilationUnit structuredCompilationUnit = (StructuredCompilationUnit)theEObject;
+				T1 result = caseStructuredCompilationUnit(structuredCompilationUnit);
+				if (result == null) result = caseCompilationUnit(structuredCompilationUnit);
+				if (result == null) result = caseGenerator(structuredCompilationUnit);
+				if (result == null) result = caseWorkFactory(structuredCompilationUnit);
+				if (result == null) result = caseConfigurable(structuredCompilationUnit);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -169,6 +189,36 @@ public class JavaSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseCompilationUnit(CompilationUnit object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Text Compilation Unit</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Text Compilation Unit</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTextCompilationUnit(TextCompilationUnit object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Structured Compilation Unit</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Structured Compilation Unit</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseStructuredCompilationUnit(StructuredCompilationUnit object) {
 		return null;
 	}
 

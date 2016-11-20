@@ -2280,6 +2280,388 @@ public interface CodegenPackage extends EPackage {
 	int JAVA_FILTER_OPERATION_COUNT = FILTER_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.codegen.impl.JavaTextFilterImpl <em>Java Text Filter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.codegen.impl.JavaTextFilterImpl
+	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaTextFilter()
+	 * @generated
+	 */
+	int JAVA_TEXT_FILTER = 24;
+
+	/**
+	 * The feature id for the '<em><b>Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER__PROPERTIES_REFERENCES = JAVA_FILTER__PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER__CONFIGURATION = JAVA_FILTER__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER__DEFAULT_PROPERTIES_REFERENCES = JAVA_FILTER__DEFAULT_PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER__ITERATOR = JAVA_FILTER__ITERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Generator</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER__GENERATOR = JAVA_FILTER__GENERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER__CLASS_NAME = JAVA_FILTER__CLASS_NAME;
+
+	/**
+	 * The number of structural features of the '<em>Java Text Filter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER_FEATURE_COUNT = JAVA_FILTER_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER___CREATE_CONTEXT__CONTEXT = JAVA_FILTER___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER___VALIDATE__DIAGNOSTICCHAIN_MAP = JAVA_FILTER___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Java Text Filter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_FILTER_OPERATION_COUNT = JAVA_FILTER_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.codegen.impl.JavaStreamFilterImpl <em>Java Stream Filter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.codegen.impl.JavaStreamFilterImpl
+	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaStreamFilter()
+	 * @generated
+	 */
+	int JAVA_STREAM_FILTER = 25;
+
+	/**
+	 * The feature id for the '<em><b>Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER__PROPERTIES_REFERENCES = JAVA_FILTER__PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER__CONFIGURATION = JAVA_FILTER__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER__DEFAULT_PROPERTIES_REFERENCES = JAVA_FILTER__DEFAULT_PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER__ITERATOR = JAVA_FILTER__ITERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Generator</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER__GENERATOR = JAVA_FILTER__GENERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER__CLASS_NAME = JAVA_FILTER__CLASS_NAME;
+
+	/**
+	 * The number of structural features of the '<em>Java Stream Filter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER_FEATURE_COUNT = JAVA_FILTER_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER___CREATE_CONTEXT__CONTEXT = JAVA_FILTER___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER___VALIDATE__DIAGNOSTICCHAIN_MAP = JAVA_FILTER___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Java Stream Filter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_FILTER_OPERATION_COUNT = JAVA_FILTER_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.codegen.impl.JavaTextGeneratorImpl <em>Java Text Generator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.codegen.impl.JavaTextGeneratorImpl
+	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaTextGenerator()
+	 * @generated
+	 */
+	int JAVA_TEXT_GENERATOR = 26;
+
+	/**
+	 * The feature id for the '<em><b>Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR__PROPERTIES_REFERENCES = JAVA_GENERATOR__PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR__CONFIGURATION = JAVA_GENERATOR__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR__DEFAULT_PROPERTIES_REFERENCES = JAVA_GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR__ITERATOR = JAVA_GENERATOR__ITERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR__CLASS_NAME = JAVA_GENERATOR__CLASS_NAME;
+
+	/**
+	 * The number of structural features of the '<em>Java Text Generator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR_FEATURE_COUNT = JAVA_GENERATOR_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR___CREATE_CONTEXT__CONTEXT = JAVA_GENERATOR___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP = JAVA_GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Java Text Generator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_TEXT_GENERATOR_OPERATION_COUNT = JAVA_GENERATOR_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.codegen.impl.JavaStreamGeneratorImpl <em>Java Stream Generator</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.codegen.impl.JavaStreamGeneratorImpl
+	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaStreamGenerator()
+	 * @generated
+	 */
+	int JAVA_STREAM_GENERATOR = 27;
+
+	/**
+	 * The feature id for the '<em><b>Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR__PROPERTIES_REFERENCES = JAVA_GENERATOR__PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR__CONFIGURATION = JAVA_GENERATOR__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR__DEFAULT_PROPERTIES_REFERENCES = JAVA_GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR__ITERATOR = JAVA_GENERATOR__ITERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Class Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR__CLASS_NAME = JAVA_GENERATOR__CLASS_NAME;
+
+	/**
+	 * The number of structural features of the '<em>Java Stream Generator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR_FEATURE_COUNT = JAVA_GENERATOR_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR___CREATE_CONTEXT__CONTEXT = JAVA_GENERATOR___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP = JAVA_GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Java Stream Generator</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int JAVA_STREAM_GENERATOR_OPERATION_COUNT = JAVA_GENERATOR_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.nasdanika.codegen.ReconcileAction <em>Reconcile Action</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2287,7 +2669,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getReconcileAction()
 	 * @generated
 	 */
-	int RECONCILE_ACTION = 24;
+	int RECONCILE_ACTION = 28;
 
 	/**
 	 * The meta object id for the '<em>Context</em>' data type.
@@ -2297,7 +2679,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 25;
+	int CONTEXT = 29;
 
 	/**
 	 * The meta object id for the '<em>Input Stream</em>' data type.
@@ -2307,7 +2689,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getInputStream()
 	 * @generated
 	 */
-	int INPUT_STREAM = 26;
+	int INPUT_STREAM = 30;
 
 	/**
 	 * The meta object id for the '<em>Void</em>' data type.
@@ -2317,7 +2699,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getVoid()
 	 * @generated
 	 */
-	int VOID = 27;
+	int VOID = 31;
 
 	/**
 	 * The meta object id for the '<em>IFile</em>' data type.
@@ -2327,7 +2709,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getIFile()
 	 * @generated
 	 */
-	int IFILE = 28;
+	int IFILE = 32;
 
 	/**
 	 * The meta object id for the '<em>IFolder</em>' data type.
@@ -2337,7 +2719,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getIFolder()
 	 * @generated
 	 */
-	int IFOLDER = 29;
+	int IFOLDER = 33;
 
 	/**
 	 * The meta object id for the '<em>IProject</em>' data type.
@@ -2347,7 +2729,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getIProject()
 	 * @generated
 	 */
-	int IPROJECT = 30;
+	int IPROJECT = 34;
 
 	/**
 	 * The meta object id for the '<em>IProject Nature</em>' data type.
@@ -2357,7 +2739,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getIProjectNature()
 	 * @generated
 	 */
-	int IPROJECT_NATURE = 31;
+	int IPROJECT_NATURE = 35;
 
 	/**
 	 * The meta object id for the '<em>IWorkspace Root</em>' data type.
@@ -2367,7 +2749,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getIWorkspaceRoot()
 	 * @generated
 	 */
-	int IWORKSPACE_ROOT = 32;
+	int IWORKSPACE_ROOT = 36;
 
 
 	/**
@@ -2378,17 +2760,17 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getException()
 	 * @generated
 	 */
-	int EXCEPTION = 33;
+	int EXCEPTION = 37;
 
 	/**
 	 * The meta object id for the '<em>IResource</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.core.resources.IFolder
+	 * @see org.eclipse.core.resources.IResource
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getIResource()
 	 * @generated
 	 */
-	int IRESOURCE = 34;
+	int IRESOURCE = 38;
 
 
 	/**
@@ -2399,7 +2781,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getList()
 	 * @generated
 	 */
-	int LIST = 35;
+	int LIST = 39;
 
 
 	/**
@@ -2410,7 +2792,7 @@ public interface CodegenPackage extends EPackage {
 	 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getMerger()
 	 * @generated
 	 */
-	int MERGER = 36;
+	int MERGER = 40;
 
 
 	/**
@@ -2984,6 +3366,46 @@ public interface CodegenPackage extends EPackage {
 	EClass getProvider();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.codegen.JavaTextFilter <em>Java Text Filter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Java Text Filter</em>'.
+	 * @see org.nasdanika.codegen.JavaTextFilter
+	 * @generated
+	 */
+	EClass getJavaTextFilter();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.codegen.JavaStreamFilter <em>Java Stream Filter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Java Stream Filter</em>'.
+	 * @see org.nasdanika.codegen.JavaStreamFilter
+	 * @generated
+	 */
+	EClass getJavaStreamFilter();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.codegen.JavaTextGenerator <em>Java Text Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Java Text Generator</em>'.
+	 * @see org.nasdanika.codegen.JavaTextGenerator
+	 * @generated
+	 */
+	EClass getJavaTextGenerator();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.codegen.JavaStreamGenerator <em>Java Stream Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Java Stream Generator</em>'.
+	 * @see org.nasdanika.codegen.JavaStreamGenerator
+	 * @generated
+	 */
+	EClass getJavaStreamGenerator();
+
+	/**
 	 * Returns the meta object for enum '{@link org.nasdanika.codegen.ReconcileAction <em>Reconcile Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3093,12 +3515,12 @@ public interface CodegenPackage extends EPackage {
 	EDataType getException();
 
 	/**
-	 * Returns the meta object for data type '{@link org.eclipse.core.resources.IFolder <em>IResource</em>}'.
+	 * Returns the meta object for data type '{@link org.eclipse.core.resources.IResource <em>IResource</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for data type '<em>IResource</em>'.
-	 * @see org.eclipse.core.resources.IFolder
-	 * @model instanceClass="org.eclipse.core.resources.IFolder"
+	 * @see org.eclipse.core.resources.IResource
+	 * @model instanceClass="org.eclipse.core.resources.IResource"
 	 * @generated
 	 */
 	EDataType getIResource();
@@ -3629,6 +4051,46 @@ public interface CodegenPackage extends EPackage {
 		EClass PROVIDER = eINSTANCE.getProvider();
 
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.codegen.impl.JavaTextFilterImpl <em>Java Text Filter</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.codegen.impl.JavaTextFilterImpl
+		 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaTextFilter()
+		 * @generated
+		 */
+		EClass JAVA_TEXT_FILTER = eINSTANCE.getJavaTextFilter();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.codegen.impl.JavaStreamFilterImpl <em>Java Stream Filter</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.codegen.impl.JavaStreamFilterImpl
+		 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaStreamFilter()
+		 * @generated
+		 */
+		EClass JAVA_STREAM_FILTER = eINSTANCE.getJavaStreamFilter();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.codegen.impl.JavaTextGeneratorImpl <em>Java Text Generator</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.codegen.impl.JavaTextGeneratorImpl
+		 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaTextGenerator()
+		 * @generated
+		 */
+		EClass JAVA_TEXT_GENERATOR = eINSTANCE.getJavaTextGenerator();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.codegen.impl.JavaStreamGeneratorImpl <em>Java Stream Generator</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.codegen.impl.JavaStreamGeneratorImpl
+		 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getJavaStreamGenerator()
+		 * @generated
+		 */
+		EClass JAVA_STREAM_GENERATOR = eINSTANCE.getJavaStreamGenerator();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.codegen.ReconcileAction <em>Reconcile Action</em>}' enum.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3732,7 +4194,7 @@ public interface CodegenPackage extends EPackage {
 		 * The meta object literal for the '<em>IResource</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.core.resources.IFolder
+		 * @see org.eclipse.core.resources.IResource
 		 * @see org.nasdanika.codegen.impl.CodegenPackageImpl#getIResource()
 		 * @generated
 		 */

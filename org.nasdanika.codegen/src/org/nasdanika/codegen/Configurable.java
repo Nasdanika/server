@@ -44,7 +44,7 @@ public interface Configurable extends CDOObject {
 
 	/**
 	 * Returns the value of the '<em><b>Configuration</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.codegen.ConfigurationItem}&lt;java.lang.Object>.
+	 * The list contents are of type {@link org.nasdanika.codegen.ConfigurationItem}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Configuration</em>' containment reference list isn't clear,
@@ -53,10 +53,10 @@ public interface Configurable extends CDOObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Configuration</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_Configuration()
-	 * @model type="org.nasdanika.codegen.ConfigurationItem<org.eclipse.emf.ecore.EJavaObject>" containment="true"
+	 * @model containment="true"
 	 * @generated
 	 */
-	EList<ConfigurationItem<Object>> getConfiguration();
+	EList<ConfigurationItem> getConfiguration();
 
 	/**
 	 * Returns the value of the '<em><b>Default Properties References</b></em>' attribute list.
@@ -82,12 +82,12 @@ public interface Configurable extends CDOObject {
 	 */
 	default Context createContext(Context parent) throws Exception {
 		SubContext ret = parent.createSubContext();
-		for (ConfigurationItem<Object> ci: getConfiguration()) {
+		for (ConfigurationItem ci: getConfiguration()) {
 			if (ci instanceof Property) {
-				ret.set(((Property<?>) ci).getName(), ci.get(ret));
+				ret.set(((Property) ci).getName(), ci.get(ret));
 			} else {
 				@SuppressWarnings("unchecked")
-				Class<Object> serviceType = (Class<Object>) parent.getClassLoader().loadClass(((Service<?>) ci).getServiceType());
+				Class<Object> serviceType = (Class<Object>) parent.getClassLoader().loadClass(((Service) ci).getServiceType());
 				ret.set(serviceType, ci.get(ret));				
 			}
 		}		

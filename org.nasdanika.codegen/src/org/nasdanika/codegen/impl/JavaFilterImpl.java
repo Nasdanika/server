@@ -24,7 +24,7 @@ import org.nasdanika.codegen.Work;
  *
  * @generated
  */
-public class JavaFilterImpl<T> extends FilterImpl<T> implements JavaFilter<T> {
+public abstract class JavaFilterImpl<T> extends FilterImpl<T> implements JavaFilter<T> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

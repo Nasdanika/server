@@ -2,7 +2,7 @@
  */
 package org.nasdanika.codegen;
 
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 
 
 /**
@@ -21,7 +21,7 @@ import org.eclipse.core.resources.IFolder;
  * @model superTypes="org.nasdanika.codegen.Resource<org.nasdanika.codegen.IResource>"
  * @generated
  */
-public interface ResourceReference extends Resource<IFolder> {
+public interface ResourceReference extends Resource<IResource> {
 	/**
 	 * Returns the value of the '<em><b>Target</b></em>' reference.
 	 * <!-- begin-user-doc -->
@@ -36,7 +36,7 @@ public interface ResourceReference extends Resource<IFolder> {
 	 * @model type="org.nasdanika.codegen.Resource<org.nasdanika.codegen.IResource>"
 	 * @generated
 	 */
-	Resource<IFolder> getTarget();
+	Resource<IResource> getTarget();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.codegen.ResourceReference#getTarget <em>Target</em>}' reference.
@@ -46,6 +46,6 @@ public interface ResourceReference extends Resource<IFolder> {
 	 * @see #getTarget()
 	 * @generated
 	 */
-	void setTarget(Resource<IFolder> value);
+	void setTarget(Resource<IResource> value);
 
 } // ResourceReference

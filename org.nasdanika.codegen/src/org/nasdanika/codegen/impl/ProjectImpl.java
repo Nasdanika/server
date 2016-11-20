@@ -3,11 +3,8 @@
 package org.nasdanika.codegen.impl;
 
 import java.util.List;
-
-import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -18,7 +15,6 @@ import org.nasdanika.codegen.Nature;
 import org.nasdanika.codegen.Project;
 import org.nasdanika.codegen.ReconcileAction;
 import org.nasdanika.codegen.Resource;
-import org.nasdanika.codegen.SubContext;
 import org.nasdanika.codegen.Work;
 
 /**
@@ -91,8 +87,8 @@ public class ProjectImpl extends ResourceGeneratorImpl<IProject> implements Proj
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Resource<IFolder>> getResources() {
-		return (EList<Resource<IFolder>>)eGet(CodegenPackage.Literals.PROJECT__RESOURCES, true);
+	public EList<Resource<IResource>> getResources() {
+		return (EList<Resource<IResource>>)eGet(CodegenPackage.Literals.PROJECT__RESOURCES, true);
 	}
 
 	/**

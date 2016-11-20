@@ -73,8 +73,8 @@ public abstract class ConfigurableImpl extends CDOObjectImpl implements Configur
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<ConfigurationItem<Object>> getConfiguration() {
-		return (EList<ConfigurationItem<Object>>)eGet(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION, true);
+	public EList<ConfigurationItem> getConfiguration() {
+		return (EList<ConfigurationItem>)eGet(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION, true);
 	}
 
 	/**

@@ -188,17 +188,27 @@ public class FilterItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.FILTER__GENERATOR,
-				 CodegenFactory.eINSTANCE.createJavaGenerator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(CodegenPackage.Literals.FILTER__GENERATOR,
 				 CodegenFactory.eINSTANCE.createInterpolator()));
 
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.FILTER__GENERATOR,
-				 CodegenFactory.eINSTANCE.createJavaFilter()));
+				 CodegenFactory.eINSTANCE.createJavaTextFilter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.FILTER__GENERATOR,
+				 CodegenFactory.eINSTANCE.createJavaStreamFilter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.FILTER__GENERATOR,
+				 CodegenFactory.eINSTANCE.createJavaTextGenerator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.FILTER__GENERATOR,
+				 CodegenFactory.eINSTANCE.createJavaStreamGenerator()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -218,7 +228,12 @@ public class FilterItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.FILTER__GENERATOR,
-				 JavaFactory.eINSTANCE.createCompilationUnit()));
+				 JavaFactory.eINSTANCE.createTextCompilationUnit()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.FILTER__GENERATOR,
+				 JavaFactory.eINSTANCE.createStructuredCompilationUnit()));
 
 		newChildDescriptors.add
 			(createChildParameter

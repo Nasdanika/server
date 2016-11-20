@@ -16,7 +16,7 @@ package org.nasdanika.codegen;
  * </ul>
  *
  * @see org.nasdanika.codegen.CodegenPackage#getJavaFilter()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface JavaFilter<T> extends Filter<T> {

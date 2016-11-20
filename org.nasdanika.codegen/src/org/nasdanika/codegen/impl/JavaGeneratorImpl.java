@@ -24,7 +24,7 @@ import org.nasdanika.codegen.Work;
  *
  * @generated
  */
-public class JavaGeneratorImpl<T> extends GeneratorImpl<T> implements JavaGenerator<T> {
+public abstract class JavaGeneratorImpl<T> extends GeneratorImpl<T> implements JavaGenerator<T> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

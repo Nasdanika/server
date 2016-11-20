@@ -141,26 +141,49 @@ public class JavaItemProviderAdapterFactory extends JavaAdapterFactory implement
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.java.CompilationUnit} instances.
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.java.TextCompilationUnit} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected CompilationUnitItemProvider compilationUnitItemProvider;
+	protected TextCompilationUnitItemProvider textCompilationUnitItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.nasdanika.codegen.java.CompilationUnit}.
+	 * This creates an adapter for a {@link org.nasdanika.codegen.java.TextCompilationUnit}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createCompilationUnitAdapter() {
-		if (compilationUnitItemProvider == null) {
-			compilationUnitItemProvider = new CompilationUnitItemProvider(this);
+	public Adapter createTextCompilationUnitAdapter() {
+		if (textCompilationUnitItemProvider == null) {
+			textCompilationUnitItemProvider = new TextCompilationUnitItemProvider(this);
 		}
 
-		return compilationUnitItemProvider;
+		return textCompilationUnitItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.java.StructuredCompilationUnit} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected StructuredCompilationUnitItemProvider structuredCompilationUnitItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.codegen.java.StructuredCompilationUnit}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createStructuredCompilationUnitAdapter() {
+		if (structuredCompilationUnitItemProvider == null) {
+			structuredCompilationUnitItemProvider = new StructuredCompilationUnitItemProvider(this);
+		}
+
+		return structuredCompilationUnitItemProvider;
 	}
 
 	/**
@@ -265,7 +288,8 @@ public class JavaItemProviderAdapterFactory extends JavaAdapterFactory implement
 		if (javaNatureItemProvider != null) javaNatureItemProvider.dispose();
 		if (packageFragmentRootItemProvider != null) packageFragmentRootItemProvider.dispose();
 		if (packageFragmentItemProvider != null) packageFragmentItemProvider.dispose();
-		if (compilationUnitItemProvider != null) compilationUnitItemProvider.dispose();
+		if (textCompilationUnitItemProvider != null) textCompilationUnitItemProvider.dispose();
+		if (structuredCompilationUnitItemProvider != null) structuredCompilationUnitItemProvider.dispose();
 	}
 
 }

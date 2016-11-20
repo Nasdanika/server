@@ -24,5 +24,10 @@ public class CDOItemProviderAdapterEx extends CDOItemProviderAdapter {
 		}
 		return parent;
 	}
+		
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
+	}	
 
 }

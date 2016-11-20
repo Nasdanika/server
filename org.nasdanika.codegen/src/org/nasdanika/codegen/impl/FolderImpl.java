@@ -5,6 +5,7 @@ package org.nasdanika.codegen.impl;
 import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -54,8 +55,8 @@ public class FolderImpl extends ResourceImpl<IFolder> implements Folder {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Resource<IFolder>> getChildren() {
-		return (EList<Resource<IFolder>>)eGet(CodegenPackage.Literals.FOLDER__CHILDREN, true);
+	public EList<Resource<IResource>> getChildren() {
+		return (EList<Resource<IResource>>)eGet(CodegenPackage.Literals.FOLDER__CHILDREN, true);
 	}
 
 	@Override

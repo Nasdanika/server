@@ -37,7 +37,7 @@ import org.nasdanika.codegen.Provider;
  *
  * @generated
  */
-public abstract class ConfigurationItemImpl<T> extends CDOObjectImpl implements ConfigurationItem<T> {
+public abstract class ConfigurationItemImpl extends CDOObjectImpl implements ConfigurationItem {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -83,8 +83,8 @@ public abstract class ConfigurationItemImpl<T> extends CDOObjectImpl implements 
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<ConfigurationItem<Object>> getConfiguration() {
-		return (EList<ConfigurationItem<Object>>)eGet(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION, true);
+	public EList<ConfigurationItem> getConfiguration() {
+		return (EList<ConfigurationItem>)eGet(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION, true);
 	}
 
 	/**
@@ -289,12 +289,12 @@ public abstract class ConfigurationItemImpl<T> extends CDOObjectImpl implements 
 		
 	@SuppressWarnings("unchecked")
 	@Override
-	public T get(Context context) throws Exception {
+	public Object get(Context context) throws Exception {
 		if (getValueType() == null || getValueType().trim().length() == 0 || String.class.getName().equals(getValueType().trim())) {
 			if (!getConfiguration().isEmpty()) {
 				throw new IllegalStateException("String values are not configurable configuration");
 			}
-			return (T) context.interpolate(getValue());
+			return context.interpolate(getValue());
 		}
 		
 		Class<?> valueClass = context.getClassLoader().loadClass(getValueType().trim());
@@ -306,14 +306,14 @@ public abstract class ConfigurationItemImpl<T> extends CDOObjectImpl implements 
 				// Try default constructor
 				Object ret = instantiate(valueClass, new Class<?>[] {}, new Object[] {});
 				if (ret != null) {
-					return ((Provider<T>) ret).get(createContext(context));
+					return ((Provider<Object>) ret).get(createContext(context));
 				}				
 			}
 			Object ret = instantiate(valueClass, new Class<?>[] { String.class }, new Object[] { interpolatedValue });
 			if (ret == null) {
 				throw new IllegalStateException("Cannot create provider (no appropriate constructor found) "+valueClass);
 			}				
-			return ((Provider<T>) ret).get(createContext(context));
+			return ((Provider<Object>) ret).get(createContext(context));
 		}
 		
 		if (isBlankValue) {
@@ -321,13 +321,13 @@ public abstract class ConfigurationItemImpl<T> extends CDOObjectImpl implements 
 				// Try default constructor
 				Object ret = instantiate(valueClass, new Class<?>[] {}, new Object[] {});
 				if (ret != null) {
-					return (T) ret;
+					return ret;
 				}				
 			}
 			// Try constructor which accepts Context
 			Object ret = instantiate(valueClass, new Class<?>[] { Context.class }, new Object[] {createContext(context) });
 			if (ret != null) {
-				return (T) ret;
+				return ret;
 			}				
 		}
 		
@@ -335,14 +335,14 @@ public abstract class ConfigurationItemImpl<T> extends CDOObjectImpl implements 
 			// Try String constructor
 			Object ret = instantiate(valueClass, new Class<?>[] { String.class }, new Object[] { interpolatedValue });
 			if (ret != null) {
-				return (T) ret;
+				return ret;
 			}				
 		}
 		
 		// Try constructor which accepts Context and String
 		Object ret = instantiate(valueClass, new Class<?>[] { String.class, Context.class }, new Object[] { interpolatedValue, createContext(context) });
 		if (ret != null) {
-			return (T) ret;
+			return ret;
 		}				
 
 		throw new IllegalStateException("Cannot create value (no appropriate constructor found) "+valueClass);

@@ -19,10 +19,10 @@ package org.nasdanika.codegen;
  * </ul>
  *
  * @see org.nasdanika.codegen.CodegenPackage#getConfigurationItem()
- * @model abstract="true" superTypes="org.nasdanika.codegen.Provider<T> org.nasdanika.codegen.Configurable"
+ * @model abstract="true" superTypes="org.nasdanika.codegen.Provider<org.eclipse.emf.ecore.EJavaObject> org.nasdanika.codegen.Configurable"
  * @generated
  */
-public interface ConfigurationItem<T> extends Provider<T>, Configurable {
+public interface ConfigurationItem extends Provider<Object>, Configurable {
 	/**
 	 * Returns the value of the '<em><b>Value Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->

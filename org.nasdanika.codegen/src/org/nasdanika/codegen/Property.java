@@ -19,7 +19,7 @@ package org.nasdanika.codegen;
  * @model
  * @generated
  */
-public interface Property<T> extends ConfigurationItem<T> {
+public interface Property extends ConfigurationItem {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->

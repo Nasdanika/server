@@ -132,11 +132,6 @@ public class CompilationUnitItemProvider extends GeneratorItemProvider {
 		return overlayImage(object, getResourceLocator().getImage("full/obj16/CompilationUnit"));
 	}
 	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return false;
-	}
-
 	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->

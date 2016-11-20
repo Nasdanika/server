@@ -121,11 +121,6 @@ public class PackageFragmentRootItemProvider extends GeneratorItemProvider {
 		return overlayImage(object, getResourceLocator().getImage("full/obj16/packagefolder_obj.gif"));
 	}
 	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
-	}
-
 	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->

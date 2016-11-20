@@ -72,15 +72,15 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createConfigurableAdapter();
 			}
 			@Override
-			public <T> Adapter caseConfigurationItem(ConfigurationItem<T> object) {
+			public Adapter caseConfigurationItem(ConfigurationItem object) {
 				return createConfigurationItemAdapter();
 			}
 			@Override
-			public <T> Adapter caseService(Service<T> object) {
+			public Adapter caseService(Service object) {
 				return createServiceAdapter();
 			}
 			@Override
-			public <T> Adapter caseProperty(Property<T> object) {
+			public Adapter caseProperty(Property object) {
 				return createPropertyAdapter();
 			}
 			@Override
@@ -162,6 +162,22 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public <T> Adapter caseProvider(Provider<T> object) {
 				return createProviderAdapter();
+			}
+			@Override
+			public Adapter caseJavaTextFilter(JavaTextFilter object) {
+				return createJavaTextFilterAdapter();
+			}
+			@Override
+			public Adapter caseJavaStreamFilter(JavaStreamFilter object) {
+				return createJavaStreamFilterAdapter();
+			}
+			@Override
+			public Adapter caseJavaTextGenerator(JavaTextGenerator object) {
+				return createJavaTextGeneratorAdapter();
+			}
+			@Override
+			public Adapter caseJavaStreamGenerator(JavaStreamGenerator object) {
+				return createJavaStreamGeneratorAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -516,6 +532,62 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createProviderAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaTextFilter <em>Java Text Filter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.JavaTextFilter
+	 * @generated
+	 */
+	public Adapter createJavaTextFilterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaStreamFilter <em>Java Stream Filter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.JavaStreamFilter
+	 * @generated
+	 */
+	public Adapter createJavaStreamFilterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaTextGenerator <em>Java Text Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.JavaTextGenerator
+	 * @generated
+	 */
+	public Adapter createJavaTextGeneratorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JavaStreamGenerator <em>Java Stream Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.JavaStreamGenerator
+	 * @generated
+	 */
+	public Adapter createJavaStreamGeneratorAdapter() {
 		return null;
 	}
 

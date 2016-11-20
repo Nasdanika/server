@@ -224,10 +224,5 @@ public class ProjectItemProvider extends ResourceGeneratorItemProvider {
 				(CodegenPackage.Literals.PROJECT__RESOURCES,
 				 CodegenFactory.eINSTANCE.createResourceReference()));
 	}
-	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
-	}
 
 }

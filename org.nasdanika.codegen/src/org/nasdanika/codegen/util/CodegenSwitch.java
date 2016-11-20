@@ -73,7 +73,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case CodegenPackage.CONFIGURATION_ITEM: {
-				ConfigurationItem<?> configurationItem = (ConfigurationItem<?>)theEObject;
+				ConfigurationItem configurationItem = (ConfigurationItem)theEObject;
 				T1 result = caseConfigurationItem(configurationItem);
 				if (result == null) result = caseProvider(configurationItem);
 				if (result == null) result = caseConfigurable(configurationItem);
@@ -81,7 +81,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case CodegenPackage.SERVICE: {
-				Service<?> service = (Service<?>)theEObject;
+				Service service = (Service)theEObject;
 				T1 result = caseService(service);
 				if (result == null) result = caseConfigurationItem(service);
 				if (result == null) result = caseProvider(service);
@@ -90,7 +90,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				return result;
 			}
 			case CodegenPackage.PROPERTY: {
-				Property<?> property = (Property<?>)theEObject;
+				Property property = (Property)theEObject;
 				T1 result = caseProperty(property);
 				if (result == null) result = caseConfigurationItem(property);
 				if (result == null) result = caseProvider(property);
@@ -288,6 +288,48 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case CodegenPackage.JAVA_TEXT_FILTER: {
+				JavaTextFilter javaTextFilter = (JavaTextFilter)theEObject;
+				T1 result = caseJavaTextFilter(javaTextFilter);
+				if (result == null) result = caseJavaFilter(javaTextFilter);
+				if (result == null) result = caseFilter(javaTextFilter);
+				if (result == null) result = caseGenerator(javaTextFilter);
+				if (result == null) result = caseWorkFactory(javaTextFilter);
+				if (result == null) result = caseConfigurable(javaTextFilter);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodegenPackage.JAVA_STREAM_FILTER: {
+				JavaStreamFilter javaStreamFilter = (JavaStreamFilter)theEObject;
+				T1 result = caseJavaStreamFilter(javaStreamFilter);
+				if (result == null) result = caseJavaFilter(javaStreamFilter);
+				if (result == null) result = caseFilter(javaStreamFilter);
+				if (result == null) result = caseGenerator(javaStreamFilter);
+				if (result == null) result = caseWorkFactory(javaStreamFilter);
+				if (result == null) result = caseConfigurable(javaStreamFilter);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodegenPackage.JAVA_TEXT_GENERATOR: {
+				JavaTextGenerator javaTextGenerator = (JavaTextGenerator)theEObject;
+				T1 result = caseJavaTextGenerator(javaTextGenerator);
+				if (result == null) result = caseJavaGenerator(javaTextGenerator);
+				if (result == null) result = caseGenerator(javaTextGenerator);
+				if (result == null) result = caseWorkFactory(javaTextGenerator);
+				if (result == null) result = caseConfigurable(javaTextGenerator);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case CodegenPackage.JAVA_STREAM_GENERATOR: {
+				JavaStreamGenerator javaStreamGenerator = (JavaStreamGenerator)theEObject;
+				T1 result = caseJavaStreamGenerator(javaStreamGenerator);
+				if (result == null) result = caseJavaGenerator(javaStreamGenerator);
+				if (result == null) result = caseGenerator(javaStreamGenerator);
+				if (result == null) result = caseWorkFactory(javaStreamGenerator);
+				if (result == null) result = caseConfigurable(javaStreamGenerator);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -318,7 +360,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseConfigurationItem(ConfigurationItem<T> object) {
+	public T1 caseConfigurationItem(ConfigurationItem object) {
 		return null;
 	}
 
@@ -333,7 +375,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseService(Service<T> object) {
+	public T1 caseService(Service object) {
 		return null;
 	}
 
@@ -348,7 +390,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T> T1 caseProperty(Property<T> object) {
+	public T1 caseProperty(Property object) {
 		return null;
 	}
 
@@ -649,6 +691,66 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public <T> T1 caseProvider(Provider<T> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Java Text Filter</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Java Text Filter</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseJavaTextFilter(JavaTextFilter object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Java Stream Filter</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Java Stream Filter</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseJavaStreamFilter(JavaStreamFilter object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Java Text Generator</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Java Text Generator</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseJavaTextGenerator(JavaTextGenerator object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Java Stream Generator</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Java Stream Generator</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseJavaStreamGenerator(JavaStreamGenerator object) {
 		return null;
 	}
 

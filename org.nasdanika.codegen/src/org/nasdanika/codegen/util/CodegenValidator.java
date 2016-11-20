@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 
 import org.eclipse.emf.common.util.DiagnosticChain;
@@ -106,11 +107,11 @@ public class CodegenValidator extends EObjectValidator {
 			case CodegenPackage.CONFIGURABLE:
 				return validateConfigurable((Configurable)value, diagnostics, context);
 			case CodegenPackage.CONFIGURATION_ITEM:
-				return validateConfigurationItem((ConfigurationItem<?>)value, diagnostics, context);
+				return validateConfigurationItem((ConfigurationItem)value, diagnostics, context);
 			case CodegenPackage.SERVICE:
-				return validateService((Service<?>)value, diagnostics, context);
+				return validateService((Service)value, diagnostics, context);
 			case CodegenPackage.PROPERTY:
-				return validateProperty((Property<?>)value, diagnostics, context);
+				return validateProperty((Property)value, diagnostics, context);
 			case CodegenPackage.WORK_FACTORY:
 				return validateWorkFactory((WorkFactory<?>)value, diagnostics, context);
 			case CodegenPackage.GENERATOR:
@@ -151,6 +152,14 @@ public class CodegenValidator extends EObjectValidator {
 				return validateJavaFilter((JavaFilter<?>)value, diagnostics, context);
 			case CodegenPackage.PROVIDER:
 				return validateProvider((Provider<?>)value, diagnostics, context);
+			case CodegenPackage.JAVA_TEXT_FILTER:
+				return validateJavaTextFilter((JavaTextFilter)value, diagnostics, context);
+			case CodegenPackage.JAVA_STREAM_FILTER:
+				return validateJavaStreamFilter((JavaStreamFilter)value, diagnostics, context);
+			case CodegenPackage.JAVA_TEXT_GENERATOR:
+				return validateJavaTextGenerator((JavaTextGenerator)value, diagnostics, context);
+			case CodegenPackage.JAVA_STREAM_GENERATOR:
+				return validateJavaStreamGenerator((JavaStreamGenerator)value, diagnostics, context);
 			case CodegenPackage.RECONCILE_ACTION:
 				return validateReconcileAction((ReconcileAction)value, diagnostics, context);
 			case CodegenPackage.CONTEXT:
@@ -172,7 +181,7 @@ public class CodegenValidator extends EObjectValidator {
 			case CodegenPackage.EXCEPTION:
 				return validateException((Exception)value, diagnostics, context);
 			case CodegenPackage.IRESOURCE:
-				return validateIResource((IFolder)value, diagnostics, context);
+				return validateIResource((IResource)value, diagnostics, context);
 			case CodegenPackage.LIST:
 				return validateList((List<?>)value, diagnostics, context);
 			case CodegenPackage.MERGER:
@@ -196,7 +205,7 @@ public class CodegenValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean validateConfigurationItem(ConfigurationItem<?> configurationItem, DiagnosticChain diagnostics, Map<Object, Object> context) {
+	public boolean validateConfigurationItem(ConfigurationItem configurationItem, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint((EObject)configurationItem, diagnostics, context);
 	}
 
@@ -205,7 +214,7 @@ public class CodegenValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean validateService(Service<?> service, DiagnosticChain diagnostics, Map<Object, Object> context) {
+	public boolean validateService(Service service, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint((EObject)service, diagnostics, context);
 	}
 
@@ -214,7 +223,7 @@ public class CodegenValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean validateProperty(Property<?> property, DiagnosticChain diagnostics, Map<Object, Object> context) {
+	public boolean validateProperty(Property property, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return validate_EveryDefaultConstraint((EObject)property, diagnostics, context);
 	}
 
@@ -593,6 +602,82 @@ public class CodegenValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean validateJavaTextFilter(JavaTextFilter javaTextFilter, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)javaTextFilter, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)javaTextFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validateGenerator_validate(javaTextFilter, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateJavaStreamFilter(JavaStreamFilter javaStreamFilter, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)javaStreamFilter, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)javaStreamFilter, diagnostics, context);
+		if (result || diagnostics != null) result &= validateGenerator_validate(javaStreamFilter, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateJavaTextGenerator(JavaTextGenerator javaTextGenerator, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)javaTextGenerator, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)javaTextGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validateGenerator_validate(javaTextGenerator, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateJavaStreamGenerator(JavaStreamGenerator javaStreamGenerator, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)javaStreamGenerator, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)javaStreamGenerator, diagnostics, context);
+		if (result || diagnostics != null) result &= validateGenerator_validate(javaStreamGenerator, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public boolean validateReconcileAction(ReconcileAction reconcileAction, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
@@ -683,7 +768,7 @@ public class CodegenValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean validateIResource(IFolder iResource, DiagnosticChain diagnostics, Map<Object, Object> context) {
+	public boolean validateIResource(IResource iResource, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 

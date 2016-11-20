@@ -4,8 +4,7 @@ package org.nasdanika.codegen.impl;
 
 import java.util.List;
 import java.util.Map;
-
-import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
@@ -30,7 +29,7 @@ import org.nasdanika.codegen.util.CodegenValidator;
  *
  * @generated
  */
-public class ResourceReferenceImpl extends ResourceImpl<IFolder> implements ResourceReference {
+public class ResourceReferenceImpl extends ResourceImpl<IResource> implements ResourceReference {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -56,8 +55,8 @@ public class ResourceReferenceImpl extends ResourceImpl<IFolder> implements Reso
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public Resource<IFolder> getTarget() {
-		return (Resource<IFolder>)eGet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, true);
+	public Resource<IResource> getTarget() {
+		return (Resource<IResource>)eGet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, true);
 	}
 
 	/**
@@ -65,13 +64,13 @@ public class ResourceReferenceImpl extends ResourceImpl<IFolder> implements Reso
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTarget(Resource<IFolder> newTarget) {
+	public void setTarget(Resource<IResource> newTarget) {
 		eSet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, newTarget);
 	}
 
 	@Override
-	public Work<List<IFolder>> createWork(Context context) throws Exception {
-		Resource<IFolder> target = getTarget();
+	public Work<List<IResource>> createWork(Context context) throws Exception {
+		Resource<IResource> target = getTarget();
 		return target == null ? null : target.createWork(context);
 	}
 	

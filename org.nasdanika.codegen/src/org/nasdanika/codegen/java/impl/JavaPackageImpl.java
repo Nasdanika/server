@@ -27,6 +27,8 @@ import org.nasdanika.codegen.java.JavaPackage;
 import org.nasdanika.codegen.java.PackageFragment;
 import org.nasdanika.codegen.java.PackageFragmentRoot;
 
+import org.nasdanika.codegen.java.StructuredCompilationUnit;
+import org.nasdanika.codegen.java.TextCompilationUnit;
 import org.nasdanika.codegen.maven.MavenPackage;
 
 import org.nasdanika.codegen.maven.impl.MavenPackageImpl;
@@ -65,6 +67,20 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 	 * @generated
 	 */
 	private EClass compilationUnitEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass textCompilationUnitEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass structuredCompilationUnitEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -276,6 +292,33 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getTextCompilationUnit() {
+		return textCompilationUnitEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getTextCompilationUnit_Generator() {
+		return (EReference)textCompilationUnitEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getStructuredCompilationUnit() {
+		return structuredCompilationUnitEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getIJavaProject() {
 		return iJavaProjectEDataType;
 	}
@@ -351,6 +394,11 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 		createEAttribute(compilationUnitEClass, COMPILATION_UNIT__MERGE);
 		createEAttribute(compilationUnitEClass, COMPILATION_UNIT__FORMAT);
 
+		textCompilationUnitEClass = createEClass(TEXT_COMPILATION_UNIT);
+		createEReference(textCompilationUnitEClass, TEXT_COMPILATION_UNIT__GENERATOR);
+
+		structuredCompilationUnitEClass = createEClass(STRUCTURED_COMPILATION_UNIT);
+
 		// Create data types
 		iJavaProjectEDataType = createEDataType(IJAVA_PROJECT);
 		iPackageFragmentRootEDataType = createEDataType(IPACKAGE_FRAGMENT_ROOT);
@@ -402,6 +450,8 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 		g2 = createEGenericType(this.getICompilationUnit());
 		g1.getETypeArguments().add(g2);
 		compilationUnitEClass.getEGenericSuperTypes().add(g1);
+		textCompilationUnitEClass.getESuperTypes().add(this.getCompilationUnit());
+		structuredCompilationUnitEClass.getESuperTypes().add(this.getCompilationUnit());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(javaNatureEClass, JavaNature.class, "JavaNature", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -415,10 +465,18 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 		initEAttribute(getPackageFragment_Name(), ecorePackage.getEString(), "name", null, 0, 1, PackageFragment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPackageFragment_Compilationunits(), this.getCompilationUnit(), null, "compilationunits", null, 0, -1, PackageFragment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(compilationUnitEClass, CompilationUnit.class, "CompilationUnit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(compilationUnitEClass, CompilationUnit.class, "CompilationUnit", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getCompilationUnit_Name(), ecorePackage.getEString(), "name", null, 0, 1, CompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCompilationUnit_Merge(), ecorePackage.getEBoolean(), "merge", "true", 0, 1, CompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getCompilationUnit_Format(), ecorePackage.getEBoolean(), "format", "true", 0, 1, CompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(textCompilationUnitEClass, TextCompilationUnit.class, "TextCompilationUnit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		g1 = createEGenericType(theCodegenPackage.getGenerator());
+		g2 = createEGenericType(ecorePackage.getEString());
+		g1.getETypeArguments().add(g2);
+		initEReference(getTextCompilationUnit_Generator(), g1, null, "generator", null, 0, 1, TextCompilationUnit.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(structuredCompilationUnitEClass, StructuredCompilationUnit.class, "StructuredCompilationUnit", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize data types
 		initEDataType(iJavaProjectEDataType, IJavaProject.class, "IJavaProject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);

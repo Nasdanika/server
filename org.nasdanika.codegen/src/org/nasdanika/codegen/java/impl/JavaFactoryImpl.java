@@ -65,7 +65,8 @@ public class JavaFactoryImpl extends EFactoryImpl implements JavaFactory {
 			case JavaPackage.JAVA_NATURE: return (EObject)createJavaNature();
 			case JavaPackage.PACKAGE_FRAGMENT_ROOT: return (EObject)createPackageFragmentRoot();
 			case JavaPackage.PACKAGE_FRAGMENT: return (EObject)createPackageFragment();
-			case JavaPackage.COMPILATION_UNIT: return (EObject)createCompilationUnit();
+			case JavaPackage.TEXT_COMPILATION_UNIT: return (EObject)createTextCompilationUnit();
+			case JavaPackage.STRUCTURED_COMPILATION_UNIT: return (EObject)createStructuredCompilationUnit();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -148,9 +149,19 @@ public class JavaFactoryImpl extends EFactoryImpl implements JavaFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public CompilationUnit createCompilationUnit() {
-		CompilationUnitImpl compilationUnit = new CompilationUnitImpl();
-		return compilationUnit;
+	public TextCompilationUnit createTextCompilationUnit() {
+		TextCompilationUnitImpl textCompilationUnit = new TextCompilationUnitImpl();
+		return textCompilationUnit;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public StructuredCompilationUnit createStructuredCompilationUnit() {
+		StructuredCompilationUnitImpl structuredCompilationUnit = new StructuredCompilationUnitImpl();
+		return structuredCompilationUnit;
 	}
 
 	/**

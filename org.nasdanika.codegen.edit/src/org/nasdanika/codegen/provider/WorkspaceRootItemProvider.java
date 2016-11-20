@@ -141,10 +141,5 @@ public class WorkspaceRootItemProvider extends ResourceGeneratorItemProvider {
 				(CodegenPackage.Literals.WORKSPACE_ROOT__PROJECTS,
 				 CodegenFactory.eINSTANCE.createProject()));
 	}
-	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
-	}
 
 }

@@ -48,8 +48,8 @@ public abstract class FileImpl<C> extends ResourceImpl<IFile> implements File<C>
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Service<C> getMerger() {
-		return (Service<C>)eGet(CodegenPackage.Literals.FILE__MERGER, true);
+	public Service getMerger() {
+		return (Service)eGet(CodegenPackage.Literals.FILE__MERGER, true);
 	}
 
 	/**
@@ -57,7 +57,7 @@ public abstract class FileImpl<C> extends ResourceImpl<IFile> implements File<C>
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setMerger(Service<C> newMerger) {
+	public void setMerger(Service newMerger) {
 		eSet(CodegenPackage.Literals.FILE__MERGER, newMerger);
 	}
 

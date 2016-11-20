@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectNature;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
 
 import org.eclipse.emf.ecore.EClass;
@@ -77,9 +78,11 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 			case CodegenPackage.RESOURCE_REFERENCE: return (EObject)createResourceReference();
 			case CodegenPackage.STATIC_TEXT: return (EObject)createStaticText();
 			case CodegenPackage.CONTENT_REFERENCE: return (EObject)createContentReference();
-			case CodegenPackage.JAVA_GENERATOR: return (EObject)createJavaGenerator();
 			case CodegenPackage.INTERPOLATOR: return (EObject)createInterpolator();
-			case CodegenPackage.JAVA_FILTER: return (EObject)createJavaFilter();
+			case CodegenPackage.JAVA_TEXT_FILTER: return (EObject)createJavaTextFilter();
+			case CodegenPackage.JAVA_STREAM_FILTER: return (EObject)createJavaStreamFilter();
+			case CodegenPackage.JAVA_TEXT_GENERATOR: return (EObject)createJavaTextGenerator();
+			case CodegenPackage.JAVA_STREAM_GENERATOR: return (EObject)createJavaStreamGenerator();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -168,8 +171,8 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <T> Service<T> createService() {
-		ServiceImpl<T> service = new ServiceImpl<T>();
+	public Service createService() {
+		ServiceImpl service = new ServiceImpl();
 		return service;
 	}
 
@@ -178,8 +181,8 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <T> Property<T> createProperty() {
-		PropertyImpl<T> property = new PropertyImpl<T>();
+	public Property createProperty() {
+		PropertyImpl property = new PropertyImpl();
 		return property;
 	}
 
@@ -278,16 +281,6 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <T> JavaGenerator<T> createJavaGenerator() {
-		JavaGeneratorImpl<T> javaGenerator = new JavaGeneratorImpl<T>();
-		return javaGenerator;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Interpolator createInterpolator() {
 		InterpolatorImpl interpolator = new InterpolatorImpl();
 		return interpolator;
@@ -298,9 +291,39 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <T> JavaFilter<T> createJavaFilter() {
-		JavaFilterImpl<T> javaFilter = new JavaFilterImpl<T>();
-		return javaFilter;
+	public JavaTextFilter createJavaTextFilter() {
+		JavaTextFilterImpl javaTextFilter = new JavaTextFilterImpl();
+		return javaTextFilter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public JavaStreamFilter createJavaStreamFilter() {
+		JavaStreamFilterImpl javaStreamFilter = new JavaStreamFilterImpl();
+		return javaStreamFilter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public JavaTextGenerator createJavaTextGenerator() {
+		JavaTextGeneratorImpl javaTextGenerator = new JavaTextGeneratorImpl();
+		return javaTextGenerator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public JavaStreamGenerator createJavaStreamGenerator() {
+		JavaStreamGeneratorImpl javaStreamGenerator = new JavaStreamGeneratorImpl();
+		return javaStreamGenerator;
 	}
 
 	/**
@@ -490,8 +513,8 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public IFolder createIResourceFromString(EDataType eDataType, String initialValue) {
-		return (IFolder)super.createFromString(eDataType, initialValue);
+	public IResource createIResourceFromString(EDataType eDataType, String initialValue) {
+		return (IResource)super.createFromString(eDataType, initialValue);
 	}
 
 	/**

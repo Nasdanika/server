@@ -72,7 +72,7 @@ public class GroupItemProvider extends GeneratorItemProvider {
 				 getString("_UI_PropertyDescriptor_description", "_UI_Group_selector_feature", "_UI_Group_type"),
 				 CodegenPackage.Literals.GROUP__SELECTOR,
 				 true,
-				 false,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -216,17 +216,27 @@ public class GroupItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.GROUP__MEMBERS,
-				 CodegenFactory.eINSTANCE.createJavaGenerator()));
-
-		newChildDescriptors.add
-			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
 				 CodegenFactory.eINSTANCE.createInterpolator()));
 
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.GROUP__MEMBERS,
-				 CodegenFactory.eINSTANCE.createJavaFilter()));
+				 CodegenFactory.eINSTANCE.createJavaTextFilter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.GROUP__MEMBERS,
+				 CodegenFactory.eINSTANCE.createJavaStreamFilter()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.GROUP__MEMBERS,
+				 CodegenFactory.eINSTANCE.createJavaTextGenerator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.GROUP__MEMBERS,
+				 CodegenFactory.eINSTANCE.createJavaStreamGenerator()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -246,7 +256,12 @@ public class GroupItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.GROUP__MEMBERS,
-				 JavaFactory.eINSTANCE.createCompilationUnit()));
+				 JavaFactory.eINSTANCE.createTextCompilationUnit()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.GROUP__MEMBERS,
+				 JavaFactory.eINSTANCE.createStructuredCompilationUnit()));
 
 		newChildDescriptors.add
 			(createChildParameter

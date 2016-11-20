@@ -4,6 +4,7 @@ package org.nasdanika.codegen;
 
 import org.eclipse.core.resources.IFolder;
 
+import org.eclipse.core.resources.IResource;
 import org.eclipse.emf.common.util.EList;
 
 /**
@@ -25,7 +26,7 @@ import org.eclipse.emf.common.util.EList;
 public interface Folder extends Resource<IFolder> {
 	/**
 	 * Returns the value of the '<em><b>Children</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.codegen.Resource}&lt;org.eclipse.core.resources.IFolder>.
+	 * The list contents are of type {@link org.nasdanika.codegen.Resource}&lt;org.eclipse.core.resources.IResource>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Children</em>' containment reference list isn't clear,
@@ -37,6 +38,6 @@ public interface Folder extends Resource<IFolder> {
 	 * @model type="org.nasdanika.codegen.Resource<org.nasdanika.codegen.IResource>" containment="true"
 	 * @generated
 	 */
-	EList<Resource<IFolder>> getChildren();
+	EList<Resource<IResource>> getChildren();
 
 } // Folder

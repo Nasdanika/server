@@ -49,13 +49,22 @@ public interface JavaFactory extends EFactory {
 	PackageFragment createPackageFragment();
 
 	/**
-	 * Returns a new object of class '<em>Compilation Unit</em>'.
+	 * Returns a new object of class '<em>Text Compilation Unit</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Compilation Unit</em>'.
+	 * @return a new object of class '<em>Text Compilation Unit</em>'.
 	 * @generated
 	 */
-	CompilationUnit createCompilationUnit();
+	TextCompilationUnit createTextCompilationUnit();
+
+	/**
+	 * Returns a new object of class '<em>Structured Compilation Unit</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Structured Compilation Unit</em>'.
+	 * @generated
+	 */
+	StructuredCompilationUnit createStructuredCompilationUnit();
 
 	/**
 	 * Returns the package supported by this factory.

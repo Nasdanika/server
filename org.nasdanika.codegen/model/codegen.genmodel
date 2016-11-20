@@ -42,18 +42,15 @@
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//ConfigurationItem">
-      <genTypeParameters ecoreTypeParameter="codegen.ecore#//ConfigurationItem/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/valueType"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/value"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/default"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//ConfigurationItem/description"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Service">
-      <genTypeParameters ecoreTypeParameter="codegen.ecore#//Service/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Service/serviceType"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Property">
-      <genTypeParameters ecoreTypeParameter="codegen.ecore#//Property/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Property/name"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//WorkFactory">
@@ -126,6 +123,10 @@
     <genClasses ecoreClass="codegen.ecore#//Provider">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Provider/T"/>
     </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//JavaTextFilter"/>
+    <genClasses ecoreClass="codegen.ecore#//JavaStreamFilter"/>
+    <genClasses ecoreClass="codegen.ecore#//JavaTextGenerator"/>
+    <genClasses ecoreClass="codegen.ecore#//JavaStreamGenerator"/>
     <nestedGenPackages prefix="Java" basePackage="org.nasdanika.codegen" disposableProviderFactory="true"
         ecorePackage="codegen.ecore#//java">
       <genDataTypes ecoreDataType="codegen.ecore#//java/IJavaProject"/>
@@ -148,6 +149,10 @@
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//java/CompilationUnit/merge"/>
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//java/CompilationUnit/format"/>
       </genClasses>
+      <genClasses ecoreClass="codegen.ecore#//java/TextCompilationUnit">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//java/TextCompilationUnit/generator"/>
+      </genClasses>
+      <genClasses ecoreClass="codegen.ecore#//java/StructuredCompilationUnit"/>
     </nestedGenPackages>
     <nestedGenPackages prefix="Maven" basePackage="org.nasdanika.codegen" disposableProviderFactory="true"
         ecorePackage="codegen.ecore#//maven">

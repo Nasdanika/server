@@ -28,7 +28,7 @@ public interface CodegenFactory extends EFactory {
 	 * @return a new object of class '<em>Service</em>'.
 	 * @generated
 	 */
-	<T> Service<T> createService();
+	Service createService();
 
 	/**
 	 * Returns a new object of class '<em>Property</em>'.
@@ -37,7 +37,7 @@ public interface CodegenFactory extends EFactory {
 	 * @return a new object of class '<em>Property</em>'.
 	 * @generated
 	 */
-	<T> Property<T> createProperty();
+	Property createProperty();
 
 	/**
 	 * Returns a new object of class '<em>Group</em>'.
@@ -121,15 +121,6 @@ public interface CodegenFactory extends EFactory {
 	<T> ContentReference<T> createContentReference();
 
 	/**
-	 * Returns a new object of class '<em>Java Generator</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Java Generator</em>'.
-	 * @generated
-	 */
-	<T> JavaGenerator<T> createJavaGenerator();
-
-	/**
 	 * Returns a new object of class '<em>Interpolator</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -139,13 +130,40 @@ public interface CodegenFactory extends EFactory {
 	Interpolator createInterpolator();
 
 	/**
-	 * Returns a new object of class '<em>Java Filter</em>'.
+	 * Returns a new object of class '<em>Java Text Filter</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Java Filter</em>'.
+	 * @return a new object of class '<em>Java Text Filter</em>'.
 	 * @generated
 	 */
-	<T> JavaFilter<T> createJavaFilter();
+	JavaTextFilter createJavaTextFilter();
+
+	/**
+	 * Returns a new object of class '<em>Java Stream Filter</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Java Stream Filter</em>'.
+	 * @generated
+	 */
+	JavaStreamFilter createJavaStreamFilter();
+
+	/**
+	 * Returns a new object of class '<em>Java Text Generator</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Java Text Generator</em>'.
+	 * @generated
+	 */
+	JavaTextGenerator createJavaTextGenerator();
+
+	/**
+	 * Returns a new object of class '<em>Java Stream Generator</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Java Stream Generator</em>'.
+	 * @generated
+	 */
+	JavaStreamGenerator createJavaStreamGenerator();
 
 	/**
 	 * Returns the package supported by this factory.

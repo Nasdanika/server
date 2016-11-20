@@ -460,6 +460,233 @@ public interface JavaPackage extends EPackage {
 	int COMPILATION_UNIT_OPERATION_COUNT = CodegenPackage.GENERATOR_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.codegen.java.impl.TextCompilationUnitImpl <em>Text Compilation Unit</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.codegen.java.impl.TextCompilationUnitImpl
+	 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getTextCompilationUnit()
+	 * @generated
+	 */
+	int TEXT_COMPILATION_UNIT = 4;
+
+	/**
+	 * The feature id for the '<em><b>Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__PROPERTIES_REFERENCES = COMPILATION_UNIT__PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__CONFIGURATION = COMPILATION_UNIT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__DEFAULT_PROPERTIES_REFERENCES = COMPILATION_UNIT__DEFAULT_PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__ITERATOR = COMPILATION_UNIT__ITERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__NAME = COMPILATION_UNIT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Merge</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__MERGE = COMPILATION_UNIT__MERGE;
+
+	/**
+	 * The feature id for the '<em><b>Format</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__FORMAT = COMPILATION_UNIT__FORMAT;
+
+	/**
+	 * The feature id for the '<em><b>Generator</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT__GENERATOR = COMPILATION_UNIT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Text Compilation Unit</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT_FEATURE_COUNT = COMPILATION_UNIT_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT = COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT___VALIDATE__DIAGNOSTICCHAIN_MAP = COMPILATION_UNIT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Text Compilation Unit</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEXT_COMPILATION_UNIT_OPERATION_COUNT = COMPILATION_UNIT_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.codegen.java.impl.StructuredCompilationUnitImpl <em>Structured Compilation Unit</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.codegen.java.impl.StructuredCompilationUnitImpl
+	 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getStructuredCompilationUnit()
+	 * @generated
+	 */
+	int STRUCTURED_COMPILATION_UNIT = 5;
+
+	/**
+	 * The feature id for the '<em><b>Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT__PROPERTIES_REFERENCES = COMPILATION_UNIT__PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT__CONFIGURATION = COMPILATION_UNIT__CONFIGURATION;
+
+	/**
+	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT__DEFAULT_PROPERTIES_REFERENCES = COMPILATION_UNIT__DEFAULT_PROPERTIES_REFERENCES;
+
+	/**
+	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT__ITERATOR = COMPILATION_UNIT__ITERATOR;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT__NAME = COMPILATION_UNIT__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Merge</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT__MERGE = COMPILATION_UNIT__MERGE;
+
+	/**
+	 * The feature id for the '<em><b>Format</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT__FORMAT = COMPILATION_UNIT__FORMAT;
+
+	/**
+	 * The number of structural features of the '<em>Structured Compilation Unit</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT_FEATURE_COUNT = COMPILATION_UNIT_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Create Context</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT = COMPILATION_UNIT___CREATE_CONTEXT__CONTEXT;
+
+	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT___VALIDATE__DIAGNOSTICCHAIN_MAP = COMPILATION_UNIT___VALIDATE__DIAGNOSTICCHAIN_MAP;
+
+	/**
+	 * The number of operations of the '<em>Structured Compilation Unit</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int STRUCTURED_COMPILATION_UNIT_OPERATION_COUNT = COMPILATION_UNIT_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '<em>IJava Project</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -467,7 +694,7 @@ public interface JavaPackage extends EPackage {
 	 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getIJavaProject()
 	 * @generated
 	 */
-	int IJAVA_PROJECT = 4;
+	int IJAVA_PROJECT = 6;
 
 	/**
 	 * The meta object id for the '<em>IPackage Fragment Root</em>' data type.
@@ -477,7 +704,7 @@ public interface JavaPackage extends EPackage {
 	 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getIPackageFragmentRoot()
 	 * @generated
 	 */
-	int IPACKAGE_FRAGMENT_ROOT = 5;
+	int IPACKAGE_FRAGMENT_ROOT = 7;
 
 	/**
 	 * The meta object id for the '<em>IPackage Fragment</em>' data type.
@@ -487,7 +714,7 @@ public interface JavaPackage extends EPackage {
 	 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getIPackageFragment()
 	 * @generated
 	 */
-	int IPACKAGE_FRAGMENT = 6;
+	int IPACKAGE_FRAGMENT = 8;
 
 	/**
 	 * The meta object id for the '<em>ICompilation Unit</em>' data type.
@@ -497,7 +724,7 @@ public interface JavaPackage extends EPackage {
 	 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getICompilationUnit()
 	 * @generated
 	 */
-	int ICOMPILATION_UNIT = 7;
+	int ICOMPILATION_UNIT = 9;
 
 
 	/**
@@ -627,6 +854,37 @@ public interface JavaPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCompilationUnit_Format();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.codegen.java.TextCompilationUnit <em>Text Compilation Unit</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Text Compilation Unit</em>'.
+	 * @see org.nasdanika.codegen.java.TextCompilationUnit
+	 * @generated
+	 */
+	EClass getTextCompilationUnit();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.codegen.java.TextCompilationUnit#getGenerator <em>Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Generator</em>'.
+	 * @see org.nasdanika.codegen.java.TextCompilationUnit#getGenerator()
+	 * @see #getTextCompilationUnit()
+	 * @generated
+	 */
+	EReference getTextCompilationUnit_Generator();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.codegen.java.StructuredCompilationUnit <em>Structured Compilation Unit</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Structured Compilation Unit</em>'.
+	 * @see org.nasdanika.codegen.java.StructuredCompilationUnit
+	 * @generated
+	 */
+	EClass getStructuredCompilationUnit();
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.jdt.core.IJavaProject <em>IJava Project</em>}'.
@@ -798,6 +1056,34 @@ public interface JavaPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute COMPILATION_UNIT__FORMAT = eINSTANCE.getCompilationUnit_Format();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.codegen.java.impl.TextCompilationUnitImpl <em>Text Compilation Unit</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.codegen.java.impl.TextCompilationUnitImpl
+		 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getTextCompilationUnit()
+		 * @generated
+		 */
+		EClass TEXT_COMPILATION_UNIT = eINSTANCE.getTextCompilationUnit();
+
+		/**
+		 * The meta object literal for the '<em><b>Generator</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference TEXT_COMPILATION_UNIT__GENERATOR = eINSTANCE.getTextCompilationUnit_Generator();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.codegen.java.impl.StructuredCompilationUnitImpl <em>Structured Compilation Unit</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.codegen.java.impl.StructuredCompilationUnitImpl
+		 * @see org.nasdanika.codegen.java.impl.JavaPackageImpl#getStructuredCompilationUnit()
+		 * @generated
+		 */
+		EClass STRUCTURED_COMPILATION_UNIT = eINSTANCE.getStructuredCompilationUnit();
 
 		/**
 		 * The meta object literal for the '<em>IJava Project</em>' data type.

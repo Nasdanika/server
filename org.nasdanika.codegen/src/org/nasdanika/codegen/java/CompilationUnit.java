@@ -21,7 +21,7 @@ import org.nasdanika.codegen.Generator;
  * </ul>
  *
  * @see org.nasdanika.codegen.java.JavaPackage#getCompilationUnit()
- * @model superTypes="org.nasdanika.codegen.Generator<org.nasdanika.codegen.java.ICompilationUnit>"
+ * @model abstract="true" superTypes="org.nasdanika.codegen.Generator<org.nasdanika.codegen.java.ICompilationUnit>"
  * @generated
  */
 public interface CompilationUnit extends Generator<ICompilationUnit> {

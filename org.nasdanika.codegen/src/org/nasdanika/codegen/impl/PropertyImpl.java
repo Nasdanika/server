@@ -20,7 +20,7 @@ import org.nasdanika.codegen.Property;
  *
  * @generated
  */
-public class PropertyImpl<T> extends ConfigurationItemImpl<T> implements Property<T> {
+public class PropertyImpl extends ConfigurationItemImpl implements Property {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

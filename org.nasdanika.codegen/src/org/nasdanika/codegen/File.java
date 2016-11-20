@@ -37,7 +37,7 @@ public interface File<C> extends Resource<IFile> {
 	 * @model containment="true"
 	 * @generated
 	 */
-	Service<C> getMerger();
+	Service getMerger();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.codegen.File#getMerger <em>Merger</em>}' containment reference.
@@ -47,7 +47,7 @@ public interface File<C> extends Resource<IFile> {
 	 * @see #getMerger()
 	 * @generated
 	 */
-	void setMerger(Service<C> value);
+	void setMerger(Service value);
 
 	/**
 	 * Returns the value of the '<em><b>Generator</b></em>' containment reference.

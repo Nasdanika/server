@@ -8,38 +8,25 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="propertiesReferences" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="configuration" upperBound="-1"
-        containment="true">
-      <eGenericType eClassifier="#//ConfigurationItem">
-        <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-      </eGenericType>
-    </eStructuralFeatures>
+        eType="#//ConfigurationItem" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="defaultPropertiesReferences"
         upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConfigurationItem" abstract="true">
-    <eTypeParameters name="T"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="valueType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="default" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eGenericSuperTypes eClassifier="#//Provider">
-      <eTypeArguments eTypeParameter="#//ConfigurationItem/T"/>
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//Configurable"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Service">
-    <eTypeParameters name="T"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Service" eSuperTypes="#//ConfigurationItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="serviceType" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eGenericSuperTypes eClassifier="#//ConfigurationItem">
-      <eTypeArguments eTypeParameter="#//Service/T"/>
-    </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Property">
-    <eTypeParameters name="T"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Property" eSuperTypes="#//ConfigurationItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eGenericSuperTypes eClassifier="#//ConfigurationItem">
-      <eTypeArguments eTypeParameter="#//Property/T"/>
-    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="WorkFactory" instanceClassName="org.nasdanika.codegen.WorkFactory"
       abstract="true" interface="true">
@@ -119,11 +106,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="File" abstract="true">
     <eTypeParameters name="C"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="merger" containment="true">
-      <eGenericType eClassifier="#//Service">
-        <eTypeArguments eTypeParameter="#//File/C"/>
-      </eGenericType>
-    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="merger" eType="#//Service"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="generator" lowerBound="1"
         containment="true">
       <eGenericType eClassifier="#//Generator">
@@ -156,7 +140,7 @@
     <eTypeParameters name="T"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="reconcileAction" eType="#//ReconcileAction"
-        defaultValueLiteral="Merge"/>
+        defaultValueLiteral="Append"/>
     <eGenericSuperTypes eClassifier="#//ResourceGenerator">
       <eTypeArguments eTypeParameter="#//Resource/T"/>
     </eGenericSuperTypes>
@@ -218,7 +202,7 @@
       <eTypeArguments eTypeParameter="#//Filter/T"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="JavaGenerator">
+  <eClassifiers xsi:type="ecore:EClass" name="JavaGenerator" abstract="true">
     <eTypeParameters name="T"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eGenericSuperTypes eClassifier="#//Generator">
@@ -230,7 +214,7 @@
       <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="JavaFilter">
+  <eClassifiers xsi:type="ecore:EClass" name="JavaFilter" abstract="true">
     <eTypeParameters name="T"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eGenericSuperTypes eClassifier="#//Filter">
@@ -248,6 +232,26 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="Merger" instanceClassName="org.nasdanika.codegen.Merger">
     <eTypeParameters name="T"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaTextFilter">
+    <eGenericSuperTypes eClassifier="#//JavaFilter">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaStreamFilter">
+    <eGenericSuperTypes eClassifier="#//JavaFilter">
+      <eTypeArguments eClassifier="#//InputStream"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaTextGenerator">
+    <eGenericSuperTypes eClassifier="#//JavaGenerator">
+      <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="JavaStreamGenerator">
+    <eGenericSuperTypes eClassifier="#//JavaGenerator">
+      <eTypeArguments eClassifier="#//InputStream"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eSubpackages name="java" nsURI="urn:org.nasdanika.codegen.java" nsPrefix="org.nasdanika.codegen.java">
     <eClassifiers xsi:type="ecore:EClass" name="JavaNature" eSuperTypes="#//Nature">
@@ -274,7 +278,7 @@
         <eTypeArguments eClassifier="#//java/IPackageFragment"/>
       </eGenericSuperTypes>
     </eClassifiers>
-    <eClassifiers xsi:type="ecore:EClass" name="CompilationUnit">
+    <eClassifiers xsi:type="ecore:EClass" name="CompilationUnit" abstract="true">
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
       <eStructuralFeatures xsi:type="ecore:EAttribute" name="merge" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
           defaultValueLiteral="true"/>
@@ -284,6 +288,14 @@
         <eTypeArguments eClassifier="#//java/ICompilationUnit"/>
       </eGenericSuperTypes>
     </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="TextCompilationUnit" eSuperTypes="#//java/CompilationUnit">
+      <eStructuralFeatures xsi:type="ecore:EReference" name="generator" containment="true">
+        <eGenericType eClassifier="#//Generator">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+        </eGenericType>
+      </eStructuralFeatures>
+    </eClassifiers>
+    <eClassifiers xsi:type="ecore:EClass" name="StructuredCompilationUnit" eSuperTypes="#//java/CompilationUnit"/>
   </eSubpackages>
   <eSubpackages name="maven" nsURI="urn:org.nasdanika.codegen.maven" nsPrefix="org.nasdanika.codegen.maven">
     <eClassifiers xsi:type="ecore:EClass" name="MavenNature" eSuperTypes="#//Nature"/>

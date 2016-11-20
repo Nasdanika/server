@@ -89,6 +89,14 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 				return createCompilationUnitAdapter();
 			}
 			@Override
+			public Adapter caseTextCompilationUnit(TextCompilationUnit object) {
+				return createTextCompilationUnitAdapter();
+			}
+			@Override
+			public Adapter caseStructuredCompilationUnit(StructuredCompilationUnit object) {
+				return createStructuredCompilationUnitAdapter();
+			}
+			@Override
 			public <T> Adapter caseWorkFactory(WorkFactory<T> object) {
 				return createWorkFactoryAdapter();
 			}
@@ -177,6 +185,34 @@ public class JavaAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createCompilationUnitAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.java.TextCompilationUnit <em>Text Compilation Unit</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.java.TextCompilationUnit
+	 * @generated
+	 */
+	public Adapter createTextCompilationUnitAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.java.StructuredCompilationUnit <em>Structured Compilation Unit</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.java.StructuredCompilationUnit
+	 * @generated
+	 */
+	public Adapter createStructuredCompilationUnitAdapter() {
 		return null;
 	}
 

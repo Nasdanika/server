@@ -121,11 +121,6 @@ public class PackageFragmentItemProvider extends GeneratorItemProvider {
 		return overlayImage(object, getResourceLocator().getImage("full/obj16/package.gif"));
 	}
 	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
-	}
-
 	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
@@ -177,7 +172,12 @@ public class PackageFragmentItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(JavaPackage.Literals.PACKAGE_FRAGMENT__COMPILATIONUNITS,
-				 JavaFactory.eINSTANCE.createCompilationUnit()));
+				 JavaFactory.eINSTANCE.createTextCompilationUnit()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(JavaPackage.Literals.PACKAGE_FRAGMENT__COMPILATIONUNITS,
+				 JavaFactory.eINSTANCE.createStructuredCompilationUnit()));
 	}
 
 	/**

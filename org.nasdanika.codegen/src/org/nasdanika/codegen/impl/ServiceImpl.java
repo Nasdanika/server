@@ -20,7 +20,7 @@ import org.nasdanika.codegen.Service;
  *
  * @generated
  */
-public class ServiceImpl<T> extends ConfigurationItemImpl<T> implements Service<T> {
+public class ServiceImpl extends ConfigurationItemImpl implements Service {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

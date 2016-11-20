@@ -325,29 +325,6 @@ public class CodegenItemProviderAdapterFactory extends CodegenAdapterFactory imp
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaGenerator} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected JavaGeneratorItemProvider javaGeneratorItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaGenerator}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createJavaGeneratorAdapter() {
-		if (javaGeneratorItemProvider == null) {
-			javaGeneratorItemProvider = new JavaGeneratorItemProvider(this);
-		}
-
-		return javaGeneratorItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.Interpolator} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -371,26 +348,95 @@ public class CodegenItemProviderAdapterFactory extends CodegenAdapterFactory imp
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaFilter} instances.
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaTextFilter} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected JavaFilterItemProvider javaFilterItemProvider;
+	protected JavaTextFilterItemProvider javaTextFilterItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaFilter}.
+	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaTextFilter}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createJavaFilterAdapter() {
-		if (javaFilterItemProvider == null) {
-			javaFilterItemProvider = new JavaFilterItemProvider(this);
+	public Adapter createJavaTextFilterAdapter() {
+		if (javaTextFilterItemProvider == null) {
+			javaTextFilterItemProvider = new JavaTextFilterItemProvider(this);
 		}
 
-		return javaFilterItemProvider;
+		return javaTextFilterItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaStreamFilter} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected JavaStreamFilterItemProvider javaStreamFilterItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaStreamFilter}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createJavaStreamFilterAdapter() {
+		if (javaStreamFilterItemProvider == null) {
+			javaStreamFilterItemProvider = new JavaStreamFilterItemProvider(this);
+		}
+
+		return javaStreamFilterItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaTextGenerator} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected JavaTextGeneratorItemProvider javaTextGeneratorItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaTextGenerator}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createJavaTextGeneratorAdapter() {
+		if (javaTextGeneratorItemProvider == null) {
+			javaTextGeneratorItemProvider = new JavaTextGeneratorItemProvider(this);
+		}
+
+		return javaTextGeneratorItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.codegen.JavaStreamGenerator} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected JavaStreamGeneratorItemProvider javaStreamGeneratorItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.codegen.JavaStreamGenerator}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createJavaStreamGeneratorAdapter() {
+		if (javaStreamGeneratorItemProvider == null) {
+			javaStreamGeneratorItemProvider = new JavaStreamGeneratorItemProvider(this);
+		}
+
+		return javaStreamGeneratorItemProvider;
 	}
 
 	/**
@@ -503,9 +549,11 @@ public class CodegenItemProviderAdapterFactory extends CodegenAdapterFactory imp
 		if (resourceReferenceItemProvider != null) resourceReferenceItemProvider.dispose();
 		if (staticTextItemProvider != null) staticTextItemProvider.dispose();
 		if (contentReferenceItemProvider != null) contentReferenceItemProvider.dispose();
-		if (javaGeneratorItemProvider != null) javaGeneratorItemProvider.dispose();
 		if (interpolatorItemProvider != null) interpolatorItemProvider.dispose();
-		if (javaFilterItemProvider != null) javaFilterItemProvider.dispose();
+		if (javaTextFilterItemProvider != null) javaTextFilterItemProvider.dispose();
+		if (javaStreamFilterItemProvider != null) javaStreamFilterItemProvider.dispose();
+		if (javaTextGeneratorItemProvider != null) javaTextGeneratorItemProvider.dispose();
+		if (javaStreamGeneratorItemProvider != null) javaStreamGeneratorItemProvider.dispose();
 	}
 
 }

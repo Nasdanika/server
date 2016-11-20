@@ -19,7 +19,7 @@ package org.nasdanika.codegen;
  * @model
  * @generated
  */
-public interface Service<T> extends ConfigurationItem<T> {
+public interface Service extends ConfigurationItem {
 	/**
 	 * Returns the value of the '<em><b>Service Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->

@@ -55,11 +55,6 @@ public class TextFileItemProvider extends FileItemProvider {
 		return overlayImage(object, getResourceLocator().getImage("full/obj16/TextFile"));
 	}
 	
-	@Override
-	protected boolean shouldComposeCreationImage() {
-		return true;
-	}
-
 	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->

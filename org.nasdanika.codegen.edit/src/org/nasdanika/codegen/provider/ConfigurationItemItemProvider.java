@@ -252,7 +252,7 @@ public class ConfigurationItemItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((ConfigurationItem<?>)object).getValueType();
+		String label = ((ConfigurationItem)object).getValueType();
 		return label == null || label.length() == 0 ?
 			getString("_UI_ConfigurationItem_type") :
 			getString("_UI_ConfigurationItem_type") + " " + label;
