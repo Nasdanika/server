@@ -19,13 +19,13 @@
    <extension point="org.eclipse.ui.newWizards">
       <!-- @generated codegen -->
       <category
-            id="org.eclipse.emf.ecore.Wizard.category.ID"
+            id="org.nasdanika"
             name="%_UI_Wizard_category"/>
       <wizard
             id="org.nasdanika.codegen.presentation.CodegenModelWizardID"
             name="%_UI_CodegenModelWizard_label"
             class="org.nasdanika.codegen.presentation.CodegenModelWizard"
-            category="org.eclipse.emf.ecore.Wizard.category.ID"
+            category="org.nasdanika"
             icon="icons/full/obj16/CodegenModelFile.gif">
          <description>%_UI_CodegenModelWizard_description</description>
          <selection class="org.eclipse.core.resources.IResource"/>

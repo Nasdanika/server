@@ -89,6 +89,11 @@ public class FolderItemProvider extends ResourceItemProvider {
 	public Object getImage(Object object) {
 		return overlayImage(object, getResourceLocator().getImage("full/obj16/Folder"));
 	}
+	
+	@Override
+	protected boolean shouldComposeCreationImage() {
+		return true;
+	}
 
 	/**
 	 * This returns the label text for the adapted class.
