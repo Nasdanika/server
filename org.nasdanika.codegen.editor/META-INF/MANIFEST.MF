@@ -17,7 +17,7 @@ Export-Package: org.nasdanika.codegen.java.presentation,
  org.nasdanika.codegen.maven.presentation,
  org.nasdanika.codegen.presentation
 Bundle-Name: %pluginName
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Bundle-Activator: org.nasdanika.codegen.presentation.CodegenEditorPlugin$Implementation
