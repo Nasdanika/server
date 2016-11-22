@@ -231,6 +231,10 @@ link resolvers, e.g. ``bundle`` schema.
          <property name="location" value="http://stleary.github.io/JSON-java"/>
          <property name="location" value="https://osgi.org/javadoc/r4v42/"/>
          <property name="location" value="http://seleniumhq.github.io/selenium/docs/api/java/"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.codegen/apidocs/"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.codegen.edit/apidocs/"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.codegen.editor/apidocs/"/>
+         <property name="location" value="http://www.nasdanika.org/server/apidocs/org.nasdanika.provisioning/apidocs/"/>
          
          <description>
             Resolves JavaDoc URL from the class/package name. Usage: ``[[javadoc&gt;fully qualified class name|text]]``. Text is optional. Examples: 

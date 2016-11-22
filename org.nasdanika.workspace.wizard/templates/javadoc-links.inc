@@ -25,6 +25,10 @@
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest.performance/apidocs</link>						
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.webtest/apidocs</link>						
 						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.workspace.wizard/apidocs</link>
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.codegen/apidocs</link>
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.codegen.edit/apidocs</link>
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.codegen.editor/apidocs</link>
+						<link>http://www.nasdanika.org/server/apidocs/org.nasdanika.provisioning/apidocs</link>
 <% } %>						
 						<link>http://download.eclipse.org/modeling/emf/emf/javadoc/2.11</link>
 						<link>http://help.eclipse.org/neon/topic/org.eclipse.emf.cdo.doc/javadoc</link>		
