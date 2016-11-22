@@ -12,6 +12,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Folder</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface Folder extends Resource<IFolder> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Children</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getFolder_Children()
 	 * @model type="org.nasdanika.codegen.Resource<org.nasdanika.codegen.IResource>" containment="true"

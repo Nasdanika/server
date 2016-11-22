@@ -13,6 +13,10 @@ import org.nasdanika.codegen.Generator;
  * A representation of the model object '<em><b>Package Fragment Root</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -34,6 +38,9 @@ public interface PackageFragmentRoot extends Generator<IPackageFragmentRoot> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.nasdanika.codegen.java.JavaPackage#getPackageFragmentRoot_Name()
@@ -61,6 +68,9 @@ public interface PackageFragmentRoot extends Generator<IPackageFragmentRoot> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Packagefragments</em>' containment reference list.
 	 * @see org.nasdanika.codegen.java.JavaPackage#getPackageFragmentRoot_Packagefragments()
 	 * @model containment="true"

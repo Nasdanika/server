@@ -139,11 +139,6 @@
       <details key="documentation" value="Group of generators from which zero to all can be invoked during the generation process."/>
     </eAnnotations>
     <eTypeParameters name="T"/>
-    <eTypeParameters name="E">
-      <eBounds eClassifier="#//Generator">
-        <eTypeArguments/>
-      </eBounds>
-    </eTypeParameters>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="selector" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Java code to select which group elements shall be invoked and to customize their contexts. Selector code is a Java method body as shown below&#xD;&#xA;&#xD;&#xA;```java&#xD;&#xA;&lt;G extends Generator> Context select(Context context, G group, Generator element) throws Exception {&#xD;&#xA;    // --- Selector code here ---&#xD;&#xA;}&#xD;&#xA;```&#xD;&#xA;&#xD;&#xA;where ``G`` is the type of the selector declaring group model element and ``element`` is the group element being evaluated. &#xD;&#xA;&#xD;&#xA;If selector returns ``null`` then given group element is not invoked during generation. Otherwise it is invoked with the returned context.&#xD;&#xA;&#xD;&#xA;Blank selector code is equivalent to ``return context;``"/>
@@ -154,7 +149,9 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Group elements."/>
       </eAnnotations>
-      <eGenericType eTypeParameter="#//Group/E"/>
+      <eGenericType eClassifier="#//Generator">
+        <eTypeArguments eTypeParameter="#//Group/T"/>
+      </eGenericType>
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//Generator">
       <eTypeArguments eTypeParameter="#//Group/T"/>
@@ -174,8 +171,7 @@
       <details key="documentation" value="Workspace root does not really generate anything because there is only &#xD;&#xA;one already existing workspace root. This model element is used for grouping projects."/>
     </eAnnotations>
     <eGenericSuperTypes eClassifier="#//Group">
-      <eTypeArguments eClassifier="#//IWorkspaceRoot"/>
-      <eTypeArguments eClassifier="#//Project"/>
+      <eTypeArguments eClassifier="#//IProject"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Folder">

@@ -8,6 +8,34 @@ package org.nasdanika.codegen;
  * A representation of the model object '<em><b>Configuration Item</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Configuration item contributes to the context of Configurable
+ * and can itself be configurable.
+ * 
+ * Configuration item can be configured with value or other configuration items. 
+ * Value and configuration items are injected into the configuration item via constructor. An appropriate constructor is selected based on 
+ * whether the value is blank and configuration items are present:
+ * 
+ * * Blank value, no configuration items - default constructor, if exists.
+ * * Non-blank value, no configuration items - a constructor which takes String, if exists.
+ * * Blank value, configuration items - a constructor which takes Context, if exists.
+ * * Otherwise - a constructor which takes String and Context in any order.
+ * 
+ * If configuration item's type is assignable from ``org.nasdanika.codegen.Provider``, then it gets instantiated using
+ * either the default constructor, if it exists and value is blank, or a constructor which takes String. The provider's ``get(Context)`` method is used
+ * to obtain actual configuration item.
+ * 
+ * If value is not blank, it is interpolated using properties already defined in the context and inherited from the parent context. 
+ * Interpolation is the process of expanding tokens enclosed into double-curly brackets to the values of properties with corresponding names.
+ * 
+ * If a property with a given name is not defined, a token does not get expanded.
+ * 
+ * Example:
+ * ```
+ * {{base-package}}.impl
+ * ```
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -31,6 +59,9 @@ public interface ConfigurationItem extends Provider<Object>, Configurable {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Configuration item value type. Defaults to ``java.lang.String``.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Value Type</em>' attribute.
 	 * @see #setValueType(String)
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurationItem_ValueType()
@@ -57,6 +88,9 @@ public interface ConfigurationItem extends Provider<Object>, Configurable {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Configuration item value.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Value</em>' attribute.
 	 * @see #setValue(String)
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurationItem_Value()
@@ -83,6 +117,11 @@ public interface ConfigurationItem extends Provider<Object>, Configurable {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Regular configuration shadow/override configuration items defined in parent context(s),
+	 * default configuration items, on the contrary, get shadowed by parent's configuration items
+	 * with the same keys.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Default</em>' attribute.
 	 * @see #setDefault(boolean)
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurationItem_Default()
@@ -109,6 +148,9 @@ public interface ConfigurationItem extends Provider<Object>, Configurable {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Optional description.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Description</em>' attribute.
 	 * @see #setDescription(String)
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurationItem_Description()

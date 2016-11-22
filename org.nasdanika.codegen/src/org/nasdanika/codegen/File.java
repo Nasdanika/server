@@ -9,6 +9,10 @@ import org.eclipse.core.resources.IFile;
  * A representation of the model object '<em><b>File</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -31,6 +35,9 @@ public interface File<C> extends Resource<IFile> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Merger</em>' containment reference.
 	 * @see #setMerger(Service)
 	 * @see org.nasdanika.codegen.CodegenPackage#getFile_Merger()
@@ -57,6 +64,9 @@ public interface File<C> extends Resource<IFile> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Generator</em>' containment reference.
 	 * @see #setGenerator(Generator)
 	 * @see org.nasdanika.codegen.CodegenPackage#getFile_Generator()

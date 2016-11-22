@@ -9,6 +9,10 @@ import org.nasdanika.codegen.Generator;
  * A representation of the model object '<em><b>Text Compilation Unit</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -29,6 +33,9 @@ public interface TextCompilationUnit extends CompilationUnit {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Generator</em>' containment reference.
 	 * @see #setGenerator(Generator)
 	 * @see org.nasdanika.codegen.java.JavaPackage#getTextCompilationUnit_Generator()

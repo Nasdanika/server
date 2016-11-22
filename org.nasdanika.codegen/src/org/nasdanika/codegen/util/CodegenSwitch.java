@@ -133,7 +133,7 @@ public class CodegenSwitch<T1> extends Switch<T1> {
 			case CodegenPackage.WORKSPACE_ROOT: {
 				WorkspaceRoot workspaceRoot = (WorkspaceRoot)theEObject;
 				T1 result = caseWorkspaceRoot(workspaceRoot);
-				if (result == null) result = caseResourceGenerator(workspaceRoot);
+				if (result == null) result = caseGroup(workspaceRoot);
 				if (result == null) result = caseGenerator(workspaceRoot);
 				if (result == null) result = caseWorkFactory(workspaceRoot);
 				if (result == null) result = caseConfigurable(workspaceRoot);

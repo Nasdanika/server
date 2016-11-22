@@ -34,6 +34,9 @@ public interface PackageFragment extends Generator<IPackageFragment> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.nasdanika.codegen.java.JavaPackage#getPackageFragment_Name()
@@ -61,6 +64,9 @@ public interface PackageFragment extends Generator<IPackageFragment> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Compilationunits</em>' containment reference list.
 	 * @see org.nasdanika.codegen.java.JavaPackage#getPackageFragment_Compilationunits()
 	 * @model containment="true"

@@ -9,6 +9,10 @@ import org.nasdanika.codegen.Nature;
  * A representation of the model object '<em><b>Nature</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  *
  * @see org.nasdanika.codegen.maven.MavenPackage#getMavenNature()
  * @model

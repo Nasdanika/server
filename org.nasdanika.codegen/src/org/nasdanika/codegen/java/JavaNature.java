@@ -11,6 +11,10 @@ import org.nasdanika.codegen.Nature;
  * A representation of the model object '<em><b>Nature</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -32,6 +36,9 @@ public interface JavaNature extends Nature {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Packagefragmentroots</em>' containment reference list.
 	 * @see org.nasdanika.codegen.java.JavaPackage#getJavaNature_Packagefragmentroots()
 	 * @model containment="true"

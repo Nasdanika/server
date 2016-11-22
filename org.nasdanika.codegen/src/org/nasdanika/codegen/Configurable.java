@@ -11,6 +11,11 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Configurable</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Something which can be configured with configuration items - properties and services.
+ * 
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -35,6 +40,16 @@ public interface Configurable extends CDOObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * URL's of properites files to load into the this configurable's context.
+	 * URL's are resolved relative to the model resource. 
+	 * 
+	 * The following custom schemes supported:
+	 * 
+	 * * ``bundle`` - ``bundle:<bundle symbolic name>/<resource path in the bundle>``
+	 * * ``java`` - ``java:<classloader path>``
+	 * 
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Properties References</em>' attribute list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_PropertiesReferences()
 	 * @model
@@ -51,6 +66,9 @@ public interface Configurable extends CDOObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Configuration items - properties and services.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Configuration</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_Configuration()
 	 * @model containment="true"
@@ -67,6 +85,20 @@ public interface Configurable extends CDOObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * URL's of properites files to load as default properties into the this configurable's context.
+	 * 
+	 * Regular properties shadow/override properties with the same names in the parent context,
+	 * default properties are shadowed/overriden by parent's properties.
+	 * 
+	 * URL's are resolved relative to the model resource. 
+	 * 
+	 * The following custom schemes supported:
+	 * 
+	 * * ``bundle`` - ``bundle:<bundle symbolic name>/<resource path in the bundle>``
+	 * * ``java`` - ``java:<classloader path>``
+	 * 
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Default Properties References</em>' attribute list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getConfigurable_DefaultPropertiesReferences()
 	 * @model

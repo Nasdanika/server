@@ -13,6 +13,9 @@ import org.eclipse.emf.common.util.Enumerator;
  * A representation of the literals of the enumeration '<em><b>Reconcile Action</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
  * @see org.nasdanika.codegen.CodegenPackage#getReconcileAction()
  * @model
  * @generated
@@ -74,6 +77,9 @@ public enum ReconcileAction implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @see #KEEP
 	 * @model name="Keep"
 	 * @generated
@@ -89,6 +95,9 @@ public enum ReconcileAction implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @see #APPEND
 	 * @model name="Append"
 	 * @generated
@@ -104,6 +113,9 @@ public enum ReconcileAction implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @see #MERGE
 	 * @model name="Merge"
 	 * @generated
@@ -119,6 +131,9 @@ public enum ReconcileAction implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @see #OVERWRITE
 	 * @model name="Overwrite"
 	 * @generated
@@ -134,6 +149,9 @@ public enum ReconcileAction implements Enumerator {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @see #CANCEL
 	 * @model name="Cancel"
 	 * @generated

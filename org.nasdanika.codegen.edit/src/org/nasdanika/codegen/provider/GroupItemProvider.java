@@ -91,7 +91,7 @@ public class GroupItemProvider extends GeneratorItemProvider {
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(CodegenPackage.Literals.GROUP__MEMBERS);
+			childrenFeatures.add(CodegenPackage.Literals.GROUP__ELEMENTS);
 		}
 		return childrenFeatures;
 	}
@@ -150,7 +150,7 @@ public class GroupItemProvider extends GeneratorItemProvider {
 			case CodegenPackage.GROUP__SELECTOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case CodegenPackage.GROUP__MEMBERS:
+			case CodegenPackage.GROUP__ELEMENTS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -170,102 +170,102 @@ public class GroupItemProvider extends GeneratorItemProvider {
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createGroup()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createWorkspaceRoot()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createFolder()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createProject()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createBinaryFile()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createTextFile()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createResourceReference()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createStaticText()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createContentReference()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createInterpolator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createJavaTextFilter()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createJavaStreamFilter()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createJavaTextGenerator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 CodegenFactory.eINSTANCE.createJavaStreamGenerator()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 JavaFactory.eINSTANCE.createJavaNature()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 JavaFactory.eINSTANCE.createPackageFragmentRoot()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 JavaFactory.eINSTANCE.createPackageFragment()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 JavaFactory.eINSTANCE.createTextCompilationUnit()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 JavaFactory.eINSTANCE.createStructuredCompilationUnit()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.GROUP__MEMBERS,
+				(CodegenPackage.Literals.GROUP__ELEMENTS,
 				 MavenFactory.eINSTANCE.createMavenNature()));
 	}
 

@@ -12,6 +12,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Project</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -35,6 +39,9 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.nasdanika.codegen.CodegenPackage#getProject_Name()
@@ -62,6 +69,9 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Natures</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getProject_Natures()
 	 * @model containment="true"
@@ -78,6 +88,9 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Resources</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getProject_Resources()
 	 * @model type="org.nasdanika.codegen.Resource<org.nasdanika.codegen.IResource>" containment="true"
@@ -95,6 +108,9 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Reconcile Action</em>' attribute.
 	 * @see org.nasdanika.codegen.ReconcileAction
 	 * @see #setReconcileAction(ReconcileAction)

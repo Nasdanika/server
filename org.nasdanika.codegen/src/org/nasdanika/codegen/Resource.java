@@ -7,6 +7,10 @@ package org.nasdanika.codegen;
  * A representation of the model object '<em><b>Resource</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -28,6 +32,9 @@ public interface Resource<T> extends ResourceGenerator<T> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.nasdanika.codegen.CodegenPackage#getResource_Name()
@@ -56,6 +63,9 @@ public interface Resource<T> extends ResourceGenerator<T> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Reconcile Action</em>' attribute.
 	 * @see org.nasdanika.codegen.ReconcileAction
 	 * @see #setReconcileAction(ReconcileAction)

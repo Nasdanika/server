@@ -8,6 +8,10 @@ package org.nasdanika.codegen;
  * A representation of the model object '<em><b>Java Text Filter</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  *
  * @see org.nasdanika.codegen.CodegenPackage#getJavaTextFilter()
  * @model superTypes="org.nasdanika.codegen.JavaFilter<org.eclipse.emf.ecore.EString>"

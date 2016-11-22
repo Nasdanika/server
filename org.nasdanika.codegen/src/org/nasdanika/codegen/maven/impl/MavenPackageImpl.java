@@ -177,6 +177,26 @@ public class MavenPackageImpl extends EPackageImpl implements MavenPackage {
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(mavenNatureEClass, MavenNature.class, "MavenNature", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		// Create annotations
+		// http://www.eclipse.org/emf/2002/GenModel
+		createGenModelAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/GenModel</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createGenModelAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/GenModel";	
+		addAnnotation
+		  (mavenNatureEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });
 	}
 
 } //MavenPackageImpl

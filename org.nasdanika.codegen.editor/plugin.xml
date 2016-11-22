@@ -1,12 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?eclipse version="3.0"?><!--
---><plugin>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><?eclipse version="3.0"?>
+<plugin>
 
-<extension point="org.eclipse.ui.editors"><editor class="org.eclipse.emfforms.spi.editor.GenericEditor" default="false" extensions="nsdgen" icon="icons/full/obj16/CodegenModelFile.gif" id="org.nasdanika.codegen.editor.Codegen.emfformseditor" name="EMFForms Editor"/></extension>
 
   <extension point="org.eclipse.ui.popupMenus">
       <objectContribution
             id="org.nasdanika.codegen.editor.Generate"
-            objectClass="org.nasdanika.codegen.ResourceGenerator">
+            objectClass="org.nasdanika.codegen.WorkspaceRoot">
          <action
                id="org.nasdanika.codegen.editor.Generate"
                label="Generate"
@@ -41,62 +40,6 @@
             extensions="nsdgen"
             class="org.nasdanika.codegen.presentation.CodegenEditor"
             contributorClass="org.nasdanika.codegen.presentation.CodegenActionBarContributor">
-      </editor>
-   </extension>
-
-   <extension point="org.eclipse.ui.newWizards">
-      <!-- @generated codegen -->
-      <category
-            id="org.eclipse.emf.ecore.Wizard.category.ID"
-            name="%_UI_Wizard_category"/>
-      <wizard
-            id="org.nasdanika.codegen.java.presentation.JavaModelWizardID"
-            name="%_UI_JavaModelWizard_label"
-            class="org.nasdanika.codegen.java.presentation.JavaModelWizard"
-            category="org.eclipse.emf.ecore.Wizard.category.ID"
-            icon="icons/full/obj16/JavaModelFile.gif">
-         <description>%_UI_JavaModelWizard_description</description>
-         <selection class="org.eclipse.core.resources.IResource"/>
-      </wizard>
-   </extension>
-
-   <extension point="org.eclipse.ui.editors">
-      <!-- @generated codegen -->
-      <editor
-            id="org.nasdanika.codegen.java.presentation.JavaEditorID"
-            name="%_UI_JavaEditor_label"
-            icon="icons/full/obj16/JavaModelFile.gif"
-            extensions="java"
-            class="org.nasdanika.codegen.java.presentation.JavaEditor"
-            contributorClass="org.nasdanika.codegen.java.presentation.JavaActionBarContributor">
-      </editor>
-   </extension>
-
-   <extension point="org.eclipse.ui.newWizards">
-      <!-- @generated codegen -->
-      <category
-            id="org.eclipse.emf.ecore.Wizard.category.ID"
-            name="%_UI_Wizard_category"/>
-      <wizard
-            id="org.nasdanika.codegen.maven.presentation.MavenModelWizardID"
-            name="%_UI_MavenModelWizard_label"
-            class="org.nasdanika.codegen.maven.presentation.MavenModelWizard"
-            category="org.eclipse.emf.ecore.Wizard.category.ID"
-            icon="icons/full/obj16/MavenModelFile.gif">
-         <description>%_UI_MavenModelWizard_description</description>
-         <selection class="org.eclipse.core.resources.IResource"/>
-      </wizard>
-   </extension>
-
-   <extension point="org.eclipse.ui.editors">
-      <!-- @generated codegen -->
-      <editor
-            id="org.nasdanika.codegen.maven.presentation.MavenEditorID"
-            name="%_UI_MavenEditor_label"
-            icon="icons/full/obj16/MavenModelFile.gif"
-            extensions="maven"
-            class="org.nasdanika.codegen.maven.presentation.MavenEditor"
-            contributorClass="org.nasdanika.codegen.maven.presentation.MavenActionBarContributor">
       </editor>
    </extension>
 </plugin>

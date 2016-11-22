@@ -11,6 +11,10 @@ import org.nasdanika.codegen.Generator;
  * A representation of the model object '<em><b>Compilation Unit</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface CompilationUnit extends Generator<ICompilationUnit> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.nasdanika.codegen.java.JavaPackage#getCompilationUnit_Name()
@@ -60,6 +67,9 @@ public interface CompilationUnit extends Generator<ICompilationUnit> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Merge</em>' attribute.
 	 * @see #setMerge(boolean)
 	 * @see org.nasdanika.codegen.java.JavaPackage#getCompilationUnit_Merge()
@@ -87,6 +97,9 @@ public interface CompilationUnit extends Generator<ICompilationUnit> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Format</em>' attribute.
 	 * @see #setFormat(boolean)
 	 * @see org.nasdanika.codegen.java.JavaPackage#getCompilationUnit_Format()

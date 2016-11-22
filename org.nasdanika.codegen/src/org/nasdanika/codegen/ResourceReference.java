@@ -10,6 +10,10 @@ import org.eclipse.core.resources.IResource;
  * A representation of the model object '<em><b>Resource Reference</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -30,6 +34,9 @@ public interface ResourceReference extends Resource<IResource> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Target</em>' reference.
 	 * @see #setTarget(Resource)
 	 * @see org.nasdanika.codegen.CodegenPackage#getResourceReference_Target()

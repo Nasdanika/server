@@ -8,6 +8,10 @@ package org.nasdanika.codegen.java;
  * A representation of the model object '<em><b>Structured Compilation Unit</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  *
  * @see org.nasdanika.codegen.java.JavaPackage#getStructuredCompilationUnit()
  * @model

@@ -8,6 +8,10 @@ package org.nasdanika.codegen;
  * A representation of the model object '<em><b>Content Reference</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -28,6 +32,9 @@ public interface ContentReference<T> extends Generator<T> {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * .
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Ref</em>' attribute.
 	 * @see #setRef(String)
 	 * @see org.nasdanika.codegen.CodegenPackage#getContentReference_Ref()

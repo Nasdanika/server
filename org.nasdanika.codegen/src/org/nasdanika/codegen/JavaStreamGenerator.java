@@ -9,6 +9,10 @@ import java.io.InputStream;
  * A representation of the model object '<em><b>Java Stream Generator</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * .
+ * <!-- end-model-doc -->
+ *
  *
  * @see org.nasdanika.codegen.CodegenPackage#getJavaStreamGenerator()
  * @model superTypes="org.nasdanika.codegen.JavaGenerator<org.nasdanika.codegen.InputStream>"

@@ -12,6 +12,10 @@ import org.eclipse.emf.common.util.DiagnosticChain;
  * A representation of the model object '<em><b>Generator</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Generator is the base class for model element performing code generation.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,31 @@ public interface Generator<T> extends WorkFactory<List<T>>, Configurable {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Iterator attribute may contain a fragment of Java code which controls
+	 * how many times the generator will be invoked and can modify generator's 
+	 * context for each invocation.
+	 * 
+	 * The iterator's code shall be a Java method body as shown below:
+	 * 
+	 * ```java
+	 * <T extends Generator> Object iterate(Context context, T generator) throws Exception {
+	 *     // --- Iterator code here ---
+	 * }
+	 * ```
+	 * 
+	 * where ``T`` is the type of the iterator declaring generator model element. 
+	 * 
+	 * Iterator code may return one of the following:
+	 * 
+	 * * ``null`` or ``false`` or empty collection - no iteration.
+	 * * ``java.lang.Iterable`` with elements of type ``org.nasdanika.codegen.Context`` or an array containing ``Context`` elements - generator will be invoked for each element of array/iterable and the element will be passed to the generator as its context.
+	 * * ``Context`` - single invocation with returned context.
+	 * 
+	 * If the iterator returns any other result, then the generator throws ``IllegalArgumentException``.
+	 * 
+	 * Blank iterator code is equivalent to ``return context;``
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Iterator</em>' attribute.
 	 * @see #setIterator(String)
 	 * @see org.nasdanika.codegen.CodegenPackage#getGenerator_Iterator()

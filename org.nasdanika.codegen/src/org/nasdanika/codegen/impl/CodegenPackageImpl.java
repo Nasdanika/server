@@ -625,7 +625,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getGroup_Members() {
+	public EReference getGroup_Elements() {
 		return (EReference)groupEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -645,15 +645,6 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 */
 	public EClass getWorkspaceRoot() {
 		return workspaceRootEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getWorkspaceRoot_Projects() {
-		return (EReference)workspaceRootEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1133,12 +1124,11 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 
 		groupEClass = createEClass(GROUP);
 		createEAttribute(groupEClass, GROUP__SELECTOR);
-		createEReference(groupEClass, GROUP__MEMBERS);
+		createEReference(groupEClass, GROUP__ELEMENTS);
 
 		resourceGeneratorEClass = createEClass(RESOURCE_GENERATOR);
 
 		workspaceRootEClass = createEClass(WORKSPACE_ROOT);
-		createEReference(workspaceRootEClass, WORKSPACE_ROOT__PROJECTS);
 
 		folderEClass = createEClass(FOLDER);
 		createEReference(folderEClass, FOLDER__CHILDREN);
@@ -1284,8 +1274,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g2 = createEGenericType(resourceGeneratorEClass_T);
 		g1.getETypeArguments().add(g2);
 		resourceGeneratorEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getResourceGenerator());
-		g2 = createEGenericType(this.getIWorkspaceRoot());
+		g1 = createEGenericType(this.getGroup());
+		g2 = createEGenericType(this.getIProject());
 		g1.getETypeArguments().add(g2);
 		workspaceRootEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getResource());
@@ -1402,12 +1392,11 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g1 = createEGenericType(this.getGenerator());
 		g2 = createEGenericType(groupEClass_T);
 		g1.getETypeArguments().add(g2);
-		initEReference(getGroup_Members(), g1, null, "members", null, 0, -1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getGroup_Elements(), g1, null, "elements", null, 0, -1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(resourceGeneratorEClass, ResourceGenerator.class, "ResourceGenerator", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(workspaceRootEClass, WorkspaceRoot.class, "WorkspaceRoot", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getWorkspaceRoot_Projects(), this.getProject(), null, "projects", null, 0, -1, WorkspaceRoot.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(folderEClass, Folder.class, "Folder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		g1 = createEGenericType(this.getResource());
@@ -1516,6 +1505,120 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	protected void createGenModelAnnotations() {
 		String source = "http://www.eclipse.org/emf/2002/GenModel";	
 		addAnnotation
+		  (this, 
+		   source, 
+		   new String[] {
+			 "documentation", "Code generation model."
+		   });	
+		addAnnotation
+		  (configurableEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Something which can be configured with configuration items - properties and services.\r\n"
+		   });	
+		addAnnotation
+		  (getConfigurable__CreateContext__Context(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Creates ``org.nasdanika.codegen.Context`` which provides access to properties and services."
+		   });	
+		addAnnotation
+		  ((getConfigurable__CreateContext__Context()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Parent context."
+		   });	
+		addAnnotation
+		  (getConfigurable_PropertiesReferences(), 
+		   source, 
+		   new String[] {
+			 "documentation", "URL\'s of properites files to load into the this configurable\'s context.\r\nURL\'s are resolved relative to the model resource. \r\n\r\nThe following custom schemes supported:\r\n\r\n* ``bundle`` - ``bundle:<bundle symbolic name>/<resource path in the bundle>``\r\n* ``java`` - ``java:<classloader path>``\r\n"
+		   });	
+		addAnnotation
+		  (getConfigurable_Configuration(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Configuration items - properties and services."
+		   });	
+		addAnnotation
+		  (getConfigurable_DefaultPropertiesReferences(), 
+		   source, 
+		   new String[] {
+			 "documentation", "URL\'s of properites files to load as default properties into the this configurable\'s context.\r\n\r\nRegular properties shadow/override properties with the same names in the parent context,\r\ndefault properties are shadowed/overriden by parent\'s properties.\r\n\r\nURL\'s are resolved relative to the model resource. \r\n\r\nThe following custom schemes supported:\r\n\r\n* ``bundle`` - ``bundle:<bundle symbolic name>/<resource path in the bundle>``\r\n* ``java`` - ``java:<classloader path>``\r\n"
+		   });	
+		addAnnotation
+		  (configurationItemEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Configuration item contributes to the context of Configurable\r\nand can itself be configurable.\r\n\r\nConfiguration item can be configured with value or other configuration items. \r\nValue and configuration items are injected into the configuration item via constructor. An appropriate constructor is selected based on \r\nwhether the value is blank and configuration items are present:\r\n\r\n* Blank value, no configuration items - default constructor, if exists.\r\n* Non-blank value, no configuration items - a constructor which takes String, if exists.\r\n* Blank value, configuration items - a constructor which takes Context, if exists.\r\n* Otherwise - a constructor which takes String and Context in any order.\r\n\r\nIf configuration item\'s type is assignable from ``org.nasdanika.codegen.Provider``, then it gets instantiated using\r\neither the default constructor, if it exists and value is blank, or a constructor which takes String. The provider\'s ``get(Context)`` method is used\r\nto obtain actual configuration item.\r\n\r\nIf value is not blank, it is interpolated using properties already defined in the context and inherited from the parent context. \r\nInterpolation is the process of expanding tokens enclosed into double-curly brackets to the values of properties with corresponding names.\r\n\r\nIf a property with a given name is not defined, a token does not get expanded.\r\n\r\nExample:\r\n```\r\n{{base-package}}.impl\r\n```"
+		   });	
+		addAnnotation
+		  (getConfigurationItem_ValueType(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Configuration item value type. Defaults to ``java.lang.String``."
+		   });	
+		addAnnotation
+		  (getConfigurationItem_Value(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Configuration item value."
+		   });	
+		addAnnotation
+		  (getConfigurationItem_Default(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Regular configuration shadow/override configuration items defined in parent context(s),\r\ndefault configuration items, on the contrary, get shadowed by parent\'s configuration items\r\nwith the same keys."
+		   });	
+		addAnnotation
+		  (getConfigurationItem_Description(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Optional description."
+		   });	
+		addAnnotation
+		  (serviceEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Service is a configuration item keyed by its type or one of types it implements/extends.\r\n"
+		   });	
+		addAnnotation
+		  (getService_ServiceType(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Service type. Shall be a superclass or implemented interface of the value type.\r\nDefaults to value type."
+		   });	
+		addAnnotation
+		  (propertyEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Property is a configuration item keyed by a String."
+		   });	
+		addAnnotation
+		  (getProperty_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Property name."
+		   });	
+		addAnnotation
+		  (workFactoryEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Work factory creates work to be executed during generation."
+		   });	
+		addAnnotation
+		  (contextEDataType, 
+		   source, 
+		   new String[] {
+			 "documentation", "Context provides access to properties and services. Contexts are typically chained\r\nwith a child context \"inheriting\" properties and services of the parent context(s)."
+		   });	
+		addAnnotation
+		  (generatorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Generator is the base class for model element performing code generation."
+		   });	
+		addAnnotation
 		  (getGenerator__Validate__DiagnosticChain_Map(), 
 		   source, 
 		   new String[] {
@@ -1532,6 +1635,282 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Validation context."
+		   });	
+		addAnnotation
+		  (getGenerator_Iterator(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Iterator attribute may contain a fragment of Java code which controls\r\nhow many times the generator will be invoked and can modify generator\'s \r\ncontext for each invocation.\r\n\r\nThe iterator\'s code shall be a Java method body as shown below:\r\n\r\n```java\r\n<T extends Generator> Object iterate(Context context, T generator) throws Exception {\r\n    // --- Iterator code here ---\r\n}\r\n```\r\n\r\nwhere ``T`` is the type of the iterator declaring generator model element. \r\n\r\nIterator code may return one of the following:\r\n\r\n* ``null`` or ``false`` or empty collection - no iteration.\r\n* ``java.lang.Iterable`` with elements of type ``org.nasdanika.codegen.Context`` or an array containing ``Context`` elements - generator will be invoked for each element of array/iterable and the element will be passed to the generator as its context.\r\n* ``Context`` - single invocation with returned context.\r\n\r\nIf the iterator returns any other result, then the generator throws ``IllegalArgumentException``.\r\n\r\nBlank iterator code is equivalent to ``return context;``"
+		   });	
+		addAnnotation
+		  (groupEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Group of generators from which zero to all can be invoked during the generation process."
+		   });	
+		addAnnotation
+		  (getGroup_Selector(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Java code to select which group elements shall be invoked and to customize their contexts. Selector code is a Java method body as shown below\r\n\r\n```java\r\n<G extends Generator> Context select(Context context, G group, Generator element) throws Exception {\r\n    // --- Selector code here ---\r\n}\r\n```\r\n\r\nwhere ``G`` is the type of the selector declaring group model element and ``element`` is the group element being evaluated. \r\n\r\nIf selector returns ``null`` then given group element is not invoked during generation. Otherwise it is invoked with the returned context.\r\n\r\nBlank selector code is equivalent to ``return context;``"
+		   });	
+		addAnnotation
+		  (getGroup_Elements(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Group elements."
+		   });	
+		addAnnotation
+		  (resourceGeneratorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "ResourceGenerator generates a workspace resource - file or directory. "
+		   });	
+		addAnnotation
+		  (workspaceRootEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Workspace root does not really generate anything because there is only \r\none already existing workspace root. This model element is used for grouping projects."
+		   });	
+		addAnnotation
+		  (folderEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getFolder_Children(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (natureEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (fileEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getFile_Merger(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getFile_Generator(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (projectEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getProject_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getProject_Natures(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getProject_Resources(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getProject_ReconcileAction(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (resourceEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getResource_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getResource_ReconcileAction(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (binaryFileEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (textFileEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (reconcileActionEEnum, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (reconcileActionEEnum.getELiterals().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (reconcileActionEEnum.getELiterals().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (reconcileActionEEnum.getELiterals().get(2), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (reconcileActionEEnum.getELiterals().get(3), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (reconcileActionEEnum.getELiterals().get(4), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (resourceReferenceEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getResourceReference_Target(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (staticTextEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getStaticText_Content(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (contentReferenceEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getContentReference_Ref(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (filterEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getFilter_Generator(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (javaGeneratorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getJavaGenerator_ClassName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (interpolatorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (javaFilterEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getJavaFilter_ClassName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (providerEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (javaTextFilterEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (javaStreamFilterEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (javaTextGeneratorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (javaStreamGeneratorEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
 		   });
 	}
 

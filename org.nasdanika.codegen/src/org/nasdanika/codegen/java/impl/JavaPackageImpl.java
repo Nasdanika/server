@@ -483,6 +483,104 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 		initEDataType(iPackageFragmentRootEDataType, IPackageFragmentRoot.class, "IPackageFragmentRoot", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iPackageFragmentEDataType, IPackageFragment.class, "IPackageFragment", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(iCompilationUnitEDataType, ICompilationUnit.class, "ICompilationUnit", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+
+		// Create annotations
+		// http://www.eclipse.org/emf/2002/GenModel
+		createGenModelAnnotations();
+	}
+
+	/**
+	 * Initializes the annotations for <b>http://www.eclipse.org/emf/2002/GenModel</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createGenModelAnnotations() {
+		String source = "http://www.eclipse.org/emf/2002/GenModel";	
+		addAnnotation
+		  (javaNatureEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getJavaNature_Packagefragmentroots(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (packageFragmentRootEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getPackageFragmentRoot_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getPackageFragmentRoot_Packagefragments(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getPackageFragment_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getPackageFragment_Compilationunits(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (compilationUnitEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getCompilationUnit_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getCompilationUnit_Merge(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getCompilationUnit_Format(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (textCompilationUnitEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (getTextCompilationUnit_Generator(), 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });	
+		addAnnotation
+		  (structuredCompilationUnitEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "."
+		   });
 	}
 
 } //JavaPackageImpl

@@ -23,6 +23,7 @@ import org.nasdanika.codegen.Configurable;
 import org.nasdanika.codegen.ConfigurationItem;
 import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Generator;
+import org.nasdanika.codegen.GeneratorFilter;
 import org.nasdanika.codegen.util.CodegenValidator;
 
 /**
@@ -129,7 +130,7 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 		// -> specify the condition that violates the invariant
 		// -> verify the details of the diagnostic, including severity and message
 		// Ensure that you remove @generated or mark it @generated NOT
-		if (true) {
+		if (false) {
 			if (diagnostics != null) {
 				diagnostics.add
 					(new BasicDiagnostic
@@ -234,6 +235,11 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 	 */
 	@SuppressWarnings("unchecked")
 	protected Iterable<Context> iterate(Context context) throws Exception {
+		GeneratorFilter gf = context.get(GeneratorFilter.class);
+		if (gf != null && !gf.test(this)) {
+			Collections.emptySet();
+		}
+		
 		String iterator = getIterator();
 		if (iterator == null || iterator.trim().length() == 0) {
 			return Collections.singleton(context);

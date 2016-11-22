@@ -67,14 +67,12 @@
     <genClasses ecoreClass="codegen.ecore#//Group">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Group/T"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute codegen.ecore#//Group/selector"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Group/members"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Group/elements"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//ResourceGenerator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//ResourceGenerator/T"/>
     </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//WorkspaceRoot">
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//WorkspaceRoot/projects"/>
-    </genClasses>
+    <genClasses ecoreClass="codegen.ecore#//WorkspaceRoot"/>
     <genClasses ecoreClass="codegen.ecore#//Folder">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Folder/children"/>
     </genClasses>

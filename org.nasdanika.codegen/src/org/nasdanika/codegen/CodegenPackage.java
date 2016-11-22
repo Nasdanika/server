@@ -22,6 +22,9 @@ import org.eclipse.emf.ecore.EReference;
  *   <li>and each data type</li>
  * </ul>
  * <!-- end-user-doc -->
+ * <!-- begin-model-doc -->
+ * Code generation model.
+ * <!-- end-model-doc -->
  * @see org.nasdanika.codegen.CodegenFactory
  * @model kind="package"
  * @generated
@@ -635,13 +638,13 @@ public interface CodegenPackage extends EPackage {
 	int GROUP__SELECTOR = GENERATOR_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Members</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Elements</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int GROUP__MEMBERS = GENERATOR_FEATURE_COUNT + 1;
+	int GROUP__ELEMENTS = GENERATOR_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Group</em>' class.
@@ -778,7 +781,7 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT__PROPERTIES_REFERENCES = RESOURCE_GENERATOR__PROPERTIES_REFERENCES;
+	int WORKSPACE_ROOT__PROPERTIES_REFERENCES = GROUP__PROPERTIES_REFERENCES;
 
 	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
@@ -787,7 +790,7 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT__CONFIGURATION = RESOURCE_GENERATOR__CONFIGURATION;
+	int WORKSPACE_ROOT__CONFIGURATION = GROUP__CONFIGURATION;
 
 	/**
 	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
@@ -796,7 +799,7 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT__DEFAULT_PROPERTIES_REFERENCES = RESOURCE_GENERATOR__DEFAULT_PROPERTIES_REFERENCES;
+	int WORKSPACE_ROOT__DEFAULT_PROPERTIES_REFERENCES = GROUP__DEFAULT_PROPERTIES_REFERENCES;
 
 	/**
 	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
@@ -805,16 +808,25 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT__ITERATOR = RESOURCE_GENERATOR__ITERATOR;
+	int WORKSPACE_ROOT__ITERATOR = GROUP__ITERATOR;
 
 	/**
-	 * The feature id for the '<em><b>Projects</b></em>' containment reference list.
+	 * The feature id for the '<em><b>Selector</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT__PROJECTS = RESOURCE_GENERATOR_FEATURE_COUNT + 0;
+	int WORKSPACE_ROOT__SELECTOR = GROUP__SELECTOR;
+
+	/**
+	 * The feature id for the '<em><b>Elements</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WORKSPACE_ROOT__ELEMENTS = GROUP__ELEMENTS;
 
 	/**
 	 * The number of structural features of the '<em>Workspace Root</em>' class.
@@ -823,7 +835,7 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT_FEATURE_COUNT = RESOURCE_GENERATOR_FEATURE_COUNT + 1;
+	int WORKSPACE_ROOT_FEATURE_COUNT = GROUP_FEATURE_COUNT + 0;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.
@@ -832,7 +844,7 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT___CREATE_CONTEXT__CONTEXT = RESOURCE_GENERATOR___CREATE_CONTEXT__CONTEXT;
+	int WORKSPACE_ROOT___CREATE_CONTEXT__CONTEXT = GROUP___CREATE_CONTEXT__CONTEXT;
 
 	/**
 	 * The operation id for the '<em>Validate</em>' operation.
@@ -841,7 +853,7 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT___VALIDATE__DIAGNOSTICCHAIN_MAP = RESOURCE_GENERATOR___VALIDATE__DIAGNOSTICCHAIN_MAP;
+	int WORKSPACE_ROOT___VALIDATE__DIAGNOSTICCHAIN_MAP = GROUP___VALIDATE__DIAGNOSTICCHAIN_MAP;
 
 	/**
 	 * The number of operations of the '<em>Workspace Root</em>' class.
@@ -850,7 +862,7 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WORKSPACE_ROOT_OPERATION_COUNT = RESOURCE_GENERATOR_OPERATION_COUNT + 0;
+	int WORKSPACE_ROOT_OPERATION_COUNT = GROUP_OPERATION_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.codegen.impl.ResourceImpl <em>Resource</em>}' class.
@@ -3008,15 +3020,15 @@ public interface CodegenPackage extends EPackage {
 	EAttribute getGroup_Selector();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.codegen.Group#getMembers <em>Members</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.codegen.Group#getElements <em>Elements</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Members</em>'.
-	 * @see org.nasdanika.codegen.Group#getMembers()
+	 * @return the meta object for the containment reference list '<em>Elements</em>'.
+	 * @see org.nasdanika.codegen.Group#getElements()
 	 * @see #getGroup()
 	 * @generated
 	 */
-	EReference getGroup_Members();
+	EReference getGroup_Elements();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.codegen.ResourceGenerator <em>Resource Generator</em>}'.
@@ -3037,17 +3049,6 @@ public interface CodegenPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getWorkspaceRoot();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.codegen.WorkspaceRoot#getProjects <em>Projects</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Projects</em>'.
-	 * @see org.nasdanika.codegen.WorkspaceRoot#getProjects()
-	 * @see #getWorkspaceRoot()
-	 * @generated
-	 */
-	EReference getWorkspaceRoot_Projects();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.codegen.Folder <em>Folder</em>}'.
@@ -3745,12 +3746,12 @@ public interface CodegenPackage extends EPackage {
 		EAttribute GROUP__SELECTOR = eINSTANCE.getGroup_Selector();
 
 		/**
-		 * The meta object literal for the '<em><b>Members</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Elements</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference GROUP__MEMBERS = eINSTANCE.getGroup_Members();
+		EReference GROUP__ELEMENTS = eINSTANCE.getGroup_Elements();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.codegen.impl.ResourceGeneratorImpl <em>Resource Generator</em>}' class.
@@ -3771,14 +3772,6 @@ public interface CodegenPackage extends EPackage {
 		 * @generated
 		 */
 		EClass WORKSPACE_ROOT = eINSTANCE.getWorkspaceRoot();
-
-		/**
-		 * The meta object literal for the '<em><b>Projects</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference WORKSPACE_ROOT__PROJECTS = eINSTANCE.getWorkspaceRoot_Projects();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.codegen.impl.FolderImpl <em>Folder</em>}' class.

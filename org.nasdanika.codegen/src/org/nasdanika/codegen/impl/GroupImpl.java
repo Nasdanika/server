@@ -23,7 +23,7 @@ import org.nasdanika.codegen.Work;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.codegen.impl.GroupImpl#getSelector <em>Selector</em>}</li>
- *   <li>{@link org.nasdanika.codegen.impl.GroupImpl#getMembers <em>Members</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.GroupImpl#getElements <em>Elements</em>}</li>
  * </ul>
  *
  * @generated
@@ -72,8 +72,8 @@ public class GroupImpl<T> extends GeneratorImpl<T> implements Group<T> {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Generator<T>> getMembers() {
-		return (EList<Generator<T>>)eGet(CodegenPackage.Literals.GROUP__MEMBERS, true);
+	public EList<Generator<T>> getElements() {
+		return (EList<Generator<T>>)eGet(CodegenPackage.Literals.GROUP__ELEMENTS, true);
 	}
 
 	@Override
