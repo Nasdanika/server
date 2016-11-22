@@ -129,7 +129,7 @@ public abstract class GeneratorImpl<T> extends CDOObjectImpl implements Generato
 		// -> specify the condition that violates the invariant
 		// -> verify the details of the diagnostic, including severity and message
 		// Ensure that you remove @generated or mark it @generated NOT
-		if (false) {
+		if (true) {
 			if (diagnostics != null) {
 				diagnostics.add
 					(new BasicDiagnostic

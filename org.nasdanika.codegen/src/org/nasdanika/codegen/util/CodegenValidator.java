@@ -99,10 +99,23 @@ public class CodegenValidator extends EObjectValidator {
 	 * Calls <code>validateXXX</code> for the corresponding classifier of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	protected boolean validate(int classifierID, Object value, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		// TODO - inject project class loader into context if not there yet.
+		return validateGen(classifierID, value, diagnostics, context);
+	}
+	
+	/**
+	 * @generated
+	 * @param classifierID
+	 * @param value
+	 * @param diagnostics
+	 * @param context
+	 * @return
+	 */
+	private boolean validateGen(int classifierID, Object value, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		switch (classifierID) {
 			case CodegenPackage.CONFIGURABLE:
 				return validateConfigurable((Configurable)value, diagnostics, context);
