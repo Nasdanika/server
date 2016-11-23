@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Generates IFolder.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -38,7 +38,7 @@ public interface Folder extends Resource<IFolder> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Folder can contain other resource generators.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Children</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getFolder_Children()

@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.codegen.CodegenPackage;
-import org.nasdanika.codegen.Configurable;
+import org.nasdanika.codegen.Configuration;
 import org.nasdanika.codegen.ConfigurationItem;
 import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Provider;
@@ -26,9 +26,12 @@ import org.nasdanika.codegen.Provider;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getPropertiesReferences <em>Properties References</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getIncludes <em>Includes</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getConfiguration <em>Configuration</em>}</li>
- *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getDefaultPropertiesReferences <em>Default Properties References</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getDefaultIncludes <em>Default Includes</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getBaseURL <em>Base URL</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getClassPath <em>Class Path</em>}</li>
+ *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getInclude <em>Include</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getValueType <em>Value Type</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.nasdanika.codegen.impl.ConfigurationItemImpl#isDefault <em>Default</em>}</li>
@@ -73,8 +76,8 @@ public abstract class ConfigurationItemImpl extends CDOObjectImpl implements Con
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<String> getPropertiesReferences() {
-		return (EList<String>)eGet(CodegenPackage.Literals.CONFIGURABLE__PROPERTIES_REFERENCES, true);
+	public EList<String> getIncludes() {
+		return (EList<String>)eGet(CodegenPackage.Literals.CONFIGURATION__INCLUDES, true);
 	}
 
 	/**
@@ -84,7 +87,7 @@ public abstract class ConfigurationItemImpl extends CDOObjectImpl implements Con
 	 */
 	@SuppressWarnings("unchecked")
 	public EList<ConfigurationItem> getConfiguration() {
-		return (EList<ConfigurationItem>)eGet(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION, true);
+		return (EList<ConfigurationItem>)eGet(CodegenPackage.Literals.CONFIGURATION__CONFIGURATION, true);
 	}
 
 	/**
@@ -93,8 +96,46 @@ public abstract class ConfigurationItemImpl extends CDOObjectImpl implements Con
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<String> getDefaultPropertiesReferences() {
-		return (EList<String>)eGet(CodegenPackage.Literals.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES, true);
+	public EList<String> getDefaultIncludes() {
+		return (EList<String>)eGet(CodegenPackage.Literals.CONFIGURATION__DEFAULT_INCLUDES, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getBaseURL() {
+		return (String)eGet(CodegenPackage.Literals.CONFIGURATION__BASE_URL, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setBaseURL(String newBaseURL) {
+		eSet(CodegenPackage.Literals.CONFIGURATION__BASE_URL, newBaseURL);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<String> getClassPath() {
+		return (EList<String>)eGet(CodegenPackage.Literals.CONFIGURATION__CLASS_PATH, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<Configuration> getInclude() {
+		return (EList<Configuration>)eGet(CodegenPackage.Literals.CONFIGURATION__INCLUDE, true);
 	}
 
 	/**
@@ -187,11 +228,14 @@ public abstract class ConfigurationItemImpl extends CDOObjectImpl implements Con
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == Configurable.class) {
+		if (baseClass == Configuration.class) {
 			switch (derivedFeatureID) {
-				case CodegenPackage.CONFIGURATION_ITEM__PROPERTIES_REFERENCES: return CodegenPackage.CONFIGURABLE__PROPERTIES_REFERENCES;
-				case CodegenPackage.CONFIGURATION_ITEM__CONFIGURATION: return CodegenPackage.CONFIGURABLE__CONFIGURATION;
-				case CodegenPackage.CONFIGURATION_ITEM__DEFAULT_PROPERTIES_REFERENCES: return CodegenPackage.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES;
+				case CodegenPackage.CONFIGURATION_ITEM__INCLUDES: return CodegenPackage.CONFIGURATION__INCLUDES;
+				case CodegenPackage.CONFIGURATION_ITEM__CONFIGURATION: return CodegenPackage.CONFIGURATION__CONFIGURATION;
+				case CodegenPackage.CONFIGURATION_ITEM__DEFAULT_INCLUDES: return CodegenPackage.CONFIGURATION__DEFAULT_INCLUDES;
+				case CodegenPackage.CONFIGURATION_ITEM__BASE_URL: return CodegenPackage.CONFIGURATION__BASE_URL;
+				case CodegenPackage.CONFIGURATION_ITEM__CLASS_PATH: return CodegenPackage.CONFIGURATION__CLASS_PATH;
+				case CodegenPackage.CONFIGURATION_ITEM__INCLUDE: return CodegenPackage.CONFIGURATION__INCLUDE;
 				default: return -1;
 			}
 		}
@@ -205,11 +249,14 @@ public abstract class ConfigurationItemImpl extends CDOObjectImpl implements Con
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == Configurable.class) {
+		if (baseClass == Configuration.class) {
 			switch (baseFeatureID) {
-				case CodegenPackage.CONFIGURABLE__PROPERTIES_REFERENCES: return CodegenPackage.CONFIGURATION_ITEM__PROPERTIES_REFERENCES;
-				case CodegenPackage.CONFIGURABLE__CONFIGURATION: return CodegenPackage.CONFIGURATION_ITEM__CONFIGURATION;
-				case CodegenPackage.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES: return CodegenPackage.CONFIGURATION_ITEM__DEFAULT_PROPERTIES_REFERENCES;
+				case CodegenPackage.CONFIGURATION__INCLUDES: return CodegenPackage.CONFIGURATION_ITEM__INCLUDES;
+				case CodegenPackage.CONFIGURATION__CONFIGURATION: return CodegenPackage.CONFIGURATION_ITEM__CONFIGURATION;
+				case CodegenPackage.CONFIGURATION__DEFAULT_INCLUDES: return CodegenPackage.CONFIGURATION_ITEM__DEFAULT_INCLUDES;
+				case CodegenPackage.CONFIGURATION__BASE_URL: return CodegenPackage.CONFIGURATION_ITEM__BASE_URL;
+				case CodegenPackage.CONFIGURATION__CLASS_PATH: return CodegenPackage.CONFIGURATION_ITEM__CLASS_PATH;
+				case CodegenPackage.CONFIGURATION__INCLUDE: return CodegenPackage.CONFIGURATION_ITEM__INCLUDE;
 				default: return -1;
 			}
 		}
@@ -223,9 +270,9 @@ public abstract class ConfigurationItemImpl extends CDOObjectImpl implements Con
 	 */
 	@Override
 	public int eDerivedOperationID(int baseOperationID, Class<?> baseClass) {
-		if (baseClass == Configurable.class) {
+		if (baseClass == Configuration.class) {
 			switch (baseOperationID) {
-				case CodegenPackage.CONFIGURABLE___CREATE_CONTEXT__CONTEXT: return CodegenPackage.CONFIGURATION_ITEM___CREATE_CONTEXT__CONTEXT;
+				case CodegenPackage.CONFIGURATION___CREATE_CONTEXT__CONTEXT: return CodegenPackage.CONFIGURATION_ITEM___CREATE_CONTEXT__CONTEXT;
 				default: return -1;
 			}
 		}

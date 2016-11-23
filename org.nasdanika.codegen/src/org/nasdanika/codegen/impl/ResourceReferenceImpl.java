@@ -5,6 +5,7 @@ package org.nasdanika.codegen.impl;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
@@ -67,12 +68,6 @@ public class ResourceReferenceImpl extends ResourceImpl<IResource> implements Re
 	public void setTarget(Resource<IResource> newTarget) {
 		eSet(CodegenPackage.Literals.RESOURCE_REFERENCE__TARGET, newTarget);
 	}
-
-	@Override
-	public Work<List<IResource>> createWork(Context context) throws Exception {
-		Resource<IResource> target = getTarget();
-		return target == null ? null : target.createWork(context);
-	}
 	
 	@Override
 	public boolean validate(DiagnosticChain diagnostics, Map<Object, Object> context) {
@@ -87,6 +82,20 @@ public class ResourceReferenceImpl extends ResourceImpl<IResource> implements Re
 					 new Object [] { this }));
 		}
 		return super.validate(diagnostics, context) && isValid;
+	}
+
+	@Override
+	public Work<List<IResource>> createWork(Context context, IProgressMonitor monitor) throws Exception {
+		
+		// TODO Iteration, context creation, ...
+		Resource<IResource> target = getTarget();
+		return target == null ? null : target.createWork(context, monitor);
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		Resource<IResource> target = getTarget();
+		return target == null ? 0 : target.getWorkFactorySize();
 	}
 
 } //ResourceReferenceImpl

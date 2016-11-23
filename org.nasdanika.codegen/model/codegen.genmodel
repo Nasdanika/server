@@ -33,12 +33,15 @@
     <genDataTypes ecoreDataType="codegen.ecore#//Merger">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//Merger/T"/>
     </genDataTypes>
-    <genClasses ecoreClass="codegen.ecore#//Configurable">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configurable/propertiesReferences"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Configurable/configuration"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configurable/defaultPropertiesReferences"/>
-      <genOperations ecoreOperation="codegen.ecore#//Configurable/createContext">
-        <genParameters ecoreParameter="codegen.ecore#//Configurable/createContext/parent"/>
+    <genClasses ecoreClass="codegen.ecore#//Configuration">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configuration/includes"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Configuration/configuration"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configuration/defaultIncludes"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configuration/baseURL"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//Configuration/classPath"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference codegen.ecore#//Configuration/include"/>
+      <genOperations ecoreOperation="codegen.ecore#//Configuration/createContext">
+        <genParameters ecoreParameter="codegen.ecore#//Configuration/createContext/parent"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//ConfigurationItem">
@@ -72,7 +75,7 @@
     <genClasses ecoreClass="codegen.ecore#//ResourceGenerator">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//ResourceGenerator/T"/>
     </genClasses>
-    <genClasses ecoreClass="codegen.ecore#//WorkspaceRoot"/>
+    <genClasses ecoreClass="codegen.ecore#//Workspace"/>
     <genClasses ecoreClass="codegen.ecore#//Folder">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//Folder/children"/>
     </genClasses>
@@ -114,6 +117,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JavaGenerator/className"/>
     </genClasses>
     <genClasses ecoreClass="codegen.ecore#//Interpolator"/>
+    <genClasses ecoreClass="codegen.ecore#//JETEmitter">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JETEmitter/templateURI"/>
+    </genClasses>
     <genClasses ecoreClass="codegen.ecore#//JavaFilter">
       <genTypeParameters ecoreTypeParameter="codegen.ecore#//JavaFilter/T"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute codegen.ecore#//JavaFilter/className"/>
@@ -154,7 +160,9 @@
     </nestedGenPackages>
     <nestedGenPackages prefix="Maven" basePackage="org.nasdanika.codegen" disposableProviderFactory="true"
         ecorePackage="codegen.ecore#//maven">
-      <genClasses ecoreClass="codegen.ecore#//maven/MavenNature"/>
+      <genClasses ecoreClass="codegen.ecore#//maven/MavenNature">
+        <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference codegen.ecore#//maven/MavenNature/pomGenerator"/>
+      </genClasses>
     </nestedGenPackages>
   </genPackages>
 </genmodel:GenModel>

@@ -20,11 +20,11 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionDelegate;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-import org.nasdanika.codegen.WorkspaceRoot;
+import org.nasdanika.codegen.Workspace;
 
 public class GenerateAction extends ActionDelegate {
 	
-	private WorkspaceRoot workspaceRoot;
+	private Workspace workspaceRoot;
 
 	@Override
 	public void run(IAction action) {
@@ -101,8 +101,8 @@ public class GenerateAction extends ActionDelegate {
 	public void selectionChanged(IAction action, ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
 			Object object = ((IStructuredSelection) selection).getFirstElement();
-			if (object instanceof WorkspaceRoot) {
-				workspaceRoot = (WorkspaceRoot) object;
+			if (object instanceof Workspace) {
+				workspaceRoot = (Workspace) object;
 				action.setEnabled(true);
 				return;
 			}

@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IProjectNature;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Generates project nature, e.g. Java or Maven nature.
  * <!-- end-model-doc -->
  *
  *

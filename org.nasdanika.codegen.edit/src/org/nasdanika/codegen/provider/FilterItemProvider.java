@@ -103,7 +103,7 @@ public class FilterItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = crop(((Filter<?>)object).getIterator());
+		String label = ((Filter<?>)object).getBaseURL();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Filter_type") :
 			getString("_UI_Filter_type") + " " + label;
@@ -148,7 +148,7 @@ public class FilterItemProvider extends GeneratorItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.FILTER__GENERATOR,
-				 CodegenFactory.eINSTANCE.createWorkspaceRoot()));
+				 CodegenFactory.eINSTANCE.createWorkspace()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -189,6 +189,11 @@ public class FilterItemProvider extends GeneratorItemProvider {
 			(createChildParameter
 				(CodegenPackage.Literals.FILTER__GENERATOR,
 				 CodegenFactory.eINSTANCE.createInterpolator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.FILTER__GENERATOR,
+				 CodegenFactory.eINSTANCE.createJETEmitter()));
 
 		newChildDescriptors.add
 			(createChildParameter

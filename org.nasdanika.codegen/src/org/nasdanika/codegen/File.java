@@ -10,7 +10,7 @@ import org.eclipse.core.resources.IFile;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Generates IFile.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -36,7 +36,9 @@ public interface File<C> extends Resource<IFile> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * If reconcile action is ``Merge`` then merger gets instantiated to merge existing and new
+	 * content of the file. The merger class shall implement ``org.nasdanika.codegen.Merger<T>`` 
+	 * where ``T`` is ``String` for text files and ``InputStream`` for binary files.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Merger</em>' containment reference.
 	 * @see #setMerger(Service)
@@ -65,7 +67,7 @@ public interface File<C> extends Resource<IFile> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * File content generator.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Generator</em>' containment reference.
 	 * @see #setGenerator(Generator)

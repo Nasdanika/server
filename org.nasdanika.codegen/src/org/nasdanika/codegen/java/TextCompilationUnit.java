@@ -10,7 +10,7 @@ import org.nasdanika.codegen.Generator;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Text compilation units uses a text generator to produce its content.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -34,7 +34,7 @@ public interface TextCompilationUnit extends CompilationUnit {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Generator to produce compilation unit content.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Generator</em>' containment reference.
 	 * @see #setGenerator(Generator)

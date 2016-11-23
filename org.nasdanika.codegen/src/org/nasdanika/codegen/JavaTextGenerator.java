@@ -9,7 +9,7 @@ package org.nasdanika.codegen;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * ``String`` binding of JavaGenerator.
  * <!-- end-model-doc -->
  *
  *

@@ -4,6 +4,7 @@ package org.nasdanika.codegen.impl;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
@@ -61,9 +62,15 @@ public abstract class JavaGeneratorImpl<T> extends GeneratorImpl<T> implements J
 	public void setClassName(String newClassName) {
 		eSet(CodegenPackage.Literals.JAVA_GENERATOR__CLASS_NAME, newClassName);
 	}
-
+	
 	@Override
-	public Work<List<T>> createWork(Context context) throws Exception {
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+	
+	@Override
+	public Work<List<T>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
 	}

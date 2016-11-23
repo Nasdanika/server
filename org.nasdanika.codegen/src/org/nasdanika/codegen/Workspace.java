@@ -10,15 +10,14 @@ import org.eclipse.core.resources.IProject;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * Workspace root does not really generate anything because there is only 
- * one already existing workspace root. This model element is used for grouping projects.
+ * Workspace is a group of projects.
  * <!-- end-model-doc -->
  *
  *
- * @see org.nasdanika.codegen.CodegenPackage#getWorkspaceRoot()
+ * @see org.nasdanika.codegen.CodegenPackage#getWorkspace()
  * @model superTypes="org.nasdanika.codegen.Group<org.nasdanika.codegen.IProject>"
  * @generated
  */
-public interface WorkspaceRoot extends Group<IProject> {
+public interface Workspace extends Group<IProject> {
 
 } // WorkspaceRoot

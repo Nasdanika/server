@@ -61,27 +61,30 @@ public class GeneratorItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addPropertiesReferencesPropertyDescriptor(object);
-			addDefaultPropertiesReferencesPropertyDescriptor(object);
+			addIncludesPropertyDescriptor(object);
+			addDefaultIncludesPropertyDescriptor(object);
+			addBaseURLPropertyDescriptor(object);
+			addClassPathPropertyDescriptor(object);
+			addIncludePropertyDescriptor(object);
 			addIteratorPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Properties References feature.
+	 * This adds a property descriptor for the Includes feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addPropertiesReferencesPropertyDescriptor(Object object) {
+	protected void addIncludesPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Configurable_propertiesReferences_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Configurable_propertiesReferences_feature", "_UI_Configurable_type"),
-				 CodegenPackage.Literals.CONFIGURABLE__PROPERTIES_REFERENCES,
+				 getString("_UI_Configuration_includes_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Configuration_includes_feature", "_UI_Configuration_type"),
+				 CodegenPackage.Literals.CONFIGURATION__INCLUDES,
 				 true,
 				 false,
 				 false,
@@ -91,23 +94,89 @@ public class GeneratorItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Default Properties References feature.
+	 * This adds a property descriptor for the Default Includes feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addDefaultPropertiesReferencesPropertyDescriptor(Object object) {
+	protected void addDefaultIncludesPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Configurable_defaultPropertiesReferences_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Configurable_defaultPropertiesReferences_feature", "_UI_Configurable_type"),
-				 CodegenPackage.Literals.CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES,
+				 getString("_UI_Configuration_defaultIncludes_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Configuration_defaultIncludes_feature", "_UI_Configuration_type"),
+				 CodegenPackage.Literals.CONFIGURATION__DEFAULT_INCLUDES,
 				 true,
 				 false,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Base URL feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addBaseURLPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Configuration_baseURL_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Configuration_baseURL_feature", "_UI_Configuration_type"),
+				 CodegenPackage.Literals.CONFIGURATION__BASE_URL,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Class Path feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addClassPathPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Configuration_classPath_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Configuration_classPath_feature", "_UI_Configuration_type"),
+				 CodegenPackage.Literals.CONFIGURATION__CLASS_PATH,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Include feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addIncludePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Configuration_include_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Configuration_include_feature", "_UI_Configuration_type"),
+				 CodegenPackage.Literals.CONFIGURATION__INCLUDE,
+				 true,
+				 false,
+				 true,
+				 null,
 				 null,
 				 null));
 	}
@@ -146,7 +215,7 @@ public class GeneratorItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION);
+			childrenFeatures.add(CodegenPackage.Literals.CONFIGURATION__CONFIGURATION);
 		}
 		return childrenFeatures;
 	}
@@ -183,7 +252,7 @@ public class GeneratorItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = crop(((Generator<?>)object).getIterator());
+		String label = ((Generator<?>)object).getBaseURL();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Generator_type") :
 			getString("_UI_Generator_type") + " " + label;
@@ -202,8 +271,10 @@ public class GeneratorItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Generator.class)) {
-			case CodegenPackage.GENERATOR__PROPERTIES_REFERENCES:
-			case CodegenPackage.GENERATOR__DEFAULT_PROPERTIES_REFERENCES:
+			case CodegenPackage.GENERATOR__INCLUDES:
+			case CodegenPackage.GENERATOR__DEFAULT_INCLUDES:
+			case CodegenPackage.GENERATOR__BASE_URL:
+			case CodegenPackage.GENERATOR__CLASS_PATH:
 			case CodegenPackage.GENERATOR__ITERATOR:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
@@ -227,12 +298,12 @@ public class GeneratorItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION,
+				(CodegenPackage.Literals.CONFIGURATION__CONFIGURATION,
 				 CodegenFactory.eINSTANCE.createService()));
 
 		newChildDescriptors.add
 			(createChildParameter
-				(CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION,
+				(CodegenPackage.Literals.CONFIGURATION__CONFIGURATION,
 				 CodegenFactory.eINSTANCE.createProperty()));
 	}
 

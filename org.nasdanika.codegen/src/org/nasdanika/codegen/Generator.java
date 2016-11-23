@@ -24,10 +24,10 @@ import org.eclipse.emf.common.util.DiagnosticChain;
  * </ul>
  *
  * @see org.nasdanika.codegen.CodegenPackage#getGenerator()
- * @model abstract="true" superTypes="org.nasdanika.codegen.WorkFactory<org.nasdanika.codegen.List<T>> org.nasdanika.codegen.Configurable"
+ * @model abstract="true" superTypes="org.nasdanika.codegen.WorkFactory<org.nasdanika.codegen.List<T>> org.nasdanika.codegen.Configuration"
  * @generated
  */
-public interface Generator<T> extends WorkFactory<List<T>>, Configurable {
+public interface Generator<T> extends WorkFactory<List<T>>, Configuration {
 
 	/**
 	 * Returns the value of the '<em><b>Iterator</b></em>' attribute.

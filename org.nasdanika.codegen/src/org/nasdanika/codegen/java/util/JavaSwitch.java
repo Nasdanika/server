@@ -7,7 +7,7 @@ import org.eclipse.emf.ecore.EPackage;
 
 import org.eclipse.emf.ecore.util.Switch;
 
-import org.nasdanika.codegen.Configurable;
+import org.nasdanika.codegen.Configuration;
 import org.nasdanika.codegen.Generator;
 import org.nasdanika.codegen.WorkFactory;
 import org.nasdanika.codegen.Nature;
@@ -77,7 +77,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseNature(javaNature);
 				if (result == null) result = caseGenerator(javaNature);
 				if (result == null) result = caseWorkFactory(javaNature);
-				if (result == null) result = caseConfigurable(javaNature);
+				if (result == null) result = caseConfiguration(javaNature);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -86,7 +86,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				T1 result = casePackageFragmentRoot(packageFragmentRoot);
 				if (result == null) result = caseGenerator(packageFragmentRoot);
 				if (result == null) result = caseWorkFactory(packageFragmentRoot);
-				if (result == null) result = caseConfigurable(packageFragmentRoot);
+				if (result == null) result = caseConfiguration(packageFragmentRoot);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -95,7 +95,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				T1 result = casePackageFragment(packageFragment);
 				if (result == null) result = caseGenerator(packageFragment);
 				if (result == null) result = caseWorkFactory(packageFragment);
-				if (result == null) result = caseConfigurable(packageFragment);
+				if (result == null) result = caseConfiguration(packageFragment);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -104,7 +104,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				T1 result = caseCompilationUnit(compilationUnit);
 				if (result == null) result = caseGenerator(compilationUnit);
 				if (result == null) result = caseWorkFactory(compilationUnit);
-				if (result == null) result = caseConfigurable(compilationUnit);
+				if (result == null) result = caseConfiguration(compilationUnit);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -114,7 +114,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseCompilationUnit(textCompilationUnit);
 				if (result == null) result = caseGenerator(textCompilationUnit);
 				if (result == null) result = caseWorkFactory(textCompilationUnit);
-				if (result == null) result = caseConfigurable(textCompilationUnit);
+				if (result == null) result = caseConfiguration(textCompilationUnit);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -124,7 +124,7 @@ public class JavaSwitch<T1> extends Switch<T1> {
 				if (result == null) result = caseCompilationUnit(structuredCompilationUnit);
 				if (result == null) result = caseGenerator(structuredCompilationUnit);
 				if (result == null) result = caseWorkFactory(structuredCompilationUnit);
-				if (result == null) result = caseConfigurable(structuredCompilationUnit);
+				if (result == null) result = caseConfiguration(structuredCompilationUnit);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -238,17 +238,17 @@ public class JavaSwitch<T1> extends Switch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Configurable</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Configuration</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Configurable</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Configuration</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseConfigurable(Configurable object) {
+	public T1 caseConfiguration(Configuration object) {
 		return null;
 	}
 

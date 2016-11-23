@@ -5,6 +5,7 @@ package org.nasdanika.codegen.maven;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 
+import org.eclipse.emf.ecore.EReference;
 import org.nasdanika.codegen.CodegenPackage;
 
 /**
@@ -67,13 +68,13 @@ public interface MavenPackage extends EPackage {
 	int MAVEN_NATURE = 0;
 
 	/**
-	 * The feature id for the '<em><b>Properties References</b></em>' attribute list.
+	 * The feature id for the '<em><b>Includes</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MAVEN_NATURE__PROPERTIES_REFERENCES = CodegenPackage.NATURE__PROPERTIES_REFERENCES;
+	int MAVEN_NATURE__INCLUDES = CodegenPackage.NATURE__INCLUDES;
 
 	/**
 	 * The feature id for the '<em><b>Configuration</b></em>' containment reference list.
@@ -85,13 +86,40 @@ public interface MavenPackage extends EPackage {
 	int MAVEN_NATURE__CONFIGURATION = CodegenPackage.NATURE__CONFIGURATION;
 
 	/**
-	 * The feature id for the '<em><b>Default Properties References</b></em>' attribute list.
+	 * The feature id for the '<em><b>Default Includes</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MAVEN_NATURE__DEFAULT_PROPERTIES_REFERENCES = CodegenPackage.NATURE__DEFAULT_PROPERTIES_REFERENCES;
+	int MAVEN_NATURE__DEFAULT_INCLUDES = CodegenPackage.NATURE__DEFAULT_INCLUDES;
+
+	/**
+	 * The feature id for the '<em><b>Base URL</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAVEN_NATURE__BASE_URL = CodegenPackage.NATURE__BASE_URL;
+
+	/**
+	 * The feature id for the '<em><b>Class Path</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAVEN_NATURE__CLASS_PATH = CodegenPackage.NATURE__CLASS_PATH;
+
+	/**
+	 * The feature id for the '<em><b>Include</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAVEN_NATURE__INCLUDE = CodegenPackage.NATURE__INCLUDE;
 
 	/**
 	 * The feature id for the '<em><b>Iterator</b></em>' attribute.
@@ -103,13 +131,22 @@ public interface MavenPackage extends EPackage {
 	int MAVEN_NATURE__ITERATOR = CodegenPackage.NATURE__ITERATOR;
 
 	/**
+	 * The feature id for the '<em><b>Pom Generator</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAVEN_NATURE__POM_GENERATOR = CodegenPackage.NATURE_FEATURE_COUNT + 0;
+
+	/**
 	 * The number of structural features of the '<em>Nature</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MAVEN_NATURE_FEATURE_COUNT = CodegenPackage.NATURE_FEATURE_COUNT + 0;
+	int MAVEN_NATURE_FEATURE_COUNT = CodegenPackage.NATURE_FEATURE_COUNT + 1;
 
 	/**
 	 * The operation id for the '<em>Create Context</em>' operation.
@@ -150,6 +187,17 @@ public interface MavenPackage extends EPackage {
 	EClass getMavenNature();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.codegen.maven.MavenNature#getPomGenerator <em>Pom Generator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Pom Generator</em>'.
+	 * @see org.nasdanika.codegen.maven.MavenNature#getPomGenerator()
+	 * @see #getMavenNature()
+	 * @generated
+	 */
+	EReference getMavenNature_PomGenerator();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -181,6 +229,13 @@ public interface MavenPackage extends EPackage {
 		 * @generated
 		 */
 		EClass MAVEN_NATURE = eINSTANCE.getMavenNature();
+		/**
+		 * The meta object literal for the '<em><b>Pom Generator</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MAVEN_NATURE__POM_GENERATOR = eINSTANCE.getMavenNature_PomGenerator();
 
 	}
 

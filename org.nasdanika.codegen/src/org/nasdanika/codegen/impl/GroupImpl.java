@@ -4,6 +4,7 @@ package org.nasdanika.codegen.impl;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -77,9 +78,15 @@ public class GroupImpl<T> extends GeneratorImpl<T> implements Group<T> {
 	}
 
 	@Override
-	public Work<List<T>> createWork(Context context) throws Exception {
+	public Work<List<T>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 } //GroupImpl

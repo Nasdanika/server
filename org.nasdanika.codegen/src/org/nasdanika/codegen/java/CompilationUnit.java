@@ -12,7 +12,7 @@ import org.nasdanika.codegen.Generator;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Compilation unit.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -38,7 +38,7 @@ public interface CompilationUnit extends Generator<ICompilationUnit> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Compilation unit name without ``.java`` extension. Interpolated.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -68,7 +68,7 @@ public interface CompilationUnit extends Generator<ICompilationUnit> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * If true, new and old compilation unit content gets merged with ``org.eclipse.emf.codegen.merge.java.JMerger``.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Merge</em>' attribute.
 	 * @see #setMerge(boolean)
@@ -98,7 +98,7 @@ public interface CompilationUnit extends Generator<ICompilationUnit> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * If true, generated/merged source is automatically formatted.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Format</em>' attribute.
 	 * @see #setFormat(boolean)

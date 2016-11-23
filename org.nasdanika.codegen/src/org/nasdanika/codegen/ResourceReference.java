@@ -11,7 +11,7 @@ import org.eclipse.core.resources.IResource;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Reference to a resource generator defined elsewhere.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -35,7 +35,7 @@ public interface ResourceReference extends Resource<IResource> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Reference target.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Target</em>' reference.
 	 * @see #setTarget(Resource)

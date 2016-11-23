@@ -9,7 +9,8 @@ package org.nasdanika.codegen;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Interpolator produces output by expanding mustache tokens ``{{token}}`` in the 
+ * input using context properties.
  * <!-- end-model-doc -->
  *
  *

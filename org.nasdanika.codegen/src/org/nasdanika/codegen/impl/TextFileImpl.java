@@ -5,6 +5,7 @@ package org.nasdanika.codegen.impl;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
@@ -40,9 +41,15 @@ public class TextFileImpl extends FileImpl<String> implements TextFile {
 	}
 
 	@Override
-	public Work<List<IFile>> createWork(Context context) throws Exception {
+	public Work<List<IFile>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 } //TextFileImpl

@@ -12,7 +12,7 @@ import org.nasdanika.codegen.Nature;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Java nature.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -37,7 +37,7 @@ public interface JavaNature extends Nature {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Package fragments roots (source folders).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Packagefragmentroots</em>' containment reference list.
 	 * @see org.nasdanika.codegen.java.JavaPackage#getJavaNature_Packagefragmentroots()

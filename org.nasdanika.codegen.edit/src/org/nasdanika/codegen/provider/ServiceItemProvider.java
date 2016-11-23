@@ -91,7 +91,7 @@ public class ServiceItemProvider extends ConfigurationItemItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = ((Service)object).getValueType();
+		String label = ((Service)object).getBaseURL();
 		return label == null || label.length() == 0 ?
 			getString("_UI_Service_type") :
 			getString("_UI_Service_type") + " " + label;

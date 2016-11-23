@@ -8,7 +8,7 @@ package org.nasdanika.codegen;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Generates project resource - file or directory.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -33,7 +33,7 @@ public interface Resource<T> extends ResourceGenerator<T> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Resource name. Interpolated. May be a path name, i.e. contain separators, e.g. ``mydir/myfile.txt``
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -64,7 +64,7 @@ public interface Resource<T> extends ResourceGenerator<T> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Action to take if resource with given name already exists.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Reconcile Action</em>' attribute.
 	 * @see org.nasdanika.codegen.ReconcileAction

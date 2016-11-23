@@ -4,13 +4,12 @@ package org.nasdanika.codegen.java.impl;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EClass;
-
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Work;
 import org.nasdanika.codegen.impl.GeneratorImpl;
-
 import org.nasdanika.codegen.java.CompilationUnit;
 import org.nasdanika.codegen.java.JavaPackage;
 
@@ -102,11 +101,17 @@ public abstract class CompilationUnitImpl extends GeneratorImpl<ICompilationUnit
 	public void setFormat(boolean newFormat) {
 		eSet(JavaPackage.Literals.COMPILATION_UNIT__FORMAT, newFormat);
 	}
-
+	
 	@Override
-	public Work<List<ICompilationUnit>> createWork(Context context) throws Exception {
+	public Work<List<ICompilationUnit>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 } //CompilationUnitImpl

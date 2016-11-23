@@ -150,7 +150,7 @@ public class FileItemProvider extends ResourceItemProvider {
 		newChildDescriptors.add
 			(createChildParameter
 				(CodegenPackage.Literals.FILE__GENERATOR,
-				 CodegenFactory.eINSTANCE.createWorkspaceRoot()));
+				 CodegenFactory.eINSTANCE.createWorkspace()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -191,6 +191,11 @@ public class FileItemProvider extends ResourceItemProvider {
 			(createChildParameter
 				(CodegenPackage.Literals.FILE__GENERATOR,
 				 CodegenFactory.eINSTANCE.createInterpolator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(CodegenPackage.Literals.FILE__GENERATOR,
+				 CodegenFactory.eINSTANCE.createJETEmitter()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -255,7 +260,7 @@ public class FileItemProvider extends ResourceItemProvider {
 		Object childObject = child;
 
 		boolean qualify =
-			childFeature == CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION ||
+			childFeature == CodegenPackage.Literals.CONFIGURATION__CONFIGURATION ||
 			childFeature == CodegenPackage.Literals.FILE__MERGER;
 
 		if (qualify) {

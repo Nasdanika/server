@@ -4,6 +4,7 @@ package org.nasdanika.codegen.impl;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.ecore.EClass;
 
 import org.nasdanika.codegen.CodegenPackage;
@@ -39,9 +40,15 @@ public class InterpolatorImpl extends FilterImpl<String> implements Interpolator
 	}
 
 	@Override
-	public Work<List<String>> createWork(Context context) throws Exception {
+	public Work<List<String>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 } //InterpolatorImpl

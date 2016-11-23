@@ -13,7 +13,7 @@ import org.eclipse.emf.common.util.EList;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Generates workspace project.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -40,7 +40,8 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Project name. The name is interpolated 
+	 * during generation and as such may contain tokens to be expanded.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -70,7 +71,7 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Project natures.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Natures</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getProject_Natures()
@@ -89,7 +90,7 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Project resources.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Resources</em>' containment reference list.
 	 * @see org.nasdanika.codegen.CodegenPackage#getProject_Resources()
@@ -109,7 +110,7 @@ public interface Project extends ResourceGenerator<IProject> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Action to take if a project with given name already exists.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Reconcile Action</em>' attribute.
 	 * @see org.nasdanika.codegen.ReconcileAction

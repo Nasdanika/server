@@ -173,7 +173,7 @@ public class TextCompilationUnitItemProvider extends CompilationUnitItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(JavaPackage.Literals.TEXT_COMPILATION_UNIT__GENERATOR,
-				 CodegenFactory.eINSTANCE.createWorkspaceRoot()));
+				 CodegenFactory.eINSTANCE.createWorkspace()));
 
 		newChildDescriptors.add
 			(createChildParameter
@@ -214,6 +214,11 @@ public class TextCompilationUnitItemProvider extends CompilationUnitItemProvider
 			(createChildParameter
 				(JavaPackage.Literals.TEXT_COMPILATION_UNIT__GENERATOR,
 				 CodegenFactory.eINSTANCE.createInterpolator()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(JavaPackage.Literals.TEXT_COMPILATION_UNIT__GENERATOR,
+				 CodegenFactory.eINSTANCE.createJETEmitter()));
 
 		newChildDescriptors.add
 			(createChildParameter

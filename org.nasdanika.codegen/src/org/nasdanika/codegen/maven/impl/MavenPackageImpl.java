@@ -3,8 +3,10 @@
 package org.nasdanika.codegen.maven.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.nasdanika.codegen.CodegenPackage;
@@ -116,6 +118,15 @@ public class MavenPackageImpl extends EPackageImpl implements MavenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getMavenNature_PomGenerator() {
+		return (EReference)mavenNatureEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MavenFactory getMavenFactory() {
 		return (MavenFactory)getEFactoryInstance();
 	}
@@ -140,6 +151,7 @@ public class MavenPackageImpl extends EPackageImpl implements MavenPackage {
 
 		// Create classes and their features
 		mavenNatureEClass = createEClass(MAVEN_NATURE);
+		createEReference(mavenNatureEClass, MAVEN_NATURE__POM_GENERATOR);
 	}
 
 	/**
@@ -177,6 +189,10 @@ public class MavenPackageImpl extends EPackageImpl implements MavenPackage {
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(mavenNatureEClass, MavenNature.class, "MavenNature", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		EGenericType g1 = createEGenericType(theCodegenPackage.getGenerator());
+		EGenericType g2 = createEGenericType(ecorePackage.getEString());
+		g1.getETypeArguments().add(g2);
+		initEReference(getMavenNature_PomGenerator(), g1, null, "pomGenerator", null, 0, 1, MavenNature.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Create annotations
 		// http://www.eclipse.org/emf/2002/GenModel
@@ -195,7 +211,13 @@ public class MavenPackageImpl extends EPackageImpl implements MavenPackage {
 		  (mavenNatureEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Maven nature."
+		   });	
+		addAnnotation
+		  (getMavenNature_PomGenerator(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Optional generator of ``pom.xml`` file."
 		   });
 	}
 

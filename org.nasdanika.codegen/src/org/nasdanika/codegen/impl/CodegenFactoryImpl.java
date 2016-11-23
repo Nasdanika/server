@@ -67,10 +67,11 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
+			case CodegenPackage.CONFIGURATION: return (EObject)createConfiguration();
 			case CodegenPackage.SERVICE: return (EObject)createService();
 			case CodegenPackage.PROPERTY: return (EObject)createProperty();
 			case CodegenPackage.GROUP: return (EObject)createGroup();
-			case CodegenPackage.WORKSPACE_ROOT: return (EObject)createWorkspaceRoot();
+			case CodegenPackage.WORKSPACE: return (EObject)createWorkspace();
 			case CodegenPackage.FOLDER: return (EObject)createFolder();
 			case CodegenPackage.PROJECT: return (EObject)createProject();
 			case CodegenPackage.BINARY_FILE: return (EObject)createBinaryFile();
@@ -79,6 +80,7 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 			case CodegenPackage.STATIC_TEXT: return (EObject)createStaticText();
 			case CodegenPackage.CONTENT_REFERENCE: return (EObject)createContentReference();
 			case CodegenPackage.INTERPOLATOR: return (EObject)createInterpolator();
+			case CodegenPackage.JET_EMITTER: return (EObject)createJETEmitter();
 			case CodegenPackage.JAVA_TEXT_FILTER: return (EObject)createJavaTextFilter();
 			case CodegenPackage.JAVA_STREAM_FILTER: return (EObject)createJavaStreamFilter();
 			case CodegenPackage.JAVA_TEXT_GENERATOR: return (EObject)createJavaTextGenerator();
@@ -171,6 +173,16 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public Configuration createConfiguration() {
+		ConfigurationImpl configuration = new ConfigurationImpl();
+		return configuration;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public Service createService() {
 		ServiceImpl service = new ServiceImpl();
 		return service;
@@ -201,9 +213,9 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WorkspaceRoot createWorkspaceRoot() {
-		WorkspaceRootImpl workspaceRoot = new WorkspaceRootImpl();
-		return workspaceRoot;
+	public Workspace createWorkspace() {
+		WorkspaceImpl workspace = new WorkspaceImpl();
+		return workspace;
 	}
 
 	/**
@@ -284,6 +296,16 @@ public class CodegenFactoryImpl extends EFactoryImpl implements CodegenFactory {
 	public Interpolator createInterpolator() {
 		InterpolatorImpl interpolator = new InterpolatorImpl();
 		return interpolator;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public JETEmitter createJETEmitter() {
+		JETEmitterImpl jetEmitter = new JETEmitterImpl();
+		return jetEmitter;
 	}
 
 	/**

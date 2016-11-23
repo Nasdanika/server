@@ -68,8 +68,8 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	protected CodegenSwitch<Adapter> modelSwitch =
 		new CodegenSwitch<Adapter>() {
 			@Override
-			public Adapter caseConfigurable(Configurable object) {
-				return createConfigurableAdapter();
+			public Adapter caseConfiguration(Configuration object) {
+				return createConfigurationAdapter();
 			}
 			@Override
 			public Adapter caseConfigurationItem(ConfigurationItem object) {
@@ -100,8 +100,8 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createResourceGeneratorAdapter();
 			}
 			@Override
-			public Adapter caseWorkspaceRoot(WorkspaceRoot object) {
-				return createWorkspaceRootAdapter();
+			public Adapter caseWorkspace(Workspace object) {
+				return createWorkspaceAdapter();
 			}
 			@Override
 			public Adapter caseFolder(Folder object) {
@@ -156,6 +156,10 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 				return createInterpolatorAdapter();
 			}
 			@Override
+			public Adapter caseJETEmitter(JETEmitter object) {
+				return createJETEmitterAdapter();
+			}
+			@Override
 			public <T> Adapter caseJavaFilter(JavaFilter<T> object) {
 				return createJavaFilterAdapter();
 			}
@@ -200,16 +204,16 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.Configurable <em>Configurable</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.Configuration <em>Configuration</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.Configurable
+	 * @see org.nasdanika.codegen.Configuration
 	 * @generated
 	 */
-	public Adapter createConfigurableAdapter() {
+	public Adapter createConfigurationAdapter() {
 		return null;
 	}
 
@@ -312,16 +316,16 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.WorkspaceRoot <em>Workspace Root</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.Workspace <em>Workspace</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.codegen.WorkspaceRoot
+	 * @see org.nasdanika.codegen.Workspace
 	 * @generated
 	 */
-	public Adapter createWorkspaceRootAdapter() {
+	public Adapter createWorkspaceAdapter() {
 		return null;
 	}
 
@@ -504,6 +508,20 @@ public class CodegenAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createInterpolatorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.codegen.JETEmitter <em>JET Emitter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.codegen.JETEmitter
+	 * @generated
+	 */
+	public Adapter createJETEmitterAdapter() {
 		return null;
 	}
 

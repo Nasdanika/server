@@ -10,7 +10,7 @@ import java.io.InputStream;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * ``InputStream`` binding of JavaFilter.
  * <!-- end-model-doc -->
  *
  *

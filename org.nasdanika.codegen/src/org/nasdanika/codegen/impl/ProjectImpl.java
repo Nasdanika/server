@@ -5,6 +5,7 @@ package org.nasdanika.codegen.impl;
 import java.util.List;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -136,9 +137,15 @@ public class ProjectImpl extends ResourceGeneratorImpl<IProject> implements Proj
 //	}
 
 	@Override
-	public Work<List<IProject>> createWork(Context context) throws Exception {
+	public Work<List<IProject>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 	
 

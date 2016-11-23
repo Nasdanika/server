@@ -16,7 +16,7 @@ import org.nasdanika.codegen.Context;
 import org.nasdanika.codegen.Generator;
 import org.nasdanika.codegen.SubContext;
 import org.nasdanika.codegen.Work;
-import org.nasdanika.codegen.WorkspaceRoot;
+import org.nasdanika.codegen.Workspace;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,13 +25,13 @@ import org.nasdanika.codegen.WorkspaceRoot;
  *
  * @generated
  */
-public class WorkspaceRootImpl extends GroupImpl<IProject> implements WorkspaceRoot {
+public class WorkspaceImpl extends GroupImpl<IProject> implements Workspace {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected WorkspaceRootImpl() {
+	protected WorkspaceImpl() {
 		super();
 	}
 
@@ -42,11 +42,11 @@ public class WorkspaceRootImpl extends GroupImpl<IProject> implements WorkspaceR
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return CodegenPackage.Literals.WORKSPACE_ROOT;
+		return CodegenPackage.Literals.WORKSPACE;
 	}
 
 	@Override
-	public Work<List<IProject>> createWork(Context context) throws Exception {
+	public Work<List<IProject>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		
 		List<Work<List<IProject>>> projectWork = new ArrayList<>();
@@ -54,7 +54,7 @@ public class WorkspaceRootImpl extends GroupImpl<IProject> implements WorkspaceR
 		SubContext wsc = context.createSubContext().set(IWorkspaceRoot.class, root);
 		for (Context iCtx: iterate(wsc)) {
 			for (Generator<IProject> prj: getElements()) {
-				Work<List<IProject>> pWork = prj.createWork(iCtx);
+				Work<List<IProject>> pWork = prj.createWork(iCtx, monitor);
 				if (pWork != null) {
 					projectWork.add(pWork);
 					totalWork[0] += pWork.size();

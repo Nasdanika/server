@@ -14,7 +14,7 @@ import org.nasdanika.codegen.Generator;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Package fragment root (source folder).
  * <!-- end-model-doc -->
  *
  * <p>
@@ -39,7 +39,8 @@ public interface PackageFragmentRoot extends Generator<IPackageFragmentRoot> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Folder name within the project. Interpolated and may be a path name, i.e. 
+	 * contain file separators, e.g. ``src/java``.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -69,7 +70,7 @@ public interface PackageFragmentRoot extends Generator<IPackageFragmentRoot> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Package fragments (packages).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Packagefragments</em>' containment reference list.
 	 * @see org.nasdanika.codegen.java.JavaPackage#getPackageFragmentRoot_Packagefragments()

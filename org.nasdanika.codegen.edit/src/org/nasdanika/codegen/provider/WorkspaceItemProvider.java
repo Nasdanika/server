@@ -9,22 +9,22 @@ import java.util.List;
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
-import org.nasdanika.codegen.WorkspaceRoot;
+import org.nasdanika.codegen.Workspace;
 
 /**
- * This is the item provider adapter for a {@link org.nasdanika.codegen.WorkspaceRoot} object.
+ * This is the item provider adapter for a {@link org.nasdanika.codegen.Workspace} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class WorkspaceRootItemProvider extends GroupItemProvider {
+public class WorkspaceItemProvider extends GroupItemProvider {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public WorkspaceRootItemProvider(AdapterFactory adapterFactory) {
+	public WorkspaceItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -62,10 +62,10 @@ public class WorkspaceRootItemProvider extends GroupItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = crop(((WorkspaceRoot)object).getIterator());
+		String label = ((Workspace)object).getBaseURL();
 		return label == null || label.length() == 0 ?
-			getString("_UI_WorkspaceRoot_type") :
-			getString("_UI_WorkspaceRoot_type") + " " + label;
+			getString("_UI_Workspace_type") :
+			getString("_UI_Workspace_type") + " " + label;
 	}
 	
 

@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -60,9 +61,15 @@ public class FolderImpl extends ResourceImpl<IFolder> implements Folder {
 	}
 
 	@Override
-	public Work<List<IFolder>> createWork(Context context) throws Exception {
+	public Work<List<IFolder>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 } //FolderImpl

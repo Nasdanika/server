@@ -9,7 +9,7 @@ package org.nasdanika.codegen;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Text file with ``String`` content.
  * <!-- end-model-doc -->
  *
  *

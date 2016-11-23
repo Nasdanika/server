@@ -65,7 +65,7 @@ public class StaticTextImpl extends GeneratorImpl<String> implements StaticText 
 	}
 
 	@Override
-	public Work<List<String>> createWork(Context context) throws Exception {
+	public Work<List<String>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		return new Work<List<String>>() {
 			
 			@Override
@@ -79,6 +79,11 @@ public class StaticTextImpl extends GeneratorImpl<String> implements StaticText 
 			}
 			
 		};
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		return 1;
 	}
 
 } //StaticTextImpl

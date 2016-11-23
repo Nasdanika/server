@@ -11,7 +11,7 @@ import java.io.InputStream;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Binary file, with ``InputStream`` content.
  * <!-- end-model-doc -->
  *
  *

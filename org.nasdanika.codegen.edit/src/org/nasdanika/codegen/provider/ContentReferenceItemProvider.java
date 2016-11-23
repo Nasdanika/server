@@ -91,7 +91,7 @@ public class ContentReferenceItemProvider extends GeneratorItemProvider {
 	 */
 	@Override
 	public String getText(Object object) {
-		String label = crop(((ContentReference<?>)object).getIterator());
+		String label = ((ContentReference<?>)object).getBaseURL();
 		return label == null || label.length() == 0 ?
 			getString("_UI_ContentReference_type") :
 			getString("_UI_ContentReference_type") + " " + label;

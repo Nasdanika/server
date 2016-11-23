@@ -9,7 +9,7 @@ package org.nasdanika.codegen;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Filter transforms input of a generator to produce output.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -33,7 +33,7 @@ public interface Filter<T> extends Generator<T> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Generator producing filter input.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Generator</em>' containment reference.
 	 * @see #setGenerator(Generator)

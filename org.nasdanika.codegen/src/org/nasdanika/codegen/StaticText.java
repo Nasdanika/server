@@ -9,7 +9,7 @@ package org.nasdanika.codegen;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Static text. Can be used as text file content or as input to interpolator or filter.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -33,7 +33,7 @@ public interface StaticText extends Generator<String> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Text content.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Content</em>' attribute.
 	 * @see #setContent(String)

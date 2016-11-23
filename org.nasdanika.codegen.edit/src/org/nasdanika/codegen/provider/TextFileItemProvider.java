@@ -107,7 +107,7 @@ public class TextFileItemProvider extends FileItemProvider {
 		Object childObject = child;
 
 		boolean qualify =
-			childFeature == CodegenPackage.Literals.CONFIGURABLE__CONFIGURATION ||
+			childFeature == CodegenPackage.Literals.CONFIGURATION__CONFIGURATION ||
 			childFeature == CodegenPackage.Literals.FILE__MERGER;
 
 		if (qualify) {

@@ -22,6 +22,15 @@ public interface CodegenFactory extends EFactory {
 	CodegenFactory eINSTANCE = org.nasdanika.codegen.impl.CodegenFactoryImpl.init();
 
 	/**
+	 * Returns a new object of class '<em>Configuration</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Configuration</em>'.
+	 * @generated
+	 */
+	Configuration createConfiguration();
+
+	/**
 	 * Returns a new object of class '<em>Service</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -49,13 +58,13 @@ public interface CodegenFactory extends EFactory {
 	<T> Group<T> createGroup();
 
 	/**
-	 * Returns a new object of class '<em>Workspace Root</em>'.
+	 * Returns a new object of class '<em>Workspace</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Workspace Root</em>'.
+	 * @return a new object of class '<em>Workspace</em>'.
 	 * @generated
 	 */
-	WorkspaceRoot createWorkspaceRoot();
+	Workspace createWorkspace();
 
 	/**
 	 * Returns a new object of class '<em>Folder</em>'.
@@ -128,6 +137,15 @@ public interface CodegenFactory extends EFactory {
 	 * @generated
 	 */
 	Interpolator createInterpolator();
+
+	/**
+	 * Returns a new object of class '<em>JET Emitter</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>JET Emitter</em>'.
+	 * @generated
+	 */
+	JETEmitter createJETEmitter();
 
 	/**
 	 * Returns a new object of class '<em>Java Text Filter</em>'.

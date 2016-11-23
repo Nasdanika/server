@@ -4,6 +4,7 @@ package org.nasdanika.codegen.java.impl;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -80,9 +81,15 @@ public class PackageFragmentImpl extends GeneratorImpl<IPackageFragment> impleme
 	}
 
 	@Override
-	public Work<List<IPackageFragment>> createWork(Context context) throws Exception {
+	public Work<List<IPackageFragment>> createWork(Context context, IProgressMonitor monitor) throws Exception {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public int getWorkFactorySize() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 } //PackageFragmentImpl

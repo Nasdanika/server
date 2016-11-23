@@ -501,85 +501,91 @@ public class JavaPackageImpl extends EPackageImpl implements JavaPackage {
 		  (javaNatureEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Java nature."
 		   });	
 		addAnnotation
 		  (getJavaNature_Packagefragmentroots(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Package fragments roots (source folders)."
 		   });	
 		addAnnotation
 		  (packageFragmentRootEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Package fragment root (source folder)."
 		   });	
 		addAnnotation
 		  (getPackageFragmentRoot_Name(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Folder name within the project. Interpolated and may be a path name, i.e. \r\ncontain file separators, e.g. ``src/java``."
 		   });	
 		addAnnotation
 		  (getPackageFragmentRoot_Packagefragments(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Package fragments (packages)."
+		   });	
+		addAnnotation
+		  (packageFragmentEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Package fragment (package)."
 		   });	
 		addAnnotation
 		  (getPackageFragment_Name(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Package name, interpolated."
 		   });	
 		addAnnotation
 		  (getPackageFragment_Compilationunits(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Package compilation units."
 		   });	
 		addAnnotation
 		  (compilationUnitEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Compilation unit."
 		   });	
 		addAnnotation
 		  (getCompilationUnit_Name(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Compilation unit name without ``.java`` extension. Interpolated."
 		   });	
 		addAnnotation
 		  (getCompilationUnit_Merge(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "If true, new and old compilation unit content gets merged with ``org.eclipse.emf.codegen.merge.java.JMerger``."
 		   });	
 		addAnnotation
 		  (getCompilationUnit_Format(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "If true, generated/merged source is automatically formatted."
 		   });	
 		addAnnotation
 		  (textCompilationUnitEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Text compilation units uses a text generator to produce its content."
 		   });	
 		addAnnotation
 		  (getTextCompilationUnit_Generator(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generator to produce compilation unit content."
 		   });	
 		addAnnotation
 		  (structuredCompilationUnitEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Structured compilation unit assembles its content from import and type declarations.\r\n\r\nWork in progress..."
 		   });
 	}
 

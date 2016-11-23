@@ -9,7 +9,9 @@ package org.nasdanika.codegen.java;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Structured compilation unit assembles its content from import and type declarations.
+ * 
+ * Work in progress...
  * <!-- end-model-doc -->
  *
  *

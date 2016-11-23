@@ -9,7 +9,8 @@ package org.nasdanika.codegen;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * Reference (URL) to a content residing elsewhere, e.g. a template in a version control
+ * system available for download over HTTP.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -33,7 +34,7 @@ public interface ContentReference<T> extends Generator<T> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Content location (URL).
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Ref</em>' attribute.
 	 * @see #setRef(String)

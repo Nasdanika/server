@@ -13,6 +13,10 @@ import org.nasdanika.codegen.Generator;
  * A representation of the model object '<em><b>Package Fragment</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Package fragment (package).
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -35,7 +39,7 @@ public interface PackageFragment extends Generator<IPackageFragment> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Package name, interpolated.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -65,7 +69,7 @@ public interface PackageFragment extends Generator<IPackageFragment> {
 	 * </p>
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * .
+	 * Package compilation units.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Compilationunits</em>' containment reference list.
 	 * @see org.nasdanika.codegen.java.JavaPackage#getPackageFragment_Compilationunits()

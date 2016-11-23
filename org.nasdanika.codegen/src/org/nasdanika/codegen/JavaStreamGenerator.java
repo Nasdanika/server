@@ -10,7 +10,7 @@ import java.io.InputStream;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * .
+ * ``InputStream`` binding of JavaGenerator.
  * <!-- end-model-doc -->
  *
  *

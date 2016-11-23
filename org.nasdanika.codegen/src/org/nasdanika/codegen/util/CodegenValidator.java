@@ -117,8 +117,8 @@ public class CodegenValidator extends EObjectValidator {
 	 */
 	private boolean validateGen(int classifierID, Object value, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		switch (classifierID) {
-			case CodegenPackage.CONFIGURABLE:
-				return validateConfigurable((Configurable)value, diagnostics, context);
+			case CodegenPackage.CONFIGURATION:
+				return validateConfiguration((Configuration)value, diagnostics, context);
 			case CodegenPackage.CONFIGURATION_ITEM:
 				return validateConfigurationItem((ConfigurationItem)value, diagnostics, context);
 			case CodegenPackage.SERVICE:
@@ -133,8 +133,8 @@ public class CodegenValidator extends EObjectValidator {
 				return validateGroup((Group<?>)value, diagnostics, context);
 			case CodegenPackage.RESOURCE_GENERATOR:
 				return validateResourceGenerator((ResourceGenerator<?>)value, diagnostics, context);
-			case CodegenPackage.WORKSPACE_ROOT:
-				return validateWorkspaceRoot((WorkspaceRoot)value, diagnostics, context);
+			case CodegenPackage.WORKSPACE:
+				return validateWorkspace((Workspace)value, diagnostics, context);
 			case CodegenPackage.FOLDER:
 				return validateFolder((Folder)value, diagnostics, context);
 			case CodegenPackage.NATURE:
@@ -161,6 +161,8 @@ public class CodegenValidator extends EObjectValidator {
 				return validateJavaGenerator((JavaGenerator<?>)value, diagnostics, context);
 			case CodegenPackage.INTERPOLATOR:
 				return validateInterpolator((Interpolator)value, diagnostics, context);
+			case CodegenPackage.JET_EMITTER:
+				return validateJETEmitter((JETEmitter)value, diagnostics, context);
 			case CodegenPackage.JAVA_FILTER:
 				return validateJavaFilter((JavaFilter<?>)value, diagnostics, context);
 			case CodegenPackage.PROVIDER:
@@ -209,8 +211,8 @@ public class CodegenValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean validateConfigurable(Configurable configurable, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		return validate_EveryDefaultConstraint((EObject)configurable, diagnostics, context);
+	public boolean validateConfiguration(Configuration configuration, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint((EObject)configuration, diagnostics, context);
 	}
 
 	/**
@@ -321,17 +323,17 @@ public class CodegenValidator extends EObjectValidator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean validateWorkspaceRoot(WorkspaceRoot workspaceRoot, DiagnosticChain diagnostics, Map<Object, Object> context) {
-		if (!validate_NoCircularContainment((EObject)workspaceRoot, diagnostics, context)) return false;
-		boolean result = validate_EveryMultiplicityConforms((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_UniqueID((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)workspaceRoot, diagnostics, context);
-		if (result || diagnostics != null) result &= validateGenerator_validate(workspaceRoot, diagnostics, context);
+	public boolean validateWorkspace(Workspace workspace, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)workspace, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)workspace, diagnostics, context);
+		if (result || diagnostics != null) result &= validateGenerator_validate(workspace, diagnostics, context);
 		return result;
 	}
 
@@ -579,6 +581,25 @@ public class CodegenValidator extends EObjectValidator {
 		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)interpolator, diagnostics, context);
 		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)interpolator, diagnostics, context);
 		if (result || diagnostics != null) result &= validateGenerator_validate(interpolator, diagnostics, context);
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateJETEmitter(JETEmitter jetEmitter, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		if (!validate_NoCircularContainment((EObject)jetEmitter, diagnostics, context)) return false;
+		boolean result = validate_EveryMultiplicityConforms((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryDataValueConforms((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryReferenceIsContained((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryBidirectionalReferenceIsPaired((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryProxyResolves((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_UniqueID((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryKeyUnique((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validate_EveryMapEntryUnique((EObject)jetEmitter, diagnostics, context);
+		if (result || diagnostics != null) result &= validateGenerator_validate(jetEmitter, diagnostics, context);
 		return result;
 	}
 

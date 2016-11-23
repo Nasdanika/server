@@ -28,7 +28,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.codegen.BinaryFile;
 import org.nasdanika.codegen.CodegenFactory;
 import org.nasdanika.codegen.CodegenPackage;
-import org.nasdanika.codegen.Configurable;
+import org.nasdanika.codegen.Configuration;
 import org.nasdanika.codegen.ConfigurationItem;
 import org.nasdanika.codegen.ContentReference;
 import org.nasdanika.codegen.Context;
@@ -39,6 +39,7 @@ import org.nasdanika.codegen.Generator;
 import org.nasdanika.codegen.Group;
 import org.nasdanika.codegen.WorkFactory;
 import org.nasdanika.codegen.Interpolator;
+import org.nasdanika.codegen.JETEmitter;
 import org.nasdanika.codegen.JavaFilter;
 import org.nasdanika.codegen.JavaGenerator;
 import org.nasdanika.codegen.JavaStreamFilter;
@@ -57,7 +58,7 @@ import org.nasdanika.codegen.ResourceReference;
 import org.nasdanika.codegen.Service;
 import org.nasdanika.codegen.StaticText;
 import org.nasdanika.codegen.TextFile;
-import org.nasdanika.codegen.WorkspaceRoot;
+import org.nasdanika.codegen.Workspace;
 
 import org.nasdanika.codegen.java.JavaPackage;
 
@@ -80,7 +81,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass configurableEClass = null;
+	private EClass configurationEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -136,7 +137,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass workspaceRootEClass = null;
+	private EClass workspaceEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -228,6 +229,13 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * @generated
 	 */
 	private EClass interpolatorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass jetEmitterEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -445,8 +453,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getConfigurable() {
-		return configurableEClass;
+	public EClass getConfiguration() {
+		return configurationEClass;
 	}
 
 	/**
@@ -454,8 +462,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getConfigurable_PropertiesReferences() {
-		return (EAttribute)configurableEClass.getEStructuralFeatures().get(0);
+	public EAttribute getConfiguration_Includes() {
+		return (EAttribute)configurationEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -463,8 +471,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getConfigurable_Configuration() {
-		return (EReference)configurableEClass.getEStructuralFeatures().get(1);
+	public EReference getConfiguration_Configuration() {
+		return (EReference)configurationEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -472,8 +480,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getConfigurable_DefaultPropertiesReferences() {
-		return (EAttribute)configurableEClass.getEStructuralFeatures().get(2);
+	public EAttribute getConfiguration_DefaultIncludes() {
+		return (EAttribute)configurationEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -481,8 +489,35 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getConfigurable__CreateContext__Context() {
-		return configurableEClass.getEOperations().get(0);
+	public EAttribute getConfiguration_BaseURL() {
+		return (EAttribute)configurationEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getConfiguration_ClassPath() {
+		return (EAttribute)configurationEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getConfiguration_Include() {
+		return (EReference)configurationEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getConfiguration__CreateContext__Context() {
+		return configurationEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -643,8 +678,8 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getWorkspaceRoot() {
-		return workspaceRootEClass;
+	public EClass getWorkspace() {
+		return workspaceEClass;
 	}
 
 	/**
@@ -895,6 +930,24 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getJETEmitter() {
+		return jetEmitterEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getJETEmitter_TemplateURI() {
+		return (EAttribute)jetEmitterEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getJavaFilter() {
 		return javaFilterEClass;
 	}
@@ -1098,11 +1151,14 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		isCreated = true;
 
 		// Create classes and their features
-		configurableEClass = createEClass(CONFIGURABLE);
-		createEAttribute(configurableEClass, CONFIGURABLE__PROPERTIES_REFERENCES);
-		createEReference(configurableEClass, CONFIGURABLE__CONFIGURATION);
-		createEAttribute(configurableEClass, CONFIGURABLE__DEFAULT_PROPERTIES_REFERENCES);
-		createEOperation(configurableEClass, CONFIGURABLE___CREATE_CONTEXT__CONTEXT);
+		configurationEClass = createEClass(CONFIGURATION);
+		createEAttribute(configurationEClass, CONFIGURATION__INCLUDES);
+		createEReference(configurationEClass, CONFIGURATION__CONFIGURATION);
+		createEAttribute(configurationEClass, CONFIGURATION__DEFAULT_INCLUDES);
+		createEAttribute(configurationEClass, CONFIGURATION__BASE_URL);
+		createEAttribute(configurationEClass, CONFIGURATION__CLASS_PATH);
+		createEReference(configurationEClass, CONFIGURATION__INCLUDE);
+		createEOperation(configurationEClass, CONFIGURATION___CREATE_CONTEXT__CONTEXT);
 
 		configurationItemEClass = createEClass(CONFIGURATION_ITEM);
 		createEAttribute(configurationItemEClass, CONFIGURATION_ITEM__VALUE_TYPE);
@@ -1128,7 +1184,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 
 		resourceGeneratorEClass = createEClass(RESOURCE_GENERATOR);
 
-		workspaceRootEClass = createEClass(WORKSPACE_ROOT);
+		workspaceEClass = createEClass(WORKSPACE);
 
 		folderEClass = createEClass(FOLDER);
 		createEReference(folderEClass, FOLDER__CHILDREN);
@@ -1169,6 +1225,9 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		createEAttribute(javaGeneratorEClass, JAVA_GENERATOR__CLASS_NAME);
 
 		interpolatorEClass = createEClass(INTERPOLATOR);
+
+		jetEmitterEClass = createEClass(JET_EMITTER);
+		createEAttribute(jetEmitterEClass, JET_EMITTER__TEMPLATE_URI);
 
 		javaFilterEClass = createEClass(JAVA_FILTER);
 		createEAttribute(javaFilterEClass, JAVA_FILTER__CLASS_NAME);
@@ -1254,7 +1313,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		EGenericType g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		configurationItemEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getConfigurable());
+		g1 = createEGenericType(this.getConfiguration());
 		configurationItemEClass.getEGenericSuperTypes().add(g1);
 		serviceEClass.getESuperTypes().add(this.getConfigurationItem());
 		propertyEClass.getESuperTypes().add(this.getConfigurationItem());
@@ -1264,7 +1323,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		EGenericType g3 = createEGenericType(generatorEClass_T);
 		g2.getETypeArguments().add(g3);
 		generatorEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getConfigurable());
+		g1 = createEGenericType(this.getConfiguration());
 		generatorEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getGenerator());
 		g2 = createEGenericType(groupEClass_T);
@@ -1277,7 +1336,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g1 = createEGenericType(this.getGroup());
 		g2 = createEGenericType(this.getIProject());
 		g1.getETypeArguments().add(g2);
-		workspaceRootEClass.getEGenericSuperTypes().add(g1);
+		workspaceEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getResource());
 		g2 = createEGenericType(this.getIFolder());
 		g1.getETypeArguments().add(g2);
@@ -1330,6 +1389,10 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		g2 = createEGenericType(ecorePackage.getEString());
 		g1.getETypeArguments().add(g2);
 		interpolatorEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getGenerator());
+		g2 = createEGenericType(ecorePackage.getEString());
+		g1.getETypeArguments().add(g2);
+		jetEmitterEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getFilter());
 		g2 = createEGenericType(javaFilterEClass_T);
 		g1.getETypeArguments().add(g2);
@@ -1352,12 +1415,15 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		javaStreamGeneratorEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(configurableEClass, Configurable.class, "Configurable", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getConfigurable_PropertiesReferences(), ecorePackage.getEString(), "propertiesReferences", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getConfigurable_Configuration(), this.getConfigurationItem(), null, "configuration", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getConfigurable_DefaultPropertiesReferences(), ecorePackage.getEString(), "defaultPropertiesReferences", null, 0, -1, Configurable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(configurationEClass, Configuration.class, "Configuration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getConfiguration_Includes(), ecorePackage.getEString(), "includes", null, 0, -1, Configuration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConfiguration_Configuration(), this.getConfigurationItem(), null, "configuration", null, 0, -1, Configuration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfiguration_DefaultIncludes(), ecorePackage.getEString(), "defaultIncludes", null, 0, -1, Configuration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfiguration_BaseURL(), ecorePackage.getEString(), "baseURL", null, 0, 1, Configuration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getConfiguration_ClassPath(), ecorePackage.getEString(), "classPath", null, 0, -1, Configuration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getConfiguration_Include(), this.getConfiguration(), null, "include", null, 0, -1, Configuration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		EOperation op = initEOperation(getConfigurable__CreateContext__Context(), this.getContext(), "createContext", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EOperation op = initEOperation(getConfiguration__CreateContext__Context(), this.getContext(), "createContext", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "parent", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEException(op, this.getException());
 
@@ -1396,7 +1462,7 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 
 		initEClass(resourceGeneratorEClass, ResourceGenerator.class, "ResourceGenerator", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
-		initEClass(workspaceRootEClass, WorkspaceRoot.class, "WorkspaceRoot", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(workspaceEClass, Workspace.class, "Workspace", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(folderEClass, Folder.class, "Folder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		g1 = createEGenericType(this.getResource());
@@ -1452,6 +1518,9 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 		initEAttribute(getJavaGenerator_ClassName(), ecorePackage.getEString(), "className", null, 0, 1, JavaGenerator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(interpolatorEClass, Interpolator.class, "Interpolator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(jetEmitterEClass, JETEmitter.class, "JETEmitter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getJETEmitter_TemplateURI(), ecorePackage.getEString(), "templateURI", null, 0, 1, JETEmitter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(javaFilterEClass, JavaFilter.class, "JavaFilter", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getJavaFilter_ClassName(), ecorePackage.getEString(), "className", null, 0, 1, JavaFilter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1511,40 +1580,58 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 			 "documentation", "Code generation model."
 		   });	
 		addAnnotation
-		  (configurableEClass, 
+		  (configurationEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "Something which can be configured with configuration items - properties and services.\r\n"
+			 "documentation", "Container of configuration items - properties and services.\r\n"
 		   });	
 		addAnnotation
-		  (getConfigurable__CreateContext__Context(), 
+		  (getConfiguration__CreateContext__Context(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Creates ``org.nasdanika.codegen.Context`` which provides access to properties and services."
 		   });	
 		addAnnotation
-		  ((getConfigurable__CreateContext__Context()).getEParameters().get(0), 
+		  ((getConfiguration__CreateContext__Context()).getEParameters().get(0), 
 		   source, 
 		   new String[] {
 			 "documentation", "Parent context."
 		   });	
 		addAnnotation
-		  (getConfigurable_PropertiesReferences(), 
+		  (getConfiguration_Includes(), 
 		   source, 
 		   new String[] {
-			 "documentation", "URL\'s of properites files to load into the this configurable\'s context.\r\nURL\'s are resolved relative to the model resource. \r\n\r\nThe following custom schemes supported:\r\n\r\n* ``bundle`` - ``bundle:<bundle symbolic name>/<resource path in the bundle>``\r\n* ``java`` - ``java:<classloader path>``\r\n"
+			 "documentation", "URL\'s of configuration files to load into the this configurable\'s context.\r\nURL\'s are resolved relative to the ``baseURL``, which in turn is resolved relative to the model resource. \r\n\r\nThe following custom schemes supported:\r\n\r\n* ``bundle`` - ``bundle:<bundle symbolic name>/<resource path in the bundle>``\r\n* ``java`` - ``java:<classloader path>``\r\n\r\nConfiguration files can be in the following formats:\r\n\r\n* XMI model - ``.xml`` or ``.nsdgen`` extension.\r\n* Properties file - ``.properties`` extension.\r\n* JSON file following the structure of the configuration model - ``.json`` extension.\r\n* YAML file following the structure of the configuration model - ``.yml`` extension.\r\n\r\nIf XML/JSON/YAML contains configuration definition, then its ``createContext()`` method is invoked in sequence\r\nto create a chain of contexts. If property or service is contained in the definition, it gets mounted to a context created by this configuration."
 		   });	
 		addAnnotation
-		  (getConfigurable_Configuration(), 
+		  (getConfiguration_Configuration(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Configuration items - properties and services."
 		   });	
 		addAnnotation
-		  (getConfigurable_DefaultPropertiesReferences(), 
+		  (getConfiguration_DefaultIncludes(), 
 		   source, 
 		   new String[] {
-			 "documentation", "URL\'s of properites files to load as default properties into the this configurable\'s context.\r\n\r\nRegular properties shadow/override properties with the same names in the parent context,\r\ndefault properties are shadowed/overriden by parent\'s properties.\r\n\r\nURL\'s are resolved relative to the model resource. \r\n\r\nThe following custom schemes supported:\r\n\r\n* ``bundle`` - ``bundle:<bundle symbolic name>/<resource path in the bundle>``\r\n* ``java`` - ``java:<classloader path>``\r\n"
+			 "documentation", "Same as ``includes``, but default includes are used only if the parent context doesn\'t contain configuration items with requested keys (names or types)."
+		   });	
+		addAnnotation
+		  (getConfiguration_BaseURL(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Base URL to resolve includes, default includes, and classpath entries. \r\nThe URL is resolved relative to the model location and defaults to the model location URL."
+		   });	
+		addAnnotation
+		  (getConfiguration_ClassPath(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Class path for loading classes of configuration elements."
+		   });	
+		addAnnotation
+		  (getConfiguration_Include(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Configurations defined elsewhere to be included into this configuration. \r\nConfigurations get chained and configuration items (properties and services) get\r\nmounted to the context created by this configuration."
 		   });	
 		addAnnotation
 		  (configurationItemEClass, 
@@ -1667,250 +1754,262 @@ public class CodegenPackageImpl extends EPackageImpl implements CodegenPackage {
 			 "documentation", "ResourceGenerator generates a workspace resource - file or directory. "
 		   });	
 		addAnnotation
-		  (workspaceRootEClass, 
+		  (workspaceEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "Workspace root does not really generate anything because there is only \r\none already existing workspace root. This model element is used for grouping projects."
+			 "documentation", "Workspace is a group of projects."
 		   });	
 		addAnnotation
 		  (folderEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generates IFolder."
 		   });	
 		addAnnotation
 		  (getFolder_Children(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Folder can contain other resource generators."
 		   });	
 		addAnnotation
 		  (natureEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generates project nature, e.g. Java or Maven nature."
 		   });	
 		addAnnotation
 		  (fileEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generates IFile."
 		   });	
 		addAnnotation
 		  (getFile_Merger(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "If reconcile action is ``Merge`` then merger gets instantiated to merge existing and new\r\ncontent of the file. The merger class shall implement ``org.nasdanika.codegen.Merger<T>`` \r\nwhere ``T`` is ``String` for text files and ``InputStream`` for binary files."
 		   });	
 		addAnnotation
 		  (getFile_Generator(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "File content generator."
 		   });	
 		addAnnotation
 		  (projectEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generates workspace project."
 		   });	
 		addAnnotation
 		  (getProject_Name(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Project name. The name is interpolated \r\nduring generation and as such may contain tokens to be expanded."
 		   });	
 		addAnnotation
 		  (getProject_Natures(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Project natures."
 		   });	
 		addAnnotation
 		  (getProject_Resources(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Project resources."
 		   });	
 		addAnnotation
 		  (getProject_ReconcileAction(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Action to take if a project with given name already exists."
 		   });	
 		addAnnotation
 		  (resourceEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generates project resource - file or directory."
 		   });	
 		addAnnotation
 		  (getResource_Name(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Resource name. Interpolated. May be a path name, i.e. contain separators, e.g. ``mydir/myfile.txt``"
 		   });	
 		addAnnotation
 		  (getResource_ReconcileAction(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Action to take if resource with given name already exists."
 		   });	
 		addAnnotation
 		  (binaryFileEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Binary file, with ``InputStream`` content."
 		   });	
 		addAnnotation
 		  (textFileEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Text file with ``String`` content."
 		   });	
 		addAnnotation
 		  (reconcileActionEEnum, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Defines an action to take if project/resource with a given name already exists in the workspace."
 		   });	
 		addAnnotation
 		  (reconcileActionEEnum.getELiterals().get(0), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Discard the generated content and keep the original or skip the generation step altogether."
 		   });	
 		addAnnotation
 		  (reconcileActionEEnum.getELiterals().get(1), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Append the new content to the existing. For project and directories it means\r\nadding new resources next to the existing, which is semantically equivalent to merging."
 		   });	
 		addAnnotation
 		  (reconcileActionEEnum.getELiterals().get(2), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Merge new and existing content, typically using a merger service for files. \r\nFor projects and directories merge is equivalent to append."
 		   });	
 		addAnnotation
 		  (reconcileActionEEnum.getELiterals().get(3), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Replace existing content with the new one. \r\nFor directories and projects it means deleting the project/directory\r\nand re-creating with the new content.\r\n\r\nIf the generation context contains ``overwrite-predicate`` property, then the value\r\nof the property is cast to ``java.util.function.Predicate`` and its ``test()`` method is invoked.\r\nIf the return value is ``true`` then the resource/project get overwritten, if ``false`` it is left intact (same as ``Keep``).\r\n\r\nThe predicate may throw ``org.eclipse.core.runtime.OperationCanceledException`` to cancel generation (same as ``Cancel``).\r\n\r\nClients may create overwrite predicates which open an overwrite confirmation dialog to solicit overwrite decision from the user. "
 		   });	
 		addAnnotation
 		  (reconcileActionEEnum.getELiterals().get(4), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Throw ``OperationCancelledException`` if resource/project already exists."
 		   });	
 		addAnnotation
 		  (resourceReferenceEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Reference to a resource generator defined elsewhere."
 		   });	
 		addAnnotation
 		  (getResourceReference_Target(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Reference target."
 		   });	
 		addAnnotation
 		  (staticTextEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Static text. Can be used as text file content or as input to interpolator or filter."
 		   });	
 		addAnnotation
 		  (getStaticText_Content(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Text content."
 		   });	
 		addAnnotation
 		  (contentReferenceEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Reference (URL) to a content residing elsewhere, e.g. a template in a version control\r\nsystem available for download over HTTP."
 		   });	
 		addAnnotation
 		  (getContentReference_Ref(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Content location (URL)."
 		   });	
 		addAnnotation
 		  (filterEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Filter transforms input of a generator to produce output."
 		   });	
 		addAnnotation
 		  (getFilter_Generator(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generator producing filter input."
 		   });	
 		addAnnotation
 		  (javaGeneratorEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "This generator instantiates and invokes Java class to generate output. \r\nThe generator Java class shall implement ``org.nasdanika.codegen.IGenerator``.\r\n\r\nFor example, JET templates may use a skeleton like shown below:\r\n\r\n\r\n```java\r\npublic class CLASS implements org.nasdanika.codegen.IGenerator<String> {\r\n\n    \n\npublic String generate(org.nasdanika.codegen.Context context, org.eclipse.core.runtime.IProgressMonitor monitor) throws Exception {\r\n        \nreturn \"\";\n   \r\n    }\n \r\n}\r\n```\r\n\r\nand classes compiled from these template can be used by the JavaGenerator."
 		   });	
 		addAnnotation
 		  (getJavaGenerator_ClassName(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Generator class name."
 		   });	
 		addAnnotation
 		  (interpolatorEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Interpolator produces output by expanding mustache tokens ``{{token}}`` in the \r\ninput using context properties."
+		   });	
+		addAnnotation
+		  (jetEmitterEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Invokes ``org.eclipse.emf.codegen.jet.JETEmitter`` to compile and evaluate a template."
+		   });	
+		addAnnotation
+		  (getJETEmitter_TemplateURI(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Template location."
 		   });	
 		addAnnotation
 		  (javaFilterEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Instantiates a Java class to filter content. \r\nThe filter Java class shall implement ``org.nasdanika.codegen.IFilter<T>``, where\r\n``T`` is content type - ``String`` for text files and ``InputStream`` for binary files."
 		   });	
 		addAnnotation
 		  (getJavaFilter_ClassName(), 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Filter class name."
 		   });	
 		addAnnotation
 		  (providerEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "Providers are used to create configuration items using given context."
 		   });	
 		addAnnotation
 		  (javaTextFilterEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "``String`` binding of JavaFilter."
 		   });	
 		addAnnotation
 		  (javaStreamFilterEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "``InputStream`` binding of JavaFilter."
 		   });	
 		addAnnotation
 		  (javaTextGeneratorEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "``String`` binding of JavaGenerator."
 		   });	
 		addAnnotation
 		  (javaStreamGeneratorEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "."
+			 "documentation", "``InputStream`` binding of JavaGenerator."
 		   });
 	}
 
