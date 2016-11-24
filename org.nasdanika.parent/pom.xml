@@ -199,11 +199,6 @@
 		<module>../org.nasdanika.story.editor</module>
 		<module>../org.nasdanika.story.feature</module>
 
-		<module>../org.nasdanika.codegen</module>
-		<module>../org.nasdanika.codegen.edit</module>
-		<module>../org.nasdanika.codegen.editor</module>
-		<module>../org.nasdanika.codegen.feature</module>
-
 		<module>../org.nasdanika.tools.design</module>
 		<module>../org.nasdanika.tools.feature</module>
 

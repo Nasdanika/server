@@ -42,9 +42,6 @@
    <feature url="features/org.nasdanika.provisioning.feature_0.1.0.qualifier.jar" id="org.nasdanika.provisioning.feature" version="0.1.0.qualifier">
       <category name="org.nasdanika.server"/>
    </feature>
-   <feature url="features/org.nasdanika.codegen.feature_0.1.0.qualifier.jar" id="org.nasdanika.codegen.feature" version="0.1.0.qualifier">
-      <category name="org.nasdanika.tools"/>
-   </feature>
    <category-def name="org.nasdanika.server" label="Server">
       <description>
          Bundles and features for building OSGi/Equinox server applications.

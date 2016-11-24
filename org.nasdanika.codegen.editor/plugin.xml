@@ -1,45 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><?eclipse version="3.0"?>
-<plugin>
-
-
-  <extension point="org.eclipse.ui.popupMenus">
-      <objectContribution
-            id="org.nasdanika.codegen.editor.Generate"
-            objectClass="org.nasdanika.codegen.WorkspaceRoot">
-         <action
-               id="org.nasdanika.codegen.editor.Generate"
-               label="Generate"
-               menubarPath="additions"
-               class="org.nasdanika.codegen.presentation.GenerateAction"
-               enablesFor="1"/>
-      </objectContribution>
-   </extension>
-
-   <extension point="org.eclipse.ui.newWizards">
-      <!-- @generated codegen -->
-      <category
-            id="org.nasdanika"
-            name="%_UI_Wizard_category"/>
-      <wizard
-            id="org.nasdanika.codegen.presentation.CodegenModelWizardID"
-            name="%_UI_CodegenModelWizard_label"
-            class="org.nasdanika.codegen.presentation.CodegenModelWizard"
-            category="org.nasdanika"
-            icon="icons/full/obj16/CodegenModelFile.gif">
-         <description>%_UI_CodegenModelWizard_description</description>
-         <selection class="org.eclipse.core.resources.IResource"/>
-      </wizard>
-   </extension>
-
-   <extension point="org.eclipse.ui.editors">
-      <!-- @generated codegen -->
-      <editor
-            id="org.nasdanika.codegen.presentation.CodegenEditorID"
-            name="%_UI_CodegenEditor_label"
-            icon="icons/full/obj16/CodegenModelFile.gif"
-            extensions="nsdgen"
-            class="org.nasdanika.codegen.presentation.CodegenEditor"
-            contributorClass="org.nasdanika.codegen.presentation.CodegenActionBarContributor">
-      </editor>
-   </extension>
-</plugin>
