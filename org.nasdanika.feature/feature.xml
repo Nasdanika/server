@@ -89,6 +89,10 @@ This Agreement is governed by the laws of the State of New York and the intellec
          id="org.nasdanika.third-party.feature"
          version="0.0.0"/>
 
+   <includes
+         id="org.nasdanika.html.feature"
+         version="0.0.0"/>
+
    <plugin
          id="org.nasdanika.core"
          download-size="0"
@@ -147,20 +151,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="org.nasdanika.web.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.nasdanika.html"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.nasdanika.html.source"
          download-size="0"
          install-size="0"
          version="0.0.0"

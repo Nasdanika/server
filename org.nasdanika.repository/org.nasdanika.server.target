@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="99">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="100">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.simple" version="1.7.6"/>
@@ -31,7 +31,7 @@
 <unit id="com.google.guava" version="18.0.0"/>
 <unit id="org.apache.aries.spifly.org.apache.aries.spifly.weaver-internal" version="1.0.8"/>
 <unit id="com.sun.jna" version="4.1.0"/>
-<unit id="json" version="20160212.0.0"/>
+<unit id="json" version="20160810.0.0"/>
 <unit id="org.apache.aries.spifly.dynamic.bundle" version="1.0.8"/>
 <unit id="org.apache.commons.lang3" version="3.3.2"/>
 <unit id="org.jsoup" version="1.9.2"/>
@@ -45,6 +45,10 @@
 <unit id="org.apache.commons.codec" version="1.10.0"/>
 <unit id="com.sun.jna.platform" version="4.1.0"/>
 <repository location="http://www.nasdanika.org/maven-osgi"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201612210436"/>
+<repository location="http://www.nasdanika.org/products/html/repository"/>
 </location>
 </locations>
 </target>

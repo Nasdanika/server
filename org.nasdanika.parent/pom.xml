@@ -42,6 +42,11 @@
 			<layout>p2</layout>
 		</repository>
 		<repository>
+			<id>html</id>
+			<url>http://www.nasdanika.org/products/html/repository</url>
+			<layout>p2</layout>
+		</repository>
+		<repository>
 			<id>maven-osgi</id>
 			<url>http://www.nasdanika.org/maven-osgi</url>
 			<layout>p2</layout>
@@ -89,6 +94,7 @@
 						<link>http://stleary.github.io/JSON-java</link>			
 						<link>https://osgi.org/javadoc/r4v42/</link>
 						<link>http://seleniumhq.github.io/selenium/docs/api/java/</link>
+						<link>http://www.nasdanika.org/products/html/apidocs</link>
 					</links>
 				</configuration>				
 			</plugin>
@@ -143,7 +149,6 @@
 	</build>
 	<modules>
 		<module>../org.nasdanika.thirdparty</module>
-		<module>../org.nasdanika.html</module>
 		<module>../org.nasdanika.core</module>
 		<module>../org.nasdanika.core.tests</module>
 		<module>../org.nasdanika.web</module>
@@ -184,7 +189,6 @@
 		<module>../org.nasdanika.repository</module>
 		<module>../org.nasdanika.server.jetty.feature</module>
 		<module>../org.nasdanika.server.third_party.feature</module>
-		<module>../org.nasdanika.html.feature</module>
 
 		<module>../org.nasdanika.sca</module>
 		<module>../org.nasdanika.cdo.sca</module>

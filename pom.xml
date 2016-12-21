@@ -24,8 +24,6 @@
 
 	<modules>
 		<!--<module>org.nasdanika.thirdparty</module>-->
-		<module>org.nasdanika.html</module>
-		<module>org.nasdanika.html.feature</module>
 		<module>org.nasdanika.core</module>
 		<module>org.nasdanika.cdo.security</module>
 		<module>org.nasdanika.cdo.security.edit</module>
