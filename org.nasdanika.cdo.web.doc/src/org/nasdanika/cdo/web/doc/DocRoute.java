@@ -1889,7 +1889,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							JSONObject ret = new JSONObject();
 							ret.put("idMap", idMap);
 							ret.put("tree", tocRoot.toJSON(docRoutePath).get("children"));
-							return new ValueAction("define("+ret.toString(4)+")");
+							return new ValueAction("define("+ret+")");
 						} finally {
 							lock.readLock().unlock();
 						}
