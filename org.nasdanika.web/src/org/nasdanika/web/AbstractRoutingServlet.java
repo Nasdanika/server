@@ -126,6 +126,8 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 	protected ExtensionManager extensionManager;
 	
 	private boolean jsonPrettyPrint;
+
+	private String responseCharacterEncoding = "UTF-8";
 	public static final MimetypesFileTypeMap MIME_TYPES_MAP = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));
 	
 	@Override
@@ -153,10 +155,16 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 		} catch (Exception e) {
 			throw new ServletException(e);
 		}		
+		
+		String rce = config.getInitParameter("response-character-encoding");
+		if (rce != null) {
+			responseCharacterEncoding = rce;
+		}
 	}
 			
 	@Override
 	protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+		resp.setCharacterEncoding(responseCharacterEncoding);
         if (webSocketServletFactory != null && webSocketServletFactory.isUpgradeRequest(req,resp)) {
         	super.service(req, resp);
         } else {		
