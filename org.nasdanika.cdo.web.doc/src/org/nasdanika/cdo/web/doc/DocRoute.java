@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1888,7 +1889,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							JSONObject ret = new JSONObject();
 							ret.put("idMap", idMap);
 							ret.put("tree", tocRoot.toJSON(docRoutePath).get("children"));
-							return new ValueAction("define("+ret+")");
+							return new ValueAction("define("+ret.toString(4)+")");
 						} finally {
 							lock.readLock().unlock();
 						}
@@ -1931,7 +1932,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				return Action.NOT_FOUND;
 			} 
 									
-			String requestURL = context.getRequest().getRequestURL().toString();
+			String characterEncoding = context.getRequest().getCharacterEncoding();
+			String requestURL = URLDecoder.decode(context.getRequest().getRequestURL().toString(), characterEncoding == null ? "UTF-8" : characterEncoding);
 			String requestURI = context.getRequest().getRequestURI();
 			String urlPrefix = requestURL.endsWith(requestURI) ? requestURL.substring(0, requestURL.length()-requestURI.length()) : null;
 			String prefix = docAppPath+ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath;			
