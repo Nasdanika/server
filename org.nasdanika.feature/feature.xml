@@ -171,20 +171,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="org.nasdanika.webtest.performance"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.nasdanika.webtest.performance.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.nasdanika.function"
          download-size="0"
          install-size="0"
@@ -374,20 +360,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
          unpack="false"/>
 
    <plugin
-         id="org.nasdanika.webtest.model.routes"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.nasdanika.webtest.model.routes.source"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.nasdanika.osgi.model"
          download-size="0"
          install-size="0"
@@ -403,13 +375,6 @@ This Agreement is governed by the laws of the State of New York and the intellec
 
    <plugin
          id="json"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.nasdanika.webtest.model"
          download-size="0"
          install-size="0"
          version="0.0.0"
