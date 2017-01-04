@@ -192,16 +192,8 @@
 		<module>../org.nasdanika.server.jetty.feature</module>
 		<module>../org.nasdanika.server.third_party.feature</module>
 
-		<module>../org.nasdanika.sca</module>
 		<module>../org.nasdanika.cdo.sca</module>
 		<module>../org.nasdanika.cdo.sca.edit</module>
-		<module>../org.nasdanika.sca.design</module>
-		<module>../org.nasdanika.sca.edit</module>
-		<module>../org.nasdanika.sca.editor</module>
-		<module>../org.nasdanika.sca.feature</module>
-
-		<module>../org.nasdanika.tools.design</module>
-		<module>../org.nasdanika.tools.feature</module>
 
 		<module>../org.nasdanika.provisioning</module>
 		<module>../org.nasdanika.provisioning.feature</module>
