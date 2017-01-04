@@ -36,20 +36,7 @@ test:
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function.cdo
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.osgi.model
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca.design
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca.editor
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca.edit
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story.editor
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story.edit
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.tools.design
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.web
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.model.routes
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.model
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.performance
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.provisioning
     
     - mv org.nasdanika.cdo.boxing/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
@@ -70,20 +57,7 @@ test:
     - mv org.nasdanika.function.cdo/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function.cdo
     - mv org.nasdanika.function/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function
     - mv org.nasdanika.osgi.model/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.osgi.model
-    - mv org.nasdanika.sca.design/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca.design
-    - mv org.nasdanika.sca.editor/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca.editor
-    - mv org.nasdanika.sca.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca.edit
-    - mv org.nasdanika.sca/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.sca
-    - mv org.nasdanika.story.editor/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story.editor
-    - mv org.nasdanika.story.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story.edit
-    - mv org.nasdanika.story/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.story
-    - mv org.nasdanika.tools.design/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.tools.design
     - mv org.nasdanika.web/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.web
-    - mv org.nasdanika.webtest.model.routes/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.model.routes
-    - mv org.nasdanika.webtest.model/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.model
-    - mv org.nasdanika.webtest.performance/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest.performance
-    - mv org.nasdanika.webtest/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.webtest
-    - mv org.nasdanika.workspace.wizard/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.workspace.wizard
     - mv org.nasdanika.provisioning/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.provisioning
     
     

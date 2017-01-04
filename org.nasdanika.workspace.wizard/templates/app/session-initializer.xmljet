@@ -1,8 +1,0 @@
-<%@ jet package="org.nasdanika.workspace.wizard.render.app" class="SessionInitializerComponentRenderer" skeleton="../Renderer.skeleton" %>
-<?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="<%=wizard.getDashedName()%>-session-initializer">
-   <implementation class="<%=wizard.getApplicationArtifactId()%>.<%=wizard.getJavaName()%>SessionInitializerComponent"/>
-   <service>
-      <provide interface="org.nasdanika.cdo.CDOSessionInitializer"/>
-   </service>
-</scr:component>

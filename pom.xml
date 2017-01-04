@@ -31,14 +31,7 @@
 		<module>org.nasdanika.cdo.security.feature</module>
 		<module>org.nasdanika.core.tests</module>
 		<module>org.nasdanika.web</module>
-		<module>org.nasdanika.webtest</module>
-		<module>org.nasdanika.webtest.model</module>
-		<module>org.nasdanika.webtest.model.routes</module>
-		<module>org.nasdanika.webtest.performance</module>
-				
-		<module>org.nasdanika.workspace.wizard</module>
-		<module>org.nasdanika.workspace.wizard.feature</module>
-		
+
 		<module>org.nasdanika.cdo.h2</module>
 		<module>org.nasdanika.cdo</module>
 		<module>org.nasdanika.cdo.web</module>
@@ -54,29 +47,14 @@
 		<module>org.nasdanika.cdo.promise</module>
 		<module>org.nasdanika.equinox.feature</module>
 		<module>org.nasdanika.cdo.feature</module>
-		<module>org.nasdanika.webtest.feature</module>
-		<module>org.nasdanika.webtest.performance.feature</module>
 		<module>org.nasdanika.feature</module>
 		<!-- <module>org.nasdanika.transaction</module> -->
 		<!-- <module>org.nasdanika.server.third_party.feature</module> -->
 		<module>org.nasdanika.server.jetty.feature</module>
 		<module>org.nasdanika.repository</module>
 
-		<module>org.nasdanika.sca</module>
 		<module>org.nasdanika.cdo.sca</module>
 		<module>org.nasdanika.cdo.sca.edit</module>
-		<module>org.nasdanika.sca.design</module>
-		<module>org.nasdanika.sca.edit</module>
-		<module>org.nasdanika.sca.editor</module>
-		<module>org.nasdanika.sca.feature</module>
-
-		<module>org.nasdanika.story</module>
-		<module>org.nasdanika.story.edit</module>
-		<module>org.nasdanika.story.editor</module>
-		<module>org.nasdanika.story.feature</module>
-
-		<module>org.nasdanika.tools.design</module>
-		<module>org.nasdanika.tools.feature</module>
 
 		<module>org.nasdanika.provisioning</module>
 		<module>org.nasdanika.provisioning.feature</module>
