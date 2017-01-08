@@ -224,7 +224,7 @@ public class PlantUmlTextGenerator {
 			if (lowerBound==0 && upperBound==-1) {
 				return "*";
 			}
-			return String.valueOf(lowerBound)+".."+upperBound;
+			return String.valueOf(lowerBound)+".."+(upperBound == -1 ? "*" : upperBound);
 		}
 		
 		return "";
