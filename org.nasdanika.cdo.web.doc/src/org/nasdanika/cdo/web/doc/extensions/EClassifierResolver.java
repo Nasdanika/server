@@ -45,7 +45,7 @@ public class EClassifierResolver implements WikiLinkResolver {
 //			return spec;
 //		}
 		int lastSlashIdx = contextModelElementPath.toString().lastIndexOf("/");
-		return lastSlashIdx==-1 ? spec : contextModelElementPath.toString().substring(0, lastSlashIdx+1) + spec;		
+		return (lastSlashIdx==-1 ? spec : contextModelElementPath.toString().substring(0, lastSlashIdx+1) + spec) + ".html";		
 	}
 
 }
