@@ -2,71 +2,212 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="security" nsURI="urn:org.nasdanika.cdo.security" nsPrefix="org.nasdanika.cdo.security">
   <eClassifiers xsi:type="ecore:EDataType" name="Context" instanceClassName="org.nasdanika.core.Context"/>
-  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordCredentials" instanceClassName="org.nasdanika.cdo.security.LoginPasswordCredentials"
-      abstract="true" interface="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ProtectionDomain" abstract="true" interface="true">
+  <eClassifiers xsi:type="ecore:EClass" name="Realm" abstract="true" interface="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;html>Protection domain establishes associations between users and actions which they can execute by the means of groups and permissions. There is no Role class/interface in the domain. A grantable actions is Role.&lt;/html>"/>
+      <details key="documentation" value="Realm establishes associations between users and actions on model objects which users are allowed to perform.&#xD;&#xA;There is no Role class/interface in the domain. A grantable actions is Role.&#xD;&#xA;&#xD;&#xA;Typically the root of the application model would implement this interface."/>
     </eAnnotations>
     <eTypeParameters name="CR"/>
-    <eOperations name="authenticate" eType="#//User">
+    <eOperations name="authenticate">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Authenticates user given provided credentials, e.g. user login and password pair.&lt;/html>"/>
+        <details key="documentation" value="Authenticates user given provided credentials, e.g. user login and password pair."/>
       </eAnnotations>
       <eParameters name="credentials">
-        <eGenericType eTypeParameter="#//ProtectionDomain/CR"/>
+        <eGenericType eTypeParameter="#//Realm/CR"/>
       </eParameters>
+    </eOperations>
+    <eOperations name="getAllPrincipals" upperBound="-1" eType="#//Principal">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Realm does not have a containment reference for principals, subclasses may&#xD;&#xA;have one or more principal containment references, direct or through contained objects.&#xD;&#xA;&#xD;&#xA;This method returns all principals defined in the realm.&#xD;&#xA;"/>
+      </eAnnotations>
     </eOperations>
     <eOperations name="clearPermissions">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Removes permissions associated with the object allowing it to be detached from the model.&lt;/html>"/>
+        <details key="documentation" value="Removes permissions associated with the target object from all principals in the realm.&#xD;&#xA;This method shall be invoked before deleting an object."/>
       </eAnnotations>
-      <eParameters name="obj" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+      <eParameters name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Target object."/>
+        </eAnnotations>
+      </eParameters>
     </eOperations>
-    <eOperations name="getAllUsers" upperBound="-1">
-      <eGenericType eTypeParameter="#//ProtectionDomain/getAllUsers/U"/>
-      <eTypeParameters name="U">
-        <eBounds eClassifier="#//User"/>
-      </eTypeParameters>
-    </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="superUsersGroup" eType="#//Group">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="root" eType="#//Principal">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Superusers have all permissions. If this collection is empty, then any user is treated as a superuser. This functionality allows to configure the system after installation and then secure it by adding superusers.&lt;/html>"/>
+        <details key="documentation" value="Root has all permissions. &#xD;&#xA;If root is not set or root is a group with no members, then any user is treated as a superuser. &#xD;&#xA;This functionality allows to configure the system after installation and then secure it by setting/adding root(s)."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="unauthenticatedPrincipal"
-        eType="#//User">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="guest" eType="#//Principal">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Unauthenticated principal.&lt;/html>"/>
+        <details key="documentation" value="Unauthenticated principal."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="everyoneGroup" eType="#//Group">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="everyone" eType="#//Principal">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>If this reference is set then all authenticated users are considered to be implicit members of this group.&lt;/html>"/>
+        <details key="documentation" value="If this reference is set then all authenticated users implicitly inherit permissions from the ``everyone`` principal."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="packages" upperBound="-1"
+        eType="#//Package" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="In a security realm principals are granted permissios to perform actions on&#xD;&#xA;protected objects.&#xD;&#xA;Actions are associated with classed defined in packages."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordProtectionDomain" abstract="true">
-    <eOperations name="setPasswordHash">
-      <eParameters name="user" eType="#//LoginPasswordHashUser"/>
-      <eParameters name="password" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eOperations>
-    <eOperations name="getUser" eType="#//User">
-      <eParameters name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    </eOperations>
-    <eGenericSuperTypes eClassifier="#//ProtectionDomain">
-      <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
-    </eGenericSuperTypes>
+  <eClassifiers xsi:type="ecore:EClass" name="Package">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Package corresponds to Ecore EPackage."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Package name for display purposes."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="nsURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Namespace URI is used to match EPackage."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Comment."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="classes" upperBound="-1"
+        eType="#//Class" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Package contains classes which match EClass'es"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="PrincipalVisitor" instanceClassName="org.nasdanika.cdo.security.PrincipalVisitor"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Principal" abstract="true" interface="true">
-    <eOperations name="authorize" eType="#//AccessDecision">
-      <eParameters name="securityPolicy" eType="#//SecurityPolicy"/>
-      <eParameters name="context" eType="#//Context"/>
-      <eParameters name="target" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-      <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="qualifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Class">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Class corresponds to EClass and contains actions which can be performed on&#xD;&#xA;instances of the corresponding EClass.."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Class name, used for matching EClass."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Comment."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
+        eType="#//Action" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Actions which can be preformed on instances of corresponding EClass."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Action">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="&lt;html>Action defined for instances of given EClass&lt;/html>"/>
+    </eAnnotations>
+    <eOperations name="match" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Matches this action to action string, qualifier in a given context and environment.&#xD;&#xA;The default implementation constructs a string ``&lt;action>:&lt;qualifier>`` and uses name as a simplified glob pattern to match the string.&#xD;&#xA;&#xD;&#xA;For example:&#xD;&#xA;&#xD;&#xA;* ``*:*`` matches any request.&#xD;&#xA;* ``read:description`` matches action ``read`` for the qualifier ``descriptor``.&#xD;&#xA;* ``*:accounts`` matches any action for the ``accounts`` qualifier."/>
+      </eAnnotations>
+      <eParameters name="context" eType="#//Context">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Matching context, e.g. ``CDOTransactionContext``."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Action name, a verb. E.g. ``read`` or ``create``"/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="qualifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Qualifier, a noun, e.g. ``description`` for a description attribute or ``doSomething(java.lang.String)`` for an operation.&#xD;&#xA;Qualifier is typically a feature/operation path."/>
+        </eAnnotations>
+      </eParameters>
       <eParameters name="environment">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Environment can be used to parameterize conditional actions. &#xD;&#xA;For example an application can define an action class ``TransferFunds`` with ``amountLimit`` ``BigDecimal`` attribute and match logic comparing ``amount`` key of the environment to the ``amount`` attribute of the action and matching only if the key is equal or greater than the attribute.. &#xD;&#xA;Then the application model may contain ``largeTransfer`` action instance with amount set to, say, ``10000``. Permission to execute this action then can be allowed to denied  to some principals.&#xD;&#xA;"/>
+        </eAnnotations>
+        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eOperations name="createPermission" eType="#//Permission">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Creates a permission for this action. &#xD;&#xA;Subclasses may customize permissions created for actions. &#xD;&#xA;E.g. ``transferFunds`` action may create a conditional permission&#xD;&#xA;wich checks transfer amount and matches only if the amount is less or greater&#xD;&#xA;than a specified limit.&#xD;&#xA;"/>
+      </eAnnotations>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Action name, which is used as a pattern to match ``&lt;action>:&lt;qualifier>`` string.  ``*`` matches any character sequence."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="grantable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Only grantable actions can have permission associations. &#xD;&#xA;Grantable action corresponds to a user story or to a role. &#xD;&#xA;A non-grantable action shall have an impliedBy relationship with at least one grantable action or be contained in a grantable action.&#xD;&#xA;Use of grantable actions allows to use fine-grained action permission checks at development time and define coarse-grained user stories (grantable actions implying or containing other actions) at runtime time."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Action description."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="implies" upperBound="-1"
+        eType="#//Action" eOpposite="#//Action/impliedBy">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="References actions which are explicitly implied by this action. &#xD;&#xA;"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="impliedBy" upperBound="-1"
+        eType="#//Action" eOpposite="#//Action/implies">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Opposite to ``implies``."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Categories allow to group related actions."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//Action" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Child actions, implicitly implied by the parent action."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Principal" abstract="true" interface="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Permissions to perform actions on model elements are granted or denied to principals."/>
+    </eAnnotations>
+    <eOperations name="authorize" eType="#//AccessDecision">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Authorizes to execute an action with a qualifier on an object in an context and an environment."/>
+      </eAnnotations>
+      <eParameters name="context" eType="#//Context">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Authorization context."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Permission target object."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Action name, e.g. ``read``, ``add``, or ``invoke``."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="qualifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Action qualifier. E.g. attribute name for ``read`` or operation signature for ``invoke``."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="environment">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Authorization environment, e.g. for ``transferFunds`` environment may contain ``transferAmount`` key.&#xD;&#xA;Environment may be used by conditional actions and/or conditional permissions."/>
+        </eAnnotations>
         <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
           <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
           <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
@@ -74,128 +215,68 @@
       </eParameters>
     </eOperations>
     <eOperations name="accept">
-      <eParameters name="visitor" eType="#//PrincipalVisitor"/>
-    </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="memberOf" upperBound="-1"
-        eType="#//Group" eOpposite="#//Group/members"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="permissions" upperBound="-1"
-        eType="#//Permission" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="protectionDomain" changeable="false"
-        volatile="true" transient="true" derived="true">
-      <eGenericType eClassifier="#//ProtectionDomain">
-        <eTypeArguments/>
-      </eGenericType>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="AccessDecision" instanceClassName="org.nasdanika.core.AuthorizationProvider.AccessDecision"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Group" eSuperTypes="#//Principal">
-    <eOperations name="isMember" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
-      <eParameters name="principal" eType="#//Principal"/>
-    </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="members" upperBound="-1"
-        eType="#//Principal" eOpposite="#//Principal/memberOf"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="User" abstract="true" interface="true"
-      eSuperTypes="#//Principal"/>
-  <eClassifiers xsi:type="ecore:EClass" name="LoginUser" eSuperTypes="#//User">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
-        iD="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="disabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordHashUser" abstract="true"
-      interface="true" eSuperTypes="#//LoginUser">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="passwordHash" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ActionKey">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value=""/>
+        <details key="documentation" value="Invokes ``PrincipalVisitor.visit()`` on this principal. For groups invokes ``accept(principalVisitor)`` on all group members."/>
       </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetNamespaceURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Namespace URI of the target class' package.&lt;/html>"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="targetClass" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Name of the target class.&lt;/html>"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="qualifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value=""/>
-      </eAnnotations>
-    </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Action" eSuperTypes="#//ActionKey #//ActionContainer">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;html>Action defined for instances of given EClass&lt;/html>"/>
-    </eAnnotations>
-    <eOperations name="match" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
-      <eParameters name="context" eType="#//Context"/>
-      <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="environment">
-        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
-          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-        </eGenericType>
+      <eParameters name="visitor" eType="#//PrincipalVisitor">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value=""/>
+        </eAnnotations>
       </eParameters>
     </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="grantable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+    <eOperations name="getRealm">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Only grantable actions can have permission associations. Grantable action corresponds to a role. A non-grantable action shall have an impliedBy relationship with at least one grantable action.&#xD;&#xA;Use of grantable actions allows to use fine-grained action permission checks at development time and define coarse-grained roles (grantable actions implying other actions) at runtime time.&#xD;&#xA;&lt;/html>"/>
+        <details key="documentation" value="Realm this principal belongs to. The default implementation traverses containment&#xD;&#xA;hierarchy until it finds a container of type ``Realm``."/>
+      </eAnnotations>
+      <eGenericType eClassifier="#//Realm">
+        <eTypeArguments/>
+      </eGenericType>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="memberOf" upperBound="-1"
+        eType="#//Group" eOpposite="#//Group/members">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Opposite to ``Group.members``."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="implies" upperBound="-1"
-        eType="#//Action" eOpposite="#//Action/impliedBy">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="permissions" upperBound="-1"
+        eType="#//Permission" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>References actions which are explicitly implied by this action. Actions are also implicitly implied by using action naming convention with dot as a separator - e.g. &lt;code>myAction&lt;/code> implies &lt;code>myAction.mySubAction&lt;/code>.&lt;/html>"/>
+        <details key="documentation" value="Permissions of this principal."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="impliedBy" upperBound="-1"
-        eType="#//Action" eOpposite="#//Action/implies">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="disabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Opposite to &lt;code>implies&lt;/code>.&lt;/html>"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="pathPatterns" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Path patterns allow to compute permissions using containment path, i.e. container object may define actions on contained objects. Containment path is computed from reference names, e.g. path of a customer account relative to the customer object would be &lt;code>/accounts&lt;/code>, and relative to the system of records would be &lt;code>/customers/accounts&lt;/code>. Container object's path is '/', If pathPatterns is empty then it is assumed that the action applies to the target object, i.e. that there is a single pattern &lt;code>/&lt;/code>.&lt;/html>"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="properties" upperBound="-1"
-        eType="#//Property" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="category" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Path patterns allow to compute permissions using containment path, i.e. container object may define actions on contained objects. Containment path is computed from reference names, e.g. path of a customer account relative to the customer object would be &lt;code>/accounts&lt;/code>, and relative to the system of records would be &lt;code>/customers/accounts&lt;/code>. Container object's path is '/', If pathPatterns is empty then it is assumed that the action applies to the target object, i.e. that there is a single pattern &lt;code>/&lt;/code>.&lt;/html>"/>
+        <details key="documentation" value="Disabling a principal has the same effect as deleting it, &#xD;&#xA;but with the ability to enable at some later point of time."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Property">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Permission" eSuperTypes="#//ActionKey">
+  <eClassifiers xsi:type="ecore:EClass" name="Permission">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="&lt;html>Permission is an association of a repository object with a principal.&lt;/html>"/>
+      <details key="documentation" value="Permission allows/denies a principal to perform an action on a model element."/>
     </eAnnotations>
     <eOperations name="authorize" eType="#//AccessDecision">
-      <eParameters name="securityPolicy" eType="#//SecurityPolicy"/>
-      <eParameters name="context" eType="#//Context"/>
-      <eParameters name="target" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
-      <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-      <eParameters name="path" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value=""/>
+      </eAnnotations>
+      <eParameters name="context" eType="#//Context">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value=""/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value=""/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="qualifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value=""/>
+        </eAnnotations>
+      </eParameters>
       <eParameters name="environment">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value=""/>
+        </eAnnotations>
         <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
           <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
           <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
@@ -205,49 +286,127 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="allow" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>If true, action is allowed. Otherwise it is denied.&lt;/html>"/>
+        <details key="documentation" value="If true, action is allowed. Otherwise it is denied."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Target object.&lt;/html>"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="withGrantOption" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>If true, user can grant given action to other users.&lt;/html>"/>
+        <details key="documentation" value="Target object."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Permission effective start date. Can be null.&lt;/html>"/>
+        <details key="documentation" value="Permission effective start date. Can be ``null``."/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Permission effective end date, can be null.&lt;/html>"/>
+        <details key="documentation" value="Permission effective end date, can be ``null``."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ActionContainer">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="actions" upperBound="-1"
-        eType="#//Action" containment="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="&lt;html>Actions. Each action is associated with EClass.&lt;/html>"/>
+        <details key="documentation" value="Comment."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//Action">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Permission's action."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="SecurityPolicy" instanceClassName="org.nasdanika.cdo.security.SecurityPolicy"
-      abstract="true" interface="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="SecurityPolicyContainer" eSuperTypes="#//SecurityPolicy #//ActionContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordCredentials" instanceClassName="org.nasdanika.cdo.security.LoginPasswordCredentials"
+      abstract="true" interface="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Credentials which consist of login name and password."/>
+    </eAnnotations>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordRealm" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Realm which supports user authentication with user name and password."/>
+    </eAnnotations>
+    <eOperations name="setPasswordHash">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Sets user password hash."/>
+      </eAnnotations>
+      <eParameters name="user" eType="#//LoginPasswordHashUser">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="User to set password hash."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="password" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Password to compute password hash from."/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eOperations name="getLoginUser" eType="#//LoginUser">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="finds user by login name."/>
+      </eAnnotations>
+      <eParameters name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="User login."/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eGenericSuperTypes eClassifier="#//Realm">
+      <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="PrincipalVisitor" instanceClassName="org.nasdanika.cdo.security.PrincipalVisitor"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="AccessDecision" instanceClassName="org.nasdanika.core.AuthorizationProvider.AccessDecision"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Group" eSuperTypes="#//Principal">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Group of principals. Group permissions are inherited by its members."/>
+    </eAnnotations>
+    <eOperations name="isMember" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Checks direct/indirect membership in the group."/>
+      </eAnnotations>
+      <eParameters name="principal" eType="#//Principal">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Principal."/>
+        </eAnnotations>
+      </eParameters>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="members" upperBound="-1"
+        eType="#//Principal" eOpposite="#//Principal/memberOf">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Group members."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value=""/>
+        <details key="documentation" value="Group name."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="imports" upperBound="-1"
-        eType="#//ActionContainer"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Group description."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LoginUser" abstract="true" eSuperTypes="#//Principal">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Login user is a principal identified by a login string. &#xD;&#xA;Login user does not necessarily have a password. The realm performs only authorization, with authentication already performed by other layers.&#xD;&#xA;&#xD;&#xA;For example:&#xD;&#xA;&#xD;&#xA;* A web application may transparently authenticate users against a Windows domain with Waffle or Apache NTML module. In this case the realm receives the name of already authenticated.&#xD;&#xA;* Two-way certificate authentication - the realm receives cn of the client certificate."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        iD="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="A unique string identifying the user."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordHashUser" abstract="true"
+      interface="true" eSuperTypes="#//LoginUser">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="With LoginPasswordHashUser Realm performs authentication and authorization."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="passwordHash" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Password one-way hash allows to verify a password provided during authentication, &#xD;&#xA;but recovery of the original password from hash would require considerable &#xD;&#xA;computational resources."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
 </ecore:EPackage>

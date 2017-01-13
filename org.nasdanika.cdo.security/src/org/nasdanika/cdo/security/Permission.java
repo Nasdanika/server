@@ -5,6 +5,7 @@ package org.nasdanika.cdo.security;
 import java.util.Date;
 import java.util.Map;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
@@ -15,7 +16,7 @@ import org.nasdanika.core.Context;
  * <!-- end-user-doc -->
  *
  * <!-- begin-model-doc -->
- * <html>Permission is an association of a repository object with a principal.</html>
+ * Permission allows/denies a principal to perform an action on a model element.
  * <!-- end-model-doc -->
  *
  * <p>
@@ -24,24 +25,25 @@ import org.nasdanika.core.Context;
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Permission#isAllow <em>Allow</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getTarget <em>Target</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Permission#isWithGrantOption <em>With Grant Option</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getStartDate <em>Start Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getComment <em>Comment</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPermission()
  * @model
+ * @extends CDOObject
  * @generated
  */
-public interface Permission extends ActionKey {
+public interface Permission extends CDOObject {
 	/**
 	 * Returns the value of the '<em><b>Allow</b></em>' attribute.
 	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * <html>If true, action is allowed. Otherwise it is denied.</html>
+	 * If true, action is allowed. Otherwise it is denied.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Allow</em>' attribute.
 	 * @see #setAllow(boolean)
@@ -66,7 +68,7 @@ public interface Permission extends ActionKey {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * <html>Target object.</html>
+	 * Target object.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Target</em>' reference.
 	 * @see #setTarget(EObject)
@@ -87,36 +89,11 @@ public interface Permission extends ActionKey {
 	void setTarget(EObject value);
 
 	/**
-	 * Returns the value of the '<em><b>With Grant Option</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * <html>If true, user can grant given action to other users.</html>
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>With Grant Option</em>' attribute.
-	 * @see #setWithGrantOption(boolean)
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_WithGrantOption()
-	 * @model
-	 * @generated
-	 */
-	boolean isWithGrantOption();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Permission#isWithGrantOption <em>With Grant Option</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>With Grant Option</em>' attribute.
-	 * @see #isWithGrantOption()
-	 * @generated
-	 */
-	void setWithGrantOption(boolean value);
-
-	/**
 	 * Returns the value of the '<em><b>Start Date</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * <html>Permission effective start date. Can be null.</html>
+	 * Permission effective start date. Can be ``null``.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Start Date</em>' attribute.
 	 * @see #setStartDate(Date)
@@ -141,7 +118,7 @@ public interface Permission extends ActionKey {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * <html>Permission effective end date, can be null.</html>
+	 * Permission effective end date, can be ``null``.
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>End Date</em>' attribute.
 	 * @see #setEndDate(Date)
@@ -169,6 +146,9 @@ public interface Permission extends ActionKey {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Comment.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Comment</em>' attribute.
 	 * @see #setComment(String)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_Comment()
@@ -188,11 +168,47 @@ public interface Permission extends ActionKey {
 	void setComment(String value);
 
 	/**
+	 * Returns the value of the '<em><b>Action</b></em>' reference.
 	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Action</em>' reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
 	 * <!-- end-user-doc -->
-	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" securityPolicyType="org.nasdanika.cdo.security.SecurityPolicy" contextDataType="org.nasdanika.cdo.security.Context"
+	 * <!-- begin-model-doc -->
+	 * Permission's action.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Action</em>' reference.
+	 * @see #setAction(Action)
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_Action()
+	 * @model
 	 * @generated
 	 */
-	AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String path, Map<String, Object> environment);
+	Action getAction();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Action</em>' reference.
+	 * @see #getAction()
+	 * @generated
+	 */
+	void setAction(Action value);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * 
+	 * @param context 
+	 * @param action 
+	 * @param qualifier 
+	 * @param environment 
+	 * <!-- end-model-doc -->
+	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" contextDataType="org.nasdanika.cdo.security.Context"
+	 * @generated
+	 */
+	AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment);
 
 } // Permission

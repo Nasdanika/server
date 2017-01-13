@@ -10,10 +10,11 @@ import java.util.regex.Pattern;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.security.Action;
-import org.nasdanika.cdo.security.ActionContainer;
+import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Property;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.ClassLoadingContext;
@@ -29,20 +30,18 @@ import org.nasdanika.core.NasdanikaException;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getActions <em>Actions</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#isGrantable <em>Grantable</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getImplies <em>Implies</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getImpliedBy <em>Implied By</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getPathPatterns <em>Path Patterns</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getCondition <em>Condition</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getProperties <em>Properties</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getCategory <em>Category</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getChildren <em>Children</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ActionImpl extends ActionKeyImpl implements Action {
+public class ActionImpl extends CDOObjectImpl implements Action {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -67,9 +66,27 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
-	public EList<Action> getActions() {
-		return (EList<Action>)eGet(SecurityPackage.Literals.ACTION_CONTAINER__ACTIONS, true);
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getName() {
+		return (String)eGet(SecurityPackage.Literals.ACTION__NAME, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setName(String newName) {
+		eSet(SecurityPackage.Literals.ACTION__NAME, newName);
 	}
 
 	/**
@@ -134,48 +151,29 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<String> getPathPatterns() {
-		return (EList<String>)eGet(SecurityPackage.Literals.ACTION__PATH_PATTERNS, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getCondition() {
-		return (String)eGet(SecurityPackage.Literals.ACTION__CONDITION, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setCondition(String newCondition) {
-		eSet(SecurityPackage.Literals.ACTION__CONDITION, newCondition);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public EList<Property> getProperties() {
-		return (EList<Property>)eGet(SecurityPackage.Literals.ACTION__PROPERTIES, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@SuppressWarnings("unchecked")
-	public EList<String> getCategory() {
-		return (EList<String>)eGet(SecurityPackage.Literals.ACTION__CATEGORY, true);
+	public String getCategory() {
+		return (String)eGet(SecurityPackage.Literals.ACTION__CATEGORY, true);
 	}
 	
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCategory(String newCategory) {
+		eSet(SecurityPackage.Literals.ACTION__CATEGORY, newCategory);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<Action> getChildren() {
+		return (EList<Action>)eGet(SecurityPackage.Literals.ACTION__CHILDREN, true);
+	}
+
 	/**
 	 * Inherits path patterns.
 	 * @return
@@ -260,31 +258,10 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
-		if (baseClass == ActionContainer.class) {
-			switch (derivedFeatureID) {
-				case SecurityPackage.ACTION__ACTIONS: return SecurityPackage.ACTION_CONTAINER__ACTIONS;
-				default: return -1;
-			}
-		}
-		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
-		if (baseClass == ActionContainer.class) {
-			switch (baseFeatureID) {
-				case SecurityPackage.ACTION_CONTAINER__ACTIONS: return SecurityPackage.ACTION__ACTIONS;
-				default: return -1;
-			}
-		}
-		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	public Permission createPermission() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	private Boolean eval(Context context, String path, Map<String, Object> environment) {
@@ -350,6 +327,8 @@ public class ActionImpl extends ActionKeyImpl implements Action {
 		switch (operationID) {
 			case SecurityPackage.ACTION___MATCH__CONTEXT_STRING_STRING_MAP:
 				return match((Context)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), (Map<String, Object>)arguments.get(3));
+			case SecurityPackage.ACTION___CREATE_PERMISSION:
+				return createPermission();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

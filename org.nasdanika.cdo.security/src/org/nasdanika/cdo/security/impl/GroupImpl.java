@@ -14,7 +14,7 @@ import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
@@ -30,7 +30,7 @@ import org.nasdanika.core.Context;
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getMemberOf <em>Member Of</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getPermissions <em>Permissions</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getProtectionDomain <em>Protection Domain</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#isDisabled <em>Disabled</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getMembers <em>Members</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.GroupImpl#getDescription <em>Description</em>}</li>
@@ -89,15 +89,44 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isDisabled() {
+		return (Boolean)eGet(SecurityPackage.Literals.PRINCIPAL__DISABLED, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDisabled(boolean newDisabled) {
+		eSet(SecurityPackage.Literals.PRINCIPAL__DISABLED, newDisabled);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Realm<?> getRealm() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
 	 * Traverses containers looking for a protection domain.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public ProtectionDomain<?> getProtectionDomain() {
+	public Realm<?> getProtectionDomain() {
 		for (EObject container = eContainer(); container != null; container = container.eContainer()) {
-			if (container instanceof ProtectionDomain) {
-				return (ProtectionDomain<?>) container;
+			if (container instanceof Realm) {
+				return (Realm<?>) container;
 			}
 		}
 
@@ -171,6 +200,17 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 		return false;
 	}
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
 	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);
 	
 	/**
@@ -188,9 +228,10 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 	 * @generated NOT
 	 */
 	public void accept(PrincipalVisitor visitor) {
-		visitor.visit(this);
-		for (Principal m: getMembers()) {
-			m.accept(visitor);
+		if (visitor.visit(this)) {
+			for (Principal m: getMembers()) {
+				m.accept(visitor);
+			}
 		}
 	}
 
@@ -205,11 +246,13 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 		switch (operationID) {
 			case SecurityPackage.GROUP___IS_MEMBER__PRINCIPAL:
 				return isMember((Principal)arguments.get(0));
-			case SecurityPackage.GROUP___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP:
-				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
+			case SecurityPackage.GROUP___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP:
+				return authorize((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
 			case SecurityPackage.GROUP___ACCEPT__PRINCIPALVISITOR:
 				accept((PrincipalVisitor)arguments.get(0));
 				return null;
+			case SecurityPackage.GROUP___GET_REALM:
+				return getRealm();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

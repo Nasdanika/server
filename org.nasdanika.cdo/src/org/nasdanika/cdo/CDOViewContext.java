@@ -2,7 +2,7 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.core.Context;
 
 public interface CDOViewContext<V extends CDOView, CR> extends Context {
@@ -23,7 +23,7 @@ public interface CDOViewContext<V extends CDOView, CR> extends Context {
 	 */
 	CDOViewContextSubject<V,CR> getSubject() throws Exception;
 	
-	ProtectionDomain<CR> getProtectionDomain();
+	Realm<CR> getSecurityRealm();
 	
 	/**
 	 * Authenticates user with provided credentials. 

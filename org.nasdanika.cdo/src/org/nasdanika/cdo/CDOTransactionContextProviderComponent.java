@@ -6,7 +6,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandlerBase;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
@@ -65,7 +65,7 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 						chain) {
 					
 					@Override
-					public ProtectionDomain<CR> getProtectionDomain() {
+					public Realm<CR> getSecurityRealm() {
 						return CDOTransactionContextProviderComponent.this.getProtectionDomain(getView());
 					}
 
@@ -90,6 +90,6 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 		return null;
 	}
 
-	protected abstract ProtectionDomain<CR> getProtectionDomain(CDOTransaction view);
+	protected abstract Realm<CR> getProtectionDomain(CDOTransaction view);
 
 }

@@ -6,21 +6,15 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.util.Switch;
 import org.nasdanika.cdo.security.Action;
-import org.nasdanika.cdo.security.ActionContainer;
-import org.nasdanika.cdo.security.ActionKey;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
-import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
+import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.Property;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.cdo.security.SecurityPolicy;
-import org.nasdanika.cdo.security.SecurityPolicyContainer;
-import org.nasdanika.cdo.security.User;
 
 /**
  * <!-- begin-user-doc -->
@@ -79,28 +73,52 @@ public class SecuritySwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
-			case SecurityPackage.LOGIN_PASSWORD_CREDENTIALS: {
-				LoginPasswordCredentials loginPasswordCredentials = (LoginPasswordCredentials)theEObject;
-				T result = caseLoginPasswordCredentials(loginPasswordCredentials);
+			case SecurityPackage.REALM: {
+				Realm<?> realm = (Realm<?>)theEObject;
+				T result = caseRealm(realm);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case SecurityPackage.PROTECTION_DOMAIN: {
-				ProtectionDomain<?> protectionDomain = (ProtectionDomain<?>)theEObject;
-				T result = caseProtectionDomain(protectionDomain);
+			case SecurityPackage.PACKAGE: {
+				org.nasdanika.cdo.security.Package package_ = (org.nasdanika.cdo.security.Package)theEObject;
+				T result = casePackage(package_);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN: {
-				LoginPasswordProtectionDomain loginPasswordProtectionDomain = (LoginPasswordProtectionDomain)theEObject;
-				T result = caseLoginPasswordProtectionDomain(loginPasswordProtectionDomain);
-				if (result == null) result = caseProtectionDomain(loginPasswordProtectionDomain);
+			case SecurityPackage.CLASS: {
+				org.nasdanika.cdo.security.Class class_ = (org.nasdanika.cdo.security.Class)theEObject;
+				T result = caseClass(class_);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.ACTION: {
+				Action action = (Action)theEObject;
+				T result = caseAction(action);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
 			case SecurityPackage.PRINCIPAL: {
 				Principal principal = (Principal)theEObject;
 				T result = casePrincipal(principal);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.PERMISSION: {
+				Permission permission = (Permission)theEObject;
+				T result = casePermission(permission);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.LOGIN_PASSWORD_CREDENTIALS: {
+				LoginPasswordCredentials loginPasswordCredentials = (LoginPasswordCredentials)theEObject;
+				T result = caseLoginPasswordCredentials(loginPasswordCredentials);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.LOGIN_PASSWORD_REALM: {
+				LoginPasswordRealm loginPasswordRealm = (LoginPasswordRealm)theEObject;
+				T result = caseLoginPasswordRealm(loginPasswordRealm);
+				if (result == null) result = caseRealm(loginPasswordRealm);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -111,17 +129,9 @@ public class SecuritySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case SecurityPackage.USER: {
-				User user = (User)theEObject;
-				T result = caseUser(user);
-				if (result == null) result = casePrincipal(user);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
 			case SecurityPackage.LOGIN_USER: {
 				LoginUser loginUser = (LoginUser)theEObject;
 				T result = caseLoginUser(loginUser);
-				if (result == null) result = caseUser(loginUser);
 				if (result == null) result = casePrincipal(loginUser);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -130,55 +140,7 @@ public class SecuritySwitch<T> extends Switch<T> {
 				LoginPasswordHashUser loginPasswordHashUser = (LoginPasswordHashUser)theEObject;
 				T result = caseLoginPasswordHashUser(loginPasswordHashUser);
 				if (result == null) result = caseLoginUser(loginPasswordHashUser);
-				if (result == null) result = caseUser(loginPasswordHashUser);
 				if (result == null) result = casePrincipal(loginPasswordHashUser);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.ACTION_KEY: {
-				ActionKey actionKey = (ActionKey)theEObject;
-				T result = caseActionKey(actionKey);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.ACTION: {
-				Action action = (Action)theEObject;
-				T result = caseAction(action);
-				if (result == null) result = caseActionKey(action);
-				if (result == null) result = caseActionContainer(action);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.PROPERTY: {
-				Property property = (Property)theEObject;
-				T result = caseProperty(property);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.PERMISSION: {
-				Permission permission = (Permission)theEObject;
-				T result = casePermission(permission);
-				if (result == null) result = caseActionKey(permission);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.ACTION_CONTAINER: {
-				ActionContainer actionContainer = (ActionContainer)theEObject;
-				T result = caseActionContainer(actionContainer);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.SECURITY_POLICY: {
-				SecurityPolicy securityPolicy = (SecurityPolicy)theEObject;
-				T result = caseSecurityPolicy(securityPolicy);
-				if (result == null) result = defaultCase(theEObject);
-				return result;
-			}
-			case SecurityPackage.SECURITY_POLICY_CONTAINER: {
-				SecurityPolicyContainer securityPolicyContainer = (SecurityPolicyContainer)theEObject;
-				T result = caseSecurityPolicyContainer(securityPolicyContainer);
-				if (result == null) result = caseSecurityPolicy(securityPolicyContainer);
-				if (result == null) result = caseActionContainer(securityPolicyContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -187,32 +149,47 @@ public class SecuritySwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Protection Domain</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Realm</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Protection Domain</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Realm</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <CR> T caseProtectionDomain(ProtectionDomain<CR> object) {
+	public <CR> T caseRealm(Realm<CR> object) {
 		return null;
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Login Password Protection Domain</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Package</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Login Password Protection Domain</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Package</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseLoginPasswordProtectionDomain(LoginPasswordProtectionDomain object) {
+	public T casePackage(org.nasdanika.cdo.security.Package object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Class</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseClass(org.nasdanika.cdo.security.Class object) {
 		return null;
 	}
 
@@ -247,21 +224,6 @@ public class SecuritySwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>User</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>User</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseUser(User object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Login User</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -292,21 +254,6 @@ public class SecuritySwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Action Key</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Action Key</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseActionKey(ActionKey object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Action</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -318,21 +265,6 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseAction(Action object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Property</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseProperty(Property object) {
 		return null;
 	}
 
@@ -352,51 +284,6 @@ public class SecuritySwitch<T> extends Switch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Action Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Action Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseActionContainer(ActionContainer object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Policy</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Policy</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseSecurityPolicy(SecurityPolicy object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Policy Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Policy Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T caseSecurityPolicyContainer(SecurityPolicyContainer object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Login Password Credentials</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -408,6 +295,21 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T caseLoginPasswordCredentials(LoginPasswordCredentials object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Login Password Realm</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Login Password Realm</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseLoginPasswordRealm(LoginPasswordRealm object) {
 		return null;
 	}
 

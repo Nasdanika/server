@@ -11,11 +11,12 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
-import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
+import org.nasdanika.cdo.security.LoginPasswordRealm;
+import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.User;
 import org.nasdanika.core.NasdanikaException;
@@ -28,14 +29,15 @@ import org.nasdanika.core.NasdanikaException;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getSuperUsersGroup <em>Super Users Group</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getUnauthenticatedPrincipal <em>Unauthenticated Principal</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordProtectionDomainImpl#getEveryoneGroup <em>Everyone Group</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getRoot <em>Root</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getGuest <em>Guest</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getEveryone <em>Everyone</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getPackages <em>Packages</em>}</li>
  * </ul>
  *
  * @generated
  */
-public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl implements LoginPasswordProtectionDomain {
+public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements LoginPasswordRealm {
 	
 	private static final String UTF_8 = "UTF-8";
 	
@@ -44,7 +46,7 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected LoginPasswordProtectionDomainImpl() {
+	protected LoginPasswordRealmImpl() {
 		super();
 	}
 
@@ -55,7 +57,7 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return SecurityPackage.Literals.LOGIN_PASSWORD_PROTECTION_DOMAIN;
+		return SecurityPackage.Literals.LOGIN_PASSWORD_REALM;
 	}
 
 	/**
@@ -73,8 +75,8 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Group getSuperUsersGroup() {
-		return (Group)eGet(SecurityPackage.Literals.PROTECTION_DOMAIN__SUPER_USERS_GROUP, true);
+	public Principal getRoot() {
+		return (Principal)eGet(SecurityPackage.Literals.REALM__ROOT, true);
 	}
 
 	/**
@@ -82,8 +84,8 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSuperUsersGroup(Group newSuperUsersGroup) {
-		eSet(SecurityPackage.Literals.PROTECTION_DOMAIN__SUPER_USERS_GROUP, newSuperUsersGroup);
+	public void setRoot(Principal newRoot) {
+		eSet(SecurityPackage.Literals.REALM__ROOT, newRoot);
 	}
 
 	/**
@@ -91,8 +93,8 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public User getUnauthenticatedPrincipal() {
-		return (User)eGet(SecurityPackage.Literals.PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL, true);
+	public Principal getGuest() {
+		return (Principal)eGet(SecurityPackage.Literals.REALM__GUEST, true);
 	}
 
 	/**
@@ -100,8 +102,8 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setUnauthenticatedPrincipal(User newUnauthenticatedPrincipal) {
-		eSet(SecurityPackage.Literals.PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL, newUnauthenticatedPrincipal);
+	public void setGuest(Principal newGuest) {
+		eSet(SecurityPackage.Literals.REALM__GUEST, newGuest);
 	}
 
 	/**
@@ -109,8 +111,8 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Group getEveryoneGroup() {
-		return (Group)eGet(SecurityPackage.Literals.PROTECTION_DOMAIN__EVERYONE_GROUP, true);
+	public Principal getEveryone() {
+		return (Principal)eGet(SecurityPackage.Literals.REALM__EVERYONE, true);
 	}
 
 	/**
@@ -118,8 +120,18 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setEveryoneGroup(Group newEveryoneGroup) {
-		eSet(SecurityPackage.Literals.PROTECTION_DOMAIN__EVERYONE_GROUP, newEveryoneGroup);
+	public void setEveryone(Principal newEveryone) {
+		eSet(SecurityPackage.Literals.REALM__EVERYONE, newEveryone);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<org.nasdanika.cdo.security.Package> getPackages() {
+		return (EList<org.nasdanika.cdo.security.Package>)eGet(SecurityPackage.Literals.REALM__PACKAGES, true);
 	}
 
 	/**
@@ -142,6 +154,17 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public LoginUser getLoginUser(String login) {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public User getUser(String login) {
@@ -153,23 +176,6 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 		
 		return null;
 	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public void clearPermissions(EObject obj) {
-		for (User user: getAllUsers()) {
-			Iterator<Permission> pit = user.getPermissions().iterator();
-			while (pit.hasNext()) {
-				Permission p = pit.next();
-				if (p.getTarget().equals(obj)) {
-					pit.remove();
-				}
-			}
-		}
-	}	
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -217,23 +223,35 @@ public abstract class LoginPasswordProtectionDomainImpl extends CDOObjectImpl im
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<Principal> getAllPrincipals() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING:
+			case SecurityPackage.LOGIN_PASSWORD_REALM___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING:
 				setPasswordHash((LoginPasswordHashUser)arguments.get(0), (String)arguments.get(1));
 				return null;
-			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_USER__STRING:
-				return getUser((String)arguments.get(0));
-			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___AUTHENTICATE__OBJECT:
-				return authenticate((LoginPasswordCredentials)arguments.get(0));
-			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT:
+			case SecurityPackage.LOGIN_PASSWORD_REALM___GET_LOGIN_USER__STRING:
+				return getLoginUser((String)arguments.get(0));
+			case SecurityPackage.LOGIN_PASSWORD_REALM___AUTHENTICATE__OBJECT:
+				authenticate((LoginPasswordCredentials)arguments.get(0));
+				return null;
+			case SecurityPackage.LOGIN_PASSWORD_REALM___GET_ALL_PRINCIPALS:
+				return getAllPrincipals();
+			case SecurityPackage.LOGIN_PASSWORD_REALM___CLEAR_PERMISSIONS__EOBJECT:
 				clearPermissions((EObject)arguments.get(0));
 				return null;
-			case SecurityPackage.LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_ALL_USERS:
-				return getAllUsers();
 		}
 		return super.eInvoke(operationID, arguments);
 	}
 
-} //LoginPasswordProtectionDomainImpl
+} //LoginPasswordRealmImpl

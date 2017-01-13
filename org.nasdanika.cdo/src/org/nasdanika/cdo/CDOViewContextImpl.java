@@ -7,7 +7,7 @@ import java.util.Map;
 
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
@@ -63,13 +63,13 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 			return authenticatedPrincipal;
 		}
 		
-		ProtectionDomain<CR> pd = getProtectionDomain();
+		Realm<CR> pd = getSecurityRealm();
 		return pd == null ? null : pd.getUnauthenticatedPrincipal();
 	}
 
 	@Override
 	public final Principal authenticate(CR credentials) throws Exception {
-		ProtectionDomain<CR> pd = getProtectionDomain();
+		Realm<CR> pd = getSecurityRealm();
 		if (pd == null) {
 			return null;
 		}

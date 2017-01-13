@@ -10,7 +10,7 @@ import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.web.ExportingContext;
@@ -75,8 +75,8 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 	}
 
 	@Override
-	public ProtectionDomain<CR> getProtectionDomain() {
-		return transactionContext.getProtectionDomain();
+	public Realm<CR> getProtectionDomain() {
+		return transactionContext.getSecurityRealm();
 	}
 
 	@Override

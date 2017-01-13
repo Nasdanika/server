@@ -42,7 +42,7 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOTransactionContextProvider;
 import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.web.SessionWebSocketServlet.WebSocketContext;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.cdo.web.routes.CDOWebUtil.DataDefinitionFilter;
@@ -446,8 +446,8 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 							}
 
 							@Override
-							public ProtectionDomain<CR> getProtectionDomain() {
-								return cdoTransactionContext.getProtectionDomain();
+							public Realm<CR> getProtectionDomain() {
+								return cdoTransactionContext.getSecurityRealm();
 							}
 
 							@Override

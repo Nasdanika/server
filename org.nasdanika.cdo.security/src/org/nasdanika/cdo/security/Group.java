@@ -9,6 +9,10 @@ import org.eclipse.emf.common.util.EList;
  * A representation of the model object '<em><b>Group</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Group of principals. Group permissions are inherited by its members.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -33,6 +37,9 @@ public interface Group extends Principal {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Group members.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Members</em>' reference list.
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getGroup_Members()
 	 * @see org.nasdanika.cdo.security.Principal#getMemberOf
@@ -49,6 +56,9 @@ public interface Group extends Principal {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Group name.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getGroup_Name()
@@ -75,6 +85,9 @@ public interface Group extends Principal {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Group description.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Description</em>' attribute.
 	 * @see #setDescription(String)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getGroup_Description()
@@ -96,6 +109,10 @@ public interface Group extends Principal {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Checks direct/indirect membership in the group.
+	 * @param principal Principal.
+	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
 	 */

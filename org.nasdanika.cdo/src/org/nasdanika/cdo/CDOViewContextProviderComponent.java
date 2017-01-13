@@ -2,7 +2,7 @@ package org.nasdanika.cdo;
 
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
@@ -51,7 +51,7 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 						chain) {
 					
 					@Override
-					public ProtectionDomain<CR> getProtectionDomain() {
+					public Realm<CR> getSecurityRealm() {
 						return CDOViewContextProviderComponent.this.getProtectionDomain(getView());
 					}
 
@@ -69,6 +69,6 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 		return null;
 	}
 	
-	protected abstract ProtectionDomain<CR> getProtectionDomain(CDOView view);
+	protected abstract Realm<CR> getProtectionDomain(CDOView view);
 
 }

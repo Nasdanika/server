@@ -36,21 +36,19 @@ public class AuthorizationHelper {
 		this.principal = principal;
 	}
 	
-	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String qualifier, Map<String, Object> environment) {
+	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
 		if (target!=null) {
 			environment = environment == null ? new HashMap<String, Object>() : new HashMap<String, Object>(environment); 
 			environment.put("target", target);
 		}
-		return authorize(securityPolicy, principal, context, target, action, qualifier, SLASH, environment, new HashSet<Principal>());
+		return authorize(principal, context, target, action, qualifier, SLASH, environment, new HashSet<Principal>());
 	}
 	
 	private static AccessDecision authorize(
-			SecurityPolicy securityPolicy,
 			Principal principal, 
 			Context context,
-			Object target, 
+			EObject target, 
 			String action,
-			String qualifier,
 			String path, 
 			Map<String, Object> environment, 
 			Set<Principal> traversed) {
@@ -58,16 +56,12 @@ public class AuthorizationHelper {
 //		System.out.println("Authorizing: "+target+" "+action+" "+qualifier+" "+path);
 		
 		// Superuser
-		ProtectionDomain<?> protectionDomain = principal.getProtectionDomain();
-		if (protectionDomain.getSuperUsersGroup()!=null && protectionDomain.getSuperUsersGroup().isMember(principal)) {
+		Realm<?> realm = principal.getRealm();
+		if (realm.getRoot() == principal) {
 			return AccessDecision.ALLOW;
 		}
-		
-		if (target!=null 
-				&& (target.getClass().getName().startsWith("[") 
-						|| target.getClass().getName().startsWith("java.") 
-						|| target.getClass().getName().startsWith("javax."))) {			
-			return AccessDecision.ALLOW; // No security on JDK classes and arrays.
+		if (realm.getRoot() instanceof Group && ((Group) realm.getRoot()).isMember(principal)) {
+			return AccessDecision.ALLOW;
 		}
 		
 		// Own permissions and implies
@@ -84,15 +78,15 @@ public class AuthorizationHelper {
 				return accessDecision;
 			}
 			
-			if (protectionDomain instanceof SecurityPolicy) {
-				AccessDecision pdAccessDecision = p.authorize((SecurityPolicy) protectionDomain, context, target, action, qualifiedPath, environment);
+			if (realm instanceof SecurityPolicy) {
+				AccessDecision pdAccessDecision = p.authorize((SecurityPolicy) realm, context, target, action, qualifiedPath, environment);
 				if (!AccessDecision.ABSTAIN.equals(pdAccessDecision)) {
 					return pdAccessDecision;
 				}					
 			}
 			
-			if (protectionDomain instanceof ActionContainer) {
-				AccessDecision pdAccessDecision = p.authorize(asSecurityPolicy((ActionContainer) protectionDomain), context, target, action, qualifiedPath, environment);
+			if (realm instanceof ActionContainer) {
+				AccessDecision pdAccessDecision = p.authorize(asSecurityPolicy((ActionContainer) realm), context, target, action, qualifiedPath, environment);
 				if (!AccessDecision.ABSTAIN.equals(pdAccessDecision)) {
 					return pdAccessDecision;
 				}					
@@ -150,8 +144,8 @@ public class AuthorizationHelper {
 			
 			// Everyone
 			if (principal instanceof User) {
-				if (!principal.equals(protectionDomain.getUnauthenticatedPrincipal())) {
-					Group everyoneGroup = protectionDomain.getEveryoneGroup();
+				if (!principal.equals(realm.getUnauthenticatedPrincipal())) {
+					Group everyoneGroup = realm.getEveryoneGroup();
 					if (everyoneGroup!=null) {
 						AccessDecision accessDecision = authorize(securityPolicy, everyoneGroup, context, target, action, qualifier, path, environment, traversed);
 						if (!AccessDecision.ABSTAIN.equals(accessDecision)) {

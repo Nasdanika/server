@@ -25,12 +25,12 @@ public abstract class AbstractCDOViewContextSubject<V extends CDOView, CR> imple
 			return (Principal) context.getView().getObject((CDOID) idAttr);
 		}
 		
-		if (context.getProtectionDomain()==null) {
+		if (context.getSecurityRealm()==null) {
 			return null;
 		}
 		
 		if (getPrincipalName() != null) {
-			for (User pdu : context.getProtectionDomain().getAllUsers()) { 
+			for (User pdu : context.getSecurityRealm().getAllUsers()) { 
 				// TODO - find(login) to optimize search in large user populations
 				if (pdu instanceof LoginUser && ((LoginUser) pdu).getLogin().equalsIgnoreCase(getPrincipalName())) {
 					if (((LoginUser) pdu).isDisabled() || (pdu instanceof LoginPasswordHashUser && ((LoginPasswordHashUser) pdu).getPasswordHash() != null)) {
@@ -43,11 +43,11 @@ public abstract class AbstractCDOViewContextSubject<V extends CDOView, CR> imple
 			}
 		}
 		
-		User unauthenticatedPrincipal = context.getProtectionDomain().getUnauthenticatedPrincipal();
-		if (unauthenticatedPrincipal!=null) {
-			setPrincipal(context, unauthenticatedPrincipal);
+		Principal guest = context.getSecurityRealm().getGuest();
+		if (guest!=null) {
+			setPrincipal(context, guest);
 		}
-		return unauthenticatedPrincipal;
+		return guest;
 	}						
 
 	@Override

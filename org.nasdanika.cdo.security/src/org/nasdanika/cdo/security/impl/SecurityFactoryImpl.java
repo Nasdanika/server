@@ -8,17 +8,12 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.nasdanika.cdo.security.*;
 import org.nasdanika.cdo.security.Action;
-import org.nasdanika.cdo.security.ActionContainer;
-import org.nasdanika.cdo.security.ActionKey;
 import org.nasdanika.cdo.security.Group;
-import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
-import org.nasdanika.cdo.security.Property;
+import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.cdo.security.SecurityPolicyContainer;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -66,14 +61,11 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case SecurityPackage.GROUP: return (EObject)createGroup();
-			case SecurityPackage.LOGIN_USER: return (EObject)createLoginUser();
-			case SecurityPackage.ACTION_KEY: return (EObject)createActionKey();
+			case SecurityPackage.PACKAGE: return (EObject)createPackage();
+			case SecurityPackage.CLASS: return (EObject)createClass();
 			case SecurityPackage.ACTION: return (EObject)createAction();
-			case SecurityPackage.PROPERTY: return (EObject)createProperty();
 			case SecurityPackage.PERMISSION: return (EObject)createPermission();
-			case SecurityPackage.ACTION_CONTAINER: return (EObject)createActionContainer();
-			case SecurityPackage.SECURITY_POLICY_CONTAINER: return (EObject)createSecurityPolicyContainer();
+			case SecurityPackage.GROUP: return (EObject)createGroup();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -122,29 +114,29 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public org.nasdanika.cdo.security.Package createPackage() {
+		PackageImpl package_ = new PackageImpl();
+		return package_;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public org.nasdanika.cdo.security.Class createClass() {
+		ClassImpl class_ = new ClassImpl();
+		return class_;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public Group createGroup() {
 		GroupImpl group = new GroupImpl();
 		return group;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public LoginUser createLoginUser() {
-		LoginUserImpl loginUser = new LoginUserImpl();
-		return loginUser;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ActionKey createActionKey() {
-		ActionKeyImpl actionKey = new ActionKeyImpl();
-		return actionKey;
 	}
 
 	/**
@@ -162,39 +154,9 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Property createProperty() {
-		PropertyImpl property = new PropertyImpl();
-		return property;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Permission createPermission() {
 		PermissionImpl permission = new PermissionImpl();
 		return permission;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public ActionContainer createActionContainer() {
-		ActionContainerImpl actionContainer = new ActionContainerImpl();
-		return actionContainer;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SecurityPolicyContainer createSecurityPolicyContainer() {
-		SecurityPolicyContainerImpl securityPolicyContainer = new SecurityPolicyContainerImpl();
-		return securityPolicyContainer;
 	}
 
 	/**

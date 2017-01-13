@@ -18,7 +18,6 @@ import org.eclipse.emf.edit.provider.IItemPropertySource;
 import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
 import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
-import org.eclipse.emf.edit.provider.ItemProviderAdapter;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.SecurityFactory;
@@ -31,7 +30,7 @@ import org.nasdanika.cdo.security.SecurityPackage;
  * @generated
  */
 public class GroupItemProvider 
-	extends ItemProviderAdapter
+	extends CDOItemProviderAdapterEx
 	implements
 		IEditingDomainItemProvider,
 		IStructuredItemContentProvider,
@@ -60,7 +59,7 @@ public class GroupItemProvider
 			super.getPropertyDescriptors(object);
 
 			addMemberOfPropertyDescriptor(object);
-			addProtectionDomainPropertyDescriptor(object);
+			addDisabledPropertyDescriptor(object);
 			addMembersPropertyDescriptor(object);
 			addNamePropertyDescriptor(object);
 			addDescriptionPropertyDescriptor(object);
@@ -91,23 +90,23 @@ public class GroupItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Protection Domain feature.
+	 * This adds a property descriptor for the Disabled feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addProtectionDomainPropertyDescriptor(Object object) {
+	protected void addDisabledPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Principal_protectionDomain_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Principal_protectionDomain_feature", "_UI_Principal_type"),
-				 SecurityPackage.Literals.PRINCIPAL__PROTECTION_DOMAIN,
+				 getString("_UI_Principal_disabled_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Principal_disabled_feature", "_UI_Principal_type"),
+				 SecurityPackage.Literals.PRINCIPAL__DISABLED,
 				 true,
 				 false,
-				 true,
-				 null,
+				 false,
+				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
 				 null,
 				 null));
 	}
@@ -171,7 +170,7 @@ public class GroupItemProvider
 				 getString("_UI_PropertyDescriptor_description", "_UI_Group_description_feature", "_UI_Group_type"),
 				 SecurityPackage.Literals.GROUP__DESCRIPTION,
 				 true,
-				 false,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -246,6 +245,7 @@ public class GroupItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Group.class)) {
+			case SecurityPackage.GROUP__DISABLED:
 			case SecurityPackage.GROUP__NAME:
 			case SecurityPackage.GROUP__DESCRIPTION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));

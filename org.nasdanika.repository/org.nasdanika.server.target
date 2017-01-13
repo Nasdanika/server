@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="100">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="104">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.simple" version="1.7.6"/>
@@ -7,11 +7,6 @@
 <repository location="http://www.nasdanika.org/slf4j"/>
 </location>
 <location path="${eclipse_home}" type="Profile"/>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.3.9.201605312009"/>
-<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.3.9.201605312009"/>
-<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.3.9.v20160517"/>
-</location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.eclipse.emf.cdo.epp.feature.group" version="4.5.0.v20160607-1511"/>
 <unit id="org.eclipse.emf.cdo.sdk.feature.group" version="4.5.0.v20160607-1511"/>
@@ -47,8 +42,17 @@
 <repository location="http://www.nasdanika.org/maven-osgi"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201612210436"/>
+<unit id="org.eclipse.jetty.bundles.f.feature.group" version="9.4.0.201612132209"/>
+<unit id="org.eclipse.jetty.bundles.f.source.feature.group" version="9.4.0.201612132209"/>
+<repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.4.0.v20161208"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201701080335"/>
 <repository location="http://www.nasdanika.org/products/html/repository"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.nasdanika.webtest.model.feature.feature.group" version="0.1.0.201612312039"/>
+<repository location="http://www.nasdanika.org/products/webtest-model/repository"/>
 </location>
 </locations>
 </target>

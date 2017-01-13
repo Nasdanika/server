@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.SecurityPackage;
@@ -28,15 +29,15 @@ import org.nasdanika.core.CoreUtil;
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#isAllow <em>Allow</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getTarget <em>Target</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#isWithGrantOption <em>With Grant Option</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getStartDate <em>Start Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getComment <em>Comment</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getAction <em>Action</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class PermissionImpl extends ActionKeyImpl implements Permission {
+public class PermissionImpl extends CDOObjectImpl implements Permission {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -54,6 +55,16 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 	@Override
 	protected EClass eStaticClass() {
 		return SecurityPackage.Literals.PERMISSION;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	protected int eStaticFeatureCount() {
+		return 0;
 	}
 
 	/**
@@ -90,24 +101,6 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 	 */
 	public void setTarget(EObject newTarget) {
 		eSet(SecurityPackage.Literals.PERMISSION__TARGET, newTarget);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isWithGrantOption() {
-		return (Boolean)eGet(SecurityPackage.Literals.PERMISSION__WITH_GRANT_OPTION, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setWithGrantOption(boolean newWithGrantOption) {
-		eSet(SecurityPackage.Literals.PERMISSION__WITH_GRANT_OPTION, newWithGrantOption);
 	}
 
 	/**
@@ -167,6 +160,35 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Action getAction() {
+		return (Action)eGet(SecurityPackage.Literals.PERMISSION__ACTION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setAction(Action newAction) {
+		eSet(SecurityPackage.Literals.PERMISSION__ACTION, newAction);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment) {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String path, Map<String, Object> environment) {
@@ -213,8 +235,8 @@ public class PermissionImpl extends ActionKeyImpl implements Permission {
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SecurityPackage.PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP:
-				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
+			case SecurityPackage.PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP:
+				return authorize((Context)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), (Map<String, Object>)arguments.get(3));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

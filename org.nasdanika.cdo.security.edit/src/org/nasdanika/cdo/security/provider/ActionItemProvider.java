@@ -8,9 +8,15 @@ import java.util.List;
 
 import org.eclipse.emf.common.notify.AdapterFactory;
 import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
+import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
+import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
+import org.eclipse.emf.edit.provider.IItemPropertySource;
+import org.eclipse.emf.edit.provider.IStructuredItemContentProvider;
+import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 import org.nasdanika.cdo.security.Action;
@@ -23,7 +29,7 @@ import org.nasdanika.cdo.security.SecurityPackage;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ActionItemProvider extends ActionKeyItemProvider {
+public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEditingDomainItemProvider, IStructuredItemContentProvider, ITreeItemContentProvider, IItemLabelProvider, IItemPropertySource {
 	/**
 	 * This constructs an instance from a factory and a notifier.
 	 * <!-- begin-user-doc -->
@@ -45,15 +51,36 @@ public class ActionItemProvider extends ActionKeyItemProvider {
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addDescriptionPropertyDescriptor(object);
+			addNamePropertyDescriptor(object);
 			addGrantablePropertyDescriptor(object);
+			addDescriptionPropertyDescriptor(object);
 			addImpliesPropertyDescriptor(object);
 			addImpliedByPropertyDescriptor(object);
-			addPathPatternsPropertyDescriptor(object);
-			addConditionPropertyDescriptor(object);
 			addCategoryPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
+	}
+
+	/**
+	 * This adds a property descriptor for the Name feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addNamePropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Action_name_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Action_name_feature", "_UI_Action_type"),
+				 SecurityPackage.Literals.ACTION__NAME,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
 	}
 
 	/**
@@ -71,7 +98,7 @@ public class ActionItemProvider extends ActionKeyItemProvider {
 				 getString("_UI_PropertyDescriptor_description", "_UI_Action_description_feature", "_UI_Action_type"),
 				 SecurityPackage.Literals.ACTION__DESCRIPTION,
 				 true,
-				 false,
+				 true,
 				 false,
 				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
 				 null,
@@ -145,50 +172,6 @@ public class ActionItemProvider extends ActionKeyItemProvider {
 	}
 
 	/**
-	 * This adds a property descriptor for the Path Patterns feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addPathPatternsPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Action_pathPatterns_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Action_pathPatterns_feature", "_UI_Action_type"),
-				 SecurityPackage.Literals.ACTION__PATH_PATTERNS,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Condition feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addConditionPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Action_condition_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Action_condition_feature", "_UI_Action_type"),
-				 SecurityPackage.Literals.ACTION__CONDITION,
-				 true,
-				 false,
-				 false,
-				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This adds a property descriptor for the Category feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -222,8 +205,7 @@ public class ActionItemProvider extends ActionKeyItemProvider {
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
-			childrenFeatures.add(SecurityPackage.Literals.ACTION_CONTAINER__ACTIONS);
-			childrenFeatures.add(SecurityPackage.Literals.ACTION__PROPERTIES);
+			childrenFeatures.add(SecurityPackage.Literals.ACTION__CHILDREN);
 		}
 		return childrenFeatures;
 	}
@@ -279,15 +261,13 @@ public class ActionItemProvider extends ActionKeyItemProvider {
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(Action.class)) {
-			case SecurityPackage.ACTION__DESCRIPTION:
+			case SecurityPackage.ACTION__NAME:
 			case SecurityPackage.ACTION__GRANTABLE:
-			case SecurityPackage.ACTION__PATH_PATTERNS:
-			case SecurityPackage.ACTION__CONDITION:
+			case SecurityPackage.ACTION__DESCRIPTION:
 			case SecurityPackage.ACTION__CATEGORY:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case SecurityPackage.ACTION__ACTIONS:
-			case SecurityPackage.ACTION__PROPERTIES:
+			case SecurityPackage.ACTION__CHILDREN:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}
@@ -307,13 +287,19 @@ public class ActionItemProvider extends ActionKeyItemProvider {
 
 		newChildDescriptors.add
 			(createChildParameter
-				(SecurityPackage.Literals.ACTION_CONTAINER__ACTIONS,
+				(SecurityPackage.Literals.ACTION__CHILDREN,
 				 SecurityFactory.eINSTANCE.createAction()));
+	}
 
-		newChildDescriptors.add
-			(createChildParameter
-				(SecurityPackage.Literals.ACTION__PROPERTIES,
-				 SecurityFactory.eINSTANCE.createProperty()));
+	/**
+	 * Return the resource locator for this item provider's resources.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public ResourceLocator getResourceLocator() {
+		return SecurityEditPlugin.INSTANCE;
 	}
 
 }

@@ -70,6 +70,52 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.Package} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected PackageItemProvider packageItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.cdo.security.Package}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createPackageAdapter() {
+		if (packageItemProvider == null) {
+			packageItemProvider = new PackageItemProvider(this);
+		}
+
+		return packageItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.Class} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ClassItemProvider classItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.cdo.security.Class}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createClassAdapter() {
+		if (classItemProvider == null) {
+			classItemProvider = new ClassItemProvider(this);
+		}
+
+		return classItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.Group} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -90,29 +136,6 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 		}
 
 		return groupItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.ActionKey} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ActionKeyItemProvider actionKeyItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.nasdanika.cdo.security.ActionKey}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createActionKeyAdapter() {
-		if (actionKeyItemProvider == null) {
-			actionKeyItemProvider = new ActionKeyItemProvider(this);
-		}
-
-		return actionKeyItemProvider;
 	}
 
 	/**
@@ -139,29 +162,6 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.Property} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected PropertyItemProvider propertyItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.nasdanika.cdo.security.Property}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createPropertyAdapter() {
-		if (propertyItemProvider == null) {
-			propertyItemProvider = new PropertyItemProvider(this);
-		}
-
-		return propertyItemProvider;
-	}
-
-	/**
 	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.Permission} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -182,52 +182,6 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 		}
 
 		return permissionItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.ActionContainer} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected ActionContainerItemProvider actionContainerItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.nasdanika.cdo.security.ActionContainer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createActionContainerAdapter() {
-		if (actionContainerItemProvider == null) {
-			actionContainerItemProvider = new ActionContainerItemProvider(this);
-		}
-
-		return actionContainerItemProvider;
-	}
-
-	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.SecurityPolicyContainer} instances.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected SecurityPolicyContainerItemProvider securityPolicyContainerItemProvider;
-
-	/**
-	 * This creates an adapter for a {@link org.nasdanika.cdo.security.SecurityPolicyContainer}.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Adapter createSecurityPolicyContainerAdapter() {
-		if (securityPolicyContainerItemProvider == null) {
-			securityPolicyContainerItemProvider = new SecurityPolicyContainerItemProvider(this);
-		}
-
-		return securityPolicyContainerItemProvider;
 	}
 
 	/**
@@ -329,13 +283,11 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 	 * @generated
 	 */
 	public void dispose() {
-		if (groupItemProvider != null) groupItemProvider.dispose();
-		if (actionKeyItemProvider != null) actionKeyItemProvider.dispose();
+		if (packageItemProvider != null) packageItemProvider.dispose();
+		if (classItemProvider != null) classItemProvider.dispose();
 		if (actionItemProvider != null) actionItemProvider.dispose();
-		if (propertyItemProvider != null) propertyItemProvider.dispose();
 		if (permissionItemProvider != null) permissionItemProvider.dispose();
-		if (actionContainerItemProvider != null) actionContainerItemProvider.dispose();
-		if (securityPolicyContainerItemProvider != null) securityPolicyContainerItemProvider.dispose();
+		if (groupItemProvider != null) groupItemProvider.dispose();
 	}
 
 }

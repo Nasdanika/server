@@ -12,23 +12,17 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.cdo.security.Action;
-import org.nasdanika.cdo.security.ActionContainer;
-import org.nasdanika.cdo.security.ActionKey;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
-import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
+import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
-import org.nasdanika.cdo.security.Property;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.cdo.security.SecurityPolicy;
-import org.nasdanika.cdo.security.SecurityPolicyContainer;
-import org.nasdanika.cdo.security.User;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -44,14 +38,21 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass protectionDomainEClass = null;
+	private EClass realmEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass loginPasswordProtectionDomainEClass = null;
+	private EClass packageEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass classEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -72,13 +73,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass userEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass loginUserEClass = null;
 
 	/**
@@ -93,21 +87,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass actionKeyEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass actionEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass propertyEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -121,28 +101,14 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass actionContainerEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass securityPolicyEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass securityPolicyContainerEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass loginPasswordCredentialsEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass loginPasswordRealmEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -231,8 +197,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getProtectionDomain() {
-		return protectionDomainEClass;
+	public EClass getRealm() {
+		return realmEClass;
 	}
 
 	/**
@@ -240,8 +206,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getProtectionDomain_SuperUsersGroup() {
-		return (EReference)protectionDomainEClass.getEStructuralFeatures().get(0);
+	public EReference getRealm_Root() {
+		return (EReference)realmEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -249,8 +215,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getProtectionDomain_UnauthenticatedPrincipal() {
-		return (EReference)protectionDomainEClass.getEStructuralFeatures().get(1);
+	public EReference getRealm_Guest() {
+		return (EReference)realmEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -258,8 +224,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getProtectionDomain_EveryoneGroup() {
-		return (EReference)protectionDomainEClass.getEStructuralFeatures().get(2);
+	public EReference getRealm_Everyone() {
+		return (EReference)realmEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -267,8 +233,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getProtectionDomain__Authenticate__Object() {
-		return protectionDomainEClass.getEOperations().get(0);
+	public EReference getRealm_Packages() {
+		return (EReference)realmEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -276,8 +242,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getProtectionDomain__ClearPermissions__EObject() {
-		return protectionDomainEClass.getEOperations().get(1);
+	public EOperation getRealm__Authenticate__Object() {
+		return realmEClass.getEOperations().get(0);
 	}
 
 	/**
@@ -285,8 +251,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getProtectionDomain__GetAllUsers() {
-		return protectionDomainEClass.getEOperations().get(2);
+	public EOperation getRealm__GetAllPrincipals() {
+		return realmEClass.getEOperations().get(1);
 	}
 
 	/**
@@ -294,8 +260,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getLoginPasswordProtectionDomain() {
-		return loginPasswordProtectionDomainEClass;
+	public EOperation getRealm__ClearPermissions__EObject() {
+		return realmEClass.getEOperations().get(2);
 	}
 
 	/**
@@ -303,8 +269,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String() {
-		return loginPasswordProtectionDomainEClass.getEOperations().get(0);
+	public EClass getPackage() {
+		return packageEClass;
 	}
 
 	/**
@@ -312,8 +278,71 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getLoginPasswordProtectionDomain__GetUser__String() {
-		return loginPasswordProtectionDomainEClass.getEOperations().get(1);
+	public EAttribute getPackage_Name() {
+		return (EAttribute)packageEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPackage_NsURI() {
+		return (EAttribute)packageEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPackage_Comment() {
+		return (EAttribute)packageEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPackage_Classes() {
+		return (EReference)packageEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getClass_() {
+		return classEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getClass_Name() {
+		return (EAttribute)classEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getClass_Comment() {
+		return (EAttribute)classEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getClass_Actions() {
+		return (EReference)classEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -348,8 +377,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getPrincipal_ProtectionDomain() {
-		return (EReference)principalEClass.getEStructuralFeatures().get(2);
+	public EAttribute getPrincipal_Disabled() {
+		return (EAttribute)principalEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -357,7 +386,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map() {
+	public EOperation getPrincipal__Authorize__Context_EObject_String_String_Map() {
 		return principalEClass.getEOperations().get(0);
 	}
 
@@ -368,6 +397,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EOperation getPrincipal__Accept__PrincipalVisitor() {
 		return principalEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getPrincipal__GetRealm() {
+		return principalEClass.getEOperations().get(2);
 	}
 
 	/**
@@ -420,15 +458,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getUser() {
-		return userEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getLoginUser() {
 		return loginUserEClass;
 	}
@@ -440,15 +469,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EAttribute getLoginUser_Login() {
 		return (EAttribute)loginUserEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getLoginUser_Disabled() {
-		return (EAttribute)loginUserEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -474,51 +494,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getActionKey() {
-		return actionKeyEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getActionKey_Name() {
-		return (EAttribute)actionKeyEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getActionKey_TargetNamespaceURI() {
-		return (EAttribute)actionKeyEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getActionKey_TargetClass() {
-		return (EAttribute)actionKeyEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getActionKey_Qualifier() {
-		return (EAttribute)actionKeyEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getAction() {
 		return actionEClass;
 	}
@@ -528,8 +503,17 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAction_Description() {
+	public EAttribute getAction_Name() {
 		return (EAttribute)actionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getAction_Description() {
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -547,15 +531,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EReference getAction_Implies() {
-		return (EReference)actionEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getAction_ImpliedBy() {
 		return (EReference)actionEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -564,26 +539,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAction_PathPatterns() {
-		return (EAttribute)actionEClass.getEStructuralFeatures().get(4);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getAction_Condition() {
-		return (EAttribute)actionEClass.getEStructuralFeatures().get(5);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getAction_Properties() {
-		return (EReference)actionEClass.getEStructuralFeatures().get(6);
+	public EReference getAction_ImpliedBy() {
+		return (EReference)actionEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -592,7 +549,16 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EAttribute getAction_Category() {
-		return (EAttribute)actionEClass.getEStructuralFeatures().get(7);
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAction_Children() {
+		return (EReference)actionEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -609,44 +575,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getProperty() {
-		return propertyEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getProperty_Name() {
-		return (EAttribute)propertyEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getProperty_Value() {
-		return (EAttribute)propertyEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getProperty_Type() {
-		return (EAttribute)propertyEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getProperty_Comment() {
-		return (EAttribute)propertyEClass.getEStructuralFeatures().get(3);
+	public EOperation getAction__CreatePermission() {
+		return actionEClass.getEOperations().get(1);
 	}
 
 	/**
@@ -681,7 +611,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getPermission_WithGrantOption() {
+	public EAttribute getPermission_StartDate() {
 		return (EAttribute)permissionEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -690,7 +620,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getPermission_StartDate() {
+	public EAttribute getPermission_EndDate() {
 		return (EAttribute)permissionEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -699,7 +629,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getPermission_EndDate() {
+	public EAttribute getPermission_Comment() {
 		return (EAttribute)permissionEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -708,8 +638,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getPermission_Comment() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(5);
+	public EReference getPermission_Action() {
+		return (EReference)permissionEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -717,71 +647,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getPermission__Authorize__SecurityPolicy_Context_Object_String_String_Map() {
+	public EOperation getPermission__Authorize__Context_String_String_Map() {
 		return permissionEClass.getEOperations().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getActionContainer() {
-		return actionContainerEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getActionContainer_Actions() {
-		return (EReference)actionContainerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getSecurityPolicy() {
-		return securityPolicyEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getSecurityPolicyContainer() {
-		return securityPolicyContainerEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSecurityPolicyContainer_Name() {
-		return (EAttribute)securityPolicyContainerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getSecurityPolicyContainer_Description() {
-		return (EAttribute)securityPolicyContainerEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getSecurityPolicyContainer_Imports() {
-		return (EReference)securityPolicyContainerEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -791,6 +658,33 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EClass getLoginPasswordCredentials() {
 		return loginPasswordCredentialsEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getLoginPasswordRealm() {
+		return loginPasswordRealmEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getLoginPasswordRealm__SetPasswordHash__LoginPasswordHashUser_String() {
+		return loginPasswordRealmEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getLoginPasswordRealm__GetLoginUser__String() {
+		return loginPasswordRealmEClass.getEOperations().get(1);
 	}
 
 	/**
@@ -848,26 +742,59 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		isCreated = true;
 
 		// Create classes and their features
-		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
+		realmEClass = createEClass(REALM);
+		createEReference(realmEClass, REALM__ROOT);
+		createEReference(realmEClass, REALM__GUEST);
+		createEReference(realmEClass, REALM__EVERYONE);
+		createEReference(realmEClass, REALM__PACKAGES);
+		createEOperation(realmEClass, REALM___AUTHENTICATE__OBJECT);
+		createEOperation(realmEClass, REALM___GET_ALL_PRINCIPALS);
+		createEOperation(realmEClass, REALM___CLEAR_PERMISSIONS__EOBJECT);
 
-		protectionDomainEClass = createEClass(PROTECTION_DOMAIN);
-		createEReference(protectionDomainEClass, PROTECTION_DOMAIN__SUPER_USERS_GROUP);
-		createEReference(protectionDomainEClass, PROTECTION_DOMAIN__UNAUTHENTICATED_PRINCIPAL);
-		createEReference(protectionDomainEClass, PROTECTION_DOMAIN__EVERYONE_GROUP);
-		createEOperation(protectionDomainEClass, PROTECTION_DOMAIN___AUTHENTICATE__OBJECT);
-		createEOperation(protectionDomainEClass, PROTECTION_DOMAIN___CLEAR_PERMISSIONS__EOBJECT);
-		createEOperation(protectionDomainEClass, PROTECTION_DOMAIN___GET_ALL_USERS);
+		packageEClass = createEClass(PACKAGE);
+		createEAttribute(packageEClass, PACKAGE__NAME);
+		createEAttribute(packageEClass, PACKAGE__NS_URI);
+		createEAttribute(packageEClass, PACKAGE__COMMENT);
+		createEReference(packageEClass, PACKAGE__CLASSES);
 
-		loginPasswordProtectionDomainEClass = createEClass(LOGIN_PASSWORD_PROTECTION_DOMAIN);
-		createEOperation(loginPasswordProtectionDomainEClass, LOGIN_PASSWORD_PROTECTION_DOMAIN___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING);
-		createEOperation(loginPasswordProtectionDomainEClass, LOGIN_PASSWORD_PROTECTION_DOMAIN___GET_USER__STRING);
+		classEClass = createEClass(CLASS);
+		createEAttribute(classEClass, CLASS__NAME);
+		createEAttribute(classEClass, CLASS__COMMENT);
+		createEReference(classEClass, CLASS__ACTIONS);
+
+		actionEClass = createEClass(ACTION);
+		createEAttribute(actionEClass, ACTION__NAME);
+		createEAttribute(actionEClass, ACTION__GRANTABLE);
+		createEAttribute(actionEClass, ACTION__DESCRIPTION);
+		createEReference(actionEClass, ACTION__IMPLIES);
+		createEReference(actionEClass, ACTION__IMPLIED_BY);
+		createEAttribute(actionEClass, ACTION__CATEGORY);
+		createEReference(actionEClass, ACTION__CHILDREN);
+		createEOperation(actionEClass, ACTION___MATCH__CONTEXT_STRING_STRING_MAP);
+		createEOperation(actionEClass, ACTION___CREATE_PERMISSION);
 
 		principalEClass = createEClass(PRINCIPAL);
 		createEReference(principalEClass, PRINCIPAL__MEMBER_OF);
 		createEReference(principalEClass, PRINCIPAL__PERMISSIONS);
-		createEReference(principalEClass, PRINCIPAL__PROTECTION_DOMAIN);
-		createEOperation(principalEClass, PRINCIPAL___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP);
+		createEAttribute(principalEClass, PRINCIPAL__DISABLED);
+		createEOperation(principalEClass, PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP);
 		createEOperation(principalEClass, PRINCIPAL___ACCEPT__PRINCIPALVISITOR);
+		createEOperation(principalEClass, PRINCIPAL___GET_REALM);
+
+		permissionEClass = createEClass(PERMISSION);
+		createEAttribute(permissionEClass, PERMISSION__ALLOW);
+		createEReference(permissionEClass, PERMISSION__TARGET);
+		createEAttribute(permissionEClass, PERMISSION__START_DATE);
+		createEAttribute(permissionEClass, PERMISSION__END_DATE);
+		createEAttribute(permissionEClass, PERMISSION__COMMENT);
+		createEReference(permissionEClass, PERMISSION__ACTION);
+		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP);
+
+		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
+
+		loginPasswordRealmEClass = createEClass(LOGIN_PASSWORD_REALM);
+		createEOperation(loginPasswordRealmEClass, LOGIN_PASSWORD_REALM___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING);
+		createEOperation(loginPasswordRealmEClass, LOGIN_PASSWORD_REALM___GET_LOGIN_USER__STRING);
 
 		groupEClass = createEClass(GROUP);
 		createEReference(groupEClass, GROUP__MEMBERS);
@@ -875,56 +802,11 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEAttribute(groupEClass, GROUP__DESCRIPTION);
 		createEOperation(groupEClass, GROUP___IS_MEMBER__PRINCIPAL);
 
-		userEClass = createEClass(USER);
-
 		loginUserEClass = createEClass(LOGIN_USER);
 		createEAttribute(loginUserEClass, LOGIN_USER__LOGIN);
-		createEAttribute(loginUserEClass, LOGIN_USER__DISABLED);
 
 		loginPasswordHashUserEClass = createEClass(LOGIN_PASSWORD_HASH_USER);
 		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH);
-
-		actionKeyEClass = createEClass(ACTION_KEY);
-		createEAttribute(actionKeyEClass, ACTION_KEY__NAME);
-		createEAttribute(actionKeyEClass, ACTION_KEY__TARGET_NAMESPACE_URI);
-		createEAttribute(actionKeyEClass, ACTION_KEY__TARGET_CLASS);
-		createEAttribute(actionKeyEClass, ACTION_KEY__QUALIFIER);
-
-		actionEClass = createEClass(ACTION);
-		createEAttribute(actionEClass, ACTION__DESCRIPTION);
-		createEAttribute(actionEClass, ACTION__GRANTABLE);
-		createEReference(actionEClass, ACTION__IMPLIES);
-		createEReference(actionEClass, ACTION__IMPLIED_BY);
-		createEAttribute(actionEClass, ACTION__PATH_PATTERNS);
-		createEAttribute(actionEClass, ACTION__CONDITION);
-		createEReference(actionEClass, ACTION__PROPERTIES);
-		createEAttribute(actionEClass, ACTION__CATEGORY);
-		createEOperation(actionEClass, ACTION___MATCH__CONTEXT_STRING_STRING_MAP);
-
-		propertyEClass = createEClass(PROPERTY);
-		createEAttribute(propertyEClass, PROPERTY__NAME);
-		createEAttribute(propertyEClass, PROPERTY__VALUE);
-		createEAttribute(propertyEClass, PROPERTY__TYPE);
-		createEAttribute(propertyEClass, PROPERTY__COMMENT);
-
-		permissionEClass = createEClass(PERMISSION);
-		createEAttribute(permissionEClass, PERMISSION__ALLOW);
-		createEReference(permissionEClass, PERMISSION__TARGET);
-		createEAttribute(permissionEClass, PERMISSION__WITH_GRANT_OPTION);
-		createEAttribute(permissionEClass, PERMISSION__START_DATE);
-		createEAttribute(permissionEClass, PERMISSION__END_DATE);
-		createEAttribute(permissionEClass, PERMISSION__COMMENT);
-		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP);
-
-		actionContainerEClass = createEClass(ACTION_CONTAINER);
-		createEReference(actionContainerEClass, ACTION_CONTAINER__ACTIONS);
-
-		securityPolicyEClass = createEClass(SECURITY_POLICY);
-
-		securityPolicyContainerEClass = createEClass(SECURITY_POLICY_CONTAINER);
-		createEAttribute(securityPolicyContainerEClass, SECURITY_POLICY_CONTAINER__NAME);
-		createEAttribute(securityPolicyContainerEClass, SECURITY_POLICY_CONTAINER__DESCRIPTION);
-		createEReference(securityPolicyContainerEClass, SECURITY_POLICY_CONTAINER__IMPORTS);
 
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
@@ -956,68 +838,76 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		setNsURI(eNS_URI);
 
 		// Create type parameters
-		ETypeParameter protectionDomainEClass_CR = addETypeParameter(protectionDomainEClass, "CR");
+		ETypeParameter realmEClass_CR = addETypeParameter(realmEClass, "CR");
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		EGenericType g1 = createEGenericType(this.getProtectionDomain());
+		EGenericType g1 = createEGenericType(this.getRealm());
 		EGenericType g2 = createEGenericType(this.getLoginPasswordCredentials());
 		g1.getETypeArguments().add(g2);
-		loginPasswordProtectionDomainEClass.getEGenericSuperTypes().add(g1);
+		loginPasswordRealmEClass.getEGenericSuperTypes().add(g1);
 		groupEClass.getESuperTypes().add(this.getPrincipal());
-		userEClass.getESuperTypes().add(this.getPrincipal());
-		loginUserEClass.getESuperTypes().add(this.getUser());
+		loginUserEClass.getESuperTypes().add(this.getPrincipal());
 		loginPasswordHashUserEClass.getESuperTypes().add(this.getLoginUser());
-		actionEClass.getESuperTypes().add(this.getActionKey());
-		actionEClass.getESuperTypes().add(this.getActionContainer());
-		permissionEClass.getESuperTypes().add(this.getActionKey());
-		securityPolicyContainerEClass.getESuperTypes().add(this.getSecurityPolicy());
-		securityPolicyContainerEClass.getESuperTypes().add(this.getActionContainer());
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(loginPasswordCredentialsEClass, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+		initEClass(realmEClass, Realm.class, "Realm", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getRealm_Root(), this.getPrincipal(), null, "root", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getRealm_Guest(), this.getPrincipal(), null, "guest", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getRealm_Everyone(), this.getPrincipal(), null, "everyone", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getRealm_Packages(), this.getPackage(), null, "packages", null, 0, -1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		initEClass(protectionDomainEClass, ProtectionDomain.class, "ProtectionDomain", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getProtectionDomain_SuperUsersGroup(), this.getGroup(), null, "superUsersGroup", null, 0, 1, ProtectionDomain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getProtectionDomain_UnauthenticatedPrincipal(), this.getUser(), null, "unauthenticatedPrincipal", null, 0, 1, ProtectionDomain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getProtectionDomain_EveryoneGroup(), this.getGroup(), null, "everyoneGroup", null, 0, 1, ProtectionDomain.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		EOperation op = initEOperation(getProtectionDomain__Authenticate__Object(), this.getUser(), "authenticate", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(protectionDomainEClass_CR);
+		EOperation op = initEOperation(getRealm__Authenticate__Object(), null, "authenticate", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(realmEClass_CR);
 		addEParameter(op, g1, "credentials", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getProtectionDomain__ClearPermissions__EObject(), null, "clearPermissions", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEObject(), "obj", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEOperation(getRealm__GetAllPrincipals(), this.getPrincipal(), "getAllPrincipals", 0, -1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getProtectionDomain__GetAllUsers(), null, "getAllUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
-		ETypeParameter t1 = addETypeParameter(op, "U");
-		g1 = createEGenericType(this.getUser());
-		t1.getEBounds().add(g1);
-		g1 = createEGenericType(t1);
-		initEOperation(op, g1);
+		op = initEOperation(getRealm__ClearPermissions__EObject(), null, "clearPermissions", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEClass(loginPasswordProtectionDomainEClass, LoginPasswordProtectionDomain.class, "LoginPasswordProtectionDomain", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(packageEClass, org.nasdanika.cdo.security.Package.class, "Package", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPackage_Name(), ecorePackage.getEString(), "name", null, 0, 1, org.nasdanika.cdo.security.Package.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPackage_NsURI(), ecorePackage.getEString(), "nsURI", null, 0, 1, org.nasdanika.cdo.security.Package.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPackage_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, org.nasdanika.cdo.security.Package.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPackage_Classes(), this.getClass_(), null, "classes", null, 0, -1, org.nasdanika.cdo.security.Package.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		op = initEOperation(getLoginPasswordProtectionDomain__SetPasswordHash__LoginPasswordHashUser_String(), null, "setPasswordHash", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getLoginPasswordHashUser(), "user", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "password", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEClass(classEClass, org.nasdanika.cdo.security.Class.class, "Class", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getClass_Name(), ecorePackage.getEString(), "name", null, 0, 1, org.nasdanika.cdo.security.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getClass_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, org.nasdanika.cdo.security.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getClass_Actions(), this.getAction(), null, "actions", null, 0, -1, org.nasdanika.cdo.security.Class.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		op = initEOperation(getLoginPasswordProtectionDomain__GetUser__String(), this.getUser(), "getUser", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "login", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getAction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAction_Grantable(), ecorePackage.getEBoolean(), "grantable", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAction_Description(), ecorePackage.getEString(), "description", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAction_Implies(), this.getAction(), this.getAction_ImpliedBy(), "implies", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAction_ImpliedBy(), this.getAction(), this.getAction_Implies(), "impliedBy", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAction_Category(), ecorePackage.getEString(), "category", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getAction_Children(), this.getAction(), null, "children", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getAction__Match__Context_String_String_Map(), ecorePackage.getEBoolean(), "match", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "qualifier", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(ecorePackage.getEMap());
+		g2 = createEGenericType(ecorePackage.getEString());
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getAction__CreatePermission(), this.getPermission(), "createPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(principalEClass, Principal.class, "Principal", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPrincipal_MemberOf(), this.getGroup(), this.getGroup_Members(), "memberOf", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPrincipal_Permissions(), this.getPermission(), null, "permissions", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		g1 = createEGenericType(this.getProtectionDomain());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEReference(getPrincipal_ProtectionDomain(), g1, null, "protectionDomain", null, 0, 1, Principal.class, IS_TRANSIENT, IS_VOLATILE, !IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPrincipal_Disabled(), ecorePackage.getEBoolean(), "disabled", null, 0, 1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		op = initEOperation(getPrincipal__Authorize__SecurityPolicy_Context_Object_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSecurityPolicy(), "securityPolicy", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getPrincipal__Authorize__Context_EObject_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEJavaObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "qualifier", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(ecorePackage.getEMap());
@@ -1030,6 +920,42 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		op = initEOperation(getPrincipal__Accept__PrincipalVisitor(), null, "accept", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getPrincipalVisitor(), "visitor", 0, 1, IS_UNIQUE, IS_ORDERED);
 
+		op = initEOperation(getPrincipal__GetRealm(), null, "getRealm", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getRealm());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEOperation(op, g1);
+
+		initEClass(permissionEClass, Permission.class, "Permission", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getPermission_Allow(), ecorePackage.getEBoolean(), "allow", "true", 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPermission_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPermission_StartDate(), ecorePackage.getEDate(), "startDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPermission_EndDate(), ecorePackage.getEDate(), "endDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPermission_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPermission_Action(), this.getAction(), null, "action", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getPermission__Authorize__Context_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "qualifier", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(ecorePackage.getEMap());
+		g2 = createEGenericType(ecorePackage.getEString());
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(loginPasswordCredentialsEClass, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(loginPasswordRealmEClass, LoginPasswordRealm.class, "LoginPasswordRealm", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		op = initEOperation(getLoginPasswordRealm__SetPasswordHash__LoginPasswordHashUser_String(), null, "setPasswordHash", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getLoginPasswordHashUser(), "user", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "password", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getLoginPasswordRealm__GetLoginUser__String(), this.getLoginUser(), "getLoginUser", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "login", 0, 1, IS_UNIQUE, IS_ORDERED);
+
 		initEClass(groupEClass, Group.class, "Group", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getGroup_Members(), this.getPrincipal(), this.getPrincipal_MemberOf(), "members", null, 0, -1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getGroup_Name(), ecorePackage.getEString(), "name", null, 0, 1, Group.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1038,78 +964,11 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		op = initEOperation(getGroup__IsMember__Principal(), ecorePackage.getEBoolean(), "isMember", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getPrincipal(), "principal", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEClass(userEClass, User.class, "User", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-
-		initEClass(loginUserEClass, LoginUser.class, "LoginUser", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(loginUserEClass, LoginUser.class, "LoginUser", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLoginUser_Login(), ecorePackage.getEString(), "login", null, 0, 1, LoginUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getLoginUser_Disabled(), ecorePackage.getEBoolean(), "disabled", null, 0, 1, LoginUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(loginPasswordHashUserEClass, LoginPasswordHashUser.class, "LoginPasswordHashUser", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLoginPasswordHashUser_PasswordHash(), ecorePackage.getEByteArray(), "passwordHash", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(actionKeyEClass, ActionKey.class, "ActionKey", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getActionKey_Name(), ecorePackage.getEString(), "name", null, 0, 1, ActionKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getActionKey_TargetNamespaceURI(), ecorePackage.getEString(), "targetNamespaceURI", null, 0, 1, ActionKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getActionKey_TargetClass(), ecorePackage.getEString(), "targetClass", null, 0, 1, ActionKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getActionKey_Qualifier(), ecorePackage.getEString(), "qualifier", null, 0, 1, ActionKey.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getAction_Description(), ecorePackage.getEString(), "description", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAction_Grantable(), ecorePackage.getEBoolean(), "grantable", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getAction_Implies(), this.getAction(), this.getAction_ImpliedBy(), "implies", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getAction_ImpliedBy(), this.getAction(), this.getAction_Implies(), "impliedBy", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAction_PathPatterns(), ecorePackage.getEString(), "pathPatterns", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAction_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getAction_Properties(), this.getProperty(), null, "properties", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAction_Category(), ecorePackage.getEString(), "category", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		op = initEOperation(getAction__Match__Context_String_String_Map(), ecorePackage.getEBoolean(), "match", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "path", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(ecorePackage.getEMap());
-		g2 = createEGenericType(ecorePackage.getEString());
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(ecorePackage.getEJavaObject());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
-
-		initEClass(propertyEClass, Property.class, "Property", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getProperty_Name(), ecorePackage.getEString(), "name", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getProperty_Value(), ecorePackage.getEString(), "value", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getProperty_Type(), ecorePackage.getEString(), "type", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getProperty_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Property.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(permissionEClass, Permission.class, "Permission", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getPermission_Allow(), ecorePackage.getEBoolean(), "allow", "true", 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPermission_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPermission_WithGrantOption(), ecorePackage.getEBoolean(), "withGrantOption", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPermission_StartDate(), ecorePackage.getEDate(), "startDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPermission_EndDate(), ecorePackage.getEDate(), "endDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPermission_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		op = initEOperation(getPermission__Authorize__SecurityPolicy_Context_Object_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getSecurityPolicy(), "securityPolicy", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEJavaObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, ecorePackage.getEString(), "path", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(ecorePackage.getEMap());
-		g2 = createEGenericType(ecorePackage.getEString());
-		g1.getETypeArguments().add(g2);
-		g2 = createEGenericType(ecorePackage.getEJavaObject());
-		g1.getETypeArguments().add(g2);
-		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
-
-		initEClass(actionContainerEClass, ActionContainer.class, "ActionContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getActionContainer_Actions(), this.getAction(), null, "actions", null, 0, -1, ActionContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(securityPolicyEClass, SecurityPolicy.class, "SecurityPolicy", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
-
-		initEClass(securityPolicyContainerEClass, SecurityPolicyContainer.class, "SecurityPolicyContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getSecurityPolicyContainer_Name(), ecorePackage.getEString(), "name", null, 0, 1, SecurityPolicyContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSecurityPolicyContainer_Description(), ecorePackage.getEString(), "description", null, 0, 1, SecurityPolicyContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getSecurityPolicyContainer_Imports(), this.getActionContainer(), null, "imports", null, 0, -1, SecurityPolicyContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1133,64 +992,112 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	protected void createGenModelAnnotations() {
 		String source = "http://www.eclipse.org/emf/2002/GenModel";	
 		addAnnotation
-		  (protectionDomainEClass, 
+		  (realmEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Protection domain establishes associations between users and actions which they can execute by the means of groups and permissions. There is no Role class/interface in the domain. A grantable actions is Role.</html>"
+			 "documentation", "Realm establishes associations between users and actions on model objects which users are allowed to perform.\r\nThere is no Role class/interface in the domain. A grantable actions is Role.\r\n\r\nTypically the root of the application model would implement this interface."
 		   });	
 		addAnnotation
-		  (getProtectionDomain__Authenticate__Object(), 
+		  (getRealm__Authenticate__Object(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Authenticates user given provided credentials, e.g. user login and password pair.</html>"
+			 "documentation", "Authenticates user given provided credentials, e.g. user login and password pair."
 		   });	
 		addAnnotation
-		  (getProtectionDomain__ClearPermissions__EObject(), 
+		  (getRealm__GetAllPrincipals(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Removes permissions associated with the object allowing it to be detached from the model.</html>"
+			 "documentation", "Realm does not have a containment reference for principals, subclasses may\r\nhave one or more principal containment references, direct or through contained objects.\r\n\r\nThis method returns all principals defined in the realm.\r\n"
 		   });	
 		addAnnotation
-		  (getProtectionDomain_SuperUsersGroup(), 
+		  (getRealm__ClearPermissions__EObject(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Superusers have all permissions. If this collection is empty, then any user is treated as a superuser. This functionality allows to configure the system after installation and then secure it by adding superusers.</html>"
+			 "documentation", "Removes permissions associated with the target object from all principals in the realm.\r\nThis method shall be invoked before deleting an object."
 		   });	
 		addAnnotation
-		  (getProtectionDomain_UnauthenticatedPrincipal(), 
+		  ((getRealm__ClearPermissions__EObject()).getEParameters().get(0), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Unauthenticated principal.</html>"
+			 "documentation", "Target object."
 		   });	
 		addAnnotation
-		  (getProtectionDomain_EveryoneGroup(), 
+		  (getRealm_Root(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>If this reference is set then all authenticated users are considered to be implicit members of this group.</html>"
+			 "documentation", "Root has all permissions. \r\nIf root is not set or root is a group with no members, then any user is treated as a superuser. \r\nThis functionality allows to configure the system after installation and then secure it by setting/adding root(s)."
 		   });	
 		addAnnotation
-		  (getActionKey_Name(), 
+		  (getRealm_Guest(), 
 		   source, 
 		   new String[] {
-			 "documentation", ""
+			 "documentation", "Unauthenticated principal."
 		   });	
 		addAnnotation
-		  (getActionKey_TargetNamespaceURI(), 
+		  (getRealm_Everyone(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Namespace URI of the target class\' package.</html>"
+			 "documentation", "If this reference is set then all authenticated users implicitly inherit permissions from the ``everyone`` principal."
 		   });	
 		addAnnotation
-		  (getActionKey_TargetClass(), 
+		  (getRealm_Packages(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Name of the target class.</html>"
+			 "documentation", "In a security realm principals are granted permissios to perform actions on\r\nprotected objects.\r\nActions are associated with classed defined in packages."
 		   });	
 		addAnnotation
-		  (getActionKey_Qualifier(), 
+		  (packageEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", ""
+			 "documentation", "Package corresponds to Ecore EPackage."
+		   });	
+		addAnnotation
+		  (getPackage_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Package name for display purposes."
+		   });	
+		addAnnotation
+		  (getPackage_NsURI(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Namespace URI is used to match EPackage."
+		   });	
+		addAnnotation
+		  (getPackage_Comment(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Comment."
+		   });	
+		addAnnotation
+		  (getPackage_Classes(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Package contains classes which match EClass\'es"
+		   });	
+		addAnnotation
+		  (classEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Class corresponds to EClass and contains actions which can be performed on\r\ninstances of the corresponding EClass.."
+		   });	
+		addAnnotation
+		  (getClass_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Class name, used for matching EClass."
+		   });	
+		addAnnotation
+		  (getClass_Comment(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Comment."
+		   });	
+		addAnnotation
+		  (getClass_Actions(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Actions which can be preformed on instances of corresponding EClass."
 		   });	
 		addAnnotation
 		  (actionEClass, 
@@ -1199,82 +1106,334 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "<html>Action defined for instances of given EClass</html>"
 		   });	
 		addAnnotation
+		  (getAction__Match__Context_String_String_Map(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Matches this action to action string, qualifier in a given context and environment.\r\nThe default implementation constructs a string ``<action>:<qualifier>`` and uses name as a simplified glob pattern to match the string.\r\n\r\nFor example:\r\n\r\n* ``*:*`` matches any request.\r\n* ``read:description`` matches action ``read`` for the qualifier ``descriptor``.\r\n* ``*:accounts`` matches any action for the ``accounts`` qualifier."
+		   });	
+		addAnnotation
+		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Matching context, e.g. ``CDOTransactionContext``."
+		   });	
+		addAnnotation
+		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Action name, a verb. E.g. ``read`` or ``create``"
+		   });	
+		addAnnotation
+		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(2), 
+		   source, 
+		   new String[] {
+			 "documentation", "Qualifier, a noun, e.g. ``description`` for a description attribute or ``doSomething(java.lang.String)`` for an operation.\r\nQualifier is typically a feature/operation path."
+		   });	
+		addAnnotation
+		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(3), 
+		   source, 
+		   new String[] {
+			 "documentation", "Environment can be used to parameterize conditional actions. \r\nFor example an application can define an action class ``TransferFunds`` with ``amountLimit`` ``BigDecimal`` attribute and match logic comparing ``amount`` key of the environment to the ``amount`` attribute of the action and matching only if the key is equal or greater than the attribute.. \r\nThen the application model may contain ``largeTransfer`` action instance with amount set to, say, ``10000``. Permission to execute this action then can be allowed to denied  to some principals.\r\n"
+		   });	
+		addAnnotation
+		  (getAction__CreatePermission(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Creates a permission for this action. \r\nSubclasses may customize permissions created for actions. \r\nE.g. ``transferFunds`` action may create a conditional permission\r\nwich checks transfer amount and matches only if the amount is less or greater\r\nthan a specified limit.\r\n"
+		   });	
+		addAnnotation
+		  (getAction_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Action name, which is used as a pattern to match ``<action>:<qualifier>`` string.  ``*`` matches any character sequence."
+		   });	
+		addAnnotation
 		  (getAction_Grantable(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Only grantable actions can have permission associations. Grantable action corresponds to a role. A non-grantable action shall have an impliedBy relationship with at least one grantable action.\r\nUse of grantable actions allows to use fine-grained action permission checks at development time and define coarse-grained roles (grantable actions implying other actions) at runtime time.\r\n</html>"
+			 "documentation", "Only grantable actions can have permission associations. \r\nGrantable action corresponds to a user story or to a role. \r\nA non-grantable action shall have an impliedBy relationship with at least one grantable action or be contained in a grantable action.\r\nUse of grantable actions allows to use fine-grained action permission checks at development time and define coarse-grained user stories (grantable actions implying or containing other actions) at runtime time."
+		   });	
+		addAnnotation
+		  (getAction_Description(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Action description."
 		   });	
 		addAnnotation
 		  (getAction_Implies(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>References actions which are explicitly implied by this action. Actions are also implicitly implied by using action naming convention with dot as a separator - e.g. <code>myAction</code> implies <code>myAction.mySubAction</code>.</html>"
+			 "documentation", "References actions which are explicitly implied by this action. \r\n"
 		   });	
 		addAnnotation
 		  (getAction_ImpliedBy(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Opposite to <code>implies</code>.</html>"
-		   });	
-		addAnnotation
-		  (getAction_PathPatterns(), 
-		   source, 
-		   new String[] {
-			 "documentation", "<html>Path patterns allow to compute permissions using containment path, i.e. container object may define actions on contained objects. Containment path is computed from reference names, e.g. path of a customer account relative to the customer object would be <code>/accounts</code>, and relative to the system of records would be <code>/customers/accounts</code>. Container object\'s path is \'/\', If pathPatterns is empty then it is assumed that the action applies to the target object, i.e. that there is a single pattern <code>/</code>.</html>"
+			 "documentation", "Opposite to ``implies``."
 		   });	
 		addAnnotation
 		  (getAction_Category(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Path patterns allow to compute permissions using containment path, i.e. container object may define actions on contained objects. Containment path is computed from reference names, e.g. path of a customer account relative to the customer object would be <code>/accounts</code>, and relative to the system of records would be <code>/customers/accounts</code>. Container object\'s path is \'/\', If pathPatterns is empty then it is assumed that the action applies to the target object, i.e. that there is a single pattern <code>/</code>.</html>"
+			 "documentation", "Categories allow to group related actions."
+		   });	
+		addAnnotation
+		  (getAction_Children(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Child actions, implicitly implied by the parent action."
+		   });	
+		addAnnotation
+		  (principalEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Permissions to perform actions on model elements are granted or denied to principals."
+		   });	
+		addAnnotation
+		  (getPrincipal__Authorize__Context_EObject_String_String_Map(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Authorizes to execute an action with a qualifier on an object in an context and an environment."
+		   });	
+		addAnnotation
+		  ((getPrincipal__Authorize__Context_EObject_String_String_Map()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Authorization context."
+		   });	
+		addAnnotation
+		  ((getPrincipal__Authorize__Context_EObject_String_String_Map()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Permission target object."
+		   });	
+		addAnnotation
+		  ((getPrincipal__Authorize__Context_EObject_String_String_Map()).getEParameters().get(2), 
+		   source, 
+		   new String[] {
+			 "documentation", "Action name, e.g. ``read``, ``add``, or ``invoke``."
+		   });	
+		addAnnotation
+		  ((getPrincipal__Authorize__Context_EObject_String_String_Map()).getEParameters().get(3), 
+		   source, 
+		   new String[] {
+			 "documentation", "Action qualifier. E.g. attribute name for ``read`` or operation signature for ``invoke``."
+		   });	
+		addAnnotation
+		  ((getPrincipal__Authorize__Context_EObject_String_String_Map()).getEParameters().get(4), 
+		   source, 
+		   new String[] {
+			 "documentation", "Authorization environment, e.g. for ``transferFunds`` environment may contain ``transferAmount`` key.\r\nEnvironment may be used by conditional actions and/or conditional permissions."
+		   });	
+		addAnnotation
+		  (getPrincipal__Accept__PrincipalVisitor(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Invokes ``PrincipalVisitor.visit()`` on this principal. For groups invokes ``accept(principalVisitor)`` on all group members."
+		   });	
+		addAnnotation
+		  ((getPrincipal__Accept__PrincipalVisitor()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", ""
+		   });	
+		addAnnotation
+		  (getPrincipal__GetRealm(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Realm this principal belongs to. The default implementation traverses containment\r\nhierarchy until it finds a container of type ``Realm``."
+		   });	
+		addAnnotation
+		  (getPrincipal_MemberOf(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Opposite to ``Group.members``."
+		   });	
+		addAnnotation
+		  (getPrincipal_Permissions(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Permissions of this principal."
+		   });	
+		addAnnotation
+		  (getPrincipal_Disabled(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Disabling a principal has the same effect as deleting it, \r\nbut with the ability to enable at some later point of time."
 		   });	
 		addAnnotation
 		  (permissionEClass, 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Permission is an association of a repository object with a principal.</html>"
+			 "documentation", "Permission allows/denies a principal to perform an action on a model element."
+		   });	
+		addAnnotation
+		  (getPermission__Authorize__Context_String_String_Map(), 
+		   source, 
+		   new String[] {
+			 "documentation", ""
+		   });	
+		addAnnotation
+		  ((getPermission__Authorize__Context_String_String_Map()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", ""
+		   });	
+		addAnnotation
+		  ((getPermission__Authorize__Context_String_String_Map()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", ""
+		   });	
+		addAnnotation
+		  ((getPermission__Authorize__Context_String_String_Map()).getEParameters().get(2), 
+		   source, 
+		   new String[] {
+			 "documentation", ""
+		   });	
+		addAnnotation
+		  ((getPermission__Authorize__Context_String_String_Map()).getEParameters().get(3), 
+		   source, 
+		   new String[] {
+			 "documentation", ""
 		   });	
 		addAnnotation
 		  (getPermission_Allow(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>If true, action is allowed. Otherwise it is denied.</html>"
+			 "documentation", "If true, action is allowed. Otherwise it is denied."
 		   });	
 		addAnnotation
 		  (getPermission_Target(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Target object.</html>"
-		   });	
-		addAnnotation
-		  (getPermission_WithGrantOption(), 
-		   source, 
-		   new String[] {
-			 "documentation", "<html>If true, user can grant given action to other users.</html>"
+			 "documentation", "Target object."
 		   });	
 		addAnnotation
 		  (getPermission_StartDate(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Permission effective start date. Can be null.</html>"
+			 "documentation", "Permission effective start date. Can be ``null``."
 		   });	
 		addAnnotation
 		  (getPermission_EndDate(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Permission effective end date, can be null.</html>"
+			 "documentation", "Permission effective end date, can be ``null``."
 		   });	
 		addAnnotation
-		  (getActionContainer_Actions(), 
+		  (getPermission_Comment(), 
 		   source, 
 		   new String[] {
-			 "documentation", "<html>Actions. Each action is associated with EClass.</html>"
+			 "documentation", "Comment."
 		   });	
 		addAnnotation
-		  (getSecurityPolicyContainer_Name(), 
+		  (getPermission_Action(), 
 		   source, 
 		   new String[] {
-			 "documentation", ""
+			 "documentation", "Permission\'s action."
+		   });	
+		addAnnotation
+		  (loginPasswordCredentialsEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Credentials which consist of login name and password."
+		   });	
+		addAnnotation
+		  (loginPasswordRealmEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Realm which supports user authentication with user name and password."
+		   });	
+		addAnnotation
+		  (getLoginPasswordRealm__SetPasswordHash__LoginPasswordHashUser_String(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Sets user password hash."
+		   });	
+		addAnnotation
+		  ((getLoginPasswordRealm__SetPasswordHash__LoginPasswordHashUser_String()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "User to set password hash."
+		   });	
+		addAnnotation
+		  ((getLoginPasswordRealm__SetPasswordHash__LoginPasswordHashUser_String()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Password to compute password hash from."
+		   });	
+		addAnnotation
+		  (getLoginPasswordRealm__GetLoginUser__String(), 
+		   source, 
+		   new String[] {
+			 "documentation", "finds user by login name."
+		   });	
+		addAnnotation
+		  ((getLoginPasswordRealm__GetLoginUser__String()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "User login."
+		   });	
+		addAnnotation
+		  (groupEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Group of principals. Group permissions are inherited by its members."
+		   });	
+		addAnnotation
+		  (getGroup__IsMember__Principal(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Checks direct/indirect membership in the group."
+		   });	
+		addAnnotation
+		  ((getGroup__IsMember__Principal()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Principal."
+		   });	
+		addAnnotation
+		  (getGroup_Members(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Group members."
+		   });	
+		addAnnotation
+		  (getGroup_Name(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Group name."
+		   });	
+		addAnnotation
+		  (getGroup_Description(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Group description."
+		   });	
+		addAnnotation
+		  (loginUserEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Login user is a principal identified by a login string. \r\nLogin user does not necessarily have a password. The realm performs only authorization, with authentication already performed by other layers.\r\n\r\nFor example:\r\n\r\n* A web application may transparently authenticate users against a Windows domain with Waffle or Apache NTML module. In this case the realm receives the name of already authenticated.\r\n* Two-way certificate authentication - the realm receives cn of the client certificate."
+		   });	
+		addAnnotation
+		  (getLoginUser_Login(), 
+		   source, 
+		   new String[] {
+			 "documentation", "A unique string identifying the user."
+		   });	
+		addAnnotation
+		  (loginPasswordHashUserEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "With LoginPasswordHashUser Realm performs authentication and authorization."
+		   });	
+		addAnnotation
+		  (getLoginPasswordHashUser_PasswordHash(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Password one-way hash allows to verify a password provided during authentication, \r\nbut recovery of the original password from hash would require considerable \r\ncomputational resources."
 		   });
 	}
 

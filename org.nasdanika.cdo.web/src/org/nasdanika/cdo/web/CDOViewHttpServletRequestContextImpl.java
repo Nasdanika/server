@@ -10,7 +10,7 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextSubject;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.web.ExportingContext;
@@ -70,8 +70,8 @@ public class CDOViewHttpServletRequestContextImpl<CR> extends HttpServletRequest
 	}
 
 	@Override
-	public ProtectionDomain<CR> getProtectionDomain() {
-		return viewContext.getProtectionDomain();
+	public Realm<CR> getProtectionDomain() {
+		return viewContext.getSecurityRealm();
 	}
 
 	@Override

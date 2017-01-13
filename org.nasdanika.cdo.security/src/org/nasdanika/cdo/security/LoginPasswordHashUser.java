@@ -8,6 +8,10 @@ package org.nasdanika.cdo.security;
  * A representation of the model object '<em><b>Login Password Hash User</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * With LoginPasswordHashUser Realm performs authentication and authorization.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
@@ -28,6 +32,11 @@ public interface LoginPasswordHashUser extends LoginUser {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Password one-way hash allows to verify a password provided during authentication, 
+	 * but recovery of the original password from hash would require considerable 
+	 * computational resources.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Password Hash</em>' attribute.
 	 * @see #setPasswordHash(byte[])
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getLoginPasswordHashUser_PasswordHash()

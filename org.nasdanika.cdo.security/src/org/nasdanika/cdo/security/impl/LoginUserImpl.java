@@ -14,7 +14,7 @@ import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.PrincipalVisitor;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
@@ -30,14 +30,13 @@ import org.nasdanika.core.Context;
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getMemberOf <em>Member Of</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getPermissions <em>Permissions</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getProtectionDomain <em>Protection Domain</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getLogin <em>Login</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#isDisabled <em>Disabled</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.LoginUserImpl#getLogin <em>Login</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
+public abstract class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -88,16 +87,27 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 	}
 
 	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Realm<?> getRealm() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
 	 * Default implementation searches protection domain in the containers hierarchy.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public ProtectionDomain<?> getProtectionDomain() {		
+	public Realm<?> getProtectionDomain() {		
 		//return (ProtectionDomain<?>)eGet(SecurityPackage.Literals.PRINCIPAL__PROTECTION_DOMAIN, true);
 		for (EObject container = eContainer(); container!=null; container = container.eContainer()) {
-			if (container instanceof ProtectionDomain) {
-				return (ProtectionDomain<?>) container;
+			if (container instanceof Realm) {
+				return (Realm<?>) container;
 			}
 		}
 		
@@ -127,8 +137,19 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public boolean isDisabled() {
-		return (Boolean)eGet(SecurityPackage.Literals.LOGIN_USER__DISABLED, true);
+		return (Boolean)eGet(SecurityPackage.Literals.PRINCIPAL__DISABLED, true);
 	}
 
 	/**
@@ -137,7 +158,7 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 	 * @generated
 	 */
 	public void setDisabled(boolean newDisabled) {
-		eSet(SecurityPackage.Literals.LOGIN_USER__DISABLED, newDisabled);
+		eSet(SecurityPackage.Literals.PRINCIPAL__DISABLED, newDisabled);
 	}
 
 	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);
@@ -171,11 +192,13 @@ public class LoginUserImpl extends CDOObjectImpl implements LoginUser {
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SecurityPackage.LOGIN_USER___AUTHORIZE__SECURITYPOLICY_CONTEXT_OBJECT_STRING_STRING_MAP:
-				return authorize((SecurityPolicy)arguments.get(0), (Context)arguments.get(1), arguments.get(2), (String)arguments.get(3), (String)arguments.get(4), (Map<String, Object>)arguments.get(5));
+			case SecurityPackage.LOGIN_USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP:
+				return authorize((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
 			case SecurityPackage.LOGIN_USER___ACCEPT__PRINCIPALVISITOR:
 				accept((PrincipalVisitor)arguments.get(0));
 				return null;
+			case SecurityPackage.LOGIN_USER___GET_REALM:
+				return getRealm();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

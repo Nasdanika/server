@@ -22,6 +22,24 @@ public interface SecurityFactory extends EFactory {
 	SecurityFactory eINSTANCE = org.nasdanika.cdo.security.impl.SecurityFactoryImpl.init();
 
 	/**
+	 * Returns a new object of class '<em>Package</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Package</em>'.
+	 * @generated
+	 */
+	Package createPackage();
+
+	/**
+	 * Returns a new object of class '<em>Class</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Class</em>'.
+	 * @generated
+	 */
+	Class createClass();
+
+	/**
 	 * Returns a new object of class '<em>Group</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -29,24 +47,6 @@ public interface SecurityFactory extends EFactory {
 	 * @generated
 	 */
 	Group createGroup();
-
-	/**
-	 * Returns a new object of class '<em>Login User</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Login User</em>'.
-	 * @generated
-	 */
-	LoginUser createLoginUser();
-
-	/**
-	 * Returns a new object of class '<em>Action Key</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Action Key</em>'.
-	 * @generated
-	 */
-	ActionKey createActionKey();
 
 	/**
 	 * Returns a new object of class '<em>Action</em>'.
@@ -58,15 +58,6 @@ public interface SecurityFactory extends EFactory {
 	Action createAction();
 
 	/**
-	 * Returns a new object of class '<em>Property</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Property</em>'.
-	 * @generated
-	 */
-	Property createProperty();
-
-	/**
 	 * Returns a new object of class '<em>Permission</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -74,24 +65,6 @@ public interface SecurityFactory extends EFactory {
 	 * @generated
 	 */
 	Permission createPermission();
-
-	/**
-	 * Returns a new object of class '<em>Action Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Action Container</em>'.
-	 * @generated
-	 */
-	ActionContainer createActionContainer();
-
-	/**
-	 * Returns a new object of class '<em>Policy Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Policy Container</em>'.
-	 * @generated
-	 */
-	SecurityPolicyContainer createSecurityPolicyContainer();
 
 	/**
 	 * Returns the package supported by this factory.

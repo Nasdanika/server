@@ -4,7 +4,7 @@ import java.util.Map;
 
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 
 /**
  * Filter which allows to replace master context and default access decision.
@@ -42,8 +42,8 @@ public class CDOViewContextFilter<V extends CDOView, CR> implements CDOViewConte
 		return target.convert(source, targetType);
 	}
 
-	public ProtectionDomain<CR> getProtectionDomain() {
-		return target.getProtectionDomain();
+	public Realm<CR> getSecurityRealm() {
+		return target.getSecurityRealm();
 	}
 
 	public Principal authenticate(CR credentials) throws Exception {

@@ -7,21 +7,15 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.security.Action;
-import org.nasdanika.cdo.security.ActionContainer;
-import org.nasdanika.cdo.security.ActionKey;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
-import org.nasdanika.cdo.security.LoginPasswordProtectionDomain;
+import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.Property;
-import org.nasdanika.cdo.security.ProtectionDomain;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.cdo.security.SecurityPolicy;
-import org.nasdanika.cdo.security.SecurityPolicyContainer;
-import org.nasdanika.cdo.security.User;
 
 /**
  * <!-- begin-user-doc -->
@@ -80,28 +74,40 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	protected SecuritySwitch<Adapter> modelSwitch =
 		new SecuritySwitch<Adapter>() {
 			@Override
-			public Adapter caseLoginPasswordCredentials(LoginPasswordCredentials object) {
-				return createLoginPasswordCredentialsAdapter();
+			public <CR> Adapter caseRealm(Realm<CR> object) {
+				return createRealmAdapter();
 			}
 			@Override
-			public <CR> Adapter caseProtectionDomain(ProtectionDomain<CR> object) {
-				return createProtectionDomainAdapter();
+			public Adapter casePackage(org.nasdanika.cdo.security.Package object) {
+				return createPackageAdapter();
 			}
 			@Override
-			public Adapter caseLoginPasswordProtectionDomain(LoginPasswordProtectionDomain object) {
-				return createLoginPasswordProtectionDomainAdapter();
+			public Adapter caseClass(org.nasdanika.cdo.security.Class object) {
+				return createClassAdapter();
+			}
+			@Override
+			public Adapter caseAction(Action object) {
+				return createActionAdapter();
 			}
 			@Override
 			public Adapter casePrincipal(Principal object) {
 				return createPrincipalAdapter();
 			}
 			@Override
-			public Adapter caseGroup(Group object) {
-				return createGroupAdapter();
+			public Adapter casePermission(Permission object) {
+				return createPermissionAdapter();
 			}
 			@Override
-			public Adapter caseUser(User object) {
-				return createUserAdapter();
+			public Adapter caseLoginPasswordCredentials(LoginPasswordCredentials object) {
+				return createLoginPasswordCredentialsAdapter();
+			}
+			@Override
+			public Adapter caseLoginPasswordRealm(LoginPasswordRealm object) {
+				return createLoginPasswordRealmAdapter();
+			}
+			@Override
+			public Adapter caseGroup(Group object) {
+				return createGroupAdapter();
 			}
 			@Override
 			public Adapter caseLoginUser(LoginUser object) {
@@ -110,34 +116,6 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseLoginPasswordHashUser(LoginPasswordHashUser object) {
 				return createLoginPasswordHashUserAdapter();
-			}
-			@Override
-			public Adapter caseActionKey(ActionKey object) {
-				return createActionKeyAdapter();
-			}
-			@Override
-			public Adapter caseAction(Action object) {
-				return createActionAdapter();
-			}
-			@Override
-			public Adapter caseProperty(Property object) {
-				return createPropertyAdapter();
-			}
-			@Override
-			public Adapter casePermission(Permission object) {
-				return createPermissionAdapter();
-			}
-			@Override
-			public Adapter caseActionContainer(ActionContainer object) {
-				return createActionContainerAdapter();
-			}
-			@Override
-			public Adapter caseSecurityPolicy(SecurityPolicy object) {
-				return createSecurityPolicyAdapter();
-			}
-			@Override
-			public Adapter caseSecurityPolicyContainer(SecurityPolicyContainer object) {
-				return createSecurityPolicyContainerAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -160,30 +138,44 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.ProtectionDomain <em>Protection Domain</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Realm <em>Realm</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.ProtectionDomain
+	 * @see org.nasdanika.cdo.security.Realm
 	 * @generated
 	 */
-	public Adapter createProtectionDomainAdapter() {
+	public Adapter createRealmAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.LoginPasswordProtectionDomain <em>Login Password Protection Domain</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Package <em>Package</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.LoginPasswordProtectionDomain
+	 * @see org.nasdanika.cdo.security.Package
 	 * @generated
 	 */
-	public Adapter createLoginPasswordProtectionDomainAdapter() {
+	public Adapter createPackageAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Class <em>Class</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.Class
+	 * @generated
+	 */
+	public Adapter createClassAdapter() {
 		return null;
 	}
 
@@ -216,20 +208,6 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.User <em>User</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.User
-	 * @generated
-	 */
-	public Adapter createUserAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.LoginUser <em>Login User</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -258,20 +236,6 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.ActionKey <em>Action Key</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.ActionKey
-	 * @generated
-	 */
-	public Adapter createActionKeyAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -282,20 +246,6 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createActionAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Property <em>Property</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.Property
-	 * @generated
-	 */
-	public Adapter createPropertyAdapter() {
 		return null;
 	}
 
@@ -314,48 +264,6 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.ActionContainer <em>Action Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.ActionContainer
-	 * @generated
-	 */
-	public Adapter createActionContainerAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.SecurityPolicy <em>Policy</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.SecurityPolicy
-	 * @generated
-	 */
-	public Adapter createSecurityPolicyAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.SecurityPolicyContainer <em>Policy Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.SecurityPolicyContainer
-	 * @generated
-	 */
-	public Adapter createSecurityPolicyContainerAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.LoginPasswordCredentials <em>Login Password Credentials</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -366,6 +274,20 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createLoginPasswordCredentialsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.LoginPasswordRealm <em>Login Password Realm</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.LoginPasswordRealm
+	 * @generated
+	 */
+	public Adapter createLoginPasswordRealmAdapter() {
 		return null;
 	}
 
