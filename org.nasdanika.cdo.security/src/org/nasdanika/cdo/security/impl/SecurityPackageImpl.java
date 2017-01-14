@@ -23,6 +23,7 @@ import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.User;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -67,6 +68,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	private EClass groupEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass userEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -251,7 +259,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getRealm__GetAllPrincipals() {
+	public EOperation getRealm__GetAllUsers() {
 		return realmEClass.getEOperations().get(1);
 	}
 
@@ -458,6 +466,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getUser() {
+		return userEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getLoginUser() {
 		return loginUserEClass;
 	}
@@ -566,7 +583,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getAction__Match__Context_String_String_Map() {
+	public EOperation getAction__Match__Context_EObject_String_String_Map() {
 		return actionEClass.getEOperations().get(0);
 	}
 
@@ -683,7 +700,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getLoginPasswordRealm__GetLoginUser__String() {
+	public EOperation getLoginPasswordRealm__GetUser__String() {
 		return loginPasswordRealmEClass.getEOperations().get(1);
 	}
 
@@ -748,7 +765,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEReference(realmEClass, REALM__EVERYONE);
 		createEReference(realmEClass, REALM__PACKAGES);
 		createEOperation(realmEClass, REALM___AUTHENTICATE__OBJECT);
-		createEOperation(realmEClass, REALM___GET_ALL_PRINCIPALS);
+		createEOperation(realmEClass, REALM___GET_ALL_USERS);
 		createEOperation(realmEClass, REALM___CLEAR_PERMISSIONS__EOBJECT);
 
 		packageEClass = createEClass(PACKAGE);
@@ -770,7 +787,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEReference(actionEClass, ACTION__IMPLIED_BY);
 		createEAttribute(actionEClass, ACTION__CATEGORY);
 		createEReference(actionEClass, ACTION__CHILDREN);
-		createEOperation(actionEClass, ACTION___MATCH__CONTEXT_STRING_STRING_MAP);
+		createEOperation(actionEClass, ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP);
 		createEOperation(actionEClass, ACTION___CREATE_PERMISSION);
 
 		principalEClass = createEClass(PRINCIPAL);
@@ -794,13 +811,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		loginPasswordRealmEClass = createEClass(LOGIN_PASSWORD_REALM);
 		createEOperation(loginPasswordRealmEClass, LOGIN_PASSWORD_REALM___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING);
-		createEOperation(loginPasswordRealmEClass, LOGIN_PASSWORD_REALM___GET_LOGIN_USER__STRING);
+		createEOperation(loginPasswordRealmEClass, LOGIN_PASSWORD_REALM___GET_USER__STRING);
 
 		groupEClass = createEClass(GROUP);
 		createEReference(groupEClass, GROUP__MEMBERS);
 		createEAttribute(groupEClass, GROUP__NAME);
 		createEAttribute(groupEClass, GROUP__DESCRIPTION);
 		createEOperation(groupEClass, GROUP___IS_MEMBER__PRINCIPAL);
+
+		userEClass = createEClass(USER);
 
 		loginUserEClass = createEClass(LOGIN_USER);
 		createEAttribute(loginUserEClass, LOGIN_USER__LOGIN);
@@ -839,6 +858,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		// Create type parameters
 		ETypeParameter realmEClass_CR = addETypeParameter(realmEClass, "CR");
+		addETypeParameter(userEClass, "CR");
+		ETypeParameter loginUserEClass_CR = addETypeParameter(loginUserEClass, "CR");
 
 		// Set bounds for type parameters
 
@@ -848,8 +869,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g1.getETypeArguments().add(g2);
 		loginPasswordRealmEClass.getEGenericSuperTypes().add(g1);
 		groupEClass.getESuperTypes().add(this.getPrincipal());
-		loginUserEClass.getESuperTypes().add(this.getPrincipal());
-		loginPasswordHashUserEClass.getESuperTypes().add(this.getLoginUser());
+		userEClass.getESuperTypes().add(this.getPrincipal());
+		g1 = createEGenericType(this.getUser());
+		g2 = createEGenericType(loginUserEClass_CR);
+		g1.getETypeArguments().add(g2);
+		loginUserEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getLoginUser());
+		g2 = createEGenericType(this.getLoginPasswordCredentials());
+		g1.getETypeArguments().add(g2);
+		loginPasswordHashUserEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(realmEClass, Realm.class, "Realm", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -861,8 +889,16 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		EOperation op = initEOperation(getRealm__Authenticate__Object(), null, "authenticate", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(realmEClass_CR);
 		addEParameter(op, g1, "credentials", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getUser());
+		g2 = createEGenericType(realmEClass_CR);
+		g1.getETypeArguments().add(g2);
+		initEOperation(op, g1);
 
-		initEOperation(getRealm__GetAllPrincipals(), this.getPrincipal(), "getAllPrincipals", 0, -1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getRealm__GetAllUsers(), null, "getAllUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(this.getUser());
+		g2 = createEGenericType(realmEClass_CR);
+		g1.getETypeArguments().add(g2);
+		initEOperation(op, g1);
 
 		op = initEOperation(getRealm__ClearPermissions__EObject(), null, "clearPermissions", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -887,8 +923,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEAttribute(getAction_Category(), ecorePackage.getEString(), "category", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAction_Children(), this.getAction(), null, "children", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		op = initEOperation(getAction__Match__Context_String_String_Map(), ecorePackage.getEBoolean(), "match", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getAction__Match__Context_EObject_String_String_Map(), ecorePackage.getEBoolean(), "match", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "qualifier", 0, 1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(ecorePackage.getEMap());
@@ -953,7 +990,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		addEParameter(op, this.getLoginPasswordHashUser(), "user", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "password", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		op = initEOperation(getLoginPasswordRealm__GetLoginUser__String(), this.getLoginUser(), "getLoginUser", 0, 1, IS_UNIQUE, IS_ORDERED);
+		op = initEOperation(getLoginPasswordRealm__GetUser__String(), this.getLoginPasswordHashUser(), "getUser", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEString(), "login", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(groupEClass, Group.class, "Group", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -963,6 +1000,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		op = initEOperation(getGroup__IsMember__Principal(), ecorePackage.getEBoolean(), "isMember", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getPrincipal(), "principal", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(userEClass, User.class, "User", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(loginUserEClass, LoginUser.class, "LoginUser", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLoginUser_Login(), ecorePackage.getEString(), "login", null, 0, 1, LoginUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1004,7 +1043,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "Authenticates user given provided credentials, e.g. user login and password pair."
 		   });	
 		addAnnotation
-		  (getRealm__GetAllPrincipals(), 
+		  (getRealm__GetAllUsers(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Realm does not have a containment reference for principals, subclasses may\r\nhave one or more principal containment references, direct or through contained objects.\r\n\r\nThis method returns all principals defined in the realm.\r\n"
@@ -1106,31 +1145,37 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "<html>Action defined for instances of given EClass</html>"
 		   });	
 		addAnnotation
-		  (getAction__Match__Context_String_String_Map(), 
+		  (getAction__Match__Context_EObject_String_String_Map(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Matches this action to action string, qualifier in a given context and environment.\r\nThe default implementation constructs a string ``<action>:<qualifier>`` and uses name as a simplified glob pattern to match the string.\r\n\r\nFor example:\r\n\r\n* ``*:*`` matches any request.\r\n* ``read:description`` matches action ``read`` for the qualifier ``descriptor``.\r\n* ``*:accounts`` matches any action for the ``accounts`` qualifier."
 		   });	
 		addAnnotation
-		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(0), 
+		  ((getAction__Match__Context_EObject_String_String_Map()).getEParameters().get(0), 
 		   source, 
 		   new String[] {
 			 "documentation", "Matching context, e.g. ``CDOTransactionContext``."
 		   });	
 		addAnnotation
-		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(1), 
+		  ((getAction__Match__Context_EObject_String_String_Map()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Permission target object. "
+		   });	
+		addAnnotation
+		  ((getAction__Match__Context_EObject_String_String_Map()).getEParameters().get(2), 
 		   source, 
 		   new String[] {
 			 "documentation", "Action name, a verb. E.g. ``read`` or ``create``"
 		   });	
 		addAnnotation
-		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(2), 
+		  ((getAction__Match__Context_EObject_String_String_Map()).getEParameters().get(3), 
 		   source, 
 		   new String[] {
 			 "documentation", "Qualifier, a noun, e.g. ``description`` for a description attribute or ``doSomething(java.lang.String)`` for an operation.\r\nQualifier is typically a feature/operation path."
 		   });	
 		addAnnotation
-		  ((getAction__Match__Context_String_String_Map()).getEParameters().get(3), 
+		  ((getAction__Match__Context_EObject_String_String_Map()).getEParameters().get(4), 
 		   source, 
 		   new String[] {
 			 "documentation", "Environment can be used to parameterize conditional actions. \r\nFor example an application can define an action class ``TransferFunds`` with ``amountLimit`` ``BigDecimal`` attribute and match logic comparing ``amount`` key of the environment to the ``amount`` attribute of the action and matching only if the key is equal or greater than the attribute.. \r\nThen the application model may contain ``largeTransfer`` action instance with amount set to, say, ``10000``. Permission to execute this action then can be allowed to denied  to some principals.\r\n"
@@ -1364,13 +1409,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "Password to compute password hash from."
 		   });	
 		addAnnotation
-		  (getLoginPasswordRealm__GetLoginUser__String(), 
+		  (getLoginPasswordRealm__GetUser__String(), 
 		   source, 
 		   new String[] {
 			 "documentation", "finds user by login name."
 		   });	
 		addAnnotation
-		  ((getLoginPasswordRealm__GetLoginUser__String()).getEParameters().get(0), 
+		  ((getLoginPasswordRealm__GetUser__String()).getEParameters().get(0), 
 		   source, 
 		   new String[] {
 			 "documentation", "User login."
@@ -1410,6 +1455,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Group description."
+		   });	
+		addAnnotation
+		  (userEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "User is a Principal which can be authenticated using credentials."
 		   });	
 		addAnnotation
 		  (loginUserEClass, 

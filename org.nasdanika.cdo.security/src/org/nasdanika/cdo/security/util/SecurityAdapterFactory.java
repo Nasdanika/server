@@ -16,6 +16,7 @@ import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.User;
 
 /**
  * <!-- begin-user-doc -->
@@ -110,7 +111,11 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 				return createGroupAdapter();
 			}
 			@Override
-			public Adapter caseLoginUser(LoginUser object) {
+			public <CR> Adapter caseUser(User<CR> object) {
+				return createUserAdapter();
+			}
+			@Override
+			public <CR> Adapter caseLoginUser(LoginUser<CR> object) {
 				return createLoginUserAdapter();
 			}
 			@Override
@@ -204,6 +209,20 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createGroupAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.User <em>User</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.User
+	 * @generated
+	 */
+	public Adapter createUserAdapter() {
 		return null;
 	}
 

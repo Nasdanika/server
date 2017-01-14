@@ -6,10 +6,9 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Realm;
-import org.nasdanika.cdo.security.SecurityPolicy;
-import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
@@ -27,14 +26,12 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	 */
 	public CDOViewContextImpl(
 			Bundle bundle, 
-			SecurityPolicyManager securityPolicyManager,			
 			AccessDecision defaultAccessDecision,
 			CDOViewContextSubject<V, CR> subject,
 			Context... chain) throws Exception {
 		super(bundle.getBundleContext(), chain);
 		this.subject = subject;
 		this.bundle = bundle;
-		this.securityPolicyManager = securityPolicyManager;
 		view = openView();
 		setDefaultAccessDecision(defaultAccessDecision);
 	}
@@ -64,7 +61,7 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 		}
 		
 		Realm<CR> pd = getSecurityRealm();
-		return pd == null ? null : pd.getUnauthenticatedPrincipal();
+		return pd == null ? null : pd.getGuest();
 	}
 
 	@Override
@@ -83,8 +80,8 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	@Override
 	public final boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		Principal principal = getPrincipal();
-		if (principal!=null && securityPolicyManager!=null) {
-			AccessDecision accessDecision = principal.authorize(securityPolicyManager, this, target, action, qualifier, environment);
+		if (principal!=null && target instanceof EObject) {
+			AccessDecision accessDecision = principal.authorize(this, (EObject) target, action, qualifier, environment);
 			if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 				return AccessDecision.ALLOW.equals(accessDecision);
 			}
@@ -94,8 +91,6 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	
 	private V view;
 	
-	private SecurityPolicyManager securityPolicyManager;
-
 	private Bundle bundle;
 
 	protected abstract V openView();
@@ -114,9 +109,6 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T adapt(Class<T> targetType) throws Exception {
-		if (SecurityPolicy.class.equals(targetType)) {
-			return (T) securityPolicyManager;
-		}
 		if (targetType.isInstance(bundle)) {
 			return (T) bundle;
 		}

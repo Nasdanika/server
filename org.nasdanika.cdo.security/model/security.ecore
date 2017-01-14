@@ -11,14 +11,20 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Authenticates user given provided credentials, e.g. user login and password pair."/>
       </eAnnotations>
+      <eGenericType eClassifier="#//User">
+        <eTypeArguments eTypeParameter="#//Realm/CR"/>
+      </eGenericType>
       <eParameters name="credentials">
         <eGenericType eTypeParameter="#//Realm/CR"/>
       </eParameters>
     </eOperations>
-    <eOperations name="getAllPrincipals" upperBound="-1" eType="#//Principal">
+    <eOperations name="getAllUsers" upperBound="-1">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Realm does not have a containment reference for principals, subclasses may&#xD;&#xA;have one or more principal containment references, direct or through contained objects.&#xD;&#xA;&#xD;&#xA;This method returns all principals defined in the realm.&#xD;&#xA;"/>
       </eAnnotations>
+      <eGenericType eClassifier="#//User">
+        <eTypeArguments eTypeParameter="#//Realm/CR"/>
+      </eGenericType>
     </eOperations>
     <eOperations name="clearPermissions">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -110,6 +116,11 @@
       <eParameters name="context" eType="#//Context">
         <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
           <details key="documentation" value="Matching context, e.g. ``CDOTransactionContext``."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Permission target object. "/>
         </eAnnotations>
       </eParameters>
       <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
@@ -340,7 +351,7 @@
         </eAnnotations>
       </eParameters>
     </eOperations>
-    <eOperations name="getLoginUser" eType="#//LoginUser">
+    <eOperations name="getUser" eType="#//LoginPasswordHashUser">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="finds user by login name."/>
       </eAnnotations>
@@ -387,19 +398,29 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="LoginUser" abstract="true" eSuperTypes="#//Principal">
+  <eClassifiers xsi:type="ecore:EClass" name="User" abstract="true" eSuperTypes="#//Principal">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="User is a Principal which can be authenticated using credentials."/>
+    </eAnnotations>
+    <eTypeParameters name="CR"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="LoginUser" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Login user is a principal identified by a login string. &#xD;&#xA;Login user does not necessarily have a password. The realm performs only authorization, with authentication already performed by other layers.&#xD;&#xA;&#xD;&#xA;For example:&#xD;&#xA;&#xD;&#xA;* A web application may transparently authenticate users against a Windows domain with Waffle or Apache NTML module. In this case the realm receives the name of already authenticated.&#xD;&#xA;* Two-way certificate authentication - the realm receives cn of the client certificate."/>
     </eAnnotations>
+    <eTypeParameters name="CR"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         iD="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="A unique string identifying the user."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//User">
+      <eTypeArguments eTypeParameter="#//LoginUser/CR"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordHashUser" abstract="true"
-      interface="true" eSuperTypes="#//LoginUser">
+      interface="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="With LoginPasswordHashUser Realm performs authentication and authorization."/>
     </eAnnotations>
@@ -408,5 +429,8 @@
         <details key="documentation" value="Password one-way hash allows to verify a password provided during authentication, &#xD;&#xA;but recovery of the original password from hash would require considerable &#xD;&#xA;computational resources."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//LoginUser">
+      <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
+    </eGenericSuperTypes>
   </eClassifiers>
 </ecore:EPackage>

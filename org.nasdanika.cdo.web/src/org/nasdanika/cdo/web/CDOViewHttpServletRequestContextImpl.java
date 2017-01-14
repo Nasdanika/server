@@ -70,7 +70,7 @@ public class CDOViewHttpServletRequestContextImpl<CR> extends HttpServletRequest
 	}
 
 	@Override
-	public Realm<CR> getProtectionDomain() {
+	public Realm<CR> getSecurityRealm() {
 		return viewContext.getSecurityRealm();
 	}
 

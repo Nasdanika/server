@@ -25,10 +25,11 @@
 	<modules>
 		<!--<module>org.nasdanika.thirdparty</module>-->
 		<module>org.nasdanika.core</module>
+		
 		<module>org.nasdanika.cdo.security</module>
 		<module>org.nasdanika.cdo.security.edit</module>
-		<module>org.nasdanika.cdo.security.editor</module>
 		<module>org.nasdanika.cdo.security.feature</module>
+		
 		<module>org.nasdanika.core.tests</module>
 		<module>org.nasdanika.web</module>
 

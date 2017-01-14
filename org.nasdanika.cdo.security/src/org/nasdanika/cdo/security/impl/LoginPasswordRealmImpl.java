@@ -5,7 +5,6 @@ package org.nasdanika.cdo.security.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.util.Arrays;
-import java.util.Iterator;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -14,8 +13,6 @@ import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginPasswordRealm;
-import org.nasdanika.cdo.security.LoginUser;
-import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.User;
@@ -154,23 +151,12 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public LoginUser getLoginUser(String login) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public User getUser(String login) {
-		for (User user: getAllUsers()) {
+	public LoginPasswordHashUser getUser(String login) {
+		for (User<LoginPasswordCredentials> user: getAllUsers()) {
 			if (user instanceof LoginPasswordHashUser && login.equalsIgnoreCase(((LoginPasswordHashUser) user).getLogin())) {
-				return user;
+				return (LoginPasswordHashUser) user;
 			}
 		}
 		
@@ -183,16 +169,8 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	 * @generated NOT
 	 */
 	@Override
-	public abstract <U extends User> EList<U> getAllUsers();
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	@Override
 	public LoginPasswordHashUser authenticate(LoginPasswordCredentials credentials) {
-		for (User user: getAllUsers()) {
+		for (User<LoginPasswordCredentials> user: getAllUsers()) {
 			if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled() && ((LoginPasswordHashUser) user).getPasswordHash()!=null) {
 				LoginPasswordHashUser lphUser = (LoginPasswordHashUser) user;
 				try {
@@ -223,7 +201,18 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<Principal> getAllPrincipals() {
+	public EList<User<LoginPasswordCredentials>> getAllUsers() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void clearPermissions(EObject target) {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
@@ -240,13 +229,12 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 			case SecurityPackage.LOGIN_PASSWORD_REALM___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING:
 				setPasswordHash((LoginPasswordHashUser)arguments.get(0), (String)arguments.get(1));
 				return null;
-			case SecurityPackage.LOGIN_PASSWORD_REALM___GET_LOGIN_USER__STRING:
-				return getLoginUser((String)arguments.get(0));
+			case SecurityPackage.LOGIN_PASSWORD_REALM___GET_USER__STRING:
+				return getUser((String)arguments.get(0));
 			case SecurityPackage.LOGIN_PASSWORD_REALM___AUTHENTICATE__OBJECT:
-				authenticate((LoginPasswordCredentials)arguments.get(0));
-				return null;
-			case SecurityPackage.LOGIN_PASSWORD_REALM___GET_ALL_PRINCIPALS:
-				return getAllPrincipals();
+				return authenticate((LoginPasswordCredentials)arguments.get(0));
+			case SecurityPackage.LOGIN_PASSWORD_REALM___GET_ALL_USERS:
+				return getAllUsers();
 			case SecurityPackage.LOGIN_PASSWORD_REALM___CLEAR_PERMISSIONS__EOBJECT:
 				clearPermissions((EObject)arguments.get(0));
 				return null;

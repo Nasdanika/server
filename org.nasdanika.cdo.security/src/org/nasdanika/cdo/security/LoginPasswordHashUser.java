@@ -20,10 +20,10 @@ package org.nasdanika.cdo.security;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getLoginPasswordHashUser()
- * @model interface="true" abstract="true"
+ * @model interface="true" abstract="true" superTypes="org.nasdanika.cdo.security.LoginUser<org.nasdanika.cdo.security.LoginPasswordCredentials>"
  * @generated
  */
-public interface LoginPasswordHashUser extends LoginUser {
+public interface LoginPasswordHashUser extends LoginUser<LoginPasswordCredentials> {
 	/**
 	 * Returns the value of the '<em><b>Password Hash</b></em>' attribute.
 	 * <!-- begin-user-doc -->

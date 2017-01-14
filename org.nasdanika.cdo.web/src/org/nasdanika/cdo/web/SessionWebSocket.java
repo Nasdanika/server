@@ -446,7 +446,7 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 							}
 
 							@Override
-							public Realm<CR> getProtectionDomain() {
+							public Realm<CR> getSecurityRealm() {
 								return cdoTransactionContext.getSecurityRealm();
 							}
 

@@ -22,7 +22,7 @@
       <genOperations ecoreOperation="security.ecore#//Realm/authenticate">
         <genParameters ecoreParameter="security.ecore#//Realm/authenticate/credentials"/>
       </genOperations>
-      <genOperations ecoreOperation="security.ecore#//Realm/getAllPrincipals"/>
+      <genOperations ecoreOperation="security.ecore#//Realm/getAllUsers"/>
       <genOperations ecoreOperation="security.ecore#//Realm/clearPermissions">
         <genParameters ecoreParameter="security.ecore#//Realm/clearPermissions/target"/>
       </genOperations>
@@ -48,6 +48,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Action/children"/>
       <genOperations ecoreOperation="security.ecore#//Action/match">
         <genParameters ecoreParameter="security.ecore#//Action/match/context"/>
+        <genParameters ecoreParameter="security.ecore#//Action/match/target"/>
         <genParameters ecoreParameter="security.ecore#//Action/match/action"/>
         <genParameters ecoreParameter="security.ecore#//Action/match/qualifier"/>
         <genParameters ecoreParameter="security.ecore#//Action/match/environment"/>
@@ -90,8 +91,8 @@
         <genParameters ecoreParameter="security.ecore#//LoginPasswordRealm/setPasswordHash/user"/>
         <genParameters ecoreParameter="security.ecore#//LoginPasswordRealm/setPasswordHash/password"/>
       </genOperations>
-      <genOperations ecoreOperation="security.ecore#//LoginPasswordRealm/getLoginUser">
-        <genParameters ecoreParameter="security.ecore#//LoginPasswordRealm/getLoginUser/login"/>
+      <genOperations ecoreOperation="security.ecore#//LoginPasswordRealm/getUser">
+        <genParameters ecoreParameter="security.ecore#//LoginPasswordRealm/getUser/login"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//Group">
@@ -102,7 +103,11 @@
         <genParameters ecoreParameter="security.ecore#//Group/isMember/principal"/>
       </genOperations>
     </genClasses>
+    <genClasses ecoreClass="security.ecore#//User">
+      <genTypeParameters ecoreTypeParameter="security.ecore#//User/CR"/>
+    </genClasses>
     <genClasses ecoreClass="security.ecore#//LoginUser">
+      <genTypeParameters ecoreTypeParameter="security.ecore#//LoginUser/CR"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginUser/login"/>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//LoginPasswordHashUser">

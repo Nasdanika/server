@@ -139,6 +139,29 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 	}
 
 	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.User} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected UserItemProvider userItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.cdo.security.User}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createUserAdapter() {
+		if (userItemProvider == null) {
+			userItemProvider = new UserItemProvider(this);
+		}
+
+		return userItemProvider;
+	}
+
+	/**
 	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.Action} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -288,6 +311,7 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 		if (actionItemProvider != null) actionItemProvider.dispose();
 		if (permissionItemProvider != null) permissionItemProvider.dispose();
 		if (groupItemProvider != null) groupItemProvider.dispose();
+		if (userItemProvider != null) userItemProvider.dispose();
 	}
 
 }

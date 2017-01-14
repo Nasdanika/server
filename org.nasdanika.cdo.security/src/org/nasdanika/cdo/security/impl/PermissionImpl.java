@@ -5,8 +5,6 @@ package org.nasdanika.cdo.security.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.Map;
-import java.util.regex.Pattern;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -14,10 +12,8 @@ import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.CoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -178,20 +174,9 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String path, Map<String, Object> environment) {
+	public AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment) {
 		//System.out.println(target + " "+action+" "+path);
 		
 		Date now = new Date();
@@ -201,26 +186,8 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 		if (getEndDate()!=null && getEndDate().before(now)) {
 			return AccessDecision.ABSTAIN;
 		}
-		
-		Action permissionAction = securityPolicy==null ? null : securityPolicy.getAction(this);
-		if (permissionAction==null) {
-			if (
-					(getTarget()==null || (target!=null && target.equals(getTarget()))) &&
-					("*".equals(getName()) || action.equals(getName())) && 
-					(CoreUtil.isBlank(getQualifier()) || Pattern.matches(getQualifier(), path))) {
-				
-				return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;					
-			}
-			return AccessDecision.ABSTAIN;
-		}
-		
-		if ((target instanceof EClass || target instanceof Class) && getTarget()==null) {
-			if (permissionAction.match(context, "class:"+action, path, environment)) {
-				return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
-			}
-			return AccessDecision.ABSTAIN;
-		}
-		if ((getTarget()==null || (target!=null && target.equals(getTarget()))) && permissionAction.match(context, action, path, environment)) {
+
+		if (getAction().match(context, getTarget(), action, qualifier, environment)) {
 			return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
 		}
 		return AccessDecision.ABSTAIN;

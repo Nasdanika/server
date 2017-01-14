@@ -3,24 +3,16 @@
 package org.nasdanika.cdo.security.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.regex.Pattern;
-
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.mozilla.javascript.Scriptable;
-import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Permission;
-import org.nasdanika.cdo.security.Property;
+import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.CoreUtil;
-import org.nasdanika.core.NasdanikaException;
 
 /**
  * <!-- begin-user-doc -->
@@ -175,78 +167,62 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	}
 
 	/**
-	 * Inherits path patterns.
+	 * Matches a pattern where <code>*</code> stands for zero or more characters and <code>?</code> stands for a single character.
+	 * @param text
+	 * @param glob
 	 * @return
 	 */
-	private EList<String> getEffectivePathPatterns() {
-		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
-			EList<String> pathPatterns = a.getPathPatterns();
-			if (!pathPatterns.isEmpty()) {
-				return pathPatterns;
-			}
-		}
-		return getPathPatterns();
-	}
+	private static boolean globMatch(String text, String glob) {
+	    String rest = null;
+	    int pos = glob.indexOf('*');
+	    if (pos != -1) {
+	        rest = glob.substring(pos + 1);
+	        glob = glob.substring(0, pos);
+	    }
 
-	/**
-	 * Inherits condition.
-	 * @return
-	 */
-	private String getEffectiveCondition() {
-		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
-			String condition = a.getCondition();
-			if (!CoreUtil.isBlank(condition)) {
-				return condition;
-			}
-		}
-		return getCondition();
-	}
-	
-	/**
-	 * Inherits name.
-	 * @return
-	 */
-	private String getEffectiveName() {
-		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
-			String name = a.getName();
-			if (!CoreUtil.isBlank(name)) {
-				return name;
-			}
-		}
-		return getName();
-	}
+	    if (glob.length() > text.length()) {
+	        return false;
+	    }
+
+	    // handle the part up to the first *
+	    for (int i = 0; i < glob.length(); i++) {
+	        if (glob.charAt(i) != '?' && !glob.substring(i, i + 1).equalsIgnoreCase(text.substring(i, i + 1))) {
+	            return false;
+	        }
+	    }
+	    
+	    // recurse for the part after the first *, if any
+	    if (rest == null) {
+	        return glob.length() == text.length();
+	    } else {
+	        for (int i = glob.length(); i <= text.length(); i++) {
+	            if (globMatch(text.substring(i), rest)) {
+	                return true;
+	            }
+	        }
+	        return false;
+	    }
+	}	
 	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public boolean match(Context context, String action, String path, Map<String, Object> environment) {
-//		System.out.println(action+" "+path);
-		String name = getEffectiveName();
-		if ("*".equals(name) || name.equals(action)) {
-			EList<String> pathPatterns = getEffectivePathPatterns();
-			if (pathPatterns.isEmpty()) {
-				if ("/".equals(path)) {
-					return eval(context, path, environment);
-				}
-			} else {
-				for (String p: pathPatterns) {
-					if (Pattern.matches(p, path)) {
-						return eval(context, path, environment);
-					}
-				}
+	@Override
+	public boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+		if (globMatch(action + ":" + qualifier, getName())) {
+			return true;
+		}
+		
+		for (Action a: getImplies()) {
+			if (a.match(context, target, action, qualifier, environment)) {
+				return true;
 			}
-		} else {		
-			for (Action a: getImplies()) {
-				if (a.match(context, action, path, environment)) {
-					return true;
-				}
-			}
-			for (Action a: getActions()) {
-				if (a.match(context, action, path, environment)) {
-					return true;
-				}
+		}
+		for (Action a: getChildren()) {
+			if (a.match(context, target, action, qualifier, environment)) {
+				return true;
 			}
 		}
 		
@@ -256,64 +232,11 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * Creates simple permission.
+	 * @generated NOT
 	 */
 	public Permission createPermission() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	private Boolean eval(Context context, String path, Map<String, Object> environment) {
-		try {
-			String condition = getEffectiveCondition();
-			if (CoreUtil.isBlank(condition)) {
-				return true;
-			}
-			org.mozilla.javascript.Context scriptContext = org.mozilla.javascript.Context.enter();
-			try {
-				Scriptable scope = scriptContext.initStandardObjects();
-				ScriptableObject.putProperty(scope, "context", org.mozilla.javascript.Context.javaToJS(context, scope));
-				for (Entry<String, Object> ee: environment.entrySet()) {
-					ScriptableObject.putProperty(scope, ee.getKey(), org.mozilla.javascript.Context.javaToJS(ee.getValue(), scope));					
-				}
-				ScriptableObject.putProperty(scope, "actionProperties", org.mozilla.javascript.Context.javaToJS(effectiveActionProperties(context), scope));					
-				ScriptableObject.putProperty(scope, "path", org.mozilla.javascript.Context.javaToJS(path, scope));					
-
-				return Boolean.TRUE.equals(scriptContext.evaluateString(scope, condition, "actionCondition", 1, null));
-			} finally {
-				org.mozilla.javascript.Context.exit();
-			}			
-		} catch (Exception e) {
-			throw new NasdanikaException("Action condition evaluation error", e);
-		}
-	}
-
-	/**
-	 * Collects properties from self and parent actions.
-	 * @param context
-	 * @return
-	 * @throws Exception
-	 */
-	private Map<String, Object> effectiveActionProperties(Context context) throws Exception {
-		Map<String, Object> actionProperties = new HashMap<>();
-		for (Action a = this; a.eContainer() instanceof Action; a = (Action) a.eContainer()) {
-			for (Property p: a.getProperties()) {
-				if (!actionProperties.containsKey(p.getName())) {
-					if (CoreUtil.isBlank(p.getType())|| String.class.getName().equals(p.getType())) {
-						actionProperties.put(p.getName(), p.getValue());
-					} else {
-						Class<?> propertyType = ((ClassLoadingContext) context).loadClass(p.getType());
-						Object propertyValue = ((Context) context).convert(p.getValue(), propertyType);
-						if (propertyValue==null) {
-							throw new NasdanikaException("Cannot convert '"+p.getValue()+"' to "+p.getType());
-						}
-						actionProperties.put(p.getName(), propertyValue);
-					}
-				}
-			}
-		}
-		return actionProperties;
+		return SecurityFactory.eINSTANCE.createPermission();
 	}
 
 	/**
@@ -325,8 +248,8 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SecurityPackage.ACTION___MATCH__CONTEXT_STRING_STRING_MAP:
-				return match((Context)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), (Map<String, Object>)arguments.get(3));
+			case SecurityPackage.ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP:
+				return match((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
 			case SecurityPackage.ACTION___CREATE_PERMISSION:
 				return createPermission();
 		}

@@ -3,7 +3,6 @@ package org.nasdanika.cdo;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.Realm;
-import org.nasdanika.cdo.security.SecurityPolicyManager;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.NasdanikaException;
@@ -13,22 +12,12 @@ import org.osgi.service.component.ComponentContext;
 public abstract class CDOViewContextProviderComponent<CR> implements CDOViewContextProvider<CDOView, CR, CDOViewContext<CDOView, CR>> {
 	
 	private CDOSessionProvider sessionProvider;
-	private SecurityPolicyManager securityPolicyManager;
 	private Bundle bundle;
 	private AccessDecision defaultAccessDecision;
 	
 	public void activate(ComponentContext componentContext) throws Exception {
-		securityPolicyManager = new SecurityPolicyManager(
-				componentContext.getBundleContext(), 
-				(String) componentContext.getProperties().get("security-policy-filter"));
 		this.bundle = componentContext.getBundleContext().getBundle();
 		defaultAccessDecision = "deny".equalsIgnoreCase((String) componentContext.getProperties().get("default-access-decision")) ? AccessDecision.DENY : AccessDecision.ALLOW;
-	}
-	
-	public void deactivate() throws Exception {
-		if (securityPolicyManager!=null) {
-			securityPolicyManager.close();
-		}
 	}
 	
 	public void setSessionProvider(CDOSessionProvider sessionProvider) {
@@ -45,7 +34,6 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 			try {
 				return new CDOViewContextImpl<CDOView, CR>(
 						bundle, 
-						securityPolicyManager,
 						defaultAccessDecision,
 						subject,
 						chain) {

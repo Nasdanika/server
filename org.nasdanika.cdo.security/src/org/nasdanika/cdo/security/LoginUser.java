@@ -29,7 +29,7 @@ package org.nasdanika.cdo.security;
  * @model abstract="true"
  * @generated
  */
-public interface LoginUser extends Principal {
+public interface LoginUser<CR> extends User<CR> {
 	/**
 	 * Returns the value of the '<em><b>Login</b></em>' attribute.
 	 * <!-- begin-user-doc -->

@@ -12,6 +12,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -48,6 +49,19 @@ public class AuthorizationHelper {
 			environment.put("target", target);
 		}
 		return authorize(principal, context, target, action, qualifier, new ArrayList<>(), environment, new HashSet<Principal>());
+	}
+	
+	/**
+	 * If this method returns true principals have all rights on object contained by the principal. 
+	 * For example, Customer extends Principal and contains Accounts which contain Statements which in turn contain transactions. If this 
+	 * method returns true, Customer would have all rights on their accounts, statements and transactions, as well as to self. 
+	 * This implementation returns <code>true</code>.
+	 * Containment is evaluated after explicitly granted/denied permissions, so some actions can be explicitly denied to the containing principal.
+	 * Override as needed.
+	 * @return
+	 */
+	protected boolean isContainmentOwnership() {
+		return true;
 	}
 		
 	/**
@@ -147,14 +161,14 @@ public class AuthorizationHelper {
 		return -1;
 	}
 	
-	private static AccessDecision authorize(
+	private AccessDecision authorize(
 			Principal principal, 
 			Context context,
 			EObject target, 
 			String action,
 			String qualifier, 
 			List<EStructuralFeature> path, 
-			Map<String, Object> environment, 
+			Map<String, Object> environment,
 			Set<Principal> traversed) {
 		
 //		System.out.println("Authorizing: "+target+" "+action+" "+qualifier+" "+path);
@@ -218,6 +232,11 @@ public class AuthorizationHelper {
 			}
 		}
 		
+		// Containment ownership
+		if (isContainmentOwnership() && EcoreUtil.isAncestor(principal, target)) {
+			return AccessDecision.ALLOW;
+		}
+					
 		return AccessDecision.ABSTAIN;
 	}
 	

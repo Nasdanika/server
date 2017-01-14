@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.Context;
 
 /**
@@ -206,6 +207,7 @@ public interface Action extends CDOObject {
 	 * * ``read:description`` matches action ``read`` for the qualifier ``descriptor``.
 	 * * ``*:accounts`` matches any action for the ``accounts`` qualifier.
 	 * @param context Matching context, e.g. ``CDOTransactionContext``.
+	 * @param target Permission target object. 
 	 * @param action Action name, a verb. E.g. ``read`` or ``create``
 	 * @param qualifier
 	 *   Qualifier, a noun, e.g. ``description`` for a description attribute or ``doSomething(java.lang.String)`` for an operation.
@@ -219,7 +221,7 @@ public interface Action extends CDOObject {
 	 * @model contextDataType="org.nasdanika.cdo.security.Context"
 	 * @generated
 	 */
-	boolean match(Context context, String action, String qualifier, Map<String, Object> environment);
+	boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment);
 
 	/**
 	 * <!-- begin-user-doc -->

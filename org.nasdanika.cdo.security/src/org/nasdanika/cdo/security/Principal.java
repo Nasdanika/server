@@ -126,9 +126,16 @@ public interface Principal extends CDOObject {
 	 * hierarchy until it finds a container of type ``Realm``.
 	 * <!-- end-model-doc -->
 	 * @model kind="operation"
-	 * @generated
+	 * @generated NOT
 	 */
-	Realm<?> getRealm();
+	default Realm<?> getRealm() {
+		for (EObject c = eContainer(); c != null; c = c.eContainer()) {
+			if (c instanceof Realm) {
+				return (Realm<?>) c;
+			}
+		}
+		return null;
+	}
 
 	/**
 	 * <!-- begin-user-doc -->

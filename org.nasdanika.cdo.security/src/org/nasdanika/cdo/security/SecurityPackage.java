@@ -123,13 +123,13 @@ public interface SecurityPackage extends EPackage {
 	int REALM___AUTHENTICATE__OBJECT = 0;
 
 	/**
-	 * The operation id for the '<em>Get All Principals</em>' operation.
+	 * The operation id for the '<em>Get All Users</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REALM___GET_ALL_PRINCIPALS = 1;
+	int REALM___GET_ALL_USERS = 1;
 
 	/**
 	 * The operation id for the '<em>Clear Permissions</em>' operation.
@@ -316,7 +316,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginUser()
 	 * @generated
 	 */
-	int LOGIN_USER = 9;
+	int LOGIN_USER = 10;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
@@ -326,7 +326,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordHashUser()
 	 * @generated
 	 */
-	int LOGIN_PASSWORD_HASH_USER = 10;
+	int LOGIN_PASSWORD_HASH_USER = 11;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
@@ -417,7 +417,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION___MATCH__CONTEXT_STRING_STRING_MAP = 0;
+	int ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP = 0;
 
 	/**
 	 * The operation id for the '<em>Create Permission</em>' operation.
@@ -673,13 +673,13 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_REALM___AUTHENTICATE__OBJECT = REALM___AUTHENTICATE__OBJECT;
 
 	/**
-	 * The operation id for the '<em>Get All Principals</em>' operation.
+	 * The operation id for the '<em>Get All Users</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_REALM___GET_ALL_PRINCIPALS = REALM___GET_ALL_PRINCIPALS;
+	int LOGIN_PASSWORD_REALM___GET_ALL_USERS = REALM___GET_ALL_USERS;
 
 	/**
 	 * The operation id for the '<em>Clear Permissions</em>' operation.
@@ -700,13 +700,13 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_REALM___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING = REALM_OPERATION_COUNT + 0;
 
 	/**
-	 * The operation id for the '<em>Get Login User</em>' operation.
+	 * The operation id for the '<em>Get User</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_REALM___GET_LOGIN_USER__STRING = REALM_OPERATION_COUNT + 1;
+	int LOGIN_PASSWORD_REALM___GET_USER__STRING = REALM_OPERATION_COUNT + 1;
 
 	/**
 	 * The number of operations of the '<em>Login Password Realm</em>' class.
@@ -826,13 +826,23 @@ public interface SecurityPackage extends EPackage {
 	int GROUP_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 1;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.UserImpl <em>User</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.UserImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getUser()
+	 * @generated
+	 */
+	int USER = 9;
+
+	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER__MEMBER_OF = PRINCIPAL__MEMBER_OF;
+	int USER__MEMBER_OF = PRINCIPAL__MEMBER_OF;
 
 	/**
 	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
@@ -841,7 +851,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER__PERMISSIONS = PRINCIPAL__PERMISSIONS;
+	int USER__PERMISSIONS = PRINCIPAL__PERMISSIONS;
 
 	/**
 	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
@@ -850,25 +860,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER__DISABLED = PRINCIPAL__DISABLED;
+	int USER__DISABLED = PRINCIPAL__DISABLED;
 
 	/**
-	 * The feature id for the '<em><b>Login</b></em>' attribute.
+	 * The number of structural features of the '<em>User</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER__LOGIN = PRINCIPAL_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Login User</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int LOGIN_USER_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 1;
+	int USER_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 0;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -877,7 +878,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+	int USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
 
 	/**
 	 * The operation id for the '<em>Accept</em>' operation.
@@ -886,7 +887,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER___ACCEPT__PRINCIPALVISITOR = PRINCIPAL___ACCEPT__PRINCIPALVISITOR;
+	int USER___ACCEPT__PRINCIPALVISITOR = PRINCIPAL___ACCEPT__PRINCIPALVISITOR;
 
 	/**
 	 * The operation id for the '<em>Get Realm</em>' operation.
@@ -895,7 +896,88 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER___GET_REALM = PRINCIPAL___GET_REALM;
+	int USER___GET_REALM = PRINCIPAL___GET_REALM;
+
+	/**
+	 * The number of operations of the '<em>User</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int USER_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER__MEMBER_OF = USER__MEMBER_OF;
+
+	/**
+	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER__PERMISSIONS = USER__PERMISSIONS;
+
+	/**
+	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER__DISABLED = USER__DISABLED;
+
+	/**
+	 * The feature id for the '<em><b>Login</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER__LOGIN = USER_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Login User</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER_FEATURE_COUNT = USER_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Authorize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = USER___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+
+	/**
+	 * The operation id for the '<em>Accept</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER___ACCEPT__PRINCIPALVISITOR = USER___ACCEPT__PRINCIPALVISITOR;
+
+	/**
+	 * The operation id for the '<em>Get Realm</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_USER___GET_REALM = USER___GET_REALM;
 
 	/**
 	 * The number of operations of the '<em>Login User</em>' class.
@@ -904,7 +986,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_USER_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 0;
+	int LOGIN_USER_OPERATION_COUNT = USER_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -1004,7 +1086,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 11;
+	int CONTEXT = 12;
 
 	/**
 	 * The meta object id for the '<em>Principal Visitor</em>' data type.
@@ -1014,7 +1096,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalVisitor()
 	 * @generated
 	 */
-	int PRINCIPAL_VISITOR = 12;
+	int PRINCIPAL_VISITOR = 13;
 
 	/**
 	 * The meta object id for the '<em>Access Decision</em>' data type.
@@ -1024,7 +1106,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
 	 * @generated
 	 */
-	int ACCESS_DECISION = 13;
+	int ACCESS_DECISION = 14;
 
 
 	/**
@@ -1092,14 +1174,14 @@ public interface SecurityPackage extends EPackage {
 	EOperation getRealm__Authenticate__Object();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Realm#getAllPrincipals() <em>Get All Principals</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Realm#getAllUsers() <em>Get All Users</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get All Principals</em>' operation.
-	 * @see org.nasdanika.cdo.security.Realm#getAllPrincipals()
+	 * @return the meta object for the '<em>Get All Users</em>' operation.
+	 * @see org.nasdanika.cdo.security.Realm#getAllUsers()
 	 * @generated
 	 */
-	EOperation getRealm__GetAllPrincipals();
+	EOperation getRealm__GetAllUsers();
 
 	/**
 	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Realm#clearPermissions(org.eclipse.emf.ecore.EObject) <em>Clear Permissions</em>}' operation.
@@ -1240,14 +1322,14 @@ public interface SecurityPackage extends EPackage {
 	EOperation getLoginPasswordRealm__SetPasswordHash__LoginPasswordHashUser_String();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.LoginPasswordRealm#getLoginUser(java.lang.String) <em>Get Login User</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.LoginPasswordRealm#getUser(java.lang.String) <em>Get User</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Get Login User</em>' operation.
-	 * @see org.nasdanika.cdo.security.LoginPasswordRealm#getLoginUser(java.lang.String)
+	 * @return the meta object for the '<em>Get User</em>' operation.
+	 * @see org.nasdanika.cdo.security.LoginPasswordRealm#getUser(java.lang.String)
 	 * @generated
 	 */
-	EOperation getLoginPasswordRealm__GetLoginUser__String();
+	EOperation getLoginPasswordRealm__GetUser__String();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}'.
@@ -1374,6 +1456,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EOperation getGroup__IsMember__Principal();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.User <em>User</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>User</em>'.
+	 * @see org.nasdanika.cdo.security.User
+	 * @generated
+	 */
+	EClass getUser();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.LoginUser <em>Login User</em>}'.
@@ -1505,14 +1597,14 @@ public interface SecurityPackage extends EPackage {
 	EReference getAction_Children();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#match(org.nasdanika.core.Context, java.lang.String, java.lang.String, java.util.Map) <em>Match</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#match(org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map) <em>Match</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Match</em>' operation.
-	 * @see org.nasdanika.cdo.security.Action#match(org.nasdanika.core.Context, java.lang.String, java.lang.String, java.util.Map)
+	 * @see org.nasdanika.cdo.security.Action#match(org.nasdanika.core.Context, org.eclipse.emf.ecore.EObject, java.lang.String, java.lang.String, java.util.Map)
 	 * @generated
 	 */
-	EOperation getAction__Match__Context_String_String_Map();
+	EOperation getAction__Match__Context_EObject_String_String_Map();
 
 	/**
 	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#createPermission() <em>Create Permission</em>}' operation.
@@ -1717,12 +1809,12 @@ public interface SecurityPackage extends EPackage {
 		EOperation REALM___AUTHENTICATE__OBJECT = eINSTANCE.getRealm__Authenticate__Object();
 
 		/**
-		 * The meta object literal for the '<em><b>Get All Principals</b></em>' operation.
+		 * The meta object literal for the '<em><b>Get All Users</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation REALM___GET_ALL_PRINCIPALS = eINSTANCE.getRealm__GetAllPrincipals();
+		EOperation REALM___GET_ALL_USERS = eINSTANCE.getRealm__GetAllUsers();
 
 		/**
 		 * The meta object literal for the '<em><b>Clear Permissions</b></em>' operation.
@@ -1837,12 +1929,12 @@ public interface SecurityPackage extends EPackage {
 		EOperation LOGIN_PASSWORD_REALM___SET_PASSWORD_HASH__LOGINPASSWORDHASHUSER_STRING = eINSTANCE.getLoginPasswordRealm__SetPasswordHash__LoginPasswordHashUser_String();
 
 		/**
-		 * The meta object literal for the '<em><b>Get Login User</b></em>' operation.
+		 * The meta object literal for the '<em><b>Get User</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation LOGIN_PASSWORD_REALM___GET_LOGIN_USER__STRING = eINSTANCE.getLoginPasswordRealm__GetLoginUser__String();
+		EOperation LOGIN_PASSWORD_REALM___GET_USER__STRING = eINSTANCE.getLoginPasswordRealm__GetUser__String();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.Principal <em>Principal</em>}' class.
@@ -1943,6 +2035,16 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EOperation GROUP___IS_MEMBER__PRINCIPAL = eINSTANCE.getGroup__IsMember__Principal();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.UserImpl <em>User</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.UserImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getUser()
+		 * @generated
+		 */
+		EClass USER = eINSTANCE.getUser();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.LoginUserImpl <em>Login User</em>}' class.
@@ -2052,7 +2154,7 @@ public interface SecurityPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ACTION___MATCH__CONTEXT_STRING_STRING_MAP = eINSTANCE.getAction__Match__Context_String_String_Map();
+		EOperation ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getAction__Match__Context_EObject_String_String_Map();
 
 		/**
 		 * The meta object literal for the '<em><b>Create Permission</b></em>' operation.

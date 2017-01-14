@@ -15,6 +15,7 @@ import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.User;
 
 /**
  * <!-- begin-user-doc -->
@@ -129,9 +130,17 @@ public class SecuritySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case SecurityPackage.USER: {
+				User<?> user = (User<?>)theEObject;
+				T result = caseUser(user);
+				if (result == null) result = casePrincipal(user);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case SecurityPackage.LOGIN_USER: {
-				LoginUser loginUser = (LoginUser)theEObject;
+				LoginUser<?> loginUser = (LoginUser<?>)theEObject;
 				T result = caseLoginUser(loginUser);
+				if (result == null) result = caseUser(loginUser);
 				if (result == null) result = casePrincipal(loginUser);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -140,6 +149,7 @@ public class SecuritySwitch<T> extends Switch<T> {
 				LoginPasswordHashUser loginPasswordHashUser = (LoginPasswordHashUser)theEObject;
 				T result = caseLoginPasswordHashUser(loginPasswordHashUser);
 				if (result == null) result = caseLoginUser(loginPasswordHashUser);
+				if (result == null) result = caseUser(loginPasswordHashUser);
 				if (result == null) result = casePrincipal(loginPasswordHashUser);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -224,6 +234,21 @@ public class SecuritySwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>User</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>User</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR> T caseUser(User<CR> object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Login User</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -234,7 +259,7 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseLoginUser(LoginUser object) {
+	public <CR> T caseLoginUser(LoginUser<CR> object) {
 		return null;
 	}
 

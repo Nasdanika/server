@@ -168,7 +168,6 @@
 		
 		<module>../org.nasdanika.cdo.security</module>
 		<module>../org.nasdanika.cdo.security.edit</module>
-		<module>../org.nasdanika.cdo.security.editor</module>
 		<module>../org.nasdanika.cdo.security.feature</module>
 		
 		<module>../org.nasdanika.cdo.boxing</module>

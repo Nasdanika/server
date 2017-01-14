@@ -16,7 +16,6 @@ import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -107,17 +106,6 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Realm<?> getRealm() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	/**
 	 * Traverses containers looking for a protection domain.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -199,29 +187,19 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 		}
 		return false;
 	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);
 	
+	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);	
+
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public AccessDecision authorize(SecurityPolicy securityPolicy, Context context, Object target, String action, String qualifier, Map<String, Object> environment) {
-		return authorizationHelper.authorize(securityPolicy, context, target, action, qualifier, environment);
+	@Override
+	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+		return authorizationHelper.authorize(context, target, action, qualifier, environment);
 	}
-
+	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -233,6 +211,17 @@ public class GroupImpl extends CDOObjectImpl implements Group {
 				m.accept(visitor);
 			}
 		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Realm<?> getRealm() {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
 	}
 
 	/**

@@ -143,7 +143,7 @@ public interface Realm<CR> extends CDOObject {
 	 * @model
 	 * @generated
 	 */
-	void authenticate(CR credentials);
+	User<CR> authenticate(CR credentials);
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -158,7 +158,7 @@ public interface Realm<CR> extends CDOObject {
 	 * @model kind="operation"
 	 * @generated
 	 */
-	EList<Principal> getAllPrincipals();
+	EList<User<CR>> getAllUsers();
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -172,8 +172,8 @@ public interface Realm<CR> extends CDOObject {
 	 * @generated NOT
 	 */
 	default void clearPermissions(EObject obj) {
-		for (Principal principal: getAllPrincipals()) {
-			Iterator<Permission> pit = principal.getPermissions().iterator();
+		for (User<?> user: getAllUsers()) {
+			Iterator<Permission> pit = user.getPermissions().iterator();
 			while (pit.hasNext()) {
 				Permission p = pit.next();
 				if (p.getTarget().equals(obj)) {

@@ -75,7 +75,7 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 	}
 
 	@Override
-	public Realm<CR> getProtectionDomain() {
+	public Realm<CR> getSecurityRealm() {
 		return transactionContext.getSecurityRealm();
 	}
 

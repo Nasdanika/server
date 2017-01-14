@@ -42,5 +42,5 @@ public interface LoginPasswordRealm extends Realm<LoginPasswordCredentials> {
 	 * @model
 	 * @generated
 	 */
-	LoginUser getLoginUser(String login);
+	LoginPasswordHashUser getUser(String login);
 } // LoginPasswordRealm

@@ -2,8 +2,8 @@ package org.nasdanika.cdo;
 
 import java.util.Map;
 
+import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.security.Principal;
-import org.nasdanika.cdo.security.SecurityPolicy;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.Context;
 
@@ -19,11 +19,10 @@ public class CDOViewContextAuthorizationProvider implements	AuthorizationProvide
 		
 		if (context instanceof CDOViewContext) {
 			Principal principal = ((CDOViewContext<?,?>) context).getPrincipal();
-			if (principal!=null) {
+			if (principal!=null && target instanceof EObject) {
 				// TODO - cache CDOID,action -> AccessDecision in session.
 				try {
-					SecurityPolicy sp = context.adapt(SecurityPolicy.class);
-					return sp==null ? AccessDecision.ABSTAIN : principal.authorize(sp, context, target, action, qualifier, environment);
+					return principal.authorize(context, (EObject) target, action, qualifier, environment);
 				} catch (Exception e) {
 					e.printStackTrace();
 					return AccessDecision.DENY; // To be on the safe side.
