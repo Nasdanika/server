@@ -25,7 +25,6 @@ test:
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca.edit
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.scheduler
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security.editor
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security.edit
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo
@@ -46,7 +45,6 @@ test:
     - mv org.nasdanika.cdo.sca.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca.edit
     - mv org.nasdanika.cdo.sca/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca
     - mv org.nasdanika.cdo.scheduler/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.scheduler
-    - mv org.nasdanika.cdo.security.editor/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security.editor
     - mv org.nasdanika.cdo.security.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security.edit
     - mv org.nasdanika.cdo.security/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security
     - mv org.nasdanika.cdo/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo
