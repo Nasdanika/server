@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
+import org.nasdanika.cdo.security.Guest;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.SecurityFactory;
@@ -66,6 +67,7 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 			case SecurityPackage.ACTION: return (EObject)createAction();
 			case SecurityPackage.PERMISSION: return (EObject)createPermission();
 			case SecurityPackage.GROUP: return (EObject)createGroup();
+			case SecurityPackage.GUEST: return (EObject)createGuest();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -137,6 +139,16 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	public Group createGroup() {
 		GroupImpl group = new GroupImpl();
 		return group;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Guest createGuest() {
+		GuestImpl guest = new GuestImpl();
+		return guest;
 	}
 
 	/**

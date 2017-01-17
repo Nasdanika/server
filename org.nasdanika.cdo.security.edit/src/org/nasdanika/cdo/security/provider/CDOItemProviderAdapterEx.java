@@ -11,7 +11,7 @@ import org.eclipse.emf.ecore.EObject;
  */
 public class CDOItemProviderAdapterEx extends CDOItemProviderAdapter {
 	
-	public CDOItemProviderAdapterEx(AdapterFactory adapterFactory) {
+	protected CDOItemProviderAdapterEx(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 

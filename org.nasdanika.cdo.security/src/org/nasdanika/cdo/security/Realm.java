@@ -64,25 +64,25 @@ public interface Realm<CR> extends CDOObject {
 	void setRoot(Principal value);
 
 	/**
-	 * Returns the value of the '<em><b>Guest</b></em>' reference.
+	 * Returns the value of the '<em><b>Guest</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Unauthenticated principal.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Guest</em>' reference.
+	 * @return the value of the '<em>Guest</em>' containment reference.
 	 * @see #setGuest(Principal)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getRealm_Guest()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	Principal getGuest();
 
 	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Realm#getGuest <em>Guest</em>}' reference.
+	 * Sets the value of the '{@link org.nasdanika.cdo.security.Realm#getGuest <em>Guest</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Guest</em>' reference.
+	 * @param value the new value of the '<em>Guest</em>' containment reference.
 	 * @see #getGuest()
 	 * @generated
 	 */
