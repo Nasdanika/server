@@ -16,8 +16,8 @@
     <genClasses image="false" ecoreClass="security.ecore#//Realm">
       <genTypeParameters ecoreTypeParameter="security.ecore#//Realm/CR"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Realm/root"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Realm/guest"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Realm/everyone"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Realm/guest"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Realm/everyone"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Realm/packages"/>
       <genOperations ecoreOperation="security.ecore#//Realm/authenticate">
         <genParameters ecoreParameter="security.ecore#//Realm/authenticate/credentials"/>

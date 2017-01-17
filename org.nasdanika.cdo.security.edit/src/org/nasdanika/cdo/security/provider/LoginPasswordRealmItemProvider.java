@@ -62,8 +62,6 @@ public class LoginPasswordRealmItemProvider
 			super.getPropertyDescriptors(object);
 
 			addRootPropertyDescriptor(object);
-			addGuestPropertyDescriptor(object);
-			addEveryonePropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -91,50 +89,6 @@ public class LoginPasswordRealmItemProvider
 	}
 
 	/**
-	 * This adds a property descriptor for the Guest feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addGuestPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Realm_guest_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Realm_guest_feature", "_UI_Realm_type"),
-				 SecurityPackage.Literals.REALM__GUEST,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Everyone feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addEveryonePropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Realm_everyone_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Realm_everyone_feature", "_UI_Realm_type"),
-				 SecurityPackage.Literals.REALM__EVERYONE,
-				 true,
-				 false,
-				 true,
-				 null,
-				 null,
-				 null));
-	}
-
-	/**
 	 * This specifies how to implement {@link #getChildren} and is used to deduce an appropriate feature for an
 	 * {@link org.eclipse.emf.edit.command.AddCommand}, {@link org.eclipse.emf.edit.command.RemoveCommand} or
 	 * {@link org.eclipse.emf.edit.command.MoveCommand} in {@link #createCommand}.
@@ -146,6 +100,8 @@ public class LoginPasswordRealmItemProvider
 	public Collection<? extends EStructuralFeature> getChildrenFeatures(Object object) {
 		if (childrenFeatures == null) {
 			super.getChildrenFeatures(object);
+			childrenFeatures.add(SecurityPackage.Literals.REALM__GUEST);
+			childrenFeatures.add(SecurityPackage.Literals.REALM__EVERYONE);
 			childrenFeatures.add(SecurityPackage.Literals.REALM__PACKAGES);
 		}
 		return childrenFeatures;
@@ -188,6 +144,8 @@ public class LoginPasswordRealmItemProvider
 		updateChildren(notification);
 
 		switch (notification.getFeatureID(LoginPasswordRealm.class)) {
+			case SecurityPackage.LOGIN_PASSWORD_REALM__GUEST:
+			case SecurityPackage.LOGIN_PASSWORD_REALM__EVERYONE:
 			case SecurityPackage.LOGIN_PASSWORD_REALM__PACKAGES:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
@@ -208,8 +166,51 @@ public class LoginPasswordRealmItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(SecurityPackage.Literals.REALM__GUEST,
+				 SecurityFactory.eINSTANCE.createPrincipal()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SecurityPackage.Literals.REALM__GUEST,
+				 SecurityFactory.eINSTANCE.createGroup()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SecurityPackage.Literals.REALM__EVERYONE,
+				 SecurityFactory.eINSTANCE.createPrincipal()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SecurityPackage.Literals.REALM__EVERYONE,
+				 SecurityFactory.eINSTANCE.createGroup()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(SecurityPackage.Literals.REALM__PACKAGES,
 				 SecurityFactory.eINSTANCE.createPackage()));
+	}
+
+	/**
+	 * This returns the label text for {@link org.eclipse.emf.edit.command.CreateChildCommand}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String getCreateChildText(Object owner, Object feature, Object child, Collection<?> selection) {
+		Object childFeature = feature;
+		Object childObject = child;
+
+		boolean qualify =
+			childFeature == SecurityPackage.Literals.REALM__GUEST ||
+			childFeature == SecurityPackage.Literals.REALM__EVERYONE;
+
+		if (qualify) {
+			return getString
+				("_UI_CreateChild_text2",
+				 new Object[] { getTypeText(childObject), getFeatureText(childFeature), getTypeText(owner) });
+		}
+		return super.getCreateChildText(owner, feature, child, selection);
 	}
 
 	/**

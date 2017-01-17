@@ -87,12 +87,12 @@ public class LoginUserItemProvider
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	@Override
 	public String getText(Object object) {
 		LoginUser<?> loginUser = (LoginUser<?>)object;
-		return getString("_UI_LoginUser_type") + " " + loginUser.isDisabled();
+		return getString("_UI_LoginUser_type") + " " + loginUser.getLogin();
 	}
 	
 

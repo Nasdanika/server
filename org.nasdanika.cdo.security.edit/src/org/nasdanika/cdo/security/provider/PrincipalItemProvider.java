@@ -50,6 +50,19 @@ public class PrincipalItemProvider
 	public PrincipalItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
+	
+
+	/**
+	 * This returns User.gif.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object getImage(Object object) {
+		return overlayImage(object, getResourceLocator().getImage("full/obj16/Principal.png"));
+	}
+
 
 	/**
 	 * This returns the property descriptors for the adapted class.
