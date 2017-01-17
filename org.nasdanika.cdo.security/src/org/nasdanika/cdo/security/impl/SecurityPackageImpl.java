@@ -13,7 +13,6 @@ import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
-import org.nasdanika.cdo.security.Guest;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginPasswordRealm;
@@ -90,13 +89,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	private EClass loginPasswordHashUserEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass guestEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -519,15 +511,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getGuest() {
-		return guestEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getAction() {
 		return actionEClass;
 	}
@@ -844,8 +827,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		loginPasswordHashUserEClass = createEClass(LOGIN_PASSWORD_HASH_USER);
 		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH);
 
-		guestEClass = createEClass(GUEST);
-
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
 		principalVisitorEDataType = createEDataType(PRINCIPAL_VISITOR);
@@ -897,13 +878,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(this.getLoginPasswordCredentials());
 		g1.getETypeArguments().add(g2);
 		loginPasswordHashUserEClass.getEGenericSuperTypes().add(g1);
-		guestEClass.getESuperTypes().add(this.getPrincipal());
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(realmEClass, Realm.class, "Realm", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getRealm_Root(), this.getPrincipal(), null, "root", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRealm_Guest(), this.getPrincipal(), null, "guest", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getRealm_Everyone(), this.getPrincipal(), null, "everyone", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getRealm_Everyone(), this.getPrincipal(), null, "everyone", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRealm_Packages(), this.getPackage(), null, "packages", null, 0, -1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		EOperation op = initEOperation(getRealm__Authenticate__Object(), null, "authenticate", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -957,7 +937,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		initEOperation(getAction__CreatePermission(), this.getPermission(), "createPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEClass(principalEClass, Principal.class, "Principal", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(principalEClass, Principal.class, "Principal", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPrincipal_MemberOf(), this.getGroup(), this.getGroup_Members(), "memberOf", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPrincipal_Permissions(), this.getPermission(), null, "permissions", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPrincipal_Disabled(), ecorePackage.getEBoolean(), "disabled", null, 0, 1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1028,8 +1008,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		initEClass(loginPasswordHashUserEClass, LoginPasswordHashUser.class, "LoginPasswordHashUser", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLoginPasswordHashUser_PasswordHash(), ecorePackage.getEByteArray(), "passwordHash", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(guestEClass, Guest.class, "Guest", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1507,12 +1485,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Password one-way hash allows to verify a password provided during authentication, \r\nbut recovery of the original password from hash would require considerable \r\ncomputational resources."
-		   });	
-		addAnnotation
-		  (guestEClass, 
-		   source, 
-		   new String[] {
-			 "documentation", "Concrete guest class."
 		   });
 	}
 

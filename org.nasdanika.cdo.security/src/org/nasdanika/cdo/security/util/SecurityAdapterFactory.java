@@ -8,7 +8,6 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
-import org.nasdanika.cdo.security.Guest;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.LoginPasswordHashUser;
 import org.nasdanika.cdo.security.LoginPasswordRealm;
@@ -122,10 +121,6 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseLoginPasswordHashUser(LoginPasswordHashUser object) {
 				return createLoginPasswordHashUserAdapter();
-			}
-			@Override
-			public Adapter caseGuest(Guest object) {
-				return createGuestAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -256,20 +251,6 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createLoginPasswordHashUserAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Guest <em>Guest</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.security.Guest
-	 * @generated
-	 */
-	public Adapter createGuestAdapter() {
 		return null;
 	}
 

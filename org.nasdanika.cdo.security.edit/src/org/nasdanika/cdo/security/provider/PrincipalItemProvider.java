@@ -23,17 +23,17 @@ import org.eclipse.emf.edit.provider.ITreeItemContentProvider;
 import org.eclipse.emf.edit.provider.ItemPropertyDescriptor;
 import org.eclipse.emf.edit.provider.ViewerNotification;
 
-import org.nasdanika.cdo.security.Guest;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
 
 /**
- * This is the item provider adapter for a {@link org.nasdanika.cdo.security.Guest} object.
+ * This is the item provider adapter for a {@link org.nasdanika.cdo.security.Principal} object.
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
  * @generated
  */
-public class GuestItemProvider 
+public class PrincipalItemProvider 
 	extends CDOItemProviderAdapterEx
 	implements
 		IEditingDomainItemProvider,
@@ -47,7 +47,7 @@ public class GuestItemProvider
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public GuestItemProvider(AdapterFactory adapterFactory) {
+	public PrincipalItemProvider(AdapterFactory adapterFactory) {
 		super(adapterFactory);
 	}
 
@@ -143,17 +143,6 @@ public class GuestItemProvider
 	}
 
 	/**
-	 * This returns Guest.gif.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	@Override
-	public Object getImage(Object object) {
-		return overlayImage(object, getResourceLocator().getImage("full/obj16/Guest"));
-	}
-
-	/**
 	 * This returns the label text for the adapted class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -161,8 +150,8 @@ public class GuestItemProvider
 	 */
 	@Override
 	public String getText(Object object) {
-		Guest guest = (Guest)object;
-		return getString("_UI_Guest_type") + " " + guest.isDisabled();
+		Principal principal = (Principal)object;
+		return getString("_UI_Principal_type") + " " + principal.isDisabled();
 	}
 	
 
@@ -177,11 +166,11 @@ public class GuestItemProvider
 	public void notifyChanged(Notification notification) {
 		updateChildren(notification);
 
-		switch (notification.getFeatureID(Guest.class)) {
-			case SecurityPackage.GUEST__DISABLED:
+		switch (notification.getFeatureID(Principal.class)) {
+			case SecurityPackage.PRINCIPAL__DISABLED:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
-			case SecurityPackage.GUEST__PERMISSIONS:
+			case SecurityPackage.PRINCIPAL__PERMISSIONS:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), true, false));
 				return;
 		}

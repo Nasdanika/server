@@ -29,7 +29,7 @@ import org.nasdanika.core.Context;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPrincipal()
- * @model interface="true" abstract="true"
+ * @model
  * @extends CDOObject
  * @generated
  */

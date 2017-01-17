@@ -89,25 +89,25 @@ public interface Realm<CR> extends CDOObject {
 	void setGuest(Principal value);
 
 	/**
-	 * Returns the value of the '<em><b>Everyone</b></em>' reference.
+	 * Returns the value of the '<em><b>Everyone</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * If this reference is set then all authenticated users implicitly inherit permissions from the ``everyone`` principal.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Everyone</em>' reference.
+	 * @return the value of the '<em>Everyone</em>' containment reference.
 	 * @see #setEveryone(Principal)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getRealm_Everyone()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	Principal getEveryone();
 
 	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Realm#getEveryone <em>Everyone</em>}' reference.
+	 * Sets the value of the '{@link org.nasdanika.cdo.security.Realm#getEveryone <em>Everyone</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Everyone</em>' reference.
+	 * @param value the new value of the '<em>Everyone</em>' containment reference.
 	 * @see #getEveryone()
 	 * @generated
 	 */

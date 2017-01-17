@@ -10,8 +10,8 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
-import org.nasdanika.cdo.security.Guest;
 import org.nasdanika.cdo.security.Permission;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
@@ -65,9 +65,9 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 			case SecurityPackage.PACKAGE: return (EObject)createPackage();
 			case SecurityPackage.CLASS: return (EObject)createClass();
 			case SecurityPackage.ACTION: return (EObject)createAction();
+			case SecurityPackage.PRINCIPAL: return (EObject)createPrincipal();
 			case SecurityPackage.PERMISSION: return (EObject)createPermission();
 			case SecurityPackage.GROUP: return (EObject)createGroup();
-			case SecurityPackage.GUEST: return (EObject)createGuest();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -146,9 +146,9 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Guest createGuest() {
-		GuestImpl guest = new GuestImpl();
-		return guest;
+	public Action createAction() {
+		ActionImpl action = new ActionImpl();
+		return action;
 	}
 
 	/**
@@ -156,9 +156,9 @@ public class SecurityFactoryImpl extends EFactoryImpl implements SecurityFactory
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Action createAction() {
-		ActionImpl action = new ActionImpl();
-		return action;
+	public Principal createPrincipal() {
+		PrincipalImpl principal = new PrincipalImpl();
+		return principal;
 	}
 
 	/**

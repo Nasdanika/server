@@ -199,23 +199,10 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<User<LoginPasswordCredentials>> getAllUsers() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public void clearPermissions(EObject target) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		LoginPasswordRealm.super.clearPermissions(target);
 	}
 
 	/**

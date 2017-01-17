@@ -12,10 +12,10 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-
+import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
-import org.nasdanika.cdo.security.Guest;
 import org.nasdanika.cdo.security.Permission;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
@@ -26,26 +26,26 @@ import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Guest</b></em>'.
+ * An implementation of the model object '<em><b>Principal</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.impl.GuestImpl#getMemberOf <em>Member Of</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.GuestImpl#getPermissions <em>Permissions</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.GuestImpl#isDisabled <em>Disabled</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.PrincipalImpl#getMemberOf <em>Member Of</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.PrincipalImpl#getPermissions <em>Permissions</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.PrincipalImpl#isDisabled <em>Disabled</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class GuestImpl extends CDOObjectImpl implements Guest {
+public class PrincipalImpl extends CDOObjectImpl implements Principal {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected GuestImpl() {
+	protected PrincipalImpl() {
 		super();
 	}
 
@@ -56,7 +56,7 @@ public class GuestImpl extends CDOObjectImpl implements Guest {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return SecurityPackage.Literals.GUEST;
+		return SecurityPackage.Literals.PRINCIPAL;
 	}
 
 	/**
@@ -107,37 +107,33 @@ public class GuestImpl extends CDOObjectImpl implements Guest {
 		eSet(SecurityPackage.Literals.PRINCIPAL__DISABLED, newDisabled);
 	}
 
+	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);
+	
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
+	@Override
 	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return authorizationHelper.authorize(context, target, action, qualifier, environment);
 	}
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
 	public void accept(PrincipalVisitor visitor) {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		visitor.visit(this);
 	}
 
 	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
+	 * @generated NOT
 	 */
+	@Override
 	public Realm<?> getRealm() {
-		// TODO: implement this method
-		// Ensure that you remove @generated or mark it @generated NOT
-		throw new UnsupportedOperationException();
+		return Principal.super.getRealm();
 	}
 
 	/**
@@ -149,15 +145,15 @@ public class GuestImpl extends CDOObjectImpl implements Guest {
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SecurityPackage.GUEST___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP:
+			case SecurityPackage.PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP:
 				return authorize((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
-			case SecurityPackage.GUEST___ACCEPT__PRINCIPALVISITOR:
+			case SecurityPackage.PRINCIPAL___ACCEPT__PRINCIPALVISITOR:
 				accept((PrincipalVisitor)arguments.get(0));
 				return null;
-			case SecurityPackage.GUEST___GET_REALM:
+			case SecurityPackage.PRINCIPAL___GET_REALM:
 				return getRealm();
 		}
 		return super.eInvoke(operationID, arguments);
 	}
 
-} //GuestImpl
+} //PrincipalImpl

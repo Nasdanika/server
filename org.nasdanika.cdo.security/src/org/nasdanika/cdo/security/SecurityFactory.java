@@ -49,15 +49,6 @@ public interface SecurityFactory extends EFactory {
 	Group createGroup();
 
 	/**
-	 * Returns a new object of class '<em>Guest</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Guest</em>'.
-	 * @generated
-	 */
-	Guest createGuest();
-
-	/**
 	 * Returns a new object of class '<em>Action</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -65,6 +56,15 @@ public interface SecurityFactory extends EFactory {
 	 * @generated
 	 */
 	Action createAction();
+
+	/**
+	 * Returns a new object of class '<em>Principal</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Principal</em>'.
+	 * @generated
+	 */
+	Principal createPrincipal();
 
 	/**
 	 * Returns a new object of class '<em>Permission</em>'.
