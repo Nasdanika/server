@@ -111,7 +111,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginUser/login"/>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//LoginPasswordHashUser">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/passwordHash"/>
+      <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/passwordHash"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>
