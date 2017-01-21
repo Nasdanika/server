@@ -151,10 +151,12 @@ public class AuthorizationHelper {
 			if (subClass.equals(superClass)) {
 				return 0;
 			}
+			int increment = 1000;
 			for (EClass sc: subClass.getESuperTypes()) {
-				int sd = distance(sc, sc);
+				++increment;
+				int sd = distance(sc, superClass);
 				if (sd!=-1) {
-					return sd+1;
+					return sd+increment;
 				}
 			}
 		}
