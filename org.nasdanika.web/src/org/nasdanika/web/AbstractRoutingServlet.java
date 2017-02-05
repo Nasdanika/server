@@ -13,6 +13,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.jetty.util.DecoratedObjectFactory;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.eclipse.jetty.websocket.servlet.WebSocketCreator;
@@ -136,6 +137,9 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 		ClassLoader ccl = currentThread.getContextClassLoader();
 		try {			
 			currentThread.setContextClassLoader(getClass().getClassLoader());
+			if (config.getServletContext().getAttribute(DecoratedObjectFactory.ATTR) == null) {
+				config.getServletContext().setAttribute(DecoratedObjectFactory.ATTR, new DecoratedObjectFactory());
+			}
 			super.init(config);
 		} finally {
 			currentThread.setContextClassLoader(ccl);
