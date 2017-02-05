@@ -185,9 +185,9 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private List<Pattern> packageExcludes = new ArrayList<>();
 		
 	private static Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
-	
 	private static String[] ABBREVIATIONS = { "e.g.", "i.e." }; // TODO - load from extensions?
 		
+	private int minFirstSentenceLength = 20;
 	private int maxFirstSentenceLength = 250;
 	
 	public void setMaxFirstSentenceLength(int maxFirstSentenceLength) {
@@ -3099,8 +3099,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	}
 	
 	public String firstSentence(String text) {
+		if (text == null || text.length() < minFirstSentenceLength) {
+			return text;
+		}
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
-		Z: while (matcher.find()) {
+		Z: while (matcher.find(minFirstSentenceLength)) {
 			String group = matcher.group();
 			for (String abbr: ABBREVIATIONS) {
 				if (group.trim().endsWith(abbr)) {
