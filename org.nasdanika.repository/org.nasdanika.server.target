@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="105">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="108">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.simple" version="1.7.6"/>
@@ -15,10 +15,6 @@
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="javax.transaction" version="1.1.1.v201105210645"/>
 <repository location="http://download.eclipse.org/tools/orbit/downloads/drops/R20160520211859/repository/"/>
-</location>
-<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201701191502"/>
-<repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="org.objectweb.asm.all.debug" version="5.0.3"/>
@@ -47,12 +43,16 @@
 <repository location="http://download.eclipse.org/jetty/updates/jetty-bundles-9.x/9.4.0.v20161208"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201701080335"/>
+<unit id="org.nasdanika.webtest.model.feature.feature.group" version="0.1.0.201612312039"/>
+<repository location="http://www.nasdanika.org/products/webtest-model/repository"/>
+</location>
+<location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
+<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201702050042"/>
 <repository location="http://www.nasdanika.org/products/html/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.webtest.model.feature.feature.group" version="0.1.0.201612312039"/>
-<repository location="http://www.nasdanika.org/products/webtest-model/repository"/>
+<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201702042346"/>
+<repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
 </location>
 </locations>
 </target>
