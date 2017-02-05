@@ -21,6 +21,11 @@ import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.Modal;
+import org.nasdanika.html.Tag;
+import org.nasdanika.html.Bootstrap.Glyphicon;
+import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.pegdown.Extensions;
 import org.pegdown.PegDownProcessor;
@@ -33,6 +38,8 @@ import org.pegdown.PegDownProcessor;
  */
 public interface Renderer<C extends Context, T extends EObject> {
 	
+	public static final String INDEX_HTML = "index.html";
+
 	/**
 	 * Documentation annotation key.
 	 */
@@ -65,9 +72,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 	String ANNOTATION_KEY_LABEL = "label";
 	
 	/**
-	 * On EClass this annotation defines EClass label/display name.
+	 * Defines named element label/display name.
 	 */
-	String ANNOTATION_KEY_ECLASS_LABEL = "eclass-label";
+	String ANNOTATION_KEY_ENAMED_ELEMENT_LABEL = "enamed-element-label";
 	
 	Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
 	
@@ -97,9 +104,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 	};
 	
-	default Renderer<?, ?> getRenderer(EClass eClass) {
+	@SuppressWarnings("unchecked")
+	default Renderer<C, EObject> getRenderer(EClass eClass) {
 		// TODO extension point.
-		return INSTANCE;
+		return (Renderer<C, EObject>) INSTANCE;
 	}
 
 	/**
@@ -178,7 +186,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Object cLabel = cRenderer.renderLabel(context, c);
 			if (cLabel != null) {
 				String objectURI = cRenderer.getObjectURI(context, c);
-				breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/index.html", cLabel);
+				breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cLabel);
 			}
 		}
 		breadCrumbs.item(null, renderLabel(context, obj));
@@ -214,7 +222,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			for (EStructuralFeature vsf: getVisibleStructuralFeatures(context, obj)) {
 				vsfm.put(vsf.getName(), vsf);
 			}
-			String label = HTMLFactory.INSTANCE.interpolate(labelAnnotation, token -> {
+			String label = getHTMLFactory().interpolate(labelAnnotation, token -> {
 				EStructuralFeature vsf = vsfm.get(token);
 				return vsf == null ? null : obj.eGet(vsf);
 			});
@@ -234,7 +242,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param context
 	 * @param obj
 	 * @return Object URI. This implementation returns object path if context is instanceof {@link HttpServletRequestContext} 
-	 * and ``#`` otherwise.
+	 * and ``null`` otherwise.
 	 * @throws Exception
 	 */
 	default String getObjectURI(C context, T obj) throws Exception {
@@ -242,7 +250,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			return ((HttpServletRequestContext) context).getObjectPath(obj);		
 		}
 		
-		return "#";
+		return null;
 	}
 	
 	/**
@@ -253,7 +261,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderLink(C context, T obj) throws Exception {
-		return HTMLFactory.INSTANCE.link(getObjectURI(context, obj), renderLabel(context, obj));
+		String objectURI = getObjectURI(context, obj);
+		return getHTMLFactory().link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
 	}
 
 	/**
@@ -263,8 +272,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return Value of ``label`` render annotation if it is present or element name passed through nameToLabel() conversion.
 	 * @throws Exception
 	 */
-	default Object renderLabel(C context, ENamedElement namedElement) throws Exception {
-		String label = getRenderAnnotation(context, namedElement, ANNOTATION_KEY_LABEL);
+	default Object renderNamedElementLabel(C context, ENamedElement namedElement) throws Exception {
+		String label = getRenderAnnotation(context, namedElement, ANNOTATION_KEY_ENAMED_ELEMENT_LABEL);
 		return label == null ? nameToLabel(namedElement.getName()) : label;
 	}
 	
@@ -275,8 +284,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param feature
 	 * @param value
 	 * @return
+	 * @throws Exception 
 	 */
-	default Object renderFeatureValue(C context, EStructuralFeature feature, Object value) {
+	default Object renderFeatureValue(C context, EStructuralFeature feature, Object value) throws Exception {
+		if (value instanceof EObject) {
+			return getRenderer(((EObject) value).eClass()).renderLink(context, (EObject) value);
+		}
 		return value == null ? "" : StringEscapeUtils.escapeHtml4(value.toString());
 	}
 
@@ -285,10 +298,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * and if not found from Ecore GenModel annotation.
 	 * @param context
 	 * @param modelElement
-	 * @return gendoc annotation rendered as markdown in a div with ...
+	 * @return gendoc annotation rendered as markdown to HTML or null if there is no documentation.
 	 * @throws Exception
 	 */
-	default Object renderDocumentation(C context, EModelElement modelElement) throws Exception {
+	default String renderDocumentation(C context, EModelElement modelElement) throws Exception {
 		String markdown = getRenderAnnotation(context, modelElement, ANNOTATION_KEY_DOCUMENTATION);
 		
 		if (markdown == null) {
@@ -306,6 +319,61 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return markdownToHtml(context, markdown);				
 	}
 	
+	default HTMLFactory getHTMLFactory() {
+		return HTMLFactory.INSTANCE;
+	}
+	
+	/**
+	 * Renders documentation modal if the element has documenation.
+	 * @param context
+	 * @param modelElement
+	 * @return documentation modal or null if the element is not documented.
+	 * @throws Exception 
+	 */
+	default Modal renderDocumentationModal(C context, EModelElement modelElement) throws Exception {
+		String doc = renderDocumentation(context, modelElement);
+		if (doc == null) {
+			return null;
+		}
+		Modal docModal = getHTMLFactory().modal();
+		if (doc.length() < 500) {
+			docModal.small();				
+		} else if (doc.length() > 2000) {
+			docModal.large();
+		}
+		docModal.title(getHTMLFactory().tag(TagName.h4, modelElement instanceof ENamedElement ? renderNamedElementLabel(context, (ENamedElement) modelElement) : "Documentation"));
+		docModal.body(getHTMLFactory().div(doc).addClass("markdown-body"));
+		return docModal;
+	}
+	
+	/**
+	 * If element has documentation this method renders a question mark glyph icon with a tooltip containing the first sentence of documentation.
+	 * If docModal is not null, then the cursor is set to pointer and click on the icon opens the doc modal.
+	 * @param context
+	 * @param modelElement
+	 * @return
+	 * @throws Exception
+	 */
+	default Tag renderDocumentationIcon(C context, EModelElement modelElement, Modal docModal) throws Exception {
+		String doc = renderDocumentation(context, modelElement);
+		if (doc == null) {
+			return null;
+		}
+		Tag helpGlyph = getHTMLFactory().glyphicon(Glyphicon.question_sign).style().margin().left("5px");
+		helpGlyph.attribute("title", firstHtmlSentence(doc));
+		if (docModal != null) {
+			helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
+			helpGlyph.style("cursor", "pointer");
+		}
+		return helpGlyph;
+	}
+	
+	/**
+	 * Converts markdown to HTML using {@link PegDownProcessor}.
+	 * @param context
+	 * @param markdown
+	 * @return
+	 */
 	default String markdownToHtml(C context, String markdown) {
 		return new PegDownProcessor(PEGDOWN_OPTIONS).markdownToHtml(markdown);		
 	}
@@ -351,7 +419,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return text.length() < getMaxFirstSentenceLength() ? text : text.substring(0, getMaxFirstSentenceLength())+"...";
 	}
 	
-//	HTMLFactory.INSTANCE.div(markdownToHtml(context, markdown)).addClass("markdown-body");
+//	getHTMLFactory().div(markdownToHtml(context, markdown)).addClass("markdown-body");
 	
 	default Object renderFirstDocumentationSentence(C context, EModelElement modelElement) throws Exception {
 		Object doc = renderDocumentation(context, modelElement);
