@@ -46,7 +46,7 @@ public abstract class EModelElementDocumentationGeneratorImpl<T extends EModelEl
 	public String getModelDocumentation(DocRoute docRoute, URI baseURI, String urlPrefix, EModelElement modelElement) {
 		EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
 		if (docAnn==null) {
-			return "";
+			return null;
 		}
 		String markdown = docAnn.getDetails().get("documentation");
 		if (CoreUtil.isBlank(markdown)) {
