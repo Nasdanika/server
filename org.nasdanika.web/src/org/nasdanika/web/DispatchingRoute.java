@@ -235,7 +235,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		HttpServletResponse response = context.getResponse();
 		if (!CoreUtil.isBlank(getApiDocPath())
 				&& context.getMethod() == RequestMethod.GET
-				&& getApiDocPath().equals(CoreUtil.join(path, "/"))) {
+				&& getApiDocPath().equals(CoreUtil.join(path, "/"))
+				&& context.authorize(context.getTarget(), "view", "api-doc", null)) {
 			
 			response.setContentType("text/html");
 			return new ValueAction(generateApiDocumentation());
