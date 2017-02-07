@@ -1,10 +1,13 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,24 +23,38 @@ import org.jsoup.Jsoup;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Breadcrumbs;
+import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
+import org.nasdanika.html.RowContainer.Row;
+import org.nasdanika.html.RowContainer.Row.Cell;
+import org.nasdanika.html.Table;
+import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.pegdown.Extensions;
+import org.pegdown.LinkRenderer;
 import org.pegdown.PegDownProcessor;
+import org.pegdown.ast.AnchorLinkNode;
+import org.pegdown.ast.AutoLinkNode;
+import org.pegdown.ast.ExpLinkNode;
+import org.pegdown.ast.RefLinkNode;
+import org.pegdown.ast.WikiLinkNode;
 
 /**
- * Renders HTML elements such as form inputs, tables, e.t.c.
+ * Renders HTML elements for a target object such as form inputs, tables, e.t.c.
  * @author Pavel
  *
  * @param <T>
  */
 public interface Renderer<C extends Context, T extends EObject> {
 	
+	public static final String ANNOTATION_KEY_VIEW_TAB = "view-tab";
+	
+	public static final String ANNOTATION_KEY_IS_TAB = "is-tab";
+
 	public static final String INDEX_HTML = "index.html";
 
 	/**
@@ -222,7 +239,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			for (EStructuralFeature vsf: getVisibleStructuralFeatures(context, obj)) {
 				vsfm.put(vsf.getName(), vsf);
 			}
-			String label = getHTMLFactory().interpolate(labelAnnotation, token -> {
+			String label = getHTMLFactory(context).interpolate(labelAnnotation, token -> {
 				EStructuralFeature vsf = vsfm.get(token);
 				return vsf == null ? null : obj.eGet(vsf);
 			});
@@ -262,7 +279,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Object renderLink(C context, T obj) throws Exception {
 		String objectURI = getObjectURI(context, obj);
-		return getHTMLFactory().link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
+		return getHTMLFactory(context).link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
 	}
 
 	/**
@@ -319,8 +336,18 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return markdownToHtml(context, markdown);				
 	}
 	
-	default HTMLFactory getHTMLFactory() {
+	default HTMLFactory getHTMLFactory(C context) throws Exception {
 		return HTMLFactory.INSTANCE;
+	}
+	
+	/**
+	 * @param context
+	 * @param obj
+	 * @return Documentation reference for EClass or null.
+	 * @throws Exception
+	 */
+	default String getEClassDocRef(C context, EClass eClass) throws Exception {
+		return null;
 	}
 	
 	/**
@@ -335,14 +362,26 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (doc == null) {
 			return null;
 		}
-		Modal docModal = getHTMLFactory().modal();
+		Modal docModal = getHTMLFactory(context).modal();
 		if (doc.length() < 500) {
 			docModal.small();				
 		} else if (doc.length() > 2000) {
 			docModal.large();
 		}
-		docModal.title(getHTMLFactory().tag(TagName.h4, modelElement instanceof ENamedElement ? renderNamedElementLabel(context, (ENamedElement) modelElement) : "Documentation"));
-		docModal.body(getHTMLFactory().div(doc).addClass("markdown-body"));
+		docModal.title(getHTMLFactory(context).tag(TagName.h4, modelElement instanceof ENamedElement ? renderNamedElementLabel(context, (ENamedElement) modelElement) : "Documentation"));
+		docModal.body(getHTMLFactory(context).div(doc).addClass("markdown-body"));
+		EClass eClass = null;
+		if (modelElement instanceof EClass) {
+			eClass = (EClass) modelElement;
+		} else if (modelElement.eContainer() instanceof EClass) {
+			eClass = (EClass) modelElement.eContainer();
+		}
+		if (eClass != null) {
+			String href = getEClassDocRef(context, eClass);
+			if (href != null) {
+				docModal.footer(getHTMLFactory(context).link(href, getResourceString(context, "informationCenter", false)).attribute("target", "_blank"));
+			}
+		}
 		return docModal;
 	}
 	
@@ -359,13 +398,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (doc == null) {
 			return null;
 		}
-		Tag helpGlyph = getHTMLFactory().glyphicon(Glyphicon.question_sign).style().margin().left("5px");
+		Tag helpGlyph = getHTMLFactory(context).fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();//.style().margin().left("5px");
 		helpGlyph.attribute("title", firstHtmlSentence(doc));
 		if (docModal != null) {
 			helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
 			helpGlyph.style("cursor", "pointer");
 		}
-		return helpGlyph;
+		return getHTMLFactory(context).tag(TagName.sup, helpGlyph);
 	}
 	
 	/**
@@ -373,9 +412,47 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param context
 	 * @param markdown
 	 * @return
+	 * @throws Exception 
 	 */
-	default String markdownToHtml(C context, String markdown) {
-		return new PegDownProcessor(PEGDOWN_OPTIONS).markdownToHtml(markdown);		
+	default String markdownToHtml(C context, String markdown) throws Exception {		
+		return new PegDownProcessor(PEGDOWN_OPTIONS).markdownToHtml(markdown, createPegDownLinkRenderer(context));		
+	}
+	
+	/**
+	 * Creates link renderer. This implementation creates a renderer which opens links in new tabs
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	default LinkRenderer createPegDownLinkRenderer(C context) throws Exception {
+		return new LinkRenderer() {
+			
+			@Override
+			public Rendering render(AnchorLinkNode node) {
+				return super.render(node).withAttribute("target", "_blank");
+			}
+			
+			@Override
+			public Rendering render(AutoLinkNode node) {
+				return super.render(node).withAttribute("target", "_blank");
+			}
+			
+			@Override
+			public Rendering render(ExpLinkNode node, String text) {
+				return super.render(node, text).withAttribute("target", "_blank");
+			}
+			
+			@Override
+			public Rendering render(RefLinkNode node, String url, String title, String text) {
+				return super.render(node, url, title, text).withAttribute("target", "_blank");
+			}
+			
+			@Override
+			public Rendering render(WikiLinkNode arg0) {
+				return super.render(arg0).withAttribute("target", "_blank");
+			}
+			
+		};		
 	}
 	
 	/**
@@ -424,6 +501,166 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Object renderFirstDocumentationSentence(C context, EModelElement modelElement) throws Exception {
 		Object doc = renderDocumentation(context, modelElement);
 		return doc instanceof String ? firstHtmlSentence((String) doc) : null;
+	}
+	
+	/**
+	 * @param context
+	 * @param obj
+	 * @return true if view shall be rendered in a tab. This implementation return true if <code>view-tab</code> is set to true.
+	 * If there is no annotation this method returns true if number of attributes is more then ten.
+	 */
+	default boolean isViewTab(C context, T obj) throws Exception {
+		String viewTabAnnotation = getRenderAnnotation(context, obj.eClass(), ANNOTATION_KEY_VIEW_TAB);
+		return viewTabAnnotation == null ? obj.eClass().getEAllAttributes().size() > 9 : "true".equals(viewTabAnnotation);
+	}
+	
+	/**
+	 * @param context
+	 * @param obj
+	 * @return true if feature shall be rendered in a tab. 
+	 * This implementation return true if <code>is-tab</code> is set to true. 
+	 * If there is no annotation this method returns true if <code>isMany()</code> returns true.
+	 */
+	default boolean isTab(C context, EStructuralFeature structuralFeature) throws Exception {
+		String isTabAnnotation = getRenderAnnotation(context, structuralFeature, ANNOTATION_KEY_IS_TAB);
+		return isTabAnnotation == null ? structuralFeature.isMany() : "true".equals(isTabAnnotation);
+	}
+	
+	/**
+	 * Renders label for the view tab, if view is rendered in a tab.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderViewTabLabel(C context, T obj) throws Exception {
+		return getResourceString(context, "viewTabLabel", false);
+	}
+	
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @return Locale to use in resource strings. This implementation uses request locale if context is {@link HttpServletRequestContext} or default JVM locale.
+	 * @throws Exception
+	 */
+	default Locale getLocale(C context) throws Exception {
+		return context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getLocale() : Locale.getDefault(); 
+	}
+	
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param key
+	 * @param interpolate If true, the value of the key, if found, is interpolated using a context that resolves tokens to resource strings.
+	 * @return Resource string for a given key. This implementation uses resource bundle.
+	 * @throws Exception
+	 */
+	default String getResourceString(C context, String key, boolean interpolate) throws Exception {
+		ResourceBundle rb = ResourceBundle.getBundle(Renderer.class.getName(), getLocale(context));
+		if (!rb.containsKey(key)) {
+			return null;
+		}
+				
+		String rs = rb.getString(key);
+		if (interpolate) {
+			return getHTMLFactory(context).interpolate(rs, token -> {
+				try {
+					return getResourceString(context, token, true);
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			});
+		}
+		return rs;
+	}
+	
+	/**
+	 * Renders feature documentation modal dialogs.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Map<EStructuralFeature, Modal> renderFeatureDocModals(C context, T obj) throws Exception {
+		Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
+		for (EStructuralFeature vf: getVisibleStructuralFeatures(context, obj)) {
+			Modal fdm = renderDocumentationModal(context, vf);
+			if (fdm != null) {
+				featureDocModals.put(vf, fdm);
+			}
+		}		
+		return featureDocModals;
+	}
+	
+	/**
+	 * Renders object view.
+	 * @param context
+	 * @param obj
+	 * @param featureDocModals
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	default Object renderView(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
+		Table featuresTable = getHTMLFactory(context).table();
+		featuresTable.col().bootstrap().grid().col(1);
+		featuresTable.col().bootstrap().grid().col(11);
+
+		for (EStructuralFeature vf: getVisibleStructuralFeatures(context, obj)) {
+			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
+			if (!isTab(context, vf)) {
+				Row fRow = featuresTable.body().row();
+				Cell fLabelCell = fRow.header(renderNamedElementLabel(context, vf));
+				if (featureDocIcon != null) {
+					fLabelCell.content(featureDocIcon);
+				}
+				if (vf.isMany()) {
+					Tag ul = getHTMLFactory(context).tag(TagName.ul);
+					for (Object v: ((Collection<Object>) obj.eGet(vf))) {
+						ul.content(getHTMLFactory(context).tag(TagName.li, renderFeatureValue(context, vf, v)));
+					}
+					fRow.cell(ul);
+				} else {
+					fRow.cell(renderFeatureValue(context, vf, obj.eGet(vf)));
+				}
+			}
+		}
+		
+				
+		// TODO - Edit button
+		
+		// TODO - Delete button
+		
+		// TODO - Web operations buttons
+
+		return featuresTable;
+	}
+	
+	/**
+	 * Renders tabs.
+	 * @param context
+	 * @param obj
+	 * @param tabs
+	 * @param featureDocModals
+	 * @throws Exception
+	 */
+	default void renderTabs(C context, T obj, Tabs tabs, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
+		if (isViewTab(context, obj)) {
+			tabs.item(renderViewTabLabel(context, obj), renderView(context, obj, featureDocModals));
+		}
+		for (EStructuralFeature vf: getVisibleStructuralFeatures(context, obj)) {
+			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
+			if (isTab(context, vf)) {
+				Tag nameSpan = getHTMLFactory(context).span(renderNamedElementLabel(context, vf));
+				if (featureDocIcon != null) {
+					nameSpan.content(featureDocIcon);
+				}
+				tabs.item(nameSpan, "TODO - table, add button");
+			}
+		}		
 	}
 
 }

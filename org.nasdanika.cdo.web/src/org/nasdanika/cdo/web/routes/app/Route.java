@@ -1,7 +1,6 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -13,12 +12,11 @@ import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
-import org.nasdanika.html.RowContainer.Row;
-import org.nasdanika.html.RowContainer.Row.Cell;
-import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.Theme;
+import org.nasdanika.html.UIElement;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.Resource;
 import org.nasdanika.web.RouteMethod;
@@ -27,6 +25,8 @@ import org.osgi.framework.BundleContext;
 
 /**
  * Application route providing CRUD operations for the underlying EObject.
+ * Target object specific render methods shall be in renderers, and non-object specific render methods 
+ * shall be in routes.  
  * @author Pavel
  *
  * @param <T>
@@ -37,6 +37,8 @@ import org.osgi.framework.BundleContext;
 		path="resources/", 
 		comment="Web resources")
 public class Route<C extends HttpServletRequestContext, T extends EObject> extends EDispatchingRoute implements Renderer<C, T> {
+
+	private static final String BOOTSTRAP_THEME_TOKEN = "bootstrap-theme";
 
 	protected Route(BundleContext bundleContext, Object... targets) throws Exception {
 		super(bundleContext, targets);
@@ -62,15 +64,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(classDocModal);
 		}
 		
-		List<EStructuralFeature> visibleFeatures = getVisibleStructuralFeatures(context, target);
-		
-		Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
-		for (EStructuralFeature vf: visibleFeatures) {
-			Modal fdm = renderDocumentationModal(context, vf);
-			if (fdm != null) {
-				featureDocModals.put(vf, fdm);
-				content.content(fdm);
-			}
+		Map<EStructuralFeature, Modal> featureDocModals = renderFeatureDocModals(context, target);
+		for (Modal fdm: featureDocModals.values()) {
+			content.content(fdm);
 		}
 		
 		// Breadcrumbs
@@ -88,50 +84,80 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 		content.content(header);
 		
-		// !many features - label, question mark, tooltip, modal.
-		Table featuresTable = content.getFactory().table();
-		content.content(featuresTable);
-		featuresTable.col().bootstrap().grid().col(1);
-		featuresTable.col().bootstrap().grid().col(11);
-
-		Tabs featureTabs = content.getFactory().tabs();
-		for (EStructuralFeature vf: visibleFeatures) {
-			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals.get(vf));
-			if (vf.isMany()) {
-				Tag nameSpan = content.getFactory().span(renderNamedElementLabel(context, vf));
-				if (featureDocIcon != null) {
-					nameSpan.content(featureDocIcon);
-				}
-				featureTabs.item(nameSpan, "TODO - table, add button");
-			} else {
-				Row fRow = featuresTable.body().row();
-				Cell fLabelCell = fRow.header(renderNamedElementLabel(context, vf));
-				if (featureDocIcon != null) {
-					fLabelCell.content(featureDocIcon);
-				}
-				fRow.cell(renderFeatureValue(context, vf, target.eGet(vf)));
-			}
+		// view 
+		if (!isViewTab(context, target)) {
+			content.content(renderView(context, target, featureDocModals));
 		}
 		
-		// Edit button
-		
-		// many features => tabs
-		
-		if (!featureTabs.isEmpty()) {
-			content.content(featureTabs);
+		Tabs tabs = content.getFactory().tabs();
+		renderTabs(context, target, tabs, featureDocModals);
+				
+		if (!tabs.isEmpty()) {
+			content.content(tabs);
 		}
 		
-		// page template
+		return renderPage(context, title, content);
 		
+	}
+		
+	/**
+	 * Renders page using page template and bootstrap theme.
+	 * @param context
+	 * @param title
+	 * @param content
+	 * @return
+	 * @throws Exception 
+	 */
+	protected Object renderPage(C context, String title, Object content) throws Exception {
 		Map<String, Object> env = new HashMap<>();
 		env.put("title", title);
-		env.put("content", content);
-		return HTMLFactory.INSTANCE.interpolate(getPageTemplate(), env);		
 		
+		Fragment contentFragment = getHTMLFactory(context).fragment();		
+		Object header = renderHeader(context);
+		if (header != null) {
+			contentFragment.content(contentFragment.getFactory().div(header));
+		}
+		
+		Object leftPanel = renderLeftPanel(context);
+		Tag contentDiv = contentFragment.getFactory().div(content);
+		if (leftPanel == null) {
+			contentFragment.content(contentDiv);			
+		} else {			
+			Tag leftPanelDiv = contentFragment.getFactory().div(leftPanel);
+			setLeftPanelAndContentColSizes(context, leftPanelDiv, contentDiv);
+			contentFragment.content(contentFragment.getFactory().div(leftPanelDiv, contentDiv).bootstrap().grid().row());			
+		}
+		
+		Object footer = renderFooter(context);
+		if (footer != null) {
+			contentFragment.content(contentFragment.getFactory().div(footer));
+		}		
+		
+		env.put("content", contentFragment);
+		Theme theme = getTheme(context);
+		switch (theme) {
+		case None:
+			env.put(BOOTSTRAP_THEME_TOKEN, "");
+			break;
+		case Default:
+			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\"resources/bootstrap/css/bootstrap-theme.min.css\" rel=\"stylesheet\">");
+			break;
+		default:
+			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\"resources/bootstrap/css/bootstrap-"+theme.name().toLowerCase()+".min.css\" rel=\"stylesheet\">");							
+		}
+		return HTMLFactory.INSTANCE.interpolate(getPageTemplate(), env);		
 	}
 	
 	/**
-	 * @return page template which takes <code>template</code> and <code>content</code> tokens for interpolation.
+	 * @param context
+	 * @return Bootstrap/Bootswatch theme to use for rendering. 
+	 */
+	protected Theme getTheme(C context) {
+		return Theme.Default;
+	}
+
+	/**
+	 * @return page template which takes <code>title</code>, <code>bootstrap-theme</code>, and <code>content</code> tokens for interpolation.
 	 * This implementation returns a minimalistic page template with Bootstrap, Knockout, require.js, jquery.js and knockout.js scripts.
 	 * 
 	 */
@@ -143,6 +169,47 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	protected String getApiDocPath() {
 		return "api.html";
 	}
+
+	/**
+	 * Renders an optional page header.
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object renderHeader(C context) throws Exception {
+		return null;
+	}
+
+	/**
+	 * Renders an optional page footer.
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object renderFooter(C context) throws Exception {
+		return null;
+	}
+	
+	/**
+	 * Renders an optional page header.
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object renderLeftPanel(C context) throws Exception {
+		return null;
+	}
+	
+	/**
+	 * Sets left panel and content sizes.
+	 */
+	protected void setLeftPanelAndContentColSizes(C context, UIElement<?> leftPanel,  UIElement<?> content) {
+		leftPanel.bootstrap().grid().col(1);
+		content.bootstrap().grid().col(11);
+	}
+	
+	
+	// TODO - trace
 	
 	
 	// Object diagram png
