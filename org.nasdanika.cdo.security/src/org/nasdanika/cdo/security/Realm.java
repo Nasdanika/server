@@ -183,4 +183,4 @@ public interface Realm<CR> extends CDOObject {
 		}
 	}	
 
-} // ProtectionDomain
+} // Realm

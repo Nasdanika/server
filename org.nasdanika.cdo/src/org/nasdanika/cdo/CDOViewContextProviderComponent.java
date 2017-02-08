@@ -40,7 +40,7 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 					
 					@Override
 					public Realm<CR> getSecurityRealm() {
-						return CDOViewContextProviderComponent.this.getProtectionDomain(getView());
+						return CDOViewContextProviderComponent.this.getSecurityRealm(getView());
 					}
 
 					@Override
@@ -57,6 +57,6 @@ public abstract class CDOViewContextProviderComponent<CR> implements CDOViewCont
 		return null;
 	}
 	
-	protected abstract Realm<CR> getProtectionDomain(CDOView view);
+	protected abstract Realm<CR> getSecurityRealm(CDOView view);
 
 }

@@ -54,7 +54,7 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 					
 					@Override
 					public Realm<CR> getSecurityRealm() {
-						return CDOTransactionContextProviderComponent.this.getProtectionDomain(getView());
+						return CDOTransactionContextProviderComponent.this.getSecurityRealm(getView());
 					}
 
 					@Override
@@ -78,6 +78,6 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 		return null;
 	}
 
-	protected abstract Realm<CR> getProtectionDomain(CDOTransaction view);
+	protected abstract Realm<CR> getSecurityRealm(CDOTransaction view);
 
 }

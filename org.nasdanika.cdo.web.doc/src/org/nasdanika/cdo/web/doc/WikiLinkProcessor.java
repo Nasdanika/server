@@ -7,9 +7,9 @@ import org.pegdown.LinkRenderer.Rendering;
 /**
  * Parses wiki link ([[...]]) in format <code>renderer(config):resolver>location|text</code>, e.g.
  * <UL>
- * <LI><code>[[global>urn:org.nasdanika.cdo.security/ProtectionDomain]]</code> - resolver is 'global' - resolves a link to ProtectionDomain EClass in 
+ * <LI><code>[[global>urn:org.nasdanika.cdo.security/Realm]]</code> - resolver is 'global' - resolves a link to Realm EClass in 
  * a package with NsURI urn:org.nasdanika.cdo.security in the global package registry.</LI>
- * <LI><code>[[global>urn:org.nasdanika.cdo.security/ProtectionDomain|Protection Domain package]]</code> - same as above with link text 'Protection Domain package' 
+ * <LI><code>[[global>urn:org.nasdanika.cdo.security/Realm|Realm package]]</code> - same as above with link text 'Realm package' 
  * <LI><code>[[lightbox:someimage.png]]</code> - renders lightbox link to an image located in the same directory with the source page.  
  * </UL>
  * Use backslash to escape control characters - &gt; and |.

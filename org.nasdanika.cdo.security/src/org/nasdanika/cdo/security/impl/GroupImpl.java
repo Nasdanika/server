@@ -53,22 +53,6 @@ public class GroupImpl extends PrincipalImpl implements Group {
 	}
 
 	/**
-	 * Traverses containers looking for a protection domain.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	public Realm<?> getProtectionDomain() {
-		for (EObject container = eContainer(); container != null; container = container.eContainer()) {
-			if (container instanceof Realm) {
-				return (Realm<?>) container;
-			}
-		}
-
-		return null; //(ProtectionDomain<?>)eGet(SecurityPackage.Literals.PRINCIPAL__PROTECTION_DOMAIN, true);
-	}
-
-	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
