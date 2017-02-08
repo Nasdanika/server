@@ -3103,14 +3103,14 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			return text;
 		}
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
-		Z: while (matcher.find(minFirstSentenceLength)) {
+		Z: while (matcher.find()) {
 			String group = matcher.group();
 			for (String abbr: ABBREVIATIONS) {
 				if (group.trim().endsWith(abbr)) {
 					continue Z;
 				}
 			}
-			if (matcher.end()<maxFirstSentenceLength) {
+			if (matcher.end() > minFirstSentenceLength && matcher.end() < maxFirstSentenceLength) {
 				return text.substring(0, matcher.end());
 			}
 		}
