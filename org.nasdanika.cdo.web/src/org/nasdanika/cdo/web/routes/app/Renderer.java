@@ -22,8 +22,12 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Glyphicon;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
+import org.nasdanika.html.Button;
 import org.nasdanika.html.FontAwesome.WebApplication;
+import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.RowContainer.Row;
@@ -369,7 +373,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			docModal.large();
 		}
 		docModal.title(getHTMLFactory(context).tag(TagName.h4, modelElement instanceof ENamedElement ? renderNamedElementLabel(context, (ENamedElement) modelElement) : "Documentation"));
-		docModal.body(getHTMLFactory(context).div(doc).addClass("markdown-body"));
+		docModal.body(getHTMLFactory(context).div(doc).addClass("markdown-body").style().background().color().value("white")); // Forcing white background to work with dark schemes - ugly but visible..
 		EClass eClass = null;
 		if (modelElement instanceof EClass) {
 			eClass = (EClass) modelElement;
@@ -481,14 +485,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 			return text;
 		}
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
-		Z: while (matcher.find(getMinFirstSentenceLength())) {
+		Z: while (matcher.find()) {
 			String group = matcher.group();
 			for (String abbr: ABBREVIATIONS) {
 				if (group.trim().endsWith(abbr)) {
 					continue Z;
 				}
 			}
-			if (matcher.end() < getMaxFirstSentenceLength()) {
+			if (matcher.end() > getMinFirstSentenceLength() && matcher.end() < getMaxFirstSentenceLength()) {
 				return text.substring(0, matcher.end());
 			}
 		}
@@ -603,8 +607,20 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	default Object renderView(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
+		return getHTMLFactory(context).fragment(renderViewFeatures(context, obj, featureDocModals), renderViewButtons(context, obj));
+	}
+
+	/**
+	 * Renders view features with <code>!isTab()</code>. This implementation renders them in a table.
+	 * @param context
+	 * @param obj
+	 * @param featureDocModals
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	default Object renderViewFeatures(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
 		Table featuresTable = getHTMLFactory(context).table();
 		featuresTable.col().bootstrap().grid().col(1);
 		featuresTable.col().bootstrap().grid().col(11);
@@ -613,7 +629,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
 			if (!isTab(context, vf)) {
 				Row fRow = featuresTable.body().row();
-				Cell fLabelCell = fRow.header(renderNamedElementLabel(context, vf));
+				Cell fLabelCell = fRow.header(renderNamedElementLabel(context, vf)).style().whiteSpace().nowrap();
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
@@ -628,15 +644,57 @@ public interface Renderer<C extends Context, T extends EObject> {
 				}
 			}
 		}
-		
-				
-		// TODO - Edit button
-		
-		// TODO - Delete button
-		
-		// TODO - Web operations buttons
-
 		return featuresTable;
+	}
+	
+	/**
+	 * Renders view buttons. This implementation renders Edit and Delete buttons.
+	 * @param context
+	 * @param obj
+	 * @param featureDocModals
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderViewButtons(C context, T obj) throws Exception {
+		Tag ret = getHTMLFactory(context).div().style().margin("5px"); 
+		ret.content(renderEditButton(context, obj));
+		ret.content(renderDeleteButton(context, obj));
+		return ret;
+	}
+
+	/**
+	 * Renders edit button. 
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderEditButton(C context, T obj) throws Exception {
+		if (context.authorize(obj, "edit", null, null)) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Button editButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.pencil).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
+			editButton.on(Event.click, "window.location='edit.html';");
+			return editButton;
+		}
+		return null;
+	}
+
+	/**
+	 * Renders edit button. 
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderDeleteButton(C context, T obj) throws Exception {
+		if (obj.eContainer() != null && context.authorize(obj, "delete", null, null)) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Button deleteButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.trash).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
+			String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getResourceString(context, "confirmDelete", false)+" "+renderNamedElementLabel(context, obj.eClass())+" '"+ renderLabel(context, obj)+"'");
+			deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';");
+			return deleteButton;
+		}
+		return null;
 	}
 	
 	/**
