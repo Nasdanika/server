@@ -3,11 +3,11 @@ package org.nasdanika.cdo.web.objectpathresolvers;
 import java.util.List;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.core.Context;
 import org.nasdanika.web.ObjectPathResolver;
 
@@ -28,7 +28,7 @@ public class EObjectPathResolver implements ObjectPathResolver<EObject> {
 				if (viewPath!=null) {
 					StringBuilder builder = new StringBuilder(viewPath);
 					builder.append("/objects/");
-					CDOIDUtil.write(builder, cdoObj.cdoID());
+					builder.append(CDOIDCodec.INSTANCE.encode(context, cdoObj.cdoID()));
 					return builder.toString();
 				}
 			}

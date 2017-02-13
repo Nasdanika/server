@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
@@ -195,7 +194,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 
 				@Override
 				public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
-					CDOID id = CDOIDUtil.read(NasdanikaCDOUtil.stripExtension(context.getPath()[1]));
+					CDOID id = CDOIDCodec.INSTANCE.decode(context, NasdanikaCDOUtil.stripExtension(context.getPath()[1]));
 					@SuppressWarnings("unchecked")
 					CDOView view = ((CDOViewContext<?, CR>) context).getView();
 					return context.getAction(view.getObject(id), 1, null, context.getPath()[1]);

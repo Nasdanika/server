@@ -13,7 +13,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicEList;
@@ -34,6 +33,7 @@ import org.json.JSONObject;
 import org.mozilla.javascript.Scriptable;
 import org.mozilla.javascript.ScriptableObject;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.web.SessionWebSocketServlet.WebSocketContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.JSONLoader;
@@ -196,7 +196,7 @@ public class CDOWebUtil {
 			throw new ServerException("Foreign object: "+path, HttpServletResponse.SC_NOT_FOUND);
 		}
 		String objPath = path.substring(viewObjectsPath.length());
-		CDOID cdoID = CDOIDUtil.read(objPath);
+		CDOID cdoID = CDOIDCodec.INSTANCE.decode(context, objPath);
 		return view.getObject(cdoID);
 	}
 	

@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -19,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.Route;
@@ -119,13 +119,13 @@ public class CDOObjectJsExtensionRoute implements Route {
 			return context.getObjectPath(cdoObject.cdoView());
 		}
 
-		public static String getId(CDOObject cdoObject) {
+		public String getId(CDOObject cdoObject) throws Exception {
 			StringBuilder builder = new StringBuilder();
-			CDOIDUtil.write(builder, cdoObject.cdoID());
+			builder.append(CDOIDCodec.INSTANCE.encode(context, cdoObject.cdoID()));
 			return builder.toString();
 		}
 		
-		public String getId() {
+		public String getId() throws Exception {
 			return getId(cdoObject);
 		}
 

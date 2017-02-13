@@ -20,7 +20,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EAttribute;
@@ -36,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.BodyParameter;
@@ -121,7 +121,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 							return model;
 						}						
 					} else {
-						CDOObject model = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(idParameter));
+						CDOObject model = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, idParameter));
 						inject(context, context.getRequest().getParameterMap(), model);
 						return model;						
 					}					
@@ -259,7 +259,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 								switch (referenceMode((EReference) feature, valueReferences, idReferences, pathReferences)) {
 								case ID:
 									StringBuilder builder = new StringBuilder();
-									CDOIDUtil.write(builder, ((CDOObject) eObject).cdoID());
+									builder.append(CDOIDCodec.INSTANCE.encode(context, ((CDOObject) eObject).cdoID()));
 									fa.put(builder.toString());								
 									break;
 								case PATH:
@@ -289,7 +289,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 							switch (referenceMode((EReference) feature, valueReferences, idReferences, pathReferences)) {
 							case ID:
 								StringBuilder builder = new StringBuilder();
-								CDOIDUtil.write(builder, ((CDOObject) eObject).cdoID());
+								builder.append(CDOIDCodec.INSTANCE.encode(context, ((CDOObject) eObject).cdoID()));
 								ret.put(feature.getName(), builder.toString());								
 								break;
 							case PATH:
@@ -324,7 +324,11 @@ public class EDispatchingRoute extends DispatchingRoute {
 					@Override
 					public String toString() {
 						StringBuilder builder = new StringBuilder();
-						CDOIDUtil.write(builder, ((CDOObject) eObject).cdoID());
+						try {
+							builder.append(CDOIDCodec.INSTANCE.encode(context, ((CDOObject) eObject).cdoID()));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
 						return builder.toString();
 					}
 					
@@ -476,7 +480,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 	protected EObject convert(Context context, JSONObject jsonObject, EClass eClass, Map<String, String> formats) throws Exception {		
 		EObject ret;
 		if (jsonObject.has(ID_KEY) && context instanceof CDOViewContext && ((CDOViewContext<?,?>) context).getView()!=null) {
-			ret = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(jsonObject.getString(ID_KEY)));
+			ret = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, jsonObject.getString(ID_KEY)));
 		} else {
 			ret=  EcoreUtil.create(eClass);
 		}
@@ -557,7 +561,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 					for (int i=0; i<values.length; ++i) {
 						if (feature instanceof EReference) {
 							// Got to be a CDOID
-							CDOObject value = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(values[i]));
+							CDOObject value = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, values[i]));
 							featureValue.add(value);
 						} else {
 							featureValue.add(fromString(context, (EAttribute) feature, values[i]));
@@ -569,7 +573,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 					} else if (values.length == 1) {
 						if (feature instanceof EReference) {
 							// Got to be a CDOID
-							CDOObject value = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDUtil.read(values[0]));
+							CDOObject value = ((CDOViewContext<?,?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, values[0]));
 							model.eSet(feature, value);
 						} else {
 							model.eSet(feature, fromString(context, (EAttribute) feature, values[0]));

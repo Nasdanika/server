@@ -16,7 +16,6 @@ import javax.servlet.http.HttpSession;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.common.revision.delta.CDOFeatureDelta;
 import org.eclipse.emf.cdo.common.revision.delta.CDORevisionDelta;
@@ -474,7 +473,11 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 									throw new IllegalArgumentException("Object does not belong to the view: "+cdoObject);
 								}
 								StringBuilder builder = new StringBuilder(getViewPath()).append("/objects/");
-								CDOIDUtil.write(builder, cdoObject.cdoID());
+								try {
+									builder.append(CDOIDCodec.INSTANCE.encode(this, cdoObject.cdoID()));
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
 								return builder.toString();
 							}
 
