@@ -18,6 +18,7 @@ import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -38,6 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpSession;
 
 // TODO? - switch to org.osgi.service.component.runtime.ServiceComponentRuntime when it is (easily) available in Equinox
 
@@ -119,6 +121,8 @@ import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route, BundleListener, DocumentationContentProvider {
 		
+	public static final String TRACE_DIV_KEY = DocRoute.class.getName()+":trace";
+	private static final String TOC_TRACE_ATTRIBUTE_KEY = TocNode.class.getName()+":trace";
 	public static final String ROUTER_DOC_CONTENT_FRAGMENT_PREFIX = "#router/doc-content/";
 	static final String COMPONENT_NAME = "component-name";
 	static final String BUNDLE_VERSION = "bundle-version";
@@ -1955,7 +1959,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 								if (MIME_TYPE_HTML.equals(tme.getKey()) && filteredContent instanceof String) {
 									TocNode toc = tocRoot.find(pathStr);
 									if (doNavWrap && toc!=null) {
-										filteredContent = navWrap(context.adapt(HTMLFactory.class), toc, (String) filteredContent, prefix);
+										filteredContent = navWrap(context, context.adapt(HTMLFactory.class), toc, (String) filteredContent, prefix);
 									}
 								}
 								return new ValueAction(filteredContent);
@@ -1965,7 +1969,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 					if (MIME_TYPE_HTML.equals(contentType) && content instanceof String) {
 						TocNode toc = tocRoot.find(pathStr);
 						if (doNavWrap && toc!=null) {
-							content = navWrap(context.adapt(HTMLFactory.class), toc, (String) content, prefix);
+							content = navWrap(context, context.adapt(HTMLFactory.class), toc, (String) content, prefix);
 						}
 					}
 				}
@@ -1997,7 +2001,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				} else {
 					fragment.content(toc.getContent());
 				}
-				return new ValueAction(doNavWrap ? navWrap(context.adapt(HTMLFactory.class), toc, fragment.toString(), prefix) : fragment.toString());
+				return new ValueAction(doNavWrap ? navWrap(context, context.adapt(HTMLFactory.class), toc, fragment.toString(), prefix) : fragment.toString());
 			}
 			
 			if (path.length>2 && "resources".equals(path[0])) {
@@ -2319,7 +2323,52 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	private static HighlightModuleGenerator HIGHLIGHT_MODULE_GENERATOR = new HighlightModuleGenerator();
 	private static SelectTocNodeModuleGenerator SELECT_TOC_NODE_MODULE_GENERATOR = new SelectTocNodeModuleGenerator();
 	
-	protected String navWrap(HTMLFactory htmlFactory, TocNode toc, String content, String prefix) {
+	/**
+	 * Injects trace into request under <code>org.nasdanika.cdo.web.doc.DocRoute:trace</code> attribute key.
+	 * @param context
+	 * @param htmlFactory
+	 * @param toc
+	 * @param prefix
+	 */
+	protected Object trace(HttpServletRequestContext context, HTMLFactory htmlFactory, TocNode toc, String prefix) {
+		HttpSession session = context.getRequest().getSession();
+		@SuppressWarnings("unchecked")
+		LinkedList<TocNode> tocTrace = (LinkedList<TocNode>) session.getAttribute(TOC_TRACE_ATTRIBUTE_KEY);
+		if (tocTrace == null) {
+			tocTrace = new LinkedList<TocNode>();
+			session.setAttribute(TOC_TRACE_ATTRIBUTE_KEY, tocTrace);
+		}
+		while (tocTrace.remove(toc)); // Remove all entries.
+		while (tocTrace.size() > 7) { // TODO Make configurable.
+			tocTrace.removeFirst();
+		}
+		Fragment ret = htmlFactory.fragment();
+		boolean isFirst = true;
+		for (TocNode traceEntry: tocTrace) {
+			if (!CoreUtil.isBlank(toc.getText())) {
+				if (!ret.isEmpty()) {
+					ret.content(htmlFactory.span("•").style().margin().left("3px").style().margin().right("3px"));
+				}
+				String bcContent;
+				if (traceEntry.getIcon()==null) {
+					bcContent = traceEntry.getText();
+				} else {
+					bcContent = htmlFactory.tag(TagName.img).attribute("src", getDocRoutePath()+traceEntry.getIcon()).style().margin().right("3px") + traceEntry.getText();
+				}
+				if (toc.isHidden()) {
+					ret.content(htmlFactory.link(prefix+traceEntry.getHref(), bcContent)); 					
+				} else {
+					ret.content(htmlFactory.link("javascript:"+tocNodeSelectScript(traceEntry.getId()), bcContent)); 
+				}
+			}
+		}
+		if (toc.getText() != null) {
+			tocTrace.add(toc);
+		}
+		return ret;
+	}
+	
+	protected String navWrap(HttpServletRequestContext context, HTMLFactory htmlFactory, TocNode toc, String content, String prefix) {
 		Breadcrumbs breadcrumbs = htmlFactory.breadcrumbs();
 		for (TocNode pathElement: toc.getPath()) {
 			if (pathElement.getText()!=null) {
@@ -2343,7 +2392,8 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 		return breadcrumbs.toString() + 
 				(toc.getText()==null ? "Documentation" : htmlFactory.title(toc.getText())) +
-				content + 
+				content +
+				htmlFactory.tag(TagName.script, "jQuery(\"#trace\").html(\""+StringEscapeUtils.escapeEcmaScript(trace(context, htmlFactory, toc, prefix).toString())+"\");") +
 				htmlFactory.tag(TagName.script, HIGHLIGHT_MODULE_GENERATOR.generate(docRoutePath)) +
 				htmlFactory.tag(TagName.script, SELECT_TOC_NODE_MODULE_GENERATOR.generate(new Object[] {docRoutePath, toc.getId()}));
 		
