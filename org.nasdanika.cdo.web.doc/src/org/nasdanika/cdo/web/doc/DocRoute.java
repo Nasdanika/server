@@ -101,6 +101,7 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.web.AbstractRoutingServlet;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -2358,7 +2359,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				if (toc.isHidden()) {
 					ret.content(htmlFactory.link(prefix+traceEntry.getHref(), bcContent)); 					
 				} else {
-					ret.content(htmlFactory.link("javascript:"+tocNodeSelectScript(traceEntry.getId()), bcContent)); 
+					ret.content(htmlFactory.link("#", htmlFactory.span(bcContent).on(Event.click, tocNodeSelectScript(traceEntry.getId())))); 
 				}
 			}
 		}
@@ -2383,7 +2384,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 				} else if (toc.isHidden()) {
 					breadcrumbs.item(prefix+pathElement.getHref(), bcContent); 					
 				} else {
-					breadcrumbs.item("javascript:"+tocNodeSelectScript(pathElement.getId()), bcContent); 
+					breadcrumbs.item("#", htmlFactory.span(bcContent).on(Event.click, tocNodeSelectScript(pathElement.getId()))); 
 				}
 			}
 		}
@@ -2412,17 +2413,18 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		
 		String path = href.substring(prefix.length());
 		TocNode toc = tocRoot.find(path);
-		if (toc==null || toc.isHidden()) {
+//		if (toc==null || toc.isHidden()) {
 			return href;
-		}
-		return "javascript:"+tocNodeSelectScript(toc.getId());
+//		}
+//		return "javascript:"+tocNodeSelectScript(toc.getId());
 	}
 
 	public static String tocNodeSelectScript(String nodeID) {
 		String selectScript = 
 				"var tocTree = jQuery('#toc'); "
 				+ "if (!tocTree.jstree('is_selected', '#"+nodeID+"')) { "
-				+ "tocTree.jstree('deselect_all');  tocTree.jstree('select_node', '#"+nodeID+"'); }";
+				+ "tocTree.jstree('deselect_all');  tocTree.jstree('select_node', '#"+nodeID+"'); } "
+				+ "event.preventDefault();";
 		return selectScript;
 	}
 

@@ -15,6 +15,7 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement.Event;
 
 public class TocNode {	
 	
@@ -238,7 +239,10 @@ public class TocNode {
 			}
 		}
 		
-		String linkRef = isHidden() ? DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+href : "javascript:"+DocRoute.tocNodeSelectScript(getId());
-		return HTMLFactory.INSTANCE.link(linkRef, iconTag, StringEscapeUtils.escapeHtml4(getText())).attribute("title", path);
+		if (isHidden()) {
+			return HTMLFactory.INSTANCE.link(DocRoute.ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+href, iconTag, StringEscapeUtils.escapeHtml4(getText())).attribute("title", path);
+			
+		}
+		return HTMLFactory.INSTANCE.link("#", iconTag, StringEscapeUtils.escapeHtml4(getText())).attribute("title", path).on(Event.click, DocRoute.tocNodeSelectScript(getId()));
 	}
 }
