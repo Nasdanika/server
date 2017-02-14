@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -14,10 +16,12 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EAnnotation;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.Context;
@@ -30,6 +34,7 @@ import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
+import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
@@ -114,8 +119,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	/**
 	 * Rendering can be customized by annotating model element with
 	 * annotations with this source.
-	 * Adding ui annotations to the model mixes modeling and UI concerns.
-	 * Also annotations allow to define only one way of rendering a particular model element.
+	 * 
+	 * Adding UI rendering annotations to the model mixes modeling and UI concerns.
+	 * Also model annotations allow to define only one way of rendering a particular model element.
+	 * 
 	 * Other customization options include overriding <code>getRenderAnnotation()</code> method or rendering methods, and
 	 * UI code generation, which leverages method overriding.  
 	 */
@@ -144,7 +151,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	/**
 	 * Retrieves render annotation. This implementation reads render annotations from "org.nasdanika.cdo.web.render"
 	 * annotation on the model element. This method can be overridden to read annotations from another source,
-	 * e.g.  
+	 * e.g. keeping render annotations associated with the current user would allow to customize UI on per-user basis.
+	 * Along the same lines the UI may be customized based on the locale or geography. 
+	 * All these and other options may be chained, e.g. if user profile does not cusomize rendering, then fall-back to 
+	 * locale profile, and then to the model annotation (call super.getRenderAnnotation()).  
 	 * @param context
 	 * @param modelElement
 	 * @param key
@@ -192,11 +202,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * Renders object path to breadcrumbs. This implementation traverses the object containment path up to the top level object in the resource.
 	 * @param target
 	 * @param context
+	 * @param action Action, e.g. Edit or Add reference.
 	 * @param breadCrumbs
 	 * @return true if breadcrumbs shall be added to the page, i.e. if it has any items.
 	 * @throws Exception
 	 */
-	default void renderObjectPath(C context, T obj, Breadcrumbs breadCrumbs) throws Exception {
+	default void renderObjectPath(C context, T obj, String action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
 		for (EObject c = obj.eContainer(); c != null; c = c.eContainer()) {
 			cPath.add(c);
@@ -210,7 +221,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 				breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cLabel);
 			}
 		}
-		breadCrumbs.item(null, renderLabel(context, obj));
+		if (action == null) {
+			breadCrumbs.item(null , renderLabel(context, obj));
+		} else {
+			String objectURI = getObjectURI(context, obj);
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
+			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.i, StringEscapeUtils.escapeHtml4(action)));
+		}
 	}
 
 	/**
@@ -619,7 +636,6 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
 	default Object renderViewFeatures(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
 		Table featuresTable = getHTMLFactory(context).table();
 		featuresTable.col().bootstrap().grid().col(1);
@@ -633,15 +649,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
-				if (vf.isMany()) {
-					Tag ul = getHTMLFactory(context).tag(TagName.ul);
-					for (Object v: ((Collection<Object>) obj.eGet(vf))) {
-						ul.content(getHTMLFactory(context).tag(TagName.li, renderFeatureValue(context, vf, v)));
-					}
-					fRow.cell(ul);
-				} else {
-					fRow.cell(renderFeatureValue(context, vf, obj.eGet(vf)));
-				}
+				fRow.cell(renderFeatureView(context, obj, vf, true));
 			}
 		}
 		return featuresTable;
@@ -674,6 +682,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button editButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.pencil).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
 			editButton.on(Event.click, "window.location='edit.html';");
+
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "editTooltip", false), env);
+			editButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
 			return editButton;
 		}
 		return null;
@@ -690,8 +704,16 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (obj.eContainer() != null && context.authorize(obj, "delete", null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button deleteButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.trash).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
-			String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getResourceString(context, "confirmDelete", false)+" "+renderNamedElementLabel(context, obj.eClass())+" '"+ renderLabel(context, obj)+"'");
-			deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';");
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete", false), env));
+			
+			// Delete through GET, not REST-compliant, but works with simple JavaScript. 
+			deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';"); // TODO - extract into a method, so it is easy to override.
+
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip", false), env);
+			deleteButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
 			return deleteButton;
 		}
 		return null;
@@ -716,9 +738,195 @@ public interface Renderer<C extends Context, T extends EObject> {
 				if (featureDocIcon != null) {
 					nameSpan.content(featureDocIcon);
 				}
-				tabs.item(nameSpan, "TODO - table, add button");
+				tabs.item(nameSpan, tabs.getFactory().div(renderFeatureView(context, obj, vf, true)).style().margin("3px"));
 			}
 		}		
 	}
 
+	/**
+	 * Renders a view of the feature value. 
+	 * A feature is rendered as a list if <code>view</code> annotation value is <code>list</code> or 
+	 * if it is not present and the feature is rendered in the view (<code>!isTab()</code>).
+	 * <P/>
+	 * If <code>view</code> annotation value is <code>table</code> or 
+	 * if it is not present and the feature is rendered in a tab (<code>isTab()</code>), 
+	 * then the feature value is rendered as a table. Object features to show and their order in the
+	 * table can be defined using <code>view-features</code> annotation. Annotation value shall list 
+	 * the features in the order in appearance, each feature on a new line. 
+	 * If this annotation is not present, all visible single-value features are shown in the order of their declaration.
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @param showButtons if true, action buttons such as edit/delete/add/create/clear/select are shown if user is authorized to perform action.
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	default Object renderFeatureView(C context, T obj, EStructuralFeature feature, boolean showActionButtons) throws Exception {
+		Fragment ret = getHTMLFactory(context).fragment();
+		Map<String, Object> env = new HashMap<>();
+		env.put("name", feature.getName());
+		if (feature.isMany()) {
+			String viewAnnotation = getRenderAnnotation(context, feature, "view");
+			boolean asTable = false;
+			if (feature instanceof EReference) {
+				boolean isTab = isTab(context, feature);
+				if (viewAnnotation == null) {
+					asTable = isTab;
+				} else {
+					if (isTab) {
+						asTable = !"view".equals(viewAnnotation);
+					} else {
+						asTable = "table".equals(viewAnnotation);
+					}
+				}
+			}
+			if (asTable) {
+				EClass refType = ((EReference) feature).getEReferenceType();
+				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
+				String viewFeaturesAnnotation = getRenderAnnotation(context, feature, "view-features");
+				if (viewFeaturesAnnotation == null) {
+					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
+						if (!sf.isMany() && context.authorize(obj, "view", feature.getName()+"/"+sf.getName(), null)) {
+							tableFeatures.add(sf);
+						}
+					}
+				} else {
+					try (BufferedReader br = new BufferedReader(new StringReader(viewFeaturesAnnotation))) {
+						String line;
+						while ((line = br.readLine()) != null) {
+							if (!CoreUtil.isBlank(line)) {
+								EStructuralFeature sf = refType.getEStructuralFeature(line);
+								if (sf != null && context.authorize(obj, "view", feature.getName()+"/"+sf.getName(), null)) {
+									tableFeatures.add(sf);
+								}
+							}
+						}
+					}
+				}
+				
+				Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
+				for (EStructuralFeature sf: tableFeatures) {
+					Modal fdm = renderDocumentationModal(context, sf);
+					if (fdm != null) {
+						featureDocModals.put(sf, fdm);
+					}
+					ret.content(fdm);
+				}		
+				
+				Table featureTable = ret.getFactory().table().bordered();
+				Row headerRow = featureTable.header().row().style(Style.INFO);
+				for (EStructuralFeature sf: tableFeatures) {
+					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf));
+					Cell headerCell = headerRow.header(renderNamedElementLabel(context, sf));
+					if (featureDocIcon != null) {
+						headerCell.content(featureDocIcon);
+					}
+				}
+				
+				headerRow.header(getResourceString(context, "actions", false)).style().text().align().center();
+				for (EObject fv: (Collection<EObject>) obj.eGet(feature)) {
+					Row vRow = featureTable.body().row();
+					for (EStructuralFeature sf: tableFeatures) {
+						vRow.cell(getRenderer(fv).renderFeatureView(context, fv, sf, false));						
+					}
+					vRow.cell("TODO - action buttons").style().text().align().center();
+				}
+				
+				ret.content(featureTable);
+				ret.content("TODO - add/create buttons - collect all concrete subclasses of reference type - drop-down button if more than one");
+				// TODO Add/Create buttons
+			} else {
+				Tag ul = getHTMLFactory(context).tag(TagName.ul);
+				int idx = 0;
+				for (Object v: ((Collection<Object>) obj.eGet(feature))) {
+					Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, v));
+					if (feature instanceof EAttribute) {
+						if (showActionButtons && context.authorize(obj, "edit", feature.getName(), null)) {
+							String tooltip = ret.getFactory().interpolate(getResourceString(context, "editTooltip", false), env);
+							Button editButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.pencil))
+								.style(Style.PRIMARY)
+								.style().margin().left("5px")
+								.on(Event.click, "window.location='edit/"+feature.getName()+"/"+idx+".html") // TODO - extract into a method, so it is easy to override.
+								.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+							liFragment.content(editButton);
+						}												
+					}
+					if (v instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
+						if (showActionButtons && context.authorize(v, "delete", null, null)) {
+							String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmDelete", false), env));;
+							String tooltip = ret.getFactory().interpolate(getResourceString(context, "deleteTooltip", false), env);
+
+							// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
+							Button deleteButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.trash))
+									.style(Style.DANGER)
+									.style().margin().left("5px")
+									.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='"+getRenderer(((EObject) v).eClass()).getObjectURI(context, (EObject) v)+"/delete.html';") // TODO - extract into a method, so it is easy to override.
+									.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+
+							liFragment.content(deleteButton);
+						}
+					} else {
+						if (showActionButtons && context.authorize(obj, "delete", feature.getName(), null)) {
+							String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmDelete", false), env));;
+							String tooltip = ret.getFactory().interpolate(getResourceString(context, "deleteTooltip", false), env);
+
+							// And yet again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
+							Button deleteButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.trash))
+									.style(Style.DANGER)
+									.style().margin().left("5px")
+									.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete/"+feature.getName()+"/"+idx+".html';") // TODO - extract into a method, so it is easy to override.
+									.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+
+							liFragment.content(deleteButton);							
+						}										
+					}
+					ul.content(getHTMLFactory(context).tag(TagName.li, liFragment));
+					++idx;
+				}
+				ret.content(ul);
+				if (showActionButtons && context.authorize(obj, "add", feature.getName(), null)) {
+					boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
+					String tooltip = ret.getFactory().interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
+
+					// TODO - create - concrete subclasses of reference type - drop-down button if more than one.
+					Button addButton = ret.getFactory().button(getResourceString(context, isCreate ? "create" : "add", false))
+							.style(Style.PRIMARY)
+							.style().margin().left("5px")
+							.on(Event.click, "window.location='add/"+feature.getName()+".html';") // TODO - extract into a method, so it is easy to override.
+							.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+
+					ret.content(addButton);							
+				}
+			}
+		} else {
+			ret.content(renderFeatureValue(context, feature, obj.eGet(feature)));
+			if (feature instanceof EReference) {
+				if (showActionButtons && context.authorize(obj, "edit", feature.getName(), null)) {
+					String tooltip = ret.getFactory().interpolate(getResourceString(context, "selectTooltip", false), env);
+					Button selectButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.pencil))
+						.style(Style.PRIMARY)
+						.style().margin().left("5px")
+						.on(Event.click, "window.location='select/"+feature.getName()+".html") // TODO - extract into a method, so it is easy to override.
+						.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+					ret.content(selectButton);
+				}
+				if (showActionButtons && context.authorize(obj, "delete", feature.getName(), null)) {
+					String clearConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmClear", false), env));;
+					String tooltip = ret.getFactory().interpolate(getResourceString(context, "clearTooltip", false), env);
+
+					// And yet again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
+					Button deleteButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.erase))
+							.style(Style.DANGER)
+							.style().margin().left("5px")
+							.on(Event.click, "if (confirm('"+clearConfirmationMessage+"?')) window.location='clear/"+feature.getName()+".html';") // TODO - extract into a method, so it is easy to override.
+							.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+
+					ret.content(deleteButton);							
+				}										
+			}
+		}
+		return ret;
+	}
+	
 }

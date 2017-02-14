@@ -18,6 +18,8 @@ import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.PathParameter;
+import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Resource;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.TargetParameter;
@@ -27,6 +29,16 @@ import org.osgi.framework.BundleContext;
  * Application route providing CRUD operations for the underlying EObject.
  * Target object specific render methods shall be in renderers, and non-object specific render methods 
  * shall be in routes.  
+ * 
+ * This implementation uses simplest Web mechanisms possible in order to make its workings easier to understand
+ * and customize and to avoid coupling with a particular JavaScript UI framework such as Knockout.js or Angular.js. 
+ * For example, it uses GET and redirects for deletion in order to keep the client-side JavaScript simple.
+ * 
+ * The assumption behind this design is that a typical web application compiles with 80/20 (or maybe even 90/10) principle
+ *  - 80% of traffic goes through 20% of pages. Therefore, the most popular pages may be customized, generated, or hand-crafted to leverage
+ *  modern techniques such as AJAX and data bindings, while the rest of pages stay simple waiting for their turn to be 
+ *  customized.  
+ *  
  * @author Pavel
  *
  * @param <T>
@@ -71,7 +83,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-		renderObjectPath(context, target, breadCrumbs);
+		renderObjectPath(context, target, null, breadCrumbs);
 		if (!breadCrumbs.isEmpty()) {
 			content.content(breadCrumbs);
 		}
@@ -208,6 +220,23 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.bootstrap().grid().col(11);
 	}
 	
+	@RouteMethod(
+			value = RequestMethod.GET,
+			path = "add/{feature}",
+			produces = "text/html",
+			comment="Renders a page for adding or creating object for a particular feature.")
+	public Object addFeature(
+			@ContextParameter C context,
+			@PathParameter("feature") String feature,
+			@TargetParameter T target) throws Exception {
+		
+		
+		return feature;
+		
+	}
+	
+	// Delete.html (GET) - redirect to referrer if the referrer is not own index.html, then redirect to the container
+//	EcoreUtil.delete(target, true);
 	
 	// TODO - trace
 	
