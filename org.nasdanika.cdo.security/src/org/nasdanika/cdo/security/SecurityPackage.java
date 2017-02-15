@@ -1079,6 +1079,88 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_HASH_USER_OPERATION_COUNT = LOGIN_USER_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.GuestImpl <em>Guest</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.GuestImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGuest()
+	 * @generated
+	 */
+	int GUEST = 12;
+
+	/**
+	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST__MEMBER_OF = PRINCIPAL__MEMBER_OF;
+
+	/**
+	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST__PERMISSIONS = PRINCIPAL__PERMISSIONS;
+
+	/**
+	 * The feature id for the '<em><b>Disabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST__DISABLED = PRINCIPAL__DISABLED;
+
+	/**
+	 * The number of structural features of the '<em>Guest</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST_FEATURE_COUNT = PRINCIPAL_FEATURE_COUNT + 0;
+
+	/**
+	 * The operation id for the '<em>Authorize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP = PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP;
+
+	/**
+	 * The operation id for the '<em>Accept</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST___ACCEPT__PRINCIPALVISITOR = PRINCIPAL___ACCEPT__PRINCIPALVISITOR;
+
+	/**
+	 * The operation id for the '<em>Get Realm</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST___GET_REALM = PRINCIPAL___GET_REALM;
+
+	/**
+	 * The number of operations of the '<em>Guest</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GUEST_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 0;
+
+	/**
 	 * The meta object id for the '<em>Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1086,7 +1168,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 12;
+	int CONTEXT = 13;
 
 	/**
 	 * The meta object id for the '<em>Principal Visitor</em>' data type.
@@ -1096,7 +1178,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalVisitor()
 	 * @generated
 	 */
-	int PRINCIPAL_VISITOR = 13;
+	int PRINCIPAL_VISITOR = 14;
 
 	/**
 	 * The meta object id for the '<em>Access Decision</em>' data type.
@@ -1106,7 +1188,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
 	 * @generated
 	 */
-	int ACCESS_DECISION = 14;
+	int ACCESS_DECISION = 15;
 
 
 	/**
@@ -1508,6 +1590,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getLoginPasswordHashUser_PasswordHash();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Guest <em>Guest</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Guest</em>'.
+	 * @see org.nasdanika.cdo.security.Guest
+	 * @generated
+	 */
+	EClass getGuest();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
@@ -2081,6 +2173,16 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH = eINSTANCE.getLoginPasswordHashUser_PasswordHash();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.GuestImpl <em>Guest</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.GuestImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGuest()
+		 * @generated
+		 */
+		EClass GUEST = eINSTANCE.getGuest();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.

@@ -176,6 +176,11 @@ public class LoginPasswordRealmItemProvider
 
 		newChildDescriptors.add
 			(createChildParameter
+				(SecurityPackage.Literals.REALM__GUEST,
+				 SecurityFactory.eINSTANCE.createGuest()));
+
+		newChildDescriptors.add
+			(createChildParameter
 				(SecurityPackage.Literals.REALM__EVERYONE,
 				 SecurityFactory.eINSTANCE.createPrincipal()));
 
@@ -183,6 +188,11 @@ public class LoginPasswordRealmItemProvider
 			(createChildParameter
 				(SecurityPackage.Literals.REALM__EVERYONE,
 				 SecurityFactory.eINSTANCE.createGroup()));
+
+		newChildDescriptors.add
+			(createChildParameter
+				(SecurityPackage.Literals.REALM__EVERYONE,
+				 SecurityFactory.eINSTANCE.createGuest()));
 
 		newChildDescriptors.add
 			(createChildParameter

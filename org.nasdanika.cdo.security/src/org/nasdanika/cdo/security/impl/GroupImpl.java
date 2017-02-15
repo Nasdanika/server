@@ -12,7 +12,6 @@ import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
-import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;

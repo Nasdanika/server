@@ -435,4 +435,9 @@
       <eTypeArguments eClassifier="#//LoginPasswordCredentials"/>
     </eGenericSuperTypes>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Guest" eSuperTypes="#//Principal">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Guest is a marker class which would typically be used in ``Realm.guest`` containment reference. The application may feature a Guest route service the application landing page and login form."/>
+    </eAnnotations>
+  </eClassifiers>
 </ecore:EPackage>

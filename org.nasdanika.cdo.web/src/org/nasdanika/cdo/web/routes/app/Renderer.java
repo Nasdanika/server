@@ -649,7 +649,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
-				fRow.cell(renderFeatureView(context, obj, vf, true));
+				fRow.cell(renderFeatureView(context, obj, vf, false));
 			}
 		}
 		return featuresTable;
