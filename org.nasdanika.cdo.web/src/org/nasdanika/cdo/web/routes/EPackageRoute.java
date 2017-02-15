@@ -14,7 +14,7 @@ public class EPackageRoute implements Route {
 		final EPackage ePackage = (EPackage) context.getTarget();
 		if (context.getPath().length==1) { 
 			if (RequestMethod.GET.equals(context.getMethod())) {
-				if (context.authorize(ePackage, "read", null, null)) {
+				if (context.authorizeRead(ePackage, null, null)) {
 					int dotIdx = context.getPath()[0].lastIndexOf(".");
 					String extension = dotIdx==-1 ? "json" : context.getPath()[0].substring(dotIdx+1); // json is "default" extension
 					Action extensionAction = context.getExtensionAction(ePackage, extension);

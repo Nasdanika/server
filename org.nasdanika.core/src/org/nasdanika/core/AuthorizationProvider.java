@@ -19,7 +19,7 @@ public interface AuthorizationProvider {
 		
 		create,
 		read,
-		write,
+		update,
 		delete,
 		execute
 		
@@ -103,7 +103,7 @@ public interface AuthorizationProvider {
 	};	
 
 	/**
-	 * Calls authorize() with {@link StandardAction}.write argument.
+	 * Calls authorize() with {@link StandardAction}.update argument.
 	 * @param context
 	 * @param target
 	 * @param qualifier
@@ -111,13 +111,13 @@ public interface AuthorizationProvider {
 	 * @return
 	 * @throws Exception
 	 */
-	default AccessDecision authorizeWrite(
+	default AccessDecision authorizeUpdate(
 			Context context, 
 			Object target, 
 			String qualifier,
 			Map<String, Object> environment) throws Exception {
 		
-		return authorize(context, target, StandardAction.write, qualifier, environment);
+		return authorize(context, target, StandardAction.update, qualifier, environment);
 	};	
 
 	/**

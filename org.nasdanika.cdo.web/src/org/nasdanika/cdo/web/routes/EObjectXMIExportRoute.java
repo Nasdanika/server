@@ -25,7 +25,7 @@ public class EObjectXMIExportRoute implements Route {
 	public Action execute(final HttpServletRequestContext context, Object... args) throws Exception {
 	
 		if (RequestMethod.GET.equals(context.getMethod())) {
-			if (!context.authorize(context.getTarget(), "read", null, null)) {
+			if (!context.authorizeRead(context.getTarget(), null, null)) {
 				return Action.FORBIDDEN;
 			}
 			

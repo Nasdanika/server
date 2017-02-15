@@ -34,7 +34,6 @@ import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
-import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
@@ -112,9 +111,6 @@ public interface Renderer<C extends Context, T extends EObject> {
 	// multi-line
 	// input type
 	// select options	
-	
-	
-	public static final String ACTION_VIEW = "view";
 
 	/**
 	 * Rendering can be customized by annotating model element with
@@ -191,7 +187,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default List<EStructuralFeature> getVisibleStructuralFeatures(C context, T obj) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
-			if (!"false".equals(getRenderAnnotation(context, sf, ANNOTATION_KEY_VISIBLE)) && context.authorize(obj, ACTION_VIEW, sf.getName(), null)) {
+			if (!"false".equals(getRenderAnnotation(context, sf, ANNOTATION_KEY_VISIBLE)) && context.authorizeRead(obj, sf.getName(), null)) {
 				ret.add(sf);
 			}
 		}
@@ -678,7 +674,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderEditButton(C context, T obj) throws Exception {
-		if (context.authorize(obj, "edit", null, null)) {
+		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button editButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.pencil).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
 			editButton.on(Event.click, "window.location='edit.html';");
@@ -701,7 +697,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderDeleteButton(C context, T obj) throws Exception {
-		if (obj.eContainer() != null && context.authorize(obj, "delete", null, null)) {
+		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button deleteButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.trash).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
@@ -787,7 +783,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				String viewFeaturesAnnotation = getRenderAnnotation(context, feature, "view-features");
 				if (viewFeaturesAnnotation == null) {
 					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
-						if (!sf.isMany() && context.authorize(obj, "view", feature.getName()+"/"+sf.getName(), null)) {
+						if (!sf.isMany() && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
 							tableFeatures.add(sf);
 						}
 					}
@@ -797,7 +793,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 						while ((line = br.readLine()) != null) {
 							if (!CoreUtil.isBlank(line)) {
 								EStructuralFeature sf = refType.getEStructuralFeature(line);
-								if (sf != null && context.authorize(obj, "view", feature.getName()+"/"+sf.getName(), null)) {
+								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
 									tableFeatures.add(sf);
 								}
 							}
@@ -842,7 +838,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				for (Object v: ((Collection<Object>) obj.eGet(feature))) {
 					Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, v));
 					if (feature instanceof EAttribute) {
-						if (showActionButtons && context.authorize(obj, "edit", feature.getName(), null)) {
+						if (showActionButtons && context.authorizeUpdate(obj, feature.getName(), null)) {
 							String tooltip = ret.getFactory().interpolate(getResourceString(context, "editTooltip", false), env);
 							Button editButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.pencil))
 								.style(Style.PRIMARY)
@@ -853,7 +849,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 						}												
 					}
 					if (v instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
-						if (showActionButtons && context.authorize(v, "delete", null, null)) {
+						if (showActionButtons && context.authorizeDelete(v, null, null)) {
 							String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmDelete", false), env));;
 							String tooltip = ret.getFactory().interpolate(getResourceString(context, "deleteTooltip", false), env);
 
@@ -867,7 +863,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 							liFragment.content(deleteButton);
 						}
 					} else {
-						if (showActionButtons && context.authorize(obj, "delete", feature.getName(), null)) {
+						if (showActionButtons && context.authorizeDelete(obj, feature.getName(), null)) {
 							String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmDelete", false), env));;
 							String tooltip = ret.getFactory().interpolate(getResourceString(context, "deleteTooltip", false), env);
 
@@ -885,7 +881,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 					++idx;
 				}
 				ret.content(ul);
-				if (showActionButtons && context.authorize(obj, "add", feature.getName(), null)) {
+				if (showActionButtons && context.authorizeUpdate(obj, feature.getName(), null)) { // Adding to a reference is considered update
 					boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
 					String tooltip = ret.getFactory().interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
 
@@ -902,7 +898,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		} else {
 			ret.content(renderFeatureValue(context, feature, obj.eGet(feature)));
 			if (feature instanceof EReference) {
-				if (showActionButtons && context.authorize(obj, "edit", feature.getName(), null)) {
+				if (showActionButtons && context.authorizeUpdate(obj, feature.getName(), null)) {
 					String tooltip = ret.getFactory().interpolate(getResourceString(context, "selectTooltip", false), env);
 					Button selectButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.pencil))
 						.style(Style.PRIMARY)
@@ -911,7 +907,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 						.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
 					ret.content(selectButton);
 				}
-				if (showActionButtons && context.authorize(obj, "delete", feature.getName(), null)) {
+				if (showActionButtons && context.authorizeDelete(obj, feature.getName(), null)) {
 					String clearConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmClear", false), env));;
 					String tooltip = ret.getFactory().interpolate(getResourceString(context, "clearTooltip", false), env);
 

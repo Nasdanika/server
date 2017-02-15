@@ -394,7 +394,7 @@ public class CDOWebUtil {
 			if (rev!=null) {
 				ret.put(VERSION_KEY, rev.getVersion());
 			}
-			if (context.authorize(cdoObject, "read", null, null)) {
+			if (context.authorizeRead(cdoObject, null, null)) {
 				EObject container = cdoObject.eContainer();
 				if (container!=null) {
 					JSONObject cv = new JSONObject();
@@ -423,7 +423,7 @@ public class CDOWebUtil {
 			EAttribute attr, 
 			DataDefinitionFilter filter) throws Exception {
 		
-		if (context.authorize(cdoObject, "read", attr.getName(), null)) {
+		if (context.authorizeRead(cdoObject, attr.getName(), null)) {
 			JSONObject dd = new JSONObject();
 			if (cdoObject.eIsSet(attr)) {
 				if (attr.isMany()) {
@@ -439,7 +439,7 @@ public class CDOWebUtil {
 			if (filter==null || filter.accept(context, cdoObject, attr, dd)) {
 				dataDefinitions.put(attr.getName(), dd);
 			}
-		} else if (context.authorize(cdoObject, "write", attr.getName(), null)) {
+		} else if (context.authorizeUpdate(cdoObject, attr.getName(), null)) {
 			dataDefinitions.put(attr.getName(), new JSONObject());
 		}
 	}
@@ -451,7 +451,7 @@ public class CDOWebUtil {
 			EReference ref, 
 			DataDefinitionFilter filter) throws Exception {
 		
-		if (context.authorize(cdoObject, "read", ref.getName(), null)) {
+		if (context.authorizeRead(cdoObject, ref.getName(), null)) {
 			
 			JSONObject dd = new JSONObject();
 			if ((ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_OBJ)!=null || ref.getEAnnotation(CDOWebUtil.ANNOTATION_EAGER_REF)!=null || !ref.isMany())

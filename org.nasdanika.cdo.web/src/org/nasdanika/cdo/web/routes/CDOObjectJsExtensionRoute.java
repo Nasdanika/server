@@ -278,11 +278,11 @@ public class CDOObjectJsExtensionRoute implements Route {
 			if (eClass.getEAnnotation(CDOWebUtil.ANNOTATION_PRIVATE)==null) {
 				EObject container = cdoObject.eContainer();
 				if (container!=null) { 
-					if (context.authorize(cdoObject, "read", null, null)) {	// TODO - permission annotation?					
+					if (context.authorizeRead(cdoObject, null, null)) {	// TODO - permission annotation?					
 						ret.add(CDO_OBJECT_MODULE_GET_CONTAINER_FACADE_DEFINITION_GENERATOR.generate());
 					}
 				}
-				if (context.authorize(cdoObject, "write", null, null)) { // TODO - permission annotation?
+				if (context.authorizeUpdate(cdoObject, null, null)) { // TODO - permission annotation?
 					ret.add("$delete: function() { return session.apply('"+getObjectPath()+"', '$delete', arguments); }");
 					ret.add("$store: function() { return session.apply().thenResolve(this); }");
 				}										
