@@ -9,6 +9,21 @@ public interface AuthorizationProvider {
 		ALLOW,
 		ABSTAIN
 	}
+	
+	/**
+	 * Standard actions.
+	 * @author Pavel
+	 *
+	 */
+	enum StandardAction {
+		
+		create,
+		read,
+		write,
+		delete,
+		execute
+		
+	}
 
 	/**
 	 * Checks whether given context has a permission to execute an action on the ojbect
@@ -28,5 +43,117 @@ public interface AuthorizationProvider {
 			Object target, 
 			String action, 
 			String qualifier,
-			Map<String, Object> environment) throws Exception;	
+			Map<String, Object> environment) throws Exception;
+	
+	/**
+	 * Calls authorize(Context, Object, String, String, Map) with action name argument.
+	 * @param context
+	 * @param target
+	 * @param action
+	 * @param qualifier
+	 * @param environment
+	 * @return
+	 * @throws Exception
+	 */
+	default AccessDecision authorize(
+			Context context, 
+			Object target, 
+			StandardAction action, 
+			String qualifier,
+			Map<String, Object> environment) throws Exception {
+		
+		return authorize(context, target, action.name(), qualifier, environment);
+	};	
+
+	/**
+	 * Calls authorize() with {@link StandardAction}.create argument.
+	 * @param context
+	 * @param target
+	 * @param qualifier
+	 * @param environment
+	 * @return
+	 * @throws Exception
+	 */
+	default AccessDecision authorizeCreate(
+			Context context, 
+			Object target, 
+			String qualifier,
+			Map<String, Object> environment) throws Exception {
+		
+		return authorize(context, target, StandardAction.create, qualifier, environment);
+	};	
+	
+
+	/**
+	 * Calls authorize() with {@link StandardAction}.read argument.
+	 * @param context
+	 * @param target
+	 * @param qualifier
+	 * @param environment
+	 * @return
+	 * @throws Exception
+	 */
+	default AccessDecision authorizeRead(
+			Context context, 
+			Object target, 
+			String qualifier,
+			Map<String, Object> environment) throws Exception {
+		
+		return authorize(context, target, StandardAction.read, qualifier, environment);
+	};	
+
+	/**
+	 * Calls authorize() with {@link StandardAction}.write argument.
+	 * @param context
+	 * @param target
+	 * @param qualifier
+	 * @param environment
+	 * @return
+	 * @throws Exception
+	 */
+	default AccessDecision authorizeWrite(
+			Context context, 
+			Object target, 
+			String qualifier,
+			Map<String, Object> environment) throws Exception {
+		
+		return authorize(context, target, StandardAction.write, qualifier, environment);
+	};	
+
+	/**
+	 * Calls authorize() with {@link StandardAction}.delete argument.
+	 * @param context
+	 * @param target
+	 * @param qualifier
+	 * @param environment
+	 * @return
+	 * @throws Exception
+	 */
+	default AccessDecision authorizeDelete(
+			Context context, 
+			Object target, 
+			String qualifier,
+			Map<String, Object> environment) throws Exception {
+		
+		return authorize(context, target, StandardAction.delete, qualifier, environment);
+	};	
+
+	/**
+	 * Calls authorize() with {@link StandardAction}.execute argument.
+	 * @param context
+	 * @param target
+	 * @param qualifier
+	 * @param environment
+	 * @return
+	 * @throws Exception
+	 */
+	default AccessDecision authorizeExecute(
+			Context context, 
+			Object target, 
+			String qualifier,
+			Map<String, Object> environment) throws Exception {
+		
+		return authorize(context, target, StandardAction.execute, qualifier, environment);
+	};	
+	
 }
