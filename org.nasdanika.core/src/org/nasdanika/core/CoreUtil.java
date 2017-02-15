@@ -454,7 +454,7 @@ public Map&lt;String, String&gt; getPackageMap() {
 				
 				Class<?> box = target.isPrimitive() ? PRIMITIVES_TO_BOXES_MAP.get(target) : null;
 				if (box!=null) {
-					return convert(source, (Class) box, context);
+					return (T) convert(source, (Class) box, context);
 				}
 				
 				for (ConverterEntry ce: ceList) {
