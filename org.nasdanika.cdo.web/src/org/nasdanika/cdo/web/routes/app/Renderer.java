@@ -702,17 +702,29 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Button deleteButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.trash).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
 			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
-			String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete", false), env));
-			
-			// Delete through GET, not REST-compliant, but works with simple JavaScript. 
-			deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';"); // TODO - extract into a method, so it is easy to override.
-
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip", false), env);
 			deleteButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			wireDeleteButton(context, obj, deleteButton);
 			
 			return deleteButton;
 		}
 		return null;
+	}
+
+	/**
+	 * Assigns action to the delete button. This implementation sets onClick handler which navigates to the delete page.
+	 * @param context
+	 * @param obj
+	 * @param deleteButton
+	 * @throws Exception
+	 */
+	default void wireDeleteButton(C context, T obj, Button deleteButton) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Map<String, Object> env = new HashMap<>();
+		env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete", false), env));			
+		// Delete through GET, not REST-compliant, but works with simple JavaScript. 
+		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';"); 
 	}
 	
 	/**
@@ -762,6 +774,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Fragment ret = getHTMLFactory(context).fragment();
 		Map<String, Object> env = new HashMap<>();
 		env.put("name", feature.getName());
+		Object featureValue = obj.eGet(feature);
 		if (feature.isMany()) {
 			String viewAnnotation = getRenderAnnotation(context, feature, "view");
 			boolean asTable = false;
@@ -810,7 +823,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 					ret.content(fdm);
 				}		
 				
-				Table featureTable = ret.getFactory().table().bordered();
+				Table featureTable = ret.getFactory().table().bordered().style().margin().bottom("5px");
 				Row headerRow = featureTable.header().row().style(Style.INFO);
 				for (EStructuralFeature sf: tableFeatures) {
 					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf));
@@ -821,108 +834,224 @@ public interface Renderer<C extends Context, T extends EObject> {
 				}
 				
 				headerRow.header(getResourceString(context, "actions", false)).style().text().align().center();
-				for (EObject fv: (Collection<EObject>) obj.eGet(feature)) {
+				int idx = 0;
+				for (EObject fv: (Collection<EObject>) featureValue) {
 					Row vRow = featureTable.body().row();
 					for (EStructuralFeature sf: tableFeatures) {
 						vRow.cell(getRenderer(fv).renderFeatureView(context, fv, sf, false));						
 					}
-					vRow.cell("TODO - action buttons").style().text().align().center();
+					Cell actionCell = vRow.cell().style().text().align().center();
+					actionCell.content(renderFeatureValueViewButton(context, obj, feature, idx, fv));
+					actionCell.content(renderFeatureValueDeleteButton(context, obj, feature, idx, fv));
+					
+					++idx;
 				}
 				
 				ret.content(featureTable);
-				ret.content("TODO - add/create buttons - collect all concrete subclasses of reference type - drop-down button if more than one");
-				// TODO Add/Create buttons
+				ret.content(renderFeatureAddButton(context, obj, feature));
 			} else {
 				Tag ul = getHTMLFactory(context).tag(TagName.ul);
 				int idx = 0;
-				for (Object v: ((Collection<Object>) obj.eGet(feature))) {
+				for (Object v: ((Collection<Object>) featureValue)) {
 					Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, v));
 					if (feature instanceof EAttribute) {
-						if (showActionButtons && context.authorizeUpdate(obj, feature.getName(), null)) {
-							String tooltip = ret.getFactory().interpolate(getResourceString(context, "editTooltip", false), env);
-							Button editButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.pencil))
-								.style(Style.PRIMARY)
-								.style().margin().left("5px")
-								.on(Event.click, "window.location='edit/"+feature.getName()+"/"+idx+".html") // TODO - extract into a method, so it is easy to override.
-								.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
-							liFragment.content(editButton);
+						if (showActionButtons) {
+							liFragment.content(renderFeatureValueEditButton(context, obj, feature, idx, v));
 						}												
 					}
-					if (v instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
-						if (showActionButtons && context.authorizeDelete(v, null, null)) {
-							String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmDelete", false), env));;
-							String tooltip = ret.getFactory().interpolate(getResourceString(context, "deleteTooltip", false), env);
-
-							// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
-							Button deleteButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.trash))
-									.style(Style.DANGER)
-									.style().margin().left("5px")
-									.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='"+getRenderer(((EObject) v).eClass()).getObjectURI(context, (EObject) v)+"/delete.html';") // TODO - extract into a method, so it is easy to override.
-									.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
-
-							liFragment.content(deleteButton);
-						}
-					} else {
-						if (showActionButtons && context.authorizeDelete(obj, feature.getName(), null)) {
-							String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmDelete", false), env));;
-							String tooltip = ret.getFactory().interpolate(getResourceString(context, "deleteTooltip", false), env);
-
-							// And yet again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
-							Button deleteButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.trash))
-									.style(Style.DANGER)
-									.style().margin().left("5px")
-									.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete/"+feature.getName()+"/"+idx+".html';") // TODO - extract into a method, so it is easy to override.
-									.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
-
-							liFragment.content(deleteButton);							
-						}										
+					if (showActionButtons) {
+						liFragment.content(renderFeatureValueDeleteButton(context, obj, feature, idx, v));
 					}
 					ul.content(getHTMLFactory(context).tag(TagName.li, liFragment));
 					++idx;
 				}
 				ret.content(ul);
-				if (showActionButtons && context.authorizeUpdate(obj, feature.getName(), null)) { // Adding to a reference is considered update
-					boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
-					String tooltip = ret.getFactory().interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
-
-					// TODO - create - concrete subclasses of reference type - drop-down button if more than one.
-					Button addButton = ret.getFactory().button(getResourceString(context, isCreate ? "create" : "add", false))
-							.style(Style.PRIMARY)
-							.style().margin().left("5px")
-							.on(Event.click, "window.location='add/"+feature.getName()+".html';") // TODO - extract into a method, so it is easy to override.
-							.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
-
-					ret.content(addButton);							
+				if (showActionButtons) { 
+					ret.content(renderFeatureAddButton(context, obj, feature));							
 				}
 			}
 		} else {
-			ret.content(renderFeatureValue(context, feature, obj.eGet(feature)));
-			if (feature instanceof EReference) {
-				if (showActionButtons && context.authorizeUpdate(obj, feature.getName(), null)) {
-					String tooltip = ret.getFactory().interpolate(getResourceString(context, "selectTooltip", false), env);
-					Button selectButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.pencil))
-						.style(Style.PRIMARY)
-						.style().margin().left("5px")
-						.on(Event.click, "window.location='select/"+feature.getName()+".html") // TODO - extract into a method, so it is easy to override.
-						.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
-					ret.content(selectButton);
-				}
-				if (showActionButtons && context.authorizeDelete(obj, feature.getName(), null)) {
-					String clearConfirmationMessage = StringEscapeUtils.escapeEcmaScript(ret.getFactory().interpolate(getResourceString(context, "confirmClear", false), env));;
-					String tooltip = ret.getFactory().interpolate(getResourceString(context, "clearTooltip", false), env);
-
-					// And yet again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
-					Button deleteButton = ret.getFactory().button(ret.getFactory().glyphicon(Glyphicon.erase))
-							.style(Style.DANGER)
-							.style().margin().left("5px")
-							.on(Event.click, "if (confirm('"+clearConfirmationMessage+"?')) window.location='clear/"+feature.getName()+".html';") // TODO - extract into a method, so it is easy to override.
-							.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
-
-					ret.content(deleteButton);							
-				}										
+			ret.content(renderFeatureValue(context, feature, featureValue));
+			if (showActionButtons && feature instanceof EReference) {
+				ret.content(renderFeatureValueEditButton(context, obj, feature, -1, featureValue));
+				ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Renders a button to add a new value to the feature, maybe by creating one. 
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @return
+	 * @throws Exception
+	 */
+	default Button renderFeatureAddButton(C context, T obj, EStructuralFeature feature)	throws Exception {
+		if (context.authorizeUpdate(obj, feature.getName(), null)) { // Adding to a reference is considered update
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", feature.getName());
+			boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
+			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
+	
+			// TODO - create - concrete subclasses of reference type - drop-down button if more than one.
+			Button addButton = htmlFactory.button(getResourceString(context, isCreate ? "create" : "add", false))
+					.style(Style.PRIMARY)
+					.style().margin().left("5px")
+					.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
+			// TODO - if there is more than one sub-class - wire drop-downs individually.
+			wireFeatureAddButton(context, obj, feature, addButton);
+			return addButton;
+		}
+		return null;
+	}
+
+	/**
+	 * Assigns an action to the button. This implementation adds onClick handler which navigates to add/create page.
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @return
+	 * @throws Exception
+	 */
+	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton) throws Exception {
+		addButton.on(Event.click, "window.location='add/"+feature.getName()+".html';");
+	}	
+
+	/**
+	 * Renders delete button for feature value.
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @param idx
+	 * @param value
+	 * @return
+	 * @throws Exception
+	 */
+	default Button renderFeatureValueDeleteButton(C context, T obj, EStructuralFeature feature, int idx, Object value) throws Exception {
+		boolean authorized;
+		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
+			// Deletion from the repository.
+			authorized = context.authorizeDelete(value, null, null); 
+		} else {
+			// Removal from feature.
+			authorized = context.authorizeDelete(obj, feature.getName(), null);
+		}
+		if (authorized) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", feature.getName());
+			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "clearTooltip" : "deleteTooltip", false), env);
+	
+			// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
+			Button deleteButton = htmlFactory.button(htmlFactory.glyphicon(idx == -1 ? Glyphicon.erase : Glyphicon.trash))
+					.style(Style.DANGER)
+					.style().margin().left("5px")
+					.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
+			wireFeatureValueDeleteButton(context, obj, feature, idx, value, deleteButton);
+			return deleteButton;
+		}
+		return null;
+	}
+
+	/**
+	 * Assigns an action to the button. This implementation adds onClick handler which navigates to delete page.
+	 * @param feature
+	 * @param idx
+	 * @param editButton
+	 */
+	default void wireFeatureValueDeleteButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button deleteButton) throws Exception {
+		Map<String, Object> env = new HashMap<>();
+		env.put("name", feature.getName());
+		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(getResourceString(context, idx == -1 ? "confirmClear" : "confirmDelete", false), env));
+		String deleteLocation;
+		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
+			deleteLocation = getRenderer(((EObject) value).eClass()).getObjectURI(context, (EObject) value)+"/delete.html";
+		} else if (idx == -1) {
+			deleteLocation = "delete/"+feature.getName()+".html";
+		} else {
+			deleteLocation = "delete/"+feature.getName()+"/"+idx+".html";			
+		}
+		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='"+deleteLocation+"';");
+	}
+
+	/**
+	 * Renders edit button for feature value
+	 * @param context
+	 * @param feature
+	 * @param idx Value index, shall be -1 for single-value features.
+	 * @return
+	 * @throws Exception
+	 */
+	default Button renderFeatureValueEditButton(C context, T obj, EStructuralFeature feature, int idx, Object value) throws Exception {		
+		if (context.authorizeUpdate(obj, feature.getName(), null)) {
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", feature.getName());
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "selectTooltip" : "editTooltip", false), env);
+			Button editButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.pencil))
+				.style(Style.PRIMARY)
+				.style().margin().left("5px")
+				.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
+			wireFeatureValueEditButton(context, obj, feature, idx, value, editButton); 
+			return editButton;
+		}
+		return null;
+	}
+
+	/**
+	 * Assigns an action to the button. This implementation adds onClick handler which navigates to edit page.
+	 * @param feature
+	 * @param idx
+	 * @param editButton
+	 */
+	default void wireFeatureValueEditButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button editButton) throws Exception {
+		if (idx == -1) {
+			editButton.on(Event.click, "window.location='edit/"+feature.getName()+".html");
+		} else {
+			editButton.on(Event.click, "window.location='edit/"+feature.getName()+"/"+idx+".html");			
+		}
+	}
+	
+	/**
+	 * Renders button which navigates to feature value details page.
+	 * @param context
+	 * @param feature
+	 * @param idx Value index, shall be -1 for single-value features.
+	 * @return
+	 * @throws Exception
+	 */
+	default Button renderFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value) throws Exception {		
+		if (context.authorizeRead(value, null, null)) {
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", getRenderer(value).renderLabel(context, value));
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "viewTooltip", false), env);
+			Button viewButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.option_horizontal))
+				.style(Style.PRIMARY)
+				.style().margin().left("5px")
+				.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
+			wireFeatureValueViewButton(context, obj, feature, idx, value, viewButton); 
+			return viewButton;
+		}
+		return null;
+	}
+
+	/**
+	 * Assigns an action to the button. This implementation adds onClick handler which navigates to the value object page.
+	 * @param feature
+	 * @param idx
+	 * @param editButton
+	 * @throws Exception 
+	 */
+	default void wireFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value, Button viewButton) throws Exception {
+		viewButton.on(Event.click, "window.location='"+getRenderer(((EObject) value).eClass()).getObjectURI(context, (EObject) value)+"/index.html'");
 	}
 	
 }

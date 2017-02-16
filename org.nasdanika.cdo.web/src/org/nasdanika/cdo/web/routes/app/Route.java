@@ -235,6 +235,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	}
 	
+	// edit
+	// edit/feature[/index]
+	// delete
+	// delete/feature[/index]
+	// clear
+	
 	// Delete.html (GET) - redirect to referrer if the referrer is not own index.html, then redirect to the container
 //	EcoreUtil.delete(target, true);
 	
