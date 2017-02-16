@@ -17,6 +17,7 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.web.HeaderParameter;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.PathParameter;
 import org.nasdanika.web.RequestMethod;
@@ -76,7 +77,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(classDocModal);
 		}
 		
-		Map<EStructuralFeature, Modal> featureDocModals = renderFeatureDocModals(context, target);
+		Map<EStructuralFeature, Modal> featureDocModals = renderVisibleStructuralFeaturesDocModals(context, target);
 		for (Modal fdm: featureDocModals.values()) {
 			content.content(fdm);
 		}
@@ -220,9 +221,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.bootstrap().grid().col(11);
 	}
 	
+	// TODO - check authorization or authorization annotations. Handle path tokens in authorization qualifiers. 
+	
 	@RouteMethod(
 			value = RequestMethod.GET,
 			path = "add/{feature}",
+			action = "edit",
+			qualifier = "{feature}",
 			produces = "text/html",
 			comment="Renders a page for adding or creating object for a particular feature.")
 	public Object addFeature(
@@ -231,19 +236,139 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@TargetParameter T target) throws Exception {
 		
 		
-		return feature;
+		return "Add "+feature;
 		
 	}
 	
-	// edit
-	// edit/feature[/index]
-	// delete
-	// delete/feature[/index]
-	// clear
+	@RouteMethod(
+			value = RequestMethod.GET,
+			path = "edit/{feature}",
+			produces = "text/html",
+			comment="Renders an edit/select page for a single-value feature.")
+	public Object editFeature(
+			@ContextParameter C context,
+			@PathParameter("feature") String feature,
+			@TargetParameter T target) throws Exception {
+		
+		
+		return "Edit "+feature;
+		
+	}
+		
+	@RouteMethod(
+			value = RequestMethod.GET,
+			path = "edit/{feature}/{element}",
+			produces = "text/html",
+			comment="Renders an edit/select page for an element of multi-value feature.")
+	public Object editFeatureElement(
+			@ContextParameter C context,
+			@PathParameter("feature") String feature,
+			@PathParameter("element") String element,
+			@TargetParameter T target) throws Exception {
+		
+		
+		return "Edit "+feature+" "+element;
+		
+	}
 	
-	// Delete.html (GET) - redirect to referrer if the referrer is not own index.html, then redirect to the container
-//	EcoreUtil.delete(target, true);
+	@RouteMethod(comment="Renders object edit form.")
+	public Object getEditHtml(
+			@ContextParameter C context,
+			@TargetParameter T target,
+			@HeaderParameter("referer") String referrer) throws Exception {
+
+		
+		String title = StringEscapeUtils.escapeHtml4(nameToLabel(((EObject) context.getTarget()).eClass().getName()));
+		Fragment content = HTMLFactory.INSTANCE.fragment();
+		
+		// Documentation modals
+		Modal classDocModal = renderDocumentationModal(context, target.eClass());
+		if (classDocModal != null) {
+			content.content(classDocModal);
+		}
+		
+//		Map<EStructuralFeature, Modal> featureDocModals = renderVisibleStructuralFeaturesDocModals(context, target);
+//		for (Modal fdm: featureDocModals.values()) {
+//			content.content(fdm);
+//		}
+		
+		// Breadcrumbs
+		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+		renderObjectPath(context, target, "Edit", breadCrumbs);
+		if (!breadCrumbs.isEmpty()) {
+			content.content(breadCrumbs);
+		}
+		
+//		// Header
+//		Tag header = content.getFactory().tag(TagName.h3, renderNamedElementLabel(context, target.eClass()), " ", renderLabel(context, target));
+//		Tag classDocIcon = renderDocumentationIcon(context, target.eClass(), classDocModal);
+//		if (classDocIcon != null) {
+//			header.content(classDocIcon);
+//		}
+//		content.content(header);
+//		
+//		// view 
+//		if (!isViewTab(context, target)) {
+//			content.content(renderView(context, target, featureDocModals));
+//		}
+//		
+//		Tabs tabs = content.getFactory().tabs();
+//		renderTabs(context, target, tabs, featureDocModals);
+//				
+//		if (!tabs.isEmpty()) {
+//			content.content(tabs);
+//		}
+		
+		content.content("Edit "+renderLabel(context, target)+" <- "+referrer);
+		
+		return renderPage(context, title, content);		
+	}				
 	
+	@RouteMethod(comment="Deletes this element and redirects either to the referrer or to the parent index if the referrer is one of 'this' object pages.")
+	public Object getDeleteHtml(
+			@ContextParameter C context,
+			@TargetParameter T target,
+			@HeaderParameter("referer") String referrer) throws Exception {
+		
+		// TODO
+//		EcoreUtil.delete(target, true);
+		return "Delete "+renderLabel(context, target)+" <- "+referrer;
+		
+	}		
+		
+	@RouteMethod(
+			value = RequestMethod.GET,
+			path = "delete/{feature}",
+			produces = "text/html",
+			comment="Clears single-value feature and redirects to the referrer.")
+	public Object deleteFeature(
+			@ContextParameter C context,
+			@PathParameter("feature") String feature,
+			@TargetParameter T target) throws Exception {
+		
+		
+		// TODO
+		return "Clear "+feature;
+		
+	}
+		
+	@RouteMethod(
+			value = RequestMethod.GET,
+			path = "delete/{feature}/{element}",
+			produces = "text/html",
+			comment="Removes an element from a multi-value feature and redirects to the referrer.")
+	public Object deleteFeatureElement(
+			@ContextParameter C context,
+			@PathParameter("feature") String feature,
+			@PathParameter("element") String element,
+			@TargetParameter T target) throws Exception {
+		
+		
+		// TODO
+		return "Delete "+feature+" "+element;
+		
+	}
+		
 	// TODO - trace
 	
 	
