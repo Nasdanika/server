@@ -8,6 +8,8 @@ import java.lang.annotation.Target;
 /**
  * Route method parameters with this annotation are provided values from request header with a given name. 
  * Parameter type can be String or String[]. 
+ * 
+ * List of HTTP headers - https://en.wikipedia.org/wiki/List_of_HTTP_header_fields.
  * @author Pavel
  *
  */
