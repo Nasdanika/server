@@ -222,7 +222,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		} else {
 			String objectURI = getObjectURI(context, obj);
 			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
-			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.i, StringEscapeUtils.escapeHtml4(action)));
+			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, StringEscapeUtils.escapeHtml4(action)));
 		}
 	}
 
@@ -601,7 +601,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	default Map<EStructuralFeature, Modal> renderFeatureDocModals(C context, T obj) throws Exception {
+	default Map<EStructuralFeature, Modal> renderVisibleStructuralFeaturesDocModals(C context, T obj) throws Exception {
 		Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
 		for (EStructuralFeature vf: getVisibleStructuralFeatures(context, obj)) {
 			Modal fdm = renderDocumentationModal(context, vf);
@@ -896,13 +896,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 			boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
 			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
 	
-			// TODO - create - concrete subclasses of reference type - drop-down button if more than one.
 			Button addButton = htmlFactory.button(getResourceString(context, isCreate ? "create" : "add", false))
 					.style(Style.PRIMARY)
 					.style().margin().left("5px")
 					.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
 			
-			// TODO - if there is more than one sub-class - wire drop-downs individually.
 			wireFeatureAddButton(context, obj, feature, addButton);
 			return addButton;
 		}
@@ -911,6 +909,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 
 	/**
 	 * Assigns an action to the button. This implementation adds onClick handler which navigates to add/create page.
+	 * If the feature supports multiple object type which can be added to it, use {@link Button}.item() method to
+	 * create a drop-down button with multiple add handlers.
 	 * @param context
 	 * @param obj
 	 * @param feature
@@ -918,6 +918,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton) throws Exception {
+		// Example of items - addButton.item(getHTMLFactory(context).link("#", "My class"));
+		
 		addButton.on(Event.click, "window.location='add/"+feature.getName()+".html';");
 	}	
 
@@ -1053,5 +1055,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default void wireFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value, Button viewButton) throws Exception {
 		viewButton.on(Event.click, "window.location='"+getRenderer(((EObject) value).eClass()).getObjectURI(context, (EObject) value)+"/index.html'");
 	}
+	
+	// Forms rendering 
 	
 }
