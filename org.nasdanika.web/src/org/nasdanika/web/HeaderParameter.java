@@ -16,7 +16,7 @@ import java.lang.annotation.Target;
 public @interface HeaderParameter {
 	
 	/**
-	 * Query parameter name.
+	 * Header parameter name.
 	 * @return
 	 */
 	String value();
