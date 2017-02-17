@@ -290,14 +290,23 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 					}
 				}
 				
+				String qualifier = routeMethodCommand.getQualifier();
 				for (int i=0; i<splitRoutePath.length; ++i) {
 					boolean isPathParameter = splitRoutePath[i].startsWith("{") && splitRoutePath[i].endsWith("}");
-					if (!isPathParameter && !splitRoutePath[i].equals(path[i])) {
+					if (isPathParameter) {
+						// Replacing path tokens in the qualifier
+						if (qualifier != null) {
+							for (int idx = qualifier.indexOf(splitRoutePath[i]); idx != -1; idx = qualifier.indexOf(splitRoutePath[i], idx + splitRoutePath[i].length())) {
+								qualifier = qualifier.substring(0, idx) + path[i] + qualifier.substring(idx + splitRoutePath[i].length());
+							}
+						}								
+					} else if (!splitRoutePath[i].equals(path[i])) {
 						continue W;
 					}
 				}
 				
-				if (context.authorize(context.getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
+				String action = CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction();
+				if (context.authorize(context.getTarget(), action, qualifier, null)) {
 					if (response!=null && !CoreUtil.isBlank(routeMethodCommand.getProduces())) {
 						response.setContentType(routeMethodCommand.getProduces());
 					}							
@@ -311,7 +320,8 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 				return Action.FORBIDDEN;
 			} else if (path.length > 1) {										
 				if (routeMethodCommand.getPattern()!=null && routeMethodCommand.getPattern().matcher(CoreUtil.join(path, "/")).matches()) {
-					if (context.authorize(context.getTarget(), CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction(), routeMethodCommand.getQualifier(), null)) {
+					String action = CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction();
+					if (context.authorize(context.getTarget(), action, routeMethodCommand.getQualifier(), null)) {
 						if (response!=null && !CoreUtil.isBlank(routeMethodCommand.getProduces())) {
 							response.setContentType(routeMethodCommand.getProduces());
 						}							
