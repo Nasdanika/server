@@ -26,13 +26,19 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
+import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FontAwesome.WebApplication;
+import org.nasdanika.html.FormGroup;
+import org.nasdanika.html.FormGroup.Status;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
@@ -40,6 +46,7 @@ import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.pegdown.Extensions;
@@ -181,10 +188,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * 
 	 * @param obj
 	 * @return A list of structural features to include into the object view. This implementation
-	 * returns all object features authorized to view.
+	 * returns all object features authorized to read which are not annotated with <code>visible</code> details annotation set to <code>false</code>
 	 * @throws Exception 
 	 */
-	default List<EStructuralFeature> getVisibleStructuralFeatures(C context, T obj) throws Exception {
+	default List<EStructuralFeature> getVisibleFeatures(C context, T obj) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
 			if (!"false".equals(getRenderAnnotation(context, sf, ANNOTATION_KEY_VISIBLE)) && context.authorizeRead(obj, sf.getName(), null)) {
@@ -253,7 +260,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 		if (labelAnnotation != null) {
 			Map<String, EStructuralFeature> vsfm = new HashMap<>();
-			for (EStructuralFeature vsf: getVisibleStructuralFeatures(context, obj)) {
+			for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
 				vsfm.put(vsf.getName(), vsf);
 			}
 			String label = getHTMLFactory(context).interpolate(labelAnnotation, token -> {
@@ -263,7 +270,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			return StringEscapeUtils.escapeHtml4(label);
 		}
 		
-		for (EStructuralFeature vsf: getVisibleStructuralFeatures(context, obj)) {
+		for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
 			Object label = obj.eGet(vsf);
 			return label == null ? label : StringEscapeUtils.escapeHtml4(String.valueOf(label));
 		}
@@ -415,9 +422,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (doc == null) {
 			return null;
 		}
+		String textDoc = Jsoup.parse(doc).text();
+		String firstSentence = firstSentence(textDoc);					
 		Tag helpGlyph = getHTMLFactory(context).fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();//.style().margin().left("5px");
-		helpGlyph.attribute("title", firstHtmlSentence(doc));
-		if (docModal != null) {
+		helpGlyph.attribute("title", firstSentence);
+		if (!textDoc.equals(firstSentence) && docModal != null) {
 			helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
 			helpGlyph.style("cursor", "pointer");
 		}
@@ -601,15 +610,26 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	default Map<EStructuralFeature, Modal> renderVisibleStructuralFeaturesDocModals(C context, T obj) throws Exception {
+	default Map<EStructuralFeature, Modal> renderFeaturesDocModals(C context, T obj, Collection<EStructuralFeature> features) throws Exception {
 		Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
-		for (EStructuralFeature vf: getVisibleStructuralFeatures(context, obj)) {
+		for (EStructuralFeature vf: features) {
 			Modal fdm = renderDocumentationModal(context, vf);
 			if (fdm != null) {
 				featureDocModals.put(vf, fdm);
 			}
 		}		
 		return featureDocModals;
+	}
+
+	/**
+	 * Renders doc modals for visible features.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Map<EStructuralFeature, Modal> renderVisibleFeaturesDocModals(C context, T obj) throws Exception {
+		return renderFeaturesDocModals(context, obj, getVisibleFeatures(context, obj));
 	}
 	
 	/**
@@ -637,7 +657,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		featuresTable.col().bootstrap().grid().col(1);
 		featuresTable.col().bootstrap().grid().col(11);
 
-		for (EStructuralFeature vf: getVisibleStructuralFeatures(context, obj)) {
+		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
 			if (!isTab(context, vf)) {
 				Row fRow = featuresTable.body().row();
@@ -739,7 +759,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (isViewTab(context, obj)) {
 			tabs.item(renderViewTabLabel(context, obj), renderView(context, obj, featureDocModals));
 		}
-		for (EStructuralFeature vf: getVisibleStructuralFeatures(context, obj)) {
+		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
 			if (isTab(context, vf)) {
 				Tag nameSpan = getHTMLFactory(context).span(renderNamedElementLabel(context, vf));
@@ -889,7 +909,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Button renderFeatureAddButton(C context, T obj, EStructuralFeature feature)	throws Exception {
-		if (context.authorizeUpdate(obj, feature.getName(), null)) { // Adding to a reference is considered update
+		if (context.authorizeCreate(obj, feature.getName(), null)) { // Adding to a reference is considered create.
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
 			env.put("name", feature.getName());
@@ -1057,5 +1077,92 @@ public interface Renderer<C extends Context, T extends EObject> {
 	}
 	
 	// Forms rendering 
+
+	/**
+	 * 
+	 * @param obj
+	 * @return A list of structural features to include into the object edit form. This implementation
+	 * returns all visible features with !isTab() and authorized to update unless <code>editable</code> annotation is set to <code>false</code>  
+	 * @throws Exception 
+	 */
+	default List<EStructuralFeature> getEditableFeatures(C context, T obj) throws Exception {
+		List<EStructuralFeature> ret = new ArrayList<>();
+		for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
+			if (context.authorizeUpdate(obj, vsf.getName(), null)) {
+				String eav = getRenderAnnotation(context, vsf, ANNOTATION_KEY_EDITABLE);
+				boolean isEditable = eav == null ? !isTab(context, vsf)  : !"false".equals(eav);
+				if (isEditable) {
+					ret.add(vsf);
+				}
+			}
+		}
+		return ret;
+	}
 	
+	/**
+	 * Renders control for the feature, e.g. input, select, or text area.
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @return
+	 * @throws Exception
+	 */
+	default UIElement<?> renderFeatureControl(C context, T obj, EStructuralFeature feature) throws Exception {
+		// TODO - control type from annotation
+		// TODO - input type from annotation or from feature data type if there is no annotation.
+		// TODO - single/many
+		// Extremely simple implementation to get started.
+		Input ret = getHTMLFactory(context).input(InputType.text).name(feature.getName()).placeholder(feature.getName());
+		Object fv = obj.eGet(feature);
+		if (fv != null) {
+			ret.value(StringEscapeUtils.escapeHtml4(fv.toString()));
+		}				
+		return ret;
+	}
+	
+	/**
+	 * Renders doc modals for editable features.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Map<EStructuralFeature, Modal> renderEditableFeaturesDocModals(C context, T obj) throws Exception {
+		return renderFeaturesDocModals(context, obj, getEditableFeatures(context, obj));
+	}	
+	
+	default Object renderFeatureFormGroupHelpText(C context, T obj, EStructuralFeature feature, Modal docModal) throws Exception {		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();		
+		String doc = renderDocumentation(context, feature);
+		if (doc != null) {
+			String textDoc = Jsoup.parse(doc).text();
+			String firstSentence = firstSentence(textDoc);			
+			ret.content(firstSentence);
+			if (!textDoc.equals(firstSentence) && docModal != null) {
+				Tag helpGlyph = htmlFactory.fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();
+				helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
+				helpGlyph.style("cursor", "pointer");
+				ret.content(helpGlyph);
+			}
+		}
+		return ret.isEmpty() ? null : ret;
+	}	
+	
+	default FormGroup<?> renderFeatureFormGroup(C context, T obj, EStructuralFeature feature, FieldContainer<?> fieldContainer, Modal docModal, String errorMessage) throws Exception {		
+		UIElement<?> control = renderFeatureControl(context, obj, feature);
+		FormGroup<?> ret = fieldContainer.formGroup(feature.getName(), control, CoreUtil.isBlank(errorMessage) ? renderFeatureFormGroupHelpText(context, obj, feature, docModal) : errorMessage);
+		if (!CoreUtil.isBlank(errorMessage)) {
+			ret.feedback();
+			ret.status(Status.ERROR);
+		}
+		return ret;
+	}
+	
+	default void renderEditableFeaturesFormGroups(C context, T obj, FieldContainer<?> fieldContainer, Map<EStructuralFeature, Modal> docModals, Map<EStructuralFeature,String> errorMessages) throws Exception {
+		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
+			renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf));
+		}
+	}
+		
 }

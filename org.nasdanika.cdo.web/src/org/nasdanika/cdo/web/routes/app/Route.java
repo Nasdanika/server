@@ -6,9 +6,14 @@ import java.util.Map;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
 import org.nasdanika.core.ContextParameter;
+import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Breadcrumbs;
+import org.nasdanika.html.Form;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
@@ -17,6 +22,7 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.web.Action;
 import org.nasdanika.web.HeaderParameter;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.PathParameter;
@@ -69,7 +75,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@TargetParameter T target) throws Exception {
 		
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(((EObject) context.getTarget()).eClass().getName()));
-		Fragment content = HTMLFactory.INSTANCE.fragment();
+		Fragment content = getHTMLFactory(context).fragment();
 		
 		// Documentation modals
 		Modal classDocModal = renderDocumentationModal(context, target.eClass());
@@ -77,7 +83,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(classDocModal);
 		}
 		
-		Map<EStructuralFeature, Modal> featureDocModals = renderVisibleStructuralFeaturesDocModals(context, target);
+		Map<EStructuralFeature, Modal> featureDocModals = renderVisibleFeaturesDocModals(context, target);
 		for (Modal fdm: featureDocModals.values()) {
 			content.content(fdm);
 		}
@@ -221,12 +227,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.bootstrap().grid().col(11);
 	}
 	
-	// TODO - check authorization or authorization annotations. Handle path tokens in authorization qualifiers. 
-	
 	@RouteMethod(
 			value = RequestMethod.GET,
 			path = "add/{feature}",
-			action = "edit",
+			action = "create",
 			qualifier = "{feature}",
 			produces = "text/html",
 			comment="Renders a page for adding or creating object for a particular feature.")
@@ -242,6 +246,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	
 	@RouteMethod(
 			value = RequestMethod.GET,
+			action = "update",
+			qualifier = "{feature}",
 			path = "edit/{feature}",
 			produces = "text/html",
 			comment="Renders an edit/select page for a single-value feature.")
@@ -257,6 +263,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	@RouteMethod(
 			value = RequestMethod.GET,
+			action = "update",
+			qualifier = "{feature}",
 			path = "edit/{feature}/{element}",
 			produces = "text/html",
 			comment="Renders an edit/select page for an element of multi-value feature.")
@@ -271,15 +279,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	}
 	
-	@RouteMethod(comment="Renders object edit form.")
+	// TODO - support both get and post, validate on post 
+	@RouteMethod(
+			comment="Renders object edit form.",
+			action = "update")
 	public Object getEditHtml(
 			@ContextParameter C context,
 			@TargetParameter T target,
 			@HeaderParameter("referer") String referrer) throws Exception {
-
 		
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(((EObject) context.getTarget()).eClass().getName()));
-		Fragment content = HTMLFactory.INSTANCE.fragment();
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment content = htmlFactory.fragment();
 		
 		// Documentation modals
 		Modal classDocModal = renderDocumentationModal(context, target.eClass());
@@ -287,10 +298,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(classDocModal);
 		}
 		
-//		Map<EStructuralFeature, Modal> featureDocModals = renderVisibleStructuralFeaturesDocModals(context, target);
-//		for (Modal fdm: featureDocModals.values()) {
-//			content.content(fdm);
-//		}
+		Map<EStructuralFeature, Modal> featureDocModals = renderEditableFeaturesDocModals(context, target);
+		for (Modal fdm: featureDocModals.values()) {
+			content.content(fdm);
+		}
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -298,6 +309,25 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (!breadCrumbs.isEmpty()) {
 			content.content(breadCrumbs);
 		}
+		
+		Form editForm = htmlFactory.form()
+//				.novalidate()
+				.action("edit.html")
+				.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
+				.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
+				.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 8)
+				.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 5);
+
+		content.content(editForm);
+		
+		Map<EStructuralFeature, String> errorMessages = new HashMap<>();
+		
+		errorMessages.put(SecurityPackage.Literals.LOGIN_USER__LOGIN, "Too short"); // For testing.
+				
+		renderEditableFeaturesFormGroups(context, target, editForm, featureDocModals, errorMessages);
+		
+		
+		
 		
 //		// Header
 //		Tag header = content.getFactory().tag(TagName.h3, renderNamedElementLabel(context, target.eClass()), " ", renderLabel(context, target));
@@ -319,26 +349,65 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 //			content.content(tabs);
 //		}
 		
-		content.content("Edit "+renderLabel(context, target)+" <- "+referrer);
+		// TODO - Cancel button navigates to referrer upon confirmation.
+		
+//		content.content("Edit "+renderLabel(context, target)+" <- "+referrer);
 		
 		return renderPage(context, title, content);		
 	}				
 	
-	@RouteMethod(comment="Deletes this element and redirects either to the referrer or to the parent index if the referrer is one of 'this' object pages.")
+	@RouteMethod(
+			comment="Deletes this element and redirects either to the referrer or to the parent index if the referrer is one of 'this' object pages.",
+			action = "delete")
 	public Object getDeleteHtml(
 			@ContextParameter C context,
 			@TargetParameter T target,
 			@HeaderParameter("referer") String referrer) throws Exception {
 		
-		// TODO
-//		EcoreUtil.delete(target, true);
-		return "Delete "+renderLabel(context, target)+" <- "+referrer;
+		String redirectURL;
+		if (CoreUtil.isBlank(referrer)) {
+			if (target.eContainer() == null) {
+				redirectURL = null;
+			} else {
+				String containerURI = getRenderer(target.eContainer().eClass()).getObjectURI(context, target.eContainer());
+				if (containerURI == null) {
+					redirectURL = null;
+				} else {
+					redirectURL = containerURI+"/index.html";
+				}
+			}
+		} else {
+			String rurl = context.getRequest().getRequestURL().toString();
+			int dIdx = rurl.lastIndexOf("/");
+			int rIdx = referrer.lastIndexOf("/");
+			if (dIdx == rIdx && dIdx != -1 && rurl.substring(0, dIdx).equals(referrer.substring(0, rIdx))) {
+				// "Self-destruction"
+				String containerURI = getRenderer(target.eContainer().eClass()).getObjectURI(context, target.eContainer());
+				if (containerURI == null) {
+					redirectURL = null;
+				} else {
+					redirectURL = containerURI+"/index.html";
+				}				
+			} else {
+				redirectURL = referrer;
+			}
+		}
 		
+		EcoreUtil.delete(target, true);
+		if (redirectURL == null) {
+			return "Deleted";
+		}
+		
+		context.getResponse().sendRedirect(redirectURL);
+		
+		return Action.NOP; 
 	}		
 		
 	@RouteMethod(
 			value = RequestMethod.GET,
 			path = "delete/{feature}",
+			action = "delete",
+			qualifier = "{feature}",
 			produces = "text/html",
 			comment="Clears single-value feature and redirects to the referrer.")
 	public Object deleteFeature(
@@ -348,13 +417,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		
 		// TODO
-		return "Clear "+feature;
+		return "To implement - Clear "+feature;
 		
 	}
 		
 	@RouteMethod(
 			value = RequestMethod.GET,
 			path = "delete/{feature}/{element}",
+			action = "delete",
+			qualifier = "{feature}",
 			produces = "text/html",
 			comment="Removes an element from a multi-value feature and redirects to the referrer.")
 	public Object deleteFeatureElement(
@@ -365,7 +436,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		
 		// TODO
-		return "Delete "+feature+" "+element;
+		return "To implement - Delete "+feature+" "+element;
 		
 	}
 		
