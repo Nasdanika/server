@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -26,7 +27,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
-import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
@@ -315,7 +315,16 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Object renderNamedElementLabel(C context, ENamedElement namedElement) throws Exception {
 		String label = getRenderAnnotation(context, namedElement, ANNOTATION_KEY_ENAMED_ELEMENT_LABEL);
-		return label == null ? nameToLabel(namedElement.getName()) : label;
+		if (label != null) {
+			return label;
+		}		
+		String name = namedElement.getName();
+		String className = namedElement.eClass().getName();
+		if (className.startsWith("E")) {
+			className = className.substring(1);
+		}
+		String rs = getResourceString(context, StringUtils.uncapitalize(className)+"."+name+".label", false);
+		return rs == null ? nameToLabel(name) : rs;
 	}
 	
 	/**
@@ -424,11 +433,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		String textDoc = Jsoup.parse(doc).text();
 		String firstSentence = firstSentence(textDoc);					
-		Tag helpGlyph = getHTMLFactory(context).fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();//.style().margin().left("5px");
+		Tag helpGlyph = renderHelpIcon(context);
 		helpGlyph.attribute("title", firstSentence);
 		if (!textDoc.equals(firstSentence) && docModal != null) {
 			helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
 			helpGlyph.style("cursor", "pointer");
+		} else {
+			helpGlyph.style("cursor", "help");			
 		}
 		return getHTMLFactory(context).tag(TagName.sup, helpGlyph);
 	}
@@ -584,13 +595,15 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default String getResourceString(C context, String key, boolean interpolate) throws Exception {
-		ResourceBundle rb = ResourceBundle.getBundle(Renderer.class.getName(), getLocale(context));
-		if (!rb.containsKey(key)) {
-			return null;
+		String rs = null;
+		for (ResourceBundle rb: getResourceBundles(context)) {
+			if (rb.containsKey(key)) {
+				rs = rb.getString(key);
+				break;
+			}
 		}
-				
-		String rs = rb.getString(key);
-		if (interpolate) {
+		
+		if (rs != null && interpolate) {
 			return getHTMLFactory(context).interpolate(rs, token -> {
 				try {
 					return getResourceString(context, token, true);
@@ -601,6 +614,18 @@ public interface Renderer<C extends Context, T extends EObject> {
 			});
 		}
 		return rs;
+	}
+	
+	/**
+	 * @param context
+	 * @return List of resource bundles to search for a resource string. This implementation returns  list containing resource bundle for Renderer.class.getName().
+	 * Subtypes may override this method to add additional bundles. 
+	 * @throws Exception
+	 */
+	default LinkedList<ResourceBundle> getResourceBundles(C context) throws Exception {
+		LinkedList<ResourceBundle> ret = new LinkedList<>();
+		ret.add(ResourceBundle.getBundle(Renderer.class.getName(), getLocale(context)));
+		return ret;
 	}
 	
 	/**
@@ -696,7 +721,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Object renderEditButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button editButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.pencil).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
+			Button editButton = htmlFactory.button(renderEditIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
 			editButton.on(Event.click, "window.location='edit.html';");
 
 			Map<String, Object> env = new HashMap<>();
@@ -708,7 +733,47 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		return null;
 	}
+	
+	/**
+	 * Renders edit icon. This implementation renders Bootstrap Glyphicon pencil.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderEditIcon(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.pencil);		
+	}
 
+	/**
+	 * Renders delete icon. This implementation renders Bootstrap Glyphicon trash.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderDeleteIcon(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.trash);		
+	}
+
+	/**
+	 * Renders clear icon. This implementation renders Bootstrap Glyphicon erase.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderClearIcon(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.erase);		
+	}
+	
+	/**
+	 * Renders "details" icon. This implementation renders Bootstrap Glyphicon option_horizontal.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderDetailsIcon(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.option_horizontal);		
+	}	
+	
 	/**
 	 * Renders edit button. 
 	 * @param context
@@ -719,7 +784,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Object renderDeleteButton(C context, T obj) throws Exception {
 		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button deleteButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.trash).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
+			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
 			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip", false), env);
@@ -969,7 +1034,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "clearTooltip" : "deleteTooltip", false), env);
 	
 			// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
-			Button deleteButton = htmlFactory.button(htmlFactory.glyphicon(idx == -1 ? Glyphicon.erase : Glyphicon.trash))
+			Button deleteButton = htmlFactory.button(idx == -1 ? renderClearIcon(context) : renderDeleteIcon(context))
 					.style(Style.DANGER)
 					.style().margin().left("5px")
 					.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
@@ -1015,7 +1080,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			env.put("name", feature.getName());
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "selectTooltip" : "editTooltip", false), env);
-			Button editButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.pencil))
+			Button editButton = htmlFactory.button(renderEditIcon(context))
 				.style(Style.PRIMARY)
 				.style().margin().left("5px")
 				.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
@@ -1054,7 +1119,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			env.put("name", getRenderer(value).renderLabel(context, value));
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "viewTooltip", false), env);
-			Button viewButton = htmlFactory.button(htmlFactory.glyphicon(Glyphicon.option_horizontal))
+			Button viewButton = htmlFactory.button(renderDetailsIcon(context))
 				.style(Style.PRIMARY)
 				.style().margin().left("5px")
 				.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
@@ -1140,7 +1205,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			String firstSentence = firstSentence(textDoc);			
 			ret.content(firstSentence);
 			if (!textDoc.equals(firstSentence) && docModal != null) {
-				Tag helpGlyph = htmlFactory.fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();
+				Tag helpGlyph = renderHelpIcon(context);
 				helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
 				helpGlyph.style("cursor", "pointer");
 				ret.content(helpGlyph);
@@ -1148,6 +1213,17 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		return ret.isEmpty() ? null : ret;
 	}	
+	
+	/**
+	 * Renders help icon. This implementation uses FontAwesome WebApplication.question_circle_o.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Tag renderHelpIcon(C context) throws Exception {
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();
+	}
 	
 	default FormGroup<?> renderFeatureFormGroup(C context, T obj, EStructuralFeature feature, FieldContainer<?> fieldContainer, Modal docModal, String errorMessage) throws Exception {		
 		UIElement<?> control = renderFeatureControl(context, obj, feature);

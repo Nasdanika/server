@@ -128,9 +128,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @throws Exception 
 	 */
 	protected Object renderPage(C context, String title, Object content) throws Exception {
-		Map<String, Object> env = new HashMap<>();
-		env.put("title", title);
-		
 		Fragment contentFragment = getHTMLFactory(context).fragment();		
 		Object header = renderHeader(context);
 		if (header != null) {
@@ -152,7 +149,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			contentFragment.content(contentFragment.getFactory().div(footer));
 		}		
 		
+		Map<String, Object> env = createRenderPageEnvironment(context);
+		env.put("title", title);
 		env.put("content", contentFragment);
+		
 		Theme theme = getTheme(context);
 		switch (theme) {
 		case None:
@@ -166,6 +166,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 		return HTMLFactory.INSTANCE.interpolate(getPageTemplate(), env);		
 	}
+
+	/**
+	 * Override to provide additional interpolation tokens used by your page template.
+	 * renderPage() adds title and content tokens to the environment before passing it to interpolate();
+	 * @param context
+	 * @return Map containing tokens to use for interpolation of the page template.
+	 */
+	protected HashMap<String, Object> createRenderPageEnvironment(C context) {
+		return new HashMap<>();
+	}
+	
+//	protected  
 	
 	/**
 	 * @param context
