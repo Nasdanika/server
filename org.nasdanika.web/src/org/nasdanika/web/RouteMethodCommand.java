@@ -8,6 +8,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
+import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.ContextProvider;
@@ -64,6 +65,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 		requestMethods = routeMethod.value();
 		comment = routeMethod.comment();
 		keepWebSocketContext = routeMethod.keepWebSocketContext();
+		action = routeMethod.action();
 		
 		// Implying path and possibly request method from method name
 		if (CoreUtil.isBlank(path) && CoreUtil.isBlank(routeMethod.pattern())) {
@@ -88,6 +90,26 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 						}
 						path = pathBuilder.toString();
 						requestMethodMatched = true;
+						if (CoreUtil.isBlank(action)) {
+							// Mapping request methods to standard actions
+							switch (rm) {
+							case DELETE:
+								action = AuthorizationProvider.StandardAction.delete.name();
+								break;
+							case GET:
+								action = AuthorizationProvider.StandardAction.read.name();
+								break;
+							case POST:
+								action = AuthorizationProvider.StandardAction.create.name();
+								break;
+							case PUT:
+								action = AuthorizationProvider.StandardAction.update.name();
+								break;
+							default:
+								// NOP
+								break;						
+							}
+						}
 						break;
 					}
 				}
@@ -110,7 +132,6 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 			}
 		}
 		consumes = routeMethod.consumes();
-		action = routeMethod.action();
 		qualifier = routeMethod.qualifier();
 		
 	}
