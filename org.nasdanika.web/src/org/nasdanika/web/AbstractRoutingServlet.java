@@ -131,6 +131,8 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 	private String responseCharacterEncoding = "UTF-8";
 	public static final MimetypesFileTypeMap MIME_TYPES_MAP = new MimetypesFileTypeMap(AbstractRoutingServlet.class.getResourceAsStream("mime.types"));
 	
+	private String loginURL;
+	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		Thread currentThread = Thread.currentThread();
@@ -164,6 +166,7 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 		if (rce != null) {
 			responseCharacterEncoding = rce;
 		}
+		loginURL = config.getInitParameter("login-url");
 	}
 			
 	@Override
@@ -207,7 +210,12 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 				throw new ServletException(e);			
 			}
 			if (action==null) {			
-				resp.sendError(HttpServletResponse.SC_NOT_FOUND);			
+				resp.sendError(HttpServletResponse.SC_NOT_FOUND);
+			} else if (action == Action.UNAUTHORIZED && loginURL != null) {
+				// Sending redirect to the login page. 
+				// The login page is responsible to redirect to the referrer URL upon
+				// successful login.
+				resp.sendRedirect(loginURL);
 			} else {
 				try {
 					resultToResponse(action.execute(), resp);
