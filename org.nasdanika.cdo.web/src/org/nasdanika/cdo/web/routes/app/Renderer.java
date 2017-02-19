@@ -15,6 +15,8 @@ import java.util.ResourceBundle;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -796,7 +798,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderSaveButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button saveButton = htmlFactory.button(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
+			Button saveButton = htmlFactory.button(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save", false)).style(Style.PRIMARY);
 			wireSaveButton(context, obj, saveButton);
 
 			Map<String, Object> env = new HashMap<>();
@@ -829,7 +831,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderCancelButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button cancelButton = htmlFactory.button(renderCancelIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.DANGER);
+			Button cancelButton = htmlFactory.button(renderCancelIcon(context).style().margin().right("5px"), getResourceString(context, "cancel", false)).style(Style.DANGER);
 			wireCancelButton(context, obj, cancelButton);
 
 			Map<String, Object> env = new HashMap<>();
@@ -852,13 +854,17 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default void wireCancelButton(C context, T obj, Button cancelButton) throws Exception {
 		if (context instanceof HttpServletRequestContext) {
-			String referrer = ((HttpServletRequestContext) context).getRequest().getParameter(REFERRER_KEY);
+			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
+			String referrer = request.getParameter(REFERRER_KEY);
+			if (referrer == null) {
+				referrer = request.getHeader("referer");
+			}
 			if (referrer != null) {
 				HTMLFactory htmlFactory = getHTMLFactory(context);
 				Map<String, Object> env = new HashMap<>();
 				env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 				String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel", false), env));			
-				cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';");
+				cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';return false;");
 				return;
 			}
 		}
@@ -943,7 +949,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception 
 	 */
 	default Tag renderSaveIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.floppy_disk);		
+		return getHTMLFactory(context).glyphicon(Glyphicon.save);		
 	}
 		
 	/**

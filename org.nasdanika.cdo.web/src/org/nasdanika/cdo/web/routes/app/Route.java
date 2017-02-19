@@ -14,6 +14,7 @@ import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Form;
+import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
@@ -326,6 +327,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Form editForm = htmlFactory.form()
 //				.novalidate()
 				.action("edit.html")
+				.method(Method.post)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 8)
