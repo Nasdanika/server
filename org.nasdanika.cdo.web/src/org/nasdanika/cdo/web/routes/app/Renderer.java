@@ -32,6 +32,7 @@ import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
+import org.nasdanika.html.Button.Type;
 import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.FormGroup;
@@ -120,9 +121,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	
 	int MIN_FIRST_SENTENCE_LENGTH = 20;
 	int MAX_FIRST_SENTENCE_LENGTH = 250;
-	
-	String[] ABBREVIATIONS = { "e.g.", "i.e." }; // TODO - load from extensions?
-	
+		
 	// multi-line
 	// input type
 	// select options	
@@ -449,7 +448,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			return null;
 		}
 		String textDoc = Jsoup.parse(doc).text();
-		String firstSentence = firstSentence(textDoc);					
+		String firstSentence = firstSentence(context, textDoc);					
 		Tag helpGlyph = renderHelpIcon(context);
 		helpGlyph.attribute("title", firstSentence);
 		if (!textDoc.equals(firstSentence) && docModal != null) {
@@ -513,13 +512,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * Extracts the first sentence from HTML as plain text.
 	 * @param html
 	 * @return
+	 * @throws Exception 
 	 */
-	default String firstHtmlSentence(String html) {
+	default String firstHtmlSentence(C context, String html) throws Exception {
 		if (CoreUtil.isBlank(html)) {
 			return "";
 		}
 
-		return firstSentence(Jsoup.parse(html).text());
+		return firstSentence(context, Jsoup.parse(html).text());
 	}
 
 	default int getMinFirstSentenceLength() {
@@ -530,14 +530,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return MAX_FIRST_SENTENCE_LENGTH;
 	}
 	
-	default String firstSentence(String text) {
+	default String firstSentence(C context, String text) throws Exception {
 		if (text == null || text.length() < getMinFirstSentenceLength()) {
 			return text;
 		}
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
 		Z: while (matcher.find()) {
 			String group = matcher.group();
-			for (String abbr: ABBREVIATIONS) {
+			for (String abbr: getResourceString(context, "abbreviations", false).split("|")) {
 				if (group.trim().endsWith(abbr)) {
 					continue Z;
 				}
@@ -554,7 +554,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	
 	default Object renderFirstDocumentationSentence(C context, EModelElement modelElement) throws Exception {
 		Object doc = renderDocumentation(context, modelElement);
-		return doc instanceof String ? firstHtmlSentence((String) doc) : null;
+		return doc instanceof String ? firstHtmlSentence(context, (String) doc) : null;
 	}
 	
 	/**
@@ -762,7 +762,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button editButton = htmlFactory.button(renderEditIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
-			editButton.on(Event.click, "window.location='edit.html';");
+			wireEditButton(context, obj, editButton);
 
 			Map<String, Object> env = new HashMap<>();
 			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
@@ -775,13 +775,102 @@ public interface Renderer<C extends Context, T extends EObject> {
 	}
 	
 	/**
+	 * Assigns an action to the edit button. This implementation adds onClick handler which navigates to edit page.
+	 * @param feature
+	 * @param idx
+	 * @param editButton
+	 */
+	default void wireEditButton(C context, T obj, Button editButton) throws Exception {
+		editButton.on(Event.click, "window.location='edit.html';");		
+	}	
+	
+	/**
+	 * Renders Save button.   
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderSaveButton(C context, T obj) throws Exception {
+		if (context.authorizeUpdate(obj, null, null)) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Button saveButton = htmlFactory.button(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
+			wireSaveButton(context, obj, saveButton);
+
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "saveTooltip", false), env);
+			saveButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
+			return saveButton;
+		}
+		return null;
+	}	
+
+	/**
+	 * Assigns an action to the save button. This implementation set the button type to Submit.
+	 * @param feature
+	 * @param idx
+	 * @param editButton
+	 */
+	default void wireSaveButton(C context, T obj, Button saveButton) throws Exception {
+		saveButton.type(Type.SUBMIT);
+	}	
+	
+	/**
+	 * Renders Save button.   
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderCancelButton(C context, T obj) throws Exception {
+		if (context.authorizeUpdate(obj, null, null)) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Button cancelButton = htmlFactory.button(renderCancelIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.DANGER);
+			wireCancelButton(context, obj, cancelButton);
+
+			Map<String, Object> env = new HashMap<>();
+			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "cancelTooltip", false), env);
+			cancelButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			
+			return cancelButton;
+		}
+		return null;
+	}	
+
+	/**
+	 * Assigns an action to the cancel button. If there is "referrer" parameter, then this implementation sets onClick to navigate to the parameter name, 
+	 * otherwise it sets button type to RESET.
+	 *  the button type to Submit.
+	 * @param feature
+	 * @param idx
+	 * @param editButton
+	 */
+	default void wireCancelButton(C context, T obj, Button cancelButton) throws Exception {
+		if (context instanceof HttpServletRequestContext) {
+			String referrer = ((HttpServletRequestContext) context).getRequest().getParameter("referrer");
+			if (referrer != null) {
+				HTMLFactory htmlFactory = getHTMLFactory(context);
+				Map<String, Object> env = new HashMap<>();
+				env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+				String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel", false), env));			
+				cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';");
+				return;
+			}
+		}
+		cancelButton.type(Type.RESET);
+	}	
+	
+	/**
 	 * Renders edit icon. This implementation renders Bootstrap Glyphicon pencil.
 	 * @param context
 	 * @return
 	 * @throws Exception 
 	 */
 	default Tag renderEditIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.pencil);		
+		return getHTMLFactory(context).glyphicon(Glyphicon.edit);		
 	}
 
 	/**
@@ -812,8 +901,49 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Tag renderDetailsIcon(C context) throws Exception {
 		return getHTMLFactory(context).glyphicon(Glyphicon.option_horizontal);		
-	}	
+	}
+
+	/**
+	 * Renders clear icon. This implementation renders Bootstrap Glyphicon erase.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderCreateIcon(C context) throws Exception {
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.magic).getTarget();		
+	}
+
+	/**
+	 * Renders clear icon. This implementation renders Bootstrap Glyphicon erase.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderAddIcon(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.plus_sign);		
+	}
+
+	/**
+	 * Renders clear icon. This implementation renders Bootstrap Glyphicon erase.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderCancelIcon(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.remove);		
+	}
 	
+
+	/**
+	 * Renders clear icon. This implementation renders Bootstrap Glyphicon erase.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderSaveIcon(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.floppy_disk);		
+	}
+		
 	/**
 	 * Renders edit button. 
 	 * @param context
@@ -1021,7 +1151,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 			boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
 			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
 	
-			Button addButton = htmlFactory.button(getResourceString(context, isCreate ? "create" : "add", false))
+			@SuppressWarnings("resource")
+			Tag icon = isCreate ? renderCreateIcon(context) : renderAddIcon(context);
+			Button addButton = htmlFactory.button(icon.style().margin().right("5px"), getResourceString(context, isCreate ? "create" : "add", false))
 					.style(Style.PRIMARY)
 					.style().margin().left("5px")
 					.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
@@ -1242,7 +1374,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		String doc = renderDocumentation(context, feature);
 		if (doc != null) {
 			String textDoc = Jsoup.parse(doc).text();
-			String firstSentence = firstSentence(textDoc);			
+			String firstSentence = firstSentence(context, textDoc);			
 			ret.content(firstSentence);
 			if (!textDoc.equals(firstSentence) && docModal != null) {
 				Tag helpGlyph = renderHelpIcon(context);
@@ -1267,7 +1399,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	
 	default FormGroup<?> renderFeatureFormGroup(C context, T obj, EStructuralFeature feature, FieldContainer<?> fieldContainer, Modal docModal, String errorMessage) throws Exception {		
 		UIElement<?> control = renderFeatureControl(context, obj, feature);
-		FormGroup<?> ret = fieldContainer.formGroup(feature.getName(), control, CoreUtil.isBlank(errorMessage) ? renderFeatureFormGroupHelpText(context, obj, feature, docModal) : errorMessage);
+		FormGroup<?> ret = fieldContainer.formGroup(renderNamedElementLabel(context, feature), control, CoreUtil.isBlank(errorMessage) ? renderFeatureFormGroupHelpText(context, obj, feature, docModal) : errorMessage);
 		if (!CoreUtil.isBlank(errorMessage)) {
 			ret.feedback();
 			ret.status(Status.ERROR);
