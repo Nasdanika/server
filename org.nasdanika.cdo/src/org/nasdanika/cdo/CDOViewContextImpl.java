@@ -80,10 +80,16 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 	@Override
 	public final boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		Principal principal = getPrincipal();
-		if (principal!=null && target instanceof EObject) {
-			AccessDecision accessDecision = principal.authorize(this, (EObject) target, action, qualifier, environment);
-			if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
-				return AccessDecision.ALLOW.equals(accessDecision);
+		if (target instanceof EObject) {
+			if (principal!=null) { 
+				AccessDecision accessDecision = principal.authorize(this, (EObject) target, action, qualifier, environment);
+				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
+					return AccessDecision.ALLOW.equals(accessDecision);
+				}
+			}
+			// Authorize any action on objects which are not yet part of the repository.
+			if (((EObject) target).eResource() == null && ((EObject) target).eContainer() == null) {
+				return true;
 			}
 		}
 		return super.authorize(target, action, qualifier, environment);
