@@ -68,6 +68,8 @@ import org.pegdown.ast.WikiLinkNode;
  */
 public interface Renderer<C extends Context, T extends EObject> {
 	
+	public static final String REFERRER_KEY = "referrer";
+
 	public static final String ANNOTATION_KEY_VIEW_TAB = "view-tab";
 	
 	public static final String ANNOTATION_KEY_IS_TAB = "is-tab";
@@ -758,7 +760,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderEditButton(C context, T obj) throws Exception {
+	default Button renderEditButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button editButton = htmlFactory.button(renderEditIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
@@ -791,7 +793,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderSaveButton(C context, T obj) throws Exception {
+	default Button renderSaveButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button saveButton = htmlFactory.button(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
@@ -824,7 +826,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderCancelButton(C context, T obj) throws Exception {
+	default Button renderCancelButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button cancelButton = htmlFactory.button(renderCancelIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.DANGER);
@@ -850,7 +852,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default void wireCancelButton(C context, T obj, Button cancelButton) throws Exception {
 		if (context instanceof HttpServletRequestContext) {
-			String referrer = ((HttpServletRequestContext) context).getRequest().getParameter("referrer");
+			String referrer = ((HttpServletRequestContext) context).getRequest().getParameter(REFERRER_KEY);
 			if (referrer != null) {
 				HTMLFactory htmlFactory = getHTMLFactory(context);
 				Map<String, Object> env = new HashMap<>();
@@ -951,7 +953,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderDeleteButton(C context, T obj) throws Exception {
+	default Button renderDeleteButton(C context, T obj) throws Exception {
 		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);

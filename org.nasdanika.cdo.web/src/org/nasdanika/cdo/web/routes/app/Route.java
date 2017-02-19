@@ -22,6 +22,7 @@ import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
+import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HeaderParameter;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -330,16 +331,23 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 8)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 5);
 
-		content.content(editForm);
+		content.content(editForm);		
 		
-		Map<EStructuralFeature, String> errorMessages = new HashMap<>();
-		
+		Map<EStructuralFeature, String> errorMessages = new HashMap<>();		
 		errorMessages.put(SecurityPackage.Literals.LOGIN_USER__LOGIN, "Too short"); // For testing.
 				
 		renderEditableFeaturesFormGroups(context, target, editForm, featureDocModals, errorMessages);
 		
+		String originalReferrer = context.getRequest().getParameter(REFERRER_KEY);
+		if (originalReferrer == null) {
+			originalReferrer = referrer;
+		}
+		if (originalReferrer != null) {
+			editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+		}		
 		
-		
+		editForm.content(renderSaveButton(context, target).style().margin().right("5px"));
+		editForm.content(renderCancelButton(context, target));
 		
 //		// Header
 //		Tag header = content.getFactory().tag(TagName.h3, renderNamedElementLabel(context, target.eClass()), " ", renderLabel(context, target));
