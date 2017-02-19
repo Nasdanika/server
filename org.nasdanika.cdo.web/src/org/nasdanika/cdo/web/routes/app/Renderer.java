@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.routes.app;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -76,6 +77,18 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * Documentation annotation key.
 	 */
 	String ANNOTATION_KEY_DOCUMENTATION = "documentation";
+
+	/**
+	 * Rendering can be customized by annotating model element with
+	 * annotations with this source.
+	 * 
+	 * Adding UI rendering annotations to the model mixes modeling and UI concerns.
+	 * Also model annotations allow to define only one way of rendering a particular model element.
+	 * 
+	 * Other customization options include overriding <code>getRenderAnnotation()</code> method or rendering methods, and
+	 * UI code generation, which leverages method overriding.  
+	 */
+	String RENDER_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.render";
 	
 	/**
 	 * Default pegdown options.
@@ -103,11 +116,6 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	String ANNOTATION_KEY_LABEL = "label";
 	
-	/**
-	 * Defines named element label/display name.
-	 */
-	String ANNOTATION_KEY_ENAMED_ELEMENT_LABEL = "enamed-element-label";
-	
 	Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
 	
 	int MIN_FIRST_SENTENCE_LENGTH = 20;
@@ -118,18 +126,6 @@ public interface Renderer<C extends Context, T extends EObject> {
 	// multi-line
 	// input type
 	// select options	
-
-	/**
-	 * Rendering can be customized by annotating model element with
-	 * annotations with this source.
-	 * 
-	 * Adding UI rendering annotations to the model mixes modeling and UI concerns.
-	 * Also model annotations allow to define only one way of rendering a particular model element.
-	 * 
-	 * Other customization options include overriding <code>getRenderAnnotation()</code> method or rendering methods, and
-	 * UI code generation, which leverages method overriding.  
-	 */
-	String RENDER_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.render";
 	
 	Renderer<Context, EObject> INSTANCE = new Renderer<Context, EObject>() {
 		
@@ -152,8 +148,18 @@ public interface Renderer<C extends Context, T extends EObject> {
 	}
 		
 	/**
-	 * Retrieves render annotation. This implementation reads render annotations from "org.nasdanika.cdo.web.render"
-	 * annotation on the model element. This method can be overridden to read annotations from another source,
+	 * Retrieves render annotation. 
+	 * 
+	 * If the model element is {@link ENamedElement}, then annotation value is
+	 * retrieved as a resource string with key ``<Named element EClass name without first E uncapitalized>.<named element name>.render.<key>``. 
+	 * For example ``attribute.name.render.label`` or ``reference.guest.render.visible``. This approach keeps resource string keys simple enough, but
+	 * may result in name clashes if used in a base renderer which serves two different model elements with different features with the same name. If it happens,
+	 * define per-model element renderers and render annotations within their resource bundles - this is the approach which https://github.com/Nasdanika/codegen-ecore-web-ui takes.
+	 * 
+	 * If there is no resource string matching the annotation key, then annotation value is read from the details entry with the specified key of
+	 * he model element annotation with source ``org.nasdanika.cdo.web.render``.
+	 * 
+	 * This method can be overridden to read annotations from another source,
 	 * e.g. keeping render annotations associated with the current user would allow to customize UI on per-user basis.
 	 * Along the same lines the UI may be customized based on the locale or geography. 
 	 * All these and other options may be chained, e.g. if user profile does not cusomize rendering, then fall-back to 
@@ -162,10 +168,27 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param modelElement
 	 * @param key
 	 * @return
+	 * @throws Exception 
 	 */
-	default String getRenderAnnotation(C context, EModelElement modelElement, String key) {
+	default String getRenderAnnotation(C context, EModelElement modelElement, String key) throws Exception {
+		if (modelElement instanceof ENamedElement) {
+			String name = ((ENamedElement) modelElement).getName();
+			String className = modelElement.eClass().getName();
+			if (className.startsWith("E")) {
+				className = className.substring(1);
+			}
+			String rs = getResourceString(context, StringUtils.uncapitalize(className)+"."+name+".render."+key, false);
+			if (rs != null) {
+				return rs;
+			}
+		}
+		
 		EAnnotation ra = modelElement.getEAnnotation(RENDER_ANNOTATION_SOURCE);
-		return ra == null ? null : ra.getDetails().get(key);
+		if (ra != null) {
+			return ra.getDetails().get(key);
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -314,17 +337,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderNamedElementLabel(C context, ENamedElement namedElement) throws Exception {
-		String label = getRenderAnnotation(context, namedElement, ANNOTATION_KEY_ENAMED_ELEMENT_LABEL);
+		String label = getRenderAnnotation(context, namedElement, ANNOTATION_KEY_LABEL);
 		if (label != null) {
 			return label;
 		}		
-		String name = namedElement.getName();
-		String className = namedElement.eClass().getName();
-		if (className.startsWith("E")) {
-			className = className.substring(1);
-		}
-		String rs = getResourceString(context, StringUtils.uncapitalize(className)+"."+name+".label", false);
-		return rs == null ? nameToLabel(name) : rs;
+		return nameToLabel(namedElement.getName());
 	}
 	
 	/**
@@ -345,7 +362,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 
 	/**
 	 * Renders element documentation. Documentation is retrieved from "documentation" annotation key 
-	 * and if not found from Ecore GenModel annotation.
+	 * and, if not found, from Ecore GenModel annotation.
 	 * @param context
 	 * @param modelElement
 	 * @return gendoc annotation rendered as markdown to HTML or null if there is no documentation.
@@ -591,17 +608,37 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param obj
 	 * @param key
 	 * @param interpolate If true, the value of the key, if found, is interpolated using a context that resolves tokens to resource strings.
-	 * @return Resource string for a given key. This implementation uses resource bundle.
+	 * @return Resource string for a given key. This implementation uses resource bundle. If property with given key is not found in the resource bundle, then
+	 * this implementation reads ``<key>@`` property (property reference), e.g. ``documentation@`` for documentation. If such property is present, then a classloader
+	 * resource with property value, if present, is loaded and stringified with {@link CoreUtil}.stringify() method. If resource reference property value ends with ``.md``,
+	 * then its value is treated as markdown and is converted to HTML. Resource references and markdown conversion can be leveraged in localization of documentation
+	 * resources. 
 	 * @throws Exception
 	 */
 	default String getResourceString(C context, String key, boolean interpolate) throws Exception {
+		LinkedList<Class<?>> resourceBundleClasses = getResourceBundleClasses(context);
+		
 		String rs = null;
-		for (ResourceBundle rb: getResourceBundles(context)) {
+		for (Class<?> rbc: resourceBundleClasses) {
+			ResourceBundle rb = ResourceBundle.getBundle(rbc.getName(), getLocale(context), rbc.getClassLoader());
 			if (rb.containsKey(key)) {
 				rs = rb.getString(key);
 				break;
 			}
-		}
+			
+			String refKey = key + '@';
+			if (rb.containsKey(refKey)) {
+				String rsRef = rb.getString(refKey);
+				URL rsRes = rbc.getResource(rsRef);
+				if (rsRes != null) {
+					rs = CoreUtil.stringify(rsRes);
+					if (rsRef.endsWith(".md")) {
+						rs = markdownToHtml(context, rs);
+					}
+					break;
+				}
+			}			
+		}		
 		
 		if (rs != null && interpolate) {
 			return getHTMLFactory(context).interpolate(rs, token -> {
@@ -613,18 +650,21 @@ public interface Renderer<C extends Context, T extends EObject> {
 				}
 			});
 		}
+		
 		return rs;
 	}
 	
 	/**
 	 * @param context
-	 * @return List of resource bundles to search for a resource string. This implementation returns  list containing resource bundle for Renderer.class.getName().
+	 * @return List of classes to load resource bundles from to search for resource strings. 
+	 * This implementation returns list containing Renderer.class.
+	 * 
 	 * Subtypes may override this method to add additional bundles. 
 	 * @throws Exception
 	 */
-	default LinkedList<ResourceBundle> getResourceBundles(C context) throws Exception {
-		LinkedList<ResourceBundle> ret = new LinkedList<>();
-		ret.add(ResourceBundle.getBundle(Renderer.class.getName(), getLocale(context)));
+	default LinkedList<Class<?>> getResourceBundleClasses(C context) throws Exception {
+		LinkedList<Class<?>> ret = new LinkedList<>();
+		ret.add(Renderer.class);
 		return ret;
 	}
 	
