@@ -3,9 +3,12 @@ package org.nasdanika.cdo.web.routes.app;
 import java.io.BufferedReader;
 import java.io.StringReader;
 import java.net.URL;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +33,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
@@ -70,6 +74,10 @@ import org.pegdown.ast.WikiLinkNode;
  */
 public interface Renderer<C extends Context, T extends EObject> {
 	
+	public static final String TITLE_KEY = "title";
+
+	public static final String NAME_KEY = "name";
+
 	public static final String REFERRER_KEY = "referrer";
 
 	public static final String ANNOTATION_KEY_VIEW_TAB = "view-tab";
@@ -348,8 +356,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 	}
 	
 	/**
-	 * Renders individual feature value. This implementation converts value to string and then html-escapes it.
-	 * nulls are rendered as blank.
+	 * Renders individual feature value. This implementation: 
+	 * 
+	 * * Nulls are rendered as empty strings.
+	 * * For booleans invokes renderTrue() or renderFalse();
+	 * * For dates uses ``format`` annotation to format with {@link SimpleDateFormat}, if the annotation is present.
+	 * * For numbers uses ``format`` annotation to format with {@link DecimalFormat}, if the annotation is present.
+	 * * Otherwise converts value to string and then html-escapes it.
 	 * @param context
 	 * @param feature
 	 * @param value
@@ -360,7 +373,47 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (value instanceof EObject) {
 			return getRenderer(((EObject) value).eClass()).renderLink(context, (EObject) value);
 		}
-		return value == null ? "" : StringEscapeUtils.escapeHtml4(value.toString());
+		if (value == null) {
+			return "";
+		}
+		if (value instanceof Boolean) {
+			return (Boolean) value ?  renderTrue(context) : renderFalse(context);
+		}
+		if (value instanceof Date) {
+			String format = getRenderAnnotation(context, feature, "format");
+			if (format != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				return sdf.format((Date) value);
+			}
+		} else if (value instanceof Number) {
+			String format = getRenderAnnotation(context, feature, "format");
+			if (format != null) {
+				DecimalFormat sdf = new DecimalFormat(format);
+				return sdf.format(value);
+			}
+		}			
+			
+		 return StringEscapeUtils.escapeHtml4(value.toString());		
+	}
+	
+	/**
+	 * Renders true value. This implementation renders a checkmark of SUCCESS color.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Object renderTrue(C context) throws Exception {
+		return getHTMLFactory(context).glyphicon(Glyphicon.ok).style().color().bootstrapColor(Color.SUCCESS);
+	}
+	
+	/**
+	 * Renders false value. This implementation renders empty string.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Object renderFalse(C context) throws Exception {
+		return "";
 	}
 
 	/**
@@ -454,7 +507,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		String textDoc = Jsoup.parse(doc).text();
 		String firstSentence = firstSentence(context, textDoc);					
 		Tag helpGlyph = renderHelpIcon(context);
-		helpGlyph.attribute("title", firstSentence);
+		helpGlyph.attribute(TITLE_KEY, firstSentence);
 		if (!textDoc.equals(firstSentence) && docModal != null) {
 			helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
 			helpGlyph.style("cursor", "pointer");
@@ -769,9 +822,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 			wireEditButton(context, obj, editButton);
 
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "editTooltip", false), env);
-			editButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			editButton.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			return editButton;
 		}
@@ -802,9 +855,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 			wireSaveButton(context, obj, saveButton);
 
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "saveTooltip", false), env);
-			saveButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			saveButton.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			return saveButton;
 		}
@@ -835,9 +888,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 			wireCancelButton(context, obj, cancelButton);
 
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "cancelTooltip", false), env);
-			cancelButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			cancelButton.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			return cancelButton;
 		}
@@ -862,7 +915,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			if (referrer != null) {
 				HTMLFactory htmlFactory = getHTMLFactory(context);
 				Map<String, Object> env = new HashMap<>();
-				env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+				env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 				String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel", false), env));			
 				cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';return false;");
 				return;
@@ -964,9 +1017,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip", false), env);
-			deleteButton.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+			deleteButton.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			wireDeleteButton(context, obj, deleteButton);
 			
 			return deleteButton;
@@ -984,7 +1037,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default void wireDeleteButton(C context, T obj, Button deleteButton) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Map<String, Object> env = new HashMap<>();
-		env.put("name", renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+		env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete", false), env));			
 		// Delete through GET, not REST-compliant, but works with simple JavaScript. 
 		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';"); 
@@ -1036,7 +1089,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Object renderFeatureView(C context, T obj, EStructuralFeature feature, boolean showActionButtons) throws Exception {
 		Fragment ret = getHTMLFactory(context).fragment();
 		Map<String, Object> env = new HashMap<>();
-		env.put("name", feature.getName());
+		env.put(NAME_KEY, feature.getName());
 		Object featureValue = obj.eGet(feature);
 		if (feature.isMany()) {
 			String viewAnnotation = getRenderAnnotation(context, feature, "view");
@@ -1155,7 +1208,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (context.authorizeCreate(obj, feature.getName(), null)) { // Adding to a reference is considered create.
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", feature.getName());
+			env.put(NAME_KEY, feature.getName());
 			boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
 			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
 	
@@ -1164,7 +1217,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Button addButton = htmlFactory.button(icon.style().margin().right("5px"), getResourceString(context, isCreate ? "create" : "add", false))
 					.style(Style.PRIMARY)
 					.style().margin().left("5px")
-					.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			wireFeatureAddButton(context, obj, feature, addButton);
 			return addButton;
@@ -1210,14 +1263,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (authorized) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", feature.getName());
+			env.put(NAME_KEY, feature.getName());
 			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "clearTooltip" : "deleteTooltip", false), env);
 	
 			// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
 			Button deleteButton = htmlFactory.button(idx == -1 ? renderClearIcon(context) : renderDeleteIcon(context))
 					.style(Style.DANGER)
 					.style().margin().left("5px")
-					.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			wireFeatureValueDeleteButton(context, obj, feature, idx, value, deleteButton);
 			return deleteButton;
@@ -1233,7 +1286,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default void wireFeatureValueDeleteButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button deleteButton) throws Exception {
 		Map<String, Object> env = new HashMap<>();
-		env.put("name", feature.getName());
+		env.put(NAME_KEY, feature.getName());
 		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(getResourceString(context, idx == -1 ? "confirmClear" : "confirmDelete", false), env));
 		String deleteLocation;
 		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
@@ -1257,13 +1310,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderFeatureValueEditButton(C context, T obj, EStructuralFeature feature, int idx, Object value) throws Exception {		
 		if (context.authorizeUpdate(obj, feature.getName(), null)) {
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", feature.getName());
+			env.put(NAME_KEY, feature.getName());
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "selectTooltip" : "editTooltip", false), env);
 			Button editButton = htmlFactory.button(renderEditIcon(context))
 				.style(Style.PRIMARY)
 				.style().margin().left("5px")
-				.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+				.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			wireFeatureValueEditButton(context, obj, feature, idx, value, editButton); 
 			return editButton;
@@ -1296,13 +1349,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value) throws Exception {		
 		if (context.authorizeRead(value, null, null)) {
 			Map<String, Object> env = new HashMap<>();
-			env.put("name", getRenderer(value).renderLabel(context, value));
+			env.put(NAME_KEY, getRenderer(value).renderLabel(context, value));
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "viewTooltip", false), env);
 			Button viewButton = htmlFactory.button(renderDetailsIcon(context))
 				.style(Style.PRIMARY)
 				.style().margin().left("5px")
-				.attribute("title", StringEscapeUtils.escapeHtml4(tooltip));
+				.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			wireFeatureValueViewButton(context, obj, feature, idx, value, viewButton); 
 			return viewButton;
