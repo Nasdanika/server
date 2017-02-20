@@ -328,17 +328,21 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 //				.novalidate()
 				.action("edit.html")
 				.method(Method.post)
+				.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
+				.horizontal(Bootstrap.DeviceSize.SMALL, 5)
+				.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
+				.horizontal(Bootstrap.DeviceSize.LARGE, 3)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
-				.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 8)
-				.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 5);
+				.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
+				.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
 
 		content.content(editForm);		
 		
 		Map<EStructuralFeature, String> errorMessages = new HashMap<>();		
 		errorMessages.put(SecurityPackage.Literals.LOGIN_USER__LOGIN, "Too short"); // For testing.
 				
-		renderEditableFeaturesFormGroups(context, target, editForm, featureDocModals, errorMessages);
+		renderEditableFeaturesFormGroups(context, target, editForm, featureDocModals, errorMessages, true);
 		
 		String originalReferrer = context.getRequest().getParameter(REFERRER_KEY);
 		if (originalReferrer == null) {

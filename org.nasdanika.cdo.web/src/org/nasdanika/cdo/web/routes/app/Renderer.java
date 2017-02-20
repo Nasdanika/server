@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.routes.app;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -10,11 +11,15 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +38,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.jsoup.Jsoup;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Bootstrap.Style;
@@ -40,6 +46,7 @@ import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Button.Type;
 import org.nasdanika.html.FieldContainer;
+import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
@@ -50,10 +57,12 @@ import org.nasdanika.html.Input;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
+import org.nasdanika.html.Select;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TextArea;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Event;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -388,12 +397,85 @@ public interface Renderer<C extends Context, T extends EObject> {
 		} else if (value instanceof Number) {
 			String format = getRenderAnnotation(context, feature, "format");
 			if (format != null) {
-				DecimalFormat sdf = new DecimalFormat(format);
-				return sdf.format(value);
+				DecimalFormat df = new DecimalFormat(format);
+				return df.format(value);
 			}
 		}			
 			
 		 return StringEscapeUtils.escapeHtml4(value.toString());		
+	}
+	
+	/**
+	 * Parses/converts string value to be compatible with the feature value type.
+	 * 
+	 * * Booleans - ``true`` and ``on`` are truthy values, ``false``, ``null``, ``off`` and empty string are falsey, all other values are illegal.
+	 * * Date - uses ``format`` annotation, if present, to parse using {@link SimpleDateFormat}.
+	 * * Number - uses ``format`` annotation, if present, to parse using {@link DecimalFormat}.
+	 * * Otherwise uses context.convert() method.
+	 * @param context
+	 * @param feature
+	 * @param strValue
+	 * @return
+	 * @throws Exception
+	 */
+	default Object parseFeatureValue(C context, EStructuralFeature feature, String strValue) throws Exception {
+		Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+		if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
+			if (strValue == null) {
+				return false;
+			}
+			switch (strValue) {
+			case "true":
+			case "on":
+				return true;
+			case "false":
+			case "off":
+				return false;
+			default:
+				throw new IllegalArgumentException("Cannot convert to boolean: " + strValue);
+			}
+		}
+		
+		if (Date.class == featureTypeInstanceClass) {
+			String format = getRenderAnnotation(context, feature, "format");
+			if (format != null) {
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				return sdf.parse(strValue);
+			}			
+		}
+		
+		if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
+			String format = getRenderAnnotation(context, feature, "format");
+			if (format != null) {
+				DecimalFormat df = new DecimalFormat(format);
+				if (BigDecimal.class == featureTypeInstanceClass) {
+					df.setParseBigDecimal(true);
+					return df.parse(strValue);
+				}				
+				Number parsed = df.parse(strValue);				
+				if (Byte.class == featureTypeInstanceClass) {
+					return parsed.byteValue();
+				}
+				if (Double.class == featureTypeInstanceClass) {
+					return parsed.doubleValue();
+				}
+				if (Float.class == featureTypeInstanceClass) {
+					return parsed.floatValue();
+				}
+				if (Integer.class == featureTypeInstanceClass) {
+					return parsed.intValue();
+				}
+				if (Long.class == featureTypeInstanceClass) {
+					return parsed.longValue();
+				}
+				if (Short.class == featureTypeInstanceClass) {
+					return parsed.shortValue();
+				}				
+				return context.convert(parsed, featureTypeInstanceClass);
+			}
+		}
+		
+		return context.convert(strValue, featureTypeInstanceClass);
 	}
 	
 	/**
@@ -1399,23 +1481,186 @@ public interface Renderer<C extends Context, T extends EObject> {
 	
 	/**
 	 * Renders control for the feature, e.g. input, select, or text area.
+	 * 
+	 * Annotations:
+	 * 
+	 * * ``control`` - defaults to input for attributes and multi-value features and select for references.
+	 *     * input (default),
+	 *     * select
+	 *     * textarea
+	 * * ``input-type`` - for ``input`` control - one of {@link HTMLFactory.InputType} values. Checkbox for booleans and multi-value features, text otherwise.
 	 * @param context
 	 * @param obj
 	 * @param feature
-	 * @return
+	 * @return Null for checkboxes and radios - they are added directly to the fieldContainer. Control to add to a field group otherwise.
 	 * @throws Exception
 	 */
-	default UIElement<?> renderFeatureControl(C context, T obj, EStructuralFeature feature) throws Exception {
-		// TODO - control type from annotation
-		// TODO - input type from annotation or from feature data type if there is no annotation.
-		// TODO - single/many
-		// Extremely simple implementation to get started.
-		Input ret = getHTMLFactory(context).input(InputType.text).name(feature.getName()).placeholder(feature.getName());
+	@SuppressWarnings("unchecked")
+	default UIElement<?> renderFeatureControl(
+			C context, 
+			T obj, 
+			EStructuralFeature feature, 
+			FieldContainer<?> fieldContainer, 
+			Modal docModal, 
+			String errorMessage,
+			boolean helpTooltip) throws Exception {
 		Object fv = obj.eGet(feature);
-		if (fv != null) {
-			ret.value(StringEscapeUtils.escapeHtml4(fv.toString()));
-		}				
-		return ret;
+		String controlType = getRenderAnnotation(context, feature, "control");
+		if (controlType == null) {
+			if (feature.isMany()) {
+				controlType = "input";
+			} else {
+				controlType = feature instanceof EAttribute ? "input" : "select";
+			}
+		}
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Object label = renderNamedElementLabel(context, feature);
+		String textLabel = Jsoup.parse(label.toString()).text();
+		if (helpTooltip) {
+			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal));			
+		}
+		switch (controlType) {
+		case "input":
+			String inputTypeStr = getRenderAnnotation(context, feature, "input-type");
+			InputType inputType = inputTypeStr == null ? null : HTMLFactory.InputType.valueOf(inputTypeStr);
+			if (inputType == null) {
+				if (feature.isMany()) {
+					inputType = InputType.checkbox;
+				} else {
+					Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+					if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
+						inputType = InputType.checkbox;
+					} else if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
+						inputType = InputType.number;
+					} else if (Date.class == featureTypeInstanceClass) {
+						inputType = InputType.date;
+					} else {
+						inputType = InputType.text;
+					}
+				}
+			}
+			
+			switch (inputType) {
+			case checkbox:
+				if (feature.isMany()) {
+					// Render a checkbox per choice.
+					FieldSet checkboxesFieldSet = fieldContainer.fieldset();
+					checkboxesFieldSet.style()
+						.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
+						.style().margin().bottom("5px");
+					checkboxesFieldSet.legend(label);
+					Set<String> valuesToSelect = new HashSet<>();
+					for (Object fev: ((Collection<Object>) fv)) {
+						valuesToSelect.add(renderFeatureValue(context, feature, fev).toString());
+					}
+					for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
+						Input checkbox = htmlFactory.input(inputType);
+						checkbox.name(feature.getName());
+						checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
+						if (valuesToSelect.contains(fc.getKey())) {
+							checkbox.attribute("checked", "true");
+						}
+						checkboxesFieldSet.checkbox(fc.getValue(), checkbox, false);
+					}					
+					return null;
+				}
+				
+				Input checkbox = htmlFactory.input(inputType);
+				checkbox.name(feature.getName());
+				checkbox.value(true);
+				if (Boolean.TRUE.equals(fv)) {
+					checkbox.attribute("checked", "true");					
+				}
+
+				fieldContainer.checkbox(renderNamedElementLabel(context, feature), checkbox, true);
+				return null;
+			case radio:
+				// Radio - get values and labels from options.
+				FieldSet radiosFieldSet = fieldContainer.fieldset();
+				radiosFieldSet.style()
+					.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
+					.style().margin().bottom("5px");
+				radiosFieldSet.legend(label);
+				String valueToSelect = fv == null ? null : renderFeatureValue(context, feature, fv).toString();
+				for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
+					Input radio = htmlFactory.input(inputType)
+							.name(feature.getName())
+							.value(StringEscapeUtils.escapeHtml4(renderFeatureValue(context, feature, fv).toString()))
+							.placeholder(textLabel)
+							.required(isRequired(context, obj, feature));
+					if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
+						radio.attribute("checked", "true");
+					}
+					radiosFieldSet.radio(fc.getValue(), radio, false);
+				}
+				return null;
+			default:
+				return htmlFactory.input(inputType)
+					.name(feature.getName())
+					.value(StringEscapeUtils.escapeHtml4(renderFeatureValue(context, feature, fv).toString()))
+					.placeholder(textLabel)
+					.required(isRequired(context, obj, feature));								
+			}
+		case "select":
+			Select select = htmlFactory.select()
+				.name(feature.getName())
+				.required(isRequired(context, obj, feature));
+			String valueToSelect = fv == null ? null : renderFeatureValue(context, feature, fv).toString();
+			for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
+				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(fc.getValue()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
+			}
+			return select;
+		case "textarea":
+			TextArea textArea = htmlFactory.textArea()
+				.name(feature.getName())
+				.placeholder(textLabel)
+				.required(isRequired(context, obj, feature));			
+			textArea.content(StringEscapeUtils.escapeHtml4(renderFeatureValue(context, feature, fv).toString()));
+			return textArea;
+		default:
+			throw new IllegalArgumentException("Unsupported control type: "+controlType);
+		}
+	}
+	
+	/**
+	 * Returns true if given feature is required. This implementation returns true if feature is not many and lower bound is not 0.
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @throws Exception
+	 */
+	default boolean isRequired(C context, T obj, EStructuralFeature feature) throws Exception {
+		return !feature.isMany() && feature.getLowerBound() != 0;
+	}
+
+	/**
+	 * Invoked for select, radio and checkbox on non-boolean types. 
+	 * 
+	 * This implementation loads choices from the ``choices`` annotation.
+	 * Choices are defined each on a new line as a value - label pair <value>=<label>.     
+	 * @return
+	 */
+	default Collection<Map.Entry<String, String>> getFeatureChoices(C context, T obj, EStructuralFeature feature) throws Exception {
+		Map<String,String> collector = new LinkedHashMap<>();
+		String choicesAnnotation = getRenderAnnotation(context, feature, "choices");
+		if (choicesAnnotation != null) {
+			try (BufferedReader br = new BufferedReader(new StringReader(choicesAnnotation))) {
+				String line;
+				while ((line = br.readLine()) != null) {
+					if (!CoreUtil.isBlank(line) && !line.startsWith("#")) {
+						int idx = line.indexOf('=');
+						if (idx == -1) {
+							collector.put(line, line);
+						} else {
+							collector.put(line.substring(0, idx), line.substring(idx+1));							
+						}
+					}
+				}
+			}
+		}
+		
+		return Collections.unmodifiableCollection(collector.entrySet());
 	}
 	
 	/**
@@ -1458,9 +1703,42 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();
 	}
 	
-	default FormGroup<?> renderFeatureFormGroup(C context, T obj, EStructuralFeature feature, FieldContainer<?> fieldContainer, Modal docModal, String errorMessage) throws Exception {		
-		UIElement<?> control = renderFeatureControl(context, obj, feature);
-		FormGroup<?> ret = fieldContainer.formGroup(renderNamedElementLabel(context, feature), control, CoreUtil.isBlank(errorMessage) ? renderFeatureFormGroupHelpText(context, obj, feature, docModal) : errorMessage);
+	/**
+	 * Renders form group if renderFeatureControl() returns non-null value.
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @param fieldContainer
+	 * @param docModal
+	 * @param errorMessage
+	 * @param helpTooltip If true, help message is rendered as a tooltip over a help annotation, like in the view. Otherwise it is renders as form group help text
+	 *  (not visible in some layouts). 
+	 * @return
+	 * @throws Exception
+	 */
+	default FormGroup<?> renderFeatureFormGroup(
+			C context, 
+			T obj, 
+			EStructuralFeature feature, 
+			FieldContainer<?> fieldContainer, 
+			Modal docModal, 
+			String errorMessage,
+			boolean helpTooltip) throws Exception {
+		
+		UIElement<?> control = renderFeatureControl(context, obj, feature, fieldContainer, docModal, errorMessage, helpTooltip);
+		if (control == null) {
+			return null;
+		}
+		Object label = renderNamedElementLabel(context, feature);
+		if (isRequired(context, obj, feature)) {
+			label = getHTMLFactory(context).fragment(label, "*");
+		}
+		if (helpTooltip) {
+			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal));
+		}
+		Object doc = helpTooltip ? null : renderFeatureFormGroupHelpText(context, obj, feature, docModal);
+		Object helpText = CoreUtil.isBlank(errorMessage) ? doc : errorMessage;
+		FormGroup<?> ret = fieldContainer.formGroup(label, control, helpText);
 		if (!CoreUtil.isBlank(errorMessage)) {
 			ret.feedback();
 			ret.status(Status.ERROR);
@@ -1468,9 +1746,16 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return ret;
 	}
 	
-	default void renderEditableFeaturesFormGroups(C context, T obj, FieldContainer<?> fieldContainer, Map<EStructuralFeature, Modal> docModals, Map<EStructuralFeature,String> errorMessages) throws Exception {
+	default void renderEditableFeaturesFormGroups(
+			C context, 
+			T obj, 
+			FieldContainer<?> fieldContainer, 
+			Map<EStructuralFeature, Modal> docModals, 
+			Map<EStructuralFeature,String> errorMessages,
+			boolean helpTooltip) throws Exception {
+		
 		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
-			renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf));
+			renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip);
 		}
 	}
 		
