@@ -166,7 +166,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		default:
 			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\"resources/bootstrap/css/bootstrap-"+theme.name().toLowerCase()+".min.css\" rel=\"stylesheet\">");							
 		}
-		return HTMLFactory.INSTANCE.interpolate(getPageTemplate(), env);		
+		return HTMLFactory.INSTANCE.interpolate(getPageTemplate(context), env);		
 	}
 
 	/**
@@ -191,11 +191,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 
 	/**
 	 * @return page template which takes <code>title</code>, <code>bootstrap-theme</code>, and <code>content</code> tokens for interpolation.
-	 * This implementation returns a minimalistic page template with Bootstrap, Knockout, require.js, jquery.js and knockout.js scripts.
+	 * This implementation returns resource string ``page.template``, which resolves to ``page-template.html`` resource - 
+	 * a minimalistic page template with Bootstrap, Knockout, require.js, jquery.js and knockout.js scripts.
+	 * @throws Exception 
 	 * 
 	 */
-	protected Object getPageTemplate() {
-		return Route.class.getResource("page-template.html");
+	protected Object getPageTemplate(C context) throws Exception {
+		return getResource(context, "page.template");
 	}
 	
 	@Override
@@ -204,33 +206,33 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	}
 
 	/**
-	 * Renders an optional page header.
+	 * Renders an optional page header. This implementation returns ``page.header`` resource. 
 	 * @param context
 	 * @return
 	 * @throws Exception
 	 */
 	protected Object renderHeader(C context) throws Exception {
-		return null;
+		return getResource(context, "page.template");
 	}
 
 	/**
-	 * Renders an optional page footer.
+	 * Renders an optional page footer. This implementation returns ``page.footer`` resource.
 	 * @param context
 	 * @return
 	 * @throws Exception
 	 */
 	protected Object renderFooter(C context) throws Exception {
-		return null;
+		return getResource(context, "page.footer");
 	}
 	
 	/**
-	 * Renders an optional page header.
+	 * Renders an optional page header. This implementation returns ``page.left-panel`` resource.
 	 * @param context
 	 * @return
 	 * @throws Exception
 	 */
 	protected Object renderLeftPanel(C context) throws Exception {
-		return null;
+		return getResource(context, "page.left-panel");
 	}
 	
 	/**
@@ -293,14 +295,20 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	}
 	
-	// TODO - support both get and post, validate on post 
 	@RouteMethod(
 			comment="Renders object edit form.",
-			action = "update")
-	public Object getEditHtml(
+			action = "update",
+			value = { RequestMethod.GET, RequestMethod.POST },
+			path = "edit.html")
+	public Object edit(
 			@ContextParameter C context,
 			@TargetParameter T target,
 			@HeaderParameter("referer") String referrer) throws Exception {
+		
+		if (context.getMethod() == RequestMethod.POST) {
+			setEditableFeatures(context, target);
+			System.out.println(validate(context, target));
+		}
 		
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(((EObject) context.getTarget()).eClass().getName()));
 		HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -352,8 +360,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
 		}		
 		
-		editForm.content(renderSaveButton(context, target).style().margin().right("5px"));
-		editForm.content(renderCancelButton(context, target));
+		Tag buttonBar = content.getFactory().div().style().text().align().right();
+		buttonBar.content(renderSaveButton(context, target).style().margin().right("5px"));
+		buttonBar.content(renderCancelButton(context, target));
+		editForm.content(buttonBar);
 		
 //		// Header
 //		Tag header = content.getFactory().tag(TagName.h3, renderNamedElementLabel(context, target.eClass()), " ", renderLabel(context, target));

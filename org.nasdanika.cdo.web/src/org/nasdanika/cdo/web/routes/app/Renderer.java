@@ -27,6 +27,11 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -35,7 +40,10 @@ import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.util.Diagnostician;
 import org.jsoup.Jsoup;
+import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
@@ -87,7 +95,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 
 	public static final String NAME_KEY = "name";
 
-	public static final String REFERRER_KEY = "referrer";
+	public static final String REFERRER_KEY = ".referrer";
 
 	public static final String ANNOTATION_KEY_VIEW_TAB = "view-tab";
 	
@@ -418,6 +426,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	default Object parseFeatureValue(C context, EStructuralFeature feature, String strValue) throws Exception {
 		Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
 		if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
@@ -434,6 +443,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 			default:
 				throw new IllegalArgumentException("Cannot convert to boolean: " + strValue);
 			}
+		}
+		
+		if (CDOObject.class.isAssignableFrom(featureTypeInstanceClass) && context instanceof CDOViewContext<?, ?>) {
+			return ((CDOViewContext<CDOView, ?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, strValue));
 		}
 		
 		if (Date.class == featureTypeInstanceClass) {
@@ -476,6 +489,37 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		
 		return context.convert(strValue, featureTypeInstanceClass);
+	}
+	
+	/**
+	 * Sets feature value from the context to the object. This implementation loads feature value(s) 
+	 * from the {@link HttpServletRequest} parameters.
+	 * @param context
+	 * @param feature
+	 * @throws Exception
+	 */
+	default void setFeatureValue(C context, T obj, EStructuralFeature feature) throws Exception {
+		if (context instanceof HttpServletRequestContext) {
+			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
+			if (feature.isMany()) {
+				@SuppressWarnings("unchecked")
+				Collection<Object> fv = (Collection<Object>) obj.eGet(feature);
+				fv.clear();
+				String[] values = request.getParameterValues(feature.getName());
+				if (values != null) {
+					for (String val: values) {
+						fv.add(parseFeatureValue(context, feature, val));
+					}
+				}						
+			} else {
+				String value = request.getParameter(feature.getName());
+				if (value == null) {
+					obj.eUnset(feature);
+				} else {
+					obj.eSet(feature, parseFeatureValue(context, feature, value));
+				}
+			}
+		}		
 	}
 	
 	/**
@@ -749,7 +793,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param interpolate If true, the value of the key, if found, is interpolated using a context that resolves tokens to resource strings.
 	 * @return Resource string for a given key. This implementation uses resource bundle. If property with given key is not found in the resource bundle, then
 	 * this implementation reads ``<key>@`` property (property reference), e.g. ``documentation@`` for documentation. If such property is present, then a classloader
-	 * resource with property value, if present, is loaded and stringified with {@link CoreUtil}.stringify() method. If resource reference property value ends with ``.md``,
+	 * resource with the name equal to the property value is loaded, if present, and stringified with {@link CoreUtil}.stringify() method. If resource reference property value ends with ``.md``,
 	 * then its value is treated as markdown and is converted to HTML. Resource references and markdown conversion can be leveraged in localization of documentation
 	 * resources. 
 	 * @throws Exception
@@ -791,6 +835,41 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		
 		return rs;
+	}
+	
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param key
+	 * @return Resource for a given key. This implementation uses resource bundle. If property with given key is not found in the resource bundle, then
+	 * this implementation reads ``<key>@`` property (property reference), e.g. ``documentation@`` for documentation. If such property is present, then a classloader
+	 * resource ({@link URL}) with the name equal to the property value is returned, if present.  
+	 * @throws Exception
+	 */
+	default Object getResource(C context, String key) throws Exception {
+		LinkedList<Class<?>> resourceBundleClasses = getResourceBundleClasses(context);
+		
+		Object res = null;
+		for (Class<?> rbc: resourceBundleClasses) {
+			ResourceBundle rb = ResourceBundle.getBundle(rbc.getName(), getLocale(context), rbc.getClassLoader());
+			if (rb.containsKey(key)) {
+				res = rb.getObject(key);
+				break;
+			}
+			
+			String refKey = key + '@';
+			if (rb.containsKey(refKey)) {
+				String rsRef = rb.getString(refKey);
+				URL rsRes = rbc.getResource(rsRef);
+				if (rsRes != null) {
+					res = rsRes;
+					break;
+				}
+			}			
+		}		
+		
+		return res;
 	}
 	
 	/**
@@ -1746,6 +1825,16 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return ret;
 	}
 	
+	/**
+	 * Renders form groups for editable features.
+	 * @param context
+	 * @param obj
+	 * @param fieldContainer
+	 * @param docModals
+	 * @param errorMessages
+	 * @param helpTooltip
+	 * @throws Exception
+	 */
 	default void renderEditableFeaturesFormGroups(
 			C context, 
 			T obj, 
@@ -1758,5 +1847,49 @@ public interface Renderer<C extends Context, T extends EObject> {
 			renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip);
 		}
 	}
+	
+	/** 
+	 * Reads feature values for editable features from the request, parses them and sets feature values.
+	 * @param context
+	 * @param obj
+	 * @param fieldContainer
+	 * @param docModals
+	 * @param errorMessages
+	 * @param helpTooltip
+	 * @throws Exception
+	 */
+	default void setEditableFeatures(C context,	T obj) throws Exception {		
+		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
+			setFeatureValue(context, obj, esf);
+		}
+	}
+	
+	default Diagnostic validate(C context, T obj) throws Exception {
+		Diagnostician diagnostician = new Diagnostician() {
+			
+			@Override
+			public String getObjectLabel(EObject eObject) {
+				try {
+					Object label = getRenderer(eObject).renderLabel(context, eObject);
+					String ret = label== null ? null : Jsoup.parse(label.toString()).text();
+					return ret == null ? super.getObjectLabel(eObject) : ret;
+				} catch (Exception e) {
+					return super.getObjectLabel(eObject);
+				}
+			}
+			
+			@Override
+			public Map<Object, Object> createDefaultContext() {
+				Map<Object, Object> ret = super.createDefaultContext();
+				ret.put(Context.class, context);
+				ret.put(Renderer.class, this);
+				return ret;
+			}
+			
+		}; 
+
+		return diagnostician.validate(obj);
+	}
+
 		
 }
