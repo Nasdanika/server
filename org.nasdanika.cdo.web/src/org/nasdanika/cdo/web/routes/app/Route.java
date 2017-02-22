@@ -1,33 +1,41 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.TransactionContext;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Form;
+import org.nasdanika.html.FormGroup;
+import org.nasdanika.html.FormGroup.Status;
 import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
+import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
-import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.HeaderParameter;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.PathParameter;
+import org.nasdanika.web.QueryParameter;
 import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.Resource;
 import org.nasdanika.web.RouteMethod;
@@ -303,15 +311,71 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object edit(
 			@ContextParameter C context,
 			@TargetParameter T target,
-			@HeaderParameter("referer") String referrer) throws Exception {
+			@QueryParameter(REFERRER_KEY) String referrerParameter,
+			@HeaderParameter("referer") String referrerHeader) throws Exception {
+		
+		boolean horizontalForm = true;
+		Map<EStructuralFeature, ValidationResult> validationResults = new HashMap<>();		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		ListGroup errorList = htmlFactory.listGroup();
 		
 		if (context.getMethod() == RequestMethod.POST) {
-			setEditableFeatures(context, target);
-			System.out.println(validate(context, target));
+			Consumer<Diagnostic> diagnosticConsumer = (diagnostic) -> {
+				List<?> dData = diagnostic.getData();
+				EStructuralFeature esf = dData.size() > 1 && dData.get(1) instanceof EStructuralFeature ? (EStructuralFeature) dData.get(1) : null;
+				FormGroup.Status status;
+				switch (diagnostic.getSeverity()) {
+				case Diagnostic.ERROR:
+					status = Status.ERROR;
+					break;
+				case Diagnostic.WARNING:
+					status = Status.WARNING;
+					break;
+				default:
+					status = Status.SUCCESS;
+				}
+				Style style = status.toStyle();
+				String message = diagnostic.getMessage();
+				String escapedMessage = CoreUtil.isBlank(message) ? status.name() : StringEscapeUtils.escapeHtml4(message);
+				if (esf == null) {
+					errorList.item(escapedMessage, style);
+				} else {
+					validationResults.put(esf, new ValidationResult(status, escapedMessage));
+					if (horizontalForm) {
+						Object featureNameLabel;
+						try {
+							featureNameLabel = renderNamedElementLabel(context, esf);
+						} catch (Exception e) {
+							featureNameLabel = esf.getName();
+						}
+						errorList.item(htmlFactory.label(style, featureNameLabel) + " " + escapedMessage, style);						
+					}
+				}
+			};
+			if (setEditableFeatures(context, target, diagnosticConsumer)) {
+				// Success - redirect to referrer parameter or referer header or the view.
+				if (context instanceof HttpServletRequestContext) {
+					String referrer = referrerParameter;
+					if (referrer == null) {
+						referrer = referrerHeader;
+					}
+					if (referrer == null) {
+						referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+					}
+					((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+					return Action.NOP;
+				}
+				
+				return "Update successful";
+			}
+			
+			if (context instanceof TransactionContext) {
+				((TransactionContext) context).setRollbackOnly();
+			}
 		}
 		
+		
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(((EObject) context.getTarget()).eClass().getName()));
-		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment content = htmlFactory.fragment();
 		
 		// Documentation modals
@@ -336,25 +400,30 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 //				.novalidate()
 				.action("edit.html")
 				.method(Method.post)
-				.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
-				.horizontal(Bootstrap.DeviceSize.SMALL, 5)
-				.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
-				.horizontal(Bootstrap.DeviceSize.LARGE, 3)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
-
-		content.content(editForm);		
 		
-		Map<EStructuralFeature, String> errorMessages = new HashMap<>();		
-		errorMessages.put(SecurityPackage.Literals.LOGIN_USER__LOGIN, "Too short"); // For testing.
+		if (horizontalForm) {
+			editForm
+				.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
+				.horizontal(Bootstrap.DeviceSize.SMALL, 5)
+				.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
+				.horizontal(Bootstrap.DeviceSize.LARGE, 3);			
+		}
+		
+		content.content(editForm);
+		
+		if (!errorList.isEmpty()) {
+			editForm.content(errorList);
+		}
 				
-		renderEditableFeaturesFormGroups(context, target, editForm, featureDocModals, errorMessages, true);
+		renderEditableFeaturesFormGroups(context, target, editForm, featureDocModals, validationResults, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
 		
-		String originalReferrer = context.getRequest().getParameter(REFERRER_KEY);
+		String originalReferrer = referrerParameter;
 		if (originalReferrer == null) {
-			originalReferrer = referrer;
+			originalReferrer = referrerHeader;
 		}
 		if (originalReferrer != null) {
 			editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
@@ -364,30 +433,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		buttonBar.content(renderSaveButton(context, target).style().margin().right("5px"));
 		buttonBar.content(renderCancelButton(context, target));
 		editForm.content(buttonBar);
-		
-//		// Header
-//		Tag header = content.getFactory().tag(TagName.h3, renderNamedElementLabel(context, target.eClass()), " ", renderLabel(context, target));
-//		Tag classDocIcon = renderDocumentationIcon(context, target.eClass(), classDocModal);
-//		if (classDocIcon != null) {
-//			header.content(classDocIcon);
-//		}
-//		content.content(header);
-//		
-//		// view 
-//		if (!isViewTab(context, target)) {
-//			content.content(renderView(context, target, featureDocModals));
-//		}
-//		
-//		Tabs tabs = content.getFactory().tabs();
-//		renderTabs(context, target, tabs, featureDocModals);
-//				
-//		if (!tabs.isEmpty()) {
-//			content.content(tabs);
-//		}
-		
-		// TODO - Cancel button navigates to referrer upon confirmation.
-		
-//		content.content("Edit "+renderLabel(context, target)+" <- "+referrer);
 		
 		return renderPage(context, title, content);		
 	}				

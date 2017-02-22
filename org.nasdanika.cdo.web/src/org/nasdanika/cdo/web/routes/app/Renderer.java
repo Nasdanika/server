@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,10 +28,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.view.CDOView;
-import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
@@ -57,7 +56,6 @@ import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.FormGroup;
-import org.nasdanika.html.FormGroup.Status;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
@@ -1073,14 +1071,15 @@ public interface Renderer<C extends Context, T extends EObject> {
 			if (referrer == null) {
 				referrer = request.getHeader("referer");
 			}
-			if (referrer != null) {
-				HTMLFactory htmlFactory = getHTMLFactory(context);
-				Map<String, Object> env = new HashMap<>();
-				env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
-				String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel", false), env));			
-				cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';return false;");
-				return;
+			if (referrer == null) {
+				referrer = ((HttpServletRequestContext) context).getObjectPath(obj)+"/"+INDEX_HTML;
 			}
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Map<String, Object> env = new HashMap<>();
+			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel", false), env));			
+			cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';return false;");
+			return;
 		}
 		cancelButton.type(Type.RESET);
 	}	
@@ -1581,7 +1580,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			EStructuralFeature feature, 
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
-			String errorMessage,
+			ValidationResult validationResult,
 			boolean helpTooltip) throws Exception {
 		Object fv = obj.eGet(feature);
 		String controlType = getRenderAnnotation(context, feature, "control");
@@ -1801,28 +1800,54 @@ public interface Renderer<C extends Context, T extends EObject> {
 			EStructuralFeature feature, 
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
-			String errorMessage,
+			ValidationResult validationResult,
 			boolean helpTooltip) throws Exception {
 		
-		UIElement<?> control = renderFeatureControl(context, obj, feature, fieldContainer, docModal, errorMessage, helpTooltip);
+		UIElement<?> control = renderFeatureControl(context, obj, feature, fieldContainer, docModal, validationResult, helpTooltip);
 		if (control == null) {
 			return null;
 		}
 		Object label = renderNamedElementLabel(context, feature);
+		HTMLFactory htmlFactory = getHTMLFactory(context);
 		if (isRequired(context, obj, feature)) {
-			label = getHTMLFactory(context).fragment(label, "*");
+			label = htmlFactory.fragment(label, "*");
 		}
 		if (helpTooltip) {
-			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal));
+			label = htmlFactory.fragment(label, renderDocumentationIcon(context, feature, docModal));
 		}
 		Object doc = helpTooltip ? null : renderFeatureFormGroupHelpText(context, obj, feature, docModal);
-		Object helpText = CoreUtil.isBlank(errorMessage) ? doc : errorMessage;
+		Object helpText = doc;
+		if (validationResult != null) {
+			Tag validationLabel = htmlFactory.label(validationResult.status.toStyle(), validationResult.message);
+			if (helpText == null) {
+				helpText = validationLabel;
+			} else {
+				helpText = htmlFactory.fragment(validationLabel, " ", helpText);
+			}
+		}
 		FormGroup<?> ret = fieldContainer.formGroup(label, control, helpText);
-		if (!CoreUtil.isBlank(errorMessage)) {
-			ret.feedback();
-			ret.status(Status.ERROR);
+		if (validationResult != null) {
+			ret.status(validationResult.status);
 		}
 		return ret;
+	}
+	
+	/**
+	 * Helper class to pass validation results around.
+	 * @author Pavel
+	 *
+	 */
+	class ValidationResult {
+		
+		final FormGroup.Status status;
+		final String message;
+		
+		public ValidationResult(FormGroup.Status status, String message) {
+			super();
+			this.status = status;
+			this.message = message;
+		}
+		
 	}
 	
 	/**
@@ -1831,37 +1856,53 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param obj
 	 * @param fieldContainer
 	 * @param docModals
-	 * @param errorMessages
+	 * @param validationResults
 	 * @param helpTooltip
 	 * @throws Exception
 	 */
-	default void renderEditableFeaturesFormGroups(
+	default List<FormGroup<?>> renderEditableFeaturesFormGroups(
 			C context, 
 			T obj, 
 			FieldContainer<?> fieldContainer, 
 			Map<EStructuralFeature, Modal> docModals, 
-			Map<EStructuralFeature,String> errorMessages,
+			Map<EStructuralFeature,ValidationResult> errorMessages,
 			boolean helpTooltip) throws Exception {
 		
+		List<FormGroup<?>> ret = new ArrayList<>();
 		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
-			renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip);
+			ret.add(renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip));
 		}
+		return ret;
 	}
 	
 	/** 
 	 * Reads feature values for editable features from the request, parses them and sets feature values.
-	 * @param context
-	 * @param obj
-	 * @param fieldContainer
-	 * @param docModals
-	 * @param errorMessages
-	 * @param helpTooltip
-	 * @throws Exception
+	 * Then validates the object. Invokes diagnostic consumer, if it is not null, for object-level results and results associated with one of editable features.
+	 * @return true if there are no errors in object-level and editable features results.
 	 */
-	default void setEditableFeatures(C context,	T obj) throws Exception {		
-		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
+	default boolean setEditableFeatures(C context, T obj, Consumer<Diagnostic> diagnosticConsumer) throws Exception {		
+		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
+		for (EStructuralFeature esf: editableFeatures) {
 			setFeatureValue(context, obj, esf);
 		}
+		Diagnostic vr = validate(context, obj);
+		boolean noErrors = true;
+		for (Diagnostic vc: vr.getChildren()) {
+			List<?> vcData = vc.getData();
+			if (!vcData.isEmpty() 
+					&& vcData.get(0) == obj 
+					&& (vcData.size() == 1 || editableFeatures.contains(vcData.get(1)))) {
+				
+				if (vc.getSeverity() == Diagnostic.ERROR) {
+					noErrors = false;
+				}
+				if (diagnosticConsumer != null) {
+					diagnosticConsumer.accept(vc);
+				}
+			}
+		}
+		
+		return noErrors;
 	}
 	
 	default Diagnostic validate(C context, T obj) throws Exception {
