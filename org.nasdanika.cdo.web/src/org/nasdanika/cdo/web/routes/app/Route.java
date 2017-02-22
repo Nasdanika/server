@@ -138,30 +138,20 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @throws Exception 
 	 */
 	protected Object renderPage(C context, String title, Object content) throws Exception {
-		Fragment contentFragment = getHTMLFactory(context).fragment();		
+		Map<String, Object> env = createRenderPageEnvironment(context);
+
+		env.put("title", title == null ? "" : title);		
+
 		Object header = renderHeader(context);
-		if (header != null) {
-			contentFragment.content(contentFragment.getFactory().div(header));
-		}
+		env.put("header", header == null ? "" : header);
 		
 		Object leftPanel = renderLeftPanel(context);
-		Tag contentDiv = contentFragment.getFactory().div(content);
-		if (leftPanel == null) {
-			contentFragment.content(contentDiv);			
-		} else {			
-			Tag leftPanelDiv = contentFragment.getFactory().div(leftPanel);
-			setLeftPanelAndContentColSizes(context, leftPanelDiv, contentDiv);
-			contentFragment.content(contentFragment.getFactory().div(leftPanelDiv, contentDiv).bootstrap().grid().row());			
-		}
+		env.put("left-panel", leftPanel == null ? "" : leftPanel);
+
+		env.put("content", content == null ? "" : content);
 		
 		Object footer = renderFooter(context);
-		if (footer != null) {
-			contentFragment.content(contentFragment.getFactory().div(footer));
-		}		
-		
-		Map<String, Object> env = createRenderPageEnvironment(context);
-		env.put("title", title);
-		env.put("content", contentFragment);
+		env.put("footer", footer == null ? "" : footer);
 		
 		Theme theme = getTheme(context);
 		switch (theme) {
@@ -220,7 +210,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @throws Exception
 	 */
 	protected Object renderHeader(C context) throws Exception {
-		return getResource(context, "page.template");
+		return getResource(context, "page.header");
 	}
 
 	/**
