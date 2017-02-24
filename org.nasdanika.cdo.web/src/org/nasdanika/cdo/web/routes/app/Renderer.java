@@ -285,7 +285,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	/**
 	 * Renders object label. This implementation interpolates the value of ``label`` annotation if it is found in 
 	 * the object's EClass or any of its subclasses. The objects is used as the interpolation token source with 
-	 * visible features names as token names and values as values. 
+	 * visible features names as token names and values as values. ``eclass-name`` token expands to object's EClass name.
 	 * 
 	 * If ``label`` annotation is not found, then the value
 	 * of the first feature is used as object label.  
@@ -313,6 +313,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 				vsfm.put(vsf.getName(), vsf);
 			}
 			String label = getHTMLFactory(context).interpolate(labelAnnotation, token -> {
+				if ("eclass-name".equals(token)) {
+					return obj.eClass().getName();
+				}
 				EStructuralFeature vsf = vsfm.get(token);
 				return vsf == null ? null : obj.eGet(vsf);
 			});
@@ -1870,7 +1873,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 		List<FormGroup<?>> ret = new ArrayList<>();
 		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
-			ret.add(renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip));
+			FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip);
+			if (fg != null) {
+				ret.add(fg);
+			}
 		}
 		return ret;
 	}
