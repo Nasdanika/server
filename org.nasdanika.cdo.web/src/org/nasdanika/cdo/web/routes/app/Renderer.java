@@ -54,6 +54,7 @@ import org.nasdanika.html.Button;
 import org.nasdanika.html.Button.Type;
 import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
+import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.Fragment;
@@ -256,7 +257,6 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param context
 	 * @param action Action, e.g. Edit or Add reference.
 	 * @param breadCrumbs
-	 * @return true if breadcrumbs shall be added to the page, i.e. if it has any items.
 	 * @throws Exception
 	 */
 	default void renderObjectPath(C context, T obj, String action, Breadcrumbs breadCrumbs) throws Exception {
@@ -267,19 +267,52 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Collections.reverse(cPath);
 		for (EObject c: cPath) {
 			Renderer<C, EObject> cRenderer = getRenderer(c);
-			Object cLabel = cRenderer.renderLabel(context, c);
+			Object cLabel = cRenderer.renderIconAndLabel(context, c);
 			if (cLabel != null) {
 				String objectURI = cRenderer.getObjectURI(context, c);
 				breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cLabel);
 			}
 		}
 		if (action == null) {
-			breadCrumbs.item(null , renderLabel(context, obj));
+			breadCrumbs.item(null , renderIconAndLabel(context, obj));
 		} else {
 			String objectURI = getObjectURI(context, obj);
 			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
 			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, StringEscapeUtils.escapeHtml4(action)));
 		}
+	}
+
+	/**
+	 * Renders object path to a fragment with a given separator. This implementation traverses the object containment path up to the top level object in the resource.
+	 * @param target
+	 * @param context
+	 * @param action Action, e.g. Edit or Add reference.
+	 * @param breadCrumbs
+	 * @throws Exception
+	 */
+	default Fragment renderObjectPath(C context, T obj, Object separator) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();
+		List<EObject> cPath = new ArrayList<EObject>();
+		for (EObject c = obj.eContainer(); c != null; c = c.eContainer()) {
+			cPath.add(c);
+		}
+		Collections.reverse(cPath);
+		for (EObject c: cPath) {
+			Renderer<C, EObject> cRenderer = getRenderer(c);
+			Object cLink = cRenderer.renderLink(context, c, false);
+			if (cLink != null) {
+				if (!ret.isEmpty()) {
+					ret.content(separator);
+				}
+				ret.content(cLink);
+			}
+		}
+		if (!ret.isEmpty()) {
+			ret.content(separator);
+		}
+		ret.content(renderLink(context, obj, false));
+		return ret;
 	}
 
 	/**
@@ -291,6 +324,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * of the first feature is used as object label.  
 	 *  
 	 * Label value is HTML-escaped. 
+	 * 
 	 * @param context
 	 * @param obj
 	 * @return Object label or null if there are no visible features (e.g. the principal does not have permission to view the object.
@@ -327,8 +361,63 @@ public interface Renderer<C extends Context, T extends EObject> {
 			return label == null ? label : StringEscapeUtils.escapeHtml4(String.valueOf(label));
 		}
 		
-		return null;
+		return null;		
+	}
+	
+	/**
+	 * Renders icon and label.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderIconAndLabel(C context, T obj) throws Exception {
+		Object label = renderLabel(context, obj);
+		if (label == null) {
+			return renderIcon(context, obj);
+		}
 		
+		Object icon = renderIcon(context, obj);
+		if (icon == null) {
+			return label;
+		}
+		return getHTMLFactory(context).fragment(icon, " ", label);		
+	}
+	
+	/**
+	 * Invokes getIcon(). If it returns null, this method also returns null.
+	 * Otherwise, if the return value contains ``/``, then it returns ``img`` tag with ``src`` attribute set to icon value.
+	 * If there is no ``/``, then it returns ``span`` with ``class`` attribute set to icon value (for glyphs, such as {@link Bootstrap.Glyphicon} or {@link FontAwesome}).
+	 * @param context
+	 * @param modelElement
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderIcon(C context, T obj) throws Exception {
+		String icon = getIcon(context, obj);
+		if (icon == null) {
+			return null;			
+		}
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		if (icon.indexOf("/") == -1) {
+			return htmlFactory.span().addClass(icon);
+		}
+		return htmlFactory.tag(TagName.img).attribute("src", icon);
+	}
+	
+	/**
+	 * Icon "location" for a given object. This implementation returns icon of the object's {@link EClass}.
+	 * If icon contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``.
+	 * @param context
+	 * @param modelElement
+	 * @return
+	 * @throws Exception 
+	 */
+	default String getIcon(C context, T obj) throws Exception {
+		if (obj == null) {
+			return null;
+		}
+		return getModelElementIcon(context, obj.eClass());
 	}
 	
 	/**
@@ -353,9 +442,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderLink(C context, T obj) throws Exception {
+	default Object renderLink(C context, T obj, boolean withPathTooltip) throws Exception {
 		String objectURI = getObjectURI(context, obj);
-		return getHTMLFactory(context).link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
+		Tag ret = getHTMLFactory(context).link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));
+		if (withPathTooltip) {
+			String pathTxt = Jsoup.parse(renderObjectPath(context, obj, " > ").toString()).text();
+			ret.attribute("title", pathTxt);
+		}
+		return ret;
 	}
 
 	/**
@@ -363,6 +457,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param context
 	 * @param namedElement
 	 * @return Value of ``label`` render annotation if it is present or element name passed through nameToLabel() conversion.
+	 * 
 	 * @throws Exception
 	 */
 	default Object renderNamedElementLabel(C context, ENamedElement namedElement) throws Exception {
@@ -371,6 +466,59 @@ public interface Renderer<C extends Context, T extends EObject> {
 			return label;
 		}		
 		return nameToLabel(namedElement.getName());
+	}
+	
+	/**
+	 * 
+	 * @param context
+	 * @param namedElement
+	 * @return Named element icon and label.
+	 * @throws Exception
+	 */
+	default Object renderNamedElementIconAndLabel(C context, ENamedElement namedElement) throws Exception {
+		Object label = renderNamedElementLabel(context, namedElement);
+		if (label == null) {
+			return renderModelElementIcon(context, namedElement);
+		}
+		
+		Object icon = renderModelElementIcon(context, namedElement);
+		if (icon == null) {
+			return label;
+		}
+		return getHTMLFactory(context).fragment(icon, " ", label);		
+	}
+	
+	/**
+	 * Invokes getModelElementIcon(). If it returns null, this method also returns null.
+	 * Otherwise, if the return value contains ``/``, then it returns ``img`` tag with ``src`` attribute set to icon value.
+	 * If there is no ``/``, then it returns ``span`` with ``class`` attribute set to icon value (for glyphs, such as {@link Bootstrap.Glyphicon} or {@link FontAwesome}).
+	 * @param context
+	 * @param modelElement
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderModelElementIcon(C context, EModelElement modelElement) throws Exception {
+		String icon = getModelElementIcon(context, modelElement);
+		if (icon == null) {
+			return null;			
+		}
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		if (icon.indexOf("/") == -1) {
+			return htmlFactory.span().addClass(icon);
+		}
+		return htmlFactory.tag(TagName.img).attribute("src", icon);
+	}
+	
+	/**
+	 * Icon "location" for a given model element. This implementation returns ``icon`` render annotation.
+	 * If icon contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``.
+	 * @param context
+	 * @param modelElement
+	 * @return
+	 * @throws Exception 
+	 */
+	default String getModelElementIcon(C context, EModelElement modelElement) throws Exception {
+		return getRenderAnnotation(context, modelElement, "icon");
 	}
 	
 	/**
@@ -389,7 +537,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Object renderFeatureValue(C context, EStructuralFeature feature, Object value) throws Exception {
 		if (value instanceof EObject) {
-			return getRenderer(((EObject) value).eClass()).renderLink(context, (EObject) value);
+			return getRenderer(((EObject) value).eClass()).renderLink(context, (EObject) value, true);
 		}
 		if (value == null) {
 			return "";
@@ -570,7 +718,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 	}
 	
 	default HTMLFactory getHTMLFactory(C context) throws Exception {
-		return HTMLFactory.INSTANCE;
+		HTMLFactory ret = context == null ? HTMLFactory.INSTANCE : context.adapt(HTMLFactory.class);
+		return ret == null ? HTMLFactory.INSTANCE : ret;
 	}
 	
 	/**
@@ -633,15 +782,36 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		String textDoc = Jsoup.parse(doc).text();
 		String firstSentence = firstSentence(context, textDoc);					
-		Tag helpGlyph = renderHelpIcon(context);
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Tag helpGlyph = htmlFactory.tag(TagName.sup, renderHelpIcon(context));
 		helpGlyph.attribute(TITLE_KEY, firstSentence);
+		
+		// More than one sentence - opens doc modal.
 		if (!textDoc.equals(firstSentence) && docModal != null) {
 			helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
 			helpGlyph.style("cursor", "pointer");
-		} else {
-			helpGlyph.style("cursor", "help");			
+			return helpGlyph;
 		}
-		return getHTMLFactory(context).tag(TagName.sup, helpGlyph);
+		
+		// Opens EClass documentation, if configured.
+		EClass eClass = null;
+		if (modelElement instanceof EClass) {
+			eClass = (EClass) modelElement;
+		} else if (modelElement.eContainer() instanceof EClass) {
+			eClass = (EClass) modelElement.eContainer();
+		}
+		if (eClass != null) {
+			String href = getEClassDocRef(context, eClass);
+			if (href != null) {
+				helpGlyph.on(Event.click, "window.open('"+href+"', '_blank');");
+				helpGlyph.style("cursor", "pointer");
+				return helpGlyph;
+			}
+		}
+		
+		// Shows help icon
+		helpGlyph.style("cursor", "help");			
+		return helpGlyph;
 	}
 	
 	/**
@@ -945,7 +1115,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
 			if (!isTab(context, vf)) {
 				Row fRow = featuresTable.body().row();
-				Cell fLabelCell = fRow.header(renderNamedElementLabel(context, vf)).style().whiteSpace().nowrap();
+				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf)).style().whiteSpace().nowrap();
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
@@ -1221,7 +1391,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
 			if (isTab(context, vf)) {
-				Tag nameSpan = getHTMLFactory(context).span(renderNamedElementLabel(context, vf));
+				Tag nameSpan = getHTMLFactory(context).span(renderNamedElementIconAndLabel(context, vf));
 				if (featureDocIcon != null) {
 					nameSpan.content(featureDocIcon);
 				}
@@ -1306,7 +1476,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				Row headerRow = featureTable.header().row().style(Style.INFO);
 				for (EStructuralFeature sf: tableFeatures) {
 					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf));
-					Cell headerCell = headerRow.header(renderNamedElementLabel(context, sf));
+					Cell headerCell = headerRow.header(renderNamedElementIconAndLabel(context, sf));
 					if (featureDocIcon != null) {
 						headerCell.content(featureDocIcon);
 					}
@@ -1596,7 +1766,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
-		Object label = renderNamedElementLabel(context, feature);
+		Object label = renderNamedElementIconAndLabel(context, feature);
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
 			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal));			
@@ -1810,7 +1980,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (control == null) {
 			return null;
 		}
-		Object label = renderNamedElementLabel(context, feature);
+		Object label = renderNamedElementIconAndLabel(context, feature);
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		if (isRequired(context, obj, feature)) {
 			label = htmlFactory.fragment(label, "*");
