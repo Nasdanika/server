@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="111">
+<?pde version="3.8"?><target includeMode="feature" name="org.nasdanika.server" sequenceNumber="114">
 <locations>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
 <unit id="slf4j.simple" version="1.7.6"/>
@@ -38,15 +38,15 @@
 <repository location="http://www.nasdanika.org/maven-osgi"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.webtest.model.feature.feature.group" version="0.1.0.201612312039"/>
+<unit id="org.nasdanika.webtest.model.feature.feature.group" version="0.1.0.201702081608"/>
 <repository location="http://www.nasdanika.org/products/webtest-model/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201702050406"/>
+<unit id="org.nasdanika.html.feature.feature.group" version="0.1.0.201702280522"/>
 <repository location="http://www.nasdanika.org/products/html/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
-<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201702050629"/>
+<unit id="org.nasdanika.third-party.feature.feature.group" version="0.1.0.201702272031"/>
 <repository location="http://www.nasdanika.org/third-party/org.nasdanika.third-party.repository/target/repository"/>
 </location>
 <location includeAllPlatforms="false" includeConfigurePhase="true" includeMode="slicer" includeSource="false" type="InstallableUnit">
