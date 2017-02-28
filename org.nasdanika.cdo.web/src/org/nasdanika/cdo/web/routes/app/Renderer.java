@@ -57,6 +57,7 @@ import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.FormGroup;
+import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
@@ -772,10 +773,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * If docModal is not null, then the cursor is set to pointer and click on the icon opens the doc modal.
 	 * @param context
 	 * @param modelElement
+	 * @param docModal Doc modal to open on icon click. Can be null.
+	 * @param superscript if true, the icon is wrapped into ``sup`` tag.
 	 * @return
 	 * @throws Exception
 	 */
-	default Tag renderDocumentationIcon(C context, EModelElement modelElement, Modal docModal) throws Exception {
+	default Tag renderDocumentationIcon(C context, EModelElement modelElement, Modal docModal, boolean superscript) throws Exception {
 		String doc = renderDocumentation(context, modelElement);
 		if (doc == null) {
 			return null;
@@ -783,14 +786,17 @@ public interface Renderer<C extends Context, T extends EObject> {
 		String textDoc = Jsoup.parse(doc).text();
 		String firstSentence = firstSentence(context, textDoc);					
 		HTMLFactory htmlFactory = getHTMLFactory(context);
-		Tag helpGlyph = htmlFactory.tag(TagName.sup, renderHelpIcon(context));
-		helpGlyph.attribute(TITLE_KEY, firstSentence);
+		Tag helpTag = renderHelpIcon(context);
+		if (superscript) {
+			helpTag = htmlFactory.tag(TagName.sup, helpTag);
+		}
+		helpTag.attribute(TITLE_KEY, firstSentence);
 		
 		// More than one sentence - opens doc modal.
 		if (!textDoc.equals(firstSentence) && docModal != null) {
-			helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
-			helpGlyph.style("cursor", "pointer");
-			return helpGlyph;
+			helpTag.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
+			helpTag.style("cursor", "pointer");
+			return helpTag;
 		}
 		
 		// Opens EClass documentation, if configured.
@@ -803,15 +809,15 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (eClass != null) {
 			String href = getEClassDocRef(context, eClass);
 			if (href != null) {
-				helpGlyph.on(Event.click, "window.open('"+href+"', '_blank');");
-				helpGlyph.style("cursor", "pointer");
-				return helpGlyph;
+				helpTag.on(Event.click, "window.open('"+href+"', '_blank');");
+				helpTag.style("cursor", "pointer");
+				return helpTag;
 			}
 		}
 		
 		// Shows help icon
-		helpGlyph.style("cursor", "help");			
-		return helpGlyph;
+		helpTag.style("cursor", "help");			
+		return helpTag;
 	}
 	
 	/**
@@ -1112,7 +1118,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		featuresTable.col().bootstrap().grid().col(11);
 
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
-			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
+			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 			if (!isTab(context, vf)) {
 				Row fRow = featuresTable.body().row();
 				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf)).style().whiteSpace().nowrap();
@@ -1389,7 +1395,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			tabs.item(renderViewTabLabel(context, obj), renderView(context, obj, featureDocModals));
 		}
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
-			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf));
+			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 			if (isTab(context, vf)) {
 				Tag nameSpan = getHTMLFactory(context).span(renderNamedElementIconAndLabel(context, vf));
 				if (featureDocIcon != null) {
@@ -1475,7 +1481,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				Table featureTable = ret.getFactory().table().bordered().style().margin().bottom("5px");
 				Row headerRow = featureTable.header().row().style(Style.INFO);
 				for (EStructuralFeature sf: tableFeatures) {
-					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf));
+					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
 					Cell headerCell = headerRow.header(renderNamedElementIconAndLabel(context, sf));
 					if (featureDocIcon != null) {
 						headerCell.content(featureDocIcon);
@@ -1769,7 +1775,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Object label = renderNamedElementIconAndLabel(context, feature);
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
-			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal));			
+			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal, true));			
 		}
 		switch (controlType) {
 		case "input":
@@ -1956,6 +1962,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 	
 	/**
 	 * Renders form group if renderFeatureControl() returns non-null value.
+	 * This implementation renders FormInputGroup if:
+	 * 
+	 * * ``form-input-group`` annotation is true.
+	 * * ``form-input-group`` annotation is not present and:
+	 *     * control is ``input`` tag.
+	 *     * Feature has either icon (rendered on the left) or help icon (rendered on the right).  
+	 * 
 	 * @param context
 	 * @param obj
 	 * @param feature
@@ -1964,7 +1977,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @param errorMessage
 	 * @param helpTooltip If true, help message is rendered as a tooltip over a help annotation, like in the view. Otherwise it is renders as form group help text
 	 *  (not visible in some layouts). 
-	 * @return
+	 * @return FormGroup. 
 	 * @throws Exception
 	 */
 	default FormGroup<?> renderFeatureFormGroup(
@@ -1980,16 +1993,22 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (control == null) {
 			return null;
 		}
-		Object label = renderNamedElementIconAndLabel(context, feature);
+		
+		Object icon = renderModelElementIcon(context, feature);
+		Tag docIcon = renderDocumentationIcon(context, feature, docModal, false);
+		
+		boolean isFormInputGroup;
+		String formInputGroupAnnotation = getRenderAnnotation(context, feature, "form-input-group");
+		if (formInputGroupAnnotation == null) {
+			isFormInputGroup = control instanceof Input && (icon != null || docIcon != null);	
+		} else {
+			isFormInputGroup = "true".equals(formInputGroupAnnotation);
+		}
+		
+		Object helpText = helpTooltip ? null : renderFeatureFormGroupHelpText(context, obj, feature, docModal);
+
 		HTMLFactory htmlFactory = getHTMLFactory(context);
-		if (isRequired(context, obj, feature)) {
-			label = htmlFactory.fragment(label, "*");
-		}
-		if (helpTooltip) {
-			label = htmlFactory.fragment(label, renderDocumentationIcon(context, feature, docModal));
-		}
-		Object doc = helpTooltip ? null : renderFeatureFormGroupHelpText(context, obj, feature, docModal);
-		Object helpText = doc;
+		
 		if (validationResult != null) {
 			Tag validationLabel = htmlFactory.label(validationResult.status.toStyle(), validationResult.message);
 			if (helpText == null) {
@@ -1997,6 +2016,33 @@ public interface Renderer<C extends Context, T extends EObject> {
 			} else {
 				helpText = htmlFactory.fragment(validationLabel, " ", helpText);
 			}
+		}
+		
+		if (isFormInputGroup) {
+			Object label = renderNamedElementLabel(context, feature);
+			if (isRequired(context, obj, feature)) {
+				label = htmlFactory.fragment(label, "*");
+			}
+			FormInputGroup ret = fieldContainer.formInputGroup(label, control, helpText);
+			if (icon != null) {
+				ret.leftAddOn(icon);
+			}
+			if (docIcon != null) {
+				ret.rightAddOn(docIcon);
+			}
+			if (validationResult != null) {
+				ret.status(validationResult.status);
+			}			
+			return ret;
+		}
+				
+		Object label = renderNamedElementIconAndLabel(context, feature);
+		if (isRequired(context, obj, feature)) {
+			label = htmlFactory.fragment(label, "*");
+		}
+		
+		if (helpTooltip && docIcon != null) {
+			label = htmlFactory.fragment(label, htmlFactory.tag(TagName.sup, docIcon));
 		}
 		FormGroup<?> ret = fieldContainer.formGroup(label, control, helpText);
 		if (validationResult != null) {

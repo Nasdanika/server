@@ -107,7 +107,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		// Header
 		Tag header = content.getFactory().tag(TagName.h3, renderNamedElementLabel(context, target.eClass()), " ", renderLabel(context, target));
-		Tag classDocIcon = renderDocumentationIcon(context, target.eClass(), classDocModal);
+		Tag classDocIcon = renderDocumentationIcon(context, target.eClass(), classDocModal, true);
 		if (classDocIcon != null) {
 			header.content(classDocIcon);
 		}
