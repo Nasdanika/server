@@ -14,7 +14,7 @@ package org.nasdanika.cdo.security;
  *
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getGuest()
- * @model
+ * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-user-secret'"
  * @generated
  */
 public interface Guest extends Principal {

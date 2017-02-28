@@ -29,7 +29,7 @@ import org.nasdanika.core.Context;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPrincipal()
- * @model
+ * @model annotation="org.nasdanika.cdo.web.render label='{{eclass-name}}' icon='fa fa-user-o'"
  * @extends CDOObject
  * @generated
  */

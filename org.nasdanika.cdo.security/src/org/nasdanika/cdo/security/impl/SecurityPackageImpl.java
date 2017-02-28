@@ -1042,6 +1042,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		// Create annotations
 		// http://www.eclipse.org/emf/2002/GenModel
 		createGenModelAnnotations();
+		// org.nasdanika.cdo.web.render
+		createOrgAnnotations();
 	}
 
 	/**
@@ -1513,6 +1515,48 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Guest is a marker class which would typically be used in ``Realm.guest`` containment reference. The application may feature a Guest route service the application landing page and login form."
+		   });
+	}
+
+	/**
+	 * Initializes the annotations for <b>org.nasdanika.cdo.web.render</b>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void createOrgAnnotations() {
+		String source = "org.nasdanika.cdo.web.render";	
+		addAnnotation
+		  (principalEClass, 
+		   source, 
+		   new String[] {
+			 "label", "{{eclass-name}}",
+			 "icon", "fa fa-user-o"
+		   });	
+		addAnnotation
+		  (groupEClass, 
+		   source, 
+		   new String[] {
+			 "label", "{{name}}",
+			 "icon", "fa fa-group"
+		   });	
+		addAnnotation
+		  (userEClass, 
+		   source, 
+		   new String[] {
+			 "icon", "fa fa-user"
+		   });	
+		addAnnotation
+		  (loginUserEClass, 
+		   source, 
+		   new String[] {
+			 "label", "{{login}}"
+		   });	
+		addAnnotation
+		  (guestEClass, 
+		   source, 
+		   new String[] {
+			 "icon", "fa fa-user-secret"
 		   });
 	}
 

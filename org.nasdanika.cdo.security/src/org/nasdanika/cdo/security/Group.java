@@ -23,7 +23,7 @@ import org.eclipse.emf.common.util.EList;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getGroup()
- * @model
+ * @model annotation="org.nasdanika.cdo.web.render label='{{name}}' icon='fa fa-group'"
  * @generated
  */
 public interface Group extends Principal {

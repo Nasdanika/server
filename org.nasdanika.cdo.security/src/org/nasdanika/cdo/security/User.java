@@ -14,6 +14,7 @@ package org.nasdanika.cdo.security;
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getUser()
  * @model abstract="true"
+ *        annotation="org.nasdanika.cdo.web.render icon='fa fa-user'"
  * @generated
  */
 public interface User<CR> extends Principal {

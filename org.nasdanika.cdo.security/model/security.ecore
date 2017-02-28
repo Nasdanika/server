@@ -193,6 +193,10 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Permissions to perform actions on model elements are granted or denied to principals."/>
     </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="label" value="{{eclass-name}}"/>
+      <details key="icon" value="fa fa-user-o"/>
+    </eAnnotations>
     <eOperations name="authorize" eType="#//AccessDecision">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Authorizes to execute an action with a qualifier on an object in an context and an environment."/>
@@ -373,6 +377,10 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Group of principals. Group permissions are inherited by its members."/>
     </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="label" value="{{name}}"/>
+      <details key="icon" value="fa fa-group"/>
+    </eAnnotations>
     <eOperations name="isMember" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Checks direct/indirect membership in the group."/>
@@ -404,11 +412,17 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="User is a Principal which can be authenticated using credentials."/>
     </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-user"/>
+    </eAnnotations>
     <eTypeParameters name="CR"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LoginUser" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Login user is a principal identified by a login string. &#xD;&#xA;Login user does not necessarily have a password. The realm performs only authorization, with authentication already performed by other layers.&#xD;&#xA;&#xD;&#xA;For example:&#xD;&#xA;&#xD;&#xA;* A web application may transparently authenticate users against a Windows domain with Waffle or Apache NTML module. In this case the realm receives the name of already authenticated.&#xD;&#xA;* Two-way certificate authentication - the realm receives cn of the client certificate."/>
+    </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="label" value="{{login}}"/>
     </eAnnotations>
     <eTypeParameters name="CR"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
@@ -438,6 +452,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="Guest" eSuperTypes="#//Principal">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Guest is a marker class which would typically be used in ``Realm.guest`` containment reference. The application may feature a Guest route service the application landing page and login form."/>
+    </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-user-secret"/>
     </eAnnotations>
   </eClassifiers>
 </ecore:EPackage>

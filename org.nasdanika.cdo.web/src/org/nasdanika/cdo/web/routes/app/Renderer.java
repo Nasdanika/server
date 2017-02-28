@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web.routes.app;
 
 import java.io.BufferedReader;
 import java.io.StringReader;
+import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -21,6 +22,7 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,9 +33,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
@@ -62,6 +66,7 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.JsTree;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
@@ -146,6 +151,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	String ANNOTATION_KEY_LABEL = "label";
 	
+	String ANNOTATION_MODEL_ELEMENT_LABEL = "model-element-label";
+	
+	
 	Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
 	
 	int MIN_FIRST_SENTENCE_LENGTH = 20;
@@ -213,7 +221,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 		EAnnotation ra = modelElement.getEAnnotation(RENDER_ANNOTATION_SOURCE);
 		if (ra != null) {
-			return ra.getDetails().get(key);
+			String value = ra.getDetails().get(key);
+			if (value != null) {
+				return value;
+			}
+		}
+		if (modelElement instanceof EClass) {
+			return RenderUtil.getRenderAnnotation((EClass) modelElement, key);
 		}
 		
 		return null;
@@ -333,14 +347,6 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Object renderLabel(C context, T obj) throws Exception {
 		String labelAnnotation = getRenderAnnotation(context, obj.eClass(), ANNOTATION_KEY_LABEL);
-		if (labelAnnotation == null) {
-			for (EClass st: obj.eClass().getEAllSuperTypes()) {
-				labelAnnotation = getRenderAnnotation(context, st, ANNOTATION_KEY_LABEL);
-				if (labelAnnotation != null) {
-					break;
-				}
-			}
-		}
 		
 		if (labelAnnotation != null) {
 			Map<String, EStructuralFeature> vsfm = new HashMap<>();
@@ -450,6 +456,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			String pathTxt = Jsoup.parse(renderObjectPath(context, obj, " > ").toString()).text();
 			ret.attribute("title", pathTxt);
 		}
+		ret.setData(obj);
 		return ret;
 	}
 
@@ -457,12 +464,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * 
 	 * @param context
 	 * @param namedElement
-	 * @return Value of ``label`` render annotation if it is present or element name passed through nameToLabel() conversion.
+	 * @return Value of ``model-element-label`` render annotation if it is present or element name passed through nameToLabel() conversion.
 	 * 
 	 * @throws Exception
 	 */
 	default Object renderNamedElementLabel(C context, ENamedElement namedElement) throws Exception {
-		String label = getRenderAnnotation(context, namedElement, ANNOTATION_KEY_LABEL);
+		String label = getRenderAnnotation(context, namedElement, ANNOTATION_MODEL_ELEMENT_LABEL);
 		if (label != null) {
 			return label;
 		}		
@@ -546,6 +553,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (value instanceof Boolean) {
 			return (Boolean) value ?  renderTrue(context) : renderFalse(context);
 		}
+		if (value instanceof Enumerator) {
+			return StringEscapeUtils.escapeHtml4(((Enumerator) value).getLiteral());
+		}		
 		if (value instanceof Date) {
 			String format = getRenderAnnotation(context, feature, "format");
 			if (format != null) {
@@ -593,6 +603,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 			default:
 				throw new IllegalArgumentException("Cannot convert to boolean: " + strValue);
 			}
+		}
+		
+		if (featureTypeInstanceClass.isEnum()) {
+			return featureTypeInstanceClass.getField(strValue).get(null);
 		}
 		
 		if (CDOObject.class.isAssignableFrom(featureTypeInstanceClass) && context instanceof CDOViewContext<?, ?>) {
@@ -751,7 +765,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		} else if (doc.length() > 2000) {
 			docModal.large();
 		}
-		docModal.title(getHTMLFactory(context).tag(TagName.h4, modelElement instanceof ENamedElement ? renderNamedElementLabel(context, (ENamedElement) modelElement) : "Documentation"));
+		docModal.title(getHTMLFactory(context).tag(TagName.h4, modelElement instanceof ENamedElement ? renderNamedElementIconAndLabel(context, (ENamedElement) modelElement) : "Documentation"));
 		docModal.body(getHTMLFactory(context).div(doc).addClass("markdown-body").style().background().color().value("white")); // Forcing white background to work with dark schemes - ugly but visible..
 		EClass eClass = null;
 		if (modelElement instanceof EClass) {
@@ -1041,6 +1055,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 				URL rsRes = rbc.getResource(rsRef);
 				if (rsRes != null) {
 					res = rsRes;
+					// TODO - special handling of .properties, .json, and .yml resources - parse and return parse result - Properties, JSONObject or JSONArray, Maps/lists
+					// If URL has a fragment, then treat is as a path in the result e.g. usd/rate.
 					break;
 				}
 			}			
@@ -1415,7 +1431,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * if it is not present and the feature is rendered in a tab (<code>isTab()</code>), 
 	 * then the feature value is rendered as a table. Object features to show and their order in the
 	 * table can be defined using <code>view-features</code> annotation. Annotation value shall list 
-	 * the features in the order in appearance, each feature on a new line. 
+	 * the features in the order in appearance, whitespace separated. 
 	 * If this annotation is not present, all visible single-value features are shown in the order of their declaration.
 	 * @param context
 	 * @param obj
@@ -1456,14 +1472,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 						}
 					}
 				} else {
-					try (BufferedReader br = new BufferedReader(new StringReader(viewFeaturesAnnotation))) {
-						String line;
-						while ((line = br.readLine()) != null) {
-							if (!CoreUtil.isBlank(line)) {
-								EStructuralFeature sf = refType.getEStructuralFeature(line);
-								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
-									tableFeatures.add(sf);
-								}
+					for (String vf: viewFeaturesAnnotation.split("\\s+")) {
+						if (!CoreUtil.isBlank(vf)) {
+							EStructuralFeature sf = refType.getEStructuralFeature(vf.trim());
+							if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+								tableFeatures.add(sf);
 							}
 						}
 					}
@@ -1766,8 +1779,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (controlType == null) {
 			if (feature.isMany()) {
 				controlType = "input";
+			} else if (feature instanceof EAttribute) {				
+				controlType = feature.getEType() instanceof EEnum ? "select" : "input";
 			} else {
-				controlType = feature instanceof EAttribute ? "input" : "select";
+				controlType = "select";
 			}
 		}
 		
@@ -1901,7 +1916,21 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Collection<Map.Entry<String, String>> getFeatureChoices(C context, T obj, EStructuralFeature feature) throws Exception {
 		Map<String,String> collector = new LinkedHashMap<>();
 		String choicesAnnotation = getRenderAnnotation(context, feature, "choices");
-		if (choicesAnnotation != null) {
+		if (choicesAnnotation == null) {
+			Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+			if (featureTypeInstanceClass.isEnum()) {
+				for (Field field: featureTypeInstanceClass.getFields()) {
+					if (field.isEnumConstant()) {
+						Object fieldValue = field.get(null);
+						if (fieldValue instanceof Enumerator) {
+							collector.put(field.getName(), ((Enumerator) fieldValue).getLiteral());
+						} else {
+							collector.put(field.getName(), fieldValue.toString());							
+						}
+					}
+				}
+			}
+		} else {
 			try (BufferedReader br = new BufferedReader(new StringReader(choicesAnnotation))) {
 				String line;
 				while ((line = br.readLine()) != null) {
@@ -2153,6 +2182,115 @@ public interface Renderer<C extends Context, T extends EObject> {
 
 		return diagnostician.validate(obj);
 	}
+	
+	/**
+	 * Renders a tree item for the object with the tree features under.
+	 * @param context Context
+	 * @param obj Object
+	 * @param depth tree depth, -1 - infinite depth.
+	 * @param itemFilter If not null, it is invoked when object list items are created. Filters can decorate or replace list items. Filter is invoked twice per item - first for the label and then for 
+	 * the entire ``li`` tag. In both cases data is set to the object. For the ``li`` invocation ``role`` property is set to ``item``
+	 * @param jsTree If true, list items are rendered for jsTree. It is responsibility of the caller code to create jsTree container and provide event handler for clicks.
+	 * @return
+	 */
+	default Object renderTreeItem(C context, T obj, int depth, Function<Object, Object> itemFilter, boolean jsTree) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Tag ret = htmlFactory.tag(TagName.li);
+		ret.setData(obj);
+		ret.setData("role", "item");
+		if (jsTree) {
+			JsTree jt = ret.jsTree();
+			jt.icon(getIcon(context, obj));
+			String objectURI = getObjectURI(context, obj);
+			Object link = htmlFactory.link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderLabel(context, obj)).setData(obj);
+			if (itemFilter != null) {
+				link = itemFilter.apply(link);
+			}
+			ret.content(link);
+		} else {
+			Object link = renderLink(context, obj, true);
+			if (itemFilter != null) {
+				link = itemFilter.apply(link);
+			}
+			ret.content(link);
+		}
+		
+		ret.content(renderReferencesTree(context, obj, depth, itemFilter, jsTree));
+		return itemFilter == null ? ret : itemFilter.apply(ret);
+	}	
 
+	/**
+	 * Renders an object tree of tree references of the argument object. Tree features are those listed in the ``tree-references`` annotation separated by space.
+	 * If there is no annotation, then containing many features are considered as tree features. If ``tree-node`` annotation of the feature is set to false, then feature elements
+	 * appear directly under the container. Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 
+	 * @param context Context
+	 * @param obj Object
+	 * @param depth tree depth, -1 - infinite depth.
+	 * @param itemFilter If not null, it is invoked when object list items are created. Filters can decorate or replace list items. 
+	 * @param jsTree If true, list items are rendered for jsTree.
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	default Object renderReferencesTree(C context, T obj, int depth, Function<Object, Object> itemFilter, boolean jsTree) throws Exception {
+		if (depth == 0) {
+			return null;
+		}
+		
+		List<EReference> treeReferences = new ArrayList<EReference>();
+		EClass eClass = obj.eClass();
+		String treeReferencesAnnotation = getRenderAnnotation(context, eClass, "tree-references");
+		if (treeReferencesAnnotation == null) {
+			for (EReference ref: eClass.getEAllReferences()) {
+				if (ref.isContainment() && ref.isMany() && context.authorizeRead(obj, ref.getName(), null)) {
+					treeReferences.add(ref);
+				}
+			}
+		} else {
+			for (String refName: treeReferencesAnnotation.split("\\s+")) {
+				if (!CoreUtil.isBlank(refName)) {
+					EReference sf = (EReference) eClass.getEStructuralFeature(refName.trim());
+					if (sf instanceof EReference && context.authorizeRead(obj, sf.getName(), null)) {
+						treeReferences.add(sf);
+					}
+				}
+			}
+		}
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Tag ret = htmlFactory.tag(TagName.ul);
+		for (EReference treeReference: treeReferences) {
+			String treeNodeAnnotation = getRenderAnnotation(context, treeReference, "tree-node");
+			boolean isTreeNode = !"false".equals(treeNodeAnnotation);
+			Tag itemContainer = ret;
+			if (isTreeNode) {
+				Tag refNode = htmlFactory.tag(TagName.li);
+				refNode.setData(treeReference);
+				refNode.setData("role", "item");
+				if (jsTree) {
+					JsTree jt = refNode.jsTree();
+					jt.icon(getModelElementIcon(context, treeReference));
+					refNode.content(renderNamedElementLabel(context, treeReference));
+				} else {
+					refNode.content(renderNamedElementIconAndLabel(context, treeReference));
+				}
+				itemContainer = htmlFactory.tag(TagName.ul);
+				refNode.content(itemContainer);
+			} 
+			
+			if (treeReference.isMany()) {
+				for (EObject ref: (Collection<? extends EObject>) obj.eGet(treeReference)) {
+					itemContainer.content(getRenderer(ref).renderTreeItem(context, ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
+				}
+			} else {
+				Object ref = obj.eGet(treeReference);
+				if (ref instanceof EObject) {
+					itemContainer.content(getRenderer((EObject) ref).renderTreeItem(context, (EObject) ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
+				}				
+			}
+		}
+		
+		return ret.isEmpty() ? null : ret;
+	}
+	
 		
 }

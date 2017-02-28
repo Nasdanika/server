@@ -27,6 +27,7 @@ package org.nasdanika.cdo.security;
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getLoginUser()
  * @model abstract="true"
+ *        annotation="org.nasdanika.cdo.web.render label='{{login}}'"
  * @generated
  */
 public interface LoginUser<CR> extends User<CR> {
