@@ -378,7 +378,7 @@ public class PlantUmlTextGenerator {
 	public void append(EEnum eEnum, String background) throws IOException {
 		appendClassStart(null, "enum", qualifiedName(eEnum)+(background==null ? "" : " "+background));
 		for (EEnumLiteral literal : eEnum.getELiterals()) {
-			appendAttribute(null, null, literal.getName(), literal.getLiteral());
+			appendAttribute(String.valueOf(literal.getValue()), null, literal.getName(), literal.getName().equals(literal.getLiteral()) ? "" : literal.getLiteral());
 		}
 		appendClassEnd();
 	}
