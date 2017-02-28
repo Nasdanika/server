@@ -18,9 +18,9 @@ import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Form;
+import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
-import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
@@ -104,13 +104,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (!breadCrumbs.isEmpty()) {
 			content.content(breadCrumbs);
 		}
-		
+				
+//		if (modelElement instanceof EClass) {
+//			return RenderUtil.getRenderAnnotation((EClass) modelElement, key);
+//		}
+				
 		// Header
-		Tag header = content.getFactory().tag(TagName.h3, renderNamedElementLabel(context, target.eClass()), " ", renderLabel(context, target));
+		Tag header = content.getFactory().tag(TagName.h3, renderIconAndLabel(context, target), " (", renderNamedElementIconAndLabel(context, target.eClass()));
 		Tag classDocIcon = renderDocumentationIcon(context, target.eClass(), classDocModal, true);
 		if (classDocIcon != null) {
 			header.content(classDocIcon);
 		}
+		header.content(")");
 		content.content(header);
 		
 		// view 
