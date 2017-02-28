@@ -140,7 +140,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	protected Object renderPage(C context, String title, Object content) throws Exception {
 		Map<String, Object> env = createRenderPageEnvironment(context);
 
-		env.put("title", title == null ? "" : title);		
+		env.put("title", title == null ? "" : title);
+		
+		Object head = renderHead(context);
+		env.put("head", head == null ? "" : head);
 
 		Object header = renderHeader(context);
 		env.put("header", header == null ? "" : header);
@@ -152,6 +155,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		Object footer = renderFooter(context);
 		env.put("footer", footer == null ? "" : footer);
+		
+		env.put("body", renderBody(context, header, leftPanel, content, footer));
 		
 		Theme theme = getTheme(context);
 		switch (theme) {
@@ -165,6 +170,39 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\"resources/bootstrap/css/bootstrap-"+theme.name().toLowerCase()+".min.css\" rel=\"stylesheet\">");							
 		}
 		return HTMLFactory.INSTANCE.interpolate(getPageTemplate(context), env);		
+	}
+	
+	/**
+	 * Renders body from header, left panel, content, and footer.
+	 * 
+	 * @param context
+	 * @param header
+	 * @param leftPanel
+	 * @param content
+	 * @param footer
+	 * @return
+	 * @throws Exception 
+	 */
+	protected Fragment renderBody(C context, Object header, Object leftPanel, Object content, Object footer) throws Exception {
+		Fragment bodyFragment = getHTMLFactory(context).fragment();		
+		if (header != null) {
+			bodyFragment.content(bodyFragment.getFactory().div(header));
+		}
+		
+		Tag contentDiv = bodyFragment.getFactory().div(content);
+		if (leftPanel == null) {
+			bodyFragment.content(contentDiv);			
+		} else {			
+			Tag leftPanelDiv = bodyFragment.getFactory().div(leftPanel);
+			setLeftPanelAndContentColSizes(context, leftPanelDiv, contentDiv);
+			bodyFragment.content(bodyFragment.getFactory().div(leftPanelDiv, contentDiv).bootstrap().grid().row());			
+		}
+		
+		if (footer != null) {
+			bodyFragment.content(bodyFragment.getFactory().div(footer));
+		}		
+		
+		return bodyFragment;
 	}
 
 	/**
@@ -202,6 +240,17 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	protected String getApiDocPath() {
 		return "api.html";
 	}
+	
+
+	/**
+	 * Renders optional page head tag declarations, e.g. additional scripts and stylesheets. This implementation returns ``page.head`` resource. 
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object renderHead(C context) throws Exception {
+		return getResource(context, "page.head");
+	}	
 
 	/**
 	 * Renders an optional page header. This implementation returns ``page.header`` resource. 
