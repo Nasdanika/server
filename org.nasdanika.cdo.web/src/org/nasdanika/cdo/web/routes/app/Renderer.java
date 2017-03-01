@@ -2322,6 +2322,5 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 		return ret.isEmpty() ? null : ret;
 	}
-	
 		
 }
