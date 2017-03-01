@@ -15,8 +15,8 @@ class RenderUtil {
 		throw new UnsupportedOperationException();
 	}
 	
-	static String getRenderAnnotation(EClass eClass, String key) {		
-		EAnnotation ra = eClass.getEAnnotation(Renderer.RENDER_ANNOTATION_SOURCE);
+	static String getRenderAnnotation(String renderAnnotationSource, EClass eClass, String key) {		
+		EAnnotation ra = eClass.getEAnnotation(renderAnnotationSource);
 		if (ra != null) {
 			String value = ra.getDetails().get(key);
 			if (value != null) {
@@ -24,7 +24,7 @@ class RenderUtil {
 			}
 		}
 		for (EClass st: eClass.getESuperTypes()) {
-			String raStr = getRenderAnnotation(st, key);
+			String raStr = getRenderAnnotation(renderAnnotationSource, st, key);
 			if (raStr != null) {
 				return raStr;
 			}

@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.regex.Matcher;
@@ -242,7 +243,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			}
 		}
 		if (modelElement instanceof EClass) {
-			return RenderUtil.getRenderAnnotation((EClass) modelElement, key);
+			return RenderUtil.getRenderAnnotation(getRenderAnnotationSource(context), (EClass) modelElement, key);
 		}
 		
 		return null;
@@ -982,7 +983,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default boolean isTab(C context, EStructuralFeature structuralFeature) throws Exception {
 		String isTabAnnotation = getRenderAnnotation(context, structuralFeature, ANNOTATION_KEY_IS_TAB);
-		return isTabAnnotation == null ? structuralFeature.isMany() : "true".equals(isTabAnnotation);
+		if (isTabAnnotation == null) {
+			return !(structuralFeature.getEType() instanceof EEnum) && structuralFeature.isMany();
+		}
+		return "true".equals(isTabAnnotation);
 	}
 	
 	/**
@@ -1152,7 +1156,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	}
 
 	/**
-	 * Renders view features with <code>!isTab()</code>. This implementation renders them in a table.
+	 * Renders view features with <code>!isTab()</code>. This implementation renders them in a table or a group of tables.
+	 * Features with ``category`` annotation are grouped into tables in panels by the annotation value.
+	 * Panel header shows category icon if ``category.<category name>.icon`` annotation is present on the object's EClass. 
+	 * Panel header text is set to the value of ``category.<category name>.label`` annotation on the object's EClass, or to the category name if this annotation is not present. 
 	 * @param context
 	 * @param obj
 	 * @param featureDocModals
@@ -1160,22 +1167,66 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderViewFeatures(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
-		Table featuresTable = getHTMLFactory(context).table();
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Table featuresTable = htmlFactory.table();
 		featuresTable.col().bootstrap().grid().col(1);
 		featuresTable.col().bootstrap().grid().col(11);
 
-		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
-			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
+		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj);
+		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
+		for (EStructuralFeature vf: visibleFeatures) {
+			String category = getRenderAnnotation(context, vf, "category");
 			if (!isTab(context, vf)) {
-				Row fRow = featuresTable.body().row();
+				if (category == null) {
+					Row fRow = featuresTable.body().row();
+					Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf)).style().whiteSpace().nowrap();
+					Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
+					if (featureDocIcon != null) {
+						fLabelCell.content(featureDocIcon);
+					}
+					fRow.cell(renderFeatureView(context, obj, vf, false));
+				} else {
+					List<EStructuralFeature> categoryFeatures = categories.get(category);
+					if (categoryFeatures == null) {
+						categoryFeatures = new ArrayList<>();
+						categories.put(category, categoryFeatures);
+					}
+					categoryFeatures.add(vf);
+				}
+			}
+		}
+		
+		if (categories.isEmpty()) {
+			return featuresTable;
+		}
+		
+		Fragment ret = htmlFactory.fragment(featuresTable);
+		
+		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
+			Table categoryFeaturesTable = htmlFactory.table();
+			categoryFeaturesTable.col().bootstrap().grid().col(1);
+			categoryFeaturesTable.col().bootstrap().grid().col(11);
+			for (EStructuralFeature vf: ce.getValue()) {
+				Row fRow = categoryFeaturesTable.body().row();
 				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf)).style().whiteSpace().nowrap();
+				Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
 				fRow.cell(renderFeatureView(context, obj, vf, false));
 			}
+			Object header = ce.getKey();
+			String categoryIconAnnotation = getRenderAnnotation(context, obj.eClass(), "category."+ce.getKey()+".icon");
+			if (categoryIconAnnotation != null) {
+				if (categoryIconAnnotation.indexOf("/") == -1) {
+					header = htmlFactory.span().addClass(categoryIconAnnotation) + " " + header;
+				} else {
+					header = htmlFactory.tag(TagName.img).attribute("src", categoryIconAnnotation) + " " + header;
+				}				
+			}
+			ret.content(htmlFactory.panel(Style.DEFAULT, header, categoryFeaturesTable, null));
 		}
-		return featuresTable;
+		return ret;
 	}
 	
 	/**
@@ -1551,20 +1602,35 @@ public interface Renderer<C extends Context, T extends EObject> {
 			} else {
 				Tag ul = getHTMLFactory(context).tag(TagName.ul);
 				int idx = 0;
-				for (Object v: ((Collection<Object>) featureValue)) {
-					Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, v));
+				Collection<Object> featureValues = (Collection<Object>) featureValue;
+				if (featureValues.size() == 1) {
+					Object v = featureValues.iterator().next();
+					ret.content(renderFeatureValue(context, feature, v));
 					if (feature instanceof EAttribute) {
 						if (showActionButtons) {
-							liFragment.content(renderFeatureValueEditButton(context, obj, feature, idx, v));
+							ret.content(renderFeatureValueEditButton(context, obj, feature, idx, v));
 						}												
 					}
 					if (showActionButtons) {
-						liFragment.content(renderFeatureValueDeleteButton(context, obj, feature, idx, v));
+						ret.content(renderFeatureValueDeleteButton(context, obj, feature, idx, v));
 					}
-					ul.content(getHTMLFactory(context).tag(TagName.li, liFragment));
-					++idx;
+					
+				} else if (!featureValues.isEmpty()) {
+					for (Object v: featureValues) {
+						Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, v));
+						if (feature instanceof EAttribute) {
+							if (showActionButtons) {
+								liFragment.content(renderFeatureValueEditButton(context, obj, feature, idx, v));
+							}												
+						}
+						if (showActionButtons) {
+							liFragment.content(renderFeatureValueDeleteButton(context, obj, feature, idx, v));
+						}
+						ul.content(getHTMLFactory(context).tag(TagName.li, liFragment));
+						++idx;
+					}
+					ret.content(ul);
 				}
-				ret.content(ul);
 				if (showActionButtons) { 
 					ret.content(renderFeatureAddButton(context, obj, feature));							
 				}
@@ -1796,7 +1862,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return Null for checkboxes and radios - they are added directly to the fieldContainer. Control to add to a field group otherwise.
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	default UIElement<?> renderFeatureControl(
 			C context, 
 			T obj, 
@@ -1849,13 +1915,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 				if (feature.isMany()) {
 					// Render a checkbox per choice.
 					FieldSet checkboxesFieldSet = fieldContainer.fieldset();
-					checkboxesFieldSet.style()
-						.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
+					checkboxesFieldSet
+						.style().border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
 						.style().margin().bottom("5px");
 					checkboxesFieldSet.legend(label);
 					Set<String> valuesToSelect = new HashSet<>();
 					for (Object fev: ((Collection<Object>) fv)) {
-						valuesToSelect.add(renderFeatureValue(context, feature, fev).toString());
+						valuesToSelect.add(fev.getClass().isEnum() ? ((Enum) fev).name() : renderFeatureValue(context, feature, fev).toString());
 					}
 					for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
 						Input checkbox = htmlFactory.input(inputType);
@@ -1953,10 +2019,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 				for (Field field: featureTypeInstanceClass.getFields()) {
 					if (field.isEnumConstant()) {
 						Object fieldValue = field.get(null);
+						@SuppressWarnings("rawtypes")
+						String name = ((Enum) fieldValue).name();
 						if (fieldValue instanceof Enumerator) {
-							collector.put(field.getName(), ((Enumerator) fieldValue).getLiteral());
+							collector.put(name, ((Enumerator) fieldValue).getLiteral());
 						} else {
-							collector.put(field.getName(), fieldValue.toString());							
+							collector.put(name, fieldValue.toString());							
 						}
 					}
 				}
@@ -2131,6 +2199,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 	
 	/**
 	 * Renders form groups for editable features.
+	 * Features with ``category`` annotation are grouped into fieldsets by the annotation value.
+	 * Field set legend shows category icon if ``category.<category name>.icon`` annotation is present on the object's EClass. 
+	 * Legend's text is set to the value of ``category.<category name>.label`` annotation on the object's EClass, or to the category name if this annotation is not present. 
 	 * @param context
 	 * @param obj
 	 * @param fieldContainer
@@ -2147,13 +2218,51 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Map<EStructuralFeature,ValidationResult> errorMessages,
 			boolean helpTooltip) throws Exception {
 		
+		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		List<FormGroup<?>> ret = new ArrayList<>();
 		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
-			FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip);
-			if (fg != null) {
-				ret.add(fg);
+			String category = getRenderAnnotation(context, esf, "category");
+			if (category == null) {
+				FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip);
+				if (fg != null) {
+					ret.add(fg);
+				}
+			} else {
+				List<EStructuralFeature> categoryFeatures = categories.get(category);
+				if (categoryFeatures == null) {
+					categoryFeatures = new ArrayList<>();
+					categories.put(category, categoryFeatures);
+				}
+				categoryFeatures.add(esf);
+			}				
+		}
+
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
+			FieldSet categoryFieldSet = fieldContainer.fieldset();
+			categoryFieldSet.style().margin().bottom("5px");
+			String category = ce.getKey();
+			String categoryIcon = getRenderAnnotation(context, obj.eClass(), "category."+category+".icon");
+			String categoryLabel = getRenderAnnotation(context, obj.eClass(), "category."+category+".label");
+			if (categoryLabel == null) {
+				categoryLabel = category;
+			}
+			if (categoryIcon == null) {
+				categoryFieldSet.legend(categoryLabel);
+			} else if (categoryIcon.indexOf("/") == -1) {
+				categoryFieldSet.legend(htmlFactory.span().addClass(categoryIcon), " ", categoryLabel);
+			} else {
+				categoryFieldSet.legend(htmlFactory.tag(TagName.img).attribute("src", categoryIcon), " ", categoryLabel);
+			}
+			
+			for (EStructuralFeature cesf: ce.getValue()) {
+				FormGroup<?> fg = renderFeatureFormGroup(context, obj, cesf, categoryFieldSet, docModals.get(cesf), errorMessages.get(cesf), helpTooltip);
+				if (fg != null) {
+					ret.add(fg);
+				}
 			}
 		}
+		
 		return ret;
 	}
 	
@@ -2322,5 +2431,42 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 		return ret.isEmpty() ? null : ret;
 	}
+		
+	/**
+	 * Renders object header. This implementation interpolates ``object.header`` resource string with the following tokens:
+	 * 
+	 * * ``icon``
+	 * * ``label``
+	 * * ``eclass-icon``
+	 * * ``eclass-label``
+	 * * ``documentation-icon``
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param classDocModal 
+	 * @return
+	 * @throws Exception 
+	 */
+	default Object renderObjectHeader(C context, T obj, Modal classDocModal) throws Exception {
+		Map<String, Object> env = new HashMap<>();
+		
+		Object icon = renderIcon(context, obj);
+		env.put("icon", icon == null ? "" : icon);
+		
+		Object label = renderLabel(context, obj);
+		env.put("label", label == null ? "" : label);
+		
+		Object eClassIcon = renderModelElementIcon(context, obj.eClass());
+		env.put("eclass-icon", eClassIcon == null ? "" : eClassIcon);
+		
+		Object eClassLabel = renderNamedElementLabel(context, obj.eClass());
+		env.put("eclass-label", eClassLabel == null || eClassLabel.equals(label) ? "" : eClassLabel);
+		
+		Tag classDocIcon = renderDocumentationIcon(context, obj.eClass(), classDocModal, true);		
+		env.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
+		
+		return getHTMLFactory(context).interpolate(getResourceString(context, "object.header", false), env);
+	}
+	
 		
 }

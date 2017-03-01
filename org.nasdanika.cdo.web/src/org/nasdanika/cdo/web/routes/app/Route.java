@@ -342,6 +342,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	}
 	
+	/**
+	 * Renders and processes edit form. The form is horizontal by default, set ``horizontal-form`` annotation on the target EClass to ``false`` to override.
+	 * @param context
+	 * @param target
+	 * @param referrerParameter
+	 * @param referrerHeader
+	 * @return
+	 * @throws Exception
+	 */
 	@RouteMethod(
 			comment="Renders object edit form.",
 			action = "update",
@@ -353,7 +362,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@QueryParameter(REFERRER_KEY) String referrerParameter,
 			@HeaderParameter("referer") String referrerHeader) throws Exception {
 		
-		boolean horizontalForm = true;
+		boolean horizontalForm = !"false".equals(getRenderAnnotation(context, target.eClass(), "horizontal-form"));
 		Map<EStructuralFeature, ValidationResult> validationResults = new HashMap<>();		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		ListGroup errorList = htmlFactory.listGroup();
@@ -434,6 +443,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (!breadCrumbs.isEmpty()) {
 			content.content(breadCrumbs);
 		}
+		
+		// Object header
+		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+		content.content(objectHeader);		
 		
 		Form editForm = htmlFactory.form()
 //				.novalidate()
@@ -558,42 +571,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		// TODO
 		return "To implement - Delete "+feature+" "+element;
 		
-	}
-		
-	/**
-	 * Renders object header. This implementation interpolates ``object.header`` resource string with the following tokens:
-	 * 
-	 * * ``icon``
-	 * * ``label``
-	 * * ``eclass-icon``
-	 * * ``eclass-label``
-	 * * ``documentation-icon``
-	 * 
-	 * @param context
-	 * @param obj
-	 * @param classDocModal 
-	 * @return
-	 * @throws Exception 
-	 */
-	protected Object renderObjectHeader(C context, T obj, Modal classDocModal) throws Exception {
-		Map<String, Object> env = new HashMap<>();
-		
-		Object icon = renderIcon(context, obj);
-		env.put("icon", icon == null ? "" : icon);
-		
-		Object label = renderLabel(context, obj);
-		env.put("label", label == null ? "" : label);
-		
-		Object eClassIcon = renderModelElementIcon(context, obj.eClass());
-		env.put("eclass-icon", eClassIcon == null ? "" : eClassIcon);
-		
-		Object eClassLabel = renderNamedElementLabel(context, obj.eClass());
-		env.put("eclass-label", eClassLabel == null || eClassLabel.equals(label) ? "" : eClassLabel);
-		
-		Tag classDocIcon = renderDocumentationIcon(context, obj.eClass(), classDocModal, true);		
-		env.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
-		
-		return getHTMLFactory(context).interpolate(getResourceString(context, "object.header", false), env);
 	}
 	
 	// TODO - trace
