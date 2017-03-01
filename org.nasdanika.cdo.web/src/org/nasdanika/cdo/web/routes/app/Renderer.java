@@ -182,6 +182,21 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default <M extends EObject> Renderer<C, M> getRenderer(M modelObject) {		
 		return modelObject == null ? null : (Renderer<C, M>) getRenderer(modelObject.eClass());
 	}
+	
+	/**
+	 * Returns source value for model annotations to use as the source of rendering annotations.
+	 * This implementation returns RENDER_ANNOTATION_SOURCE constant value ``org.nasdanika.cdo.web.render``.
+	 * This method can be overridden to "white-label" the model, i.e. to use rendering annotations with source
+	 * specific to the development organization, e.g. ``com.mycompany.render``. 
+	 * 
+	 * It can also be overridden to use different annotations profiles in different situations, e.g. ``com.mycompany.lob-a.render`` for business A and ``com.mycompany.lob-b.render`` for business B. 
+	 * 
+	 * @param context
+	 * @return
+	 */
+	default String getRenderAnnotationSource(C context) {
+		return RENDER_ANNOTATION_SOURCE;		
+	}
 		
 	/**
 	 * Retrieves render annotation. 
@@ -219,7 +234,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			}
 		}
 		
-		EAnnotation ra = modelElement.getEAnnotation(RENDER_ANNOTATION_SOURCE);
+		EAnnotation ra = modelElement.getEAnnotation(getRenderAnnotationSource(context));
 		if (ra != null) {
 			String value = ra.getDetails().get(key);
 			if (value != null) {
@@ -333,7 +348,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	/**
 	 * Renders object label. This implementation interpolates the value of ``label`` annotation if it is found in 
 	 * the object's EClass or any of its subclasses. The objects is used as the interpolation token source with 
-	 * visible features names as token names and values as values. ``eclass-name`` token expands to object's EClass name.
+	 * visible features names as token names and values as values. ``eclass-name`` token expands to object's EClass name and ``eclass-label`` to EClass label.
 	 * 
 	 * If ``label`` annotation is not found, then the value
 	 * of the first feature is used as object label.  
@@ -357,6 +372,16 @@ public interface Renderer<C extends Context, T extends EObject> {
 				if ("eclass-name".equals(token)) {
 					return obj.eClass().getName();
 				}
+				
+				if ("eclass-label".equals(token)) {
+					try {
+						return renderNamedElementLabel(context, obj.eClass());
+					} catch (Exception e) {
+						e.printStackTrace();
+						return "*** ERROR ***";
+					}
+				}
+				
 				EStructuralFeature vsf = vsfm.get(token);
 				return vsf == null ? null : obj.eGet(vsf);
 			});
@@ -520,13 +545,19 @@ public interface Renderer<C extends Context, T extends EObject> {
 	/**
 	 * Icon "location" for a given model element. This implementation returns ``icon`` render annotation.
 	 * If icon contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``.
+	 * 
+	 * If annotation is not found and the model element is {@link EStructuralFeature}, then the icon of its type is returned.
 	 * @param context
 	 * @param modelElement
 	 * @return
 	 * @throws Exception 
 	 */
 	default String getModelElementIcon(C context, EModelElement modelElement) throws Exception {
-		return getRenderAnnotation(context, modelElement, "icon");
+		String ret = getRenderAnnotation(context, modelElement, "icon");
+		if (ret == null && modelElement instanceof EStructuralFeature) {
+			return getModelElementIcon(context, ((EStructuralFeature) modelElement).getEType());
+		}
+		return ret;
 	}
 	
 	/**
