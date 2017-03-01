@@ -109,14 +109,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 //			return RenderUtil.getRenderAnnotation((EClass) modelElement, key);
 //		}
 				
-		// Header
-		Tag header = content.getFactory().tag(TagName.h3, renderIconAndLabel(context, target), " (", renderNamedElementIconAndLabel(context, target.eClass()));
-		Tag classDocIcon = renderDocumentationIcon(context, target.eClass(), classDocModal, true);
-		if (classDocIcon != null) {
-			header.content(classDocIcon);
-		}
-		header.content(")");
-		content.content(header);
+		// Object header
+		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+		content.content(objectHeader);
 		
 		// view 
 		if (!isViewTab(context, target)) {
@@ -565,6 +560,42 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	}
 		
+	/**
+	 * Renders object header. This implementation interpolates ``object.header`` resource string with the following tokens:
+	 * 
+	 * * ``icon``
+	 * * ``label``
+	 * * ``eclass-icon``
+	 * * ``eclass-label``
+	 * * ``documentation-icon``
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param classDocModal 
+	 * @return
+	 * @throws Exception 
+	 */
+	protected Object renderObjectHeader(C context, T obj, Modal classDocModal) throws Exception {
+		Map<String, Object> env = new HashMap<>();
+		
+		Object icon = renderIcon(context, obj);
+		env.put("icon", icon == null ? "" : icon);
+		
+		Object label = renderLabel(context, obj);
+		env.put("label", label == null ? "" : label);
+		
+		Object eClassIcon = renderModelElementIcon(context, obj.eClass());
+		env.put("eclass-icon", eClassIcon == null ? "" : eClassIcon);
+		
+		Object eClassLabel = renderNamedElementLabel(context, obj.eClass());
+		env.put("eclass-label", eClassLabel == null || eClassLabel.equals(label) ? "" : eClassLabel);
+		
+		Tag classDocIcon = renderDocumentationIcon(context, obj.eClass(), classDocModal, true);		
+		env.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
+		
+		return getHTMLFactory(context).interpolate(getResourceString(context, "object.header", false), env);
+	}
+	
 	// TODO - trace
 	
 	
