@@ -291,24 +291,42 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	}
 	
 	@RouteMethod(
-			value = RequestMethod.GET,
+			value = { RequestMethod.GET, RequestMethod.POST }, 
 			path = "add/{feature}",
 			action = "create",
 			qualifier = "{feature}",
 			produces = "text/html",
-			comment="Renders a page for adding or creating object for a particular feature.")
-	public Object addFeature(
+			comment="Renders a page for adding a reference to a non-containment feature.")
+	public Object addReferenceFeatureElement(
 			@ContextParameter C context,
 			@PathParameter("feature") String feature,
 			@TargetParameter T target) throws Exception {
 		
-		
-		return "Add "+feature;
+		return "Add reference "+feature;
 		
 	}
 	
 	@RouteMethod(
-			value = RequestMethod.GET,
+			value = { RequestMethod.GET, RequestMethod.POST }, 
+			path = "create/{feature}/{epackage}/{eclass}",
+			action = "create",
+			qualifier = "{feature}",
+			produces = "text/html",
+			comment="Renders a page for creating an object and adding it to a containment feature.")
+	public Object createContainementFeatureElement(
+			@ContextParameter C context,
+			@PathParameter("feature") String feature,
+			@PathParameter("epackage") String epackage,
+			@PathParameter("eclass") String eclass,
+			@TargetParameter T target) throws Exception {
+		
+//		Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */))		
+		return "Add containment "+feature;
+		
+	}
+	
+	@RouteMethod(
+			value = { RequestMethod.GET, RequestMethod.POST },
 			action = "update",
 			qualifier = "{feature}",
 			path = "edit/{feature}",
@@ -325,7 +343,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	}
 		
 	@RouteMethod(
-			value = RequestMethod.GET,
+			value = { RequestMethod.GET, RequestMethod.POST }, 
 			action = "update",
 			qualifier = "{feature}",
 			path = "edit/{feature}/{element}",
