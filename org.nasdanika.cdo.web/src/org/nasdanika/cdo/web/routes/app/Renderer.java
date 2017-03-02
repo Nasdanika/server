@@ -229,12 +229,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default String getRenderAnnotation(C context, EModelElement modelElement, String key) throws Exception {
 		if (modelElement instanceof ENamedElement) {
-			String name = ((ENamedElement) modelElement).getName();
-			String className = modelElement.eClass().getName();
-			if (className.startsWith("E")) {
-				className = className.substring(1);
-			}
-			String rs = getResourceString(context, StringUtils.uncapitalize(className)+"."+name+".render."+key, false);
+			String rs = getResourceString(context, ((ENamedElement) modelElement), "render."+key, false);
 			if (rs != null) {
 				return rs;
 			}
@@ -314,7 +309,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		} else {
 			String objectURI = getObjectURI(context, obj);
 			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
-			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, StringEscapeUtils.escapeHtml4(action)));
+			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
 		}
 	}
 
@@ -1117,6 +1112,28 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}		
 		
 		return res;
+	}
+	
+	/**
+	 * Retrieves resource string for a named element. This method calls getResourceString() with ``<element type>.<element name>.<key>`` key. E.g. ``class.MyClass.myKey``.
+	 */
+	default String getResourceString(C context, ENamedElement namedElement, String key, boolean interpolate) throws Exception {
+		String className = namedElement.eClass().getName();
+		if (className.startsWith("E")) {
+			className = className.substring(1);
+		}
+		return getResourceString(context, StringUtils.uncapitalize(className)+"."+namedElement.getName()+"."+key, interpolate);
+	}
+	
+	/**
+	 * Retrieves resource string for a named element. This method calls getResource() with ``<element type>.<element name>.<key>`` key. E.g. ``class.MyClass.myKey``.
+	 */
+	default Object getResource(C context, ENamedElement namedElement, String key) throws Exception {
+		String className = namedElement.eClass().getName();
+		if (className.startsWith("E")) {
+			className = className.substring(1);
+		}
+		return getResource(context, StringUtils.uncapitalize(className)+"."+namedElement.getName()+"."+key);
 	}
 	
 	/**
