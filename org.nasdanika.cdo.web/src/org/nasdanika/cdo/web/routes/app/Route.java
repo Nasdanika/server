@@ -5,11 +5,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
@@ -84,11 +90,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@ContextParameter C context, 
 			@TargetParameter T target) throws Exception {
 		
-		String title = StringEscapeUtils.escapeHtml4(nameToLabel(((EObject) context.getTarget()).eClass().getName()));
+		EClass targetEClass = target.eClass();
+		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 		Fragment content = getHTMLFactory(context).fragment();
 		
 		// Documentation modals
-		Modal classDocModal = renderDocumentationModal(context, target.eClass());
+		Modal classDocModal = renderDocumentationModal(context, targetEClass);
 		if (classDocModal != null) {
 			content.content(classDocModal);
 		}
@@ -318,11 +325,151 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@PathParameter("feature") String feature,
 			@PathParameter("epackage") String epackage,
 			@PathParameter("eclass") String eclass,
-			@TargetParameter T target) throws Exception {
+			@TargetParameter T target,
+			@QueryParameter(REFERRER_KEY) String referrerParameter,
+			@HeaderParameter("referer") String referrerHeader) throws Exception {
 		
-//		Hex.encodeHexString(eClassifier.getEPackage().getNsURI().getBytes(/* UTF-8? */))		
-		return "Add containment "+feature;
+		// TODO - Get/Post, validation.
+		String ePackageNsURI = new String(Hex.decodeHex(epackage.toCharArray()));
+		if (context instanceof CDOViewContext) {
+			@SuppressWarnings("unchecked")
+			EPackage ePackage = ((CDOViewContext<CDOView, ?>) context).getView().getSession().getPackageRegistry().getEPackage(ePackageNsURI);
+			if (ePackage != null) {
+				EClassifier eClassifier = ePackage.getEClassifier(eclass.substring(0, eclass.length() - ".html".length()));
+				if (eClassifier instanceof EClass) {
+					EClass eClass = (EClass) eClassifier;
+					EObject instance = ePackage.getEFactoryInstance().create(eClass);
+					Renderer<C, EObject> renderer = getRenderer(eClass);
+					
+					boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, target.eClass(), "horizontal-form"));
+					Map<EStructuralFeature, ValidationResult> validationResults = new HashMap<>();		
+					HTMLFactory htmlFactory = getHTMLFactory(context);
+					ListGroup errorList = htmlFactory.listGroup();
+					// TODO - extract validation processing into a helper method or class.
+					if (context.getMethod() == RequestMethod.POST) {
+						Consumer<Diagnostic> diagnosticConsumer = (diagnostic) -> {
+							List<?> dData = diagnostic.getData();
+							EStructuralFeature esf = dData.size() > 1 && dData.get(1) instanceof EStructuralFeature ? (EStructuralFeature) dData.get(1) : null;
+							FormGroup.Status status;
+							switch (diagnostic.getSeverity()) {
+							case Diagnostic.ERROR:
+								status = Status.ERROR;
+								break;
+							case Diagnostic.WARNING:
+								status = Status.WARNING;
+								break;
+							default:
+								status = Status.SUCCESS;
+							}
+							Style style = status.toStyle();
+							String message = diagnostic.getMessage();
+							String escapedMessage = CoreUtil.isBlank(message) ? status.name() : StringEscapeUtils.escapeHtml4(message);
+							if (esf == null) {
+								errorList.item(escapedMessage, style);
+							} else {
+								validationResults.put(esf, new ValidationResult(status, escapedMessage));
+								if (horizontalForm) {
+									Object featureNameLabel;
+									try {
+										featureNameLabel = renderNamedElementLabel(context, esf);
+									} catch (Exception e) {
+										featureNameLabel = esf.getName();
+									}
+									errorList.item(htmlFactory.label(style, featureNameLabel) + " " + escapedMessage, style);						
+								}
+							}
+						};
+						if (setEditableFeatures(context, target, diagnosticConsumer)) {
+							// Success - redirect to referrer parameter or referer header or the view.
+							if (context instanceof HttpServletRequestContext) {
+								String referrer = referrerParameter;
+								if (referrer == null) {
+									referrer = referrerHeader;
+								}
+								if (referrer == null) {
+									referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+								}
+								((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+								return Action.NOP;
+							}
+							
+							return "Update successful";
+						}
+						
+						if (context instanceof TransactionContext) {
+							((TransactionContext) context).setRollbackOnly();
+						}
+					}
+							
+					String title = StringEscapeUtils.escapeHtml4(renderer.nameToLabel(eClass.getName()));
+					Fragment content = htmlFactory.fragment();
+					
+					// Documentation modals
+					Modal classDocModal = renderer.renderDocumentationModal(context, eClass);
+					if (classDocModal != null) {
+						content.content(classDocModal);
+					}
+					
+					Map<EStructuralFeature, Modal> featureDocModals = renderer.renderEditableFeaturesDocModals(context, instance);
+					for (Modal fdm: featureDocModals.values()) {
+						content.content(fdm);
+					}
+					
+					// Breadcrumbs
+					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+					renderer.renderObjectPath(context, target, renderNamedElementIconAndLabel(context, target.eClass().getEStructuralFeature(feature))+" / "+renderer.getResourceString(context, "create", true), breadCrumbs);
+					if (!breadCrumbs.isEmpty()) {
+						content.content(breadCrumbs);
+					}
+					
+					// Object header
+					Tag objectHeader = content.getFactory().tag(TagName.h3, renderer.renderObjectHeader(context, instance, classDocModal));
+					content.content(objectHeader);		
+					
+					Form editForm = htmlFactory.form()
+//							.novalidate()
+							.action("edit.html")
+							.method(Method.post)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
+					
+					if (horizontalForm) {
+						editForm
+							.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
+							.horizontal(Bootstrap.DeviceSize.SMALL, 5)
+							.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
+							.horizontal(Bootstrap.DeviceSize.LARGE, 3);			
+					}
+					
+					content.content(editForm);
+					
+					if (!errorList.isEmpty()) {
+						editForm.content(errorList);
+					}
+							
+					renderer.renderEditableFeaturesFormGroups(context, instance, editForm, featureDocModals, validationResults, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
+					
+					String originalReferrer = referrerParameter;
+					if (originalReferrer == null) {
+						originalReferrer = referrerHeader;
+					}
+					if (originalReferrer != null) {
+						editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+					}		
+					
+					Tag buttonBar = content.getFactory().div().style().text().align().right();
+					buttonBar.content(renderer.renderSaveButton(context, instance).style().margin().right("5px"));
+					buttonBar.content(renderer.renderCancelButton(context, instance));
+					editForm.content(buttonBar);
+					
+					return renderPage(context, title, content);							
+				}							
+			}
+		}
 		
+		return Action.BAD_REQUEST;		
 	}
 	
 	@RouteMethod(
@@ -380,7 +527,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@QueryParameter(REFERRER_KEY) String referrerParameter,
 			@HeaderParameter("referer") String referrerHeader) throws Exception {
 		
-		boolean horizontalForm = !"false".equals(getRenderAnnotation(context, target.eClass(), "horizontal-form"));
+		EClass targetEClass = target.eClass();
+		boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, "horizontal-form"));
 		Map<EStructuralFeature, ValidationResult> validationResults = new HashMap<>();		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		ListGroup errorList = htmlFactory.listGroup();
@@ -389,6 +537,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			Consumer<Diagnostic> diagnosticConsumer = (diagnostic) -> {
 				List<?> dData = diagnostic.getData();
 				EStructuralFeature esf = dData.size() > 1 && dData.get(1) instanceof EStructuralFeature ? (EStructuralFeature) dData.get(1) : null;
+				String messageKey = dData.size() > 1 && dData.get(dData.size()-1) instanceof String ? (String) dData.get(dData.size()-1) : null;
 				FormGroup.Status status;
 				switch (diagnostic.getSeverity()) {
 				case Diagnostic.ERROR:
@@ -401,7 +550,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					status = Status.SUCCESS;
 				}
 				Style style = status.toStyle();
-				String message = diagnostic.getMessage();
+				String message;
+				try {
+					message = messageKey == null ? diagnostic.getMessage() : getResourceString(context, esf == null ? targetEClass : esf, messageKey, true);
+				} catch (Exception ex) {
+					ex.printStackTrace();
+					message = diagnostic.getMessage();
+				}
 				String escapedMessage = CoreUtil.isBlank(message) ? status.name() : StringEscapeUtils.escapeHtml4(message);
 				if (esf == null) {
 					errorList.item(escapedMessage, style);
@@ -412,6 +567,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						try {
 							featureNameLabel = renderNamedElementLabel(context, esf);
 						} catch (Exception e) {
+							e.printStackTrace();
 							featureNameLabel = esf.getName();
 						}
 						errorList.item(htmlFactory.label(style, featureNameLabel) + " " + escapedMessage, style);						
@@ -439,13 +595,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				((TransactionContext) context).setRollbackOnly();
 			}
 		}
-		
-		
-		String title = StringEscapeUtils.escapeHtml4(nameToLabel(((EObject) context.getTarget()).eClass().getName()));
+				
+		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 		Fragment content = htmlFactory.fragment();
 		
 		// Documentation modals
-		Modal classDocModal = renderDocumentationModal(context, target.eClass());
+		Modal classDocModal = renderDocumentationModal(context, targetEClass);
 		if (classDocModal != null) {
 			content.content(classDocModal);
 		}
@@ -457,7 +612,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-		renderObjectPath(context, target, "Edit", breadCrumbs);
+		renderObjectPath(context, target, getResourceString(context, "edit", true), breadCrumbs);
 		if (!breadCrumbs.isEmpty()) {
 			content.content(breadCrumbs);
 		}
