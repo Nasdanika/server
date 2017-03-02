@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOObject;
@@ -38,10 +39,14 @@ import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.EEnum;
+import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.Diagnostician;
@@ -586,8 +591,21 @@ public interface Renderer<C extends Context, T extends EObject> {
 			return (Boolean) value ?  renderTrue(context) : renderFalse(context);
 		}
 		if (value instanceof Enumerator) {
-			return StringEscapeUtils.escapeHtml4(((Enumerator) value).getLiteral());
-		}		
+			Enumerator enumeratorValue = (Enumerator) value;
+			String ret = StringEscapeUtils.escapeHtml4(enumeratorValue.getLiteral());
+			EClassifier featureType = feature.getEType();
+			if (featureType instanceof EEnum) {
+				EEnum featureEnum = (EEnum) featureType;
+				EEnumLiteral enumLiteral = featureEnum.getEEnumLiteral(enumeratorValue.getName());
+				Tag literalDocumentationIcon = renderDocumentationIcon(context, enumLiteral, null, true);
+				if (literalDocumentationIcon != null) {
+					return ret + literalDocumentationIcon;
+				}
+			}
+			
+			return ret;
+		}
+		
 		if (value instanceof Date) {
 			String format = getRenderAnnotation(context, feature, "format");
 			if (format != null) {
@@ -775,7 +793,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return Documentation reference for EClass or null.
 	 * @throws Exception
 	 */
-	default String getEClassDocRef(C context, EClass eClass) throws Exception {
+	default String getEClassifierDocRef(C context, EClassifier eClassifier) throws Exception {
 		return null;
 	}
 	
@@ -806,7 +824,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			eClass = (EClass) modelElement.eContainer();
 		}
 		if (eClass != null) {
-			String href = getEClassDocRef(context, eClass);
+			String href = getEClassifierDocRef(context, eClass);
 			if (href != null) {
 				docModal.footer(getHTMLFactory(context).link(href, getResourceString(context, "informationCenter", false)).attribute("target", "_blank"));
 			}
@@ -846,14 +864,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		
 		// Opens EClass documentation, if configured.
-		EClass eClass = null;
-		if (modelElement instanceof EClass) {
-			eClass = (EClass) modelElement;
-		} else if (modelElement.eContainer() instanceof EClass) {
-			eClass = (EClass) modelElement.eContainer();
+		EClassifier eClassifier = null;
+		if (modelElement instanceof EClassifier) {
+			eClassifier = (EClassifier) modelElement;
+		} else if (modelElement.eContainer() instanceof EClassifier) {
+			eClassifier = (EClassifier) modelElement.eContainer();
 		}
-		if (eClass != null) {
-			String href = getEClassDocRef(context, eClass);
+		if (eClassifier != null) {
+			String href = getEClassifierDocRef(context, eClassifier);
 			if (href != null) {
 				helpTag.on(Event.click, "window.open('"+href+"', '_blank');");
 				helpTag.style("cursor", "pointer");
@@ -943,7 +961,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
 		Z: while (matcher.find()) {
 			String group = matcher.group();
-			for (String abbr: getResourceString(context, "abbreviations", false).split("|")) {
+			String[] abbra = getResourceString(context, "abbreviations", false).split("\\|");
+			for (String abbr: abbra) {
 				if (group.trim().endsWith(abbr)) {
 					continue Z;
 				}
@@ -1675,8 +1694,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 	}
 
 	/**
-	 * Assigns an action to the button. This implementation adds onClick handler which navigates to add/create page.
-	 * If the feature supports multiple object type which can be added to it, use {@link Button}.item() method to
+	 * Assigns an action to the button. For containment references this feature invokes getFeatureElementTypes() and creates a drop-down button if there is more than one type. 
+	 * For other features it adds onClick handler which navigates to add page.
+	 * If the feature supports multiple object types which can be added to it, use {@link Button}.item() method to
 	 * create a drop-down button with multiple add handlers.
 	 * @param context
 	 * @param obj
@@ -1685,10 +1705,83 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton) throws Exception {
-		// Example of items - addButton.item(getHTMLFactory(context).link("#", "My class"));
-		
-		addButton.on(Event.click, "window.location='add/"+feature.getName()+".html';");
+		if (feature instanceof EReference && ((EReference) feature).isContainment()) {
+			List<EClass> featureElementTypes = getReferenceElementTypes(context, obj, (EReference) feature);
+			if (featureElementTypes.isEmpty()) {
+				addButton.disabled();
+			} else if (featureElementTypes.size() == 1) {
+				EClass featureElementType = featureElementTypes.iterator().next();
+				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
+				addButton.on(Event.click, "window.location='create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
+			} else {
+				for (EClass featureElementType: featureElementTypes) {
+					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
+					addButton.item(getHTMLFactory(context).link("create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html", getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
+				}
+			}
+		} else {
+			addButton.on(Event.click, "window.location='add/"+feature.getName()+".html';");
+		}
 	}	
+	
+	/**
+	 * Returns a list of {@link EClass}'es which can be instantiated and instances can be added as elements to the specified feature.
+	 * This implementation reads element types from ``element-types`` annotation. The list of element types shall be space-separated. Elements shall be in
+	 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
+	 * feature's declaring EClass.
+	 *   
+	 * If there is no ``element-types`` annotation, this implementation returns a list of all concrete classes from the session package registry which are compatible with the feature type.
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @return
+	 * @throws Exception
+	 */
+	default List<EClass> getReferenceElementTypes(C context, T obj, EReference reference) throws Exception {
+		List<EClass> ret = new ArrayList<>();
+		String elementTypesAnnotation = getRenderAnnotation(context, reference, "element-types");
+		if (elementTypesAnnotation == null) {
+			if (context instanceof CDOViewContext) {
+				@SuppressWarnings("unchecked")
+				Registry ePackageRegistry = ((CDOViewContext<CDOView, ?>) context).getView().getSession().getPackageRegistry();
+				for (String nsURI: ePackageRegistry.keySet()) {			
+					EPackage ePackage = ePackageRegistry.getEPackage(nsURI);					
+					if (ePackage!=null) {
+						for (EClassifier ec: ePackage.getEClassifiers()) {
+							if (ec instanceof EClass) {
+								EClass eClass = (EClass) ec;
+								if (!eClass.isAbstract() && !eClass.isInterface() && reference.getEReferenceType().isSuperTypeOf(eClass)) {
+									ret.add(eClass);
+								}
+							}
+						}
+					}
+				}
+			}
+		} else {
+			for (String etSpec: elementTypesAnnotation.split("\\s+")) {
+				if (!CoreUtil.isBlank(etSpec)) {
+					int atIdx = etSpec.indexOf("@");
+					if (atIdx == -1) {
+						EClassifier eClassifier = reference.getEContainingClass().getEPackage().getEClassifier(etSpec.trim());
+						if (eClassifier instanceof EClass) {
+							ret.add((EClass) eClassifier);
+						}
+					} else if (context instanceof CDOViewContext) {
+						@SuppressWarnings("unchecked")
+						EPackage ePackage = ((CDOViewContext<CDOView, ?>) context).getView().getSession().getPackageRegistry().getEPackage(etSpec.substring(atIdx+1).trim());
+						if (ePackage != null) {
+							EClassifier eClassifier = ePackage.getEClassifier(etSpec.trim());
+							if (eClassifier instanceof EClass) {
+								ret.add((EClass) eClassifier);
+							}							
+						}
+					}
+				}
+			}
+		}
+		return ret;
+	}
 
 	/**
 	 * Renders delete button for feature value.
