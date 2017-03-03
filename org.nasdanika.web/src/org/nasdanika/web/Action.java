@@ -77,6 +77,20 @@ public interface Action extends AutoCloseable {
 		
 	};	
 	
+	Action SERVICE_UNAVAILABLE = new Action() {
+
+		@Override
+		public Object execute() throws Exception {
+			return ProcessingError.SERVICE_UNAVAILABLE;
+		}
+
+		@Override
+		public void close() throws Exception {
+			// NOP			
+		}
+		
+	};	
+	
 	Action UNAUTHORIZED = new Action() {
 
 		@Override
