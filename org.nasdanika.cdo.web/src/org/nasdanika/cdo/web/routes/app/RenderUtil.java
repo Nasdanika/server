@@ -8,14 +8,14 @@ import org.eclipse.emf.ecore.EClass;
  * @author Pavel
  *
  */
-class RenderUtil {
+public class RenderUtil {
 	
 	// Utility class, no instances.
 	private RenderUtil() {
 		throw new UnsupportedOperationException();
 	}
 	
-	static String getRenderAnnotation(String renderAnnotationSource, EClass eClass, String key) {		
+	public static String getRenderAnnotation(String renderAnnotationSource, EClass eClass, String key) {		
 		EAnnotation ra = eClass.getEAnnotation(renderAnnotationSource);
 		if (ra != null) {
 			String value = ra.getDetails().get(key);
@@ -31,5 +31,7 @@ class RenderUtil {
 		}
 		return null;
 	}	
+	
+	
 
 }
