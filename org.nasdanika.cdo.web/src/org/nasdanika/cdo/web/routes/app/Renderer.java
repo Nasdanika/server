@@ -13,6 +13,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,10 +33,17 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
+import org.eclipse.e4.emf.xpath.XPathContext;
+import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.notify.Notifier;
+import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.Enumerator;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -66,6 +74,7 @@ import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.WebApplication;
+import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.Fragment;
@@ -73,6 +82,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.JsTree;
+import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
@@ -108,16 +118,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 
 	public static final String REFERRER_KEY = ".referrer";
 
-	public static final String ANNOTATION_KEY_VIEW_TAB = "view-tab";
-	
-	public static final String ANNOTATION_KEY_IS_TAB = "is-tab";
-
 	public static final String INDEX_HTML = "index.html";
-
-	/**
-	 * Documentation annotation key.
-	 */
-	String ANNOTATION_KEY_DOCUMENTATION = "documentation";
 
 	/**
 	 * Rendering can be customized by annotating model element with
@@ -140,26 +141,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * Source for Ecore GenModel documentation.
 	 */
 	String ECORE_DOC_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";	
-	
-	/**
-	 * Set this annotation details key to ``false`` to hide structural feature from view.
-	 */
-	String ANNOTATION_KEY_VISIBLE = "visible";
-
-	/**
-	 * Set this annotation details key to ``false`` to hide make visible structural feature read-only in the edit form.
-	 */
-	String ANNOTATION_KEY_EDITABLE = "editable";
-	
-	/**
-	 * On EClass this annotation is a pattern which is interpolated to generate object label.
-	 * On features and operations this annotation defines feature/operation label, a.k.a. "Display name". 
-	 */
-	String ANNOTATION_KEY_LABEL = "label";
-	
-	String ANNOTATION_MODEL_ELEMENT_LABEL = "model-element-label";
-	
-	
+		
 	Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
 	
 	int MIN_FIRST_SENTENCE_LENGTH = 20;
@@ -249,6 +231,79 @@ public interface Renderer<C extends Context, T extends EObject> {
 		return null;
 	}
 	
+	enum RenderAnnotation {
+		
+		/**
+		 * Set this annotation details key to ``false`` to hide structural feature from view.
+		 */
+		VISIBLE("visible"),
+
+		/**
+		 * Set this annotation details key to ``false`` to hide make visible structural feature read-only in the edit form.
+		 */
+		EDITABLE("editable"),
+		
+		/**
+		 * On EClass this annotation is a pattern which is interpolated to generate object label.
+		 * On features and operations this annotation defines feature/operation label, a.k.a. "Display name". 
+		 */
+		LABEL("label"),
+		
+		MODEL_ELEMENT_LABEL("model-element-label"),
+		
+		DOCUMENTATION("documentation"), 
+		
+		FORMAT("format"),
+		
+		ICON("icon"),
+		
+		VIEW_TAB("view-tab"),
+		
+		IS_TAB("is-tab"),		
+		
+		CHOICES_SELECTOR("choices-selector"),
+		
+		CATEGORY("category"),
+		
+		VIEW("view"),
+		
+		VIEW_FEATURES("view-features"),
+		
+		ELEMENT_TYPES("element-types"),
+		
+		CONTROL("control"),
+		
+		INPUT_TYPE("input-type"),
+		
+		CHOICES("choices"),
+		
+		FORM_INPUT_GROUP("form-input-group"),
+		
+		TREE_REFERENCES("tree-references"),
+		
+		HORIZONTAL_FORM("horizontal-form"),
+		
+		TREE_NODE("tree-node");		
+		
+		public final String literal;
+		
+		private RenderAnnotation(String literal) {
+			this.literal = literal;
+		}
+	}
+	
+	/**
+	 * Retrieves render annotation using {@link RenderAnnotation} enum.
+	 * @param context
+	 * @param modelElement
+	 * @param renderAnnotation
+	 * @return
+	 * @throws Exception
+	 */
+	default String getRenderAnnotation(C context, EModelElement modelElement, RenderAnnotation renderAnnotation) throws Exception {
+		return getRenderAnnotation(context, modelElement, renderAnnotation.literal);
+	}	
+	
 	/**
 	 * Derives label (display name) from a name. This implementation splits by camel case,
 	 * lowercases 1+ segments and capitalizes the 0 segment. E.g. myCoolName becomes My cool name.
@@ -275,7 +330,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default List<EStructuralFeature> getVisibleFeatures(C context, T obj) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
-			if (!"false".equals(getRenderAnnotation(context, sf, ANNOTATION_KEY_VISIBLE)) && context.authorizeRead(obj, sf.getName(), null)) {
+			if (!"false".equals(getRenderAnnotation(context, sf, RenderAnnotation.VISIBLE)) && context.authorizeRead(obj, sf.getName(), null)) {
 				ret.add(sf);
 			}
 		}
@@ -362,7 +417,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderLabel(C context, T obj) throws Exception {
-		String labelAnnotation = getRenderAnnotation(context, obj.eClass(), ANNOTATION_KEY_LABEL);
+		String labelAnnotation = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.LABEL);
 		
 		if (labelAnnotation != null) {
 			Map<String, EStructuralFeature> vsfm = new HashMap<>();
@@ -495,7 +550,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderNamedElementLabel(C context, ENamedElement namedElement) throws Exception {
-		String label = getRenderAnnotation(context, namedElement, ANNOTATION_MODEL_ELEMENT_LABEL);
+		String label = getRenderAnnotation(context, namedElement, RenderAnnotation.MODEL_ELEMENT_LABEL);
 		if (label != null) {
 			return label;
 		}		
@@ -554,7 +609,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception 
 	 */
 	default String getModelElementIcon(C context, EModelElement modelElement) throws Exception {
-		String ret = getRenderAnnotation(context, modelElement, "icon");
+		String ret = getRenderAnnotation(context, modelElement, RenderAnnotation.ICON);
 		if (ret == null && modelElement instanceof EStructuralFeature) {
 			return getModelElementIcon(context, ((EStructuralFeature) modelElement).getEType());
 		}
@@ -602,13 +657,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		
 		if (value instanceof Date) {
-			String format = getRenderAnnotation(context, feature, "format");
+			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
 			if (format != null) {
 				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				return sdf.format((Date) value);
 			}
 		} else if (value instanceof Number) {
-			String format = getRenderAnnotation(context, feature, "format");
+			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
 			if (format != null) {
 				DecimalFormat df = new DecimalFormat(format);
 				return df.format(value);
@@ -632,8 +687,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default Object parseFeatureValue(C context, EStructuralFeature feature, String strValue) throws Exception {
+	default Object parseFeatureValue(C context, EStructuralFeature feature, String strValue) throws Exception {		
 		Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+		if (featureTypeInstanceClass.isInstance(strValue)) {
+			return strValue;
+		}
+		
 		if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
 			if (strValue == null) {
 				return false;
@@ -646,7 +705,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 			case "off":
 				return false;
 			default:
-				throw new IllegalArgumentException("Cannot convert to boolean: " + strValue);
+				Map<String,Object> env = new HashMap<>();
+				env.put("value", strValue);
+				env.put("type", "boolean");
+				throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError", false), env));
 			}
 		}
 		
@@ -659,7 +721,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		
 		if (Date.class == featureTypeInstanceClass) {
-			String format = getRenderAnnotation(context, feature, "format");
+			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
 			if (format != null) {
 				SimpleDateFormat sdf = new SimpleDateFormat(format);
 				return sdf.parse(strValue);
@@ -667,7 +729,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		
 		if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
-			String format = getRenderAnnotation(context, feature, "format");
+			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
 			if (format != null) {
 				DecimalFormat df = new DecimalFormat(format);
 				if (BigDecimal.class == featureTypeInstanceClass) {
@@ -697,7 +759,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 			}
 		}
 		
-		return context.convert(strValue, featureTypeInstanceClass);
+		Object ret = context.convert(strValue, featureTypeInstanceClass);
+		if (strValue != null && ret == null) {
+			Map<String,Object> env = new HashMap<>();
+			env.put("value", strValue);
+			env.put("type", featureTypeInstanceClass.getName());
+			throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError", false), env));
+		}
+		return ret;
 	}
 	
 	/**
@@ -760,14 +829,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default String renderDocumentation(C context, EModelElement modelElement) throws Exception {
-		String markdown = getRenderAnnotation(context, modelElement, ANNOTATION_KEY_DOCUMENTATION);
+		String markdown = getRenderAnnotation(context, modelElement, RenderAnnotation.DOCUMENTATION);
 		
 		if (markdown == null) {
 			EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
 			if (docAnn==null) {
 				return null;
 			}
-			markdown = docAnn.getDetails().get(ANNOTATION_KEY_DOCUMENTATION);
+			markdown = docAnn.getDetails().get(RenderAnnotation.DOCUMENTATION.literal);
 		}
 		
 		if (CoreUtil.isBlank(markdown)) {
@@ -984,7 +1053,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * If there is no annotation this method returns true if number of attributes is more then ten.
 	 */
 	default boolean isViewTab(C context, T obj) throws Exception {
-		String viewTabAnnotation = getRenderAnnotation(context, obj.eClass(), ANNOTATION_KEY_VIEW_TAB);
+		String viewTabAnnotation = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.VIEW_TAB);
 		return viewTabAnnotation == null ? obj.eClass().getEAllAttributes().size() > 9 : "true".equals(viewTabAnnotation);
 	}
 	
@@ -996,7 +1065,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * If there is no annotation this method returns true if <code>isMany()</code> returns true.
 	 */
 	default boolean isTab(C context, EStructuralFeature structuralFeature) throws Exception {
-		String isTabAnnotation = getRenderAnnotation(context, structuralFeature, ANNOTATION_KEY_IS_TAB);
+		String isTabAnnotation = getRenderAnnotation(context, structuralFeature, RenderAnnotation.IS_TAB);
 		if (isTabAnnotation == null) {
 			return !(structuralFeature.getEType() instanceof EEnum) && structuralFeature.isMany();
 		}
@@ -1159,10 +1228,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Map<EStructuralFeature, Modal> renderFeaturesDocModals(C context, T obj, Collection<EStructuralFeature> features) throws Exception {
 		Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
-		for (EStructuralFeature vf: features) {
-			Modal fdm = renderDocumentationModal(context, vf);
+		for (EStructuralFeature feature: features) {
+			Modal fdm = renderDocumentationModal(context, feature);
 			if (fdm != null) {
-				featureDocModals.put(vf, fdm);
+				featureDocModals.put(feature, fdm);
 			}
 		}		
 		return featureDocModals;
@@ -1211,7 +1280,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj);
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		for (EStructuralFeature vf: visibleFeatures) {
-			String category = getRenderAnnotation(context, vf, "category");
+			String category = getRenderAnnotation(context, vf, RenderAnnotation.CATEGORY);
 			if (!isTab(context, vf)) {
 				if (category == null) {
 					Row fRow = featuresTable.body().row();
@@ -1565,7 +1634,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		env.put(NAME_KEY, feature.getName());
 		Object featureValue = obj.eGet(feature);
 		if (feature.isMany()) {
-			String viewAnnotation = getRenderAnnotation(context, feature, "view");
+			String viewAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.VIEW);
 			boolean asTable = false;
 			if (feature instanceof EReference) {
 				boolean isTab = isTab(context, feature);
@@ -1582,7 +1651,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			if (asTable) {
 				EClass refType = ((EReference) feature).getEReferenceType();
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
-				String viewFeaturesAnnotation = getRenderAnnotation(context, feature, "view-features");
+				String viewFeaturesAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.VIEW_FEATURES);
 				if (viewFeaturesAnnotation == null) {
 					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
 						if (!sf.isMany() && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
@@ -1695,11 +1764,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, feature.getName());
 			boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
-			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "addTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "selectTooltip", false), env);
 	
 			@SuppressWarnings("resource")
 			Tag icon = isCreate ? renderCreateIcon(context) : renderAddIcon(context);
-			Button addButton = htmlFactory.button(icon.style().margin().right("5px"), getResourceString(context, isCreate ? "create" : "add", false))
+			Button addButton = htmlFactory.button(icon.style().margin().right("5px"), getResourceString(context, isCreate ? "create" : "select", false))
 					.style(Style.PRIMARY)
 					.style().margin().left("5px")
 					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
@@ -1737,7 +1806,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				}
 			}
 		} else {
-			addButton.on(Event.click, "window.location='add/"+feature.getName()+".html';");
+			addButton.on(Event.click, "window.location='select/"+feature.getName()+".html';");
 		}
 	}	
 	
@@ -1756,7 +1825,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default List<EClass> getReferenceElementTypes(C context, T obj, EReference reference) throws Exception {
 		List<EClass> ret = new ArrayList<>();
-		String elementTypesAnnotation = getRenderAnnotation(context, reference, "element-types");
+		String elementTypesAnnotation = getRenderAnnotation(context, reference, RenderAnnotation.ELEMENT_TYPES);
 		if (elementTypesAnnotation == null) {
 			if (context instanceof CDOViewContext) {
 				@SuppressWarnings("unchecked")
@@ -1946,7 +2015,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
 			if (context.authorizeUpdate(obj, vsf.getName(), null)) {
-				String eav = getRenderAnnotation(context, vsf, ANNOTATION_KEY_EDITABLE);
+				String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
 				boolean isEditable = eav == null ? !isTab(context, vsf)  : !"false".equals(eav);
 				if (isEditable) {
 					ret.add(vsf);
@@ -1955,6 +2024,36 @@ public interface Renderer<C extends Context, T extends EObject> {
 		}
 		return ret;
 	}
+
+	/**
+	 * Returns feature value to be used in form controls like input, select, e.t.c.
+	 * This implementation returns name for enums and {@link CDOID} encoded with {@link CDOIDCodec} for {@link CDOObject}'s.
+	 * For all other values it returns HTML-escaped result of ``renderFeatureValue()``  
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @param featureValue
+	 * @return
+	 * @throws Exception 
+	 */
+	default String getFormControlValue(C context, T obj, EStructuralFeature feature, Object featureValue) throws Exception {
+		if (featureValue == null) {
+			return "";
+		}
+		
+		if (featureValue.getClass().isEnum()) {
+			return ((Enum<?>) featureValue).name();
+		} 
+		
+		if (featureValue instanceof CDOObject) {
+			return CDOIDCodec.INSTANCE.encode(context, ((CDOObject) featureValue).cdoID());
+		}
+			
+		Object rfv = renderFeatureValue(context, feature, featureValue);
+		return rfv == null ? "" : StringEscapeUtils.escapeHtml4(rfv.toString());						
+	}
+	
+	// TODO - placeholder - might be an implicit default, placeholder selector
 	
 	/**
 	 * Renders control for the feature, e.g. input, select, or text area.
@@ -1972,24 +2071,25 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @return Null for checkboxes and radios - they are added directly to the fieldContainer. Control to add to a field group otherwise.
 	 * @throws Exception
 	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	default UIElement<?> renderFeatureControl(
 			C context, 
 			T obj, 
 			EStructuralFeature feature, 
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
-			ValidationResult validationResult,
+			List<ValidationResult> validationResults,
 			boolean helpTooltip) throws Exception {
 		Object fv = obj.eGet(feature);
-		String controlType = getRenderAnnotation(context, feature, "control");
+		String controlTypeStr = getRenderAnnotation(context, feature, RenderAnnotation.CONTROL);
+		TagName controlType = controlTypeStr == null ? null : TagName.valueOf(controlTypeStr); 
 		if (controlType == null) {
 			if (feature.isMany()) {
-				controlType = "input";
+				controlType = TagName.input;
 			} else if (feature instanceof EAttribute) {				
-				controlType = feature.getEType() instanceof EEnum ? "select" : "input";
+				controlType = feature.getEType() instanceof EEnum ? TagName.select : TagName.input;
 			} else {
-				controlType = "select";
+				controlType = TagName.select;
 			}
 		}
 		
@@ -2000,8 +2100,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal, true));			
 		}
 		switch (controlType) {
-		case "input":
-			String inputTypeStr = getRenderAnnotation(context, feature, "input-type");
+		case input:
+			String inputTypeStr = getRenderAnnotation(context, feature, RenderAnnotation.INPUT_TYPE);
 			InputType inputType = inputTypeStr == null ? null : HTMLFactory.InputType.valueOf(inputTypeStr);
 			if (inputType == null) {
 				if (feature.isMany()) {
@@ -2031,7 +2131,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 					checkboxesFieldSet.legend(label);
 					Set<String> valuesToSelect = new HashSet<>();
 					for (Object fev: ((Collection<Object>) fv)) {
-						valuesToSelect.add(fev.getClass().isEnum() ? ((Enum) fev).name() : renderFeatureValue(context, feature, fev).toString());
+						valuesToSelect.add(getFormControlValue(context, obj, feature, fev));
 					}
 					for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
 						Input checkbox = htmlFactory.input(inputType);
@@ -2061,11 +2161,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 					.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
 					.style().margin().bottom("5px");
 				radiosFieldSet.legend(label);
-				String valueToSelect = fv == null ? null : renderFeatureValue(context, feature, fv).toString();
+				String valueToSelect = getFormControlValue(context, obj, feature, fv);
 				for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
 					Input radio = htmlFactory.input(inputType)
 							.name(feature.getName())
-							.value(StringEscapeUtils.escapeHtml4(renderFeatureValue(context, feature, fv).toString()))
+							.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
 							.placeholder(textLabel)
 							.required(isRequired(context, obj, feature));
 					if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
@@ -2077,25 +2177,25 @@ public interface Renderer<C extends Context, T extends EObject> {
 			default:
 				return htmlFactory.input(inputType)
 					.name(feature.getName())
-					.value(StringEscapeUtils.escapeHtml4(renderFeatureValue(context, feature, fv).toString()))
+					.value(StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, fv)))
 					.placeholder(textLabel)
 					.required(isRequired(context, obj, feature));								
 			}
-		case "select":
+		case select:
 			Select select = htmlFactory.select()
 				.name(feature.getName())
 				.required(isRequired(context, obj, feature));
-			String valueToSelect = fv == null ? null : renderFeatureValue(context, feature, fv).toString();
+			String valueToSelect = getFormControlValue(context, obj, feature, fv);
 			for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
-				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(fc.getValue()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
+				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
 			}
 			return select;
-		case "textarea":
+		case textarea:
 			TextArea textArea = htmlFactory.textArea()
 				.name(feature.getName())
 				.placeholder(textLabel)
 				.required(isRequired(context, obj, feature));			
-			textArea.content(StringEscapeUtils.escapeHtml4(renderFeatureValue(context, feature, fv).toString()));
+			textArea.content(getFormControlValue(context, obj, feature, fv));
 			return textArea;
 		default:
 			throw new IllegalArgumentException("Unsupported control type: "+controlType);
@@ -2116,39 +2216,94 @@ public interface Renderer<C extends Context, T extends EObject> {
 	/**
 	 * Invoked for select, radio and checkbox on non-boolean types. 
 	 * 
-	 * This implementation loads choices from the ``choices`` annotation.
-	 * Choices are defined each on a new line as a value - label pair <value>=<label>.     
+	 * For references this implementation evaluates selector read from ``choices-selector`` annotation, if it is present. The selector expression 
+	 * is evaluated with [EMF XPath](https://github.com/eclipse/eclipse.platform.ui/tree/master/bundles/org.eclipse.e4.emf.xpath), which extends
+	 * [Apache Commons JXPath](https://commons.apache.org/proper/commons-jxpath/index.html). Some examples of using EMF XPath:
+	 * 
+	 * * https://tomsondev.bestsolution.at/2010/10/08/navigatingquerying-emf-models-using-xpath/
+	 * * http://www.programcreek.com/java-api-examples/index.php?source_dir=eclipse.platform.ui-master/tests/org.eclipse.e4.emf.xpath.test/src/org/eclipse/e4/emf/xpath/test/ExampleQueriesTestCase.java
+	 * 
+	 * If ``choices-selector`` annotation is not present, then this implementation finds all objects compatible with the reference type in the object's containing resource set. 
+	 * 
+	 * For attributes choices are loaded from the ``choices`` annotation.
+	 * Choices are defined each on a new line as a value - label pair <value>=<label>.  
+	 * If there is no equal sign, then the line value is used for both value and label.   
+	 * 
+	 * 
 	 * @return
 	 */
 	default Collection<Map.Entry<String, String>> getFeatureChoices(C context, T obj, EStructuralFeature feature) throws Exception {
 		Map<String,String> collector = new LinkedHashMap<>();
-		String choicesAnnotation = getRenderAnnotation(context, feature, "choices");
-		if (choicesAnnotation == null) {
-			Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
-			if (featureTypeInstanceClass.isEnum()) {
-				for (Field field: featureTypeInstanceClass.getFields()) {
-					if (field.isEnumConstant()) {
-						Object fieldValue = field.get(null);
-						@SuppressWarnings("rawtypes")
-						String name = ((Enum) fieldValue).name();
-						if (fieldValue instanceof Enumerator) {
-							collector.put(name, ((Enumerator) fieldValue).getLiteral());
-						} else {
-							collector.put(name, fieldValue.toString());							
+		
+		if (feature instanceof EReference) {
+			String choicesSelector = getRenderAnnotation(context, feature, RenderAnnotation.CHOICES_SELECTOR);
+			// Accumulates selections for sorting before adding to the collector.
+			List<String[]> accumulator = new ArrayList<>(); 
+			if (choicesSelector == null) {
+				TreeIterator<Notifier> tit = obj.eResource().getResourceSet().getAllContents();
+				while (tit.hasNext()) {
+					Notifier next = tit.next();
+					if (feature.getEType().isInstance(next) && next instanceof CDOObject) {
+						CDOObject cdoNext = (CDOObject) next;
+						Object iconAndLabel = getRenderer(cdoNext).renderIconAndLabel(context, cdoNext);
+						if (iconAndLabel != null) {
+							accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoNext.cdoID()), iconAndLabel.toString() });
+						}
+					}
+				}
+			} else {
+				XPathContextFactory<EObject> xPathFactory = EcoreXPathContextFactory.newInstance(); 
+				XPathContext xPathContext = xPathFactory.newContext(obj);
+				Iterator<Object> cit = xPathContext.iterate(choicesSelector);
+				while (cit.hasNext()) {
+					Object selection = cit.next();
+					if (feature.getEType().isInstance(selection) && selection instanceof CDOObject) {
+						CDOObject cdoSelection = (CDOObject) selection;
+						Object iconAndLabel = getRenderer(cdoSelection).renderIconAndLabel(context, cdoSelection);
+						if (iconAndLabel != null) {
+							accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoSelection.cdoID()), iconAndLabel.toString() });
 						}
 					}
 				}
 			}
-		} else {
-			try (BufferedReader br = new BufferedReader(new StringReader(choicesAnnotation))) {
-				String line;
-				while ((line = br.readLine()) != null) {
-					if (!CoreUtil.isBlank(line) && !line.startsWith("#")) {
-						int idx = line.indexOf('=');
-						if (idx == -1) {
-							collector.put(line, line);
-						} else {
-							collector.put(line.substring(0, idx), line.substring(idx+1));							
+			
+			Collections.sort(accumulator, (e1, e2) -> {										
+				return Jsoup.parse(e1[1]).text().compareTo(Jsoup.parse(e2[1]).text());
+			});
+			
+			for (String[] e: accumulator) {
+				collector.put(e[0], e[1]);
+			}
+						
+		} else {		
+			String choicesAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.CHOICES);
+			if (choicesAnnotation == null) {
+				Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+				if (featureTypeInstanceClass.isEnum()) {
+					for (Field field: featureTypeInstanceClass.getFields()) {
+						if (field.isEnumConstant()) {
+							Object fieldValue = field.get(null);
+							@SuppressWarnings("rawtypes")
+							String name = ((Enum) fieldValue).name();
+							if (fieldValue instanceof Enumerator) {
+								collector.put(name, ((Enumerator) fieldValue).getLiteral());
+							} else {
+								collector.put(name, fieldValue.toString());							
+							}
+						}
+					}
+				}
+			} else {
+				try (BufferedReader br = new BufferedReader(new StringReader(choicesAnnotation))) {
+					String line;
+					while ((line = br.readLine()) != null) {
+						if (!CoreUtil.isBlank(line) && !line.startsWith("#")) {
+							int idx = line.indexOf('=');
+							if (idx == -1) {
+								collector.put(line, line);
+							} else {
+								collector.put(line.substring(0, idx), line.substring(idx+1));							
+							}
 						}
 					}
 				}
@@ -2224,10 +2379,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 			EStructuralFeature feature, 
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
-			ValidationResult validationResult,
+			List<ValidationResult> validationResults,
 			boolean helpTooltip) throws Exception {
 		
-		UIElement<?> control = renderFeatureControl(context, obj, feature, fieldContainer, docModal, validationResult, helpTooltip);
+		UIElement<?> control = renderFeatureControl(context, obj, feature, fieldContainer, docModal, validationResults, helpTooltip);
 		if (control == null) {
 			return null;
 		}
@@ -2236,7 +2391,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Tag docIcon = renderDocumentationIcon(context, feature, docModal, false);
 		
 		boolean isFormInputGroup;
-		String formInputGroupAnnotation = getRenderAnnotation(context, feature, "form-input-group");
+		String formInputGroupAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.FORM_INPUT_GROUP);
 		if (formInputGroupAnnotation == null) {
 			isFormInputGroup = control instanceof Input && (icon != null || docIcon != null);	
 		} else {
@@ -2246,13 +2401,18 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Object helpText = helpTooltip ? null : renderFeatureFormGroupHelpText(context, obj, feature, docModal);
 
 		HTMLFactory htmlFactory = getHTMLFactory(context);
-		
-		if (validationResult != null) {
-			Tag validationLabel = htmlFactory.label(validationResult.status.toStyle(), validationResult.message);
-			if (helpText == null) {
-				helpText = validationLabel;
-			} else {
-				helpText = htmlFactory.fragment(validationLabel, " ", helpText);
+				
+		FormGroup.Status status = null;
+		if (validationResults != null) {
+			Fragment htf = htmlFactory.fragment();
+			for (ValidationResult validationResult: validationResults) {				
+				htf.content(htmlFactory.label(validationResult.status.toStyle(), validationResult.message), " ");
+				if (status == null || status.ordinal() < validationResult.status.ordinal()) {
+					status = validationResult.status;
+				}
+			}
+			if (!htf.isEmpty()) {
+				helpText = htf.content(helpText);
 			}
 		}
 		
@@ -2268,8 +2428,8 @@ public interface Renderer<C extends Context, T extends EObject> {
 			if (docIcon != null) {
 				ret.rightAddOn(docIcon);
 			}
-			if (validationResult != null) {
-				ret.status(validationResult.status);
+			if (status != null) {
+				ret.status(status);
 			}			
 			return ret;
 		}
@@ -2283,9 +2443,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 			label = htmlFactory.fragment(label, htmlFactory.tag(TagName.sup, docIcon));
 		}
 		FormGroup<?> ret = fieldContainer.formGroup(label, control, helpText);
-		if (validationResult != null) {
-			ret.status(validationResult.status);
-		}
+		if (status != null) {
+			ret.status(status);
+		}			
 		return ret;
 	}
 	
@@ -2325,15 +2485,15 @@ public interface Renderer<C extends Context, T extends EObject> {
 			T obj, 
 			FieldContainer<?> fieldContainer, 
 			Map<EStructuralFeature, Modal> docModals, 
-			Map<EStructuralFeature,ValidationResult> errorMessages,
+			Map<EStructuralFeature,List<ValidationResult>> validationResults,
 			boolean helpTooltip) throws Exception {
 		
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		List<FormGroup<?>> ret = new ArrayList<>();
 		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
-			String category = getRenderAnnotation(context, esf, "category");
+			String category = getRenderAnnotation(context, esf, RenderAnnotation.CATEGORY);
 			if (category == null) {
-				FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), errorMessages.get(esf), helpTooltip);
+				FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), validationResults.get(esf), helpTooltip);
 				if (fg != null) {
 					ret.add(fg);
 				}
@@ -2366,7 +2526,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			}
 			
 			for (EStructuralFeature cesf: ce.getValue()) {
-				FormGroup<?> fg = renderFeatureFormGroup(context, obj, cesf, categoryFieldSet, docModals.get(cesf), errorMessages.get(cesf), helpTooltip);
+				FormGroup<?> fg = renderFeatureFormGroup(context, obj, cesf, categoryFieldSet, docModals.get(cesf), validationResults.get(cesf), helpTooltip);
 				if (fg != null) {
 					ret.add(fg);
 				}
@@ -2384,7 +2544,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default boolean setEditableFeatures(C context, T obj, Consumer<Diagnostic> diagnosticConsumer) throws Exception {		
 		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
 		for (EStructuralFeature esf: editableFeatures) {
-			setFeatureValue(context, obj, esf);
+			try {
+				setFeatureValue(context, obj, esf);
+			} catch (Exception e) {
+				diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, e.getMessage(), new Object[] { obj, esf, e }));
+			}
 		}
 		Diagnostic vr = validate(context, obj);
 		boolean noErrors = true;
@@ -2397,9 +2561,9 @@ public interface Renderer<C extends Context, T extends EObject> {
 				if (vc.getSeverity() == Diagnostic.ERROR) {
 					noErrors = false;
 				}
-				if (diagnosticConsumer != null) {
-					diagnosticConsumer.accept(vc);
-				}
+			}
+			if (diagnosticConsumer != null) {
+				diagnosticConsumer.accept(vc);
 			}
 		}
 		
@@ -2488,7 +2652,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 		List<EReference> treeReferences = new ArrayList<EReference>();
 		EClass eClass = obj.eClass();
-		String treeReferencesAnnotation = getRenderAnnotation(context, eClass, "tree-references");
+		String treeReferencesAnnotation = getRenderAnnotation(context, eClass, RenderAnnotation.TREE_REFERENCES);
 		if (treeReferencesAnnotation == null) {
 			for (EReference ref: eClass.getEAllReferences()) {
 				if (ref.isContainment() && ref.isMany() && context.authorizeRead(obj, ref.getName(), null)) {
@@ -2509,7 +2673,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Tag ret = htmlFactory.tag(TagName.ul);
 		for (EReference treeReference: treeReferences) {
-			String treeNodeAnnotation = getRenderAnnotation(context, treeReference, "tree-node");
+			String treeNodeAnnotation = getRenderAnnotation(context, treeReference, RenderAnnotation.TREE_NODE);
 			boolean isTreeNode = !"false".equals(treeNodeAnnotation);
 			Tag itemContainer = ret;
 			if (isTreeNode) {
@@ -2577,6 +2741,95 @@ public interface Renderer<C extends Context, T extends EObject> {
 		
 		return getHTMLFactory(context).interpolate(getResourceString(context, "object.header", false), env);
 	}
+
+	/**
+	 * Renders object edit form with feature documentation modals and error messages if any. Action buttons are not rendered.
+	 * @param context
+	 * @param obj
+	 * @param validationResults
+	 * @param featureValidationResults
+	 * @param horizontalForm
+	 * @return
+	 * @throws Exception
+	 */
+	default Form renderEditForm(
+			C context, 
+			T obj, 
+			List<ValidationResult> validationResults, 
+			Map<EStructuralFeature, List<ValidationResult>> featureValidationResults, 
+			boolean horizontalForm) throws Exception {
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);		
+		Form editForm = htmlFactory.form();
+		
+		Map<EStructuralFeature, Modal> featureDocModals = renderEditableFeaturesDocModals(context, obj);
+		for (Modal fdm: featureDocModals.values()) {
+			editForm.content(fdm);
+		}
+		
+		ListGroup errorList = htmlFactory.listGroup();
+		for (ValidationResult vr: validationResults) {
+			errorList.item(vr.message, vr.status.toStyle());			
+		}
+		
+		if (horizontalForm) {
+			for (Entry<EStructuralFeature, List<ValidationResult>> fe: featureValidationResults.entrySet()) {
+				for (ValidationResult fvr: fe.getValue()) {
+					Object featureNameLabel = renderNamedElementIconAndLabel(context, fe.getKey());
+					errorList.item(htmlFactory.label(fvr.status.toStyle(), featureNameLabel) + " " + fvr.message, fvr.status.toStyle());											
+				}
+			}
+		}
+		
+		if (!errorList.isEmpty()) {
+			editForm.content(errorList);
+		}
+				
+		renderEditableFeaturesFormGroups(context, obj, editForm, featureDocModals, featureValidationResults, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
+		return editForm;
+	}
 	
+	/**
+	 * Renders an edit form for a single feature, e.g. a reference with checkboxes for selecting multiple values and radios or select for selecting a single value.
+	 * @param context
+	 * @param obj
+	 * @param validationResults
+	 * @param featureValidationResults
+	 * @param horizontalForm
+	 * @return
+	 * @throws Exception
+	 */
+	default Form renderFeatureEditForm(
+			C context, 
+			T obj, 
+			EStructuralFeature feature,
+			List<ValidationResult> featureValidationResults, 
+			boolean horizontalForm) throws Exception {
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);		
+		Form selectForm = htmlFactory.form();
+		
+		Modal featureDocModal = renderDocumentationModal(context, feature);
+		selectForm.content(featureDocModal);
+		
+		ListGroup errorList = htmlFactory.listGroup();
+		
+		if (horizontalForm && featureValidationResults != null) {
+			for (ValidationResult fvr: featureValidationResults) {
+				errorList.item(fvr.message, fvr.status.toStyle());											
+			}
+		}
+		
+		if (!errorList.isEmpty()) {
+			selectForm.content(errorList);
+		}
+		
+		FormGroup<?> fg = renderFeatureFormGroup(context, obj, feature, selectForm, featureDocModal, featureValidationResults, horizontalForm);
+		if (fg != null) {
+			fg.feedback(!horizontalForm);
+		}
+		
+		return selectForm;
+	}
 		
 }
