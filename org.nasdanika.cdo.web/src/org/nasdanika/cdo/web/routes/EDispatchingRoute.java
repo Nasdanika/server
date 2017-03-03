@@ -19,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.view.CDOView;
@@ -38,6 +39,7 @@ import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.web.Action;
 import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.DispatchingRoute;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -130,11 +132,52 @@ public class EDispatchingRoute extends DispatchingRoute {
 			}
 
 			/**
-			 * Converts EObject to JSONObject.
+			 * Manages locks and converts EObject to JSONObject.
 			 */
 			@Override
 			public Object execute(HttpServletRequestContext context, Object target, Object[] arguments)	throws Exception {
-				Object ret = super.execute(context, target, arguments);
+				CDOLock cdoLock = null;
+				if (context.getTarget() instanceof CDOObject) {
+					CDOObject cdoTarget = (CDOObject) context.getTarget();
+					switch (getLock().type()) {
+					case READ:
+						cdoLock = cdoTarget.cdoReadLock();
+						break;
+					case WRITE:
+						cdoLock = cdoTarget.cdoWriteLock();
+						break;
+					case IMPLY_FROM_HTTP_METHOD:
+						switch (context.getMethod()) {
+						case DELETE:
+						case PATCH:
+						case POST:
+						case PUT:
+							cdoLock = cdoTarget.cdoWriteLock();
+							break;
+						default:
+							cdoLock = cdoTarget.cdoReadLock();							
+							break;
+						}
+					default:
+						break;					
+					}
+				}
+				
+				Object ret;
+				if (cdoLock == null) {
+					ret = super.execute(context, target, arguments);
+				} else {
+					if (cdoLock.tryLock(getLock().timeout(), getLock().timeUnit())) {
+						try {
+							ret = super.execute(context, target, arguments);
+						} finally {
+							cdoLock.unlock();
+						}						
+					} else {
+						return Action.SERVICE_UNAVAILABLE;
+					}
+				}					
+				
 				HttpServletResponse response = context.getResponse();
 				if (response!=null && JSON_CONTENT_TYPE.equals(response.getContentType())) {
 					ResponseModel responseModel = method.getAnnotation(ResponseModel.class);

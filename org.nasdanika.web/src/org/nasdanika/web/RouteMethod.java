@@ -4,6 +4,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This annotation tells router to wrap object method into a route.
@@ -83,5 +84,55 @@ public @interface RouteMethod {
 	 * @return
 	 */
 	String comment() default "";	
+
+	/**
+	 * Defines locking to apply when executing route method.
+	 * @author Pavel Vlasov
+	 *
+	 */
+	@interface Lock {
+		
+		/**
+		 * Lock to apply to the context object of the route method before executing the method.
+		 * @author Pavel Vlasov
+		 *
+		 */
+		enum Type { 
+			/**
+			 * No locking.
+			 */
+			NONE, 
+			/**
+			 * Read lock.
+			 */
+			READ, 
+			/**
+			 * Write lock.
+			 */
+			WRITE,
+			
+			/**
+			 * Lock type is implied from the request method. WRITE for PUT, POST, PATCH, and DELETE, READ otherwise.
+			 */
+			IMPLY_FROM_HTTP_METHOD
+		}
+		
+		/**
+		 * Lock to apply to the context object of the route method before executing the route method.
+		 * @return
+		 */
+		Type type() default Type.IMPLY_FROM_HTTP_METHOD;
+		
+		/**
+		 * Lock timeout in milliseconds, 0 means infinite.
+		 * @return
+		 */
+		long timeout() default 1;
+		
+		TimeUnit timeUnit() default TimeUnit.MINUTES; 
+		
+	}
+	
+	Lock lock() default @Lock();
 
 }

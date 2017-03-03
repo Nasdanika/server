@@ -13,6 +13,7 @@ import org.nasdanika.core.Context;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.ContextProvider;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.web.RouteMethod.Lock;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -33,6 +34,11 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	private String qualifier;
 	private String comment;
 	private boolean keepWebSocketContext;
+	private Lock lock;
+	
+	public Lock getLock() {
+		return lock;
+	}
 	
 	public String getComment() {
 		return comment;
@@ -66,6 +72,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 		comment = routeMethod.comment();
 		keepWebSocketContext = routeMethod.keepWebSocketContext();
 		action = routeMethod.action();
+		lock = routeMethod.lock();
 		
 		// Implying path and possibly request method from method name
 		if (CoreUtil.isBlank(path) && CoreUtil.isBlank(routeMethod.pattern())) {
