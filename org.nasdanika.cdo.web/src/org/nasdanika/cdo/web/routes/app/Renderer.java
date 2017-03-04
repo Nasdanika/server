@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
@@ -31,6 +33,7 @@ import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
@@ -58,6 +61,8 @@ import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.Diagnostician;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.CDOIDCodec;
@@ -103,6 +108,7 @@ import org.pegdown.ast.AutoLinkNode;
 import org.pegdown.ast.ExpLinkNode;
 import org.pegdown.ast.RefLinkNode;
 import org.pegdown.ast.WikiLinkNode;
+import org.yaml.snakeyaml.Yaml;
 
 /**
  * Renders HTML elements for a target object such as form inputs, tables, e.t.c.
@@ -1260,8 +1266,46 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String refKey = key + '@';
 			if (rb.containsKey(refKey)) {
 				String rsRef = rb.getString(refKey);
-				URL rsRes = rbc.getResource(rsRef);
+				int hashIdx = rsRef.indexOf("#");				
+				String cleanRsRef = hashIdx == -1 ? rsRef : rsRef.substring(0, hashIdx);
+				String fragment = hashIdx == -1 ? null : rsRef.substring(hashIdx+1);
+				int lastDotIdx = cleanRsRef.lastIndexOf('.');
+				String extension = lastDotIdx == -1 ? null : cleanRsRef.substring(lastDotIdx + 1);
+				boolean supportsFragment = "properties".equals(extension) || "yml".equals(extension) || "json".equals(extension);
+				URL rsRes = rbc.getResource(supportsFragment ? cleanRsRef : rsRef);
 				if (rsRes != null) {
+					if (supportsFragment) {
+						switch (extension) {
+						case "json":
+							try (InputStream is = rsRes.openStream()) {
+								JSONTokener tokener = new JSONTokener(is);
+								// Supports only JSON Objects
+								JSONObject jsonObject = new JSONObject(tokener);
+								if (fragment == null) {
+									return jsonObject.toMap();
+								}
+								return JXPathContext.newContext(jsonObject.toMap()).getValue(fragment);
+							}
+						case "yml":
+							try (InputStream is = rsRes.openStream()) {
+								Yaml yaml = new Yaml();
+								Object obj = yaml.load(is);
+								if (fragment == null) {
+									return obj;
+								}
+								return JXPathContext.newContext(obj).getValue(fragment);
+							}														
+						case "properties":
+							try (InputStream is = rsRes.openStream()) {
+								Properties properties = new Properties();
+								properties.load(is);
+								if (fragment == null) {
+									return properties;
+								}
+								return JXPathContext.newContext(properties).getValue(fragment);
+							}							
+						}
+					}
 					// TODO - special handling of .properties, .json, and .yml resources - parse and return parse result - Properties, JSONObject or JSONArray, Maps/lists
 					// If URL has a fragment, then treat is as a jxpath in the result e.g. usd/rate.
 					return rsRes;
@@ -2147,6 +2191,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	// TODO - placeholder - might be an implicit default, placeholder selector
+	
+	// TODO - support tree rendering for 
 	
 	/**
 	 * Renders control for the feature, e.g. input, select, or text area.
