@@ -454,7 +454,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				if (eClassifier instanceof EClass && ((EReference) tsf).getEReferenceType().isSuperTypeOf((EClass) eClassifier)) {
 					EClass eClass = (EClass) eClassifier;					
 					EObject instance = ePackage.getEFactoryInstance().create(eClass);
-					Renderer<C, EObject> renderer = getRenderer(eClass);
+					Renderer<C, EObject> renderer = getReferenceRenderer((EReference) tsf, instance);
 					
 					ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
 						

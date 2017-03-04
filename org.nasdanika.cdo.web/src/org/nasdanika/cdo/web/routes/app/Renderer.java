@@ -110,7 +110,7 @@ import org.pegdown.ast.WikiLinkNode;
  *
  * @param <T>
  */
-public interface Renderer<C extends Context, T extends EObject> {
+public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 	
 	public static final String TITLE_KEY = "title";
 
@@ -160,6 +160,65 @@ public interface Renderer<C extends Context, T extends EObject> {
 		// TODO extension point.
 		return (Renderer<C, EObject>) INSTANCE;
 	}
+	
+	/**
+	 * Returns an instance of renderer chained with the masterResourceProvider.
+	 * Sub-interfaces and implementations must override this method to return a proper
+	 * renderer implementation.
+	 * @param masterResourceProvider
+	 * @return
+	 */
+	default Renderer<C, T> chain(ResourceProvider<C> masterResourceProvider) {
+		return new Renderer<C, T>() {
+			
+			@Override
+			public ResourceProvider<C> getMasterResourceProvider(C context) throws Exception {
+				return masterResourceProvider;
+			}
+			
+		};
+	}
+	
+	/**
+	 * Returns renderer for a feature. The renderer is chained with this renderer as its master
+	 * resource provider with ``<feature class>.<feature name>.`` prefix. 
+	 * 
+	 * For example if a renderer is requested for {@link EAttribute} ``myAttribute`` then call to its
+	 * ``getResource(context, "myResource")`` method will call this renderer with ``attribute.myAttribute.myResource`` key.
+	 * 
+	 * Such chaining allows contextual customization, a renderer for class A would behave differently when class A is a child 
+	 * of B or C.
+	 * @param reference
+	 * @param featureValue
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	default <M extends EObject> Renderer<C, M> getReferenceRenderer(EReference reference, M featureValue) {
+		String className = reference.eClass().getName();
+		if (className.startsWith("E")) {
+			className = className.substring(1);
+		}
+		String prefix = StringUtils.uncapitalize(className)+"."+reference.getName()+".";
+		
+		ResourceProvider<C> master = new ResourceProvider<C>() {
+
+			@Override
+			public Object getResource(C context, String key) throws Exception {
+				return Renderer.this.getResource(context, prefix+key);
+			}
+
+			@Override
+			public String getResourceString(C context, String key) throws Exception {
+				return Renderer.this.getResourceString(context, prefix+key);
+			}
+		};
+		
+		if (featureValue == null) {
+			return (Renderer<C, M>) getRenderer(reference.getEReferenceType()).chain(master);
+		}
+		
+		return getRenderer(featureValue).chain(master);
+	}	
 
 	/**
 	 * Returns renderer for an object.
@@ -632,7 +691,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Object renderFeatureValue(C context, EStructuralFeature feature, Object value) throws Exception {
 		if (value instanceof EObject) {
-			return getRenderer(((EObject) value).eClass()).renderLink(context, (EObject) value, true);
+			return getReferenceRenderer((EReference) feature, (EObject) value).renderLink(context, (EObject) value, true);
 		}
 		if (value == null) {
 			return "";
@@ -708,7 +767,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 				Map<String,Object> env = new HashMap<>();
 				env.put("value", strValue);
 				env.put("type", "boolean");
-				throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError", false), env));
+				throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));
 			}
 		}
 		
@@ -764,7 +823,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Map<String,Object> env = new HashMap<>();
 			env.put("value", strValue);
 			env.put("type", featureTypeInstanceClass.getName());
-			throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError", false), env));
+			throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));
 		}
 		return ret;
 	}
@@ -890,7 +949,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		if (eClass != null) {
 			String href = getEClassifierDocRef(context, eClass);
 			if (href != null) {
-				docModal.footer(getHTMLFactory(context).link(href, getResourceString(context, "informationCenter", false)).attribute("target", "_blank"));
+				docModal.footer(getHTMLFactory(context).link(href, getResourceString(context, "informationCenter")).attribute("target", "_blank"));
 			}
 		}
 		return docModal;
@@ -1025,7 +1084,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Matcher matcher = SENTENCE_PATTERN.matcher(text);		
 		Z: while (matcher.find()) {
 			String group = matcher.group();
-			String[] abbra = getResourceString(context, "abbreviations", false).split("\\|");
+			String[] abbra = getResourceString(context, "abbreviations").split("\\|");
 			for (String abbr: abbra) {
 				if (group.trim().endsWith(abbr)) {
 					continue Z;
@@ -1080,7 +1139,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default Object renderViewTabLabel(C context, T obj) throws Exception {
-		return getResourceString(context, "viewTabLabel", false);
+		return getResourceString(context, "viewTabLabel");
 	}
 	
 	/**
@@ -1092,6 +1151,26 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 */
 	default Locale getLocale(C context) throws Exception {
 		return context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getLocale() : Locale.getDefault(); 
+	}
+	
+	/**
+	 * Calls getResourceString(context, key, false)
+	 * @throws Exception
+	 */
+	@Override
+	default String getResourceString(C context, String key) throws Exception {
+		return getResourceString(context, key, false);
+	}
+	
+	/**
+	 * If this method returns non-null value, then the master resource provider is used first to retrieve resources and 
+	 * the renderer's own logic is used only if the provider doesn't contain requested resource. 
+	 * 
+	 * @param context
+	 * @return
+	 */
+	default ResourceProvider<C> getMasterResourceProvider(C context) throws Exception {
+		return null;
 	}
 	
 	/**
@@ -1108,29 +1187,33 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception
 	 */
 	default String getResourceString(C context, String key, boolean interpolate) throws Exception {
-		LinkedList<Class<?>> resourceBundleClasses = getResourceBundleClasses(context);
+		ResourceProvider<C> master = getMasterResourceProvider(context);
+		String rs = master == null ? null : master.getResourceString(context, key);
 		
-		String rs = null;
-		for (Class<?> rbc: resourceBundleClasses) {
-			ResourceBundle rb = ResourceBundle.getBundle(rbc.getName(), getLocale(context), rbc.getClassLoader());
-			if (rb.containsKey(key)) {
-				rs = rb.getString(key);
-				break;
-			}
+		if (rs == null) {
+			LinkedList<Class<?>> resourceBundleClasses = getResourceBundleClasses(context);
 			
-			String refKey = key + '@';
-			if (rb.containsKey(refKey)) {
-				String rsRef = rb.getString(refKey);
-				URL rsRes = rbc.getResource(rsRef);
-				if (rsRes != null) {
-					rs = CoreUtil.stringify(rsRes);
-					if (rsRef.endsWith(".md")) {
-						rs = markdownToHtml(context, rs);
-					}
+			for (Class<?> rbc: resourceBundleClasses) {
+				ResourceBundle rb = ResourceBundle.getBundle(rbc.getName(), getLocale(context), rbc.getClassLoader());
+				if (rb.containsKey(key)) {
+					rs = rb.getString(key);
 					break;
 				}
-			}			
-		}		
+				
+				String refKey = key + '@';
+				if (rb.containsKey(refKey)) {
+					String rsRef = rb.getString(refKey);
+					URL rsRes = rbc.getResource(rsRef);
+					if (rsRes != null) {
+						rs = CoreUtil.stringify(rsRes);
+						if (rsRef.endsWith(".md")) {
+							rs = markdownToHtml(context, rs);
+						}
+						break;
+					}
+				}			
+			}
+		}
 		
 		if (rs != null && interpolate) {
 			return getHTMLFactory(context).interpolate(rs, token -> {
@@ -1156,15 +1239,22 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * resource ({@link URL}) with the name equal to the property value is returned, if present.  
 	 * @throws Exception
 	 */
+	@Override
 	default Object getResource(C context, String key) throws Exception {
+		ResourceProvider<C> master = getMasterResourceProvider(context);
+		if (master != null) {
+			Object res = master.getResource(context, key);
+			if (res != null) {
+				return res;
+			}
+		}
+		
 		LinkedList<Class<?>> resourceBundleClasses = getResourceBundleClasses(context);
 		
-		Object res = null;
 		for (Class<?> rbc: resourceBundleClasses) {
 			ResourceBundle rb = ResourceBundle.getBundle(rbc.getName(), getLocale(context), rbc.getClassLoader());
 			if (rb.containsKey(key)) {
-				res = rb.getObject(key);
-				break;
+				return rb.getObject(key);
 			}
 			
 			String refKey = key + '@';
@@ -1172,15 +1262,14 @@ public interface Renderer<C extends Context, T extends EObject> {
 				String rsRef = rb.getString(refKey);
 				URL rsRes = rbc.getResource(rsRef);
 				if (rsRes != null) {
-					res = rsRes;
 					// TODO - special handling of .properties, .json, and .yml resources - parse and return parse result - Properties, JSONObject or JSONArray, Maps/lists
-					// If URL has a fragment, then treat is as a path in the result e.g. usd/rate.
-					break;
+					// If URL has a fragment, then treat is as a jxpath in the result e.g. usd/rate.
+					return rsRes;
 				}
 			}			
 		}		
 		
-		return res;
+		return null;
 	}
 	
 	/**
@@ -1359,12 +1448,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderEditButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button editButton = htmlFactory.button(renderEditIcon(context).style().margin().right("5px"), getResourceString(context, "edit", false)).style(Style.PRIMARY);
+			Button editButton = htmlFactory.button(renderEditIcon(context).style().margin().right("5px"), getResourceString(context, "edit")).style(Style.PRIMARY);
 			wireEditButton(context, obj, editButton);
 
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
-			String tooltip = htmlFactory.interpolate(getResourceString(context, "editTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "editTooltip"), env);
 			editButton.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			return editButton;
@@ -1392,7 +1481,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderSaveButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button saveButton = htmlFactory.button(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save", false)).style(Style.PRIMARY);
+			Button saveButton = htmlFactory.button(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save")).style(Style.PRIMARY);
 			wireSaveButton(context, obj, saveButton);
 
 			Map<String, Object> env = new HashMap<>();
@@ -1425,12 +1514,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderCancelButton(C context, T obj) throws Exception {
 		if (context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button cancelButton = htmlFactory.button(renderCancelIcon(context).style().margin().right("5px"), getResourceString(context, "cancel", false)).style(Style.DANGER);
+			Button cancelButton = htmlFactory.button(renderCancelIcon(context).style().margin().right("5px"), getResourceString(context, "cancel")).style(Style.DANGER);
 			wireCancelButton(context, obj, cancelButton);
 
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
-			String tooltip = htmlFactory.interpolate(getResourceString(context, "cancelTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "cancelTooltip"), env);
 			cancelButton.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			return cancelButton;
@@ -1459,7 +1548,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
-			String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel", false), env));			
+			String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel"), env));			
 			cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';return false;");
 			return;
 		}
@@ -1557,10 +1646,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderDeleteButton(C context, T obj) throws Exception {
 		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete", false)).style(Style.DANGER);
+			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete")).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
-			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip"), env);
 			deleteButton.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			wireDeleteButton(context, obj, deleteButton);
 			
@@ -1580,7 +1669,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Map<String, Object> env = new HashMap<>();
 		env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
-		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete", false), env));			
+		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete"), env));			
 		// Delete through GET, not REST-compliant, but works with simple JavaScript. 
 		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';"); 
 	}
@@ -1688,12 +1777,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 					}
 				}
 				
-				headerRow.header(getResourceString(context, "actions", false)).style().text().align().center();
+				headerRow.header(getResourceString(context, "actions")).style().text().align().center();
 				int idx = 0;
 				for (EObject fv: (Collection<EObject>) featureValue) {
 					Row vRow = featureTable.body().row();
 					for (EStructuralFeature sf: tableFeatures) {
-						vRow.cell(getRenderer(fv).renderFeatureView(context, fv, sf, false));						
+						vRow.cell(getReferenceRenderer((EReference) feature, fv).renderFeatureView(context, fv, sf, false));						
 					}
 					Cell actionCell = vRow.cell().style().text().align().center();
 					actionCell.content(renderFeatureValueViewButton(context, obj, feature, idx, fv));
@@ -1764,11 +1853,11 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, feature.getName());
 			boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
-			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "selectTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "selectTooltip"), env);
 	
 			@SuppressWarnings("resource")
 			Tag icon = isCreate ? renderCreateIcon(context) : renderAddIcon(context);
-			Button addButton = htmlFactory.button(icon.style().margin().right("5px"), getResourceString(context, isCreate ? "create" : "select", false))
+			Button addButton = htmlFactory.button(icon.style().margin().right("5px"), getResourceString(context, isCreate ? "create" : "select"))
 					.style(Style.PRIMARY)
 					.style().margin().left("5px")
 					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
@@ -1802,7 +1891,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			} else {
 				for (EClass featureElementType: featureElementTypes) {
 					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-					addButton.item(getHTMLFactory(context).link("create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html", getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
+					addButton.item(getHTMLFactory(context).link("create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html", getReferenceRenderer((EReference) feature, featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
 				}
 			}
 		} else {
@@ -1892,7 +1981,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, feature.getName());
-			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "clearTooltip" : "deleteTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "clearTooltip" : "deleteTooltip"), env);
 	
 			// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
 			Button deleteButton = htmlFactory.button(idx == -1 ? renderClearIcon(context) : renderDeleteIcon(context))
@@ -1915,10 +2004,10 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default void wireFeatureValueDeleteButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button deleteButton) throws Exception {
 		Map<String, Object> env = new HashMap<>();
 		env.put(NAME_KEY, feature.getName());
-		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(getResourceString(context, idx == -1 ? "confirmClear" : "confirmDelete", false), env));
+		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(getResourceString(context, idx == -1 ? "confirmClear" : "confirmDelete"), env));
 		String deleteLocation;
 		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
-			deleteLocation = getRenderer(((EObject) value).eClass()).getObjectURI(context, (EObject) value)+"/delete.html";
+			deleteLocation = getReferenceRenderer((EReference) feature, (EObject) value).getObjectURI(context, (EObject) value)+"/delete.html";
 		} else if (idx == -1) {
 			deleteLocation = "delete/"+feature.getName()+".html";
 		} else {
@@ -1940,7 +2029,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, feature.getName());
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "selectTooltip" : "editTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "selectTooltip" : "editTooltip"), env);
 			Button editButton = htmlFactory.button(renderEditIcon(context))
 				.style(Style.PRIMARY)
 				.style().margin().left("5px")
@@ -1977,9 +2066,13 @@ public interface Renderer<C extends Context, T extends EObject> {
 	default Button renderFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value) throws Exception {		
 		if (context.authorizeRead(value, null, null)) {
 			Map<String, Object> env = new HashMap<>();
-			env.put(NAME_KEY, getRenderer(value).renderLabel(context, value));
+			if (feature instanceof EReference) {
+				env.put(NAME_KEY, getReferenceRenderer((EReference) feature, value).renderLabel(context, value));				
+			} else {
+				env.put(NAME_KEY, getRenderer(value).renderLabel(context, value));
+			}
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			String tooltip = htmlFactory.interpolate(getResourceString(context, "viewTooltip", false), env);
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "viewTooltip"), env);
 			Button viewButton = htmlFactory.button(renderDetailsIcon(context))
 				.style(Style.PRIMARY)
 				.style().margin().left("5px")
@@ -1999,7 +2092,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 	 * @throws Exception 
 	 */
 	default void wireFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value, Button viewButton) throws Exception {
-		viewButton.on(Event.click, "window.location='"+getRenderer(((EObject) value).eClass()).getObjectURI(context, (EObject) value)+"/index.html'");
+		viewButton.on(Event.click, "window.location='"+getReferenceRenderer((EReference) feature, (EObject) value).getObjectURI(context, (EObject) value)+"/index.html'");
 	}
 	
 	// Forms rendering 
@@ -2245,7 +2338,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 					Notifier next = tit.next();
 					if (feature.getEType().isInstance(next) && next instanceof CDOObject) {
 						CDOObject cdoNext = (CDOObject) next;
-						Object iconAndLabel = getRenderer(cdoNext).renderIconAndLabel(context, cdoNext);
+						Object iconAndLabel = getReferenceRenderer((EReference) feature, cdoNext).renderIconAndLabel(context, cdoNext);
 						if (iconAndLabel != null) {
 							accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoNext.cdoID()), iconAndLabel.toString() });
 						}
@@ -2259,7 +2352,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 					Object selection = cit.next();
 					if (feature.getEType().isInstance(selection) && selection instanceof CDOObject) {
 						CDOObject cdoSelection = (CDOObject) selection;
-						Object iconAndLabel = getRenderer(cdoSelection).renderIconAndLabel(context, cdoSelection);
+						Object iconAndLabel = getReferenceRenderer((EReference) feature, cdoSelection).renderIconAndLabel(context, cdoSelection);
 						if (iconAndLabel != null) {
 							accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoSelection.cdoID()), iconAndLabel.toString() });
 						}
@@ -2693,12 +2786,12 @@ public interface Renderer<C extends Context, T extends EObject> {
 			
 			if (treeReference.isMany()) {
 				for (EObject ref: (Collection<? extends EObject>) obj.eGet(treeReference)) {
-					itemContainer.content(getRenderer(ref).renderTreeItem(context, ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
+					itemContainer.content(getReferenceRenderer(treeReference, ref).renderTreeItem(context, ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
 				}
 			} else {
 				Object ref = obj.eGet(treeReference);
 				if (ref instanceof EObject) {
-					itemContainer.content(getRenderer((EObject) ref).renderTreeItem(context, (EObject) ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
+					itemContainer.content(getReferenceRenderer(treeReference, (EObject) ref).renderTreeItem(context, (EObject) ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
 				}				
 			}
 		}
@@ -2739,7 +2832,7 @@ public interface Renderer<C extends Context, T extends EObject> {
 		Tag classDocIcon = renderDocumentationIcon(context, obj.eClass(), classDocModal, true);		
 		env.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
 		
-		return getHTMLFactory(context).interpolate(getResourceString(context, "object.header", false), env);
+		return getHTMLFactory(context).interpolate(getResourceString(context, "object.header"), env);
 	}
 
 	/**
