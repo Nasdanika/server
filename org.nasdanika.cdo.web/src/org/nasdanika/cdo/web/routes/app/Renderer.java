@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +19,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,6 +63,7 @@ import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.Diagnostician;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.jsoup.Jsoup;
@@ -75,6 +78,7 @@ import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.Button.Type;
+import org.nasdanika.html.Container;
 import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome;
@@ -174,7 +178,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param masterResourceProvider
 	 * @return
 	 */
-	default Renderer<C, T> chain(ResourceProvider<C> masterResourceProvider) {
+	default Renderer<C, T> chain(ResourceProvider<C> masterResourceProvider) throws Exception {
 		return new Renderer<C, T>() {
 			
 			@Override
@@ -199,7 +203,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	default <M extends EObject> Renderer<C, M> getReferenceRenderer(EReference reference, M featureValue) {
+	default <M extends EObject> Renderer<C, M> getReferenceRenderer(EReference reference, M featureValue) throws Exception {
 		String className = reference.eClass().getName();
 		if (className.startsWith("E")) {
 			className = className.substring(1);
@@ -341,6 +345,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		INPUT_TYPE("input-type"),
 		
 		CHOICES("choices"),
+		
+		CHOICE_TREE("choice-tree"),
 		
 		FORM_INPUT_GROUP("form-input-group"),
 		
@@ -1243,6 +1249,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return Resource for a given key. This implementation uses resource bundle. If property with given key is not found in the resource bundle, then
 	 * this implementation reads ``<key>@`` property (property reference), e.g. ``documentation@`` for documentation. If such property is present, then a classloader
 	 * resource ({@link URL}) with the name equal to the property value is returned, if present.  
+	 * 
+	 * Property references with ``.property``, ``.yml`` and ``.json`` extensions are handled in the following way:
+	 * 
+	 * * If there is ``#`` in the property value then the value after it (a fragment) is treated as a [jxpath](https://commons.apache.org/proper/commons-jxpath/) expression for yml and json and as a property name for properties and the value before the hash character is treated as resource path.
+	 * * Resource is loaded and parsed by a respective parser.
+	 * * If there is a fragment, then it is evaluated.
+	 *  
+	 * 
 	 * @throws Exception
 	 */
 	@Override
@@ -1302,12 +1316,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								if (fragment == null) {
 									return properties;
 								}
-								return JXPathContext.newContext(properties).getValue(fragment);
+								return properties.get(fragment);
 							}							
 						}
 					}
-					// TODO - special handling of .properties, .json, and .yml resources - parse and return parse result - Properties, JSONObject or JSONArray, Maps/lists
-					// If URL has a fragment, then treat is as a jxpath in the result e.g. usd/rate.
 					return rsRes;
 				}
 			}			
@@ -2192,8 +2204,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	// TODO - placeholder - might be an implicit default, placeholder selector
 	
-	// TODO - support tree rendering for 
-	
 	/**
 	 * Renders control for the feature, e.g. input, select, or text area.
 	 * 
@@ -2204,6 +2214,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 *     * select
 	 *     * textarea
 	 * * ``input-type`` - for ``input`` control - one of {@link HTMLFactory.InputType} values. Checkbox for booleans and multi-value features, text otherwise.
+	 * * ``choice-tree`` - if value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. If value is ``reference-nodes``, then containing references are shown as nodes in the tree. 
 	 * @param context
 	 * @param obj
 	 * @param feature
@@ -2238,9 +2249,121 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (helpTooltip) {
 			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal, true));			
 		}
+
+		Comparator<? super EObject> labelComparator = (e1, e2) -> {
+			try {
+				Object l1 = getRenderer(e1).renderLabel(context, e1);
+				Object l2 = getRenderer(e2).renderLabel(context, e2);					
+				return Jsoup.parse(String.valueOf(l1)).text().compareTo(Jsoup.parse(String.valueOf(l2)).text());
+			} catch (Exception e) {
+				return e1.hashCode() - e2.hashCode();
+			}
+		};		
+		
+		String choiceTreeAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.CHOICE_TREE);
+		boolean isChoiceTreeReferenceNodes = "reference-nodes".equals(choiceTreeAnnotation);
+		boolean isChoiceTree = feature instanceof EReference && ("true".equals(choiceTreeAnnotation) || isChoiceTreeReferenceNodes); 
+		List<EObject> choices = new ArrayList<>();
+		List<EObject> roots = new ArrayList<>();
+		if (isChoiceTree) {
+			choices.addAll(getReferenceChoices(context, obj, (EReference) feature));
+			roots.addAll(choices);
+			for (int i=0; i < roots.size() - 1; ++i) {
+				for (EObject eObj = roots.get(i); eObj != null; eObj = eObj.eContainer()) {
+					roots.set(i, eObj);
+					if (i < roots.size() - 1) {
+						ListIterator<EObject> nrit = roots.listIterator(i + 1);
+						while (nrit.hasNext()) {
+							if (EcoreUtil.isAncestor(eObj, nrit.next())) {
+								nrit.remove();
+							}
+						}
+					} 
+					if (i == roots.size() - 1) {
+						break;
+					}
+				}
+			}
+			if (roots.size() > 1) {
+				Collections.sort(roots, labelComparator);				
+			}
+		}
+		
+		abstract class ChoiceTreeRenderer {
+			
+			void render(EObject obj, boolean includingThis, Container<?> container) throws Exception {
+				if (includingThis) {
+					Tag li = htmlFactory.tag(TagName.li);
+					container.content(li);
+					if (choices.contains(obj)) {
+						li.content(renderControl(obj), " ");
+					}
+					li.content(getRenderer(obj).renderIconAndLabel(context, obj));
+					Tag ul = htmlFactory.tag(TagName.ul);
+					for (EReference ref: obj.eClass().getEAllReferences()) {
+						if (ref.isContainment()) {
+							render(obj, ref, ul);
+						}
+					}
+					if (!ul.isEmpty()) {
+						li.content(ul);
+					}
+				} else {
+					for (EReference ref: obj.eClass().getEAllReferences()) {
+						if (ref.isContainment()) {
+							render(obj, ref, container);
+						}
+					}
+				}
+			}
+			
+			void render(EObject obj, EReference ref, Container<?> container) throws Exception {
+				Collection<EObject> refElements = new ArrayList<>();
+				if (ref.isMany()) {
+					refElements.addAll((Collection<EObject>) obj.eGet(ref));
+				} else {
+					refElements.add((EObject) obj.eGet(ref));
+				}
+				Iterator<EObject> rit = refElements.iterator();
+				Z: while (rit.hasNext()) {
+					EObject re = rit.next();
+					for (EObject ch: choices) {
+						if (EcoreUtil.isAncestor(re, ch)) {
+							continue Z;
+						}
+					}
+					rit.remove();
+				}
+				if (!refElements.isEmpty()) {
+					if (refElements.size() > 1) {
+						Collections.sort(roots, labelComparator);					
+					}
+					if (isChoiceTreeReferenceNodes) {
+						Tag li = htmlFactory.tag(TagName.li);
+						container.content(li);
+						li.content(getRenderer(obj).renderNamedElementIconAndLabel(context, ref));
+						Tag ul = htmlFactory.tag(TagName.ul);
+						for (EObject re: refElements) {
+							render(re, true, ul);
+						}
+						if (!ul.isEmpty()) {
+							li.content(ul);
+						}
+					} else {					
+						for (EObject re: refElements) {
+							render(re, true, container);
+						}
+					}
+				}
+			}
+			
+			abstract Object renderControl(EObject obj) throws Exception;
+			
+		}		
+		
 		switch (controlType) {
 		case input:
-			String inputTypeStr = getRenderAnnotation(context, feature, RenderAnnotation.INPUT_TYPE);
+			String inputTypeStr = isChoiceTree ? "radio" : getRenderAnnotation(context, feature, RenderAnnotation.INPUT_TYPE);
 			InputType inputType = inputTypeStr == null ? null : HTMLFactory.InputType.valueOf(inputTypeStr);
 			if (inputType == null) {
 				if (feature.isMany()) {
@@ -2272,15 +2395,39 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					for (Object fev: ((Collection<Object>) fv)) {
 						valuesToSelect.add(getFormControlValue(context, obj, feature, fev));
 					}
-					for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
-						Input checkbox = htmlFactory.input(inputType);
-						checkbox.name(feature.getName());
-						checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
-						if (valuesToSelect.contains(fc.getKey())) {
-							checkbox.attribute("checked", "true");
+					if (isChoiceTree) {
+						Tag ul = htmlFactory.tag(TagName.ul);
+						ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
+							
+							@Override
+							Object renderControl(EObject obj) throws Exception {
+								Input checkbox = htmlFactory.input(InputType.checkbox).name(feature.getName());
+								if (obj instanceof CDOObject) {
+									String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
+									checkbox.value(value);
+									if (valuesToSelect.contains(value)) {
+										checkbox.attribute("checked", "true");
+									}
+								}
+								return checkbox;
+							}
+							
+						};
+						for (EObject re: roots) {
+							treeRenderer.render(re, roots.size() > 1, ul);
 						}
-						checkboxesFieldSet.checkbox(fc.getValue(), checkbox, false);
-					}					
+						checkboxesFieldSet.content(ul);
+					} else {					
+						for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
+							Input checkbox = htmlFactory.input(inputType);
+							checkbox.name(feature.getName());
+							checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
+							if (valuesToSelect.contains(fc.getKey())) {
+								checkbox.attribute("checked", "true");
+							}
+							checkboxesFieldSet.checkbox(fc.getValue(), checkbox, false);
+						}
+					}
 					return null;
 				}
 				
@@ -2301,16 +2448,39 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					.style().margin().bottom("5px");
 				radiosFieldSet.legend(label);
 				String valueToSelect = getFormControlValue(context, obj, feature, fv);
-				for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
-					Input radio = htmlFactory.input(inputType)
-							.name(feature.getName())
-							.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
-							.placeholder(textLabel)
-							.required(isRequired(context, obj, feature));
-					if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
-						radio.attribute("checked", "true");
+				if (isChoiceTree) {
+					Tag ul = htmlFactory.tag(TagName.ul);
+					ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
+						
+						@Override
+						Object renderControl(EObject obj) throws Exception {
+							Input radio = htmlFactory.input(InputType.radio).name(feature.getName());
+							if (obj instanceof CDOObject) {
+								String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
+								radio.value(value);
+								if (valueToSelect != null && valueToSelect.equals(value)) {
+									radio.attribute("checked", "true");
+								}
+							}
+							return radio;
+						}
+						
+					};
+					for (EObject re: roots) {
+						treeRenderer.render(re, roots.size() > 1, ul);
 					}
-					radiosFieldSet.radio(fc.getValue(), radio, false);
+					radiosFieldSet.content(ul);
+				} else {										
+					for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {  
+						Input radio = htmlFactory.input(inputType)
+								.name(feature.getName())
+								.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
+								.placeholder(textLabel);
+						if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
+							radio.attribute("checked", "true");
+						}
+						radiosFieldSet.radio(fc.getValue(), radio, false);
+					}
 				}
 				return null;
 			default:
@@ -2351,11 +2521,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default boolean isRequired(C context, T obj, EStructuralFeature feature) throws Exception {
 		return !feature.isMany() && feature.getLowerBound() != 0;
 	}
-
+	
 	/**
 	 * Invoked for select, radio and checkbox on non-boolean types. 
 	 * 
-	 * For references this implementation evaluates selector read from ``choices-selector`` annotation, if it is present. The selector expression 
+	 * This implementation evaluates selector read from ``choices-selector`` annotation, if it is present. The selector expression 
 	 * is evaluated with [EMF XPath](https://github.com/eclipse/eclipse.platform.ui/tree/master/bundles/org.eclipse.e4.emf.xpath), which extends
 	 * [Apache Commons JXPath](https://commons.apache.org/proper/commons-jxpath/index.html). Some examples of using EMF XPath:
 	 * 
@@ -2363,6 +2533,38 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * * http://www.programcreek.com/java-api-examples/index.php?source_dir=eclipse.platform.ui-master/tests/org.eclipse.e4.emf.xpath.test/src/org/eclipse/e4/emf/xpath/test/ExampleQueriesTestCase.java
 	 * 
 	 * If ``choices-selector`` annotation is not present, then this implementation finds all objects compatible with the reference type in the object's containing resource set. 
+	 * 
+	 */
+	default Collection<EObject> getReferenceChoices(C context, T obj, EReference reference) throws Exception {
+		String choicesSelector = getRenderAnnotation(context, reference, RenderAnnotation.CHOICES_SELECTOR);
+		List<EObject> ret = new ArrayList<>(); 
+		if (choicesSelector == null) {
+			TreeIterator<Notifier> tit = obj.eResource().getResourceSet().getAllContents();
+			while (tit.hasNext()) {
+				Notifier next = tit.next();
+				if (reference.getEType().isInstance(next)) {
+					ret.add((EObject) next);
+				}
+			}
+		} else {
+			XPathContextFactory<EObject> xPathFactory = EcoreXPathContextFactory.newInstance(); 
+			XPathContext xPathContext = xPathFactory.newContext(obj);
+			Iterator<Object> cit = xPathContext.iterate(choicesSelector);
+			while (cit.hasNext()) {
+				Object selection = cit.next();
+				if (reference.getEType().isInstance(selection)) {
+					ret.add((EObject) selection);
+				}
+			}
+		}
+		return ret;
+	}
+	
+
+	/**
+	 * Invoked for select, radio and checkbox on non-boolean types. 
+	 * 
+	 * For references it calls getReferenceChoices, renders each object label as label, encodes CDOID as value and sorts choices by the label. 
 	 * 
 	 * For attributes choices are loaded from the ``choices`` annotation.
 	 * Choices are defined each on a new line as a value - label pair <value>=<label>.  
@@ -2375,35 +2577,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,String> collector = new LinkedHashMap<>();
 		
 		if (feature instanceof EReference) {
-			String choicesSelector = getRenderAnnotation(context, feature, RenderAnnotation.CHOICES_SELECTOR);
 			// Accumulates selections for sorting before adding to the collector.
 			List<String[]> accumulator = new ArrayList<>(); 
-			if (choicesSelector == null) {
-				TreeIterator<Notifier> tit = obj.eResource().getResourceSet().getAllContents();
-				while (tit.hasNext()) {
-					Notifier next = tit.next();
-					if (feature.getEType().isInstance(next) && next instanceof CDOObject) {
-						CDOObject cdoNext = (CDOObject) next;
-						Object iconAndLabel = getReferenceRenderer((EReference) feature, cdoNext).renderIconAndLabel(context, cdoNext);
-						if (iconAndLabel != null) {
-							accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoNext.cdoID()), iconAndLabel.toString() });
-						}
+			for (EObject choice: getReferenceChoices(context, obj, (EReference) feature)) {
+				if (choice instanceof CDOObject) {
+					CDOObject cdoNext = (CDOObject) choice;
+					Object iconAndLabel = getReferenceRenderer((EReference) feature, cdoNext).renderIconAndLabel(context, cdoNext);
+					if (iconAndLabel != null) {
+						accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoNext.cdoID()), iconAndLabel.toString() });
 					}
-				}
-			} else {
-				XPathContextFactory<EObject> xPathFactory = EcoreXPathContextFactory.newInstance(); 
-				XPathContext xPathContext = xPathFactory.newContext(obj);
-				Iterator<Object> cit = xPathContext.iterate(choicesSelector);
-				while (cit.hasNext()) {
-					Object selection = cit.next();
-					if (feature.getEType().isInstance(selection) && selection instanceof CDOObject) {
-						CDOObject cdoSelection = (CDOObject) selection;
-						Object iconAndLabel = getReferenceRenderer((EReference) feature, cdoSelection).renderIconAndLabel(context, cdoSelection);
-						if (iconAndLabel != null) {
-							accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoSelection.cdoID()), iconAndLabel.toString() });
-						}
-					}
-				}
+				}				
 			}
 			
 			Collections.sort(accumulator, (e1, e2) -> {										
