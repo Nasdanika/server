@@ -318,42 +318,128 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 */
 		LABEL("label"),
 		
+		/**
+		 * Value of ``model-element-label`` render annotation is used to customize/localize name of a model element such as {@link EClass} or {@link EStructuralFeature}.
+		 */
 		MODEL_ELEMENT_LABEL("model-element-label"),
 		
+		/**
+		 * Documentation annotation can be used to:
+		 * 
+		 * * Provide documentation for model elements if they are not documented in the model.
+		 * * Localize model element documentation.
+		 * 
+		 */
 		DOCUMENTATION("documentation"), 
-		
+
+		/**
+		 * Format is used for rendering and parsing date and number feature values. {@link SimpleDateFormat} for dates, {@link DecimalFormat} for numbers.
+		 */
 		FORMAT("format"),
-		
+
+		/**
+		 * Annotation to provide an icon for a model element such as {@link EClass} or {@link EStructuralFeature}.
+		 * If icon contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``.
+		 */
 		ICON("icon"),
 		
+		/**
+		 * Set this annotation on {@link EClass} to true to have the class view rendered in a tab. 
+		 */
 		VIEW_TAB("view-tab"),
-		
+
+		/**
+		 * Set this annotation to true to have {@link EStructuralFeature} rendered in a tab. By default many {@link EReference}s are rendered
+		 * in tabs and {@link EAttribute}s and single references are rendered in the class view.
+		 */
 		IS_TAB("is-tab"),		
 		
+		/**
+		 * {@link EReference} annotation - [EMF XPath](https://github.com/eclipse/eclipse.platform.ui/tree/master/bundles/org.eclipse.e4.emf.xpath)/[JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
+		 * The path is evaluated with the current object as context.
+		 */
 		CHOICES_SELECTOR("choices-selector"),
 		
+		/**
+		 * {@link EStructuralFeature} category. Categories are displayed as panels in the view and field sets in edit forms.
+		 */
 		CATEGORY("category"),
 		
+		/**
+		 * Set this annotation to ``list`` on {@link EReference} to have elements rendered in a list instead of a table.
+		 */
 		VIEW("view"),
 		
+		/**
+		 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference tab table.
+		 */
 		VIEW_FEATURES("view-features"),
 		
+		/**
+		 * {@link EReference} annotation specifying {@link EClass}es of elements which can be instantiated to the reference.  
+		 * The list of element types shall be space-separated. Elements shall be in
+		 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
+		 * feature's declaring EClass.
+		 * 
+		 */
 		ELEMENT_TYPES("element-types"),
-		
+
+		/**
+		 * {@link EStructuralFeature} annotation specifying edit form control type for the feature. 
+		 * Defaults to input for attributes and multi-value features and select for references.
+		 * 
+		 * Valid values:
+		 * 
+		 *     * input (default for {@link EAttribute}),
+		 *     * select (default for {@link EReference},
+		 *     * textarea
+		 */
 		CONTROL("control"),
 		
+		/**
+		 * {@link EStructuralFeature} annotation for ``input`` control - one of {@link HTMLFactory.InputType} values. 
+		 * Defaults to checkbox for booleans and multi-value features, text otherwise.
+		 */
 		INPUT_TYPE("input-type"),
-		
+
+		/**
+		 * {@link EAttribute} annotation for select, radio and checkbox on non-boolean types. 
+		 * 
+		 * Choices are defined each on a new line as a value - label pair <value>=<label>.  
+		 * If there is no equal sign, then the line value is used for both value and label.   
+		 */
 		CHOICES("choices"),
 		
+		/**
+		 * {@link EReference} annotation. 
+		 * If value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. 
+		 * If value is ``reference-nodes``, then containing references are shown as nodes in the tree. 
+		 */
 		CHOICE_TREE("choice-tree"),
 		
+		/**
+		 * {@link EStructuralFeature} annotation. Set it to true to force rendering of the form control in a {@link FormInputGroup} instead of {@link FormGroup} or
+		 * to false to force the opposite. If this annotation is not present then inputs with either icon (rendered on the left) or help icon (rendered on the right) 
+		 * are rendered as form input groups.  
+		 */
 		FORM_INPUT_GROUP("form-input-group"),
 		
+		/**
+		 * {@link EClass} annotation. It lists references to render as children of the class object in the tree representation. Feature names shall be space-separated.
+		 * In the absense of this annotation containing many features are considered as tree features. 
+		 */
 		TREE_REFERENCES("tree-references"),
 		
+		/**
+		 * By default EClass edit forms are rendered as horizontal forms by the {@link Route}. Set this annotation to ``false`` to change the default rendering.
+		 */
 		HORIZONTAL_FORM("horizontal-form"),
 		
+		/**
+		  * {@link EStructuralFeature} annotation. If it is set to false, then feature elements
+		  * appear directly under the container in the tree. 
+		  * Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 		 
+		  */
 		TREE_NODE("tree-node");		
 		
 		public final String literal;
