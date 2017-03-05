@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -60,8 +61,7 @@ import org.osgi.framework.BundleContext;
  * 
  * The assumption behind this design is that a typical web application compiles with 80/20 (or maybe even 90/10) principle
  *  - 80% of traffic goes through 20% of pages. Therefore, the most popular pages may be customized, generated, or hand-crafted to leverage
- *  modern techniques such as AJAX and data bindings, while the rest of pages stay simple waiting for their turn to be 
- *  customized.  
+ *  modern techniques such as AJAX and data bindings, while the rest of pages stay simple waiting for their turn to be customized.  
  *  
  * @author Pavel
  *
@@ -74,6 +74,29 @@ import org.osgi.framework.BundleContext;
 		comment="Web resources")
 public class Route<C extends HttpServletRequestContext, T extends EObject> extends EDispatchingRoute implements Renderer<C, T> {
 
+	/**
+	 * Interpolation tokens used by the page template
+	 * @author Pavel
+	 *
+	 */
+	public enum PageTemplateTokens {
+		
+		RESOURCES_PATH("resources-path"),
+		TITLE("title"),
+		HEAD("head"),
+		HEADER("header"),
+		LEFT_PANEL("left-panel"),
+		CONTENT("content"),
+		FOOTER("footer"),
+		BODY("body");
+
+		public final String literal;
+
+		private PageTemplateTokens(String literal) {
+			this.literal = literal;
+		}
+		
+	}
 	private static final String EXTENSION_HTML = ".html";
 	private static final String BOOTSTRAP_THEME_TOKEN = "bootstrap-theme";
 
@@ -134,7 +157,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(tabs);
 		}
 		
-		return renderPage(context, title, content);
+		return renderPage(context, title, content, null);
 		
 	}
 		
@@ -146,41 +169,46 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception 
 	 */
-	protected Object renderPage(C context, String title, Object content) throws Exception {
+	protected Object renderPage(C context, String title, Object content, Consumer<Map<String,Object>> environmentCustomizer) throws Exception {
 		Map<String, Object> env = createRenderPageEnvironment(context);
 
-		env.put("title", title == null ? "" : title);
+		env.put(PageTemplateTokens.TITLE.literal, title == null ? "" : title);
 		
 		Object head = renderHead(context);
-		env.put("head", head == null ? "" : head);
+		env.put(PageTemplateTokens.HEAD.literal, head == null ? "" : head);
 
 		Object header = renderHeader(context);
-		env.put("header", header == null ? "" : header);
+		env.put(PageTemplateTokens.HEADER.literal, header == null ? "" : header);
 		
 		Object leftPanel = renderLeftPanel(context);
-		env.put("left-panel", leftPanel == null ? "" : leftPanel);
+		env.put(PageTemplateTokens.LEFT_PANEL.literal, leftPanel == null ? "" : leftPanel);
 
-		env.put("content", content == null ? "" : content);
+		env.put(PageTemplateTokens.CONTENT.literal, content == null ? "" : content);
 		
 		Object footer = renderFooter(context);
-		env.put("footer", footer == null ? "" : footer);
+		env.put(PageTemplateTokens.FOOTER.literal, footer == null ? "" : footer);
 		
-		env.put("body", renderBody(context, header, leftPanel, content, footer));
+		env.put(PageTemplateTokens.BODY.literal, renderBody(context, header, leftPanel, content, footer));
 		
+		if (environmentCustomizer != null) {
+			environmentCustomizer.accept(env);
+		}
+				
 		Theme theme = getTheme(context);
 		switch (theme) {
 		case None:
 			env.put(BOOTSTRAP_THEME_TOKEN, "");
 			break;
 		case Default:
-			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\"resources/bootstrap/css/bootstrap-theme.min.css\" rel=\"stylesheet\">");
+			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\""+env.get(PageTemplateTokens.RESOURCES_PATH.literal)+"/bootstrap/css/bootstrap-theme.min.css\" rel=\"stylesheet\">");
 			break;
 		default:
-			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\"resources/bootstrap/css/bootstrap-"+theme.name().toLowerCase()+".min.css\" rel=\"stylesheet\">");							
+			env.put(BOOTSTRAP_THEME_TOKEN, "<link href=\""+env.get(PageTemplateTokens.RESOURCES_PATH.literal)+"/bootstrap/css/bootstrap-"+theme.name().toLowerCase()+".min.css\" rel=\"stylesheet\">");							
 		}
+		
 		return HTMLFactory.INSTANCE.interpolate(getPageTemplate(context), env);		
 	}
-	
+//	{{resources-path}}	
 	/**
 	 * Renders body from header, left panel, content, and footer.
 	 * 
@@ -221,7 +249,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return Map containing tokens to use for interpolation of the page template.
 	 */
 	protected HashMap<String, Object> createRenderPageEnvironment(C context) {
-		return new HashMap<>();
+		HashMap<String, Object> ret = new HashMap<>();
+		ret.put(PageTemplateTokens.RESOURCES_PATH.literal, "resources");
+		return ret;
 	}
 	
 //	protected  
@@ -422,7 +452,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			
 			content.content(editForm);
 			
-			return renderPage(context, title, content);		
+			return renderPage(context, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));		
 		}
 		
 		return Action.BAD_REQUEST;				
@@ -543,7 +573,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 					content.content(editForm);										
 					
-					return renderPage(context, title, content);							
+					return renderPage(context, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));							
 				}							
 			}
 		}
@@ -693,7 +723,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		content.content(editForm);
 		
-		return renderPage(context, title, content);		
+		return renderPage(context, title, content, null);		
 	}				
 	
 	@RouteMethod(
