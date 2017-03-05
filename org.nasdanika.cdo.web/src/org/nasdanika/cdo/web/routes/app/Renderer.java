@@ -62,6 +62,8 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONObject;
@@ -165,10 +167,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 	};
 	
+	/**
+	 * Returns a renderer instance for a class. This implementation uses renderer registry 
+	 * which loads renderers from extensions of ``org.nasdanika.cdo.web.renderer`` extension point.
+	 * @param eClass
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	default Renderer<C, EObject> getRenderer(EClass eClass) {
-		// TODO extension point.
-		return (Renderer<C, EObject>) INSTANCE;
+		return (Renderer<C, EObject>) RendererRegistry.INSTANCE.getRenderer(eClass);
 	}
 	
 	/**
@@ -2625,8 +2632,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String choicesSelector = getRenderAnnotation(context, reference, RenderAnnotation.CHOICES_SELECTOR);
 		List<EObject> ret = new ArrayList<>(); 
 		if (choicesSelector == null) {
-			TreeIterator<Notifier> tit = obj.eResource().getResourceSet().getAllContents();
-			while (tit.hasNext()) {
+			Resource eResource = obj.eResource();
+			TreeIterator<? extends Notifier> tit = null;
+			if (eResource == null && context instanceof HttpServletRequestContext) {
+				Object target = ((HttpServletRequestContext) context).getTarget();
+				if (target instanceof EObject) {
+					eResource = ((EObject) target).eResource();
+				}
+			} 
+			
+			if (eResource != null) {
+				ResourceSet resourceSet = eResource.getResourceSet();
+				if (resourceSet == null) {
+					tit = eResource.getAllContents();
+				} else {
+					tit = resourceSet.getAllContents();
+				}
+			}
+			
+			while (tit != null && tit.hasNext()) {
 				Notifier next = tit.next();
 				if (reference.getEType().isInstance(next)) {
 					ret.add((EObject) next);

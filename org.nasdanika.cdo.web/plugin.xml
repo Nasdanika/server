@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
+   <extension-point id="renderer" name="EObject renderer" schema="schema/renderer.exsd"/>
    <extension
          point="org.nasdanika.web.route">
       <object-route
