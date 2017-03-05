@@ -2479,46 +2479,56 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			case checkbox:
 				if (feature.isMany()) {
 					// Render a checkbox per choice.
-					FieldSet checkboxesFieldSet = fieldContainer.fieldset();
-					checkboxesFieldSet
-						.style().border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
-						.style().margin().bottom("5px");
-					checkboxesFieldSet.legend(label);
 					Set<String> valuesToSelect = new HashSet<>();
 					for (Object fev: ((Collection<Object>) fv)) {
 						valuesToSelect.add(getFormControlValue(context, obj, feature, fev));
 					}
 					if (isChoiceTree) {
-						Tag ul = htmlFactory.tag(TagName.ul);
-						ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
-							
-							@Override
-							Object renderControl(EObject obj) throws Exception {
-								Input checkbox = htmlFactory.input(InputType.checkbox).name(feature.getName());
-								if (obj instanceof CDOObject) {
-									String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
-									checkbox.value(value);
-									if (valuesToSelect.contains(value)) {
-										checkbox.attribute("checked", "true");
+						if (!roots.isEmpty()) {
+							Tag ul = htmlFactory.tag(TagName.ul);
+							ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
+								
+								@Override
+								Object renderControl(EObject obj) throws Exception {
+									Input checkbox = htmlFactory.input(InputType.checkbox).name(feature.getName());
+									if (obj instanceof CDOObject) {
+										String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
+										checkbox.value(value);
+										if (valuesToSelect.contains(value)) {
+											checkbox.attribute("checked", "true");
+										}
 									}
+									return checkbox;
 								}
-								return checkbox;
+								
+							};
+							for (EObject re: roots) {
+								treeRenderer.render(re, roots.size() > 1, ul);
 							}
-							
-						};
-						for (EObject re: roots) {
-							treeRenderer.render(re, roots.size() > 1, ul);
+							FieldSet checkboxesFieldSet = fieldContainer.fieldset();
+							checkboxesFieldSet
+								.style().border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
+								.style().margin().bottom("5px");
+							checkboxesFieldSet.legend(label);
+							checkboxesFieldSet.content(ul);
 						}
-						checkboxesFieldSet.content(ul);
 					} else {					
-						for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
-							Input checkbox = htmlFactory.input(inputType);
-							checkbox.name(feature.getName());
-							checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
-							if (valuesToSelect.contains(fc.getKey())) {
-								checkbox.attribute("checked", "true");
+						Collection<Entry<String, String>> featureChoices = getFeatureChoices(context, obj, feature);
+						if (!featureChoices.isEmpty()) {
+							FieldSet checkboxesFieldSet = fieldContainer.fieldset();
+							checkboxesFieldSet
+								.style().border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
+								.style().margin().bottom("5px");
+							checkboxesFieldSet.legend(label);
+							for (Entry<String, String> fc: featureChoices) {
+								Input checkbox = htmlFactory.input(inputType);
+								checkbox.name(feature.getName());
+								checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
+								if (valuesToSelect.contains(fc.getKey())) {
+									checkbox.attribute("checked", "true");
+								}
+								checkboxesFieldSet.checkbox(fc.getValue(), checkbox, false);
 							}
-							checkboxesFieldSet.checkbox(fc.getValue(), checkbox, false);
 						}
 					}
 					return null;
@@ -2535,44 +2545,54 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				return null;
 			case radio:
 				// Radio - get values and labels from options.
-				FieldSet radiosFieldSet = fieldContainer.fieldset();
-				radiosFieldSet.style()
-					.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
-					.style().margin().bottom("5px");
-				radiosFieldSet.legend(label);
 				String valueToSelect = getFormControlValue(context, obj, feature, fv);
 				if (isChoiceTree) {
-					Tag ul = htmlFactory.tag(TagName.ul);
-					ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
-						
-						@Override
-						Object renderControl(EObject obj) throws Exception {
-							Input radio = htmlFactory.input(InputType.radio).name(feature.getName());
-							if (obj instanceof CDOObject) {
-								String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
-								radio.value(value);
-								if (valueToSelect != null && valueToSelect.equals(value)) {
-									radio.attribute("checked", "true");
+					if (!roots.isEmpty()) {
+						Tag ul = htmlFactory.tag(TagName.ul);
+						ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
+							
+							@Override
+							Object renderControl(EObject obj) throws Exception {
+								Input radio = htmlFactory.input(InputType.radio).name(feature.getName());
+								if (obj instanceof CDOObject) {
+									String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
+									radio.value(value);
+									if (valueToSelect != null && valueToSelect.equals(value)) {
+										radio.attribute("checked", "true");
+									}
 								}
+								return radio;
 							}
-							return radio;
+							
+						};
+						for (EObject re: roots) {
+							treeRenderer.render(re, roots.size() > 1, ul);
 						}
-						
-					};
-					for (EObject re: roots) {
-						treeRenderer.render(re, roots.size() > 1, ul);
+						FieldSet radiosFieldSet = fieldContainer.fieldset();
+						radiosFieldSet.style()
+							.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
+							.style().margin().bottom("5px");
+						radiosFieldSet.legend(label);
+						radiosFieldSet.content(ul);
 					}
-					radiosFieldSet.content(ul);
 				} else {										
-					for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {  
-						Input radio = htmlFactory.input(inputType)
-								.name(feature.getName())
-								.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
-								.placeholder(textLabel);
-						if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
-							radio.attribute("checked", "true");
+					Collection<Entry<String, String>> featureChoices = getFeatureChoices(context, obj, feature);
+					if (!featureChoices.isEmpty()) {
+						FieldSet radiosFieldSet = fieldContainer.fieldset();
+						radiosFieldSet.style()
+							.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
+							.style().margin().bottom("5px");
+						radiosFieldSet.legend(label);
+						for (Entry<String, String> fc: featureChoices) {  
+							Input radio = htmlFactory.input(inputType)
+									.name(feature.getName())
+									.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
+									.placeholder(textLabel);
+							if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
+								radio.attribute("checked", "true");
+							}
+							radiosFieldSet.radio(fc.getValue(), radio, false);
 						}
-						radiosFieldSet.radio(fc.getValue(), radio, false);
 					}
 				}
 				return null;
@@ -2584,11 +2604,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					.required(isRequired(context, obj, feature));								
 			}
 		case select:
+			Collection<Entry<String, String>> selectFeatureChoices = getFeatureChoices(context, obj, feature);
+			if (selectFeatureChoices.isEmpty()) {
+				return null;
+			}
 			Select select = htmlFactory.select()
 				.name(feature.getName())
 				.required(isRequired(context, obj, feature));
 			String valueToSelect = getFormControlValue(context, obj, feature, fv);
-			for (Entry<String, String> fc: getFeatureChoices(context, obj, feature)) {
+			for (Entry<String, String> fc: selectFeatureChoices) {
 				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
 			}
 			return select;
