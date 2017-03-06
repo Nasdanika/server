@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
 import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
@@ -37,6 +39,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.CDOIDCodec;
+import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.Action;
@@ -58,6 +61,10 @@ import org.osgi.framework.BundleContext;
  *
  */
 public class EDispatchingRoute extends DispatchingRoute {
+	
+	static {
+		JXPathContextReferenceImpl.addNodePointerFactory(new CDOObjectPointerFactory());
+	}			
 
 	public EDispatchingRoute(BundleContext bundleContext, Object... targets) throws Exception {
 		super(bundleContext, targets);
@@ -130,7 +137,7 @@ public class EDispatchingRoute extends DispatchingRoute {
 				}
 				return super.processModelParameter(context, parameterType);
 			}
-
+			
 			/**
 			 * Manages locks and converts EObject to JSONObject.
 			 */
@@ -138,13 +145,16 @@ public class EDispatchingRoute extends DispatchingRoute {
 			public Object execute(HttpServletRequestContext context, Object target, Object[] arguments)	throws Exception {
 				CDOLock cdoLock = null;
 				if (context.getTarget() instanceof CDOObject) {
-					CDOObject cdoTarget = (CDOObject) context.getTarget();
+					CDOObject lockTarget = (CDOObject) context.getTarget();
+					if (!CoreUtil.isBlank(getLock().path())) {
+						lockTarget = (CDOObject) JXPathContext.newContext(lockTarget).getValue(getLock().path());
+					}
 					switch (getLock().type()) {
 					case READ:
-						cdoLock = cdoTarget.cdoReadLock();
+						cdoLock = lockTarget.cdoReadLock();
 						break;
 					case WRITE:
-						cdoLock = cdoTarget.cdoWriteLock();
+						cdoLock = lockTarget.cdoWriteLock();
 						break;
 					case IMPLY_FROM_HTTP_METHOD:
 						switch (context.getMethod()) {
@@ -152,10 +162,10 @@ public class EDispatchingRoute extends DispatchingRoute {
 						case PATCH:
 						case POST:
 						case PUT:
-							cdoLock = cdoTarget.cdoWriteLock();
+							cdoLock = lockTarget.cdoWriteLock();
 							break;
 						default:
-							cdoLock = cdoTarget.cdoReadLock();							
+							cdoLock = lockTarget.cdoReadLock();							
 							break;
 						}
 					default:

@@ -39,6 +39,9 @@ import org.apache.commons.jxpath.ri.model.NodePointerFactory;
 import org.apache.commons.jxpath.ri.model.beans.BeanPointerFactory;
 import org.apache.commons.jxpath.ri.model.beans.NullPointer;
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.id.CDOID;
+import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * Implements NodePointerFactory for {@link CDOObject}.
@@ -57,8 +60,21 @@ public class CDOObjectPointerFactory implements NodePointerFactory {
     @Override
 	public NodePointer createNodePointer(QName name, Object bean, Locale locale) {
         if (bean instanceof CDOObject) {    	
-	        JXPathCDOObjectInfo bi = new JXPathCDOObjectInfo(((CDOObject)bean).eClass());
-	        return new EObjectPointer(name, bean, bi, locale);
+	        CDOObject cdoObject = (CDOObject)bean;
+        	EObject eContainer = cdoObject.eContainer();
+        	if (eContainer instanceof CDOObject) {
+        		NodePointer parentPointer = createNodePointer(name, eContainer, locale);
+				StringBuilder sb = new StringBuilder();
+        		CDOID cdoID = cdoObject.cdoID();
+        		if (cdoID != null) {
+        			CDOIDUtil.write(sb, cdoID);
+        		} else {
+        			sb.append(cdoObject.hashCode());
+        		}
+        		return createNodePointer(parentPointer, new QName("cdo", sb.toString()), bean);
+        	}
+			JXPathCDOObjectInfo bi = new JXPathCDOObjectInfo(cdoObject.eClass());
+	        return new CDOObjectPointer(name, (CDOObject) bean, bi, locale);
         }
         return null;
     }
@@ -71,7 +87,7 @@ public class CDOObjectPointerFactory implements NodePointerFactory {
 
         if (bean instanceof CDOObject) {
 	        JXPathCDOObjectInfo bi = new JXPathCDOObjectInfo(((CDOObject)bean).eClass());
-	        return new EObjectPointer(parent, name, bean, bi);
+	        return new CDOObjectPointer(parent, name, (CDOObject) bean, bi);
         }
         return null;
     }

@@ -38,9 +38,6 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.eclipse.e4.emf.xpath.EcoreXPathContextFactory;
-import org.eclipse.e4.emf.xpath.XPathContext;
-import org.eclipse.e4.emf.xpath.XPathContextFactory;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.view.CDOView;
@@ -362,7 +359,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		IS_TAB("is-tab"),		
 		
 		/**
-		 * {@link EReference} annotation - [EMF XPath](https://github.com/eclipse/eclipse.platform.ui/tree/master/bundles/org.eclipse.e4.emf.xpath)/[JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
+		 * {@link EReference} annotation - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
 		 * The path is evaluated with the current object as context.
 		 */
 		CHOICES_SELECTOR("choices-selector"),
@@ -2643,11 +2640,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * Invoked for select, radio and checkbox on non-boolean types. 
 	 * 
 	 * This implementation evaluates selector read from ``choices-selector`` annotation, if it is present. The selector expression 
-	 * is evaluated with [EMF XPath](https://github.com/eclipse/eclipse.platform.ui/tree/master/bundles/org.eclipse.e4.emf.xpath), which extends
-	 * [Apache Commons JXPath](https://commons.apache.org/proper/commons-jxpath/index.html). Some examples of using EMF XPath:
-	 * 
-	 * * https://tomsondev.bestsolution.at/2010/10/08/navigatingquerying-emf-models-using-xpath/
-	 * * http://www.programcreek.com/java-api-examples/index.php?source_dir=eclipse.platform.ui-master/tests/org.eclipse.e4.emf.xpath.test/src/org/eclipse/e4/emf/xpath/test/ExampleQueriesTestCase.java
+	 * is evaluated with [Apache Commons JXPath](https://commons.apache.org/proper/commons-jxpath/index.html). 
 	 * 
 	 * If ``choices-selector`` annotation is not present, then this implementation finds all objects compatible with the reference type in the object's containing resource set. 
 	 * 
@@ -2681,9 +2674,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		} else {
-			XPathContextFactory<EObject> xPathFactory = EcoreXPathContextFactory.newInstance(); 
-			XPathContext xPathContext = xPathFactory.newContext(obj);
-			Iterator<Object> cit = xPathContext.iterate(choicesSelector);
+			Iterator<?> cit = JXPathContext.newContext(obj).iterate(choicesSelector);
 			while (cit.hasNext()) {
 				Object selection = cit.next();
 				if (reference.getEType().isInstance(selection)) {

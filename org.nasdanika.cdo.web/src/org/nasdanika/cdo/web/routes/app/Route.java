@@ -728,7 +728,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	
 	@RouteMethod(
 			comment="Deletes this element and redirects either to the referrer or to the parent index if the referrer is one of 'this' object pages.",
-			lock = @RouteMethod.Lock(type=Type.WRITE), 
+			lock = @RouteMethod.Lock(type=Type.WRITE, path=".."), 
 			action = "delete")
 	public Object getDeleteHtml(
 			@ContextParameter C context,

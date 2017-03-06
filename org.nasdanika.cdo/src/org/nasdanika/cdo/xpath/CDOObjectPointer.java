@@ -36,6 +36,7 @@ import java.util.Locale;
 import org.apache.commons.jxpath.JXPathIntrospector;
 import org.apache.commons.jxpath.ri.QName;
 import org.apache.commons.jxpath.ri.model.NodePointer;
+import org.eclipse.emf.cdo.CDOObject;
 
 /**
  * A Pointer that points to a JavaBean or a collection. It is either
@@ -44,7 +45,7 @@ import org.apache.commons.jxpath.ri.model.NodePointer;
  * in the chain.
  *
  */
-public class EObjectPointer extends EStructuralFeatureOwnerPointer {
+public class CDOObjectPointer extends EStructuralFeatureOwnerPointer {
     private QName name;
     private Object bean;
     private JXPathCDOObjectInfo beanInfo;
@@ -58,7 +59,7 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
      * @param beanInfo JXPathBeanInfo
      * @param locale Locale
      */
-    public EObjectPointer(QName name, Object bean, JXPathCDOObjectInfo beanInfo, Locale locale) {
+    public CDOObjectPointer(QName name, CDOObject bean, JXPathCDOObjectInfo beanInfo, Locale locale) {
         super(null, locale);
         this.name = name;
         this.bean = bean;
@@ -72,7 +73,7 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
      * @param bean pointed
      * @param beanInfo JXPathBeanInfo
      */
-    public EObjectPointer(NodePointer parent, QName name, Object bean, JXPathCDOObjectInfo beanInfo) {
+    public CDOObjectPointer(NodePointer parent, QName name, CDOObject bean, JXPathCDOObjectInfo beanInfo) {
         super(parent);
         this.name = name;
         this.bean = bean;
@@ -130,11 +131,11 @@ public class EObjectPointer extends EStructuralFeatureOwnerPointer {
             return true;
         }
 
-        if (!(object instanceof EObjectPointer)) {
+        if (!(object instanceof CDOObjectPointer)) {
             return false;
         }
 
-        EObjectPointer other = (EObjectPointer) object;
+        CDOObjectPointer other = (CDOObjectPointer) object;
         if (parent != other.parent && (parent == null || !parent.equals(other.parent))) {
             return false;
         }

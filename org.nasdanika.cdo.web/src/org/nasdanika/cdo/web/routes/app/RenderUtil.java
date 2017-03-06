@@ -1,7 +1,9 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
+import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 
 /**
  * Utility class for the {@link Renderer}
@@ -9,6 +11,10 @@ import org.eclipse.emf.ecore.EClass;
  *
  */
 public class RenderUtil {
+	
+	static {
+		JXPathContextReferenceImpl.addNodePointerFactory(new CDOObjectPointerFactory());
+	}
 	
 	// Utility class, no instances.
 	private RenderUtil() {
@@ -31,7 +37,5 @@ public class RenderUtil {
 		}
 		return null;
 	}	
-	
-	
 
 }

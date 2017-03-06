@@ -131,6 +131,13 @@ public @interface RouteMethod {
 		
 		TimeUnit timeUnit() default TimeUnit.MINUTES; 
 		
+		/**
+		 * [JXPath](https://commons.apache.org/proper/commons-jxpath/) path
+		 * of the object to apply the lock to.
+		 * @return
+		 */
+		String path() default "";
+		
 	}
 	
 	Lock lock() default @Lock();
