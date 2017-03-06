@@ -84,6 +84,7 @@ import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
+import org.nasdanika.html.FormGroup.Status;
 import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
@@ -819,10 +820,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		if (value instanceof Date) {
 			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
-			if (format != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
-				return sdf.format((Date) value);
+			if (format == null) {
+				format = "yyyy-MM-dd"; // Default web format for dates.
 			}
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			return sdf.format((Date) value);
 		} else if (value instanceof Number) {
 			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
 			if (format != null) {
@@ -883,41 +885,67 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		if (Date.class == featureTypeInstanceClass) {
 			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
-			if (format != null) {
-				SimpleDateFormat sdf = new SimpleDateFormat(format);
-				return sdf.parse(strValue);
-			}			
+			if (format == null) {
+				format = "yyyy-MM-dd"; // Default web format for dates.
+			}
+			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			return sdf.parse(strValue);
 		}
 		
 		if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
 			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
-			if (format != null) {
-				DecimalFormat df = new DecimalFormat(format);
-				if (BigDecimal.class == featureTypeInstanceClass) {
-					df.setParseBigDecimal(true);
-					return df.parse(strValue);
+			if (format == null) {
+				if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
+					return Byte.parseByte(strValue);
+				}
+				if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
+					return Double.parseDouble(strValue);
+				}
+				if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
+					return Float.parseFloat(strValue);
+				}
+				if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
+					return Integer.parseInt(strValue);
+				}
+				if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
+					return Long.parseLong(strValue);
+				}
+				if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
+					return Short.parseShort(strValue);
 				}				
-				Number parsed = df.parse(strValue);				
-				if (Byte.class == featureTypeInstanceClass) {
-					return parsed.byteValue();
-				}
-				if (Double.class == featureTypeInstanceClass) {
-					return parsed.doubleValue();
-				}
-				if (Float.class == featureTypeInstanceClass) {
-					return parsed.floatValue();
-				}
-				if (Integer.class == featureTypeInstanceClass) {
-					return parsed.intValue();
-				}
-				if (Long.class == featureTypeInstanceClass) {
-					return parsed.longValue();
-				}
-				if (Short.class == featureTypeInstanceClass) {
-					return parsed.shortValue();
-				}				
-				return context.convert(parsed, featureTypeInstanceClass);
 			}
+			DecimalFormat df = new DecimalFormat(format);
+			if (BigDecimal.class == featureTypeInstanceClass) {
+				df.setParseBigDecimal(true);
+				return df.parse(strValue);
+			}				
+			Number parsed = df.parse(strValue);				
+			if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
+				return parsed.byteValue();
+			}
+			if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
+				return parsed.doubleValue();
+			}
+			if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
+				return parsed.floatValue();
+			}
+			if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
+				return parsed.intValue();
+			}
+			if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
+				return parsed.longValue();
+			}
+			if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
+				return parsed.shortValue();
+			}				
+			Object cp = context.convert(parsed, featureTypeInstanceClass);
+			if (parsed != null && cp == null) {
+				Map<String,Object> env = new HashMap<>();
+				env.put("value", parsed);
+				env.put("type", featureTypeInstanceClass.getName());
+				throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));				
+			}
+			return cp;
 		}
 		
 		Object ret = context.convert(strValue, featureTypeInstanceClass);
@@ -2481,7 +2509,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						valuesToSelect.add(getFormControlValue(context, obj, feature, fev));
 					}
 					if (isChoiceTree) {
-						if (!roots.isEmpty()) {
+						if (roots.isEmpty()) {
+							if (isRequired(context, obj, feature)) {
+								return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+							}
+							return null;
+						} else {						
 							Tag ul = htmlFactory.tag(TagName.ul);
 							ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
 								
@@ -2511,7 +2544,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}
 					} else {					
 						Collection<Entry<String, String>> featureChoices = getFeatureChoices(context, obj, feature);
-						if (!featureChoices.isEmpty()) {
+						if (featureChoices.isEmpty()) {
+							if (isRequired(context, obj, feature)) {
+								return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+							}
+							return null;
+						} else {						
 							FieldSet checkboxesFieldSet = fieldContainer.fieldset();
 							checkboxesFieldSet
 								.style().border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
@@ -2544,7 +2582,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				// Radio - get values and labels from options.
 				String valueToSelect = getFormControlValue(context, obj, feature, fv);
 				if (isChoiceTree) {
-					if (!roots.isEmpty()) {
+					if (roots.isEmpty()) {
+						if (isRequired(context, obj, feature)) {
+							return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+						}
+						return null;
+					} else {						
 						Tag ul = htmlFactory.tag(TagName.ul);
 						ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
 							
@@ -2574,7 +2617,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 				} else {										
 					Collection<Entry<String, String>> featureChoices = getFeatureChoices(context, obj, feature);
-					if (!featureChoices.isEmpty()) {
+					if (featureChoices.isEmpty()) {
+						if (isRequired(context, obj, feature)) {
+							return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+						}
+						return null;
+					} else {						
 						FieldSet radiosFieldSet = fieldContainer.fieldset();
 						radiosFieldSet.style()
 							.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
@@ -2603,16 +2651,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		case select:
 			Collection<Entry<String, String>> selectFeatureChoices = getFeatureChoices(context, obj, feature);
 			if (selectFeatureChoices.isEmpty()) {
+				if (isRequired(context, obj, feature)) {
+					return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+				}
 				return null;
+			} else {
+				Select select = htmlFactory.select()
+					.name(feature.getName())
+					.required(isRequired(context, obj, feature));
+				String valueToSelect = getFormControlValue(context, obj, feature, fv);
+				for (Entry<String, String> fc: selectFeatureChoices) {
+					select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
+				}
+				return select;
 			}
-			Select select = htmlFactory.select()
-				.name(feature.getName())
-				.required(isRequired(context, obj, feature));
-			String valueToSelect = getFormControlValue(context, obj, feature, fv);
-			for (Entry<String, String> fc: selectFeatureChoices) {
-				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
-			}
-			return select;
 		case textarea:
 			TextArea textArea = htmlFactory.textArea()
 				.name(feature.getName())
@@ -2850,6 +2902,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 				
 		FormGroup.Status status = null;
+		Object statusData = control.getData(FormGroup.Status.class.getName());
+		if (statusData instanceof FormGroup.Status) {
+			status = (Status) statusData;
+		}
 		if (validationResults != null) {
 			Fragment htf = htmlFactory.fragment();
 			for (ValidationResult validationResult: validationResults) {				
@@ -2990,30 +3046,39 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default boolean setEditableFeatures(C context, T obj, Consumer<Diagnostic> diagnosticConsumer) throws Exception {		
 		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
+		boolean noErrors = true;
 		for (EStructuralFeature esf: editableFeatures) {
 			try {
 				setFeatureValue(context, obj, esf);
 			} catch (Exception e) {
-				diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, e.getMessage(), new Object[] { obj, esf, e }));
+				Throwable rootCause = e;
+				while (rootCause.getCause() != null) {
+					rootCause = rootCause.getCause();
+				}
+				noErrors = false;
+				if (diagnosticConsumer != null) {
+					String rootCauseMessage = rootCause.getMessage() == null ? rootCause.toString() : rootCause.getMessage();
+					diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, rootCauseMessage, new Object[] { obj, esf, e }));
+				}
 			}
 		}
 		Diagnostic vr = validate(context, obj);
-		boolean noErrors = true;
 		for (Diagnostic vc: vr.getChildren()) {
 			List<?> vcData = vc.getData();
 			if (!vcData.isEmpty() 
 					&& vcData.get(0) == obj 
 					&& (vcData.size() == 1 || editableFeatures.contains(vcData.get(1)))) {
-				
+
 				if (vc.getSeverity() == Diagnostic.ERROR) {
 					noErrors = false;
 				}
 			}
+			
 			if (diagnosticConsumer != null) {
 				diagnosticConsumer.accept(vc);
 			}
+
 		}
-		
 		return noErrors;
 	}
 	
