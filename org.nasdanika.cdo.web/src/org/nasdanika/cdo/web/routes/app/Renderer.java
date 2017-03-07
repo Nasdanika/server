@@ -68,6 +68,7 @@ import org.json.JSONTokener;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.CDOIDCodec;
+import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
@@ -89,6 +90,7 @@ import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.HTMLFactory.TokenSource;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.JsTree;
 import org.nasdanika.html.ListGroup;
@@ -445,7 +447,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		  * appear directly under the container in the tree. 
 		  * Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 		 
 		  */
-		TREE_NODE("tree-node");		
+		TREE_NODE("tree-node"),		
+		
+		/**
+		 * {@link EStructuralFeature} annotation specifying feature value content type. If feature control is ``textarea`` and content type is ``text/html`` then 
+		 * the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor. 
+		 */
+		CONTENT_TYPE("content-type");
 		
 		public final String literal;
 		
@@ -515,17 +523,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Collections.reverse(cPath);
 		for (EObject c: cPath) {
 			Renderer<C, EObject> cRenderer = getRenderer(c);
-			Object cLabel = cRenderer.renderIconAndLabel(context, c);
-			if (cLabel != null) {
+			Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);
+			if (cIconAndLabel != null) {
 				String objectURI = cRenderer.getObjectURI(context, c);
-				breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cLabel);
+				breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
 			}
 		}
 		if (action == null) {
 			breadCrumbs.item(null , renderIconAndLabel(context, obj));
 		} else {
 			String objectURI = getObjectURI(context, obj);
-			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderLabel(context, obj));
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));
 			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
 		}
 	}
@@ -656,7 +664,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Icon "location" for a given object. This implementation returns icon of the object's {@link EClass}.
+	 * Icon "location" for a given object. If object element has {@link RenderAnnotation}.ICON annotation, then it is interpolated with object features as tokens and
+	 * ``context-path`` token set to request context path. Otherwise this implementation returns icon of the object's {@link EClass}.
+	 * 
 	 * If icon contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``.
 	 * @param context
 	 * @param modelElement
@@ -667,6 +677,31 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (obj == null) {
 			return null;
 		}
+		String ra = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.ICON);
+		if (ra != null) {
+			boolean[] hasTokenExpansionFailures = { false };
+			TokenSource contextPathTokenSource = token -> {
+				if ("context-path".equals(token) && context instanceof HttpServletRequestContext) {
+					return ((HttpServletRequestContext) context).getRequest().getContextPath();
+				}
+				return null;
+			};
+			TokenSource eObjectTokenSource = new EObjectTokenSource(obj, contextPathTokenSource) {
+				@Override
+				public Object get(String token) {
+					Object ret = super.get(token);
+					if (ret == null) {
+						hasTokenExpansionFailures[0] = true;
+					}
+					return ret;
+				}
+			};
+			String icon = getHTMLFactory(context).interpolate(ra, eObjectTokenSource);
+			if (!hasTokenExpansionFailures[0]) {
+				return icon;
+			}
+		}
+		
 		return getModelElementIcon(context, obj.eClass());
 	}
 	
@@ -771,11 +806,36 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default String getModelElementIcon(C context, EModelElement modelElement) throws Exception {
-		String ret = getRenderAnnotation(context, modelElement, RenderAnnotation.ICON);
-		if (ret == null && modelElement instanceof EStructuralFeature) {
+		String ra = getRenderAnnotation(context, modelElement, RenderAnnotation.ICON);
+		if (ra != null) {
+			boolean[] hasTokenExpansionFailures = { false };
+			TokenSource contextPathTokenSource = token -> {
+				if ("context-path".equals(token) && context instanceof HttpServletRequestContext) {
+					return ((HttpServletRequestContext) context).getRequest().getContextPath();
+				}
+				return null;
+			};
+			TokenSource eObjectTokenSource = new EObjectTokenSource(modelElement, contextPathTokenSource) {
+				@Override
+				public Object get(String token) {
+					Object ret = super.get(token);
+					if (ret == null) {
+						hasTokenExpansionFailures[0] = true;
+					}
+					return ret;
+				}
+			};
+			String icon = getHTMLFactory(context).interpolate(ra, eObjectTokenSource);
+			if (!hasTokenExpansionFailures[0]) {
+				return icon;
+			}
+		}
+		
+		if (modelElement instanceof EStructuralFeature) {
 			return getModelElementIcon(context, ((EStructuralFeature) modelElement).getEType());
 		}
-		return ret;
+		
+		return null;
 	}
 	
 	/**
@@ -831,9 +891,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				DecimalFormat df = new DecimalFormat(format);
 				return df.format(value);
 			}
-		}			
+		}	
+		
+		if ("text/html".equals(getRenderAnnotation(context, feature, RenderAnnotation.CONTENT_TYPE))) {
+			return value;
+		}
 			
-		 return StringEscapeUtils.escapeHtml4(value.toString());		
+		return StringEscapeUtils.escapeHtml4(value.toString());		
 	}
 	
 	/**
@@ -1012,6 +1076,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * Renders element documentation. Documentation is retrieved from "documentation" annotation key 
 	 * and, if not found, from Ecore GenModel annotation.
+	 * 
+	 * For references, if documentation is not present, then the reference type documentation is returned.
 	 * @param context
 	 * @param modelElement
 	 * @return gendoc annotation rendered as markdown to HTML or null if there is no documentation.
@@ -1023,6 +1089,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (markdown == null) {
 			EAnnotation docAnn = modelElement.getEAnnotation(ECORE_DOC_ANNOTATION_SOURCE);
 			if (docAnn==null) {
+				if (modelElement instanceof EReference) {
+					return renderDocumentation(context, ((EReference) modelElement).getEReferenceType());
+				}
 				return null;
 			}
 			markdown = docAnn.getDetails().get(RenderAnnotation.DOCUMENTATION.literal);
@@ -1723,7 +1792,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 			String cancelConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmCancel"), env));			
-			cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"?')) window.location='"+referrer+"';return false;");
+			cancelButton.on(Event.click, "if (confirm('"+cancelConfirmationMessage+"')) window.location='"+referrer+"';return false;");
 			return;
 		}
 		cancelButton.type(Type.RESET);
@@ -1845,7 +1914,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete"), env));			
 		// Delete through GET, not REST-compliant, but works with simple JavaScript. 
-		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='delete.html';"); 
+		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"')) window.location='delete.html';"); 
 	}
 	
 	/**
@@ -1905,7 +1974,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					asTable = isTab;
 				} else {
 					if (isTab) {
-						asTable = !"view".equals(viewAnnotation);
+						asTable = !"list".equals(viewAnnotation);
 					} else {
 						asTable = "table".equals(viewAnnotation);
 					}
@@ -1994,7 +2063,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if (showActionButtons) {
 							liFragment.content(renderFeatureValueDeleteButton(context, obj, feature, idx, v));
 						}
-						ul.content(getHTMLFactory(context).tag(TagName.li, liFragment));
+						ul.content(getHTMLFactory(context).tag(TagName.li, liFragment).style().margin().bottom("3px"));
 						++idx;
 					}
 					ret.content(ul);
@@ -2154,8 +2223,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (authorized) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
-			env.put(NAME_KEY, feature.getName());
-			String tooltip = htmlFactory.interpolate(getResourceString(context, idx == -1 ? "clearTooltip" : "deleteTooltip"), env);
+			env.put(NAME_KEY, Jsoup.parse(renderNamedElementLabel(context, feature).toString()).text());
+			env.put("element", value);
+			if (value instanceof EObject) {
+				Renderer<C, EObject> vr = getRenderer((EObject) value);
+				if (vr != null) {
+					Object vLabel = vr.renderLabel(context, (EObject) value);
+					if (vLabel != null) {
+						env.put("element", Jsoup.parse(vLabel.toString()).text());
+					}
+				}
+			}
+			String tooltipResourceString;
+			if (idx == -1) {
+				tooltipResourceString = getResourceString(context, "clearTooltip");
+			} else {
+				tooltipResourceString = getResourceString(context, feature instanceof EReference && !((EReference) feature).isContainment() ? "removeTooltip" : "deleteTooltip");
+			}
+			String tooltip = htmlFactory.interpolate(tooltipResourceString, env);
 	
 			// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
 			Button deleteButton = htmlFactory.button(idx == -1 ? renderClearIcon(context) : renderDeleteIcon(context))
@@ -2177,8 +2262,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default void wireFeatureValueDeleteButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button deleteButton) throws Exception {
 		Map<String, Object> env = new HashMap<>();
-		env.put(NAME_KEY, feature.getName());
-		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(getResourceString(context, idx == -1 ? "confirmClear" : "confirmDelete"), env));
+		env.put(NAME_KEY, Jsoup.parse(renderNamedElementLabel(context, feature).toString()).text());
+		env.put("element", value);
+		if (value instanceof EObject) {
+			Renderer<C, EObject> vr = getRenderer((EObject) value);
+			if (vr != null) {
+				Object vLabel = vr.renderLabel(context, (EObject) value);
+				if (vLabel != null) {
+					env.put("element", Jsoup.parse(vLabel.toString()).text());
+				}
+			}
+		}
+		String confirmationResourceString;
+		if (idx == -1) {
+			confirmationResourceString = getResourceString(context, "confirmClear");
+		} else {
+			confirmationResourceString = getResourceString(context, feature instanceof EReference && !((EReference) feature).isContainment() ? "confirmRemove" : "confirmDelete");
+		}
+		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(confirmationResourceString, env));
 		String deleteLocation;
 		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
 			deleteLocation = getReferenceRenderer((EReference) feature, (EObject) value).getObjectURI(context, (EObject) value)+"/delete.html";
@@ -2187,7 +2288,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		} else {
 			deleteLocation = "delete/"+feature.getName()+"/"+idx+".html";			
 		}
-		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"?')) window.location='"+deleteLocation+"';");
+		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"')) window.location='"+deleteLocation+"';");
 	}
 
 	/**
@@ -2330,7 +2431,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * * ``control`` - defaults to input for attributes and multi-value features and select for references.
 	 *     * input (default),
 	 *     * select
-	 *     * textarea
+	 *     * textarea. If ``content-type`` annotation is set to ``text/html`` then the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor.      
 	 * * ``input-type`` - for ``input`` control - one of {@link HTMLFactory.InputType} values. Checkbox for booleans and multi-value features, text otherwise.
 	 * * ``choice-tree`` - if value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. If value is ``reference-nodes``, then containing references are shown as nodes in the tree. 
 	 * @param context
@@ -2671,12 +2772,31 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				.placeholder(textLabel)
 				.required(isRequired(context, obj, feature));			
 			textArea.content(getFormControlValue(context, obj, feature, fv));
+			if ("text/html".equals(getRenderAnnotation(context, feature, RenderAnnotation.CONTENT_TYPE))) {
+				textArea.id(htmlFactory.nextId());
+				fieldContainer.content(renderTinymceInitScript(context, textArea));
+			}
 			return textArea;
 		default:
 			throw new IllegalArgumentException("Unsupported control type: "+controlType);
 		}
 	}
 	
+	/**
+	 * Renders TinyMCE initialization script for the text area. This implementation interpolates ``tinymce-init.js`` script with the ``#<text area id>`` as ``selector`` token.
+	 * @param context
+	 * @param textArea
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderTinymceInitScript(C context, TextArea textArea) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		if (textArea.getId() == null) {
+			textArea.id(htmlFactory.nextId());
+		}
+		return htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("tinymce-init.js"), token -> "selector".equals(token) ? "#" + textArea.getId() : null));				
+	}
+
 	/**
 	 * Returns true if given feature is required. This implementation returns true if feature is not many and lower bound is not 0.
 	 * @param context
@@ -2721,7 +2841,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			while (tit != null && tit.hasNext()) {
 				Notifier next = tit.next();
-				if (reference.getEType().isInstance(next)) {
+				if (reference.getEType().isInstance(next) && context.authorize(next, StandardAction.read, null, null)) {
 					ret.add((EObject) next);
 				}
 			}
@@ -2729,7 +2849,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Iterator<?> cit = JXPathContext.newContext(obj).iterate(choicesSelector);
 			while (cit.hasNext()) {
 				Object selection = cit.next();
-				if (reference.getEType().isInstance(selection)) {
+				if (reference.getEType().isInstance(selection) && context.authorize(selection, StandardAction.read, null, null)) {
 					ret.add((EObject) selection);
 				}
 			}
