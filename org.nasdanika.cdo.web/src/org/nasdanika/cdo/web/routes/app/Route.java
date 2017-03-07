@@ -465,6 +465,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			action = "create",
 			qualifier = "{feature}",
 			produces = "text/html",
+			lock = @RouteMethod.Lock(type = Type.WRITE), 
 			comment="Renders a page for creating an object and adding it to a containment feature.")
 	public Object createContainementFeatureElement(
 			@ContextParameter C context,
@@ -495,14 +496,16 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						
 					};
 					
+					// Adding the new instance to the object graph for selectors to work. 
+					if (tsf.isMany()) {
+						((Collection<Object>) target.eGet(tsf)).add(instance);
+					} else {
+						target.eSet(tsf, instance);
+					}					
+					
 					if (context.getMethod() == RequestMethod.POST) {			
 						if (renderer.setEditableFeatures(context, instance, diagnosticConsumer)) {							
 							// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
-							if (tsf.isMany()) {
-								((Collection<Object>) target.eGet(tsf)).add(instance);
-							} else {
-								target.eSet(tsf, instance);
-							}
 							if (context instanceof HttpServletRequestContext) {
 								String referrer = referrerParameter;
 								if (referrer == null) {
@@ -517,6 +520,11 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							
 							return "Update successful";
 						}
+					} 
+					
+					// Rollback transaction to remove the instance.
+					if (context instanceof TransactionContext) {
+						((TransactionContext) context).setRollbackOnly();
 					}
 
 					HTMLFactory htmlFactory = getHTMLFactory(context);
