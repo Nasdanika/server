@@ -310,14 +310,35 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	enum RenderAnnotation {
 		
 		/**
-		 * Set this annotation details key to ``false`` to hide structural feature from view.
+		 * {@link EStructuralFeature} annotation defining whether the feature is visible in the object view.
+		 * The value of this annotation can be one of the following:
+		 * 
+		 *   * Blank string (or annotation is not present) - the feature is editable if it is not a tab (``isTab()`` returns false)
+		 *   * ``true`` boolean literal - the feature is visible.
+		 *   * ``false`` boolean literal - the feature is hidden.
+		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is visible.
 		 */
 		VISIBLE("visible"),
 
 		/**
-		 * Set this annotation details key to ``false`` to hide exclude visible structural feature from the edit form.
+		 * {@link EStructuralFeature} annotation defining whether a visible feature is editable, i.e. shall be displayed in the edit form. A feature might be editable, but disabled.
+		 * The value of this annotation can be one of the following:
+		 * 
+		 *   * ``true`` boolean literal or empty string - the feature is visible (default).
+		 *   * ``false`` boolean literal - the feature is hidden.
+		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is editable.
 		 */
 		EDITABLE("editable"),
+		
+		/**
+		 * {@link EStructuralFeature} annotation defining whether an editable feature is disabled, i.e. it shall be displayed in the edit form, but the edit control shall be disabled.
+		 * The value of this annotation can be one of the following:
+		 * 
+		 *   * ``true`` boolean literal or empty string - the feature is visible (default).
+		 *   * ``false`` boolean literal - the feature is hidden.
+		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is disabled.
+		 */
+		DISABLED("disabled"),
 		
 		/**
 		 * On EClass this annotation is a pattern which is interpolated to generate object label.
@@ -351,7 +372,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		ICON("icon"),
 		
 		/**
-		 * Set this annotation on {@link EClass} to true to have the class view rendered in a tab. 
+		 * Set this annotation on {@link EClass} to ``true`` to have the class view rendered in a tab. 
 		 */
 		VIEW_TAB("view-tab"),
 
@@ -379,6 +400,26 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		/**
 		 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference tab table.
+		 * The value of this annotation can be one of the following:
+		 * 
+		 * * A space-separated list of feature names.
+		 * * A YAML document list of feature names or mappings of feature name to feature configuration definition, which may include:
+		 *     * ``visible`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is included in the list.
+		 *     * ``align`` - left, center, or right. Defaults to right for numbers, center for dates and booleans and left for other types.
+		 *     * ``width`` - if this key maps to a number, then the number is used for all device sizes. Otherwise is shall map to a map of device-size to number mappings.
+		 *       
+		 * Example:
+		 * ```yaml
+		 * - name:
+		 *     align: right
+		 *     width: 5
+		 * - age:
+		 *     aligh: left
+		 *     width:
+		 *         xs: 3        
+		 * - ssn
+		 * ```
+		 *        
 		 */
 		VIEW_FEATURES("view-features"),
 		
@@ -499,15 +540,23 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * 
 	 * @param obj
-	 * @return A list of structural features to include into the object view. This implementation
-	 * returns all object features authorized to read which are not annotated with <code>visible</code> details annotation set to <code>false</code>
+	 * @return A list of structural features to include into the object view. ``RenderAnnotation.VISIBLE`` defines feature visibility.
 	 * @throws Exception 
 	 */
 	default List<EStructuralFeature> getVisibleFeatures(C context, T obj) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
-			if (!"false".equals(getRenderAnnotation(context, sf, RenderAnnotation.VISIBLE)) && context.authorizeRead(obj, sf.getName(), null)) {
-				ret.add(sf);
+			if (context.authorizeRead(obj, sf.getName(), null)) {
+				String visibleRenderAnnotation = getRenderAnnotation(context, sf, RenderAnnotation.VISIBLE);
+				if (CoreUtil.isBlank(visibleRenderAnnotation) || "true".equals(visibleRenderAnnotation)) {
+					ret.add(sf);
+				} else if (!"false".equals(visibleRenderAnnotation) && obj instanceof CDOObject) {
+					// XPath
+					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+					if (Boolean.TRUE.equals(jxPathContext.getValue(visibleRenderAnnotation, Boolean.class))) {
+						ret.add(sf);
+					}
+				}
 			}
 		}
 		return ret;
@@ -2013,13 +2062,101 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}
 					}
 				} else {
-					for (String vf: viewFeaturesAnnotation.split("\\s+")) {
-						if (!CoreUtil.isBlank(vf)) {
-							EStructuralFeature sf = refType.getEStructuralFeature(vf.trim());
-							if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
-								tableFeatures.add(sf);
+					/**
+					 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference tab table.
+					 * The value of this annotation can be one of the following:
+					 * 
+					 * * A space-separated list of feature names.
+					 * * A YAML document list of feature names or mappings of feature name to feature configuration definition, which may include:
+					 *     * ``visible`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is included in the list.
+					 *     * ``align`` - left, center, or right. Defaults to right for numbers, center for dates and booleans and left for other types.
+					 *     * ``width`` - if this key maps to a number, then the number is used for all device sizes. Otherwise is shall map to a map of device-size to number mappings.
+					 *       
+					 * Example:
+					 * ```yaml
+					 * - name:
+					 *     align: right
+					 *     width: 5
+					 * - age:
+					 *     aligh: left
+					 *     width:
+					 *         xs: 3        
+					 * - ssn
+					 * ```
+					 *        
+					 */
+
+					Yaml yaml = new Yaml();
+					Object spec = yaml.load(viewFeaturesAnnotation);
+					Map<EStructuralFeature, Object> featureSpecs = new HashMap<>();
+					if (spec instanceof String) {
+						for (String vf: ((String) spec).split("\\s+")) {
+							if (!CoreUtil.isBlank(vf)) {
+								EStructuralFeature sf = refType.getEStructuralFeature(vf.trim());
+								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+									tableFeatures.add(sf);
+								}
 							}
 						}
+					} else if (spec instanceof List) {
+						// List containing either feature names or mappings of names to feature specs
+						for (Object fe: (List<Object>) spec) {
+							if (fe instanceof String) {
+								EStructuralFeature sf = refType.getEStructuralFeature(((String) fe).trim());
+								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+									tableFeatures.add(sf);
+								}								
+							} else if (fe instanceof Map) {
+								// Should be a single-entry map
+								for (Entry<String, Object> fme: ((Map<String, Object>) fe).entrySet()) {
+									EStructuralFeature sf = refType.getEStructuralFeature(fme.getKey().trim());
+									if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+										boolean visible = true;
+										if (fme.getValue() instanceof Map) {
+											Object vspec = ((Map<?,?>) fme.getValue()).get(RenderAnnotation.VISIBLE.literal);
+											if (vspec instanceof String) {
+												if ("true".equals(((String) vspec).trim())) {
+													visible = true;
+												} else if ("false".equals(((String) vspec).trim())) {
+													visible = false;
+												} else if (obj instanceof CDOObject) {
+													JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+													visible = Boolean.TRUE.equals(jxPathContext.getValue((String) vspec, Boolean.class));
+												}
+											}
+										}
+										if (visible) {
+											tableFeatures.add(sf);
+											featureSpecs.put(sf, fme.getValue());
+										}
+									}																	
+								}
+							}
+						}						
+					} else if (spec instanceof Map) {
+						for (Entry<String, Object> fme: ((Map<String, Object>) spec).entrySet()) {
+							EStructuralFeature sf = refType.getEStructuralFeature(fme.getKey().trim());
+							if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+								boolean visible = true;
+								if (fme.getValue() instanceof Map) {
+									Object vspec = ((Map<?,?>) fme.getValue()).get(RenderAnnotation.VISIBLE.literal);
+									if (vspec instanceof String) {
+										if ("true".equals(((String) vspec).trim())) {
+											visible = true;
+										} else if ("false".equals(((String) vspec).trim())) {
+											visible = false;
+										} else if (obj instanceof CDOObject) {
+											JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+											visible = Boolean.TRUE.equals(jxPathContext.getValue((String) vspec, Boolean.class));
+										}
+									}
+								}
+								if (visible) {
+									tableFeatures.add(sf);
+									featureSpecs.put(sf, fme.getValue());
+								}
+							}																	
+						}						
 					}
 				}
 				
@@ -2035,6 +2172,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Table featureTable = ret.getFactory().table().bordered().style().margin().bottom("5px");
 				Row headerRow = featureTable.header().row().style(Style.INFO);
 				for (EStructuralFeature sf: tableFeatures) {
+					// TODO - colgroups, alignments, widths.
 					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
 					Cell headerCell = headerRow.header(renderNamedElementIconAndLabel(context, sf));
 					if (featureDocIcon != null) {
@@ -2397,8 +2535,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * 
 	 * @param obj
-	 * @return A list of structural features to include into the object edit form. This implementation
-	 * returns all visible features with !isTab() and authorized to update unless <code>editable</code> annotation is set to <code>false</code>  
+	 * @return A list of structural features to include into the object edit form. RenderAnnotation.EDITABLE annotation value
+	 * defines feature editability.  
 	 * @throws Exception 
 	 */
 	default List<EStructuralFeature> getEditableFeatures(C context, T obj) throws Exception {
@@ -2406,9 +2544,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
 			if (context.authorizeUpdate(obj, vsf.getName(), null)) {
 				String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
-				boolean isEditable = eav == null ? !isTab(context, vsf)  : !"false".equals(eav);
-				if (isEditable) {
+				if (CoreUtil.isBlank(eav)) {
+					if (!isTab(context, vsf)) {
+						ret.add(vsf);
+					}
+				} else if ("true".equals(eav)) {
 					ret.add(vsf);
+				} else if (!"false".equals(eav) && obj instanceof CDOObject) {
+					// XPath
+					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+					if (Boolean.TRUE.equals(jxPathContext.getValue(eav, Boolean.class))) {
+						ret.add(vsf);
+					}
 				}
 			}
 		}
@@ -2455,7 +2602,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 *     * select
 	 *     * textarea. If ``content-type`` annotation is set to ``text/html`` then the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor.      
 	 * * ``input-type`` - for ``input`` control - one of {@link HTMLFactory.InputType} values. Checkbox for booleans and multi-value features, text otherwise.
-	 * * ``choice-tree`` - if value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. If value is ``reference-nodes``, then containing references are shown as nodes in the tree. 
+	 * * ``choice-tree`` - if value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. If value is ``reference-nodes``, then containing references are shown as nodes in the tree.
+	 * 
+	 * Control can be conditionally or unconditionally disabled - see RenderAnnotation.DISABLED for details.
+	 *  
 	 * @param context
 	 * @param obj
 	 * @param feature
@@ -2601,6 +2751,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			abstract Object renderControl(EObject obj) throws Exception;
 			
 		}		
+				
+		boolean disabled;
+		String disabledRenderAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.DISABLED);
+		if (CoreUtil.isBlank(disabledRenderAnnotation) || "false".equals(disabledRenderAnnotation)) {
+			disabled = false;
+		} else if ("true".equals(disabledRenderAnnotation)) {
+			disabled = true;
+		} else if (obj instanceof CDOObject) {
+			// XPath
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+			disabled = Boolean.TRUE.equals(jxPathContext.getValue(disabledRenderAnnotation, Boolean.class));
+		} else {
+			disabled = false;
+		}
 		
 		switch (controlType) {
 		case input:
@@ -2651,7 +2815,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 											checkbox.attribute("checked", "true");
 										}
 									}
-									return checkbox;
+									return checkbox.disabled(disabled);
 								}
 								
 							};
@@ -2679,7 +2843,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								.style().margin().bottom("5px");
 							checkboxesFieldSet.legend(label);
 							for (Entry<String, String> fc: featureChoices) {
-								Input checkbox = htmlFactory.input(inputType);
+								Input checkbox = htmlFactory.input(inputType).disabled(disabled);
 								checkbox.name(feature.getName());
 								checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
 								if (valuesToSelect.contains(fc.getKey())) {
@@ -2692,7 +2856,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					return null;
 				}
 				
-				Input checkbox = htmlFactory.input(inputType);
+				Input checkbox = htmlFactory.input(inputType).disabled(disabled);
 				checkbox.name(feature.getName());
 				checkbox.value(true);
 				if (Boolean.TRUE.equals(fv)) {
@@ -2716,7 +2880,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							
 							@Override
 							Object renderControl(EObject obj) throws Exception {
-								Input radio = htmlFactory.input(InputType.radio).name(feature.getName());
+								Input radio = htmlFactory.input(InputType.radio).name(feature.getName()).disabled(disabled);
 								if (obj instanceof CDOObject) {
 									String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
 									radio.value(value);
@@ -2753,6 +2917,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						radiosFieldSet.legend(label);
 						for (Entry<String, String> fc: featureChoices) {  
 							Input radio = htmlFactory.input(inputType)
+									.disabled(disabled)
 									.name(feature.getName())
 									.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
 									.placeholder(textLabel);
@@ -2766,6 +2931,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				return null;
 			default:
 				return htmlFactory.input(inputType)
+					.disabled(disabled)
 					.name(feature.getName())
 					.value(StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, fv)))
 					.placeholder(textLabel)
@@ -2774,6 +2940,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		case select:
 			Collection<Entry<String, String>> selectFeatureChoices = getFeatureChoices(context, obj, feature);
 			Select select = htmlFactory.select()
+				.disabled(disabled)
 				.name(feature.getName())
 				.required(isRequired(context, obj, feature));
 			if (feature.getLowerBound() == 0) {
@@ -2793,6 +2960,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return select;
 		case textarea:
 			TextArea textArea = htmlFactory.textArea()
+				.disabled(disabled)
 				.name(feature.getName())
 				.placeholder(textLabel)
 				.required(isRequired(context, obj, feature));			

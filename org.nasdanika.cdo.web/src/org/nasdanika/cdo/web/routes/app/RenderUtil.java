@@ -58,6 +58,8 @@ public class RenderUtil {
 			root = (CDOObject) root.eContainer();
 		}
 		jxPathContext.getVariables().declareVariable("root", root);
+		
+		// Functions, e.g. eClassName()?
 		return jxPathContext;
 	}
 

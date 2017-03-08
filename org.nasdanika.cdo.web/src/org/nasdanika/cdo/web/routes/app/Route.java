@@ -999,12 +999,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 			} catch (Exception e) {
 				xPathFormGroup.status(Status.ERROR);
-//				StringWriter sw = new StringWriter();
-//				try (PrintWriter printWriter = new PrintWriter(sw)) {
-//					e.printStackTrace(printWriter);
-//				}
-//				sw.close();
-//				content.content(htmlFactory.panel(Style.DANGER, "Exception: "+e, htmlFactory.div(sw).style().whiteSpace().preWrap(), null));
 				content.content(htmlFactory.label(Style.DANGER, "ERROR: "+e));
 			}
 		}		
