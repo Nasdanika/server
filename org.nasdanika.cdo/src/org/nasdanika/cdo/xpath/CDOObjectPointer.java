@@ -25,7 +25,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - adjustment to EObject
  ******************************************************************************/
 /*
- * This code was copied from //https://github.com/eclipse/eclipse.platform.ui/tree/master/bundles/org.eclipse.e4.emf.xpath/src/org/eclipse/e4/emf/internal/xpath
+ * This code was copied from https://github.com/eclipse/eclipse.platform.ui/tree/master/bundles/org.eclipse.e4.emf.xpath/src/org/eclipse/e4/emf/internal/xpath
  * to provide support of parent navigation in CDOObject pointers. 
  * Contributor: Pavel Vlasov <Pavel.Vlasov@nasdanika.org>
  */
