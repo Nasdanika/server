@@ -41,7 +41,8 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * Creates a new {@link JXPathContext} with the object as context object and conext as ``context`` variable.
+	 * Creates a new {@link JXPathContext} with the object as context object and context as ``context`` variable and
+	 * root object as ``root`` variable.
 	 * @param context
 	 * @param obj
 	 * @return
@@ -52,6 +53,11 @@ public class RenderUtil {
 		if (context != null) {
 			jxPathContext.getVariables().declareVariable("context", context);
 		}
+		CDOObject root = obj;
+		while (root.eContainer() instanceof CDOObject) {
+			root = (CDOObject) root.eContainer();
+		}
+		jxPathContext.getVariables().declareVariable("root", root);
 		return jxPathContext;
 	}
 
