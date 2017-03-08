@@ -123,7 +123,7 @@ import org.yaml.snakeyaml.Yaml;
  * @param <T>
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
-	
+		
 	public static final String TITLE_KEY = "title";
 
 	public static final String NAME_KEY = "name";
@@ -315,7 +315,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		VISIBLE("visible"),
 
 		/**
-		 * Set this annotation details key to ``false`` to hide make visible structural feature read-only in the edit form.
+		 * Set this annotation details key to ``false`` to hide exclude visible structural feature from the edit form.
 		 */
 		EDITABLE("editable"),
 		
@@ -383,7 +383,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		VIEW_FEATURES("view-features"),
 		
 		/**
-		 * {@link EReference} annotation specifying {@link EClass}es of elements which can be instantiated to the reference.  
+		 * {@link EReference} annotation specifying {@link EClass}es of elements which can be instantiated and set/added to the reference.  
 		 * The list of element types shall be space-separated. Elements shall be in
 		 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
 		 * feature's declaring EClass.
@@ -453,7 +453,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * {@link EStructuralFeature} annotation specifying feature value content type. If feature control is ``textarea`` and content type is ``text/html`` then 
 		 * the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor. 
 		 */
-		CONTENT_TYPE("content-type");
+		CONTENT_TYPE("content-type"),
+		
+		/**
+		 * {@link EStructuralFeature} annotation specifying XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the 
+		 * default value. For example, in hierarchical structures children may implicitly inherit parent feature value, unless it is explicitly set (overridden) in the child.
+		 */
+		PLACEHOLDER("placeholder");
 		
 		public final String literal;
 		
@@ -615,11 +621,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
-			Object label = obj.eGet(vsf);
-			return label == null ? label : StringEscapeUtils.escapeHtml4(String.valueOf(label));
+			if (vsf instanceof EAttribute) {
+				Object label = obj.eGet(vsf);
+				if (label != null) {
+					return StringEscapeUtils.escapeHtml4(String.valueOf(label));
+				}
+			}
 		}
 		
-		return null;		
+		if (obj instanceof CDOObject) {
+			CDOID cdoID = ((CDOObject) obj).cdoID();
+			if (cdoID != null) {
+				return renderNamedElementLabel(context, obj.eClass())+"-"+CDOIDCodec.INSTANCE.encode(context, cdoID);
+			}
+		}
+		
+		return renderNamedElementLabel(context, obj.eClass());		
 	}
 	
 	/**
@@ -686,7 +703,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				return null;
 			};
-			TokenSource eObjectTokenSource = new EObjectTokenSource(obj, contextPathTokenSource) {
+			TokenSource eObjectTokenSource = new EObjectTokenSource(context, obj, contextPathTokenSource) {
 				@Override
 				public Object get(String token) {
 					Object ret = super.get(token);
@@ -731,7 +748,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String objectURI = getObjectURI(context, obj);
 		Tag ret = getHTMLFactory(context).link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));
 		if (withPathTooltip) {
-			String pathTxt = Jsoup.parse(renderObjectPath(context, obj, " > ").toString()).text();
+			String pathTxt = Jsoup.parse(renderObjectPath(context, obj, " > ").toString() + " ["+renderNamedElementLabel(context, obj.eClass())+"]").text();			
 			ret.attribute("title", pathTxt);
 		}
 		ret.setData(obj);
@@ -815,7 +832,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				return null;
 			};
-			TokenSource eObjectTokenSource = new EObjectTokenSource(modelElement, contextPathTokenSource) {
+			TokenSource eObjectTokenSource = new EObjectTokenSource(context, modelElement, contextPathTokenSource) {
 				@Override
 				public Object get(String token) {
 					Object ret = super.get(token);
@@ -918,6 +935,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
 		if (featureTypeInstanceClass.isInstance(strValue)) {
 			return strValue;
+		}
+		
+		// Blank is treated as null for non-string values.
+		if (CoreUtil.isBlank(strValue)) {
+			return null;
 		}
 		
 		if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
@@ -2751,21 +2773,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		case select:
 			Collection<Entry<String, String>> selectFeatureChoices = getFeatureChoices(context, obj, feature);
-			if (selectFeatureChoices.isEmpty()) {
-				if (isRequired(context, obj, feature)) {
-					return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
-				}
-				return null;
-			} else {
-				Select select = htmlFactory.select()
-					.name(feature.getName())
-					.required(isRequired(context, obj, feature));
-				String valueToSelect = getFormControlValue(context, obj, feature, fv);
-				for (Entry<String, String> fc: selectFeatureChoices) {
-					select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
-				}
-				return select;
+			Select select = htmlFactory.select()
+				.name(feature.getName())
+				.required(isRequired(context, obj, feature));
+			if (feature.getLowerBound() == 0) {
+				select.option("", "", false, false);
 			}
+			String valueToSelect = getFormControlValue(context, obj, feature, fv);				
+			for (Entry<String, String> fc: selectFeatureChoices) {
+				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
+			}
+			if (selectFeatureChoices.isEmpty()) {
+				select.disabled();
+				if (isRequired(context, obj, feature)) {
+					select.setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+				}
+			} 
+			
+			return select;
 		case textarea:
 			TextArea textArea = htmlFactory.textArea()
 				.name(feature.getName())
@@ -3462,6 +3487,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		return selectForm;
+	}
+	
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @return
+	 */
+	default Object getPlaceholder(C context, T obj, EStructuralFeature feature) throws Exception {
+		String ra = getRenderAnnotation(context, feature, RenderAnnotation.PLACEHOLDER);
+		return ra != null && obj instanceof CDOObject ? RenderUtil.newJXPathContext(context, (CDOObject) obj).getValue(ra) : null;		
 	}
 		
 }
