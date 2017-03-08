@@ -1,7 +1,11 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
+import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 
 /**
  * Utility class for the {@link Renderer}
@@ -9,6 +13,10 @@ import org.eclipse.emf.ecore.EClass;
  *
  */
 public class RenderUtil {
+	
+	static {
+		JXPathContextReferenceImpl.addNodePointerFactory(new CDOObjectPointerFactory());
+	}	
 		
 	// Utility class, no instances.
 	private RenderUtil() {
@@ -30,6 +38,21 @@ public class RenderUtil {
 			}
 		}
 		return null;
-	}	
+	}
+	
+	/**
+	 * Creates a new {@link JXPathContext} with the object as context object and conext as ``context`` variable.
+	 * @param context
+	 * @param obj
+	 * @return
+	 */
+	public static JXPathContext newJXPathContext(Object context, CDOObject obj) {
+		JXPathContext jxPathContext = JXPathContext.newContext(obj);
+		jxPathContext.setLenient(true);
+		if (context != null) {
+			jxPathContext.getVariables().declareVariable("context", context);
+		}
+		return jxPathContext;
+	}
 
 }
