@@ -1,12 +1,9 @@
 package org.nasdanika.cdo.web.routes.app;
 
-import org.apache.commons.jxpath.JXPathContext;
-import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 import org.nasdanika.html.HTMLFactory.TokenSource;
 
 /**
@@ -20,14 +17,12 @@ public class EObjectTokenSource implements TokenSource {
 	
 	public static final String XPATH_PREFIX = "xpath:";
 	
-	static {
-		JXPathContextReferenceImpl.addNodePointerFactory(new CDOObjectPointerFactory());
-	}	
-	
 	private EObject source;
 	private TokenSource[] chain;
+	private Object context;
 	
-	public EObjectTokenSource(EObject source, TokenSource... chain) {
+	public EObjectTokenSource(Object context, EObject source, TokenSource... chain) {
+		this.context = context;
 		this.source = source;
 		this.chain = chain;
 	}
@@ -43,9 +38,7 @@ public class EObjectTokenSource implements TokenSource {
 		}
 		
 		if (source instanceof CDOObject && token.startsWith(XPATH_PREFIX)) {
-			JXPathContext jxPathContext = JXPathContext.newContext(source);
-			jxPathContext.setLenient(true);
-			Object ret = jxPathContext.getValue(token.substring(XPATH_PREFIX.length()));
+			Object ret = RenderUtil.newJXPathContext(context, (CDOObject) source).getValue(token.substring(XPATH_PREFIX.length()));
 			if (ret != null) {
 				return ret;
 			}
@@ -60,7 +53,5 @@ public class EObjectTokenSource implements TokenSource {
 		
 		return null;
 	}
-	
-	
 
 }
