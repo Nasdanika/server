@@ -1,13 +1,18 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -25,17 +30,23 @@ import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.TransactionContext;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
+import org.nasdanika.html.Button;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.Form.Method;
+import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
+import org.nasdanika.html.Input;
 import org.nasdanika.html.Modal;
+import org.nasdanika.html.Table;
 import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TextArea;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.web.Action;
@@ -872,5 +883,133 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	
 	
 	// Object diagram png
+
+	/**
+	 * Renders and processes a form for evaluating XPath expressions. 
+	 * This route method is intended to be used by application/model developers. To hide this route method override it without adding
+	 * {@link RouteMethod} annotation.
+	 * @param context
+	 * @param target
+	 * @param referrerParameter
+	 * @param referrerHeader
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(
+			comment="Helper page for evaluation of XPath expressions.",
+			action = "read",
+			value = { RequestMethod.GET, RequestMethod.POST },
+			path = "XPathEvaluator.html")
+	public Object xPathEvaluator(
+			@ContextParameter C context,
+			@TargetParameter T target,						
+			@QueryParameter("xpath") String xpath,
+			@QueryParameter("type") String type) throws Exception {
+	
+		if (!(target instanceof CDOObject)) {
+			return Action.NOT_FOUND;
+		}
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment content = htmlFactory.fragment();
+		
+		// Breadcrumbs
+		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+		renderObjectPath(context, target, "XPath Evaluator", breadCrumbs);
+		if (!breadCrumbs.isEmpty()) {
+			content.content(breadCrumbs);
+		}
+		
+		// Object header
+		Modal classDocModal = renderDocumentationModal(context, target.eClass());
+		if (classDocModal != null) {
+			content.content(classDocModal);
+		}
+		
+		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal), " - XPath Evaluator");
+		content.content(objectHeader);				
+		
+		Form form = htmlFactory.form().action("XPathEvaluator.html").method(Method.post).style().margin().bottom("5px");
+		
+		TextArea xPathTextArea = htmlFactory.textArea().required().rows(10).name("xpath");
+		if (xpath != null) {
+			xPathTextArea.content(StringEscapeUtils.escapeHtml4(xpath));
+		}
+		FormGroup<?> xPathFormGroup = form.formGroup("XPath*", xPathTextArea, "XPath expression to evaluate");
+		Input valueTypeRadio = htmlFactory.input(InputType.radio).name("type").value("value");
+		form.radio("Value", valueTypeRadio, true);
+		Input iteratorTypeRadio = htmlFactory.input(InputType.radio).name("type").value("iterator");
+		form.radio("Iterator", iteratorTypeRadio, true);
+		boolean isValue = type == null || "value".equals(type);
+		(isValue ? valueTypeRadio : iteratorTypeRadio).attribute("checked", "true"); 	
+		form.content(htmlFactory.tag(TagName.hr));
+		form.button("Evaluate").type(Button.Type.SUBMIT).style(Style.PRIMARY);
+		
+		content.content(form);
+		
+		if (context.getMethod() == RequestMethod.POST) {
+			try {
+				JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) target);
+				if (isValue) {
+					Object value = jxPathContext.getValue(xpath);
+					if (value == null) {
+						content.content(htmlFactory.label(Style.SUCCESS, "No result")); 
+					} else {
+						if (value instanceof EObject) {
+							EObject eObject = (EObject) value;
+							Renderer<C, EObject> re = getRenderer(eObject);
+							EClass eClass = eObject.eClass();
+							Object resultClassDocIcon = renderDocumentationIcon(context, eClass, null, true);
+							if (resultClassDocIcon == null) {
+								resultClassDocIcon = "";
+							}
+							String header = "Result - " + (re == null ? this : re).renderNamedElementLabel(context, eClass) + resultClassDocIcon +" ("+eObject.getClass().getName()+")";
+							Object footer = re == null ? null : re.renderLink(context, eObject, true);
+							content.content(htmlFactory.panel(Style.SUCCESS, header, StringEscapeUtils.escapeHtml4(eObject.toString()), footer));
+						} else {
+							content.content(htmlFactory.panel(Style.SUCCESS, "Result - "+value.getClass().getName(), StringEscapeUtils.escapeHtml4(value.toString()), null));							
+						}
+					}
+				} else {
+					Table resultsTable = htmlFactory.table().bordered();
+					Iterator<?> rit = jxPathContext.iterate(xpath);
+					while (rit.hasNext()) {
+						Object value = rit.next();
+						if (value == null) {
+							resultsTable.row(htmlFactory.label(Style.SUCCESS, "No result"), "", ""); 
+						} else {
+							if (value instanceof EObject) {
+								EObject eObject = (EObject) value;
+								Renderer<C, EObject> re = getRenderer(eObject);
+								EClass eClass = eObject.eClass();
+								Object resultClassDocIcon = renderDocumentationIcon(context, eClass, null, true);
+								if (resultClassDocIcon == null) {
+									resultClassDocIcon = "";
+								}
+								String typeInfo = String.valueOf((re == null ? this : re).renderNamedElementLabel(context, eClass)) + resultClassDocIcon +" ("+eObject.getClass().getName()+")";
+								Object link = re == null ? "" : re.renderLink(context, eObject, true);
+								resultsTable.row(typeInfo, StringEscapeUtils.escapeHtml4(eObject.toString()), link);
+							} else {
+								resultsTable.row(value.getClass().getName(), StringEscapeUtils.escapeHtml4(value.toString()), "");							
+							}
+						}
+						
+					}
+					content.content(htmlFactory.panel(Style.SUCCESS, "Results", resultsTable, null));
+				}
+			} catch (Exception e) {
+				xPathFormGroup.status(Status.ERROR);
+//				StringWriter sw = new StringWriter();
+//				try (PrintWriter printWriter = new PrintWriter(sw)) {
+//					e.printStackTrace(printWriter);
+//				}
+//				sw.close();
+//				content.content(htmlFactory.panel(Style.DANGER, "Exception: "+e, htmlFactory.div(sw).style().whiteSpace().preWrap(), null));
+				content.content(htmlFactory.label(Style.DANGER, "ERROR: "+e));
+			}
+		}		
+		
+		return renderPage(context, "XPath Evaluator", content, null);				
+	}	
 	
 }
