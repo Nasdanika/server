@@ -3,7 +3,11 @@
 package org.nasdanika.cdo.security.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.Map;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Variables;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -13,6 +17,7 @@ import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -142,7 +147,6 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	public String getCategory() {
 		return (String)eGet(SecurityPackage.Literals.ACTION__CATEGORY, true);
 	}

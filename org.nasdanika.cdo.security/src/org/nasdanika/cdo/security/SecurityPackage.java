@@ -574,13 +574,22 @@ public interface SecurityPackage extends EPackage {
 	int PERMISSION__ACTION = 5;
 
 	/**
+	 * The feature id for the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__CONDITION = 6;
+
+	/**
 	 * The number of structural features of the '<em>Permission</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION_FEATURE_COUNT = 6;
+	int PERMISSION_FEATURE_COUNT = 7;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -1785,6 +1794,17 @@ public interface SecurityPackage extends EPackage {
 	EReference getPermission_Action();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Permission#getCondition <em>Condition</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Condition</em>'.
+	 * @see org.nasdanika.cdo.security.Permission#getCondition()
+	 * @see #getPermission()
+	 * @generated
+	 */
+	EAttribute getPermission_Condition();
+
+	/**
 	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Permission#authorize(org.nasdanika.core.Context, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2323,6 +2343,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EReference PERMISSION__ACTION = eINSTANCE.getPermission_Action();
+
+		/**
+		 * The meta object literal for the '<em><b>Condition</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PERMISSION__CONDITION = eINSTANCE.getPermission_Condition();
 
 		/**
 		 * The meta object literal for the '<em><b>Authorize</b></em>' operation.

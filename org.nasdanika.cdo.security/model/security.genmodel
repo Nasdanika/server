@@ -78,6 +78,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/endDate"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute security.ecore#//Permission/comment"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Permission/action"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/condition"/>
       <genOperations ecoreOperation="security.ecore#//Permission/authorize">
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/context"/>
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/action"/>

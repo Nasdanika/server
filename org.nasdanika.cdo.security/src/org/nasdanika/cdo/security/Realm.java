@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -165,7 +166,7 @@ public interface Realm<CR> extends CDOObject {
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Removes permissions associated with the target object from all principals in the realm.
-	 * This method shall be invoked before deleting an object.
+	 * This method shall be invoked before deleting an object. Or use {@link EcoreUtil}.delete().
 	 * @param target Target object.
 	 * <!-- end-model-doc -->
 	 * @model

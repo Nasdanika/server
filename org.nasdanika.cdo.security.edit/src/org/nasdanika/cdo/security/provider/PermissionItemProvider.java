@@ -55,6 +55,7 @@ public class PermissionItemProvider extends CDOItemProviderAdapterEx implements 
 			addEndDatePropertyDescriptor(object);
 			addCommentPropertyDescriptor(object);
 			addActionPropertyDescriptor(object);
+			addConditionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -192,6 +193,28 @@ public class PermissionItemProvider extends CDOItemProviderAdapterEx implements 
 	}
 
 	/**
+	 * This adds a property descriptor for the Condition feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addConditionPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Permission_condition_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Permission_condition_feature", "_UI_Permission_type"),
+				 SecurityPackage.Literals.PERMISSION__CONDITION,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
 	 * This returns Permission.gif.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -231,6 +254,7 @@ public class PermissionItemProvider extends CDOItemProviderAdapterEx implements 
 			case SecurityPackage.PERMISSION__START_DATE:
 			case SecurityPackage.PERMISSION__END_DATE:
 			case SecurityPackage.PERMISSION__COMMENT:
+			case SecurityPackage.PERMISSION__CONDITION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

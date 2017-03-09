@@ -29,6 +29,7 @@ import org.nasdanika.core.Context;
  *   <li>{@link org.nasdanika.cdo.security.Permission#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getComment <em>Comment</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Permission#getCondition <em>Condition</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPermission()
@@ -195,6 +196,40 @@ public interface Permission extends CDOObject {
 	 * @generated
 	 */
 	void setAction(Action value);
+
+	/**
+	 * Returns the value of the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).
+	 * 
+	 * The expression is evaluated in the context of the target object with the following variables:
+	 * 
+	 * * ``context``
+	 * * ``environment``
+	 * * ``action``
+	 * * ``qualifier``
+	 * * ``principal``
+	 * * ``permission``
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Condition</em>' attribute.
+	 * @see #setCondition(String)
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_Condition()
+	 * @model
+	 * @generated
+	 */
+	String getCondition();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.cdo.security.Permission#getCondition <em>Condition</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Condition</em>' attribute.
+	 * @see #getCondition()
+	 * @generated
+	 */
+	void setCondition(String value);
 
 	/**
 	 * <!-- begin-user-doc -->

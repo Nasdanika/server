@@ -3,8 +3,12 @@
 package org.nasdanika.cdo.security.impl;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+
+import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.Variables;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -14,6 +18,7 @@ import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,6 +34,7 @@ import org.nasdanika.core.Context;
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getComment <em>Comment</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getAction <em>Action</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getCondition <em>Condition</em>}</li>
  * </ul>
  *
  * @generated
@@ -174,10 +180,28 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getCondition() {
+		return (String)eGet(SecurityPackage.Literals.PERMISSION__CONDITION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCondition(String newCondition) {
+		eSet(SecurityPackage.Literals.PERMISSION__CONDITION, newCondition);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
 	public AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment) {
-		//System.out.println(target + " "+action+" "+path);
+//		System.out.println(getTarget() + " "+action+" "+qualifier);
 		
 		Date now = new Date();
 		if (getStartDate()!=null && getStartDate().after(now)) {
@@ -188,7 +212,19 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 		}
 
 		if (getAction().match(context, getTarget(), action, qualifier, environment)) {
-			return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
+			if (CoreUtil.isBlank(getCondition())) {
+				return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
+			}
+			JXPathContext jxPathContext = JXPathContext.newContext(getTarget());
+			Variables variables = jxPathContext.getVariables();
+			variables.declareVariable("context", context);
+			variables.declareVariable("environment", environment == null ? Collections.emptyMap() : environment);
+			variables.declareVariable("action", action);
+			variables.declareVariable("action", qualifier == null ? "" : qualifier);
+			
+			if (Boolean.TRUE.equals(jxPathContext.getValue(getCondition(), Boolean.class))) {			
+				return isAllow() ? AccessDecision.ALLOW : AccessDecision.DENY;
+			}
 		}
 		return AccessDecision.ABSTAIN;
 	}

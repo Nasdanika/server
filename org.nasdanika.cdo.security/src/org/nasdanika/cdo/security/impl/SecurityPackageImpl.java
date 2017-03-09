@@ -681,6 +681,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getPermission_Condition() {
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EOperation getPermission__Authorize__Context_String_String_Map() {
 		return permissionEClass.getEOperations().get(0);
 	}
@@ -822,6 +831,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEAttribute(permissionEClass, PERMISSION__END_DATE);
 		createEAttribute(permissionEClass, PERMISSION__COMMENT);
 		createEReference(permissionEClass, PERMISSION__ACTION);
+		createEAttribute(permissionEClass, PERMISSION__CONDITION);
 		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP);
 
 		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
@@ -990,6 +1000,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEAttribute(getPermission_EndDate(), ecorePackage.getEDate(), "endDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getPermission_Action(), this.getAction(), null, "action", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPermission_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = initEOperation(getPermission__Authorize__Context_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1401,6 +1412,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Permission\'s action."
+		   });	
+		addAnnotation
+		  (getPermission_Condition(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).\r\n\r\nThe expression is evaluated in the context of the target object with the following variables:\r\n\r\n* ``context``\r\n* ``environment``\r\n* ``action``\r\n* ``qualifier``\r\n* ``principal``\r\n* ``permission``"
 		   });	
 		addAnnotation
 		  (loginPasswordCredentialsEClass, 

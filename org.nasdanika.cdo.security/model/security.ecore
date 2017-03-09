@@ -331,6 +331,11 @@
         <details key="documentation" value="Permission's action."/>
       </eAnnotations>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).&#xD;&#xA;&#xD;&#xA;The expression is evaluated in the context of the target object with the following variables:&#xD;&#xA;&#xD;&#xA;* ``context``&#xD;&#xA;* ``environment``&#xD;&#xA;* ``action``&#xD;&#xA;* ``qualifier``&#xD;&#xA;* ``permission``"/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LoginPasswordCredentials" instanceClassName="org.nasdanika.cdo.security.LoginPasswordCredentials"
       abstract="true" interface="true">
