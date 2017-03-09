@@ -105,6 +105,7 @@ import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.TextArea;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.html.Well;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
@@ -499,6 +500,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		/**
 		 * {@link EStructuralFeature} annotation specifying XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the 
 		 * default value. For example, in hierarchical structures children may implicitly inherit parent feature value, unless it is explicitly set (overridden) in the child.
+		 * 
+		 * In the absence of feature value (null or blank string for strings) placeholder values are displayed in the view in a small {@link Well}.
 		 */
 		PLACEHOLDER("placeholder");
 		
@@ -919,11 +922,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Object renderFeatureValue(C context, EStructuralFeature feature, Object value) throws Exception {
+		if (value == null || (value instanceof String && ((String) value).length() == 0)) {
+			String pra = getRenderAnnotation(context, feature, RenderAnnotation.PLACEHOLDER);
+			if (!CoreUtil.isBlank(pra) && context instanceof HttpServletRequestContext) {
+				Object target = ((HttpServletRequestContext) context).getTarget();
+				if (target instanceof CDOObject) {
+					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) target);
+					Object pv = jxPathContext.getValue(pra);
+					if (pv != null) {
+						return getHTMLFactory(context).well(renderFeatureValue(context, feature, pv)).small();
+					}
+				}
+			}
+			return "";
+		}
 		if (value instanceof EObject) {
 			return getReferenceRenderer((EReference) feature, (EObject) value).renderLink(context, (EObject) value, true);
-		}
-		if (value == null) {
-			return "";
 		}
 		if (value instanceof Boolean) {
 			return (Boolean) value ?  renderTrue(context) : renderFalse(context);
