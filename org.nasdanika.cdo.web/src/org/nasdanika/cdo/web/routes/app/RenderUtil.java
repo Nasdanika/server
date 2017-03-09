@@ -1,10 +1,18 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.jxpath.ClassFunctions;
+import org.apache.commons.jxpath.ExpressionContext;
 import org.apache.commons.jxpath.JXPathContext;
+import org.apache.commons.jxpath.NodeSet;
+import org.apache.commons.jxpath.Pointer;
 import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.ecore.EAnnotation;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 
 /**
@@ -41,8 +49,86 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * Creates a new {@link JXPathContext} with the object as context object and context as ``context`` variable and
-	 * root object as ``root`` variable.
+	 * The initial versio of this class was copied from https://github.com/eclipse/eclipse.platform.ui/blob/master/bundles/org.eclipse.e4.emf.xpath/src/org/eclipse/e4/emf/internal/xpath/JXPathContextImpl.java,
+	 * The original copyright notice is below;
+	 */
+	/*******************************************************************************
+	 * Copyright (c) 2010, 2015 BestSolution.at and others.
+	 * All rights reserved. This program and the accompanying materials
+	 * are made available under the terms of the Eclipse Public License v1.0
+	 * which accompanies this distribution, and is available at
+	 * http://www.eclipse.org/legal/epl-v10.html
+	 *
+	 * Contributors:
+	 *     Tom Schindl <tom.schindl@bestsolution.at> - adjustment to EObject
+	 ******************************************************************************/
+	public static class EMFFunctions {
+		
+		/**
+		 * The original method.
+		 * @param o
+		 * @return
+		 */
+		public static String eClassName(Object o) {
+			if( o instanceof Collection<?> ) {
+				if( ! ((Collection<?>) o).isEmpty() ) {
+					return eClassName(((Collection<?>) o).iterator().next());
+				}
+			} else if( o instanceof EObject ) {
+				return ((EObject) o).eClass().getName();
+			} else if( o instanceof NodeSet ) {
+				List<?> l = ((NodeSet) o).getValues();
+				if( l.size() > 0 && l.get(0) instanceof EObject ) {
+					return eClassName(l.get(0));
+				}
+			} else if( o instanceof Pointer ) {
+				if( ((Pointer) o).getValue() instanceof EObject ) {
+					return eClassName(((Pointer) o).getValue());
+				}
+			}
+
+			return null;
+		}
+		
+		/**
+		 * Expression context method.
+		 * @param expressionContext
+		 * @return
+		 */
+		public static String eClassName(ExpressionContext expressionContext) {
+			Pointer cnp = expressionContext.getContextNodePointer();
+			if (cnp != null) {
+				Object node = cnp.getNode();
+				if (node instanceof EObject) {
+					return ((EObject) node).eClass().getName();
+				}
+			}
+
+			return null;
+		}
+		
+		/**
+		 * Expression context method.
+		 * @param expressionContext
+		 * @return
+		 */
+		public static String ePackageNsURI(ExpressionContext expressionContext) {
+			Pointer cnp = expressionContext.getContextNodePointer();
+			if (cnp != null) {
+				Object node = cnp.getNode();
+				if (node instanceof EObject) {
+					return ((EObject) node).eClass().getEPackage().getNsURI();
+				}
+			}
+
+			return null;
+		}		
+		
+	}	
+	
+	/**
+	 * Creates a new {@link JXPathContext} with the object as context object and context as ``context`` variable, 
+	 * root object as ``root`` variable, and {@link EMFFunctions} as functions.
 	 * @param context
 	 * @param obj
 	 * @return
@@ -59,7 +145,7 @@ public class RenderUtil {
 		}
 		jxPathContext.getVariables().declareVariable("root", root);
 		
-		// Functions, e.g. eClassName()?
+		jxPathContext.setFunctions(new ClassFunctions(EMFFunctions.class, "ecore"));
 		return jxPathContext;
 	}
 
