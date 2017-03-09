@@ -1,7 +1,5 @@
 package org.nasdanika.cdo.web.routes.app;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -544,7 +542,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 					// Breadcrumbs
 					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-					renderer.renderObjectPath(context, target, renderNamedElementIconAndLabel(context, target.eClass().getEStructuralFeature(feature))+" / "+renderer.getResourceString(context, "create", true), breadCrumbs);
+					renderObjectPath(context, target, renderNamedElementIconAndLabel(context, target.eClass().getEStructuralFeature(feature))+" / "+renderer.getResourceString(context, "create", true), breadCrumbs);
 					if (!breadCrumbs.isEmpty()) {
 						content.content(breadCrumbs);
 					}
@@ -926,7 +924,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(classDocModal);
 		}
 		
-		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal), " - XPath Evaluator");
+		Tag objectHeader = content.getFactory().tag(
+				TagName.h3, 
+				renderObjectHeader(context, target, classDocModal), 
+				" - ", 
+				// TODO - doc system article and link to the article.
+				htmlFactory.link("https://commons.apache.org/proper/commons-jxpath/users-guide.html", "XPath").attribute("title", "Use ecore:eClassName() and ecore:ePackageNsURI() functions to compute EClass details"), 
+				" Evaluator");
 		content.content(objectHeader);				
 		
 		Form form = htmlFactory.form().action("XPathEvaluator.html").method(Method.post).style().margin().bottom("5px");
