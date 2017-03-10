@@ -8,6 +8,7 @@ import org.apache.commons.jxpath.ExpressionContext;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.NodeSet;
 import org.apache.commons.jxpath.Pointer;
+import org.apache.commons.jxpath.Variables;
 import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -128,7 +129,7 @@ public class RenderUtil {
 	
 	/**
 	 * Creates a new {@link JXPathContext} with the object as context object and context as ``context`` variable, 
-	 * root object as ``root`` variable, and {@link EMFFunctions} as functions.
+	 * root object as ``root`` variable, the context node as ``this`` variable, and {@link EMFFunctions} as functions.
 	 * @param context
 	 * @param obj
 	 * @return
@@ -136,14 +137,17 @@ public class RenderUtil {
 	public static JXPathContext newJXPathContext(Object context, CDOObject obj) {
 		JXPathContext jxPathContext = JXPathContext.newContext(obj);
 		jxPathContext.setLenient(true);
+		Variables variables = jxPathContext.getVariables();
 		if (context != null) {
-			jxPathContext.getVariables().declareVariable("context", context);
+			variables.declareVariable("context", context);
 		}
+		
+		variables.declareVariable("this", obj);
 		CDOObject root = obj;
 		while (root.eContainer() instanceof CDOObject) {
 			root = (CDOObject) root.eContainer();
 		}
-		jxPathContext.getVariables().declareVariable("root", root);
+		variables.declareVariable("root", root);
 		
 		jxPathContext.setFunctions(new ClassFunctions(EMFFunctions.class, "ecore"));
 		return jxPathContext;
