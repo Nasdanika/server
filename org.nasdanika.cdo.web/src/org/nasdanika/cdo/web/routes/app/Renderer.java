@@ -44,6 +44,7 @@ import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.Enumerator;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAnnotation;
@@ -496,6 +497,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor. 
 		 */
 		CONTENT_TYPE("content-type"),
+		
+		/**
+		 * Defines model element ({@link EClass} or {@link EStructuralFeature}) constraint used for validation. Constraint shall be a YML text which defines a single constraint or a list of constraints. 
+		 * 
+		 * Constraint can be a string or a map containing:
+		 * 
+		 * * ``condition`` - XPath expression boolean expression.
+		 * * ``errorMessageKey`` - Optional error message key. If it is present, error message is retrieved as resource string.
+		 * * ``errorMessage`` - Error message to display if the expression evaluates to false. It is used if ``errorMessageKey`` is not defined or if there is no resource string for the key. 
+		 * 
+		 * If the constraint is a String, then it is treated as ``condition`` XPath expression and error message is constructed as ``Constraint violation: <condition>``. 
+		 * 
+		 */
+		CONSTRAINT("constraint"),
 		
 		/**
 		 * {@link EStructuralFeature} annotation specifying XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the 
@@ -3409,6 +3424,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return noErrors;
 	}
 	
+	/**
+	 * Validates object using Ecore validation and ``validate(C,T,EModelElement,DiagnosticChain)`` method.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
 	default Diagnostic validate(C context, T obj) throws Exception {
 		Diagnostician diagnostician = new Diagnostician() {
 			
@@ -3431,9 +3453,83 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				return ret;
 			}
 			
-		}; 
+		};
+		
+		BasicDiagnostic bd = new BasicDiagnostic();
+		Diagnostic validationResult = diagnostician.validate(obj);
+		if (!validationResult.getChildren().isEmpty()) {
+			bd.merge(validationResult);
+		}
+		validate(context, obj, obj.eClass(), bd);
+		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
+			validate(context, obj, sf, bd);			
+		}
+		return bd;
+	}
 
-		return diagnostician.validate(obj);
+	/**
+	 * Validates {@link EClass} or {@link EStructuralFeature} using {@link RenderAnnotation}.CONSTRAINT annotations.
+	 * @param context
+	 * @param obj
+	 * @param modelElement
+	 * @param diagnosticChain
+	 */
+	default void validate(C context, T obj, EModelElement modelElement, DiagnosticChain diagnosticChain) throws Exception {
+		if (obj instanceof CDOObject) {
+			String classConstraintSpec = getRenderAnnotation(context, modelElement, RenderAnnotation.CONSTRAINT);
+			if (classConstraintSpec != null) {
+				Yaml yaml = new Yaml();
+				Object csy = yaml.load(classConstraintSpec);			
+				List<?> classConstraints;
+				if (csy instanceof List) {
+					classConstraints = (List<?>) csy;
+				} else {
+					classConstraints = Collections.singletonList(csy);
+				}
+				for (Object cc: classConstraints) {
+					String conditionStr = null;
+					String errorMessageKey = null;
+					String errorMessage = null; 
+					if (cc instanceof String) {
+						conditionStr = (String) cc;
+					} else if (cc instanceof Map) {
+						Map<?,?> ccm = (Map<?,?>) cc;
+						Object condition = ccm.get("condition");
+						if (condition instanceof String) {
+							conditionStr = (String) condition;
+						}
+						Object emk = ccm.get("errorMessageKey");
+						if (emk instanceof String) {
+							errorMessageKey = (String) emk;
+						}
+						Object em = ccm.get("errorMessage");
+						if (em instanceof String) {
+							errorMessage = (String) em;
+						}
+					}
+					if (!CoreUtil.isBlank(conditionStr)) {
+						JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+						if (!Boolean.TRUE.equals(jxPathContext.getValue(conditionStr, Boolean.TYPE))) {
+							String errMsg = null;
+							if (errorMessageKey != null) {
+								errMsg = getResourceString(context, errorMessageKey);
+								if (errMsg == null) {
+									errMsg = errorMessage;
+								}
+								if (errMsg == null) {
+									errMsg = "Constraint violation: "+conditionStr;
+								} else {
+									errMsg = getHTMLFactory(context).interpolate(errMsg, new EObjectTokenSource(context, obj));
+								}
+							}
+							
+							Object[] data = modelElement instanceof EStructuralFeature ? new Object[] { obj, modelElement } : new Object[] { obj }; 							
+							diagnosticChain.add(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, errMsg, data));
+						}						
+					}
+				}
+			}
+		}		
 	}
 	
 	/**
