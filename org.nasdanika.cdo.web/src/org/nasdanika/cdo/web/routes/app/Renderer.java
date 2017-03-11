@@ -125,189 +125,6 @@ import org.yaml.snakeyaml.Yaml;
  * @param <T>
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
-		
-	public static final String TITLE_KEY = "title";
-
-	public static final String NAME_KEY = "name";
-
-	public static final String REFERRER_KEY = ".referrer";
-
-	public static final String INDEX_HTML = "index.html";
-
-	/**
-	 * Rendering can be customized by annotating model element with
-	 * annotations with this source.
-	 * 
-	 * Adding UI rendering annotations to the model mixes modeling and UI concerns.
-	 * Also model annotations allow to define only one way of rendering a particular model element.
-	 * 
-	 * Other customization options include overriding <code>getRenderAnnotation()</code> method or rendering methods, and
-	 * UI code generation, which leverages method overriding.  
-	 */
-	String RENDER_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.render";
-	
-	/**
-	 * Default pegdown options.
-	 */
-	int PEGDOWN_OPTIONS = 	Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS ^ Extensions.SUPPRESS_ALL_HTML;
-
-	/**
-	 * Source for Ecore GenModel documentation.
-	 */
-	String ECORE_DOC_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";	
-		
-	Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
-	
-	int MIN_FIRST_SENTENCE_LENGTH = 20;
-	int MAX_FIRST_SENTENCE_LENGTH = 250;
-		
-	// multi-line
-	// input type
-	// select options	
-	
-	Renderer<Context, EObject> INSTANCE = new Renderer<Context, EObject>() {
-		
-	};
-	
-	/**
-	 * Returns a renderer instance for a class. This implementation uses renderer registry 
-	 * which loads renderers from extensions of ``org.nasdanika.cdo.web.renderer`` extension point.
-	 * @param eClass
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	default Renderer<C, EObject> getRenderer(EClass eClass) {
-		return (Renderer<C, EObject>) RendererRegistry.INSTANCE.getRenderer(eClass);
-	}
-	
-	/**
-	 * Returns an instance of renderer chained with the masterResourceProvider.
-	 * Sub-interfaces and implementations must override this method to return a proper
-	 * renderer implementation.
-	 * @param masterResourceProvider
-	 * @return
-	 */
-	default Renderer<C, T> chain(ResourceProvider<C> masterResourceProvider) throws Exception {
-		return new Renderer<C, T>() {
-			
-			@Override
-			public ResourceProvider<C> getMasterResourceProvider(C context) throws Exception {
-				return masterResourceProvider;
-			}
-			
-		};
-	}
-	
-	/**
-	 * Returns renderer for a feature. The renderer is chained with this renderer as its master
-	 * resource provider with ``<feature class>.<feature name>.`` prefix. 
-	 * 
-	 * For example if a renderer is requested for {@link EAttribute} ``myAttribute`` then call to its
-	 * ``getResource(context, "myResource")`` method will call this renderer with ``attribute.myAttribute.myResource`` key.
-	 * 
-	 * Such chaining allows contextual customization, a renderer for class A would behave differently when class A is a child 
-	 * of B or C.
-	 * @param reference
-	 * @param featureValue
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	default <M extends EObject> Renderer<C, M> getReferenceRenderer(EReference reference, M featureValue) throws Exception {
-		String className = reference.eClass().getName();
-		if (className.startsWith("E")) {
-			className = className.substring(1);
-		}
-		String prefix = StringUtils.uncapitalize(className)+"."+reference.getName()+".";
-		
-		ResourceProvider<C> master = new ResourceProvider<C>() {
-
-			@Override
-			public Object getResource(C context, String key) throws Exception {
-				return Renderer.this.getResource(context, prefix+key);
-			}
-
-			@Override
-			public String getResourceString(C context, String key) throws Exception {
-				return Renderer.this.getResourceString(context, prefix+key);
-			}
-		};
-		
-		if (featureValue == null) {
-			return (Renderer<C, M>) getRenderer(reference.getEReferenceType()).chain(master);
-		}
-		
-		return getRenderer(featureValue).chain(master);
-	}	
-
-	/**
-	 * Returns renderer for an object.
-	 * @param modelObject
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	default <M extends EObject> Renderer<C, M> getRenderer(M modelObject) {		
-		return modelObject == null ? null : (Renderer<C, M>) getRenderer(modelObject.eClass());
-	}
-	
-	/**
-	 * Returns source value for model annotations to use as the source of rendering annotations.
-	 * This implementation returns RENDER_ANNOTATION_SOURCE constant value ``org.nasdanika.cdo.web.render``.
-	 * This method can be overridden to "white-label" the model, i.e. to use rendering annotations with source
-	 * specific to the development organization, e.g. ``com.mycompany.render``. 
-	 * 
-	 * It can also be overridden to use different annotations profiles in different situations, e.g. ``com.mycompany.lob-a.render`` for business A and ``com.mycompany.lob-b.render`` for business B. 
-	 * 
-	 * @param context
-	 * @return
-	 */
-	default String getRenderAnnotationSource(C context) {
-		return RENDER_ANNOTATION_SOURCE;		
-	}
-		
-	/**
-	 * Retrieves render annotation. 
-	 * 
-	 * If the model element is {@link ENamedElement}, then annotation value is
-	 * retrieved as a resource string with key ``<Named element EClass name without first E uncapitalized>.<named element name>.render.<key>``. 
-	 * For example ``attribute.name.render.label`` or ``reference.guest.render.visible``. This approach keeps resource string keys simple enough, but
-	 * may result in name clashes if used in a base renderer which serves two different model elements with different features with the same name. If it happens,
-	 * define per-model element renderers and render annotations within their resource bundles - this is the approach which https://github.com/Nasdanika/codegen-ecore-web-ui takes.
-	 * 
-	 * If there is no resource string matching the annotation key, then annotation value is read from the details entry with the specified key of
-	 * he model element annotation with source ``org.nasdanika.cdo.web.render``.
-	 * 
-	 * This method can be overridden to read annotations from another source,
-	 * e.g. keeping render annotations associated with the current user would allow to customize UI on per-user basis.
-	 * Along the same lines the UI may be customized based on the locale or geography. 
-	 * All these and other options may be chained, e.g. if user profile does not cusomize rendering, then fall-back to 
-	 * locale profile, and then to the model annotation (call super.getRenderAnnotation()).  
-	 * @param context
-	 * @param modelElement
-	 * @param key
-	 * @return
-	 * @throws Exception 
-	 */
-	default String getRenderAnnotation(C context, EModelElement modelElement, String key) throws Exception {
-		if (modelElement instanceof ENamedElement) {
-			String rs = getResourceString(context, ((ENamedElement) modelElement), "render."+key, false);
-			if (rs != null) {
-				return rs;
-			}
-		}
-		
-		EAnnotation ra = modelElement.getEAnnotation(getRenderAnnotationSource(context));
-		if (ra != null) {
-			String value = ra.getDetails().get(key);
-			if (value != null) {
-				return value;
-			}
-		}
-		if (modelElement instanceof EClass) {
-			return RenderUtil.getRenderAnnotation(getRenderAnnotationSource(context), (EClass) modelElement, key);
-		}
-		
-		return null;
-	}
 	
 	enum RenderAnnotation {
 		
@@ -513,18 +330,221 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		CONSTRAINT("constraint"),
 		
 		/**
+		 * {@link EStructuralFeature} or {@link EClass} annotation - XPath expression to use for sorting of items in tables and lists.  
+		 */
+		SORT("sort"),
+		
+		/**
+		 * {@link EReference} annotation indicating that the table listing reference elements shall display elements type in a type column. 
+		 * The value of this annotation is a pattern which is interpolated with the following tokens:
+		 * 
+		 * * ``icon`` - Element icon.
+		 * * ``eclass-icon`` - Element type icon.
+		 * * ``eclass-label`` - Element type label.
+		 * * ``documentation-icon`` - Documentation icon or blank string if there is no documentation.
+		 * 
+		 * This annotation is useful for references containing elements of different types.
+		 */
+		TYPE_COLUMN("type-column"),				
+		
+		/**
 		 * {@link EStructuralFeature} annotation specifying XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the 
 		 * default value. For example, in hierarchical structures children may implicitly inherit parent feature value, unless it is explicitly set (overridden) in the child.
 		 * 
 		 * In the absence of feature value (null or blank string for strings) placeholder values are displayed in the view in a small {@link Well}.
 		 */
-		PLACEHOLDER("placeholder");
+		PLACEHOLDER("placeholder");				
 		
 		public final String literal;
 		
 		private RenderAnnotation(String literal) {
 			this.literal = literal;
 		}
+	}
+	
+	
+		
+	public static final String TITLE_KEY = "title";
+
+	public static final String NAME_KEY = "name";
+
+	public static final String REFERRER_KEY = ".referrer";
+
+	public static final String INDEX_HTML = "index.html";
+
+	/**
+	 * Rendering can be customized by annotating model element with
+	 * annotations with this source.
+	 * 
+	 * Adding UI rendering annotations to the model mixes modeling and UI concerns.
+	 * Also model annotations allow to define only one way of rendering a particular model element.
+	 * 
+	 * Other customization options include overriding <code>getRenderAnnotation()</code> method or rendering methods, and
+	 * UI code generation, which leverages method overriding.  
+	 */
+	String RENDER_ANNOTATION_SOURCE = "org.nasdanika.cdo.web.render";
+	
+	/**
+	 * Default pegdown options.
+	 */
+	int PEGDOWN_OPTIONS = 	Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS ^ Extensions.SUPPRESS_ALL_HTML;
+
+	/**
+	 * Source for Ecore GenModel documentation.
+	 */
+	String ECORE_DOC_ANNOTATION_SOURCE = "http://www.eclipse.org/emf/2002/GenModel";	
+		
+	Pattern SENTENCE_PATTERN = Pattern.compile(".+?[\\.?!]+\\s+");	
+	
+	int MIN_FIRST_SENTENCE_LENGTH = 20;
+	int MAX_FIRST_SENTENCE_LENGTH = 250;
+		
+	// multi-line
+	// input type
+	// select options	
+	
+	Renderer<Context, EObject> INSTANCE = new Renderer<Context, EObject>() {
+		
+	};
+	
+	/**
+	 * Returns a renderer instance for a class. This implementation uses renderer registry 
+	 * which loads renderers from extensions of ``org.nasdanika.cdo.web.renderer`` extension point.
+	 * @param eClass
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	default Renderer<C, EObject> getRenderer(EClass eClass) {
+		return (Renderer<C, EObject>) RendererRegistry.INSTANCE.getRenderer(eClass);
+	}
+	
+	/**
+	 * Returns an instance of renderer chained with the masterResourceProvider.
+	 * Sub-interfaces and implementations must override this method to return a proper
+	 * renderer implementation.
+	 * @param masterResourceProvider
+	 * @return
+	 */
+	default Renderer<C, T> chain(ResourceProvider<C> masterResourceProvider) throws Exception {
+		return new Renderer<C, T>() {
+			
+			@Override
+			public ResourceProvider<C> getMasterResourceProvider(C context) throws Exception {
+				return masterResourceProvider;
+			}
+			
+		};
+	}
+	
+	/**
+	 * Returns renderer for a feature. The renderer is chained with this renderer as its master
+	 * resource provider with ``<feature class>.<feature name>.`` prefix. 
+	 * 
+	 * For example if a renderer is requested for {@link EAttribute} ``myAttribute`` then call to its
+	 * ``getResource(context, "myResource")`` method will call this renderer with ``attribute.myAttribute.myResource`` key.
+	 * 
+	 * Such chaining allows contextual customization, a renderer for class A would behave differently when class A is a child 
+	 * of B or C.
+	 * @param reference
+	 * @param featureValue
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	default <M extends EObject> Renderer<C, M> getReferenceRenderer(EReference reference, M featureValue) throws Exception {
+		String className = reference.eClass().getName();
+		if (className.startsWith("E")) {
+			className = className.substring(1);
+		}
+		String prefix = StringUtils.uncapitalize(className)+"."+reference.getName()+".";
+		
+		ResourceProvider<C> master = new ResourceProvider<C>() {
+
+			@Override
+			public Object getResource(C context, String key) throws Exception {
+				return Renderer.this.getResource(context, prefix+key);
+			}
+
+			@Override
+			public String getResourceString(C context, String key) throws Exception {
+				return Renderer.this.getResourceString(context, prefix+key);
+			}
+		};
+		
+		if (featureValue == null) {
+			return (Renderer<C, M>) getRenderer(reference.getEReferenceType()).chain(master);
+		}
+		
+		return getRenderer(featureValue).chain(master);
+	}	
+
+	/**
+	 * Returns renderer for an object.
+	 * @param modelObject
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	default <M extends EObject> Renderer<C, M> getRenderer(M modelObject) {		
+		return modelObject == null ? null : (Renderer<C, M>) getRenderer(modelObject.eClass());
+	}
+	
+	/**
+	 * Returns source value for model annotations to use as the source of rendering annotations.
+	 * This implementation returns RENDER_ANNOTATION_SOURCE constant value ``org.nasdanika.cdo.web.render``.
+	 * This method can be overridden to "white-label" the model, i.e. to use rendering annotations with source
+	 * specific to the development organization, e.g. ``com.mycompany.render``. 
+	 * 
+	 * It can also be overridden to use different annotations profiles in different situations, e.g. ``com.mycompany.lob-a.render`` for business A and ``com.mycompany.lob-b.render`` for business B. 
+	 * 
+	 * @param context
+	 * @return
+	 */
+	default String getRenderAnnotationSource(C context) {
+		return RENDER_ANNOTATION_SOURCE;		
+	}
+		
+	/**
+	 * Retrieves render annotation. 
+	 * 
+	 * If the model element is {@link ENamedElement}, then annotation value is
+	 * retrieved as a resource string with key ``<Named element EClass name without first E uncapitalized>.<named element name>.render.<key>``. 
+	 * For example ``attribute.name.render.label`` or ``reference.guest.render.visible``. This approach keeps resource string keys simple enough, but
+	 * may result in name clashes if used in a base renderer which serves two different model elements with different features with the same name. If it happens,
+	 * define per-model element renderers and render annotations within their resource bundles - this is the approach which https://github.com/Nasdanika/codegen-ecore-web-ui takes.
+	 * 
+	 * If there is no resource string matching the annotation key, then annotation value is read from the details entry with the specified key of
+	 * he model element annotation with source ``org.nasdanika.cdo.web.render``.
+	 * 
+	 * This method can be overridden to read annotations from another source,
+	 * e.g. keeping render annotations associated with the current user would allow to customize UI on per-user basis.
+	 * Along the same lines the UI may be customized based on the locale or geography. 
+	 * All these and other options may be chained, e.g. if user profile does not cusomize rendering, then fall-back to 
+	 * locale profile, and then to the model annotation (call super.getRenderAnnotation()).  
+	 * @param context
+	 * @param modelElement
+	 * @param key
+	 * @return
+	 * @throws Exception 
+	 */
+	default String getRenderAnnotation(C context, EModelElement modelElement, String key) throws Exception {
+		if (modelElement instanceof ENamedElement) {
+			String rs = getResourceString(context, ((ENamedElement) modelElement), "render."+key, false);
+			if (rs != null) {
+				return rs;
+			}
+		}
+		
+		EAnnotation ra = modelElement.getEAnnotation(getRenderAnnotationSource(context));
+		if (ra != null) {
+			String value = ra.getDetails().get(key);
+			if (value != null) {
+				return value;
+			}
+		}
+		if (modelElement instanceof EClass) {
+			return RenderUtil.getRenderAnnotation(getRenderAnnotationSource(context), (EClass) modelElement, key);
+		}
+		
+		return null;
 	}
 	
 	/**
@@ -2040,7 +2060,48 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}		
 	}
+	
+	/**
+	 * Returns object to use for feature value sorting. This implementation uses {@link RenderAnnotation}.SORT annotation
+	 * to compute the value. It returns null if there is not annotation. 
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @param featureValue
+	 * @return
+	 * @throws Exception
+	 */
+	default Object getFeatureSortKey(C context, T obj, EStructuralFeature feature, Object featureValue) throws Exception {
+		String sortRenderAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.SORT);
+		if (sortRenderAnnotation == null) {
+			sortRenderAnnotation = getRenderAnnotation(context, feature.getEType(), RenderAnnotation.SORT);
+		}			
+		if (sortRenderAnnotation != null && featureValue instanceof CDOObject) {
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) featureValue);
+			jxPathContext.getVariables().declareVariable("owner", obj);
+			return jxPathContext.getValue(sortRenderAnnotation);
+		}
+		return null;
+	}
 
+	/**
+	 * Returns true if feature values shall be sorted. This implementation returns true if {@link RenderAnnotation}.SORT annotation
+	 * is present on the feature or the feature type. 
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @param featureValue
+	 * @return
+	 * @throws Exception
+	 */
+	default boolean isSortFeatureValues(C context, T obj, EStructuralFeature feature) throws Exception {		
+		String sortRenderAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.SORT);
+		if (sortRenderAnnotation == null) {
+			sortRenderAnnotation = getRenderAnnotation(context, feature.getEType(), RenderAnnotation.SORT);
+		}			
+		return sortRenderAnnotation != null;
+	}	
+	
 	/**
 	 * Renders a view of the feature value. 
 	 * A feature is rendered as a list if <code>view</code> annotation value is <code>list</code> or 
@@ -2061,7 +2122,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	@SuppressWarnings("unchecked")
 	default Object renderFeatureView(C context, T obj, EStructuralFeature feature, boolean showActionButtons) throws Exception {
-		Fragment ret = getHTMLFactory(context).fragment();
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();
 		Map<String, Object> env = new HashMap<>();
 		env.put(NAME_KEY, feature.getName());
 		Object featureValue = obj.eGet(feature);
@@ -2080,6 +2142,44 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 				}
 			}
+			
+			boolean isSort = isSortFeatureValues(context, obj, feature);					
+			
+			class FeatureValueEntry<V> implements Comparable<FeatureValueEntry<V>> {
+				
+				FeatureValueEntry(V value, int position) throws Exception {
+					this.value = value;
+					this.position = position;
+					if (isSort) {
+						sortValue = getFeatureSortKey(context, obj, feature, value);
+					}					
+				}
+				
+				V value;
+				Object sortValue;
+				int position;
+				
+				@Override
+				public int compareTo(FeatureValueEntry<V> o) {
+					Object sv = sortValue;					
+					Object osv = o.sortValue;
+					
+					if (sv instanceof Comparable) {
+						int result = ((Comparable<Object>) sv).compareTo(osv);
+						if (result != 0) {
+							return result;
+						}
+					} else if (osv instanceof Comparable) {
+						int result = ((Comparable<Object>) osv).compareTo(sv);
+						if (result != 0) {
+							return -result;
+						}
+					}
+					return position-o.position;
+				}
+				
+			}
+						
 			if (asTable) {
 				EClass refType = ((EReference) feature).getEReferenceType();
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
@@ -2198,9 +2298,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					ret.content(fdm);
 				}		
 				
-				Table featureTable = ret.getFactory().table().bordered().style().margin().bottom("5px");
+				Table featureTable = ret.getFactory().table().bordered().style().margin().bottom("5px");				
 				Row headerRow = featureTable.header().row().style(Style.INFO);
-				for (EStructuralFeature sf: tableFeatures) {
+				String typeColumnAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.TYPE_COLUMN);
+				if (!CoreUtil.isBlank(typeColumnAnnotation)) {
+					headerRow.header(getResourceString(context, "type")).style().text().align().center();					
+				}
+
+				for (EStructuralFeature sf: tableFeatures) {					
 					// TODO - colgroups, alignments, widths.
 					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
 					Cell headerCell = headerRow.header(renderNamedElementIconAndLabel(context, sf));
@@ -2210,50 +2315,86 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				headerRow.header(getResourceString(context, "actions")).style().text().align().center();
-				int idx = 0;
+				
+				int pos = 0;
+				List<FeatureValueEntry<EObject>> featureValueEntries = new ArrayList<>();
 				for (EObject fv: (Collection<EObject>) featureValue) {
+					featureValueEntries.add(new FeatureValueEntry<EObject>(fv, pos++));
+				}
+				
+				if (isSort) {
+					Collections.sort(featureValueEntries);
+				}
+				
+				for (FeatureValueEntry<EObject> fve: featureValueEntries) {
 					Row vRow = featureTable.body().row();
+					if (!CoreUtil.isBlank(typeColumnAnnotation)) {
+						Map<String, Object> typeEnv = new HashMap<>();
+						Renderer<C, EObject> fvr = getRenderer(fve.value);
+						
+						Object icon = fvr.renderIcon(context, fve.value);
+						typeEnv.put("icon", icon == null ? "" : icon);
+						
+						EClass fvClass = fve.value.eClass();
+						Object eClassIcon = fvr.renderModelElementIcon(context, fvClass);
+						typeEnv.put("eclass-icon", eClassIcon == null ? "" : eClassIcon);
+						
+						Object eClassLabel = fvr.renderNamedElementLabel(context, fvClass);
+						typeEnv.put("eclass-label", eClassLabel);
+						
+						Tag classDocIcon = fvr.renderDocumentationIcon(context, fvClass, null, true);		
+						typeEnv.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
+						
+						vRow.cell(htmlFactory.interpolate(typeColumnAnnotation, typeEnv)).style().text().align().center();
+					}
+					
 					for (EStructuralFeature sf: tableFeatures) {
-						vRow.cell(getReferenceRenderer((EReference) feature, fv).renderFeatureView(context, fv, sf, false));						
+						vRow.cell(getReferenceRenderer((EReference) feature, fve.value).renderFeatureView(context, fve.value, sf, false));						
 					}
 					Cell actionCell = vRow.cell().style().text().align().center();
-					actionCell.content(renderFeatureValueViewButton(context, obj, feature, idx, fv));
-					actionCell.content(renderFeatureValueDeleteButton(context, obj, feature, idx, fv));
-					
-					++idx;
+					actionCell.content(renderFeatureValueViewButton(context, obj, feature, fve.position, fve.value));
+					actionCell.content(renderFeatureValueDeleteButton(context, obj, feature, fve.position, fve.value));
 				}
 				
 				ret.content(featureTable);
 				ret.content(renderFeatureAddButton(context, obj, feature));
 			} else {
-				Tag ul = getHTMLFactory(context).tag(TagName.ul);
-				int idx = 0;
+				Tag ul = htmlFactory.tag(TagName.ul);
 				Collection<Object> featureValues = (Collection<Object>) featureValue;
 				if (featureValues.size() == 1) {
 					Object v = featureValues.iterator().next();
 					ret.content(renderFeatureValue(context, feature, v));
 					if (feature instanceof EAttribute) {
 						if (showActionButtons) {
-							ret.content(renderFeatureValueEditButton(context, obj, feature, idx, v));
+							ret.content(renderFeatureValueEditButton(context, obj, feature, 0, v));
 						}												
 					}
 					if (showActionButtons) {
-						ret.content(renderFeatureValueDeleteButton(context, obj, feature, idx, v));
+						ret.content(renderFeatureValueDeleteButton(context, obj, feature, 0, v));
 					}
 					
 				} else if (!featureValues.isEmpty()) {
-					for (Object v: featureValues) {
-						Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, v));
+					int pos = 0;
+					List<FeatureValueEntry<Object>> featureValueEntries = new ArrayList<>();
+					for (Object fv: featureValues) {
+						featureValueEntries.add(new FeatureValueEntry<Object>(fv, pos++));						
+					}
+					
+					if (isSort) {
+						Collections.sort(featureValueEntries);
+					}
+					
+					for (FeatureValueEntry<Object> featureValueEntry: featureValueEntries) {
+						Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, featureValueEntry.value));
 						if (feature instanceof EAttribute) {
 							if (showActionButtons) {
-								liFragment.content(renderFeatureValueEditButton(context, obj, feature, idx, v));
+								liFragment.content(renderFeatureValueEditButton(context, obj, feature, featureValueEntry.position, featureValueEntry.value));
 							}												
 						}
 						if (showActionButtons) {
-							liFragment.content(renderFeatureValueDeleteButton(context, obj, feature, idx, v));
+							liFragment.content(renderFeatureValueDeleteButton(context, obj, feature, featureValueEntry.position, featureValueEntry.value));
 						}
-						ul.content(getHTMLFactory(context).tag(TagName.li, liFragment).style().margin().bottom("3px"));
-						++idx;
+						ul.content(htmlFactory.tag(TagName.li, liFragment).style().margin().bottom("3px"));
 					}
 					ret.content(ul);
 				}
@@ -2323,7 +2464,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			} else {
 				for (EClass featureElementType: featureElementTypes) {
 					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-					addButton.item(getHTMLFactory(context).link("create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html", getReferenceRenderer((EReference) feature, featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
+					String createURL = "create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html";
+					addButton.item(getHTMLFactory(context).link(createURL, getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
 				}
 			}
 		} else {
