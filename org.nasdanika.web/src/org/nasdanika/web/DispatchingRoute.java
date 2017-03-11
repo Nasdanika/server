@@ -83,19 +83,32 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			targets = new Object[] {this}; // Self-dispatch
 		}
 		
-		HashSet<Class<?>> traversed = new HashSet<Class<?>>();
+		HashSet<Class<?>> traversedRouteMethods = new HashSet<Class<?>>();
+		HashSet<Class<?>> traversedResourceEntries = new HashSet<Class<?>>();
 		for (Object target: targets) {
-			for (Method method: (target==null ? getClass() : target.getClass()).getMethods()) {
-				final RouteMethod routeMethod = method.getAnnotation(RouteMethod.class);
-				if (routeMethod!=null) {
-					routeMethodEntries.add(new RouteMethodEntry(target, createRouteMethodCommand(bundleContext, method)));
-				}
-			}
-			collectResourceEntries(target==null ? getClass() : target.getClass(), 0, 0, traversed);
+			collectRouteMethods(bundleContext, target, target==null ? getClass() : target.getClass(), traversedRouteMethods);
+			collectResourceEntries(target==null ? getClass() : target.getClass(), 0, 0, traversedResourceEntries);
 		}
 		
 		Collections.sort(routeMethodEntries);	
 		this.targets = targets;
+	}
+	
+	private void collectRouteMethods(BundleContext bundleContext, Object target, Class<?> clazz, Set<Class<?>> traversed) throws Exception {				
+		if (clazz!=null && traversed.add(clazz)) {
+			for (Method method: clazz.getDeclaredMethods()) {
+				RouteMethod routeMethod = method.getAnnotation(RouteMethod.class);
+				if (routeMethod!=null) {
+					routeMethodEntries.add(new RouteMethodEntry(target, createRouteMethodCommand(bundleContext, method)));
+				}
+			}
+			
+			collectRouteMethods(bundleContext, target, clazz.getSuperclass(), traversed);
+			Class<?>[] implementedInterfaces = clazz.getInterfaces();
+			for (int i=0; i<implementedInterfaces.length; ++i) {
+				collectRouteMethods(bundleContext, target, implementedInterfaces[i], traversed);
+			}
+		}		
 	}
 
 	/**
