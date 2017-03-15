@@ -16,6 +16,7 @@ import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.core.runtime.Platform;
+import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.DocumentationProvider;
@@ -318,7 +319,34 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 					}
 				}
 				
-				String action = CoreUtil.isBlank(routeMethodCommand.getAction()) ? context.getMethod().name() : routeMethodCommand.getAction();
+				String action = routeMethodCommand.getAction();
+				if (CoreUtil.isBlank(routeMethodCommand.getAction())) {
+					// Mapping request methods to standard actions
+					switch (context.getMethod()) {
+					case DELETE:
+						action = AuthorizationProvider.StandardAction.delete.name();
+						break;
+					case GET:
+					case OPTIONS:
+					case TRACE:
+						action = AuthorizationProvider.StandardAction.read.name();
+						break;
+					case POST:
+						action = AuthorizationProvider.StandardAction.create.name();
+						break;
+					case PUT:
+					case PATCH:
+						action = AuthorizationProvider.StandardAction.update.name();
+						break;
+					default:
+						action = context.getMethod().name();
+						break;						
+					}
+				}
+				if (CoreUtil.isBlank(routeMethodCommand.getQualifier())) {
+					qualifier = routeMethodCommand.getMethod().getName(); // Path?
+				}				
+				
 				if (context.authorize(context.getTarget(), action, qualifier, null)) {
 					if (response!=null && !CoreUtil.isBlank(routeMethodCommand.getProduces())) {
 						response.setContentType(routeMethodCommand.getProduces());

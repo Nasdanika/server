@@ -243,7 +243,8 @@ public class ExtensionManager extends AdapterManager {
 		}
 		
 		@Override
-		public Action execute(HttpServletRequestContext context, Object... args) throws Exception {			
+		public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+			// Action from request method?
 			if (context.authorize(target, action.length()==0 ? context.getMethod().name() : action, qualifier, null)) {
 				Object result = super.execute(context);
 				if (result==null && isVoid) {

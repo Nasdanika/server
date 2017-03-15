@@ -68,7 +68,13 @@ public @interface RouteMethod {
 	boolean keepWebSocketContext() default false;
 	
 	/**
-	 * Authorization action. If not set, the request method name is used, e.g. GET.
+	 * Authorization action. If not set a standar action corresponding to request method is used:
+	 * 
+	 * * GET, OPTIONS, TRACE - read
+	 * * POST - create
+	 * * DELETE - delete
+	 * * PUT, PATCH - update
+	 * 
 	 * @return
 	 */
 	String action() default "";

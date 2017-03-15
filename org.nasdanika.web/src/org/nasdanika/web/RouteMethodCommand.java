@@ -104,12 +104,15 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 								action = AuthorizationProvider.StandardAction.delete.name();
 								break;
 							case GET:
+							case OPTIONS:
+							case TRACE:
 								action = AuthorizationProvider.StandardAction.read.name();
 								break;
 							case POST:
 								action = AuthorizationProvider.StandardAction.create.name();
 								break;
 							case PUT:
+							case PATCH:
 								action = AuthorizationProvider.StandardAction.update.name();
 								break;
 							default:
