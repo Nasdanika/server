@@ -106,7 +106,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 		
 	}
-	private static final String EXTENSION_HTML = ".html";
 	private static final String BOOTSTRAP_THEME_TOKEN = "bootstrap-theme";
 
 	protected Route(BundleContext bundleContext, Object... targets) throws Exception {
@@ -166,7 +165,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(tabs);
 		}
 		
-		return renderPage(context, title, content, null);
+		return renderPage(context, target, title, content, null);
 		
 	}
 		
@@ -178,32 +177,32 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception 
 	 */
-	protected Object renderPage(C context, String title, Object content, Consumer<Map<String,Object>> environmentCustomizer) throws Exception {
+	protected Object renderPage(C context, T obj, String title, Object content, Consumer<Map<String,Object>> environmentCustomizer) throws Exception {
 		Map<String, Object> env = createRenderPageEnvironment(context);
+
+		if (environmentCustomizer != null) {
+			environmentCustomizer.accept(env);
+		}			
 
 		env.put(PageTemplateTokens.TITLE.literal, title == null ? "" : title);
 		
-		Object head = renderHead(context);
+		Object head = renderHead(context, obj);
 		env.put(PageTemplateTokens.HEAD.literal, head == null ? "" : head);
 
-		Object header = renderHeader(context);
+		Object header = renderHeader(context, obj);
 		env.put(PageTemplateTokens.HEADER.literal, header == null ? "" : header);
-		
-		Object leftPanel = renderLeftPanel(context);
+				
+		Object leftPanel = renderLeftPanel(context, obj, (EStructuralFeature) env.get("context-feature"));
 		env.put(PageTemplateTokens.LEFT_PANEL.literal, leftPanel == null ? "" : leftPanel);
 
 		env.put(PageTemplateTokens.CONTENT.literal, content == null ? "" : content);
 		
-		Object footer = renderFooter(context);
+		Object footer = renderFooter(context, obj);
 		env.put(PageTemplateTokens.FOOTER.literal, footer == null ? "" : footer);
 		
 		env.put(PageTemplateTokens.BODY.literal, renderBody(context, header, leftPanel, content, footer));
 		
-		if (environmentCustomizer != null) {
-			environmentCustomizer.accept(env);
-		}
-				
-		Theme theme = getTheme(context);
+		Theme theme = getTheme(context, obj);
 		switch (theme) {
 		case None:
 			env.put(BOOTSTRAP_THEME_TOKEN, "");
@@ -269,7 +268,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @param context
 	 * @return Bootstrap/Bootswatch theme to use for rendering. 
 	 */
-	protected Theme getTheme(C context) {
+	protected Theme getTheme(C context, T obj) {
 		return Theme.Default;
 	}
 
@@ -296,7 +295,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception
 	 */
-	protected Object renderHead(C context) throws Exception {
+	protected Object renderHead(C context, T obj) throws Exception {
 		return getResource(context, "page.head");
 	}	
 
@@ -306,7 +305,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception
 	 */
-	protected Object renderHeader(C context) throws Exception {
+	protected Object renderHeader(C context, T obj) throws Exception {
 		return getResource(context, "page.header");
 	}
 
@@ -316,18 +315,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception
 	 */
-	protected Object renderFooter(C context) throws Exception {
+	protected Object renderFooter(C context, T obj) throws Exception {
 		return getResource(context, "page.footer");
-	}
-	
-	/**
-	 * Renders an optional page header. This implementation returns ``page.left-panel`` resource.
-	 * @param context
-	 * @return
-	 * @throws Exception
-	 */
-	protected Object renderLeftPanel(C context) throws Exception {
-		return getResource(context, "page.left-panel");
 	}
 	
 	/**
@@ -340,7 +329,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	
 	@RouteMethod(
 			value = { RequestMethod.GET, RequestMethod.POST }, 
-			path = "select/{feature}",
+			path = "feature/{feature}/select.html",
 			action = "update",
 			qualifier = "{feature}",
 			produces = "text/html",
@@ -352,7 +341,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@PathParameter("feature") String feature,
 			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
 
-		EStructuralFeature tsf = target.eClass().getEStructuralFeature(feature.substring(0, feature.length() - EXTENSION_HTML.length()));
+		EStructuralFeature tsf = target.eClass().getEStructuralFeature(feature);
 		if (tsf != null) {
 			EClass targetEClass = target.eClass();
 			HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -461,7 +450,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			
 			content.content(editForm);
 			
-			return renderPage(context, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));		
+			return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));		
 		}
 		
 		return Action.BAD_REQUEST;				
@@ -470,8 +459,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	@SuppressWarnings("unchecked")
 	@RouteMethod(
 			value = { RequestMethod.GET, RequestMethod.POST }, 
-			path = "create/{feature}/{epackage}/{eclass}",
-			action = "create",
+			path = "feature/{feature}/create/{epackage}/{eclass}",
 			qualifier = "{feature}",
 			produces = "text/html",
 			lock = @RouteMethod.Lock(type = Type.WRITE), 
@@ -542,7 +530,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 					// Breadcrumbs
 					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-					renderObjectPath(context, target, renderNamedElementIconAndLabel(context, target.eClass().getEStructuralFeature(feature))+" / "+renderer.getResourceString(context, "create", true), breadCrumbs);
+					renderFeaturePath(context, target, tsf, renderer.getResourceString(context, "create", true) + " / " + renderNamedElementIconAndLabel(context, eClass), breadCrumbs);
 					if (!breadCrumbs.isEmpty()) {
 						content.content(breadCrumbs);
 					}
@@ -590,19 +578,78 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 					content.content(editForm);										
 					
-					return renderPage(context, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));							
+					return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));							
 				}							
 			}
 		}
 		
 		return Action.BAD_REQUEST;		
 	}
+		
+	@RouteMethod(
+			value = RequestMethod.GET,
+			qualifier = "{feature}",
+			path = "feature/{feature}/view.html",
+			produces = "text/html",
+			comment="Renders a feature view page.")
+	public Object viewFeature(
+			@ContextParameter C context,
+			@PathParameter("feature") String feature,
+			@TargetParameter T target) throws Exception {
+		
+		EStructuralFeature sf = target.eClass().getEStructuralFeature(feature);
+		if (sf == null) {
+			return Action.NOT_FOUND;
+		}
+		
+		EClass targetEClass = target.eClass();
+		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
+		Fragment content = getHTMLFactory(context).fragment();
+		
+		// Documentation modals
+		Modal classDocModal = renderDocumentationModal(context, targetEClass);
+		if (classDocModal != null) {
+			content.content(classDocModal);
+		}
+		
+		// Breadcrumbs
+		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+		renderFeaturePath(context, target, sf, null, breadCrumbs);
+		if (!breadCrumbs.isEmpty()) {
+			content.content(breadCrumbs);
+		}
+				
+//		if (modelElement instanceof EClass) {
+//			return RenderUtil.getRenderAnnotation((EClass) modelElement, key);
+//		}
+				
+		// Headers
+		Tag featureHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, sf));
+		Modal fdm = renderDocumentationModal(context, sf);
+		if (fdm != null) {
+			content.content(fdm);
+		}
+		Tag featureDocIcon = renderDocumentationIcon(context, sf, fdm, true);
+		if (featureDocIcon != null) {
+			featureHeader.content(featureDocIcon);
+		}
+
+		content.content(featureHeader);
+		
+		Tag objectHeader = content.getFactory().tag(TagName.h4, renderObjectHeader(context, target, classDocModal));
+		content.content(objectHeader);
+		
+		// view 
+		content.content(renderFeatureView(context, target, sf, true));
+		
+		return renderPage(context, target, title, content, env -> env.put("context-feature", sf));
+	}	
 	
 	@RouteMethod(
 			value = { RequestMethod.GET, RequestMethod.POST },
 			action = "update",
 			qualifier = "{feature}",
-			path = "edit/{feature}",
+			path = "feature/{feature}/edit.html",
 			produces = "text/html",
 			comment="Renders an edit/select page for a single-value feature.")
 	public Object editFeature(
@@ -610,7 +657,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@PathParameter("feature") String feature,
 			@TargetParameter T target) throws Exception {
 		
-		
+		// TODO
 		return "Edit "+feature;
 		
 	}
@@ -619,7 +666,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			value = { RequestMethod.GET, RequestMethod.POST }, 
 			action = "update",
 			qualifier = "{feature}",
-			path = "edit/{feature}/{element}",
+			path = "feature/{feature}/{element}/edit.html",
 			produces = "text/html",
 			comment="Renders an edit/select page for an element of multi-value feature.")
 	public Object editFeatureElement(
@@ -628,9 +675,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@PathParameter("element") String element,
 			@TargetParameter T target) throws Exception {
 		
-		
-		return "Edit "+feature+" "+element;
-		
+		// TODO
+		return "Edit "+feature+" "+element;		
 	}
 	
 	/**
@@ -740,7 +786,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		content.content(editForm);
 		
-		return renderPage(context, title, content, null);		
+		return renderPage(context, target, title, content, null);		
 	}				
 	
 	@RouteMethod(
@@ -793,7 +839,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	@RouteMethod(
 			value = RequestMethod.GET,
-			path = "delete/{feature}",
+			path = "feature/{feature}/delete.html",
 			action = "delete",
 			qualifier = "{feature}",
 			produces = "text/html",
@@ -805,7 +851,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@HeaderParameter("referer") String referrer,
 			@PathParameter("feature") String feature) throws Exception {
 		
-		EStructuralFeature tsf = target.eClass().getEStructuralFeature(feature.substring(0, feature.length() - EXTENSION_HTML.length()));
+		EStructuralFeature tsf = target.eClass().getEStructuralFeature(feature);
 		if (tsf != null) {
 			String redirectURL;
 			if (CoreUtil.isBlank(referrer)) {
@@ -834,7 +880,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	@RouteMethod(
 			value = RequestMethod.GET,
-			path = "delete/{feature}/{element}",
+			path = "feature/{feature}/{element}/delete.html",
 			action = "delete",
 			qualifier = "{feature}",
 			produces = "text/html",
@@ -861,7 +907,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				redirectURL = referrer;
 			}
 			
-			int idx = Integer.parseInt(element.substring(0, element.length() - EXTENSION_HTML.length()));
+			int idx = Integer.parseInt(element);
 			
 			((List<?>) target.eGet(tsf)).remove(idx);
 			if (redirectURL == null) {
@@ -1007,7 +1053,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			}
 		}		
 		
-		return renderPage(context, "XPath Evaluator", content, null);				
+		return renderPage(context, target, "XPath Evaluator", content, null);				
 	}	
 	
 }
