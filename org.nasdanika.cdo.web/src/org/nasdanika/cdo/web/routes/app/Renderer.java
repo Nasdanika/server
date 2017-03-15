@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -196,10 +197,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		VIEW_TAB("view-tab"),
 
 		/**
-		 * Set this annotation to true to have {@link EStructuralFeature} rendered in a tab. By default many {@link EReference}s are rendered
-		 * in tabs and {@link EAttribute}s and single references are rendered in the class view.
+		 * Defines {@link EStructuralFeature} location - view, left panel, or tab. The value shall be one of {@link FeatureLocation} constants.
 		 */
-		IS_TAB("is-tab"),		
+		FEATURE_LOCATION("feature-location"),		
 		
 		/**
 		 * {@link EReference} annotation - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
@@ -364,13 +364,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	
 		
-	public static final String TITLE_KEY = "title";
+	String TITLE_KEY = "title";
 
-	public static final String NAME_KEY = "name";
+	String NAME_KEY = "name";
 
-	public static final String REFERRER_KEY = ".referrer";
+	String REFERRER_KEY = ".referrer";
 
-	public static final String INDEX_HTML = "index.html";
+	String INDEX_HTML = "index.html";
+	
+	String EXTENSION_HTML = ".html";	
 
 	/**
 	 * Rendering can be customized by annotating model element with
@@ -548,6 +550,23 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
+	 * Parses result of getRenderAnnotation() as {@link Yaml}.
+	 * @param context
+	 * @param modelElement
+	 * @param key
+	 * @return
+	 * @throws Exception
+	 */
+	default Object getYamlRenderAnnotation(C context, EModelElement modelElement, String key) throws Exception {
+		String yamlStr = getRenderAnnotation(context, modelElement, key);
+		if (yamlStr == null) {
+			return null;
+		}
+		Yaml yaml = new Yaml();
+		return yaml.load(yamlStr);
+	}
+	
+	/**
 	 * Retrieves render annotation using {@link RenderAnnotation} enum.
 	 * @param context
 	 * @param modelElement
@@ -557,6 +576,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default String getRenderAnnotation(C context, EModelElement modelElement, RenderAnnotation renderAnnotation) throws Exception {
 		return getRenderAnnotation(context, modelElement, renderAnnotation.literal);
+	}	
+	
+	/**
+	 * Parses result of getRenderAnnotation() as {@link Yaml}.
+	 * @param context
+	 * @param modelElement
+	 * @param renderAnnotation
+	 * @return
+	 * @throws Exception
+	 */
+	default Object getYamlRenderAnnotation(C context, EModelElement modelElement, RenderAnnotation renderAnnotation) throws Exception {
+		return getYamlRenderAnnotation(context, modelElement, renderAnnotation.literal);
 	}	
 	
 	/**
@@ -601,6 +632,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
+	 * Returns true if this container argument shall be treated as the breadcrumbs path root.
+	 * @param context
+	 * @param obj
+	 * @param container
+	 * @return
+	 * @throws Exception
+	 */
+	default boolean isObjectPathRoot(C context, T obj, EObject container) throws Exception {
+		return container.eContainer() == null;
+	}
+	
+	/**
 	 * Renders object path to breadcrumbs. This implementation traverses the object containment path up to the top level object in the resource.
 	 * @param target
 	 * @param context
@@ -610,16 +653,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default void renderObjectPath(C context, T obj, String action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
-		for (EObject c = obj.eContainer(); c != null; c = c.eContainer()) {
-			cPath.add(c);
-		}
-		Collections.reverse(cPath);
-		for (EObject c: cPath) {
-			Renderer<C, EObject> cRenderer = getRenderer(c);
-			Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);
-			if (cIconAndLabel != null) {
-				String objectURI = cRenderer.getObjectURI(context, c);
-				breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
+		if (!isObjectPathRoot(context, obj, obj)) {
+			for (EObject c = obj.eContainer(); c.eContainer() != null; c = c.eContainer()) {
+				cPath.add(c);
+				if (isObjectPathRoot(context, obj, c)) {
+					break;
+				}
+			}
+			Collections.reverse(cPath);
+			for (EObject c: cPath) {
+				Renderer<C, EObject> cRenderer = getRenderer(c);
+				Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);
+				if (cIconAndLabel != null) {
+					String objectURI = cRenderer.getObjectURI(context, c);
+					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
+				}
 			}
 		}
 		if (action == null) {
@@ -627,6 +675,40 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		} else {
 			String objectURI = getObjectURI(context, obj);
 			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));
+			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
+		}
+	}
+	
+	/**
+	 * Renders object's feature path to breadcrumbs. This implementation traverses the object containment path up to the top level object in the resource.
+	 * @param target
+	 * @param context
+	 * @param action Action, e.g. Edit or Add reference.
+	 * @param breadCrumbs
+	 * @throws Exception
+	 */
+	default void renderFeaturePath(C context, T obj, EStructuralFeature feature, String action, Breadcrumbs breadCrumbs) throws Exception {
+		List<EObject> cPath = new ArrayList<EObject>();
+		if (!isObjectPathRoot(context, obj, obj)) {
+			for (EObject c = obj.eContainer(); !isObjectPathRoot(context, obj, c); c = c.eContainer()) {
+				cPath.add(c);
+			}
+			Collections.reverse(cPath);
+			for (EObject c: cPath) {
+				Renderer<C, EObject> cRenderer = getRenderer(c);
+				Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);
+				if (cIconAndLabel != null) {
+					String objectURI = cRenderer.getObjectURI(context, c);
+					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
+				}
+			}
+		}
+		String objectURI = getObjectURI(context, obj);
+		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));
+		if (action == null) {
+			breadCrumbs.item(null, renderNamedElementIconAndLabel(context, feature));
+		} else {
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/feature/"+feature.getName()+"/view.html", renderNamedElementIconAndLabel(context, feature));
 			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
 		}
 	}
@@ -998,12 +1080,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (format == null) {
 				format = "yyyy-MM-dd"; // Default web format for dates.
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat(format);
+			SimpleDateFormat sdf = new SimpleDateFormat(format, getLocale(context));
 			return sdf.format((Date) value);
 		} else if (value instanceof Number) {
 			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
 			if (format != null) {
-				DecimalFormat df = new DecimalFormat(format);
+				DecimalFormat df = new DecimalFormat(format,  DecimalFormatSymbols.getInstance(getLocale(context)));
 				return df.format(value);
 			}
 		}	
@@ -1428,26 +1510,47 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @param obj
 	 * @return true if view shall be rendered in a tab. This implementation return true if <code>view-tab</code> is set to true.
-	 * If there is no annotation this method returns true if number of attributes is more then ten.
 	 */
 	default boolean isViewTab(C context, T obj) throws Exception {
 		String viewTabAnnotation = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.VIEW_TAB);
-		return viewTabAnnotation == null ? obj.eClass().getEAllAttributes().size() > 9 : "true".equals(viewTabAnnotation);
+		return viewTabAnnotation == null ? false : "true".equals(viewTabAnnotation);
+	}
+	
+	/**
+	 * Defines where to display visible {@link EStructuralFeature} or feature link.
+	 * @author Pavel Vlasov
+	 *
+	 */
+	enum FeatureLocation {
+		/**
+		 * Display as part of object view. Default for single features.
+		 */
+		view, 
+		
+		/**
+		 * Display a link to feature view page in the left panel. Default for many features.
+		 */
+		leftPanel,
+		
+		/**
+		 * Display a link in a tab below the object view. 
+		 */
+		tab 
 	}
 	
 	/**
 	 * @param context
 	 * @param obj
-	 * @return true if feature shall be rendered in a tab. 
-	 * This implementation return true if <code>is-tab</code> is set to true. 
-	 * If there is no annotation this method returns true if <code>isMany()</code> returns true.
+	 * @return feature location. 
+	 * This implementation returns value of {@link RenderAnnotation}.FEATURE_LOCATION render annotation. 
+	 * If there is no annotation this method returns ``leftPanel`` if <code>isMany()</code> returns true and ``view`` otherwise.
 	 */
-	default boolean isTab(C context, EStructuralFeature structuralFeature) throws Exception {
-		String isTabAnnotation = getRenderAnnotation(context, structuralFeature, RenderAnnotation.IS_TAB);
-		if (isTabAnnotation == null) {
-			return !(structuralFeature.getEType() instanceof EEnum) && structuralFeature.isMany();
+	default FeatureLocation getFeatureLocation(C context, EStructuralFeature structuralFeature) throws Exception {
+		String featureLocationAnnotation = getRenderAnnotation(context, structuralFeature, RenderAnnotation.FEATURE_LOCATION);
+		if (featureLocationAnnotation == null) {
+			return !(structuralFeature.getEType() instanceof EEnum) && structuralFeature.isMany() ? FeatureLocation.leftPanel : FeatureLocation.view;
 		}
-		return "true".equals(isTabAnnotation);
+		return FeatureLocation.valueOf(featureLocationAnnotation);
 	}
 	
 	/**
@@ -1733,7 +1836,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		for (EStructuralFeature vf: visibleFeatures) {
 			String category = getRenderAnnotation(context, vf, RenderAnnotation.CATEGORY);
-			if (!isTab(context, vf)) {
+			if (getFeatureLocation(context, vf) == FeatureLocation.view) {
 				if (category == null) {
 					Row fRow = featuresTable.body().row();
 					Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf)).style().whiteSpace().nowrap();
@@ -2051,7 +2154,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
-			if (isTab(context, vf)) {
+			if (getFeatureLocation(context, vf) == FeatureLocation.tab) {
 				Tag nameSpan = getHTMLFactory(context).span(renderNamedElementIconAndLabel(context, vf));
 				if (featureDocIcon != null) {
 					nameSpan.content(featureDocIcon);
@@ -2060,6 +2163,27 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}		
 	}
+		
+	/**
+	 * Renders left panel. This implementation renders nav pill for visible features with location set to ``leftPanel``.
+	 * @param context
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderLeftPanel(C context, T obj, EStructuralFeature feature) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Tag ret = htmlFactory.tag(TagName.ul).addClass("nav", "nav-pills", "nav-stacked");
+		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
+			if (getFeatureLocation(context, vf) == FeatureLocation.leftPanel) {
+				Tag pill = htmlFactory.tag(TagName.li, htmlFactory.link(getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", renderNamedElementIconAndLabel(context, vf)));
+				if (vf == feature) {
+					pill.addClass("active");
+				}
+				ret.content(pill);
+			}
+		}		
+		return ret;
+	}	
 	
 	/**
 	 * Returns object to use for feature value sorting. This implementation uses {@link RenderAnnotation}.SORT annotation
@@ -2131,11 +2255,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String viewAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.VIEW);
 			boolean asTable = false;
 			if (feature instanceof EReference) {
-				boolean isTab = isTab(context, feature);
+				boolean isView = getFeatureLocation(context, feature) == FeatureLocation.view;
 				if (viewAnnotation == null) {
-					asTable = isTab;
+					asTable = !isView;
 				} else {
-					if (isTab) {
+					if (!isView) {
 						asTable = !"list".equals(viewAnnotation);
 					} else {
 						asTable = "table".equals(viewAnnotation);
@@ -2183,7 +2307,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (asTable) {
 				EClass refType = ((EReference) feature).getEReferenceType();
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
-				String viewFeaturesAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.VIEW_FEATURES);
+				Object viewFeaturesAnnotation = getYamlRenderAnnotation(context, feature, RenderAnnotation.VIEW_FEATURES);
 				if (viewFeaturesAnnotation == null) {
 					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
 						if (!sf.isMany() && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
@@ -2215,11 +2339,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					 *        
 					 */
 
-					Yaml yaml = new Yaml();
-					Object spec = yaml.load(viewFeaturesAnnotation);
 					Map<EStructuralFeature, Object> featureSpecs = new HashMap<>();
-					if (spec instanceof String) {
-						for (String vf: ((String) spec).split("\\s+")) {
+					if (viewFeaturesAnnotation instanceof String) {
+						for (String vf: ((String) viewFeaturesAnnotation).split("\\s+")) {
 							if (!CoreUtil.isBlank(vf)) {
 								EStructuralFeature sf = refType.getEStructuralFeature(vf.trim());
 								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
@@ -2227,9 +2349,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								}
 							}
 						}
-					} else if (spec instanceof List) {
+					} else if (viewFeaturesAnnotation instanceof List) {
 						// List containing either feature names or mappings of names to feature specs
-						for (Object fe: (List<Object>) spec) {
+						for (Object fe: (List<Object>) viewFeaturesAnnotation) {
 							if (fe instanceof String) {
 								EStructuralFeature sf = refType.getEStructuralFeature(((String) fe).trim());
 								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
@@ -2262,8 +2384,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								}
 							}
 						}						
-					} else if (spec instanceof Map) {
-						for (Entry<String, Object> fme: ((Map<String, Object>) spec).entrySet()) {
+					} else if (viewFeaturesAnnotation instanceof Map) {
+						for (Entry<String, Object> fme: ((Map<String, Object>) viewFeaturesAnnotation).entrySet()) {
 							EStructuralFeature sf = refType.getEStructuralFeature(fme.getKey().trim());
 							if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
 								boolean visible = true;
@@ -2453,6 +2575,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton) throws Exception {
+		String objectURI = getObjectURI(context, obj);		
 		if (feature instanceof EReference && ((EReference) feature).isContainment()) {
 			List<EClass> featureElementTypes = getReferenceElementTypes(context, obj, (EReference) feature);
 			if (featureElementTypes.isEmpty()) {
@@ -2460,16 +2583,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			} else if (featureElementTypes.size() == 1) {
 				EClass featureElementType = featureElementTypes.iterator().next();
 				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-				addButton.on(Event.click, "window.location='create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
+				addButton.on(Event.click, "window.location='"+objectURI+"/create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
 			} else {
 				for (EClass featureElementType: featureElementTypes) {
 					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-					String createURL = "create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html";
+					String createURL = objectURI+"/feature/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
 					addButton.item(getHTMLFactory(context).link(createURL, getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
 				}
 			}
 		} else {
-			addButton.on(Event.click, "window.location='select/"+feature.getName()+".html';");
+			addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/select.html';");
 		}
 	}	
 	
@@ -2615,9 +2738,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
 			deleteLocation = getReferenceRenderer((EReference) feature, (EObject) value).getObjectURI(context, (EObject) value)+"/delete.html";
 		} else if (idx == -1) {
-			deleteLocation = "delete/"+feature.getName()+".html";
+			deleteLocation = "feature/"+feature.getName()+"/delete.html";
 		} else {
-			deleteLocation = "delete/"+feature.getName()+"/"+idx+".html";			
+			deleteLocation = "feature/"+feature.getName()+"/"+idx+"/delete.html";			
 		}
 		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"')) window.location='"+deleteLocation+"';");
 	}
@@ -2655,9 +2778,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default void wireFeatureValueEditButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button editButton) throws Exception {
 		if (idx == -1) {
-			editButton.on(Event.click, "window.location='edit/"+feature.getName()+".html");
+			editButton.on(Event.click, "window.location='feature/"+feature.getName()+"/edit.html");
 		} else {
-			editButton.on(Event.click, "window.location='edit/"+feature.getName()+"/"+idx+".html");			
+			editButton.on(Event.click, "window.location='feature/"+feature.getName()+"/"+idx+"/edit.html");			
 		}
 	}
 	
@@ -2716,7 +2839,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (context.authorizeUpdate(obj, vsf.getName(), null)) {
 				String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
 				if (CoreUtil.isBlank(eav)) {
-					if (!isTab(context, vsf)) {
+					if (getFeatureLocation(context, vsf) == FeatureLocation.view) {
 						ret.add(vsf);
 					}
 				} else if ("true".equals(eav)) {
@@ -3618,15 +3741,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default void validate(C context, T obj, EModelElement modelElement, DiagnosticChain diagnosticChain) throws Exception {
 		if (obj instanceof CDOObject) {
-			String classConstraintSpec = getRenderAnnotation(context, modelElement, RenderAnnotation.CONSTRAINT);
+			Object classConstraintSpec = getYamlRenderAnnotation(context, modelElement, RenderAnnotation.CONSTRAINT);
 			if (classConstraintSpec != null) {
-				Yaml yaml = new Yaml();
-				Object csy = yaml.load(classConstraintSpec);			
 				List<?> classConstraints;
-				if (csy instanceof List) {
-					classConstraints = (List<?>) csy;
+				if (classConstraintSpec instanceof List) {
+					classConstraints = (List<?>) classConstraintSpec;
 				} else {
-					classConstraints = Collections.singletonList(csy);
+					classConstraints = Collections.singletonList(classConstraintSpec);
 				}
 				for (Object cc: classConstraints) {
 					String conditionStr = null;
@@ -3920,5 +4041,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String ra = getRenderAnnotation(context, feature, RenderAnnotation.PLACEHOLDER);
 		return ra != null && obj instanceof CDOObject ? RenderUtil.newJXPathContext(context, (CDOObject) obj).getValue(ra) : null;		
 	}
+	
+	
 		
 }
