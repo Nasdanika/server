@@ -41,7 +41,6 @@ import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.TextArea;
@@ -154,19 +153,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.content(objectHeader);
 		
 		// view 
-		if (!isViewTab(context, target)) {
+		if (!isViewItem(context, target)) {
 			content.content(renderView(context, target, featureDocModals));
 		}
 		
-		Tabs tabs = content.getFactory().tabs();
-		renderTabs(context, target, tabs, featureDocModals);
-				
-		if (!tabs.isEmpty()) {
-			content.content(tabs);
-		}
+		content.content(renderFeatureItemsContainer(context, target, featureDocModals));
 		
-		return renderPage(context, target, title, content, null);
-		
+		return renderPage(context, target, title, content, null);		
 	}
 		
 	/**
@@ -479,106 +472,109 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			EPackage ePackage = ((CDOViewContext<CDOView, ?>) context).getView().getSession().getPackageRegistry().getEPackage(ePackageNsURI);
 			if (ePackage != null) {
 				EClassifier eClassifier = ePackage.getEClassifier(eclass.substring(0, eclass.length() - EXTENSION_HTML.length()));
-				if (eClassifier instanceof EClass && ((EReference) tsf).getEReferenceType().isSuperTypeOf((EClass) eClassifier)) {
+				EClass eReferenceType = ((EReference) tsf).getEReferenceType();
+				if (eClassifier instanceof EClass) {
 					EClass eClass = (EClass) eClassifier;					
 					EObject instance = ePackage.getEFactoryInstance().create(eClass);
-					Renderer<C, EObject> renderer = getReferenceRenderer((EReference) tsf, instance);
-					
-					ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+					if (eReferenceType.isInstance(instance)) {
+						Renderer<C, EObject> renderer = getReferenceRenderer((EReference) tsf, instance);
 						
-						@Override
-						protected String getResourceString(EStructuralFeature feature, String key) throws Exception {
-							return Route.this.getResourceString(context, (ENamedElement) (feature == null ? eClass : feature), key, true);
-						}
-						
-					};
-					
-					// Adding the new instance to the object graph for selectors to work. 
-					if (tsf.isMany()) {
-						((Collection<Object>) target.eGet(tsf)).add(instance);
-					} else {
-						target.eSet(tsf, instance);
-					}					
-					
-					if (context.getMethod() == RequestMethod.POST) {			
-						if (renderer.setEditableFeatures(context, instance, diagnosticConsumer)) {							
-							// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
-							if (context instanceof HttpServletRequestContext) {
-								String referrer = referrerParameter;
-								if (referrer == null) {
-									referrer = referrerHeader;
-								}
-								if (referrer == null) {
-									referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
-								}
-								((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
-								return Action.NOP;
+						ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+							
+							@Override
+							protected String getResourceString(EStructuralFeature feature, String key) throws Exception {
+								return Route.this.getResourceString(context, (ENamedElement) (feature == null ? eClass : feature), key, true);
 							}
 							
-							return "Update successful";
-						}
-					} 
-					
-					// Rollback transaction to remove the instance.
-					if (context instanceof TransactionContext) {
-						((TransactionContext) context).setRollbackOnly();
-					}
-
-					HTMLFactory htmlFactory = getHTMLFactory(context);
-					String title = StringEscapeUtils.escapeHtml4(renderer.nameToLabel(eClass.getName()));
-					Fragment content = htmlFactory.fragment();
-					
-					// Breadcrumbs
-					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-					renderFeaturePath(context, target, tsf, renderer.getResourceString(context, "create", true) + " / " + renderNamedElementIconAndLabel(context, eClass), breadCrumbs);
-					if (!breadCrumbs.isEmpty()) {
-						content.content(breadCrumbs);
-					}
-					
-					// Object header
-					Modal classDocModal = renderer.renderDocumentationModal(context, eClass);
-					if (classDocModal != null) {
-						content.content(classDocModal);
-					}
-					
-					Tag objectHeader = content.getFactory().tag(TagName.h3, renderer.renderObjectHeader(context, instance, classDocModal));
-					content.content(objectHeader);
-															
-					boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
-					Form editForm = renderer.renderEditForm(context, instance, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getFeatureValidationResults(), horizontalForm)
-				//		.novalidate()
-						.action(eclass)
-						.method(Method.post)
-						.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
-						.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
-						.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
-						.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
-					
-					if (horizontalForm) {
-						editForm
-							.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
-							.horizontal(Bootstrap.DeviceSize.SMALL, 5)
-							.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
-							.horizontal(Bootstrap.DeviceSize.LARGE, 3);
+						};
 						
+						// Adding the new instance to the object graph for selectors to work. 
+						if (tsf.isMany()) {
+							((Collection<Object>) target.eGet(tsf)).add(instance);
+						} else {
+							target.eSet(tsf, instance);
+						}					
+						
+						if (context.getMethod() == RequestMethod.POST) {			
+							if (renderer.setEditableFeatures(context, instance, diagnosticConsumer)) {							
+								// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
+								if (context instanceof HttpServletRequestContext) {
+									String referrer = referrerParameter;
+									if (referrer == null) {
+										referrer = referrerHeader;
+									}
+									if (referrer == null) {
+										referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+									}
+									((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+									return Action.NOP;
+								}
+								
+								return "Update successful";
+							}
+						} 
+						
+						// Rollback transaction to remove the instance.
+						if (context instanceof TransactionContext) {
+							((TransactionContext) context).setRollbackOnly();
+						}
+	
+						HTMLFactory htmlFactory = getHTMLFactory(context);
+						String title = StringEscapeUtils.escapeHtml4(renderer.nameToLabel(eClass.getName()));
+						Fragment content = htmlFactory.fragment();
+						
+						// Breadcrumbs
+						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+						renderFeaturePath(context, target, tsf, renderer.getResourceString(context, "create", true) + " / " + renderNamedElementIconAndLabel(context, eClass), breadCrumbs);
+						if (!breadCrumbs.isEmpty()) {
+							content.content(breadCrumbs);
+						}
+						
+						// Object header
+						Modal classDocModal = renderer.renderDocumentationModal(context, eClass);
+						if (classDocModal != null) {
+							content.content(classDocModal);
+						}
+						
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderer.renderObjectHeader(context, instance, classDocModal));
+						content.content(objectHeader);
+																
+						boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
+						Form editForm = renderer.renderEditForm(context, instance, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getFeatureValidationResults(), horizontalForm)
+					//		.novalidate()
+							.action(eclass)
+							.method(Method.post)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
+							.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
+						
+						if (horizontalForm) {
+							editForm
+								.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
+								.horizontal(Bootstrap.DeviceSize.SMALL, 5)
+								.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
+								.horizontal(Bootstrap.DeviceSize.LARGE, 3);
+							
+						}
+						
+						String originalReferrer = referrerParameter;
+						if (originalReferrer == null) {
+							originalReferrer = referrerHeader;
+						}
+						if (originalReferrer != null) {
+							editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+						}		
+						
+						Tag buttonBar = htmlFactory.div().style().text().align().right();
+						buttonBar.content(renderer.renderSaveButton(context, instance).style().margin().right("5px"));
+						buttonBar.content(renderer.renderCancelButton(context, instance));
+						editForm.content(buttonBar);
+						
+						content.content(editForm);										
+						
+						return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));
 					}
-					
-					String originalReferrer = referrerParameter;
-					if (originalReferrer == null) {
-						originalReferrer = referrerHeader;
-					}
-					if (originalReferrer != null) {
-						editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
-					}		
-					
-					Tag buttonBar = htmlFactory.div().style().text().align().right();
-					buttonBar.content(renderer.renderSaveButton(context, instance).style().margin().right("5px"));
-					buttonBar.content(renderer.renderCancelButton(context, instance));
-					editForm.content(buttonBar);
-					
-					content.content(editForm);										
-					
-					return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));							
 				}							
 			}
 		}
@@ -640,7 +636,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.content(objectHeader);
 		
 		// view 
-		content.content(renderFeatureView(context, target, sf, true));
+		content.content(renderFeatureView(context, target, sf, true, null, null));
 		
 		return renderPage(context, target, title, content, env -> env.put("context-feature", sf));
 	}	
