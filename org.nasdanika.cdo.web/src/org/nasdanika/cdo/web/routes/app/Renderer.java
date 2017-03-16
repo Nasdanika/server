@@ -2513,7 +2513,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Row headerRow = featureTable.header().row().style(Style.INFO);
 				String typeColumnAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.TYPE_COLUMN);
 				if (!CoreUtil.isBlank(typeColumnAnnotation)) {
-					headerRow.header(getResourceString(context, "type")).style().text().align().center();					
+					headerRow.header(getResourceString(context, "type"));					
 				}
 
 				for (EStructuralFeature sf: tableFeatures) {					
@@ -2560,7 +2560,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						Tag classDocIcon = fvr.renderDocumentationIcon(context, fvClass, null, true);		
 						typeEnv.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
 						
-						vRow.cell(htmlFactory.interpolate(typeColumnAnnotation, typeEnv)).style().text().align().center();
+						vRow.cell(htmlFactory.interpolate(typeColumnAnnotation, typeEnv));
 					}
 					
 					for (EStructuralFeature sf: tableFeatures) {
@@ -3189,6 +3189,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 			
+			// TODO - hidden inputs for disabled controls.
 			switch (inputType) {
 			case checkbox:
 				if (feature.isMany()) {
@@ -3342,13 +3343,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		case select:
 			Collection<Entry<String, String>> selectFeatureChoices = getFeatureChoices(context, obj, feature);
 			Select select = htmlFactory.select()
-				.disabled(disabled)
-				.name(feature.getName())
 				.required(isRequired(context, obj, feature));
+			
 			if (feature.getLowerBound() == 0) {
 				select.option("", "", false, false);
 			}
 			String valueToSelect = getFormControlValue(context, obj, feature, fv);				
+			if (disabled) {
+				fieldContainer.content(htmlFactory.input(InputType.hidden).name(feature.getName()).value(valueToSelect));
+				select.disabled();
+			} else {
+				select.name(feature.getName());
+			}
 			for (Entry<String, String> fc: selectFeatureChoices) {
 				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
 			}
