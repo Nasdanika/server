@@ -50,7 +50,7 @@ public class RenderUtil {
 	}
 	
 	/**
-	 * The initial versio of this class was copied from https://github.com/eclipse/eclipse.platform.ui/blob/master/bundles/org.eclipse.e4.emf.xpath/src/org/eclipse/e4/emf/internal/xpath/JXPathContextImpl.java,
+	 * The initial version of this class was copied from https://github.com/eclipse/eclipse.platform.ui/blob/master/bundles/org.eclipse.e4.emf.xpath/src/org/eclipse/e4/emf/internal/xpath/JXPathContextImpl.java,
 	 * The original copyright notice is below;
 	 */
 	/*******************************************************************************
@@ -91,6 +91,10 @@ public class RenderUtil {
 			return null;
 		}
 		
+		public static Object iif(boolean condition, Object ifTrue, Object ifFalse) {
+			return condition ? ifTrue : ifFalse;
+		}
+				
 		/**
 		 * Expression context method.
 		 * @param expressionContext
@@ -107,6 +111,30 @@ public class RenderUtil {
 
 			return null;
 		}
+		
+		/**
+		 * For checking boolean attributes.  
+		 * @return
+		 */
+		public static boolean isTrue(Object obj) {
+			if (obj instanceof Collection) {
+				for (Object e: (Collection<?>) obj) {
+					if (isFalse(e)) {
+						return false;
+					}
+				}
+				return true;
+			}
+			return Boolean.TRUE.equals(obj);
+		}		
+		
+		/**
+		 * For checking boolean attributes.  
+		 * @return
+		 */
+		public static boolean isFalse(Object obj) {
+			return !isTrue(obj);
+		}		
 		
 		/**
 		 * Expression context method.
