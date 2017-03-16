@@ -30,6 +30,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -95,13 +96,14 @@ import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.HTMLFactory.TokenSource;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.JsTree;
+import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
+import org.nasdanika.html.NamedItemsContainer;
 import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Select;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.Tabs;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.TextArea;
@@ -133,7 +135,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * {@link EStructuralFeature} annotation defining whether the feature is visible in the object view.
 		 * The value of this annotation can be one of the following:
 		 * 
-		 *   * Blank string (or annotation is not present) - the feature is editable if it is not a tab (``isTab()`` returns false)
+		 *   * Blank string (or annotation is not present) - the feature is editable if it is not an item (``isItem()`` returns false)
 		 *   * ``true`` boolean literal - the feature is visible.
 		 *   * ``false`` boolean literal - the feature is hidden.
 		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is visible.
@@ -192,12 +194,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		ICON("icon"),
 		
 		/**
-		 * Set this annotation on {@link EClass} to ``true`` to have the class view rendered in a tab. 
+		 * Set this annotation on {@link EClass} to ``true`` to have the class view rendered in the item container. 
 		 */
-		VIEW_TAB("view-tab"),
+		VIEW_ITEM("view-item"),
 
 		/**
-		 * Defines {@link EStructuralFeature} location - view, left panel, or tab. The value shall be one of {@link FeatureLocation} constants.
+		 * Defines {@link EStructuralFeature} location - view, left panel, or item container (tabs, pills, accordion). The value shall be one of {@link FeatureLocation} constants.
 		 */
 		FEATURE_LOCATION("feature-location"),		
 		
@@ -218,7 +220,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		VIEW("view"),
 		
 		/**
-		 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference tab table.
+		 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference item table.
 		 * The value of this annotation can be one of the following:
 		 * 
 		 * * A space-separated list of feature names.
@@ -345,7 +347,50 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * 
 		 * This annotation is useful for references containing elements of different types.
 		 */
-		TYPE_COLUMN("type-column"),				
+		TYPE_COLUMN("type-column"),		
+		
+		/**
+		 * {@link EClass} yaml annotation which defines feature items container and its configuration.
+		 * If not present, features items are rendered as tabs.
+		 * 
+		 * Supported containers:
+		 * 
+		 * * ``tabs`` - may contain ``justified`` sub-element set to ``true``. 
+		 * * ``pills`` - may contain sub-elements:
+		 *     * ``stacked``
+		 *     * ``justified``
+		 *     * ``width``
+		 * * ``accordion`` - may contain ``style`` sub-element with value corresponding to one of {@link Bootstrap.Style} enum constants.
+		 * 
+		 * Examples:
+		 * 
+		 * ```
+		 * tabs
+		 * 
+		 * tabs:
+		 *     justified: true
+		 *     
+		 * pills
+		 * 
+		 * pills:
+		 *     stacked: true
+		 *     justified: true
+		 *     width: 2
+		 *  
+		 * pills:
+		 *     stacked: true
+		 *     justified: true
+		 *     width: 
+		 *         xs: 5
+		 *         lg: 1
+		 *         
+		 * accordion
+		 * 
+		 * accordion
+		 *     style: PRIMARY         
+		 * ```
+		 */
+		FEATURE_ITEMS_CONTAINER("feature-items-container"),
 		
 		/**
 		 * {@link EStructuralFeature} annotation specifying XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the 
@@ -654,7 +699,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default void renderObjectPath(C context, T obj, String action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
 		if (!isObjectPathRoot(context, obj, obj)) {
-			for (EObject c = obj.eContainer(); c.eContainer() != null; c = c.eContainer()) {
+			for (EObject c = obj.eContainer(); c != null; c = c.eContainer()) {
 				cPath.add(c);
 				if (isObjectPathRoot(context, obj, c)) {
 					break;
@@ -690,8 +735,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default void renderFeaturePath(C context, T obj, EStructuralFeature feature, String action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
 		if (!isObjectPathRoot(context, obj, obj)) {
-			for (EObject c = obj.eContainer(); !isObjectPathRoot(context, obj, c); c = c.eContainer()) {
+			for (EObject c = obj.eContainer(); c != null; c = c.eContainer()) {
 				cPath.add(c);
+				if (isObjectPathRoot(context, obj, c)) {
+					break;
+				}
 			}
 			Collections.reverse(cPath);
 			for (EObject c: cPath) {
@@ -1509,11 +1557,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * @param context
 	 * @param obj
-	 * @return true if view shall be rendered in a tab. This implementation return true if <code>view-tab</code> is set to true.
+	 * @return true if view shall be rendered in the item container. This implementation return true if <code>view-item</code> is set to true.
 	 */
-	default boolean isViewTab(C context, T obj) throws Exception {
-		String viewTabAnnotation = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.VIEW_TAB);
-		return viewTabAnnotation == null ? false : "true".equals(viewTabAnnotation);
+	default boolean isViewItem(C context, T obj) throws Exception {
+		String viewItemAnnotation = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.VIEW_ITEM);
+		return viewItemAnnotation == null ? false : "true".equals(viewItemAnnotation);
 	}
 	
 	/**
@@ -1533,9 +1581,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		leftPanel,
 		
 		/**
-		 * Display a link in a tab below the object view. 
+		 * Display a link in an item container below the object view. 
 		 */
-		tab 
+		item 
 	}
 	
 	/**
@@ -1545,7 +1593,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * This implementation returns value of {@link RenderAnnotation}.FEATURE_LOCATION render annotation. 
 	 * If there is no annotation this method returns ``leftPanel`` if <code>isMany()</code> returns true and ``view`` otherwise.
 	 */
-	default FeatureLocation getFeatureLocation(C context, EStructuralFeature structuralFeature) throws Exception {
+	default FeatureLocation getFeatureLocation(C context, EStructuralFeature structuralFeature) throws Exception {		
 		String featureLocationAnnotation = getRenderAnnotation(context, structuralFeature, RenderAnnotation.FEATURE_LOCATION);
 		if (featureLocationAnnotation == null) {
 			return !(structuralFeature.getEType() instanceof EEnum) && structuralFeature.isMany() ? FeatureLocation.leftPanel : FeatureLocation.view;
@@ -1554,14 +1602,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders label for the view tab, if view is rendered in a tab.
+	 * Renders label for the view item, if view is rendered in an item container.
 	 * @param context
 	 * @param obj
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderViewTabLabel(C context, T obj) throws Exception {
-		return getResourceString(context, "viewTabLabel");
+	default Object renderViewItemLabel(C context, T obj) throws Exception {
+		return getResourceString(context, "viewItemLabel");
 	}
 	
 	/**
@@ -1816,7 +1864,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 
 	/**
-	 * Renders view features with <code>!isTab()</code>. This implementation renders them in a table or a group of tables.
+	 * Renders view features with feature location set/defaulting to ``view``. This implementation renders them in a table or a group of tables.
 	 * Features with ``category`` annotation are grouped into tables in panels by the annotation value.
 	 * Panel header shows category icon if ``category.<category name>.icon`` annotation is present on the object's EClass. 
 	 * Panel header text is set to the value of ``category.<category name>.label`` annotation on the object's EClass, or to the category name if this annotation is not present. 
@@ -1844,7 +1892,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if (featureDocIcon != null) {
 						fLabelCell.content(featureDocIcon);
 					}
-					fRow.cell(renderFeatureView(context, obj, vf, false));
+					fRow.cell(renderFeatureView(context, obj, vf, false, null, null));
 				} else {
 					List<EStructuralFeature> categoryFeatures = categories.get(category);
 					if (categoryFeatures == null) {
@@ -1873,7 +1921,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
-				fRow.cell(renderFeatureView(context, obj, vf, false));
+				fRow.cell(renderFeatureView(context, obj, vf, false, null, null));
 			}
 			Object header = ce.getKey();
 			String categoryIconAnnotation = getRenderAnnotation(context, obj.eClass(), "category."+ce.getKey()+".icon");
@@ -2141,28 +2189,72 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders tabs.
+	 * Renders feature items.
 	 * @param context
 	 * @param obj
-	 * @param tabs
+	 * @param itemContainer
 	 * @param featureDocModals
 	 * @throws Exception
 	 */
-	default void renderTabs(C context, T obj, Tabs tabs, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
-		if (isViewTab(context, obj)) {
-			tabs.item(renderViewTabLabel(context, obj), renderView(context, obj, featureDocModals));
+	default NamedItemsContainer<?, ?> renderFeatureItemsContainer(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {		
+		NamedItemsContainer<?, ?> ret = null;
+		Object spec = getYamlRenderAnnotation(context, obj.eClass(), RenderAnnotation.FEATURE_ITEMS_CONTAINER);
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		if (spec instanceof String) {
+			switch (((String) spec).trim()) {
+			case "accordion":
+				ret = htmlFactory.accordion();
+				break;
+			case "pills":
+				ret = htmlFactory.pills();				
+				break;
+			case "tabs":
+				ret = htmlFactory.tabs();
+				break;
+			}			
+		} else if (spec instanceof Map) {
+			for (Entry<?, ?> se: ((Map<?,?>) spec).entrySet()) {
+				if (se.getKey() instanceof String) {
+					switch (((String) se.getKey()).trim()) {
+					case "accordion":
+						ret = htmlFactory.accordion();
+						// TODO - style
+						break;
+					case "pills":
+						ret = htmlFactory.pills();
+						// TODO - stacked, justified, size(s)
+						break;
+					case "tabs":
+						ret = htmlFactory.tabs();
+						// TODO - justified
+						break;
+					}								
+				}
+			}
+		}
+		
+		if (ret == null) {
+			ret = htmlFactory.tabs(); // Catch all
+		}
+
+		if (isViewItem(context, obj)) {
+			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, featureDocModals));
 		}
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
-			if (getFeatureLocation(context, vf) == FeatureLocation.tab) {
-				Tag nameSpan = getHTMLFactory(context).span(renderNamedElementIconAndLabel(context, vf));
+			if (getFeatureLocation(context, vf) == FeatureLocation.item) {
+				Tag nameSpan = htmlFactory.span(renderNamedElementIconAndLabel(context, vf));
 				if (featureDocIcon != null) {
 					nameSpan.content(featureDocIcon);
 				}
-				tabs.item(nameSpan, tabs.getFactory().div(renderFeatureView(context, obj, vf, true)).style().margin("3px"));
+				ret.item(nameSpan, htmlFactory.div(renderFeatureView(context, obj, vf, true, null, null)).style().margin("3px"));
 			}
 		}		
+		
+		return ret.isEmpty() ? null : ret;
 	}
+	
+	
 		
 	/**
 	 * Renders left panel. This implementation renders nav pill for visible features with location set to ``leftPanel``.
@@ -2172,16 +2264,46 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default Object renderLeftPanel(C context, T obj, EStructuralFeature feature) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
-		Tag ret = htmlFactory.tag(TagName.ul).addClass("nav", "nav-pills", "nav-stacked");
+		LinkGroup linkGroup = htmlFactory.linkGroup();
+		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
 			if (getFeatureLocation(context, vf) == FeatureLocation.leftPanel) {
-				Tag pill = htmlFactory.tag(TagName.li, htmlFactory.link(getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", renderNamedElementIconAndLabel(context, vf)));
-				if (vf == feature) {
-					pill.addClass("active");
-				}
-				ret.content(pill);
+				String category = getRenderAnnotation(context, vf, RenderAnnotation.CATEGORY);
+				if (category == null) {
+					linkGroup.item(renderNamedElementIconAndLabel(context, vf), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
+				} else {
+					List<EStructuralFeature> categoryFeatures = categories.get(category);
+					if (categoryFeatures == null) {
+						categoryFeatures = new ArrayList<>();
+						categories.put(category, categoryFeatures);
+					}
+					categoryFeatures.add(vf);
+				}					
 			}
 		}		
+		
+		if (categories.isEmpty()) {
+			return linkGroup;
+		}
+		
+		Fragment ret = htmlFactory.fragment(linkGroup);
+		
+		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
+			LinkGroup categoryFeaturesLinkGroup = htmlFactory.linkGroup();
+			for (EStructuralFeature vf: ce.getValue()) {
+				categoryFeaturesLinkGroup.item(renderNamedElementIconAndLabel(context, vf), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
+			}
+			Object header = ce.getKey();
+			String categoryIconAnnotation = getRenderAnnotation(context, obj.eClass(), "category."+ce.getKey()+".icon");
+			if (categoryIconAnnotation != null) {
+				if (categoryIconAnnotation.indexOf("/") == -1) {
+					header = htmlFactory.span().addClass(categoryIconAnnotation) + " " + header;
+				} else {
+					header = htmlFactory.tag(TagName.img).attribute("src", categoryIconAnnotation) + " " + header;
+				}				
+			}
+			ret.content(htmlFactory.panel(Style.DEFAULT, header, categoryFeaturesLinkGroup, null));
+		}
 		return ret;
 	}	
 	
@@ -2229,10 +2351,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * Renders a view of the feature value. 
 	 * A feature is rendered as a list if <code>view</code> annotation value is <code>list</code> or 
-	 * if it is not present and the feature is rendered in the view (<code>!isTab()</code>).
+	 * if it is not present and the feature is rendered in the view.
 	 * <P/>
 	 * If <code>view</code> annotation value is <code>table</code> or 
-	 * if it is not present and the feature is rendered in a tab (<code>isTab()</code>), 
+	 * if it is not present and the feature is rendered in an item container, 
 	 * then the feature value is rendered as a table. Object features to show and their order in the
 	 * table can be defined using <code>view-features</code> annotation. Annotation value shall list 
 	 * the features in the order in appearance, whitespace separated. 
@@ -2241,11 +2363,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param obj
 	 * @param feature
 	 * @param showButtons if true, action buttons such as edit/delete/add/create/clear/select are shown if user is authorized to perform action.
+	 * @param filter Used for many-value features to filter, if not null.
+	 * @param If not null it is used for sorting, overrides annotation-defined sorting.
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default Object renderFeatureView(C context, T obj, EStructuralFeature feature, boolean showActionButtons) throws Exception {
+	default Object renderFeatureView(C context, T obj, EStructuralFeature feature, boolean showActionButtons, Predicate<Object> filter, Comparator<Object> comparator) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 		Map<String, Object> env = new HashMap<>();
@@ -2267,43 +2391,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 			
-			boolean isSort = isSortFeatureValues(context, obj, feature);					
-			
-			class FeatureValueEntry<V> implements Comparable<FeatureValueEntry<V>> {
-				
-				FeatureValueEntry(V value, int position) throws Exception {
-					this.value = value;
-					this.position = position;
-					if (isSort) {
-						sortValue = getFeatureSortKey(context, obj, feature, value);
-					}					
-				}
-				
-				V value;
-				Object sortValue;
-				int position;
-				
-				@Override
-				public int compareTo(FeatureValueEntry<V> o) {
-					Object sv = sortValue;					
-					Object osv = o.sortValue;
-					
-					if (sv instanceof Comparable) {
-						int result = ((Comparable<Object>) sv).compareTo(osv);
-						if (result != 0) {
-							return result;
-						}
-					} else if (osv instanceof Comparable) {
-						int result = ((Comparable<Object>) osv).compareTo(sv);
-						if (result != 0) {
-							return -result;
-						}
-					}
-					return position-o.position;
-				}
-				
-			}
-						
+			boolean isSort = comparator == null && isSortFeatureValues(context, obj, feature);					
+									
 			if (asTable) {
 				EClass refType = ((EReference) feature).getEReferenceType();
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
@@ -2316,7 +2405,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 				} else {
 					/**
-					 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference tab table.
+					 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference item table.
 					 * The value of this annotation can be one of the following:
 					 * 
 					 * * A space-separated list of feature names.
@@ -2441,10 +2530,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				int pos = 0;
 				List<FeatureValueEntry<EObject>> featureValueEntries = new ArrayList<>();
 				for (EObject fv: (Collection<EObject>) featureValue) {
-					featureValueEntries.add(new FeatureValueEntry<EObject>(fv, pos++));
+					if (filter == null || filter.test(fv)) {
+						featureValueEntries.add(new FeatureValueEntry<EObject>(fv, pos++, isSort ? getFeatureSortKey(context, obj, feature, fv) : null));
+					}
 				}
 				
-				if (isSort) {
+				if (comparator != null) {
+					Collections.sort(featureValueEntries, (e1, e2) -> comparator.compare(e1.value, e2.value));
+				} else if (isSort) {
 					Collections.sort(featureValueEntries);
 				}
 				
@@ -2471,7 +2564,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 					
 					for (EStructuralFeature sf: tableFeatures) {
-						vRow.cell(getReferenceRenderer((EReference) feature, fve.value).renderFeatureView(context, fve.value, sf, false));						
+						vRow.cell(getReferenceRenderer((EReference) feature, fve.value).renderFeatureView(context, fve.value, sf, false, null, null));						
 					}
 					Cell actionCell = vRow.cell().style().text().align().center();
 					actionCell.content(renderFeatureValueViewButton(context, obj, feature, fve.position, fve.value));
@@ -2499,10 +2592,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					int pos = 0;
 					List<FeatureValueEntry<Object>> featureValueEntries = new ArrayList<>();
 					for (Object fv: featureValues) {
-						featureValueEntries.add(new FeatureValueEntry<Object>(fv, pos++));						
+						if (filter == null || filter.test(fv)) {
+							featureValueEntries.add(new FeatureValueEntry<Object>(fv, pos++, isSort ? getFeatureSortKey(context, obj, feature, fv) : null));
+						}
 					}
 					
-					if (isSort) {
+					if (comparator != null) {
+						Collections.sort(featureValueEntries, (e1, e2) -> comparator.compare(e1.value, e2.value));
+					} else if (isSort) {
 						Collections.sort(featureValueEntries);
 					}
 					
@@ -2526,10 +2623,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		} else {
 			ret.content(renderFeatureValue(context, feature, featureValue));
-			if (showActionButtons && feature instanceof EReference) {
-				ret.content(renderFeatureValueEditButton(context, obj, feature, -1, featureValue));
-				ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
-			}
+			if (feature instanceof EReference) {
+				if (((EReference) feature).isContainment()) {
+					ret.content(renderFeatureAddButton(context, obj, feature));
+				}
+				if (showActionButtons) {
+					ret.content(renderFeatureValueEditButton(context, obj, feature, -1, featureValue));
+					ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
+				}
+			}						
 		}
 		return ret;
 	}
@@ -2575,7 +2677,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton) throws Exception {
-		String objectURI = getObjectURI(context, obj);		
+		String objectURI = getObjectURI(context, obj);	
+		addButton.type(Type.BUTTON); // No submitting.
 		if (feature instanceof EReference && ((EReference) feature).isContainment()) {
 			List<EClass> featureElementTypes = getReferenceElementTypes(context, obj, (EReference) feature);
 			if (featureElementTypes.isEmpty()) {
@@ -2583,7 +2686,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			} else if (featureElementTypes.size() == 1) {
 				EClass featureElementType = featureElementTypes.iterator().next();
 				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-				addButton.on(Event.click, "window.location='"+objectURI+"/create/"+feature.getName()+"/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
+				addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
 			} else {
 				for (EClass featureElementType: featureElementTypes) {
 					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
@@ -2777,10 +2880,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param editButton
 	 */
 	default void wireFeatureValueEditButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button editButton) throws Exception {
+		String objURI = getObjectURI(context, obj);
 		if (idx == -1) {
-			editButton.on(Event.click, "window.location='feature/"+feature.getName()+"/edit.html");
+			editButton.on(Event.click, "window.location='"+objURI+"/feature/"+feature.getName()+"/edit.html'");
 		} else {
-			editButton.on(Event.click, "window.location='feature/"+feature.getName()+"/"+idx+"/edit.html");			
+			editButton.on(Event.click, "window.location='"+objURI+"/feature/"+feature.getName()+"/"+idx+"/edit.html'");			
 		}
 	}
 	
@@ -2839,7 +2943,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (context.authorizeUpdate(obj, vsf.getName(), null)) {
 				String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
 				if (CoreUtil.isBlank(eav)) {
-					if (getFeatureLocation(context, vsf) == FeatureLocation.view) {
+					if (getFeatureLocation(context, vsf) == FeatureLocation.view && !(vsf instanceof EReference && ((EReference) vsf).isContainment())) {
 						ret.add(vsf);
 					}
 				} else if ("true".equals(eav)) {
@@ -2915,20 +3019,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip) throws Exception {
+
 		Object fv = obj.eGet(feature);
 		String controlTypeStr = getRenderAnnotation(context, feature, RenderAnnotation.CONTROL);
 		TagName controlType = controlTypeStr == null ? null : TagName.valueOf(controlTypeStr); 
+		HTMLFactory htmlFactory = getHTMLFactory(context);
 		if (controlType == null) {
 			if (feature.isMany()) {
 				controlType = TagName.input;
 			} else if (feature instanceof EAttribute) {				
 				controlType = feature.getEType() instanceof EEnum ? TagName.select : TagName.input;
+			} else if (((EReference) feature).isContainment()) {				
+				// Link and create button.
+				return htmlFactory.well(renderFeatureValue(context, feature, fv), renderFeatureAddButton(context, obj, feature)).small();
 			} else {
 				controlType = TagName.select;
 			}
 		}
 		
-		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Object label = renderNamedElementIconAndLabel(context, feature);
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
@@ -3152,7 +3260,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				Input checkbox = htmlFactory.input(inputType).disabled(disabled);
 				checkbox.name(feature.getName());
-				checkbox.value(true);
+				checkbox.value("true");
 				if (Boolean.TRUE.equals(fv)) {
 					checkbox.attribute("checked", "true");					
 				}
