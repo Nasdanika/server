@@ -649,6 +649,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		return StringUtils.join(cca, " ");
 	}
+	
+	interface FeaturePredicate {
+		
+		boolean test(EStructuralFeature feature) throws Exception;
+		
+	}
 
 	/**
 	 * 
@@ -656,10 +662,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return A list of structural features to include into the object view. ``RenderAnnotation.VISIBLE`` defines feature visibility.
 	 * @throws Exception 
 	 */
-	default List<EStructuralFeature> getVisibleFeatures(C context, T obj) throws Exception {
+	default List<EStructuralFeature> getVisibleFeatures(C context, T obj, FeaturePredicate predicate) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
-			if (context.authorizeRead(obj, sf.getName(), null)) {
+			if (context.authorizeRead(obj, sf.getName(), null) && (predicate == null || predicate.test(sf))) {
 				String visibleRenderAnnotation = getRenderAnnotation(context, sf, RenderAnnotation.VISIBLE);
 				if (CoreUtil.isBlank(visibleRenderAnnotation) || "true".equals(visibleRenderAnnotation)) {
 					ret.add(sf);
@@ -752,15 +758,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		String objectURI = getObjectURI(context, obj);
 		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));		
-		EClass eClass = obj.eClass();
-		Object categoryIconAndLabel = renderFeatureCategoryIconAndLabel(context, feature, eClass);
+		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj, null);
+		Object categoryIconAndLabel = renderFeatureCategoryIconAndLabel(context, feature, visibleFeatures);
 		if (categoryIconAndLabel != null) {
 			breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
 		}
 		if (action == null) {
-			breadCrumbs.item(null, renderFeatureIconAndLabel(context, feature, eClass));
+			breadCrumbs.item(null, renderFeatureIconAndLabel(context, feature, visibleFeatures));
 		} else {
-			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/feature/"+feature.getName()+"/view.html", renderFeatureIconAndLabel(context, feature, eClass));
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/feature/"+feature.getName()+"/view.html", renderFeatureIconAndLabel(context, feature, visibleFeatures));
 			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
 		}
 	}
@@ -818,7 +824,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		if (labelAnnotation != null) {
 			Map<String, EStructuralFeature> vsfm = new HashMap<>();
-			for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
+			for (EStructuralFeature vsf: getVisibleFeatures(context, obj, null)) {
 				vsfm.put(vsf.getName(), vsf);
 			}
 			String label = getHTMLFactory(context).interpolate(labelAnnotation, token -> {
@@ -841,7 +847,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return StringEscapeUtils.escapeHtml4(label);
 		}
 		
-		for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
+		for (EStructuralFeature vsf: getVisibleFeatures(context, obj, null)) {
 			if (vsf instanceof EAttribute) {
 				Object label = obj.eGet(vsf);
 				if (label != null) {
@@ -984,26 +990,26 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param eClass
 	 * @throws Exception
 	 */
-	default String renderFeatureLabel(C context, EStructuralFeature feature, EClass eClass) throws Exception {
+	default String renderFeatureLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
 		String label = getRenderAnnotation(context, feature, RenderAnnotation.MODEL_ELEMENT_LABEL);
 		if (label != null) {
 			return label;
 		}		
 		String featureName = feature.getName();
-		String autoCategory = RenderUtil.getAutoCategory(feature, eClass);
+		String autoCategory = RenderUtil.getAutoCategory(feature, features);
 		return nameToLabel(autoCategory == null ? featureName : featureName.substring(autoCategory.length()));		
 	}
 	
-	default Object renderFeatureCategoryLabel(C context, EStructuralFeature feature, EClass eClass) throws Exception {
+	default Object renderFeatureCategoryLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
 		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = RenderUtil.getAutoCategory(feature, eClass);
+			category = RenderUtil.getAutoCategory(feature, features);
 		}
 		if (category == null) {
 			return null;
 		}
 		
-		String categoryLabelAnnotation = getRenderAnnotation(context, eClass, "category."+category+".label");
+		String categoryLabelAnnotation = getRenderAnnotation(context, feature.getEContainingClass(), "category."+category+".label");
 		if (categoryLabelAnnotation != null) {
 			return categoryLabelAnnotation;
 		}
@@ -1016,25 +1022,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return StringUtils.join(cca, " ");		
 	}
 	
-	default Object renderFeatureCategoryIcon(C context, EStructuralFeature feature, EClass eClass) throws Exception {
+	default Object renderFeatureCategoryIcon(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
 		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = RenderUtil.getAutoCategory(feature, eClass);
+			category = RenderUtil.getAutoCategory(feature, features);
 		}
 		if (category == null) {
 			return null;
 		}
 		
-		return getRenderAnnotation(context, eClass, "category."+category+".icon");
+		return getRenderAnnotation(context, feature.getEContainingClass(), "category."+category+".icon");
 	}
 	
-	default Object renderFeatureCategoryIconAndLabel(C context, EStructuralFeature feature, EClass eClass) throws Exception {
-		Object label = renderFeatureCategoryLabel(context, feature, eClass);
+	default Object renderFeatureCategoryIconAndLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
+		Object label = renderFeatureCategoryLabel(context, feature, features);
 		if (label == null) {
-			return renderFeatureCategoryIcon(context, feature, eClass);
+			return renderFeatureCategoryIcon(context, feature, features);
 		}
 		
-		Object icon = renderFeatureCategoryIcon(context, feature, eClass);
+		Object icon = renderFeatureCategoryIcon(context, feature, features);
 		if (icon == null) {
 			return label;
 		}
@@ -1048,8 +1054,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return Named element icon and label.
 	 * @throws Exception
 	 */
-	default Object renderFeatureIconAndLabel(C context, EStructuralFeature feature, EClass eClass) throws Exception {
-		Object label = renderFeatureLabel(context, feature, eClass);
+	default Object renderFeatureIconAndLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
+		Object label = renderFeatureLabel(context, feature, features);
 		if (label == null) {
 			return renderModelElementIcon(context, feature);
 		}
@@ -1068,10 +1074,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param eClass
 	 * @return
 	 */
-	default String getFeatureCategory(C context, EStructuralFeature feature, EClass eClass) throws Exception {
+	default String getFeatureCategory(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
 		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = RenderUtil.getAutoCategory(feature, eClass);
+			category = RenderUtil.getAutoCategory(feature, features);
 		}
 		return category;
 	}
@@ -1697,7 +1703,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * This implementation returns value of {@link RenderAnnotation}.FEATURE_LOCATION render annotation. 
 	 * If there is no annotation this method returns ``leftPanel`` if <code>isMany()</code> returns true and ``view`` otherwise.
 	 */
-	default FeatureLocation getFeatureLocation(C context, EStructuralFeature structuralFeature) throws Exception {		
+	default FeatureLocation getFeatureLocation(C context, EStructuralFeature structuralFeature) throws Exception {
 		String featureLocationAnnotation = getRenderAnnotation(context, structuralFeature, RenderAnnotation.FEATURE_LOCATION);
 		if (featureLocationAnnotation == null) {
 			return !(structuralFeature.getEType() instanceof EEnum) && structuralFeature.isMany() ? FeatureLocation.leftPanel : FeatureLocation.view;
@@ -1952,7 +1958,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Map<EStructuralFeature, Modal> renderVisibleFeaturesDocModals(C context, T obj) throws Exception {
-		return renderFeaturesDocModals(context, obj, getVisibleFeatures(context, obj));
+		return renderFeaturesDocModals(context, obj, getVisibleFeatures(context, obj, null));
 	}
 	
 	/**
@@ -1984,30 +1990,27 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		featuresTable.col().bootstrap().grid().col(1);
 		featuresTable.col().bootstrap().grid().col(11);
 
-		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj);
+		List<EStructuralFeature> viewFeatures = getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.view);
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
-		EClass eClass = obj.eClass();
-		for (EStructuralFeature vf: visibleFeatures) {
-			if (getFeatureLocation(context, vf) == FeatureLocation.view) {
-				String category = getFeatureCategory(context, vf, eClass);
-				if (category == null) {
-					Row fRow = featuresTable.body().row();
-					Cell fLabelCell = fRow.header(renderFeatureIconAndLabel(context, vf, eClass)).style().whiteSpace().nowrap();
-					Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
-					if (featureDocIcon != null) {
-						fLabelCell.content(featureDocIcon);
-					}
-					fRow.cell(renderFeatureView(context, obj, vf, false, null, null));
-				} else {
-					List<EStructuralFeature> categoryFeatures = categories.get(category);
-					if (categoryFeatures == null) {
-						categoryFeatures = new ArrayList<>();
-						categories.put(category, categoryFeatures);
-						categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, vf, eClass));
-					}
-					categoryFeatures.add(vf);
+		for (EStructuralFeature vf: viewFeatures) {
+			String category = getFeatureCategory(context, vf, viewFeatures);
+			if (category == null) {
+				Row fRow = featuresTable.body().row();
+				Cell fLabelCell = fRow.header(renderFeatureIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
+				Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
+				if (featureDocIcon != null) {
+					fLabelCell.content(featureDocIcon);
 				}
+				fRow.cell(renderFeatureView(context, obj, vf, false, null, null));
+			} else {
+				List<EStructuralFeature> categoryFeatures = categories.get(category);
+				if (categoryFeatures == null) {
+					categoryFeatures = new ArrayList<>();
+					categories.put(category, categoryFeatures);
+					categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, vf, viewFeatures));
+				}
+				categoryFeatures.add(vf);
 			}
 		}
 		
@@ -2023,7 +2026,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			categoryFeaturesTable.col().bootstrap().grid().col(11);
 			for (EStructuralFeature vf: ce.getValue()) {
 				Row fRow = categoryFeaturesTable.body().row();
-				Cell fLabelCell = fRow.header(renderFeatureIconAndLabel(context, vf, eClass)).style().whiteSpace().nowrap();
+				Cell fLabelCell = fRow.header(renderFeatureIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
 				Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
@@ -2338,15 +2341,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (isViewItem(context, obj)) {
 			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, featureDocModals));
 		}
-		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
+		for (EStructuralFeature vf: getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.item)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
-			if (getFeatureLocation(context, vf) == FeatureLocation.item) {
-				Tag nameSpan = htmlFactory.span(renderNamedElementIconAndLabel(context, vf));
-				if (featureDocIcon != null) {
-					nameSpan.content(featureDocIcon);
-				}
-				ret.item(nameSpan, htmlFactory.div(renderFeatureView(context, obj, vf, true, null, null)).style().margin("3px"));
+			Tag nameSpan = htmlFactory.span(renderNamedElementIconAndLabel(context, vf));
+			if (featureDocIcon != null) {
+				nameSpan.content(featureDocIcon);
 			}
+			ret.item(nameSpan, htmlFactory.div(renderFeatureView(context, obj, vf, true, null, null)).style().margin("3px"));
 		}		
 		
 		return ret.isEmpty() ? null : ret;
@@ -2365,22 +2366,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		LinkGroup linkGroup = htmlFactory.linkGroup();
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
-		EClass eClass = obj.eClass();
-		for (EStructuralFeature vf: getVisibleFeatures(context, obj)) {
-			if (getFeatureLocation(context, vf) == FeatureLocation.leftPanel) {
-				String category = getFeatureCategory(context, feature, eClass);
-				if (category == null) {
-					linkGroup.item(renderFeatureIconAndLabel(context, vf, eClass), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
-				} else {
-					List<EStructuralFeature> categoryFeatures = categories.get(category);
-					if (categoryFeatures == null) {
-						categoryFeatures = new ArrayList<>();
-						categories.put(category, categoryFeatures);
-						categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, vf, eClass));
-					}
-					categoryFeatures.add(vf);
-				}					
-			}
+		List<EStructuralFeature> leftPanelFeatures = getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.leftPanel);
+		for (EStructuralFeature vf: leftPanelFeatures) {
+			String category = getFeatureCategory(context, feature, leftPanelFeatures);
+			if (category == null) {
+				linkGroup.item(renderFeatureIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
+			} else {
+				List<EStructuralFeature> categoryFeatures = categories.get(category);
+				if (categoryFeatures == null) {
+					categoryFeatures = new ArrayList<>();
+					categories.put(category, categoryFeatures);
+					categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, vf, leftPanelFeatures));
+				}
+				categoryFeatures.add(vf);
+			}					
 		}		
 		
 		if (categories.isEmpty()) {
@@ -2392,7 +2391,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 			LinkGroup categoryFeaturesLinkGroup = htmlFactory.linkGroup();
 			for (EStructuralFeature vf: ce.getValue()) {
-				categoryFeaturesLinkGroup.item(renderFeatureIconAndLabel(context, vf, eClass), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
+				categoryFeaturesLinkGroup.item(renderFeatureIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
 			}
 			ret.content(htmlFactory.panel(Style.DEFAULT, categoriesIconsAndLabels.get(ce.getKey()), categoryFeaturesLinkGroup, null));
 		}
@@ -2606,9 +2605,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 				Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 				List<EStructuralFeature> uncategorizedTableFeatures = new ArrayList<>();
-				EClass eClass = obj.eClass();
 				for (EStructuralFeature tf: tableFeatures) {
-					String category = getFeatureCategory(context, tf, eClass);
+					String category = getFeatureCategory(context, tf, tableFeatures);
 					if (category == null) {
 						uncategorizedTableFeatures.add(tf);
 					} else {
@@ -2616,7 +2614,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if (categoryFeatures == null) {
 							categoryFeatures = new ArrayList<>();
 							categories.put(category, categoryFeatures);
-							categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, tf, eClass));
+							categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, tf, tableFeatures));
 						}
 						categoryFeatures.add(tf);
 					}
@@ -2631,7 +2629,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				for (EStructuralFeature sf: uncategorizedTableFeatures) {					
 					// TODO - colgroups, alignments, widths.
 					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
-					Cell headerCell = headerRow.header(renderFeatureIconAndLabel(context, sf, eClass));
+					Cell headerCell = headerRow.header(renderFeatureIconAndLabel(context, sf, tableFeatures));
 					if (featureDocIcon != null) {
 						headerCell.content(featureDocIcon);
 					}
@@ -2641,7 +2639,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 					
 				for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
-					headerRow.header(categoriesIconsAndLabels.get(ce.getKey())).colspan(ce.getValue().size());
+					headerRow.header(categoriesIconsAndLabels.get(ce.getKey())).colspan(ce.getValue().size()).style().text().align().center();
 				}
 								
 				Cell actionsCell = headerRow.header(getResourceString(context, "actions")).style().text().align().center();
@@ -2654,7 +2652,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 						for (EStructuralFeature sf: ce.getValue()) {
 							Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
-							Cell featureHeader = cfhr.header(renderFeatureIconAndLabel(context, sf, eClass));
+							Cell featureHeader = cfhr.header(renderFeatureIconAndLabel(context, sf, tableFeatures));
 							if (featureDocIcon != null) {
 								featureHeader.content(featureDocIcon);
 							}
@@ -3083,21 +3081,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default List<EStructuralFeature> getEditableFeatures(C context, T obj) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
-		for (EStructuralFeature vsf: getVisibleFeatures(context, obj)) {
-			if (context.authorizeUpdate(obj, vsf.getName(), null)) {
-				String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
-				if (CoreUtil.isBlank(eav)) {
-					if (getFeatureLocation(context, vsf) == FeatureLocation.view && !(vsf instanceof EReference && ((EReference) vsf).isContainment())) {
-						ret.add(vsf);
-					}
-				} else if ("true".equals(eav)) {
+		for (EStructuralFeature vsf: getVisibleFeatures(context, obj, vf -> context.authorizeUpdate(obj, vf.getName(), null))) {
+			String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
+			if (CoreUtil.isBlank(eav)) {
+				if (getFeatureLocation(context, vsf) == FeatureLocation.view && !(vsf instanceof EReference && ((EReference) vsf).isContainment())) {
 					ret.add(vsf);
-				} else if (!"false".equals(eav) && obj instanceof CDOObject) {
-					// XPath
-					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
-					if (Boolean.TRUE.equals(jxPathContext.getValue(eav, Boolean.class))) {
-						ret.add(vsf);
-					}
+				}
+			} else if ("true".equals(eav)) {
+				ret.add(vsf);
+			} else if (!"false".equals(eav) && obj instanceof CDOObject) {
+				// XPath
+				JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+				if (Boolean.TRUE.equals(jxPathContext.getValue(eav, Boolean.class))) {
+					ret.add(vsf);
 				}
 			}
 		}
@@ -3182,7 +3178,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		EClass eClass = obj.eClass();
-		Object label = renderFeatureIconAndLabel(context, feature, eClass);
+		Object label = renderFeatureIconAndLabel(context, feature, getEditableFeatures(context, obj));
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
 			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal, true));			
@@ -3411,7 +3407,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					checkbox.attribute("checked", "true");					
 				}
 
-				fieldContainer.checkbox(renderFeatureLabel(context, feature, eClass), checkbox, true);
+				fieldContainer.checkbox(renderFeatureLabel(context, feature, getEditableFeatures(context, obj)), checkbox, true);
 				return null;
 			case radio:
 				// Radio - get values and labels from options.
@@ -3787,7 +3783,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		EClass eClass = obj.eClass();
 		if (isFormInputGroup) {
-			Object label = renderFeatureLabel(context, feature, eClass);
+			Object label = renderFeatureLabel(context, feature, getEditableFeatures(context, obj));
 			if (isRequired(context, obj, feature)) {
 				label = htmlFactory.fragment(label, "*");
 			}
@@ -3804,7 +3800,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return ret;
 		}
 				
-		Object label = renderFeatureIconAndLabel(context, feature, eClass);
+		Object label = renderFeatureIconAndLabel(context, feature, getEditableFeatures(context, obj));
 		if (isRequired(context, obj, feature)) {
 			label = htmlFactory.fragment(label, "*");
 		}
@@ -3862,8 +3858,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 		List<FormGroup<?>> ret = new ArrayList<>();
 		EClass eClass = obj.eClass();
-		for (EStructuralFeature esf: getEditableFeatures(context, obj)) {
-			String category = getFeatureCategory(context, esf, eClass);
+		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
+		for (EStructuralFeature esf: editableFeatures) {
+			String category = getFeatureCategory(context, esf, editableFeatures);
 			if (category == null) {
 				FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), validationResults.get(esf), helpTooltip);
 				if (fg != null) {
@@ -3874,29 +3871,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (categoryFeatures == null) {
 					categoryFeatures = new ArrayList<>();
 					categories.put(category, categoryFeatures);
-					categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, esf, eClass));
+					categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, esf, editableFeatures));
 				}
 				categoryFeatures.add(esf);
 			}				
 		}
 
-		HTMLFactory htmlFactory = getHTMLFactory(context);
 		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 			FieldSet categoryFieldSet = fieldContainer.fieldset();
 			categoryFieldSet.style().margin().bottom("5px");
-			String category = ce.getKey();
-			String categoryIcon = getRenderAnnotation(context, eClass, "category."+category+".icon");
-			String categoryLabel = getRenderAnnotation(context, eClass, "category."+category+".label");
-			if (categoryLabel == null) {
-				categoryLabel = category;
-			}
-			if (categoryIcon == null) {
-				categoryFieldSet.legend(categoryLabel);
-			} else if (categoryIcon.indexOf("/") == -1) {
-				categoryFieldSet.legend(htmlFactory.span().addClass(categoryIcon), " ", categoryLabel);
-			} else {
-				categoryFieldSet.legend(htmlFactory.tag(TagName.img).attribute("src", categoryIcon), " ", categoryLabel);
-			}
+			categoryFieldSet.legend(categoriesIconsAndLabels.get(ce.getKey()));
 			
 			for (EStructuralFeature cesf: ce.getValue()) {
 				FormGroup<?> fg = renderFeatureFormGroup(context, obj, cesf, categoryFieldSet, docModals.get(cesf), validationResults.get(cesf), helpTooltip);

@@ -200,15 +200,15 @@ public class RenderUtil {
 	 * @param eClass
 	 * @return
 	 */
-	public static String getAutoCategory(EStructuralFeature feature, EClass eClass) {
-		if (!feature.getEContainingClass().isSuperTypeOf(eClass)) {
-			throw new IllegalArgumentException("Feature containing class "+feature.getEContainingClass()+" is not a super class of "+eClass);
+	public static String getAutoCategory(EStructuralFeature feature, Collection<EStructuralFeature> features) {
+		if (!features.contains(feature)) {
+			throw new IllegalArgumentException("Features do not contain the feature");
 		}
 		Map<String, Set<EStructuralFeature>> categories = new HashMap<>();
-		for (EStructuralFeature esf: eClass.getEAllStructuralFeatures()) {
+		for (EStructuralFeature esf: features) {
 			String[] esfn = StringUtils.splitByCharacterTypeCamelCase(esf.getName());
-			if (esfn.length > 1) {
-				String category = StringUtils.join(esfn, null, 0, esfn.length-1);
+			for (int i = 1; i < esfn.length; ++i) {
+				String category = StringUtils.join(esfn, null, 0, i);
 				Set<EStructuralFeature> cf = categories.get(category);
 				if (cf == null) {
 					cf = new HashSet<>();
