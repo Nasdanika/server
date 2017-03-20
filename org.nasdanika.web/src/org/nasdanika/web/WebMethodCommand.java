@@ -228,7 +228,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 	 */
 	protected Object processBodyParameter(C context, Class<?> parameterType, Annotation[] parameterAnnotations) throws Exception {
 		// Explicit JSON conversion
-		if (JSON_CONTENT_TYPE.equals(context.getResponse().getContentType())) {
+		if (JSON_CONTENT_TYPE.equals(context.getRequest().getContentType())) {
 			if (parameterType == JSONArray.class) {
 				return new JSONArray(new JSONTokener(context.getRequest().getReader()));
 			}
