@@ -144,7 +144,26 @@ public class PlantUmlTextGenerator {
 		}
 		
 	};
+		
+	private DependencyTracer<EClassifier> bothDependencyTracer = new DependencyTracer<EClassifier>() {
 	
+		@Override
+		protected Iterable<EClassifier> getDependencies(EClassifier obj) {
+			Collection<EClassifier> ret = new HashSet<>();
+			if (obj instanceof EClass) {
+				// In
+				ret.addAll(getSubTypes((EClass) obj));
+				ret.addAll(getReferrers((EClass) obj));
+				// Out
+				ret.addAll(((EClass) obj).getESuperTypes());
+				for (EReference ref: ((EClass) obj).getEReferences()) {
+					ret.add(ref.getEReferenceType());
+				}
+			}
+			return ret;
+		}
+		
+	};
 	
 	
 	/**
@@ -152,7 +171,6 @@ public class PlantUmlTextGenerator {
 	 * @param coreClassifiers
 	 * @throws IOException 
 	 */
-	@SuppressWarnings("unchecked")
 	public void appendWithRelationships(
 			Iterable<EClassifier> coreClassifiers,
 			RelationshipDirection direction,
@@ -168,7 +186,7 @@ public class PlantUmlTextGenerator {
 		
 		switch (direction) {
 		case both:
-			relatedSet = inDependencyTracer.trace(coreSet, depth, OUT_DEPENDENCY_TRACER);
+			relatedSet = bothDependencyTracer.trace(coreSet, depth);
 			break;
 		case in:
 			relatedSet = inDependencyTracer.trace(coreSet, depth);

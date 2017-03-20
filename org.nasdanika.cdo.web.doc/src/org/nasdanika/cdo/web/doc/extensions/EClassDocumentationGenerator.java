@@ -25,7 +25,6 @@ import org.eclipse.emf.ecore.EReference;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.EClassifierKey;
-import org.nasdanika.cdo.web.doc.story.DiagramSpecGenerator;
 import org.nasdanika.cdo.web.html.EOperationFormGenerator;
 import org.nasdanika.cdo.web.html.FormGeneratorBase;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;

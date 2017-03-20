@@ -1,6 +1,8 @@
 package org.nasdanika.cdo.web.doc;
 
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public abstract class DependencyTracer<T> {
@@ -12,48 +14,34 @@ public abstract class DependencyTracer<T> {
 	 * @param chain Combine results with the chain.
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
-	public Set<T> trace(Set<T> from, int depth, DependencyTracer<T>... chain) {
-		Set<T> ret = createAccumulator();
+	public Set<T> trace(Set<T> from, int depth) {
+		Map<T, Integer> distanceTracker = createDepthTracker();
 		for (T f: from) {
-			Set<T> acc = createAccumulator();
-			trace(f, depth, chain, acc);
-			ret.addAll(acc);
+			trace(f, depth, distanceTracker);
 		}
-		for (DependencyTracer<T> ch: chain) {
-			if (ch != null) {
-				ret.addAll(ch.trace(from, depth));
-			}
-		}
-		return ret;
+		return distanceTracker.keySet();
 		
 	}
 	
-	@SuppressWarnings("unchecked")
-	public Set<T> trace(T from, int depth, DependencyTracer<T>... chain) {
-		Set<T> ret = createAccumulator();
-		trace(from, depth, chain, ret);
-		for (DependencyTracer<T> ch: chain) {
-			if (ch != null) {
-				ret.addAll(ch.trace(from, depth));
-			}
-		}
-		return ret;
+	public Set<T> trace(T from, int depth) {
+		return trace(Collections.singleton(from), depth);
 	}
 	
 	/**
-	 * Creates accumulator set
-	 * @return HashSet, subclasses may override to return, for example, TreeSet.
+	 * Creates depth tracker.
+	 * @return HashMap, subclasses may override to return, for example, TreeMap.
 	 */
-	protected Set<T> createAccumulator() {
-		return new HashSet<T>();
+	protected Map<T,Integer> createDepthTracker() {
+		return new HashMap<T,Integer>();
 	}
 	
-	private void trace(T from, int depth, DependencyTracer<T>[] chain, Set<T> accumulator) {
-		if (accumulator.add(from)) {
+	private void trace(T from, int depth, Map<T, Integer> depthTracker) {
+		Integer objDepth = depthTracker.get(from);
+		if (objDepth == null || objDepth < depth) {
+			depthTracker.put(from, depth);
 			if (depth != 0) {
 				for (T dep: getDependencies(from)) {
-					trace(dep, depth == -1 ? depth : depth - 1, chain, accumulator);
+					trace(dep, depth == -1 ? depth : depth - 1, depthTracker);
 				}
 			}
 		}

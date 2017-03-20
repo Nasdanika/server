@@ -10,6 +10,7 @@ import java.util.Set;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.web.doc.DependencyTracer;
+import org.nasdanika.cdo.web.doc.EObjectBothDependencyTracer;
 import org.nasdanika.cdo.web.doc.EObjectInDependencyTracer;
 import org.nasdanika.cdo.web.doc.EObjectOutDependencyTracer;
 import org.nasdanika.story.Actor;
@@ -45,7 +46,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 		return obj instanceof Protagonist || obj instanceof Story;
 	}
 	
-	private static DependencyTracer<EObject> IN_DEPENDENCY_TRACER = new EObjectInDependencyTracer(); {
+	private static DependencyTracer<EObject> IN_DEPENDENCY_TRACER = new EObjectInDependencyTracer() {
 		
 //		protected void onDependency(EObject source, EObject target, org.eclipse.emf.ecore.EReference ref) {
 //			System.out.print("[IN] "+ref.getEContainingClass().getName()+"."+ref.getName()+" ");
@@ -85,8 +86,10 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 //		}
 		
 	};
+	
+	private static DependencyTracer<EObject> BOTH_DEPENDENCY_TRACER = new EObjectBothDependencyTracer();
+	
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void diagramSpec(EObject obj, int depth, Direction direction, StringBuilder specBuilder) {
 		Set<EObject> diagramElements = new HashSet<EObject>();
@@ -104,7 +107,7 @@ class UseCaseDiagramSpecGenerator implements DiagramSpecGenerator {
 		
 		switch (direction) {
 		case both:
-			diagramElements = IN_DEPENDENCY_TRACER.trace(diagramElements, depth, OUT_DEPENDENCY_TRACER);
+			diagramElements = BOTH_DEPENDENCY_TRACER.trace(diagramElements, depth);
 			break;
 		case in:
 			diagramElements = IN_DEPENDENCY_TRACER.trace(diagramElements, depth);

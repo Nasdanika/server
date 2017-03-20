@@ -75,6 +75,30 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 		
 	}; 		
 	
+	private static DependencyTracer<EObject> BOTH_DEPENDENCY_TRACER = new DependencyTracer<EObject>() {
+
+		@Override
+		protected Iterable<EObject> getDependencies(EObject obj) {			
+			Set<EObject> ret = new HashSet<>();
+			TreeIterator<Notifier> tit = obj.eResource().getResourceSet().getAllContents();
+			while (tit.hasNext()) {
+				Notifier next = tit.next();
+				if (next instanceof Scenario) {
+					// In
+					if (((Scenario) next).getOutcomeState() == obj) {
+						ret.addAll(((Scenario) next).getContextStates());
+					}				
+					// Out
+					if (((Scenario) next).getContextStates().contains(obj) && ((Scenario) next).getOutcomeState() != null) {
+						ret.add(((Scenario) next).getOutcomeState());
+					}
+				}
+			}
+			return ret;
+		}
+		
+	}; 		
+	
 	private static boolean isDiagramElement(EObject obj) {
 		return obj instanceof State || obj instanceof Scenario;
 	}	
@@ -119,7 +143,7 @@ class StateTransitionDiagramSpecGenerator implements DiagramSpecGenerator {
 		
 		switch (direction) {
 		case both:
-			diagramElements = IN_DEPENDENCY_TRACER.trace(diagramElements, depth, OUT_DEPENDENCY_TRACER);
+			diagramElements = BOTH_DEPENDENCY_TRACER.trace(diagramElements, depth);
 			break;
 		case in:
 			diagramElements = IN_DEPENDENCY_TRACER.trace(diagramElements, depth);

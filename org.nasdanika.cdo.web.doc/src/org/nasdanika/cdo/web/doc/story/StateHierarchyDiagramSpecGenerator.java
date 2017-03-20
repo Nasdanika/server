@@ -64,7 +64,30 @@ class StateHierarchyDiagramSpecGenerator implements DiagramSpecGenerator {
 			return obj instanceof State ? new ArrayList<EObject>(((State) obj).getSuperStates()) : Collections.emptySet();
 		}
 		
+	};
+		
+	private static DependencyTracer<EObject> BOTH_DEPENDENCY_TRACER = new DependencyTracer<EObject>() {
+
+		@Override
+		protected Iterable<EObject> getDependencies(EObject obj) {			
+			Set<EObject> ret = new HashSet<>();
+			// In
+			TreeIterator<Notifier> tit = obj.eResource().getResourceSet().getAllContents();
+			while (tit.hasNext()) {
+				Notifier next = tit.next();
+				if (next instanceof State && ((State) next).getSuperStates().contains(obj)) {
+					ret.add((State) next);
+				}
+			}
+			// Out
+			if (obj instanceof State) {
+				ret.addAll(((State) obj).getSuperStates());
+			}
+			return ret;
+		}
+		
 	}; 		
+	
 	
 	private static boolean isDiagramElement(EObject obj) {
 		return obj instanceof State;
@@ -80,7 +103,6 @@ class StateHierarchyDiagramSpecGenerator implements DiagramSpecGenerator {
 		List<Scenario> outboundScenarios = new ArrayList<>();
 	}		
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void diagramSpec(EObject obj, int depth, Direction direction, StringBuilder specBuilder) {
 		Set<EObject> diagramElements = new HashSet<EObject>();
@@ -98,7 +120,7 @@ class StateHierarchyDiagramSpecGenerator implements DiagramSpecGenerator {
 		
 		switch (direction) {
 		case both:
-			diagramElements = IN_DEPENDENCY_TRACER.trace(diagramElements, depth, OUT_DEPENDENCY_TRACER);
+			diagramElements = BOTH_DEPENDENCY_TRACER.trace(diagramElements, depth);
 			break;
 		case in:
 			diagramElements = IN_DEPENDENCY_TRACER.trace(diagramElements, depth);
