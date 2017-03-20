@@ -1031,7 +1031,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return null;
 		}
 		
-		return getRenderAnnotation(context, feature.getEContainingClass(), "category."+category+".icon");
+		String iconAnnotation = getRenderAnnotation(context, feature.getEContainingClass(), "category."+category+".icon");
+		if (iconAnnotation == null) {
+			return null;
+		}
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		if (iconAnnotation.indexOf("/") == -1) {
+			return htmlFactory.span().addClass(iconAnnotation);
+		}
+		return htmlFactory.tag(TagName.img).attribute("src", iconAnnotation);
 	}
 	
 	default Object renderFeatureCategoryIconAndLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
@@ -2002,7 +2010,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
-				fRow.cell(renderFeatureView(context, obj, vf, false, null, null));
+				boolean showActionButtons = false;
+				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
+					showActionButtons = true;
+				}
+				fRow.cell(renderFeatureView(context, obj, vf, showActionButtons, null, null));
 			} else {
 				List<EStructuralFeature> categoryFeatures = categories.get(category);
 				if (categoryFeatures == null) {
@@ -2031,7 +2043,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
-				fRow.cell(renderFeatureView(context, obj, vf, false, null, null));
+				boolean showActionButtons = false;
+				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
+					showActionButtons = true;
+				}
+				fRow.cell(renderFeatureView(context, obj, vf, showActionButtons, null, null));
 			}
 			ret.content(htmlFactory.panel(Style.DEFAULT, categoriesIconsAndLabels.get(ce.getKey()), categoryFeaturesTable, null));
 		}
@@ -2766,12 +2782,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		} else {
 			ret.content(renderFeatureValue(context, feature, featureValue));
 			if (feature instanceof EReference) {
-				if (((EReference) feature).isContainment()) {
-					ret.content(renderFeatureAddButton(context, obj, feature));
-				}
 				if (showActionButtons) {
-					ret.content(renderFeatureValueEditButton(context, obj, feature, -1, featureValue));
-					ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
+					if (((EReference) feature).isContainment()) {
+						ret.content(renderFeatureAddButton(context, obj, feature));
+						if (featureValue != null) {
+							ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
+						}
+					} else {
+						ret.content(renderFeatureValueEditButton(context, obj, feature, -1, featureValue));
+						ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
+					}
 				}
 			}						
 		}
@@ -3167,8 +3187,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (controlType == null) {
 			if (feature.isMany()) {
 				controlType = TagName.input;
-			} else if (feature instanceof EAttribute) {				
-				controlType = feature.getEType() instanceof EEnum ? TagName.select : TagName.input;
+			} else if (feature instanceof EAttribute) {		
+				Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+				controlType = featureTypeInstanceClass.isEnum() ? TagName.select : TagName.input;
 			} else if (((EReference) feature).isContainment()) {				
 				// Link and create button.
 				return htmlFactory.well(renderFeatureValue(context, feature, fv), renderFeatureAddButton(context, obj, feature)).small();
@@ -3177,7 +3198,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		EClass eClass = obj.eClass();
 		Object label = renderFeatureIconAndLabel(context, feature, getEditableFeatures(context, obj));
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
@@ -3781,7 +3801,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		EClass eClass = obj.eClass();
 		if (isFormInputGroup) {
 			Object label = renderFeatureLabel(context, feature, getEditableFeatures(context, obj));
 			if (isRequired(context, obj, feature)) {
@@ -3857,7 +3876,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 		List<FormGroup<?>> ret = new ArrayList<>();
-		EClass eClass = obj.eClass();
 		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
 		for (EStructuralFeature esf: editableFeatures) {
 			String category = getFeatureCategory(context, esf, editableFeatures);
