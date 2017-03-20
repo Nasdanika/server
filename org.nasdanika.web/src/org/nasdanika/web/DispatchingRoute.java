@@ -29,6 +29,7 @@ import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.web.RouteMethod.Lock;
 import org.nasdanika.web.routes.ObjectRoute;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -469,6 +470,7 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 		private String produces;
 		private int priority;
 		private String comment;
+		private Lock lock;
 
 		private Object htmlRequestModel = "";
 		private Object htmlResponseModel = "";
@@ -485,6 +487,7 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			produces = rmc.getProduces();
 			priority = rmc.getMethod().getAnnotation(RouteMethod.class).priority();
 			comment = rmc.getComment();
+			lock = rmc.getLock();
 			
 			Class<?>[] pt = rmc.getMethod().getParameterTypes();
 			Annotation[][] pa = rmc.getMethod().getParameterAnnotations();
@@ -542,6 +545,18 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			row.cell(htmlRequestModel).bootstrap().text().center();
 			row.cell(htmlResponseModel).bootstrap().text().center();
 			row.cell(priority).bootstrap().text().center();
+			if (lock == null) {
+				row.cell();
+			} else {
+				Tag lockInfo = TagName.ul.create();
+				lockInfo.content(TagName.li.create("Type: "+lock.type()));
+				lockInfo.content(TagName.li.create("Timeout: "+lock.timeout()));
+				lockInfo.content(TagName.li.create("Time unit: "+lock.timeUnit()));
+				if (!CoreUtil.isBlank(lock.path())) {
+					lockInfo.content(TagName.li.create("Path: "+lock.path()));
+				}
+				row.cell(lockInfo);
+			}
 			row.cell(comment);
 		}
 		
@@ -571,7 +586,19 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 			tableBuilder.append(produces).append(" | ");
 			tableBuilder.append(markdownRequestModel).append(" | ");
 			tableBuilder.append(markdownResponseModel).append(" | ");
-			tableBuilder.append(priority).append(" | ");
+			tableBuilder.append(priority).append(" | ");	
+			StringBuilder lockInfo = new StringBuilder();
+			if (lock != null) {
+				lockInfo
+					.append("type = " + lock.type())
+					.append(", timeout = " + lock.timeout())
+					.append(", time unit = " + lock.timeUnit());
+				
+				if (!CoreUtil.isBlank(lock.path())) {
+					lockInfo.append(", path = " + lock.path());
+				}
+			}
+			tableBuilder.append(lockInfo).append(" | ");
 			tableBuilder.append(comment).append(" | ");
 			
 			tableBuilder.append(System.lineSeparator());
@@ -646,14 +673,15 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 	protected Table generateApiHtmlTable() {
 		Table apiTable = HTMLFactory.INSTANCE.table().bordered();
 		Row hRow = apiTable.header().row().style(Style.PRIMARY);
-		hRow.header("Path");
-		hRow.header("Pattern");
+		hRow.header("Path").rowspan(2);
+		hRow.header("Pattern").rowspan(2);
 		hRow.header("Method(s)").bootstrap().text().center();
 		hRow.header("Consumes").bootstrap().text().center();
 		hRow.header("Produces").bootstrap().text().center();
 		hRow.header("Request").bootstrap().text().center();
 		hRow.header("Response").bootstrap().text().center();
 		hRow.header("Priority").bootstrap().text().center();
+		hRow.header("Lock").bootstrap().text().center();		
 		hRow.header("Comment");
 		
 		List<ApiInfo> apiInfos = new ArrayList<>();
@@ -735,9 +763,9 @@ public class DispatchingRoute implements Route, DocumentationProvider {
 
 	protected String generateApiMarkdownTable() {
 		StringBuilder tableBuilder = new StringBuilder(System.lineSeparator());
-		
-		tableBuilder.append("Path | Pattern     | Method(s) | Consumes | Produces | Request | Response | Priority | Comment").append(System.lineSeparator()); 
-		tableBuilder.append("-----|-------------|:---------:|:--------:|:--------:|:-------:|:--------:|:--------:|--------").append(System.lineSeparator());
+						
+		tableBuilder.append("Path | Pattern     | Method(s) | Consumes | Produces | Request | Response | Priority | Lock | Comment").append(System.lineSeparator()); 
+		tableBuilder.append("-----|-------------|:---------:|:--------:|:--------:|:-------:|:--------:|:--------:|------|--------").append(System.lineSeparator());
 
 		List<ApiInfo> apiInfos = new ArrayList<>();
 		for (RouteMethodEntry rme: routeMethodEntries) {
