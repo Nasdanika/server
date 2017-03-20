@@ -982,6 +982,78 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return ret;
 	}
 	
+	
+	/**
+	 * Detect common prefix in feature names and uses it as a category. E.g. ``miscKey`` and miscValue`` will 
+	 * get an auto-category ``Misc``. Feature names are tokenized by camel case. Category contains at least two
+	 * features. If a feature belongs to two categories, e.g. ``miscFeatureA`` would belong to ``misc` and to ``miscFeature`` categories, 
+	 * the category with larger number of features in it wins. If the number of features in two categories is equal, then the longest category wins.
+	 * @param feature
+	 * @param eClass
+	 * @return
+	 */
+	default String getAutoCategory(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
+		if (!features.contains(feature)) {
+			throw new IllegalArgumentException("Features do not contain the feature");
+		}
+		Map<String, Set<EStructuralFeature>> categories = new HashMap<>();
+		for (EStructuralFeature esf: features) {
+			String categoryAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
+			if (categoryAnnotation == null) {
+				String[] esfn = StringUtils.splitByCharacterTypeCamelCase(esf.getName());
+				for (int i = 1; i < esfn.length; ++i) {
+					String category = StringUtils.join(esfn, null, 0, i);
+					Set<EStructuralFeature> cf = categories.get(category);
+					if (cf == null) {
+						cf = new HashSet<>();
+						categories.put(category, cf);
+					}
+					cf.add(esf);
+				}
+			} else {
+				Set<EStructuralFeature> cf = categories.get(categoryAnnotation);
+				if (cf == null) {
+					cf = new HashSet<>();
+					categories.put(categoryAnnotation, cf);
+				}
+				cf.add(esf);				
+			}
+		}
+		
+		// Remove irrelevant
+		Iterator<Entry<String, Set<EStructuralFeature>>> eit = categories.entrySet().iterator();
+		while (eit.hasNext()) {
+			Entry<String, Set<EStructuralFeature>> entry = eit.next();
+			if (entry.getValue().size()==1 || !entry.getValue().contains(feature)) {
+				eit.remove();
+			}
+		}
+		
+		if (categories.isEmpty()) {
+			return null;
+		}
+		
+		if (categories.size() == 1) {
+			return categories.keySet().iterator().next();
+		}
+		
+		// Sort by size and then by length - largest/longest first.		
+		List<String> cList = new ArrayList<>(categories.keySet());
+		Collections.sort(cList, (c1, c2) -> {
+			Set<EStructuralFeature> fs1 = categories.get(c1);
+			Set<EStructuralFeature> fs2 = categories.get(c2);
+			
+			int cmp = fs2.size() - fs1.size();
+			if (cmp != 0) {
+				return cmp;
+			}
+			return c2.length() - c1.length();
+		});
+		
+		return cList.get(0);
+	}
+	
+	
 	/**
 	 * Renders feature label. Returns alue of ``model-element-label`` render annotation if it is present.
 	 * If it is not present, this implementation return element name suffix after the auto-category (if any) passed through nameToLabel() conversion.
@@ -996,14 +1068,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return label;
 		}		
 		String featureName = feature.getName();
-		String autoCategory = RenderUtil.getAutoCategory(feature, features);
+		String autoCategory = getAutoCategory(context, feature, features);
 		return nameToLabel(autoCategory == null ? featureName : featureName.substring(autoCategory.length()));		
 	}
 	
 	default Object renderFeatureCategoryLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
 		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = RenderUtil.getAutoCategory(feature, features);
+			category = getAutoCategory(context, feature, features);
 		}
 		if (category == null) {
 			return null;
@@ -1025,7 +1097,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default Object renderFeatureCategoryIcon(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
 		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = RenderUtil.getAutoCategory(feature, features);
+			category = getAutoCategory(context, feature, features);
 		}
 		if (category == null) {
 			return null;
@@ -1085,7 +1157,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default String getFeatureCategory(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
 		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = RenderUtil.getAutoCategory(feature, features);
+			category = getAutoCategory(context, feature, features);
 		}
 		return category;
 	}
