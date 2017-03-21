@@ -996,9 +996,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (!features.contains(feature)) {
 			throw new IllegalArgumentException("Features do not contain the feature");
 		}
+		if (getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY) != null) {
+			return null;
+		}
 		Map<String, Set<EStructuralFeature>> categories = new HashMap<>();
 		for (EStructuralFeature esf: features) {
-			String categoryAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
+			String categoryAnnotation = getRenderAnnotation(context, esf, RenderAnnotation.CATEGORY);
 			if (categoryAnnotation == null) {
 				String[] esfn = StringUtils.splitByCharacterTypeCamelCase(esf.getName());
 				for (int i = 1; i < esfn.length; ++i) {
