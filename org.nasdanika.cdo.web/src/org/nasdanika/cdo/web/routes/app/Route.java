@@ -412,7 +412,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
 			Form editForm = renderFeatureEditForm(context, target, tsf, diagnosticConsumer.getFeatureValidationResults().get(tsf), horizontalForm)
 		//		.novalidate()
-				.action(feature)
+				.action("select.html")				
 				.method(Method.post)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)

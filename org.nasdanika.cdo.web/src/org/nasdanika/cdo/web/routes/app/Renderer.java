@@ -1055,7 +1055,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	
 	/**
-	 * Renders feature label. Returns alue of ``model-element-label`` render annotation if it is present.
+	 * Renders feature label. Returns value of ``model-element-label`` render annotation if it is present.
 	 * If it is not present, this implementation return element name suffix after the auto-category (if any) passed through nameToLabel() conversion.
 	 * @param context
 	 * @param feature
@@ -3270,7 +3270,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		Object label = renderFeatureIconAndLabel(context, feature, getEditableFeatures(context, obj));
+		Object label = renderFeatureIconAndLabel(context, feature, getVisibleFeatures(context, obj, vf -> context.authorize(obj, StandardAction.update, feature.getName(), null)));
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
 			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal, true));			
