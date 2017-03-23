@@ -10,6 +10,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -129,6 +130,8 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 	
+	public static final String ORIGINAL_FEATURE_VALUE_NAME_PREFIX = ".original.";
+
 	enum RenderAnnotation {
 		
 		/**
@@ -414,6 +417,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	String NAME_KEY = "name";
 
 	String REFERRER_KEY = ".referrer";
+	
+	String OBJECT_VERSION_KEY = ".object-version";
 
 	String INDEX_HTML = "index.html";
 	
@@ -3431,8 +3436,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (feature.isMany()) {
 					// Render a checkbox per choice.
 					Set<String> valuesToSelect = new HashSet<>();
-					for (Object fev: ((Collection<Object>) fv)) {
-						valuesToSelect.add(getFormControlValue(context, obj, feature, fev));
+					String[] requestValues = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameterValues(feature.getName()) : null;
+					if (requestValues == null) {
+						for (Object fev: ((Collection<Object>) fv)) {
+							valuesToSelect.add(getFormControlValue(context, obj, feature, fev));
+						}
+					} else {
+						valuesToSelect.addAll(Arrays.asList(requestValues));
 					}
 					if (isChoiceTree) {
 						if (roots.isEmpty()) {
@@ -3506,7 +3516,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				return null;
 			case radio:
 				// Radio - get values and labels from options.
-				String valueToSelect = getFormControlValue(context, obj, feature, fv);
+				String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(feature.getName()) : null;				
+				String valueToSelect = requestValue == null ? getFormControlValue(context, obj, feature, fv) : requestValue;
 				if (isChoiceTree) {
 					if (roots.isEmpty()) {
 						if (isRequired(context, obj, feature)) {
@@ -3569,10 +3580,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				return null;
 			default:
+				requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(feature.getName()) : null;
 				return htmlFactory.input(inputType)
 					.disabled(disabled)
 					.name(feature.getName())
-					.value(StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, fv)))
+					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, fv)) : requestValue)
 					.placeholder(textLabel)
 					.required(isRequired(context, obj, feature));								
 			}
@@ -3584,7 +3596,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (feature.getLowerBound() == 0) {
 				select.option("", "", false, false);
 			}
-			String valueToSelect = getFormControlValue(context, obj, feature, fv);				
+			String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(feature.getName()) : null;
+			String valueToSelect = requestValue == null ? getFormControlValue(context, obj, feature, fv) : requestValue;				
 			if (disabled) {
 				fieldContainer.content(htmlFactory.input(InputType.hidden).name(feature.getName()).value(valueToSelect));
 				select.disabled();
@@ -3953,6 +3966,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		List<FormGroup<?>> ret = new ArrayList<>();
 		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
 		for (EStructuralFeature esf: editableFeatures) {
+			// Original value
+			String originalName = ORIGINAL_FEATURE_VALUE_NAME_PREFIX+esf.getName();
+			String originalValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, esf, obj.eGet(esf)));
+			fieldContainer.content(InputType.hidden.create().name(originalName).value(originalValue));
+			
 			String category = getFeatureCategory(context, esf, editableFeatures);
 			if (category == null) {
 				FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), validationResults.get(esf), helpTooltip);
@@ -4027,6 +4045,44 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 
 		}
 		return noErrors;
+	}
+
+	/** 
+	 * Compares feature values from the object with the original values stored in hidden fields. 
+	 * Creates error diagnostics for concurrently modified features.
+	 * @return true if there are no differences in values.
+	 */
+	default boolean compareEditableFeatures(C context, T obj, Consumer<Diagnostic> diagnosticConsumer) throws Exception {		
+		boolean noDiscrepancies = true;
+		if (context instanceof HttpServletRequestContext) {
+			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
+			List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
+			for (EStructuralFeature feature: editableFeatures) {
+				if (feature.isMany()) {
+					String[] originalValues = request.getParameterValues(ORIGINAL_FEATURE_VALUE_NAME_PREFIX+feature.getName());
+					if (originalValues != null) {
+						@SuppressWarnings("unchecked")
+						Collection<Object> fv = (Collection<Object>) obj.eGet(feature);
+						if (originalValues != null) {
+							// TODO compare
+						}
+					}
+				} else {
+					String originalValue = request.getParameter(ORIGINAL_FEATURE_VALUE_NAME_PREFIX+feature.getName());
+					if (originalValue != null) {
+						String currentValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, obj.eGet(feature)));
+						if (!originalValue.equals(currentValue)) {
+							Map<String, Object> env = new HashMap<>();
+							env.put("value", renderFeatureValue(context, feature, obj.eGet(feature)));
+							String msg = getHTMLFactory(context).interpolate(getResourceString(context, "concurrentModification.feature"), env);
+							diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, msg, new Object[] { obj, feature }));
+							noDiscrepancies = false;
+						}
+					}
+				}
+			}
+		}		
+		return noDiscrepancies;
 	}
 	
 	/**

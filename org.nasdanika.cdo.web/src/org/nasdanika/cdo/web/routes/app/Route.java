@@ -11,6 +11,7 @@ import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
@@ -693,7 +694,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@ContextParameter C context,
 			@TargetParameter T target,
 			@HeaderParameter("referer") String referrerHeader,			
-			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
+			@QueryParameter(REFERRER_KEY) String referrerParameter,
+			@QueryParameter(OBJECT_VERSION_KEY) String objectVersionParameter) throws Exception {
 		
 		EClass targetEClass = target.eClass();
 		HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -706,8 +708,19 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			
 		};
 		
-		if (context.getMethod() == RequestMethod.POST) {			
-			if (setEditableFeatures(context, target, diagnosticConsumer)) {
+		if (context.getMethod() == RequestMethod.POST) {
+			boolean versionMatch = true;
+			if (target instanceof CDOObject) {
+				CDORevision revision = ((CDOObject) target).cdoRevision();
+				if (revision != null && objectVersionParameter != null && revision.getVersion() != Integer.parseInt(objectVersionParameter)) {
+					versionMatch = compareEditableFeatures(context, target, diagnosticConsumer);
+					if (!versionMatch) {
+						diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, getResourceString(context, "concurrentModification.object"), new Object[] { target }));
+					}
+				}
+			}
+			
+			if (versionMatch && setEditableFeatures(context, target, diagnosticConsumer)) {
 				// Success - redirect to referrer parameter or referer header or the view.
 				if (context instanceof HttpServletRequestContext) {
 					String referrer = referrerParameter;
@@ -773,7 +786,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 		if (originalReferrer != null) {
 			editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
-		}		
+		}	
+
+		// Optimistic locking
+		if (target instanceof CDOObject) {
+			CDORevision revision = ((CDOObject) target).cdoRevision();
+			if (revision != null) {
+				editForm.content(htmlFactory.input(InputType.hidden).name(OBJECT_VERSION_KEY).value(revision.getVersion()));
+			}
+		}
 		
 		Tag buttonBar = htmlFactory.div().style().text().align().right();
 		buttonBar.content(renderSaveButton(context, target).style().margin().right("5px"));
