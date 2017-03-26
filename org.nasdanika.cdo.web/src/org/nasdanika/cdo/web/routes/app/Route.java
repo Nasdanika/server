@@ -574,7 +574,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						
 						content.content(editForm);										
 						
-						return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));
+						return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));
 					}
 				}							
 			}
@@ -639,7 +639,11 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		// view 
 		content.content(renderFeatureView(context, target, sf, true, null, null));
 		
-		return renderPage(context, target, title, content, env -> env.put("context-feature", sf));
+		Consumer<Map<String, Object>> environmentCustomizer = env -> {
+			env.put("context-feature", sf);
+			env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal));			
+		};
+		return renderPage(context, target, title, content, environmentCustomizer);
 	}	
 	
 	@RouteMethod(

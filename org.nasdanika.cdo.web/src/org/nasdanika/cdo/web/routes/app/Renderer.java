@@ -1,8 +1,6 @@
 package org.nasdanika.cdo.web.routes.app;
 
-import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -159,15 +157,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * {@link EStructuralFeature} annotation defining whether an editable feature is disabled, i.e. it shall be displayed in the edit form, but the edit control shall be disabled.
 		 * The value of this annotation can be one of the following:
 		 * 
-		 *   * ``true`` boolean literal or empty string - the feature is visible (default).
-		 *   * ``false`` boolean literal - the feature is hidden.
+		 *   * ``false`` boolean literal or empty string - the feature is enabled (default).
+		 *   * ``true`` boolean literal - the feature is disabled.
 		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is disabled.
 		 */
 		DISABLED("disabled"),
 		
 		/**
 		 * On EClass this annotation is a pattern which is interpolated to generate object label.
-		 * On features and operations this annotation defines feature/operation label, a.k.a. "Display name". 
 		 */
 		LABEL("label"),
 		
@@ -277,30 +274,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		/**
 		 * {@link EAttribute} annotation for select, radio and checkbox on non-boolean types. 
 		 * 
-		 * Choices are defined each on a new line as a value - label pair <value>=<label>.  
-		 * If there is no equal sign, then the line value is used for both value and label.   
+		 * YAML map of values to labels or list if values and labels are the same.   
 		 */
 		CHOICES("choices"),
-		
 		/**
-		 * {@link EReference} annotation. 
-		 * If value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. 
-		 * If value is ``reference-nodes``, then containing references are shown as nodes in the tree. 
-		 */
-		CHOICE_TREE("choice-tree"),
-		
-		/**
-		 * {@link EStructuralFeature} annotation. Set it to true to force rendering of the form control in a {@link FormInputGroup} instead of {@link FormGroup} or
-		 * to false to force the opposite. If this annotation is not present then inputs with either icon (rendered on the left) or help icon (rendered on the right) 
-		 * are rendered as form input groups.  
+		 * {@link EStructuralFeature} annotation. 
 		 */
 		FORM_INPUT_GROUP("form-input-group"),
-		
-		/**
-		 * {@link EClass} annotation. It lists references to render as children of the class object in the tree representation. Feature names shall be space-separated.
-		 * In the absense of this annotation containing many features are considered as tree features. 
-		 */
-		TREE_REFERENCES("tree-references"),
 		
 		/**
 		 * By default EClass edit forms are rendered as horizontal forms by the {@link Route}. Set this annotation to ``false`` to change the default rendering.
@@ -308,14 +288,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		HORIZONTAL_FORM("horizontal-form"),
 		
 		/**
-		  * {@link EStructuralFeature} annotation. If it is set to false, then feature elements
-		  * appear directly under the container in the tree. 
-		  * Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 		 
-		  */
-		TREE_NODE("tree-node"),		
-		
-		/**
-		 * {@link EStructuralFeature} annotation specifying feature value content type. If feature control is ``textarea`` and content type is ``text/html`` then 
+		 * {@link EAttribute} annotation specifying feature value content type. If attribute control is ``textarea`` and content type is ``text/html`` then 
 		 * the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor. 
 		 */
 		CONTENT_TYPE("content-type"),
@@ -338,7 +311,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * {@link EStructuralFeature} or {@link EClass} annotation - XPath expression to use for sorting of items in tables and lists.  
 		 */
 		SORT("sort"),
-		
+
+//---		
 		/**
 		 * {@link EReference} annotation indicating that the table listing reference elements shall display elements type in a type column. 
 		 * The value of this annotation is a pattern which is interpolated with the following tokens:
@@ -401,8 +375,29 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * 
 		 * In the absence of feature value (null or blank string for strings) placeholder values are displayed in the view in a small {@link Well}.
 		 */
-		PLACEHOLDER("placeholder");				
+		PLACEHOLDER("placeholder"),				
+
+//===		
+		/**
+		 * {@link EReference} annotation. 
+		 * If value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. 
+		 * If value is ``reference-nodes``, then containing references are shown as nodes in the tree. 
+		 */
+		CHOICE_TREE("choice-tree"), 
+				
+		/**
+		 * {@link EClass} annotation. It lists references to render as children of the class object in the tree representation. Feature names shall be space-separated.
+		 * In the absense of this annotation containing many features are considered as tree features. 
+		 */
+		TREE_REFERENCES("tree-references"),
 		
+		/**
+		  * {@link EStructuralFeature} annotation. If it is set to false, then feature elements
+		  * appear directly under the container in the tree. 
+		  * Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 		 
+		  */
+		TREE_NODE("tree-node");		
+				
 		public final String literal;
 		
 		private RenderAnnotation(String literal) {
@@ -2464,7 +2459,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 		List<EStructuralFeature> leftPanelFeatures = getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.leftPanel);
 		for (EStructuralFeature vf: leftPanelFeatures) {
-			String category = getFeatureCategory(context, feature, leftPanelFeatures);
+			String category = getFeatureCategory(context, vf, leftPanelFeatures);
 			if (category == null) {
 				linkGroup.item(renderFeatureIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
 			} else {
@@ -3720,6 +3715,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * 
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	default Collection<Map.Entry<String, String>> getFeatureChoices(C context, T obj, EStructuralFeature feature) throws Exception {
 		Map<String,String> collector = new LinkedHashMap<>();
 		
@@ -3745,8 +3741,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 						
 		} else {		
-			String choicesAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.CHOICES);
-			if (choicesAnnotation == null) {
+			Object choicesAnnotation = getYamlRenderAnnotation(context, feature, RenderAnnotation.CHOICES);
+			if (choicesAnnotation instanceof Map) { // key-value pairs
+				for (Entry<String, Object> e: ((Map<String,Object>) choicesAnnotation).entrySet()) {
+					collector.put(e.getKey(), String.valueOf(e.getValue()));							
+				}
+			} else if (choicesAnnotation instanceof List) { // key and value are equal.
+				for (Object e: ((List<Object>) choicesAnnotation)) {
+					String strVal = String.valueOf(e);
+					collector.put(strVal, strVal);							
+				}				
+			} else { // null or not supported
 				Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
 				if (featureTypeInstanceClass.isEnum()) {
 					for (Field field: featureTypeInstanceClass.getFields()) {
@@ -3758,20 +3763,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								collector.put(name, ((Enumerator) fieldValue).getLiteral());
 							} else {
 								collector.put(name, fieldValue.toString());							
-							}
-						}
-					}
-				}
-			} else {
-				try (BufferedReader br = new BufferedReader(new StringReader(choicesAnnotation))) {
-					String line;
-					while ((line = br.readLine()) != null) {
-						if (!CoreUtil.isBlank(line) && !line.startsWith("#")) {
-							int idx = line.indexOf('=');
-							if (idx == -1) {
-								collector.put(line, line);
-							} else {
-								collector.put(line.substring(0, idx), line.substring(idx+1));							
 							}
 						}
 					}
