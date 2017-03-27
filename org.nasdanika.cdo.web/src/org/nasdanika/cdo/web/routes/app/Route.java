@@ -411,8 +411,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(objectHeader);				
 			
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
+			boolean noValidate = "true".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.NO_VALIDATE));
 			Form editForm = renderFeatureEditForm(context, target, tsf, diagnosticConsumer.getFeatureValidationResults().get(tsf), horizontalForm)
-		//		.novalidate()
+				.novalidate(noValidate)
 				.action("select.html")				
 				.method(Method.post)
 				.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
@@ -541,8 +542,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						content.content(objectHeader);
 																
 						boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
+						boolean noValidate = "true".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
 						Form editForm = renderer.renderEditForm(context, instance, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getFeatureValidationResults(), horizontalForm)
-					//		.novalidate()
+							.novalidate(noValidate)
 							.action(eclass)
 							.method(Method.post)
 							.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
@@ -766,8 +768,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.content(objectHeader);				
 		
 		boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
+		boolean noValidate = "true".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.NO_VALIDATE));
 		Form editForm = renderEditForm(context, target, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getFeatureValidationResults(), horizontalForm)
-	//		.novalidate()
+			.novalidate(noValidate)
 			.action("edit.html")
 			.method(Method.post)
 			.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
