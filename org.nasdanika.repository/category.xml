@@ -18,9 +18,6 @@
    <feature url="features/org.nasdanika.server.jetty.feature_0.1.0.qualifier.jar" id="org.nasdanika.server.jetty.feature" version="0.1.0.qualifier">
       <category name="org.nasdanika.runtime"/>
    </feature>
-   <feature url="features/org.nasdanika.third-party.feature_0.1.0.201702272031.jar" id="org.nasdanika.third-party.feature" version="0.1.0.201702272031">
-      <category name="org.nasdanika.runtime"/>
-   </feature>
    <category-def name="org.nasdanika.runtime" label="Runtime bundles">
       <description>
          Bundles and features for building OSGi/Equinox server applications.
