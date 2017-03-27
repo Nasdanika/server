@@ -9,6 +9,7 @@ import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -1294,6 +1295,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			return "";
 		}
+		if (value instanceof byte[]) {
+			return Base64.getEncoder().encodeToString((byte[]) value);
+		}
 		if (value instanceof EObject) {
 			return getReferenceRenderer((EReference) feature, (EObject) value).renderLink(context, (EObject) value, true);
 		}
@@ -1361,6 +1365,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		// Blank is treated as null for non-string values.
 		if (CoreUtil.isBlank(strValue)) {
 			return null;
+		}
+		
+		if (byte[].class == featureTypeInstanceClass) {
+			return Base64.getDecoder().decode(strValue.trim());
 		}
 		
 		if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
