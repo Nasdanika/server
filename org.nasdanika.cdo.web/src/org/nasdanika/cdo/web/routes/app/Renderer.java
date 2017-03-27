@@ -267,6 +267,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		CONTROL("control"),
 		
 		/**
+		 * Control configuration shall be a YAML map of control attribute names to values. 
+		 * If value is a map, then it is output as css values - colon separated keys and values and semicolon separated entries. E.g. style attribute can be specified as a map.
+		 * If value is a list, then it is output as space-separated entries. E.g. class attribute can be specified as a list.
+		 */
+		CONTROL_CONFIGURATION("control-configuration"),
+		
+		/**
 		 * {@link EStructuralFeature} annotation for ``input`` control - one of {@link HTMLFactory.InputType} values. 
 		 * Defaults to checkbox for booleans and multi-value features, text otherwise.
 		 */
@@ -287,6 +294,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * By default EClass edit forms are rendered as horizontal forms by the {@link Route}. Set this annotation to ``false`` to change the default rendering.
 		 */
 		HORIZONTAL_FORM("horizontal-form"),
+		
+		/**
+		 * {@link EClass} annotation. Set it to true to disable HTML 5 form validation, e.g. if you have a required component with HTML content rendered by
+		 * TinyMCE in Chrome.
+		 */
+		NO_VALIDATE("no-validate"),
 		
 		/**
 		 * {@link EAttribute} annotation specifying feature value content type. If attribute control is ``textarea`` and content type is ``text/html`` then 
@@ -3281,6 +3294,35 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
+		Map<String, String> controlConfiguration = new HashMap<>();
+		Object controlConfigurationYaml = getYamlRenderAnnotation(context, feature, RenderAnnotation.CONTROL_CONFIGURATION);
+		if (controlConfigurationYaml instanceof Map) {
+			for (Entry<String, Object> e: ((Map<String,Object>) controlConfigurationYaml).entrySet()) {
+				Object v = e.getValue();
+				if (v instanceof String) {
+					controlConfiguration.put(e.getKey(), (String) v);
+				} else if (v instanceof List) {
+					StringBuilder sb = new StringBuilder();
+					for (Object ve: (List<Object>) v) {
+						if (sb.length() > 0) {
+							sb.append(" ");
+						}
+						sb.append(ve);
+					}
+					controlConfiguration.put(e.getKey(), sb.toString());
+				} else if (v instanceof Map) {
+					StringBuilder sb = new StringBuilder();
+					for (Entry<String, Object> ve: ((Map<String, Object>) v).entrySet()) {
+						if (sb.length() > 0) {
+							sb.append("; ");
+						}
+						sb.append(ve.getKey()).append(":").append(ve.getValue());
+					}
+					controlConfiguration.put(e.getKey(), sb.toString());					
+				}
+			}
+		}
+		
 		Object label = renderFeatureIconAndLabel(context, feature, getVisibleFeatures(context, obj, vf -> context.authorize(obj, StandardAction.update, feature.getName(), null)));
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
@@ -3460,6 +3502,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								@Override
 								Object renderControl(EObject obj) throws Exception {
 									Input checkbox = htmlFactory.input(InputType.checkbox).name(feature.getName());
+									for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+										checkbox.attribute(ce.getKey(), ce.getValue());
+									}
 									if (obj instanceof CDOObject) {
 										String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
 										checkbox.value(value);
@@ -3496,6 +3541,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							checkboxesFieldSet.legend(label);
 							for (Entry<String, String> fc: featureChoices) {
 								Input checkbox = htmlFactory.input(inputType).disabled(disabled);
+								for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+									checkbox.attribute(ce.getKey(), ce.getValue());
+								}
 								checkbox.name(feature.getName());
 								checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
 								if (valuesToSelect.contains(fc.getKey())) {
@@ -3509,6 +3557,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				Input checkbox = htmlFactory.input(inputType).disabled(disabled);
+				for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+					checkbox.attribute(ce.getKey(), ce.getValue());
+				}
 				checkbox.name(feature.getName());
 				checkbox.value("true");
 				if (Boolean.TRUE.equals(fv)) {
@@ -3534,6 +3585,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							@Override
 							Object renderControl(EObject obj) throws Exception {
 								Input radio = htmlFactory.input(InputType.radio).name(feature.getName()).disabled(disabled);
+								for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+									radio.attribute(ce.getKey(), ce.getValue());
+								}
 								if (obj instanceof CDOObject) {
 									String value = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj).cdoID());
 									radio.value(value);
@@ -3574,6 +3628,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									.name(feature.getName())
 									.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
 									.placeholder(textLabel);
+							for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+								radio.attribute(ce.getKey(), ce.getValue());
+							}
 							if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
 								radio.attribute("checked", "true");
 							}
@@ -3584,17 +3641,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				return null;
 			default:
 				requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(feature.getName()) : null;
-				return htmlFactory.input(inputType)
+				Input input = htmlFactory.input(inputType)
 					.disabled(disabled)
 					.name(feature.getName())
 					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, fv)) : requestValue)
 					.placeholder(textLabel)
-					.required(isRequired(context, obj, feature));								
+					.required(isRequired(context, obj, feature));
+
+				for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+					input.attribute(ce.getKey(), ce.getValue());
+				}
+				
+				return input;
 			}
 		case select:
 			Collection<Entry<String, String>> selectFeatureChoices = getFeatureChoices(context, obj, feature);
-			Select select = htmlFactory.select()
-				.required(isRequired(context, obj, feature));
+			Select select = htmlFactory.select().required(isRequired(context, obj, feature));
+			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+				select.attribute(ce.getKey(), ce.getValue());
+			}
 			
 			if (feature.getLowerBound() == 0) {
 				select.option("", "", false, false);
@@ -3624,6 +3689,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				.name(feature.getName())
 				.placeholder(textLabel)
 				.required(isRequired(context, obj, feature));			
+			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+				textArea.attribute(ce.getKey(), ce.getValue());
+			}
 			textArea.content(getFormControlValue(context, obj, feature, fv));
 			if ("text/html".equals(getRenderAnnotation(context, feature, RenderAnnotation.CONTENT_TYPE))) {
 				textArea.id(htmlFactory.nextId());
