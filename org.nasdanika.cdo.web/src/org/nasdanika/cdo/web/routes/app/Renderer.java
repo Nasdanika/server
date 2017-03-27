@@ -1362,18 +1362,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return strValue;
 		}
 		
-		// Blank is treated as null for non-string values.
-		if (CoreUtil.isBlank(strValue)) {
-			return null;
-		}
-		
-		if (byte[].class == featureTypeInstanceClass) {
-			return Base64.getDecoder().decode(strValue.trim());
-		}
-		
 		if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
-			if (strValue == null) {
-				return false;
+			if (CoreUtil.isBlank(strValue)) {
+				return boolean.class == featureTypeInstanceClass ? false : null;
 			}
 			switch (strValue) {
 			case "true":
@@ -1388,6 +1379,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				env.put("type", "boolean");
 				throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));
 			}
+		}
+		
+		// Blank is treated as null for non-string values.
+		if (CoreUtil.isBlank(strValue)) {
+			return null;
+		}
+		
+		if (byte[].class == featureTypeInstanceClass) {
+			return Base64.getDecoder().decode(strValue.trim());
 		}
 		
 		if (featureTypeInstanceClass.isEnum()) {
