@@ -222,26 +222,26 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception 
 	 */
-	protected Fragment renderBody(C context, Object header, Object leftPanel, Object content, Object footer) throws Exception {
-		Fragment bodyFragment = getHTMLFactory(context).fragment();		
+	protected Tag renderBody(C context, Object header, Object leftPanel, Object content, Object footer) throws Exception {
+		Tag bodyDiv = getHTMLFactory(context).div().style().margin("5px");		
 		if (header != null) {
-			bodyFragment.content(bodyFragment.getFactory().div(header));
+			bodyDiv.content(bodyDiv.getFactory().div(header));
 		}
 		
-		Tag contentDiv = bodyFragment.getFactory().div(content);
+		Tag contentDiv = bodyDiv.getFactory().div(content);
 		if (leftPanel == null) {
-			bodyFragment.content(contentDiv);			
+			bodyDiv.content(contentDiv);			
 		} else {			
-			Tag leftPanelDiv = bodyFragment.getFactory().div(leftPanel);
+			Tag leftPanelDiv = bodyDiv.getFactory().div(leftPanel);
 			setLeftPanelAndContentColSizes(context, leftPanelDiv, contentDiv);
-			bodyFragment.content(bodyFragment.getFactory().div(leftPanelDiv, contentDiv).bootstrap().grid().row());			
+			bodyDiv.content(bodyDiv.getFactory().div(leftPanelDiv, contentDiv).bootstrap().grid().row());			
 		}
 		
 		if (footer != null) {
-			bodyFragment.content(bodyFragment.getFactory().div(footer));
+			bodyDiv.content(bodyDiv.getFactory().div(footer));
 		}		
 		
-		return bodyFragment;
+		return bodyDiv;
 	}
 
 	/**
@@ -317,8 +317,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * Sets left panel and content sizes.
 	 */
 	protected void setLeftPanelAndContentColSizes(C context, UIElement<?> leftPanel,  UIElement<?> content) {
-		leftPanel.bootstrap().grid().col(1);
-		content.bootstrap().grid().col(11);
+		leftPanel.bootstrap().grid().col(2);
+		content.bootstrap().grid().col(10);
 	}
 	
 	@RouteMethod(
