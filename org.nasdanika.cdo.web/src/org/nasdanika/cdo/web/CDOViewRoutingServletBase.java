@@ -16,6 +16,7 @@ import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextProvider;
 import org.nasdanika.cdo.CDOViewContextSubject;
+import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.util.NasdanikaCDOUtil;
 import org.nasdanika.cdo.web.routes.CDOViewSessionModuleGenerator;
 import org.nasdanika.core.Context;
@@ -76,6 +77,24 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			cdoViewContextProviderServiceTracker.close();
 		}
 		super.destroy();
+	}
+	
+	/**
+	 * Forbidden for Guest is the same as unauthorized.
+	 * @throws Exception 
+	 */
+	@Override
+	protected Action filterAction(HttpServletRequest req, HttpServletResponse resp, HttpServletRequestContext context, Action action) throws Exception {
+		if (action == Action.FORBIDDEN) {
+			@SuppressWarnings("unchecked")
+			C ctx = (C) context;
+			Realm<CR> securityRealm = ctx.getSecurityRealm();
+			if (securityRealm != null && ctx.getPrincipal() == securityRealm.getGuest()) {
+				return Action.UNAUTHORIZED;
+			}
+			
+		}
+		return super.filterAction(req, resp, context, action);
 	}
 	
 	private static final CDOViewSessionModuleGenerator cdoViewSessionModuleGenerator = new CDOViewSessionModuleGenerator();	

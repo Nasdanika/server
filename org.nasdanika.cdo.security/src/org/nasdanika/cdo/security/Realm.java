@@ -159,7 +159,7 @@ public interface Realm<CR> extends CDOObject {
 	 * @model kind="operation"
 	 * @generated
 	 */
-	EList<User<CR>> getAllUsers();
+	<U extends User<CR>> EList<U> getAllUsers();
 
 	/**
 	 * <!-- begin-user-doc -->

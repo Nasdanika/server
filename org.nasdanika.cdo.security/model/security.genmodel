@@ -22,7 +22,9 @@
       <genOperations ecoreOperation="security.ecore#//Realm/authenticate">
         <genParameters ecoreParameter="security.ecore#//Realm/authenticate/credentials"/>
       </genOperations>
-      <genOperations ecoreOperation="security.ecore#//Realm/getAllUsers"/>
+      <genOperations ecoreOperation="security.ecore#//Realm/getAllUsers">
+        <genTypeParameters ecoreTypeParameter="security.ecore#//Realm/getAllUsers/U"/>
+      </genOperations>
       <genOperations ecoreOperation="security.ecore#//Realm/clearPermissions">
         <genParameters ecoreParameter="security.ecore#//Realm/clearPermissions/target"/>
       </genOperations>

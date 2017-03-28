@@ -167,6 +167,9 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 			responseCharacterEncoding = rce;
 		}
 		loginURL = config.getInitParameter("login-url");
+		if (loginURL != null) {
+			loginURL = CoreUtil.interpolate(loginURL, token -> "context-path".equals(token) ? config.getServletContext().getContextPath() : null);
+		}
 	}
 			
 	@Override
@@ -197,7 +200,7 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 			Action action = null;
 			try (HttpServletRequestContext context = createContext(path, req, resp, reqUrl)) {
 				for (Route route: matchRootRoutes(RequestMethod.valueOf(req.getMethod()), path)) {
-					action = route.execute(context);
+					action = filterAction(req, resp, context, route.execute(context));
 					if (action!=null) {
 						break;
 					}
@@ -226,6 +229,18 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 				}
 			}
         }
+	}
+
+	/**
+	 * Allows to replace action. E.g. replace FORBIDDEN with UNAUTHORIZED if principal is Guest.
+	 * @param req
+	 * @param resp
+	 * @param context
+	 * @param action
+	 * @return
+	 */
+	protected Action filterAction(HttpServletRequest req, HttpServletResponse resp, HttpServletRequestContext context, Action action) throws Exception {
+		return action;
 	}
 
 	protected Iterable<Route> matchRootRoutes(RequestMethod method, String[] path) throws Exception {

@@ -22,9 +22,12 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Realm does not have a containment reference for principals, subclasses may&#xD;&#xA;have one or more principal containment references, direct or through contained objects.&#xD;&#xA;&#xD;&#xA;This method returns all principals defined in the realm.&#xD;&#xA;"/>
       </eAnnotations>
-      <eGenericType eClassifier="#//User">
-        <eTypeArguments eTypeParameter="#//Realm/CR"/>
-      </eGenericType>
+      <eGenericType eTypeParameter="#//Realm/getAllUsers/U"/>
+      <eTypeParameters name="U">
+        <eBounds eClassifier="#//User">
+          <eTypeArguments eTypeParameter="#//Realm/CR"/>
+        </eBounds>
+      </eTypeParameters>
     </eOperations>
     <eOperations name="clearPermissions">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">

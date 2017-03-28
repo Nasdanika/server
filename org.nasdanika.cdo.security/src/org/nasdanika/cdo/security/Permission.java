@@ -210,7 +210,6 @@ public interface Permission extends CDOObject {
 	 * * ``environment``
 	 * * ``action``
 	 * * ``qualifier``
-	 * * ``principal``
 	 * * ``permission``
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Condition</em>' attribute.

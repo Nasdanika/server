@@ -2479,6 +2479,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 		List<EStructuralFeature> leftPanelFeatures = getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.leftPanel);
+		if (leftPanelFeatures.isEmpty()) {
+			return null;
+		}
 		for (EStructuralFeature vf: leftPanelFeatures) {
 			String category = getFeatureCategory(context, vf, leftPanelFeatures);
 			if (category == null) {

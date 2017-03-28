@@ -925,9 +925,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEOperation(op, g1);
 
 		op = initEOperation(getRealm__GetAllUsers(), null, "getAllUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
+		ETypeParameter t1 = addETypeParameter(op, "U");
 		g1 = createEGenericType(this.getUser());
 		g2 = createEGenericType(realmEClass_CR);
 		g1.getETypeArguments().add(g2);
+		t1.getEBounds().add(g1);
+		g1 = createEGenericType(t1);
 		initEOperation(op, g1);
 
 		op = initEOperation(getRealm__ClearPermissions__EObject(), null, "clearPermissions", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1417,7 +1420,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getPermission_Condition(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).\r\n\r\nThe expression is evaluated in the context of the target object with the following variables:\r\n\r\n* ``context``\r\n* ``environment``\r\n* ``action``\r\n* ``qualifier``\r\n* ``principal``\r\n* ``permission``"
+			 "documentation", "Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).\r\n\r\nThe expression is evaluated in the context of the target object with the following variables:\r\n\r\n* ``context``\r\n* ``environment``\r\n* ``action``\r\n* ``qualifier``\r\n* ``permission``"
 		   });	
 		addAnnotation
 		  (loginPasswordCredentialsEClass, 

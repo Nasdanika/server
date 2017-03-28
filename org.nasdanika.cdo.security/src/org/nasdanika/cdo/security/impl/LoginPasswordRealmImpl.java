@@ -201,7 +201,7 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<User<LoginPasswordCredentials>> getAllUsers() {
+	public <U extends User<LoginPasswordCredentials>> EList<U> getAllUsers() {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
