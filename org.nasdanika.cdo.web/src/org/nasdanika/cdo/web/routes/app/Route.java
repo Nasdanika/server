@@ -1,11 +1,14 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
+
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
@@ -24,6 +27,8 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.security.LoginPasswordCredentials;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
@@ -32,6 +37,7 @@ import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
+import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.FormGroup;
@@ -40,6 +46,7 @@ import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
@@ -82,6 +89,7 @@ import org.osgi.framework.BundleContext;
 		path="resources/", 
 		comment="Web resources")
 public class Route<C extends HttpServletRequestContext, T extends EObject> extends EDispatchingRoute implements Renderer<C, T> {
+
 
 	/**
 	 * Interpolation tokens used by the page template
@@ -331,7 +339,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object selectReferenceFeatureElement(
 			@ContextParameter C context,
 			@TargetParameter T target,
-			@HeaderParameter("referer") String referrerHeader,			
+			@HeaderParameter(REFERRER_HEADER) String referrerHeader,			
 			@PathParameter("feature") String feature,
 			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
 
@@ -462,7 +470,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object createContainementFeatureElement(
 			@ContextParameter C context,
 			@TargetParameter T target,
-			@HeaderParameter("referer") String referrerHeader,			
+			@HeaderParameter(REFERRER_HEADER) String referrerHeader,			
 			@PathParameter("feature") String feature,
 			@PathParameter("epackage") String epackage,
 			@PathParameter("eclass") String eclass,
@@ -699,7 +707,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object edit(
 			@ContextParameter C context,
 			@TargetParameter T target,
-			@HeaderParameter("referer") String referrerHeader,			
+			@HeaderParameter(REFERRER_HEADER) String referrerHeader,			
 			@QueryParameter(REFERRER_KEY) String referrerParameter,
 			@QueryParameter(OBJECT_VERSION_KEY) String objectVersionParameter) throws Exception {
 		
@@ -820,7 +828,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object getDeleteHtml(
 			@ContextParameter C context,
 			@TargetParameter T target,
-			@HeaderParameter("referer") String referrer) throws Exception {
+			@HeaderParameter(REFERRER_HEADER) String referrer) throws Exception {
 		
 		String redirectURL;
 		if (CoreUtil.isBlank(referrer)) {
@@ -872,7 +880,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object deleteFeature(
 			@ContextParameter C context,
 			@TargetParameter T target,
-			@HeaderParameter("referer") String referrer,
+			@HeaderParameter(REFERRER_HEADER) String referrer,
 			@PathParameter("feature") String feature) throws Exception {
 		
 		EStructuralFeature tsf = target.eClass().getEStructuralFeature(feature);
@@ -913,7 +921,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object deleteFeatureElement(
 			@ContextParameter C context,
 			@TargetParameter T target,
-			@HeaderParameter("referer") String referrer,
+			@HeaderParameter(REFERRER_HEADER) String referrer,
 			@PathParameter("feature") String feature,
 			@PathParameter("element") String element) throws Exception {
 		
@@ -1078,6 +1086,96 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}		
 		
 		return renderPage(context, target, "XPath Evaluator", content, null);				
-	}	
+	}
+	
+	/**
+	 * Processes login. If isPost is true, checks that login and password are not blank and authenticates
+	 * the user. If authentication is successful, redirects to the returnURL or to the authenticated principal home page.   
+	 * @param context Context.
+	 * @param returnURL URL to redirect to upon successful authentication. If null, this method redirects to the authenticated principal home.
+	 * @param login Login.
+	 * @param password Password
+	 * @return null if authentication was successful and a redirect has been sent to the returnURL or the authenticated principal home page..
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	protected Form processLogin(C context, String returnURL, String login, String password) throws Exception {	
+		List<String> errorMessages = new ArrayList<>();
+		if (context.getMethod() == RequestMethod.POST) {
+			if (CoreUtil.isBlank(login)) {
+				errorMessages.add(getResourceString(context, "blankLogin"));
+			}
+			if (CoreUtil.isBlank(password)) {
+				errorMessages.add(getResourceString(context, "blankPassword"));
+			}
+			if (errorMessages.isEmpty()) {
+				Principal authenticatedPrincipal = ((CDOViewContext<?, LoginPasswordCredentials>) context).authenticate(new LoginPasswordCredentials() {
+					
+					@Override
+					public String getPassword() {
+						return password;
+					}
+					
+					@Override
+					public String getLogin() {				
+						return login;
+					}
+				});
+				if (authenticatedPrincipal==null) {
+					errorMessages.add(getResourceString(context, "invalidLoginPasswordCombination")); 
+				} else {
+					String principalHome = context.getObjectPath(authenticatedPrincipal)+"/index.html";
+					context.getResponse().sendRedirect(CoreUtil.isBlank(returnURL) ? principalHome : returnURL);
+					return null;
+				}
+			}			
+		}
+				
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		
+		Form loginForm = htmlFactory.form().method(Method.post); // Action
+
+		if (!errorMessages.isEmpty()) {
+			ListGroup errorLg = htmlFactory.listGroup();
+			loginForm.content(errorLg);
+			for (String em: errorMessages) {
+				errorLg.item(em, Style.DANGER);
+			}
+		}		
+		
+		Input loginInput = InputType.text.create().required().name("login").placeholder(getResourceString(context, "loginHint"));
+		if (login != null) {
+			loginInput.value(login);
+		}
+		loginForm.formInputGroup(getResourceString(context, "login"), loginInput, getResourceString(context, "loginHint")).leftAddOn(htmlFactory.fontAwesome().webApplication(WebApplication.user));
+		
+		Input passwordInput = InputType.password.create().required().name("password").placeholder(getResourceString(context, "passwordHint"));
+		if (password != null) {
+			passwordInput.value(password);
+		}
+		loginForm.formInputGroup(getResourceString(context, "password"), passwordInput, getResourceString(context, "passwordHint")).leftAddOn(htmlFactory.fontAwesome().webApplication(WebApplication.key));
+		
+		if (returnURL != null) {
+			loginForm.content(htmlFactory.input(InputType.hidden).name("url").value(returnURL));
+		}	
+		
+		loginForm.button(getResourceString(context, "logIn")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
+		return loginForm;
+	}
+
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(comment="Invalidates session")
+	public Object getLogoutHtml(@ContextParameter C context, @HeaderParameter(REFERRER_HEADER) String referrer) throws Exception {
+		context.getRequest().getSession().invalidate();
+		if (referrer == null) {
+			return "Log out successful";
+		}
+		context.getResponse().sendRedirect(referrer);
+		return Action.NOP;
+	}
+
 	
 }

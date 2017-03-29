@@ -6,6 +6,8 @@ import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
 import java.net.URL;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.ServletConfig;
@@ -216,9 +218,14 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 				resp.sendError(HttpServletResponse.SC_NOT_FOUND);
 			} else if (action == Action.UNAUTHORIZED && loginURL != null) {
 				// Sending redirect to the login page. 
-				// The login page is responsible to redirect to the referrer URL upon
+				// The login page is responsible to redirect to the original request url upon
 				// successful login.
-				resp.sendRedirect(loginURL);
+				StringBuffer requestURL = req.getRequestURL();
+				String queryString = req.getQueryString();
+				if (queryString != null) {
+					requestURL.append("?").append(queryString);
+				}				
+				resp.sendRedirect(loginURL+"?url="+URLEncoder.encode(requestURL.toString(), StandardCharsets.UTF_8.toString()));
 			} else {
 				try {
 					resultToResponse(action.execute(), resp);

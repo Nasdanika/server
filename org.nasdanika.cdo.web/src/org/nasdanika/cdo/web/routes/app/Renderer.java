@@ -427,6 +427,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 
 	String REFERRER_KEY = ".referrer";
 	
+	String REFERRER_HEADER = "referer";
+	
 	String OBJECT_VERSION_KEY = ".object-version";
 
 	String INDEX_HTML = "index.html";

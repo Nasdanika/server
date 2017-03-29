@@ -18,7 +18,9 @@ public class RedirectToPrincipalHomeRoute implements Route {
 		if (context instanceof CDOViewContext) {
 			Principal principal = ((CDOViewContext<?,?>) context).getPrincipal();
 			if (principal != null) {
-				context.getResponse().sendRedirect(context.getObjectPath(principal)+"/index.html");
+				String principalHome = context.getObjectPath(principal)+"/index.html";
+				String queryString = context.getRequest().getQueryString();
+				context.getResponse().sendRedirect(queryString == null ? principalHome : principalHome + "?" + queryString);
 				return Action.NOP;
 			}
 		}
