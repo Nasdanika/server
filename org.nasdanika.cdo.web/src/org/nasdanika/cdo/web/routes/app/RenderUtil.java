@@ -94,6 +94,18 @@ public class RenderUtil {
 		public static Object iif(boolean condition, Object ifTrue, Object ifFalse) {
 			return condition ? ifTrue : ifFalse;
 		}
+		
+		/**
+		 * This function can be used to tell new objects from existing objects.
+		 * In particular, it can be used in 'editable' conditions to make some features editable or not-editable 
+		 * depending on whether the object is new (create form) or existing. An example of it would be user login
+		 * or some other unique ID which is not supposed change after object creation. 
+		 * @param o
+		 * @return
+		 */
+		public static boolean isTemporary(Object o) {
+			return o instanceof CDOObject && ((CDOObject) o).cdoID() != null && ((CDOObject) o).cdoID().isTemporary();
+		}
 				
 		/**
 		 * Expression context method.
