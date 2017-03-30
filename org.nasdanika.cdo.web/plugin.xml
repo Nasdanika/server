@@ -185,6 +185,10 @@
                   location="doc/forms.md"
                   name="Forms">
             </topic>
+            <topic
+                  location="doc/application-rendering.md"
+                  name="Application rendering">
+            </topic>
          </topic>
       </toc>
    </extension>
