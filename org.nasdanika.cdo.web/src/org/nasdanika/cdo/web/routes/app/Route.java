@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -42,6 +40,7 @@ import org.nasdanika.html.Form;
 import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
+import org.nasdanika.html.FormInputGroup;
 import org.nasdanika.html.Fragment;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
@@ -582,8 +581,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						buttonBar.content(renderer.renderCancelButton(context, instance));
 						editForm.content(buttonBar);
 						
-						content.content(editForm);										
-						
+						content.content(editForm);		
 						return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));
 					}
 				}							
@@ -1101,12 +1099,16 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	@SuppressWarnings("unchecked")
 	protected Form processLogin(C context, String returnURL, String login, String password) throws Exception {	
 		List<String> errorMessages = new ArrayList<>();
+		boolean invalidLogin = false;
+		boolean invalidPassword = false;
 		if (context.getMethod() == RequestMethod.POST) {
 			if (CoreUtil.isBlank(login)) {
 				errorMessages.add(getResourceString(context, "blankLogin"));
+				invalidLogin = true;
 			}
 			if (CoreUtil.isBlank(password)) {
 				errorMessages.add(getResourceString(context, "blankPassword"));
+				invalidPassword = true;
 			}
 			if (errorMessages.isEmpty()) {
 				Principal authenticatedPrincipal = ((CDOViewContext<?, LoginPasswordCredentials>) context).authenticate(new LoginPasswordCredentials() {
@@ -1122,7 +1124,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 				});
 				if (authenticatedPrincipal==null) {
-					errorMessages.add(getResourceString(context, "invalidLoginPasswordCombination")); 
+					errorMessages.add(getResourceString(context, "invalidLoginPasswordCombination"));
+					invalidLogin = true;
+					invalidPassword = true;
 				} else {
 					String principalHome = context.getObjectPath(authenticatedPrincipal)+"/index.html";
 					context.getResponse().sendRedirect(CoreUtil.isBlank(returnURL) ? principalHome : returnURL);
@@ -1147,13 +1151,19 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (login != null) {
 			loginInput.value(login);
 		}
-		loginForm.formInputGroup(getResourceString(context, "login"), loginInput, getResourceString(context, "loginHint")).leftAddOn(htmlFactory.fontAwesome().webApplication(WebApplication.user));
+		FormInputGroup lfig = loginForm.formInputGroup(getResourceString(context, "login"), loginInput, getResourceString(context, "loginHint")).leftAddOn(htmlFactory.fontAwesome().webApplication(WebApplication.user));
+		if (invalidLogin) {
+			lfig.status(Status.ERROR);
+		}
 		
 		Input passwordInput = InputType.password.create().required().name("password").placeholder(getResourceString(context, "passwordHint"));
 		if (password != null) {
 			passwordInput.value(password);
 		}
-		loginForm.formInputGroup(getResourceString(context, "password"), passwordInput, getResourceString(context, "passwordHint")).leftAddOn(htmlFactory.fontAwesome().webApplication(WebApplication.key));
+		FormInputGroup pfig = loginForm.formInputGroup(getResourceString(context, "password"), passwordInput, getResourceString(context, "passwordHint")).leftAddOn(htmlFactory.fontAwesome().webApplication(WebApplication.key));
+		if (invalidPassword) {
+			pfig.status(Status.ERROR);
+		}
 		
 		if (returnURL != null) {
 			loginForm.content(htmlFactory.input(InputType.hidden).name("url").value(returnURL));
