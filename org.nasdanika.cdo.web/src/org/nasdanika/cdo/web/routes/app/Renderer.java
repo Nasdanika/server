@@ -129,7 +129,9 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 	
-	public static final String ORIGINAL_FEATURE_VALUE_NAME_PREFIX = ".original.";
+	String ORIGINAL_FEATURE_VALUE_NAME_PREFIX = ".original.";
+	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
+	
 
 	enum RenderAnnotation {
 		
@@ -2475,7 +2477,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderLeftPanel(C context, T obj, EStructuralFeature feature) throws Exception {
+	default Object renderLeftPanel(C context, T obj) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		LinkGroup linkGroup = htmlFactory.linkGroup();
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
@@ -2484,6 +2486,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (leftPanelFeatures.isEmpty()) {
 			return null;
 		}
+		
+		Object feature = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY) : null;
 		for (EStructuralFeature vf: leftPanelFeatures) {
 			String category = getFeatureCategory(context, vf, leftPanelFeatures);
 			if (category == null) {

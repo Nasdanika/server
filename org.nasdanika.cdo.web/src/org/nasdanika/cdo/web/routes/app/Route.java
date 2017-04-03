@@ -167,7 +167,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		content.content(renderFeatureItemsContainer(context, target, featureDocModals));
 		
-		return renderPage(context, target, title, content, null);		
+		return renderPage(context, target, title, content);		
 	}
 		
 	/**
@@ -178,12 +178,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception 
 	 */
-	protected Object renderPage(C context, T obj, String title, Object content, Consumer<Map<String,Object>> environmentCustomizer) throws Exception {
+	protected Object renderPage(C context, T obj, String title, Object content) throws Exception {
 		Map<String, Object> env = createRenderPageEnvironment(context);
-
-		if (environmentCustomizer != null) {
-			environmentCustomizer.accept(env);
-		}			
 
 		env.put(PageTemplateTokens.TITLE.literal, title == null ? "" : title);
 		
@@ -193,7 +189,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Object header = renderHeader(context, obj);
 		env.put(PageTemplateTokens.HEADER.literal, header == null ? "" : header);
 				
-		Object leftPanel = renderLeftPanel(context, obj, (EStructuralFeature) env.get("context-feature"));
+		Object leftPanel = renderLeftPanel(context, obj);
 		env.put(PageTemplateTokens.LEFT_PANEL.literal, leftPanel == null ? "" : leftPanel);
 
 		env.put(PageTemplateTokens.CONTENT.literal, content == null ? "" : content);
@@ -257,9 +253,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @param context
 	 * @return Map containing tokens to use for interpolation of the page template.
 	 */
-	protected HashMap<String, Object> createRenderPageEnvironment(C context) {
-		HashMap<String, Object> ret = new HashMap<>();
-		ret.put(PageTemplateTokens.RESOURCES_PATH.literal, "resources");
+	protected HashMap<String, Object> createRenderPageEnvironment(C context) throws Exception {
+		HashMap<String, Object> ret = new HashMap<>();		
+		ret.put(PageTemplateTokens.RESOURCES_PATH.literal, context.getObjectPath(context.getTarget())+"/resources");
 		return ret;
 	}
 	
@@ -452,7 +448,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			
 			content.content(editForm);
 			
-			return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));		
+			return renderPage(context, target, title, content);		
 		}
 		
 		return Action.BAD_REQUEST;				
@@ -582,7 +578,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						editForm.content(buttonBar);
 						
 						content.content(editForm);		
-						return renderPage(context, target, title, content, env -> env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal)));
+						return renderPage(context, target, title, content);
 					}
 				}							
 			}
@@ -647,11 +643,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		// view 
 		content.content(renderFeatureView(context, target, sf, true, null, null));
 		
-		Consumer<Map<String, Object>> environmentCustomizer = env -> {
-			env.put("context-feature", sf);
-			env.put(PageTemplateTokens.RESOURCES_PATH.literal, "../../"+env.get(PageTemplateTokens.RESOURCES_PATH.literal));			
-		};
-		return renderPage(context, target, title, content, environmentCustomizer);
+		context.getRequest().setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, sf);
+		return renderPage(context, target, title, content);
 	}	
 	
 	@RouteMethod(
@@ -816,7 +809,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		content.content(editForm);
 		
-		return renderPage(context, target, title, content, null);		
+		return renderPage(context, target, title, content);		
 	}				
 	
 	@RouteMethod(
@@ -1083,7 +1076,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			}
 		}		
 		
-		return renderPage(context, target, "XPath Evaluator", content, null);				
+		return renderPage(context, target, "XPath Evaluator", content);				
 	}
 	
 	/**
