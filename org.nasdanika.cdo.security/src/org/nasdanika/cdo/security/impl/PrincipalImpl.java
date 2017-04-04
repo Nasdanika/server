@@ -14,8 +14,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.AuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
-import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.PrincipalPermission;
 import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
@@ -85,8 +85,8 @@ public class PrincipalImpl extends CDOObjectImpl implements Principal {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<Permission> getPermissions() {
-		return (EList<Permission>)eGet(SecurityPackage.Literals.PRINCIPAL__PERMISSIONS, true);
+	public EList<PrincipalPermission> getPermissions() {
+		return (EList<PrincipalPermission>)eGet(SecurityPackage.Literals.PRINCIPAL__PERMISSIONS, true);
 	}
 
 	/**

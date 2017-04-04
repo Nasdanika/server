@@ -202,7 +202,7 @@ public class PrincipalItemProvider
 		newChildDescriptors.add
 			(createChildParameter
 				(SecurityPackage.Literals.PRINCIPAL__PERMISSIONS,
-				 SecurityFactory.eINSTANCE.createPermission()));
+				 SecurityFactory.eINSTANCE.createPrincipalPermission()));
 	}
 
 	/**

@@ -14,6 +14,9 @@ import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.PrincipalPermission;
+import org.nasdanika.cdo.security.Protected;
+import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.User;
@@ -111,6 +114,20 @@ public class SecuritySwitch<T> extends Switch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case SecurityPackage.PRINCIPAL_PERMISSION: {
+				PrincipalPermission principalPermission = (PrincipalPermission)theEObject;
+				T result = casePrincipalPermission(principalPermission);
+				if (result == null) result = casePermission(principalPermission);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.PROTECTED_PERMISSION: {
+				ProtectedPermission protectedPermission = (ProtectedPermission)theEObject;
+				T result = caseProtectedPermission(protectedPermission);
+				if (result == null) result = casePermission(protectedPermission);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case SecurityPackage.LOGIN_PASSWORD_CREDENTIALS: {
 				LoginPasswordCredentials loginPasswordCredentials = (LoginPasswordCredentials)theEObject;
 				T result = caseLoginPasswordCredentials(loginPasswordCredentials);
@@ -159,6 +176,12 @@ public class SecuritySwitch<T> extends Switch<T> {
 				Guest guest = (Guest)theEObject;
 				T result = caseGuest(guest);
 				if (result == null) result = casePrincipal(guest);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SecurityPackage.PROTECTED: {
+				Protected protected_ = (Protected)theEObject;
+				T result = caseProtected(protected_);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -302,6 +325,21 @@ public class SecuritySwitch<T> extends Switch<T> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Protected</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Protected</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseProtected(Protected object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Action</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -328,6 +366,36 @@ public class SecuritySwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public T casePermission(Permission object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Principal Permission</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Principal Permission</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T casePrincipalPermission(PrincipalPermission object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Protected Permission</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Protected Permission</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseProtectedPermission(ProtectedPermission object) {
 		return null;
 	}
 

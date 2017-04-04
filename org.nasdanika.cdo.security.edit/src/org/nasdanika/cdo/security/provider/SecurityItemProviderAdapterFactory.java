@@ -208,26 +208,49 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 	}
 
 	/**
-	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.Permission} instances.
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.PrincipalPermission} instances.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected PermissionItemProvider permissionItemProvider;
+	protected PrincipalPermissionItemProvider principalPermissionItemProvider;
 
 	/**
-	 * This creates an adapter for a {@link org.nasdanika.cdo.security.Permission}.
+	 * This creates an adapter for a {@link org.nasdanika.cdo.security.PrincipalPermission}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
-	public Adapter createPermissionAdapter() {
-		if (permissionItemProvider == null) {
-			permissionItemProvider = new PermissionItemProvider(this);
+	public Adapter createPrincipalPermissionAdapter() {
+		if (principalPermissionItemProvider == null) {
+			principalPermissionItemProvider = new PrincipalPermissionItemProvider(this);
 		}
 
-		return permissionItemProvider;
+		return principalPermissionItemProvider;
+	}
+
+	/**
+	 * This keeps track of the one adapter used for all {@link org.nasdanika.cdo.security.ProtectedPermission} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ProtectedPermissionItemProvider protectedPermissionItemProvider;
+
+	/**
+	 * This creates an adapter for a {@link org.nasdanika.cdo.security.ProtectedPermission}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createProtectedPermissionAdapter() {
+		if (protectedPermissionItemProvider == null) {
+			protectedPermissionItemProvider = new ProtectedPermissionItemProvider(this);
+		}
+
+		return protectedPermissionItemProvider;
 	}
 
 	/**
@@ -333,7 +356,8 @@ public class SecurityItemProviderAdapterFactory extends SecurityAdapterFactory i
 		if (classItemProvider != null) classItemProvider.dispose();
 		if (actionItemProvider != null) actionItemProvider.dispose();
 		if (principalItemProvider != null) principalItemProvider.dispose();
-		if (permissionItemProvider != null) permissionItemProvider.dispose();
+		if (principalPermissionItemProvider != null) principalPermissionItemProvider.dispose();
+		if (protectedPermissionItemProvider != null) protectedPermissionItemProvider.dispose();
 		if (groupItemProvider != null) groupItemProvider.dispose();
 		if (guestItemProvider != null) guestItemProvider.dispose();
 	}

@@ -24,7 +24,6 @@ import org.nasdanika.core.Context;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Permission#isAllow <em>Allow</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Permission#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getStartDate <em>Start Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getComment <em>Comment</em>}</li>
@@ -33,7 +32,7 @@ import org.nasdanika.core.Context;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPermission()
- * @model
+ * @model abstract="true"
  * @extends CDOObject
  * @generated
  */
@@ -65,29 +64,12 @@ public interface Permission extends CDOObject {
 	void setAllow(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Target</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * <!-- begin-model-doc -->
-	 * Target object.
-	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Target</em>' reference.
-	 * @see #setTarget(EObject)
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_Target()
-	 * @model
+	 * @model kind="operation"
 	 * @generated
 	 */
 	EObject getTarget();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Permission#getTarget <em>Target</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Target</em>' reference.
-	 * @see #getTarget()
-	 * @generated
-	 */
-	void setTarget(EObject value);
 
 	/**
 	 * Returns the value of the '<em><b>Start Date</b></em>' attribute.
@@ -244,5 +226,13 @@ public interface Permission extends CDOObject {
 	 * @generated
 	 */
 	AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model kind="operation"
+	 * @generated
+	 */
+	Principal getPrincipal();
 
 } // Permission

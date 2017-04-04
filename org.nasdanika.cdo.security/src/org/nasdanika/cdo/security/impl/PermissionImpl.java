@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Permission;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
@@ -29,7 +30,6 @@ import org.nasdanika.core.CoreUtil;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#isAllow <em>Allow</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getStartDate <em>Start Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.PermissionImpl#getComment <em>Comment</em>}</li>
@@ -39,7 +39,7 @@ import org.nasdanika.core.CoreUtil;
  *
  * @generated
  */
-public class PermissionImpl extends CDOObjectImpl implements Permission {
+public abstract class PermissionImpl extends CDOObjectImpl implements Permission {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -85,24 +85,6 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 	 */
 	public void setAllow(boolean newAllow) {
 		eSet(SecurityPackage.Literals.PERMISSION__ALLOW, newAllow);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EObject getTarget() {
-		return (EObject)eGet(SecurityPackage.Literals.PERMISSION__TARGET, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTarget(EObject newTarget) {
-		eSet(SecurityPackage.Literals.PERMISSION__TARGET, newTarget);
 	}
 
 	/**
@@ -240,6 +222,10 @@ public class PermissionImpl extends CDOObjectImpl implements Permission {
 		switch (operationID) {
 			case SecurityPackage.PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP:
 				return authorize((Context)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), (Map<String, Object>)arguments.get(3));
+			case SecurityPackage.PERMISSION___GET_PRINCIPAL:
+				return getPrincipal();
+			case SecurityPackage.PERMISSION___GET_TARGET:
+				return getTarget();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

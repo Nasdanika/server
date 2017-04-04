@@ -20,7 +20,10 @@ import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.PrincipalPermission;
 import org.nasdanika.cdo.security.PrincipalVisitor;
+import org.nasdanika.cdo.security.Protected;
+import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
@@ -103,6 +106,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass protectedEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass actionEClass = null;
 
 	/**
@@ -111,6 +121,20 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	private EClass permissionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass principalPermissionEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass protectedPermissionEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -528,6 +552,24 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getProtected() {
+		return protectedEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getProtected_Permissions() {
+		return (EReference)protectedEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAction() {
 		return actionEClass;
 	}
@@ -609,8 +651,17 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getAction__CreatePermission() {
+	public EOperation getAction__CreatePrincipalPermission() {
 		return actionEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getAction__CreateProtectedPermission() {
+		return actionEClass.getEOperations().get(2);
 	}
 
 	/**
@@ -636,17 +687,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getPermission_Target() {
-		return (EReference)permissionEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getPermission_StartDate() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -655,7 +697,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EAttribute getPermission_EndDate() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(3);
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -664,7 +706,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EAttribute getPermission_Comment() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(4);
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -673,7 +715,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EReference getPermission_Action() {
-		return (EReference)permissionEClass.getEStructuralFeatures().get(5);
+		return (EReference)permissionEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -682,7 +724,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EAttribute getPermission_Condition() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(6);
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(5);
 	}
 
 	/**
@@ -692,6 +734,60 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EOperation getPermission__Authorize__Context_String_String_Map() {
 		return permissionEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getPermission__GetPrincipal() {
+		return permissionEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getPermission__GetTarget() {
+		return permissionEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getPrincipalPermission() {
+		return principalPermissionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPrincipalPermission_Target() {
+		return (EReference)principalPermissionEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getProtectedPermission() {
+		return protectedPermissionEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getProtectedPermission_Principal() {
+		return (EReference)protectedPermissionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -814,7 +910,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEAttribute(actionEClass, ACTION__CATEGORY);
 		createEReference(actionEClass, ACTION__CHILDREN);
 		createEOperation(actionEClass, ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP);
-		createEOperation(actionEClass, ACTION___CREATE_PERMISSION);
+		createEOperation(actionEClass, ACTION___CREATE_PRINCIPAL_PERMISSION);
+		createEOperation(actionEClass, ACTION___CREATE_PROTECTED_PERMISSION);
 
 		principalEClass = createEClass(PRINCIPAL);
 		createEReference(principalEClass, PRINCIPAL__MEMBER_OF);
@@ -826,13 +923,20 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		permissionEClass = createEClass(PERMISSION);
 		createEAttribute(permissionEClass, PERMISSION__ALLOW);
-		createEReference(permissionEClass, PERMISSION__TARGET);
 		createEAttribute(permissionEClass, PERMISSION__START_DATE);
 		createEAttribute(permissionEClass, PERMISSION__END_DATE);
 		createEAttribute(permissionEClass, PERMISSION__COMMENT);
 		createEReference(permissionEClass, PERMISSION__ACTION);
 		createEAttribute(permissionEClass, PERMISSION__CONDITION);
 		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP);
+		createEOperation(permissionEClass, PERMISSION___GET_PRINCIPAL);
+		createEOperation(permissionEClass, PERMISSION___GET_TARGET);
+
+		principalPermissionEClass = createEClass(PRINCIPAL_PERMISSION);
+		createEReference(principalPermissionEClass, PRINCIPAL_PERMISSION__TARGET);
+
+		protectedPermissionEClass = createEClass(PROTECTED_PERMISSION);
+		createEReference(protectedPermissionEClass, PROTECTED_PERMISSION__PRINCIPAL);
 
 		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
 
@@ -855,6 +959,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEAttribute(loginPasswordHashUserEClass, LOGIN_PASSWORD_HASH_USER__PASSWORD_HASH);
 
 		guestEClass = createEClass(GUEST);
+
+		protectedEClass = createEClass(PROTECTED);
+		createEReference(protectedEClass, PROTECTED__PERMISSIONS);
 
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
@@ -893,6 +1000,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
+		principalPermissionEClass.getESuperTypes().add(this.getPermission());
+		protectedPermissionEClass.getESuperTypes().add(this.getPermission());
 		EGenericType g1 = createEGenericType(this.getRealm());
 		EGenericType g2 = createEGenericType(this.getLoginPasswordCredentials());
 		g1.getETypeArguments().add(g2);
@@ -968,11 +1077,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
 
-		initEOperation(getAction__CreatePermission(), this.getPermission(), "createPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
+		initEOperation(getAction__CreatePrincipalPermission(), this.getPrincipalPermission(), "createPrincipalPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getAction__CreateProtectedPermission(), this.getProtectedPermission(), "createProtectedPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(principalEClass, Principal.class, "Principal", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPrincipal_MemberOf(), this.getGroup(), this.getGroup_Members(), "memberOf", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPrincipal_Permissions(), this.getPermission(), null, "permissions", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPrincipal_Permissions(), this.getPrincipalPermission(), null, "permissions", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPrincipal_Disabled(), ecorePackage.getEBoolean(), "disabled", null, 0, 1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = initEOperation(getPrincipal__Authorize__Context_EObject_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -996,9 +1107,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g1.getETypeArguments().add(g2);
 		initEOperation(op, g1);
 
-		initEClass(permissionEClass, Permission.class, "Permission", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEClass(permissionEClass, Permission.class, "Permission", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPermission_Allow(), ecorePackage.getEBoolean(), "allow", "true", 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPermission_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_StartDate(), ecorePackage.getEDate(), "startDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_EndDate(), ecorePackage.getEDate(), "endDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1015,6 +1125,16 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getPermission__GetPrincipal(), this.getPrincipal(), "getPrincipal", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getPermission__GetTarget(), ecorePackage.getEObject(), "getTarget", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEClass(principalPermissionEClass, PrincipalPermission.class, "PrincipalPermission", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPrincipalPermission_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, PrincipalPermission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		initEClass(protectedPermissionEClass, ProtectedPermission.class, "ProtectedPermission", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getProtectedPermission_Principal(), this.getPrincipal(), null, "principal", null, 0, 1, ProtectedPermission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(loginPasswordCredentialsEClass, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
@@ -1044,6 +1164,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEAttribute(getLoginPasswordHashUser_PasswordHash(), ecorePackage.getEByteArray(), "passwordHash", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(guestEClass, Guest.class, "Guest", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+
+		initEClass(protectedEClass, Protected.class, "Protected", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getProtected_Permissions(), this.getProtectedPermission(), null, "permissions", null, 0, -1, Protected.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1219,7 +1342,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "Environment can be used to parameterize conditional actions. \r\nFor example an application can define an action class ``TransferFunds`` with ``amountLimit`` ``BigDecimal`` attribute and match logic comparing ``amount`` key of the environment to the ``amount`` attribute of the action and matching only if the key is equal or greater than the attribute.. \r\nThen the application model may contain ``largeTransfer`` action instance with amount set to, say, ``10000``. Permission to execute this action then can be allowed to denied  to some principals.\r\n"
 		   });	
 		addAnnotation
-		  (getAction__CreatePermission(), 
+		  (getAction__CreatePrincipalPermission(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Creates a permission for this action. \r\nSubclasses may customize permissions created for actions. \r\nE.g. ``transferFunds`` action may create a conditional permission\r\nwich checks transfer amount and matches only if the amount is less or greater\r\nthan a specified limit.\r\n"
+		   });	
+		addAnnotation
+		  (getAction__CreateProtectedPermission(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Creates a permission for this action. \r\nSubclasses may customize permissions created for actions. \r\nE.g. ``transferFunds`` action may create a conditional permission\r\nwich checks transfer amount and matches only if the amount is less or greater\r\nthan a specified limit.\r\n"
@@ -1387,12 +1516,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "If true, action is allowed. Otherwise it is denied."
 		   });	
 		addAnnotation
-		  (getPermission_Target(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Target object."
-		   });	
-		addAnnotation
 		  (getPermission_StartDate(), 
 		   source, 
 		   new String[] {
@@ -1421,6 +1544,30 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).\r\n\r\nThe expression is evaluated in the context of the target object with the following variables:\r\n\r\n* ``context``\r\n* ``environment``\r\n* ``action``\r\n* ``qualifier``\r\n* ``permission``"
+		   });	
+		addAnnotation
+		  (principalPermissionEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Permission owned by a principal to execute action on the target object."
+		   });	
+		addAnnotation
+		  (getPrincipalPermission_Target(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Target object."
+		   });	
+		addAnnotation
+		  (protectedPermissionEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Permission owned by a protected object to execute action by the referenced principal."
+		   });	
+		addAnnotation
+		  (getProtectedPermission_Principal(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Target object."
 		   });	
 		addAnnotation
 		  (loginPasswordCredentialsEClass, 
@@ -1535,6 +1682,18 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Guest is a marker class which would typically be used in ``Realm.guest`` containment reference. The application may feature a Guest route service the application landing page and login form."
+		   });	
+		addAnnotation
+		  (protectedEClass, 
+		   source, 
+		   new String[] {
+			 "documentation", "Classes extending this interface maintain a list of permissions referencing principals."
+		   });	
+		addAnnotation
+		  (getProtected_Permissions(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Permissions on this object."
 		   });
 	}
 

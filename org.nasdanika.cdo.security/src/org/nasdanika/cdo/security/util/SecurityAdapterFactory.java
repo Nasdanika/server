@@ -15,6 +15,9 @@ import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.PrincipalPermission;
+import org.nasdanika.cdo.security.Protected;
+import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.User;
@@ -100,6 +103,14 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 				return createPermissionAdapter();
 			}
 			@Override
+			public Adapter casePrincipalPermission(PrincipalPermission object) {
+				return createPrincipalPermissionAdapter();
+			}
+			@Override
+			public Adapter caseProtectedPermission(ProtectedPermission object) {
+				return createProtectedPermissionAdapter();
+			}
+			@Override
 			public Adapter caseLoginPasswordCredentials(LoginPasswordCredentials object) {
 				return createLoginPasswordCredentialsAdapter();
 			}
@@ -126,6 +137,10 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseGuest(Guest object) {
 				return createGuestAdapter();
+			}
+			@Override
+			public Adapter caseProtected(Protected object) {
+				return createProtectedAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -274,6 +289,20 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Protected <em>Protected</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.Protected
+	 * @generated
+	 */
+	public Adapter createProtectedAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -298,6 +327,34 @@ public class SecurityAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPermissionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.PrincipalPermission <em>Principal Permission</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.PrincipalPermission
+	 * @generated
+	 */
+	public Adapter createPrincipalPermissionAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.security.ProtectedPermission <em>Protected Permission</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.security.ProtectedPermission
+	 * @generated
+	 */
+	public Adapter createProtectedPermissionAdapter() {
 		return null;
 	}
 

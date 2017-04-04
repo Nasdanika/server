@@ -70,11 +70,11 @@ public class AuthorizationHelper {
 	 * @param target
 	 * @return
 	 */
-	private static List<Permission> filterAndSortPermissions(EList<Permission> permissions, EObject target) {
+	private static <P extends Permission> List<P> filterAndSortPermissions(List<P> permissions, EObject target) {
 		class PermissionEntry implements Comparable<PermissionEntry> {
-			Permission permission;
+			P permission;
 			int distance;
-			public PermissionEntry(Permission permission, int distance) {
+			public PermissionEntry(P permission, int distance) {
 				this.permission = permission;
 				this.distance = distance;
 			}
@@ -99,7 +99,7 @@ public class AuthorizationHelper {
 		}
 		List<PermissionEntry> tmp = new ArrayList<>();
 		EClass targetClass = target.eClass(); 
-		for (Permission p: permissions) {
+		for (P p: permissions) {
 			if (p.getTarget().equals(target)) {
 				int distance = distance(targetClass, getActionClass(p.getAction(), targetClass));
 				if (distance!=-1) {
@@ -108,7 +108,7 @@ public class AuthorizationHelper {
 			}
 		}
 		Collections.sort(tmp);
-		List<Permission> ret = new ArrayList<>();
+		List<P> ret = new ArrayList<>();
 		for (PermissionEntry pe: tmp) {
 			ret.add(pe.permission);
 		}
@@ -185,7 +185,16 @@ public class AuthorizationHelper {
 		}
 		
 		// Own permissions and implies
-		for (Permission p: filterAndSortPermissions(principal.getPermissions(), target)) {
+		List<Permission> permissions = new ArrayList<>();
+		if (target instanceof Protected) {
+			for (ProtectedPermission pp: ((Protected) target).getPermissions()) {
+				if (pp.getPrincipal() == principal) {
+					permissions.add(pp);
+				}
+			}
+		}
+		permissions.addAll(filterAndSortPermissions(principal.getPermissions(), target));
+		for (Permission p: permissions) {
 			StringBuilder qualifierBuilder = new StringBuilder();
 			for (EStructuralFeature pe: path) {
 				qualifierBuilder.append(pe.getName());

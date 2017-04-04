@@ -237,6 +237,22 @@ public interface Action extends CDOObject {
 	 * @model
 	 * @generated
 	 */
-	Permission createPermission();
+	PrincipalPermission createPrincipalPermission();
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Creates a permission for this action. 
+	 * Subclasses may customize permissions created for actions. 
+	 * E.g. ``transferFunds`` action may create a conditional permission
+	 * wich checks transfer amount and matches only if the amount is less or greater
+	 * than a specified limit.
+	 * 
+	 * <!-- end-model-doc -->
+	 * @model
+	 * @generated
+	 */
+	ProtectedPermission createProtectedPermission();
 
 } // Action

@@ -76,13 +76,22 @@ public interface SecurityFactory extends EFactory {
 	Principal createPrincipal();
 
 	/**
-	 * Returns a new object of class '<em>Permission</em>'.
+	 * Returns a new object of class '<em>Principal Permission</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Permission</em>'.
+	 * @return a new object of class '<em>Principal Permission</em>'.
 	 * @generated
 	 */
-	Permission createPermission();
+	PrincipalPermission createPrincipalPermission();
+
+	/**
+	 * Returns a new object of class '<em>Protected Permission</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Protected Permission</em>'.
+	 * @generated
+	 */
+	ProtectedPermission createProtectedPermission();
 
 	/**
 	 * Returns the package supported by this factory.

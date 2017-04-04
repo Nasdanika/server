@@ -174,7 +174,7 @@ public interface Realm<CR> extends CDOObject {
 	 */
 	default void clearPermissions(EObject obj) {
 		for (User<?> user: getAllUsers()) {
-			Iterator<Permission> pit = user.getPermissions().iterator();
+			Iterator<PrincipalPermission> pit = user.getPermissions().iterator();
 			while (pit.hasNext()) {
 				Permission p = pit.next();
 				if (p.getTarget().equals(obj)) {

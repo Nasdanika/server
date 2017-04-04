@@ -55,7 +55,8 @@
         <genParameters ecoreParameter="security.ecore#//Action/match/qualifier"/>
         <genParameters ecoreParameter="security.ecore#//Action/match/environment"/>
       </genOperations>
-      <genOperations ecoreOperation="security.ecore#//Action/createPermission"/>
+      <genOperations ecoreOperation="security.ecore#//Action/createPrincipalPermission"/>
+      <genOperations ecoreOperation="security.ecore#//Action/createProtectedPermission"/>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//Principal">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Principal/memberOf"/>
@@ -75,7 +76,6 @@
     </genClasses>
     <genClasses ecoreClass="security.ecore#//Permission">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/allow"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Permission/target"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/startDate"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Permission/endDate"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute security.ecore#//Permission/comment"/>
@@ -87,6 +87,14 @@
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/qualifier"/>
         <genParameters ecoreParameter="security.ecore#//Permission/authorize/environment"/>
       </genOperations>
+      <genOperations ecoreOperation="security.ecore#//Permission/getPrincipal"/>
+      <genOperations ecoreOperation="security.ecore#//Permission/getTarget"/>
+    </genClasses>
+    <genClasses ecoreClass="security.ecore#//PrincipalPermission">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//PrincipalPermission/target"/>
+    </genClasses>
+    <genClasses ecoreClass="security.ecore#//ProtectedPermission">
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//ProtectedPermission/principal"/>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordRealm">
@@ -117,5 +125,8 @@
       <genFeatures property="Readonly" createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//LoginPasswordHashUser/passwordHash"/>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//Guest"/>
+    <genClasses image="false" ecoreClass="security.ecore#//Protected">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Protected/permissions"/>
+    </genClasses>
   </genPackages>
 </genmodel:GenModel>

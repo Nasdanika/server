@@ -57,7 +57,7 @@ public interface Principal extends CDOObject {
 
 	/**
 	 * Returns the value of the '<em><b>Permissions</b></em>' containment reference list.
-	 * The list contents are of type {@link org.nasdanika.cdo.security.Permission}.
+	 * The list contents are of type {@link org.nasdanika.cdo.security.PrincipalPermission}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
@@ -68,7 +68,7 @@ public interface Principal extends CDOObject {
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<Permission> getPermissions();
+	EList<PrincipalPermission> getPermissions();
 
 	/**
 	 * Returns the value of the '<em><b>Disabled</b></em>' attribute.

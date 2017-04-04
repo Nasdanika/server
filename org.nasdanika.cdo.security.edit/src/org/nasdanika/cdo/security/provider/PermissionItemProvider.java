@@ -50,7 +50,6 @@ public class PermissionItemProvider extends CDOItemProviderAdapterEx implements 
 			super.getPropertyDescriptors(object);
 
 			addAllowPropertyDescriptor(object);
-			addTargetPropertyDescriptor(object);
 			addStartDatePropertyDescriptor(object);
 			addEndDatePropertyDescriptor(object);
 			addCommentPropertyDescriptor(object);
@@ -78,28 +77,6 @@ public class PermissionItemProvider extends CDOItemProviderAdapterEx implements 
 				 false,
 				 false,
 				 ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE,
-				 null,
-				 null));
-	}
-
-	/**
-	 * This adds a property descriptor for the Target feature.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	protected void addTargetPropertyDescriptor(Object object) {
-		itemPropertyDescriptors.add
-			(createItemPropertyDescriptor
-				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
-				 getResourceLocator(),
-				 getString("_UI_Permission_target_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Permission_target_feature", "_UI_Permission_type"),
-				 SecurityPackage.Literals.PERMISSION__TARGET,
-				 true,
-				 false,
-				 true,
-				 null,
 				 null,
 				 null));
 	}

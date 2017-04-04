@@ -4,12 +4,14 @@ package org.nasdanika.cdo.security.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.security.Action;
-import org.nasdanika.cdo.security.Permission;
+import org.nasdanika.cdo.security.PrincipalPermission;
+import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.Context;
@@ -231,11 +233,19 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * Creates simple permission.
 	 * @generated NOT
 	 */
-	public Permission createPermission() {
-		return SecurityFactory.eINSTANCE.createPermission();
+	public PrincipalPermission createPrincipalPermission() {
+		return SecurityFactory.eINSTANCE.createPrincipalPermission();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public ProtectedPermission createProtectedPermission() {
+		return SecurityFactory.eINSTANCE.createProtectedPermission();
 	}
 
 	/**
@@ -249,8 +259,10 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 		switch (operationID) {
 			case SecurityPackage.ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP:
 				return match((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
-			case SecurityPackage.ACTION___CREATE_PERMISSION:
-				return createPermission();
+			case SecurityPackage.ACTION___CREATE_PRINCIPAL_PERMISSION:
+				return createPrincipalPermission();
+			case SecurityPackage.ACTION___CREATE_PROTECTED_PERMISSION:
+				return createProtectedPermission();
 		}
 		return super.eInvoke(operationID, arguments);
 	}

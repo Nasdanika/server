@@ -276,7 +276,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordCredentials()
 	 * @generated
 	 */
-	int LOGIN_PASSWORD_CREDENTIALS = 6;
+	int LOGIN_PASSWORD_CREDENTIALS = 8;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl <em>Login Password Realm</em>}' class.
@@ -286,7 +286,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordRealm()
 	 * @generated
 	 */
-	int LOGIN_PASSWORD_REALM = 7;
+	int LOGIN_PASSWORD_REALM = 9;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PrincipalImpl <em>Principal</em>}' class.
@@ -306,7 +306,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGroup()
 	 * @generated
 	 */
-	int GROUP = 8;
+	int GROUP = 10;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.LoginUserImpl <em>Login User</em>}' class.
@@ -316,7 +316,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginUser()
 	 * @generated
 	 */
-	int LOGIN_USER = 10;
+	int LOGIN_USER = 12;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.LoginPasswordHashUser <em>Login Password Hash User</em>}' class.
@@ -326,7 +326,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getLoginPasswordHashUser()
 	 * @generated
 	 */
-	int LOGIN_PASSWORD_HASH_USER = 11;
+	int LOGIN_PASSWORD_HASH_USER = 13;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
@@ -420,13 +420,22 @@ public interface SecurityPackage extends EPackage {
 	int ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP = 0;
 
 	/**
-	 * The operation id for the '<em>Create Permission</em>' operation.
+	 * The operation id for the '<em>Create Principal Permission</em>' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION___CREATE_PERMISSION = 1;
+	int ACTION___CREATE_PRINCIPAL_PERMISSION = 1;
+
+	/**
+	 * The operation id for the '<em>Create Protected Permission</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION___CREATE_PROTECTED_PERMISSION = 2;
 
 	/**
 	 * The number of operations of the '<em>Action</em>' class.
@@ -435,7 +444,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION_OPERATION_COUNT = 2;
+	int ACTION_OPERATION_COUNT = 3;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -529,22 +538,13 @@ public interface SecurityPackage extends EPackage {
 	int PERMISSION__ALLOW = 0;
 
 	/**
-	 * The feature id for the '<em><b>Target</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERMISSION__TARGET = 1;
-
-	/**
 	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__START_DATE = 2;
+	int PERMISSION__START_DATE = 1;
 
 	/**
 	 * The feature id for the '<em><b>End Date</b></em>' attribute.
@@ -553,7 +553,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__END_DATE = 3;
+	int PERMISSION__END_DATE = 2;
 
 	/**
 	 * The feature id for the '<em><b>Comment</b></em>' attribute.
@@ -562,7 +562,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__COMMENT = 4;
+	int PERMISSION__COMMENT = 3;
 
 	/**
 	 * The feature id for the '<em><b>Action</b></em>' reference.
@@ -571,7 +571,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__ACTION = 5;
+	int PERMISSION__ACTION = 4;
 
 	/**
 	 * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -580,7 +580,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__CONDITION = 6;
+	int PERMISSION__CONDITION = 5;
 
 	/**
 	 * The number of structural features of the '<em>Permission</em>' class.
@@ -589,7 +589,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION_FEATURE_COUNT = 7;
+	int PERMISSION_FEATURE_COUNT = 6;
 
 	/**
 	 * The operation id for the '<em>Authorize</em>' operation.
@@ -601,13 +601,267 @@ public interface SecurityPackage extends EPackage {
 	int PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP = 0;
 
 	/**
+	 * The operation id for the '<em>Get Principal</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION___GET_PRINCIPAL = 1;
+
+	/**
+	 * The operation id for the '<em>Get Target</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION___GET_TARGET = 2;
+
+	/**
 	 * The number of operations of the '<em>Permission</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION_OPERATION_COUNT = 1;
+	int PERMISSION_OPERATION_COUNT = 3;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PrincipalPermissionImpl <em>Principal Permission</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.PrincipalPermissionImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalPermission()
+	 * @generated
+	 */
+	int PRINCIPAL_PERMISSION = 6;
+
+	/**
+	 * The feature id for the '<em><b>Allow</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__ALLOW = PERMISSION__ALLOW;
+
+	/**
+	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__START_DATE = PERMISSION__START_DATE;
+
+	/**
+	 * The feature id for the '<em><b>End Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__END_DATE = PERMISSION__END_DATE;
+
+	/**
+	 * The feature id for the '<em><b>Comment</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__COMMENT = PERMISSION__COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Action</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__ACTION = PERMISSION__ACTION;
+
+	/**
+	 * The feature id for the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__CONDITION = PERMISSION__CONDITION;
+
+	/**
+	 * The feature id for the '<em><b>Target</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__TARGET = PERMISSION_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Principal Permission</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION_FEATURE_COUNT = PERMISSION_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Authorize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP = PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP;
+
+	/**
+	 * The operation id for the '<em>Get Principal</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION___GET_PRINCIPAL = PERMISSION___GET_PRINCIPAL;
+
+	/**
+	 * The operation id for the '<em>Get Target</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION___GET_TARGET = PERMISSION___GET_TARGET;
+
+	/**
+	 * The number of operations of the '<em>Principal Permission</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION_OPERATION_COUNT = PERMISSION_OPERATION_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.ProtectedPermissionImpl <em>Protected Permission</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.impl.ProtectedPermissionImpl
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtectedPermission()
+	 * @generated
+	 */
+	int PROTECTED_PERMISSION = 7;
+
+	/**
+	 * The feature id for the '<em><b>Allow</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__ALLOW = PERMISSION__ALLOW;
+
+	/**
+	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__START_DATE = PERMISSION__START_DATE;
+
+	/**
+	 * The feature id for the '<em><b>End Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__END_DATE = PERMISSION__END_DATE;
+
+	/**
+	 * The feature id for the '<em><b>Comment</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__COMMENT = PERMISSION__COMMENT;
+
+	/**
+	 * The feature id for the '<em><b>Action</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__ACTION = PERMISSION__ACTION;
+
+	/**
+	 * The feature id for the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__CONDITION = PERMISSION__CONDITION;
+
+	/**
+	 * The feature id for the '<em><b>Principal</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__PRINCIPAL = PERMISSION_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Protected Permission</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION_FEATURE_COUNT = PERMISSION_FEATURE_COUNT + 1;
+
+	/**
+	 * The operation id for the '<em>Authorize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP = PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP;
+
+	/**
+	 * The operation id for the '<em>Get Principal</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION___GET_PRINCIPAL = PERMISSION___GET_PRINCIPAL;
+
+	/**
+	 * The operation id for the '<em>Get Target</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION___GET_TARGET = PERMISSION___GET_TARGET;
+
+	/**
+	 * The number of operations of the '<em>Protected Permission</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION_OPERATION_COUNT = PERMISSION_OPERATION_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Login Password Credentials</em>' class.
@@ -842,7 +1096,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getUser()
 	 * @generated
 	 */
-	int USER = 9;
+	int USER = 11;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -1095,7 +1349,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getGuest()
 	 * @generated
 	 */
-	int GUEST = 12;
+	int GUEST = 14;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -1170,6 +1424,43 @@ public interface SecurityPackage extends EPackage {
 	int GUEST_OPERATION_COUNT = PRINCIPAL_OPERATION_COUNT + 0;
 
 	/**
+	 * The meta object id for the '{@link org.nasdanika.cdo.security.Protected <em>Protected</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.security.Protected
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtected()
+	 * @generated
+	 */
+	int PROTECTED = 15;
+
+	/**
+	 * The feature id for the '<em><b>Permissions</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED__PERMISSIONS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Protected</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_FEATURE_COUNT = 1;
+
+	/**
+	 * The number of operations of the '<em>Protected</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_OPERATION_COUNT = 0;
+
+	/**
 	 * The meta object id for the '<em>Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1177,7 +1468,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 13;
+	int CONTEXT = 16;
 
 	/**
 	 * The meta object id for the '<em>Principal Visitor</em>' data type.
@@ -1187,7 +1478,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalVisitor()
 	 * @generated
 	 */
-	int PRINCIPAL_VISITOR = 14;
+	int PRINCIPAL_VISITOR = 17;
 
 	/**
 	 * The meta object id for the '<em>Access Decision</em>' data type.
@@ -1197,7 +1488,7 @@ public interface SecurityPackage extends EPackage {
 	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getAccessDecision()
 	 * @generated
 	 */
-	int ACCESS_DECISION = 15;
+	int ACCESS_DECISION = 18;
 
 
 	/**
@@ -1611,6 +1902,27 @@ public interface SecurityPackage extends EPackage {
 	EClass getGuest();
 
 	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Protected <em>Protected</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Protected</em>'.
+	 * @see org.nasdanika.cdo.security.Protected
+	 * @generated
+	 */
+	EClass getProtected();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.cdo.security.Protected#getPermissions <em>Permissions</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Permissions</em>'.
+	 * @see org.nasdanika.cdo.security.Protected#getPermissions()
+	 * @see #getProtected()
+	 * @generated
+	 */
+	EReference getProtected_Permissions();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1708,14 +2020,24 @@ public interface SecurityPackage extends EPackage {
 	EOperation getAction__Match__Context_EObject_String_String_Map();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#createPermission() <em>Create Permission</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#createPrincipalPermission() <em>Create Principal Permission</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the '<em>Create Permission</em>' operation.
-	 * @see org.nasdanika.cdo.security.Action#createPermission()
+	 * @return the meta object for the '<em>Create Principal Permission</em>' operation.
+	 * @see org.nasdanika.cdo.security.Action#createPrincipalPermission()
 	 * @generated
 	 */
-	EOperation getAction__CreatePermission();
+	EOperation getAction__CreatePrincipalPermission();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#createProtectedPermission() <em>Create Protected Permission</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Create Protected Permission</em>' operation.
+	 * @see org.nasdanika.cdo.security.Action#createProtectedPermission()
+	 * @generated
+	 */
+	EOperation getAction__CreateProtectedPermission();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Permission <em>Permission</em>}'.
@@ -1737,17 +2059,6 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getPermission_Allow();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.Permission#getTarget <em>Target</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Target</em>'.
-	 * @see org.nasdanika.cdo.security.Permission#getTarget()
-	 * @see #getPermission()
-	 * @generated
-	 */
-	EReference getPermission_Target();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Permission#getStartDate <em>Start Date</em>}'.
@@ -1813,6 +2124,68 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EOperation getPermission__Authorize__Context_String_String_Map();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Permission#getPrincipal() <em>Get Principal</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Principal</em>' operation.
+	 * @see org.nasdanika.cdo.security.Permission#getPrincipal()
+	 * @generated
+	 */
+	EOperation getPermission__GetPrincipal();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Permission#getTarget() <em>Get Target</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Target</em>' operation.
+	 * @see org.nasdanika.cdo.security.Permission#getTarget()
+	 * @generated
+	 */
+	EOperation getPermission__GetTarget();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.PrincipalPermission <em>Principal Permission</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Principal Permission</em>'.
+	 * @see org.nasdanika.cdo.security.PrincipalPermission
+	 * @generated
+	 */
+	EClass getPrincipalPermission();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.PrincipalPermission#getTarget <em>Target</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Target</em>'.
+	 * @see org.nasdanika.cdo.security.PrincipalPermission#getTarget()
+	 * @see #getPrincipalPermission()
+	 * @generated
+	 */
+	EReference getPrincipalPermission_Target();
+
+	/**
+	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.ProtectedPermission <em>Protected Permission</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Protected Permission</em>'.
+	 * @see org.nasdanika.cdo.security.ProtectedPermission
+	 * @generated
+	 */
+	EClass getProtectedPermission();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.ProtectedPermission#getPrincipal <em>Principal</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Principal</em>'.
+	 * @see org.nasdanika.cdo.security.ProtectedPermission#getPrincipal()
+	 * @see #getProtectedPermission()
+	 * @generated
+	 */
+	EReference getProtectedPermission_Principal();
 
 	/**
 	 * Returns the meta object for data type '{@link org.nasdanika.core.Context <em>Context</em>}'.
@@ -2205,6 +2578,24 @@ public interface SecurityPackage extends EPackage {
 		EClass GUEST = eINSTANCE.getGuest();
 
 		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.Protected <em>Protected</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.Protected
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtected()
+		 * @generated
+		 */
+		EClass PROTECTED = eINSTANCE.getProtected();
+
+		/**
+		 * The meta object literal for the '<em><b>Permissions</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PROTECTED__PERMISSIONS = eINSTANCE.getProtected_Permissions();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2279,12 +2670,20 @@ public interface SecurityPackage extends EPackage {
 		EOperation ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP = eINSTANCE.getAction__Match__Context_EObject_String_String_Map();
 
 		/**
-		 * The meta object literal for the '<em><b>Create Permission</b></em>' operation.
+		 * The meta object literal for the '<em><b>Create Principal Permission</b></em>' operation.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation ACTION___CREATE_PERMISSION = eINSTANCE.getAction__CreatePermission();
+		EOperation ACTION___CREATE_PRINCIPAL_PERMISSION = eINSTANCE.getAction__CreatePrincipalPermission();
+
+		/**
+		 * The meta object literal for the '<em><b>Create Protected Permission</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ACTION___CREATE_PROTECTED_PERMISSION = eINSTANCE.getAction__CreateProtectedPermission();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.PermissionImpl <em>Permission</em>}' class.
@@ -2303,14 +2702,6 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PERMISSION__ALLOW = eINSTANCE.getPermission_Allow();
-
-		/**
-		 * The meta object literal for the '<em><b>Target</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference PERMISSION__TARGET = eINSTANCE.getPermission_Target();
 
 		/**
 		 * The meta object literal for the '<em><b>Start Date</b></em>' attribute feature.
@@ -2359,6 +2750,58 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EOperation PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP = eINSTANCE.getPermission__Authorize__Context_String_String_Map();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Principal</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation PERMISSION___GET_PRINCIPAL = eINSTANCE.getPermission__GetPrincipal();
+
+		/**
+		 * The meta object literal for the '<em><b>Get Target</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation PERMISSION___GET_TARGET = eINSTANCE.getPermission__GetTarget();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.PrincipalPermissionImpl <em>Principal Permission</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.PrincipalPermissionImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getPrincipalPermission()
+		 * @generated
+		 */
+		EClass PRINCIPAL_PERMISSION = eINSTANCE.getPrincipalPermission();
+
+		/**
+		 * The meta object literal for the '<em><b>Target</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PRINCIPAL_PERMISSION__TARGET = eINSTANCE.getPrincipalPermission_Target();
+
+		/**
+		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ProtectedPermissionImpl <em>Protected Permission</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.security.impl.ProtectedPermissionImpl
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getProtectedPermission()
+		 * @generated
+		 */
+		EClass PROTECTED_PERMISSION = eINSTANCE.getProtectedPermission();
+
+		/**
+		 * The meta object literal for the '<em><b>Principal</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PROTECTED_PERMISSION__PRINCIPAL = eINSTANCE.getProtectedPermission_Principal();
 
 		/**
 		 * The meta object literal for the '<em>Context</em>' data type.
