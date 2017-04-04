@@ -86,6 +86,8 @@ Open ``xxx-cdo-transaction-context-provider.xml`` in the application project ``O
 <property name="default-access-decision" type="String" value="deny"/>
 ```
 
+Also make sure that your ``<app name>CDOTransactionContextProviderComponent`` class correctly implements ``getSecurityRealm()``. 
+
 ### Implement login form
 
 Create and register ``GuestRenderer`` and ``GuestRoute``.
@@ -220,9 +222,73 @@ Registration in ``plugin.xml``:
 
 ### User home
 
-Implement the user route as required by your application. 
+Implement the user route as required by your application.
 
-### Access control
+### NTLM authentication
+
+This section describes how to set up NTLM authentication by putting the application behind Apache HTTPD (inspired by [Jenkins Reverse Proxy Auth Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Reverse+Proxy+Auth+Plugin). Another option is to use [WAFFLE](https://github.com/Waffle/waffle) or similar products.
+
+#### Apache HTTPD
+
+* Enable proxy, ntlm and rewrite modules, 
+* Proxy to your app 
+* Set up NTLM/SSPI authentication
+* Set up rewrite rule to pass user name in ``X-Forwarded-User`` header.
+
+```
+# Required modules
+LoadModule proxy_module modules/mod_proxy.so
+# Maybe this one is not needed
+LoadModule proxy_html_module modules/mod_proxy_html.so 
+LoadModule proxy_http_module modules/mod_proxy_http.so
+LoadModule rewrite_module modules/mod_rewrite.so
+
+LoadModule auth_ntlm_module modules/mod_authn_ntlm.so
+
+...  
+
+ProxyPass         /myapp  http://localhost:8080/myapp nocanon
+ProxyPassReverse  /myapp  http://localhost:8080/myapp
+ProxyRequests     Off
+AllowEncodedSlashes NoDecode
+
+<Location "/myapp/">
+    AllowOverride All
+    Options FollowSymLinks
+    Order allow,deny
+    Allow from all
+    
+    AuthName "MyOrg"
+    AuthType SSPI
+    NTLMAuth On
+    NTLMAuthoritative On
+    NTLMOmitDomain On
+    NTLMUsernameCase lower
+    NTLMOfferBasic Off
+
+    require valid-user
+
+    RewriteEngine On
+    RewriteCond %{LA-U:REMOTE_USER} (.+)
+    RewriteRule . - [E=RU:%1]
+    RequestHeader add X-Forwarded-User %{RU}e
+
+</Location>
+```
+
+#### plugin.xml
+
+Add ``user-name-header`` init parameter to the router servlet:
+
+```xml
+<init-param
+      name="user-name-header"
+      value="X-Forwarded-User">
+</init-param>
+```
+ 
+
+### Authorization
 
 Define packages, classes, and actions in the initial model.
 
