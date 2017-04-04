@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
