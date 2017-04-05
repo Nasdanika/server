@@ -1301,6 +1301,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Object renderFeatureValue(C context, EStructuralFeature feature, Object value) throws Exception {
+		if (feature instanceof EReference && !feature.isMany() && !context.authorize(value, StandardAction.read, null, null)) {
+			value = null;
+		}
+		
 		if (value == null || (value instanceof String && ((String) value).length() == 0)) {
 			String pra = getRenderAnnotation(context, feature, RenderAnnotation.PLACEHOLDER);
 			if (!CoreUtil.isBlank(pra) && context instanceof HttpServletRequestContext) {
