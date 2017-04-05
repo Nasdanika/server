@@ -199,6 +199,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		env.put(PageTemplateTokens.BODY.literal, renderBody(context, header, leftPanel, content, footer));
 		
 		Theme theme = getTheme(context, obj);
+		if (theme == null) {
+			theme = Theme.Default;
+		}
 		switch (theme) {
 		case None:
 			env.put(BOOTSTRAP_THEME_TOKEN, "");
@@ -264,7 +267,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @param context
 	 * @return Bootstrap/Bootswatch theme to use for rendering. 
 	 */
-	protected Theme getTheme(C context, T obj) {
+	protected Theme getTheme(C context, T obj) throws Exception {
 		return Theme.Default;
 	}
 
