@@ -1452,13 +1452,22 @@ public interface SecurityPackage extends EPackage {
 	int PROTECTED_FEATURE_COUNT = 1;
 
 	/**
+	 * The operation id for the '<em>Authorize</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED___AUTHORIZE__CONTEXT_PRINCIPAL_STRING_STRING_MAP = 0;
+
+	/**
 	 * The number of operations of the '<em>Protected</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTED_OPERATION_COUNT = 0;
+	int PROTECTED_OPERATION_COUNT = 1;
 
 	/**
 	 * The meta object id for the '<em>Context</em>' data type.
@@ -1921,6 +1930,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getProtected_Permissions();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Protected#authorize(org.nasdanika.core.Context, org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String, java.util.Map) <em>Authorize</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Authorize</em>' operation.
+	 * @see org.nasdanika.cdo.security.Protected#authorize(org.nasdanika.core.Context, org.nasdanika.cdo.security.Principal, java.lang.String, java.lang.String, java.util.Map)
+	 * @generated
+	 */
+	EOperation getProtected__Authorize__Context_Principal_String_String_Map();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
@@ -2594,6 +2613,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EReference PROTECTED__PERMISSIONS = eINSTANCE.getProtected_Permissions();
+
+		/**
+		 * The meta object literal for the '<em><b>Authorize</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation PROTECTED___AUTHORIZE__CONTEXT_PRINCIPAL_STRING_STRING_MAP = eINSTANCE.getProtected__Authorize__Context_Principal_String_String_Map();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.

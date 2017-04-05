@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
@@ -17,11 +16,11 @@ import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
 /**
- * Helper (mix-in) class for resolving permissions.
+ * Helper (mix-in) class for resolving principal permissions.
  * @author Pavel
  *
  */
-public class AuthorizationHelper {
+public class PrincipalAuthorizationHelper {
 
 	private static final String PARENT_NAVIGATION = "../";
 	private Principal principal;
@@ -30,7 +29,7 @@ public class AuthorizationHelper {
 	 * Creates authorization helper for a given principal.
 	 * @param principal
 	 */
-	public AuthorizationHelper(Principal principal) {
+	public PrincipalAuthorizationHelper(Principal principal) {
 		this.principal = principal;
 	}
 	
@@ -184,23 +183,23 @@ public class AuthorizationHelper {
 			return AccessDecision.ALLOW;
 		}
 		
-		// Own permissions and implies
-		List<Permission> permissions = new ArrayList<>();
+		StringBuilder qualifierBuilder = new StringBuilder();
+		for (EStructuralFeature pe: path) {
+			qualifierBuilder.append(pe.getName());
+			qualifierBuilder.append("/");
+		}
+		qualifierBuilder.append(qualifier);
+		
+		// Protected
 		if (target instanceof Protected) {
-			for (ProtectedPermission pp: ((Protected) target).getPermissions()) {
-				if (pp.getPrincipal() == principal) {
-					permissions.add(pp);
-				}
+			AccessDecision tad = ((Protected) target).authorize(context, principal, action, qualifierBuilder.toString(), environment);
+			if (tad != AccessDecision.ABSTAIN) {
+				return tad;
 			}
 		}
-		permissions.addAll(filterAndSortPermissions(principal.getPermissions(), target));
-		for (Permission p: permissions) {
-			StringBuilder qualifierBuilder = new StringBuilder();
-			for (EStructuralFeature pe: path) {
-				qualifierBuilder.append(pe.getName());
-				qualifierBuilder.append("/");
-			}
-			qualifierBuilder.append(qualifier);
+		
+		// Own permissions and implies
+		for (Permission p: filterAndSortPermissions(principal.getPermissions(), target)) {
 			AccessDecision accessDecision = p.authorize(context, action, qualifierBuilder.toString(), environment);
 			if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 				return accessDecision;

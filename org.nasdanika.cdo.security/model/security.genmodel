@@ -127,6 +127,13 @@
     <genClasses ecoreClass="security.ecore#//Guest"/>
     <genClasses image="false" ecoreClass="security.ecore#//Protected">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Protected/permissions"/>
+      <genOperations ecoreOperation="security.ecore#//Protected/authorize">
+        <genParameters ecoreParameter="security.ecore#//Protected/authorize/context"/>
+        <genParameters ecoreParameter="security.ecore#//Protected/authorize/principal"/>
+        <genParameters ecoreParameter="security.ecore#//Protected/authorize/action"/>
+        <genParameters ecoreParameter="security.ecore#//Protected/authorize/qualifier"/>
+        <genParameters ecoreParameter="security.ecore#//Protected/authorize/environment"/>
+      </genOperations>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

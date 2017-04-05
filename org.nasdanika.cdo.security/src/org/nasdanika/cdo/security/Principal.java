@@ -100,7 +100,8 @@ public interface Principal extends CDOObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Authorizes to execute an action with a qualifier on an object in an context and an environment.
+	 * Authorizes to execute an action with a qualifier on an object in a context and an environment.
+	 * If target is instanceof Protected then its authorize() method is invoked and takes precedence over the Principal's authorize().
 	 * @param context Authorization context.
 	 * @param target Permission target object.
 	 * @param action Action name, e.g. ``read``, ``add``, or ``invoke``.

@@ -570,6 +570,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getProtected__Authorize__Context_Principal_String_String_Map() {
+		return protectedEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAction() {
 		return actionEClass;
 	}
@@ -962,6 +971,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		protectedEClass = createEClass(PROTECTED);
 		createEReference(protectedEClass, PROTECTED__PERMISSIONS);
+		createEOperation(protectedEClass, PROTECTED___AUTHORIZE__CONTEXT_PRINCIPAL_STRING_STRING_MAP);
 
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
@@ -1167,6 +1177,18 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		initEClass(protectedEClass, Protected.class, "Protected", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getProtected_Permissions(), this.getProtectedPermission(), null, "permissions", null, 0, -1, Protected.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getProtected__Authorize__Context_Principal_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getPrincipal(), "principal", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEString(), "qualifier", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(ecorePackage.getEMap());
+		g2 = createEGenericType(ecorePackage.getEString());
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1405,7 +1427,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getPrincipal__Authorize__Context_EObject_String_String_Map(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Authorizes to execute an action with a qualifier on an object in an context and an environment."
+			 "documentation", "Authorizes to execute an action with a qualifier on an object in a context and an environment.\r\nIf target is instanceof Protected then its authorize() method is invoked and takes precedence over the Principal\'s authorize()."
 		   });	
 		addAnnotation
 		  ((getPrincipal__Authorize__Context_EObject_String_String_Map()).getEParameters().get(0), 
@@ -1688,6 +1710,42 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Classes extending this interface maintain a list of permissions referencing principals."
+		   });	
+		addAnnotation
+		  (getProtected__Authorize__Context_Principal_String_String_Map(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Authorizes the principal to execute an action with a qualifier in a context and an environment.\r\nIf return value of this methos is ALLOW or DENY, it takes precedence over Principal\'s authorize() return value\r\n(i.e. Principal\'s authorize() is not invoked if this method returns anything other than ABSTAIN).\r\n\r\nThe default implementation of this method iterates over protected permissions."
+		   });	
+		addAnnotation
+		  ((getProtected__Authorize__Context_Principal_String_String_Map()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Authorization context."
+		   });	
+		addAnnotation
+		  ((getProtected__Authorize__Context_Principal_String_String_Map()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Permission target object."
+		   });	
+		addAnnotation
+		  ((getProtected__Authorize__Context_Principal_String_String_Map()).getEParameters().get(2), 
+		   source, 
+		   new String[] {
+			 "documentation", "Action name, e.g. ``read``, ``add``, or ``invoke``."
+		   });	
+		addAnnotation
+		  ((getProtected__Authorize__Context_Principal_String_String_Map()).getEParameters().get(3), 
+		   source, 
+		   new String[] {
+			 "documentation", "Action qualifier. E.g. attribute name for ``read`` or operation signature for ``invoke``."
+		   });	
+		addAnnotation
+		  ((getProtected__Authorize__Context_Principal_String_String_Map()).getEParameters().get(4), 
+		   source, 
+		   new String[] {
+			 "documentation", "Authorization environment, e.g. for ``transferFunds`` environment may contain ``transferAmount`` key.\r\nEnvironment may be used by conditional actions and/or conditional permissions."
 		   });	
 		addAnnotation
 		  (getProtected_Permissions(), 

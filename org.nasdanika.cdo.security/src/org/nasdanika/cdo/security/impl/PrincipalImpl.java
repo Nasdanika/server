@@ -12,7 +12,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.nasdanika.cdo.security.AuthorizationHelper;
+import org.nasdanika.cdo.security.PrincipalAuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalPermission;
@@ -107,7 +107,7 @@ public class PrincipalImpl extends CDOObjectImpl implements Principal {
 		eSet(SecurityPackage.Literals.PRINCIPAL__DISABLED, newDisabled);
 	}
 
-	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);
+	private PrincipalAuthorizationHelper authorizationHelper = new PrincipalAuthorizationHelper(this);
 	
 	/**
 	 * <!-- begin-user-doc -->

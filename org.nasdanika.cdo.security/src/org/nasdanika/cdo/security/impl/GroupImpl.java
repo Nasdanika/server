@@ -8,7 +8,7 @@ import java.util.Map;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.cdo.security.AuthorizationHelper;
+import org.nasdanika.cdo.security.PrincipalAuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
@@ -118,7 +118,7 @@ public class GroupImpl extends PrincipalImpl implements Group {
 		return false;
 	}
 	
-	private AuthorizationHelper authorizationHelper = new AuthorizationHelper(this);	
+	private PrincipalAuthorizationHelper authorizationHelper = new PrincipalAuthorizationHelper(this);	
 
 	/**
 	 * <!-- begin-user-doc -->
