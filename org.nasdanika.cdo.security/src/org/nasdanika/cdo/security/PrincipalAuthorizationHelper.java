@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 
 /**
  * Helper (mix-in) class for resolving principal permissions.
@@ -185,10 +186,17 @@ public class PrincipalAuthorizationHelper {
 		
 		StringBuilder qualifierBuilder = new StringBuilder();
 		for (EStructuralFeature pe: path) {
+			if (qualifierBuilder.length() > 0) {
+				qualifierBuilder.append("/");
+			}
 			qualifierBuilder.append(pe.getName());
-			qualifierBuilder.append("/");
 		}
-		qualifierBuilder.append(qualifier);
+		if (!CoreUtil.isBlank(qualifier)) {
+			if (qualifierBuilder.length() > 0) {
+				qualifierBuilder.append("/");
+			}			
+			qualifierBuilder.append(qualifier);
+		}
 		
 		// Protected
 		if (target instanceof Protected) {
