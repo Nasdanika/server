@@ -722,7 +722,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default void renderObjectPath(C context, T obj, String action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
 		if (!isObjectPathRoot(context, obj, obj)) {
-			for (EObject c = obj.eContainer(); c != null; c = c.eContainer()) {
+			for (EObject c = obj.eContainer(); c != null && context.authorize(c, StandardAction.read, null, null); c = c.eContainer()) {
 				cPath.add(c);
 				if (isObjectPathRoot(context, obj, c)) {
 					break;
