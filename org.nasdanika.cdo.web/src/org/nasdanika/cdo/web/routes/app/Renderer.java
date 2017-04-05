@@ -683,7 +683,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default List<EStructuralFeature> getVisibleFeatures(C context, T obj, FeaturePredicate predicate) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
-			if (context.authorizeRead(obj, sf.getName(), null) && (predicate == null || predicate.test(sf))) {
+			if (context.authorizeRead(obj, sf.getName(), null) 
+					&& (predicate == null || predicate.test(sf)) 
+					&& (sf.isMany() || obj.eGet(sf) == null || context.authorize(obj.eGet(sf), StandardAction.read, null, null))) {
 				String visibleRenderAnnotation = getRenderAnnotation(context, sf, RenderAnnotation.VISIBLE);
 				if (CoreUtil.isBlank(visibleRenderAnnotation) || "true".equals(visibleRenderAnnotation)) {
 					ret.add(sf);
