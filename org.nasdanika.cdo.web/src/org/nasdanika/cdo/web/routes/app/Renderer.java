@@ -683,9 +683,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default List<EStructuralFeature> getVisibleFeatures(C context, T obj, FeaturePredicate predicate) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
-			if (context.authorizeRead(obj, sf.getName(), null) 
-					&& (predicate == null || predicate.test(sf)) 
-					&& (sf.isMany() || obj.eGet(sf) == null || context.authorize(obj.eGet(sf), StandardAction.read, null, null))) {
+			if (context.authorizeRead(obj, sf.getName(), null) && (predicate == null || predicate.test(sf))) {
+				if (sf instanceof EReference && !sf.isMany()) { 
+					Object fv = obj.eGet(sf); 
+					if (fv != null && !context.authorize(obj.eGet(sf), StandardAction.read, null, null)) {
+						continue; // Single reference with unreadable value.
+					}
+				}
 				String visibleRenderAnnotation = getRenderAnnotation(context, sf, RenderAnnotation.VISIBLE);
 				if (CoreUtil.isBlank(visibleRenderAnnotation) || "true".equals(visibleRenderAnnotation)) {
 					ret.add(sf);
@@ -760,7 +764,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default void renderFeaturePath(C context, T obj, EStructuralFeature feature, String action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
 		if (!isObjectPathRoot(context, obj, obj)) {
-			for (EObject c = obj.eContainer(); c != null; c = c.eContainer()) {
+			for (EObject c = obj.eContainer(); c != null && context.authorize(c, StandardAction.read, null, null); c = c.eContainer()) {
 				cPath.add(c);
 				if (isObjectPathRoot(context, obj, c)) {
 					break;
