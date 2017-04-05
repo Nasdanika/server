@@ -2789,7 +2789,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				int pos = 0;
 				List<FeatureValueEntry<EObject>> featureValueEntries = new ArrayList<>();
-				for (EObject fv: (Collection<EObject>) featureValue) {
+				FV: for (EObject fv: (Collection<EObject>) featureValue) {
+					// Testing readability of all single table features
+					for (EStructuralFeature tf: tableFeatures) {
+						if (tf instanceof EReference && !((EReference) tf).isMany()) {
+							Object tfv = fv.eGet(tf);
+							if (tfv != null && !context.authorize(tfv, StandardAction.read, null, null)) {
+								continue FV;
+							}
+						}
+					}
 					if (filter == null || filter.test(fv)) {
 						featureValueEntries.add(new FeatureValueEntry<EObject>(fv, pos++, isSort ? getFeatureSortKey(context, obj, feature, fv) : null));
 					}
