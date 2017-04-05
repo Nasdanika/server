@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.web;
 
+import java.security.Principal;
 import java.util.Collections;
 
 import javax.servlet.ServletConfig;
@@ -38,11 +39,12 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	
 	protected ServiceTracker<CDOViewContextProvider<V,CR,C>, CDOViewContextProvider<V,CR,C>> cdoViewContextProviderServiceTracker;
 	private String sessionWebSocketServletPath;
+	private String userNameHeader;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
-		
+		userNameHeader = config.getInitParameter("user-name-header");
 		sessionWebSocketServletPath = config.getInitParameter("ws-session-path");
 		
 		BundleContext bundleContext = getBundleContext();
@@ -106,10 +108,26 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			throw new ServletException("View provider not found");
 		}
 		
-		C viewContext = provider.createContext(new HttpSessionCDOViewContextSubject<V, CR>(req.getSession(), req.getUserPrincipal()==null ? null : req.getUserPrincipal().getName()));
+		String principalName = getPrincipalName(req);
+		HttpSessionCDOViewContextSubject<V, CR> subject = new HttpSessionCDOViewContextSubject<V, CR>(req.getSession(), principalName);
+		C viewContext = provider.createContext(subject);
 		HttpServletRequestContext compositeContext = createCompositeContext(path, req, resp, reqUrl, viewContext, chain);
 		compositeContext.getRootObjectsPaths().put(viewContext.getView(), reqUrl);
 		return compositeContext;
+	}
+
+	/**
+	 * Retrieves principal name from the request.
+	 * Returns user principal name if user principal is not null. Otherwise returns value of the header specified in ``user-name-header`` init parameter, if any.
+	 * @param req
+	 * @return
+	 */
+	protected String getPrincipalName(HttpServletRequest req) {
+		Principal userPrincipal = req.getUserPrincipal();
+		if (userPrincipal==null) {
+			return userNameHeader == null ? null : req.getHeader(userNameHeader);
+		}
+		return userPrincipal.getName();
 	}
 	
 	protected abstract HttpServletRequestContext createCompositeContext(String[] path, final HttpServletRequest req, HttpServletResponse resp, String reqUrl, C viewContext, Context[] chain) throws Exception;
