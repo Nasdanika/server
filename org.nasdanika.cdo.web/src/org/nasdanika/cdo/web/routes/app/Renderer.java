@@ -1288,6 +1288,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * Renders individual feature value. This implementation: 
 	 * 
+	 * * Unreadable targets of single references are treated as nulls.
 	 * * Nulls are rendered as empty strings.
 	 * * For booleans invokes renderTrue() or renderFalse();
 	 * * For dates uses ``format`` annotation to format with {@link SimpleDateFormat}, if the annotation is present.
@@ -2790,17 +2791,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				int pos = 0;
 				List<FeatureValueEntry<EObject>> featureValueEntries = new ArrayList<>();
 				FV: for (EObject fv: (Collection<EObject>) featureValue) {
-					// Testing readability of all single table features
-					for (EStructuralFeature tf: tableFeatures) {
-						if (tf instanceof EReference && !((EReference) tf).isMany()) {
-							Object tfv = fv.eGet(tf);
-							if (tfv != null && !context.authorize(tfv, StandardAction.read, null, null)) {
-								continue FV;
+					if (context.authorize(fv, StandardAction.read, null, null)) {
+						// Testing readability of all single table features
+						for (EStructuralFeature tf: tableFeatures) {
+							if (tf instanceof EReference && !((EReference) tf).isMany()) {
+								Object tfv = fv.eGet(tf);
+								if (tfv != null && !context.authorize(tfv, StandardAction.read, null, null)) {
+									continue FV;
+								}
 							}
 						}
-					}
-					if (filter == null || filter.test(fv)) {
-						featureValueEntries.add(new FeatureValueEntry<EObject>(fv, pos++, isSort ? getFeatureSortKey(context, obj, feature, fv) : null));
+						if (filter == null || filter.test(fv)) {
+							featureValueEntries.add(new FeatureValueEntry<EObject>(fv, pos++, isSort ? getFeatureSortKey(context, obj, feature, fv) : null));
+						}
 					}
 				}
 				
@@ -2849,7 +2852,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				ret.content(renderFeatureAddButton(context, obj, feature));
 			} else {
 				Tag ul = htmlFactory.tag(TagName.ul);
-				Collection<Object> featureValues = (Collection<Object>) featureValue;
+				List<Object> featureValues = new ArrayList<>();
+				for (Object fv: (Collection<Object>) featureValue) {
+					if (context.authorize(fv, StandardAction.read, null, null)) {
+						featureValues.add(fv);
+					}
+				}
 				if (featureValues.size() == 1) {
 					Object v = featureValues.iterator().next();
 					ret.content(renderFeatureValue(context, feature, v));
