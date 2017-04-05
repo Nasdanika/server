@@ -2974,7 +2974,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String objectURI = getObjectURI(context, obj);	
 		addButton.type(Type.BUTTON); // No submitting.
 		if (feature instanceof EReference && ((EReference) feature).isContainment()) {
-			List<EClass> featureElementTypes = getReferenceElementTypes(context, obj, (EReference) feature);
+			List<EClass> featureElementTypes = new ArrayList<>();
+			for (EClass ec: getReferenceElementTypes(context, obj, (EReference) feature)) {
+				String qualifier = feature.getName()+"/"+ec.getName();
+				if (feature.getEContainingClass().getEPackage() != ec.getEPackage()) {
+					qualifier += "@"+ec.getEPackage().getNsURI();
+				}
+				if (context.authorizeCreate(obj, qualifier, null)) {
+					featureElementTypes.add(ec);
+				}
+			}
 			if (featureElementTypes.isEmpty()) {
 				addButton.disabled();
 			} else if (featureElementTypes.size() == 1) {
