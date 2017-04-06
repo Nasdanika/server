@@ -1,6 +1,6 @@
 ## Routes
 
-Web functionality can be associated with model elements using routes. There are the following type of routes:
+Web functionality can be associated with model elements using routes. There are the following types of routes:
 
 * [Route operations](routeOperations.md) - annotated [[classifier>EOperation@http://www.eclipse.org/emf/2002/Ecore|EOperations]]. This kind of routes allows to define web functionality right in the model. It might be convenient for models which are used only in a web context and don't feature extensive web functionality. In models with extensive web functionality route operations may clutter the model and for models used in multiple contexts route operations will be irrelevant in non-web contexts and will introduce dependencies on web bundles.
 * Extensions - routes associated with model elements using [Eclipse extensions mechanism](http://www.vogella.com/tutorials/EclipseExtensionPoint/article.html):

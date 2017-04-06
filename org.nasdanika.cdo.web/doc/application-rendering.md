@@ -1,10 +1,93 @@
 # Application rendering
 
-Overview - CRUD, annotations, Ecore elements - classes, features, operations, many, containment.
+This page describes how to create model-driven web applications leveraging classes and interfaces in [org.nasdanika.cdo.web.routes.app](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/org/nasdanika/cdo/web/routes/app/package-summary.html) package of the [org.nasdanika.cdo.web](https://github.com/Nasdanika/server/tree/master/org.nasdanika.cdo.web) bundle, [Renderer](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/org/nasdanika/cdo/web/routes/app/Renderer.html) and [Route](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/org/nasdanika/cdo/web/routes/app/Route.html) in particular.
+
+The sections below outline the entire process of creating a web application focusing on use and customization of application routes and renderers. You can find a detailed description of the entire process in the [Server-side Java Development for Innovators](https://server-side-java-development-for-innovators.books.nasdanika.org/) online book, which is work in progress at 
+the time of this writing.
+
+## Overview
+
+The core concept of the approach described here is that Web UI can be rendered using metadata of the model elements such as [EClass](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EClass.html), [EAttribute](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EAttribute.html), and [EReference](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EReference.html). Rendering can be customized with:
+
+* Model annotations.
+* Resource strings from resource bundles.
+* Overriding default implementations rendering/routing methods.  
+
+
+## Difference from Eclipse RAP
+
+[Eclipse RAP](https://www.eclipse.org/rap/) provides means of exposing EMF/CDO web UI in a Web browser. The approach described here is fundamentally different from the one used by Eclipse RAP.
+
+Eclipse RAP exposes SWT API's to the web. It starts a UI thread on the server which handles interactions with the browser. 
+Nasdanika CDO Web processes each Web UI interaction as an HTTP request in its own CDO transaction. It also supports WebSockets but they are not used by application renderers and routes described here.
+
+Eclipse RAP provides its own widgets toolkit, here we are going to leverage [Bootstrap](http://getbootstrap.com/) and HTML.
+
+## Development
+
+The development process includes the following steps:
+
+* Set up environment.
+* Generate application workspace.
+* Create the application domain model. Optionally annotate the model. 
+* Generate model code, edit support, and editor.
+* Customize editor, e.g. add ``Set password`` action.
+* Create the initial application model to be loaded into the repository on first start.
+* Create Web UI generator model and generate renderers, routes, resource bundles and renderer/route registrations in ``plugin.xml``.
+* Customize/localize the Web UI.
+* Secure the application.
+* Additional generation targets.
+* Build and deploy.
+ 
+These steps are described in the sections below.
+
+### Set up environment
+
+You'll need to download Eclipse Modeling package and install M2E, Tycho and Nasdanika Application Workspace Wizard. 
+You may also install Nasdanika Story Editor, Nasdanika Ecore code generation editor and Web UI generation target so you don't have to do it later.
+
+These steps are explained in [Install prerequisites](https://server-side-java-development-for-innovators.books.nasdanika.org/chapter-0-setup/install-prerequisites.html) chapter. 
+
+Nasdanika plugins can be installed from ``http://www.nasdanika.org/repository`` P2 repository. 
+ 
+### Generate application workspace
+
+This step is explained in the [Nasdanika Application Workspace Wizard Documentation](https://github.com/Nasdanika/workspace-wizard/blob/master/org.nasdanika.workspace.wizard/doc/wizard.md) 
+and [Generate Application Projects](https://server-side-java-development-for-innovators.books.nasdanika.org/chapter-0-setup/generate-application-projects.html) chapter. 
+
+### Create the application domain model 
+
+You can create the application domain model using several editors provided by [Ecore Tools](https://www.eclipse.org/ecoretools/) - a diagram editor and two types of tree editors, depending on 
+your choice. For example you can start with the diagram editor to visually capture relationships between domain classes and then, after capturing "the big picture", switch to tree editors. 
+
+You may watch this, slightly dated, video - [Create and document an ECore/CDO Model](https://www.youtube.com/watch?v=qfvr6HWo_Ok).
+
+#### Adding rendering annotations
+
+You may choose to keep rendering annotations in the model.
+
+
+### Generate model code, edit support, and editor
+### Customize editor, e.g. add ``Set password`` action
+### Create the initial application model to be loaded into the repository on first start
+### Create Web UI generator model and generate renderers, routes, resource bundles and renderer/route registrations in ``plugin.xml``
+### Customize/localize the Web UI
+### Secure the application
+### Additional generation targets
+
+* Stories
+* UI Driver and tests
+* Custom 
+
+### Build and deploy
+
+
+
 
 ## Rendering annotations
 
 Resolution - resource strings, chaining, model annotations, annotation source.
+default/reference implementation.
 
 ## View
 
@@ -15,6 +98,14 @@ Resolution - resource strings, chaining, model annotations, annotation source.
 ## Delete
 
 
+## Model annotation
+
+white-labeling.
+
+
+## Customize
+
+icons.
 
 ## Security
 
