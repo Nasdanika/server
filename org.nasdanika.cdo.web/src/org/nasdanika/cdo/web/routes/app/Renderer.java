@@ -420,9 +420,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			this.literal = literal;
 		}
 	}
-	
-	
-		
+			
 	String TITLE_KEY = "title";
 
 	String NAME_KEY = "name";
@@ -1812,7 +1810,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		/**
 		 * Display a link in an item container below the object view. 
 		 */
-		item 
+		item,
+		
+		/**
+		 * Applicable to single {@link EReference}. This location has the target object attributes "inlined" in the containing object 
+		 * view and edit form. The inlined attributes will be categorized using the reference label. For example if ``Customer`` can have one and only one ``Address`` set at ``Customer``
+		 * object creation time, then the address may be inlined into the customer object. When a reference is inlined, it is not possible to change the reference target to another object 
+		 * through the UI, but it is possible to view and edit it.  
+		 */
+		inline
 	}
 	
 	/**
@@ -2110,6 +2116,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		featuresTable.col().bootstrap().grid().col(11);
 
 		List<EStructuralFeature> viewFeatures = getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.view);
+		// TODO - add support of inlined features. 
+		
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 		for (EStructuralFeature vf: viewFeatures) {
@@ -2475,7 +2483,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				nameSpan.content(featureDocIcon);
 			}
 			ret.item(nameSpan, htmlFactory.div(renderFeatureView(context, obj, vf, true, null, null)).style().margin("3px"));
-		}		
+		}	
+		
+		// TODO - add support of inlined features.
 		
 		return ret.isEmpty() ? null : ret;
 	}
@@ -2619,6 +2629,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (asTable) {
 				EClass refType = ((EReference) feature).getEReferenceType();
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
+				// TODO - add support of inlined references.
 				Object viewFeaturesAnnotation = getYamlRenderAnnotation(context, feature, RenderAnnotation.VIEW_FEATURES);
 				if (viewFeaturesAnnotation == null) {
 					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
@@ -4113,6 +4124,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
+		// TODO - add support of inlined features.
+		
 		return ret;
 	}
 	
@@ -4122,6 +4135,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return true if there are no errors in object-level and editable features results.
 	 */
 	default boolean setEditableFeatures(C context, T obj, Consumer<Diagnostic> diagnosticConsumer) throws Exception {		
+		// TODO - add support of inlined features.
 		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
 		boolean noErrors = true;
 		for (EStructuralFeature esf: editableFeatures) {
