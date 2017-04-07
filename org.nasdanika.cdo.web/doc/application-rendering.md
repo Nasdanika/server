@@ -62,15 +62,68 @@ your choice. For example you can start with the diagram editor to visually captu
 
 You may watch this, slightly dated, video - [Create and document an ECore/CDO Model](https://www.youtube.com/watch?v=qfvr6HWo_Ok).
 
-#### Adding rendering annotations
+#### Add render annotations
 
-You may choose to keep rendering annotations in the model.
+The way the Web UI is rendered can be customized in several ways, one of them being adding render annotations to the model. 
+On the one hand it mixes the domain and the UI concerns, but on the other it allows to keep all things in one place - the model. 
+This approach might be handy if the model developer is also responsible for the model UI so they have an idea how a particular model element shall appear in the UI.
+
+The up-to date list of supported render annotations can be found in [RenderAnnotation](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/org/nasdanika/cdo/web/routes/app/Renderer.RenderAnnotation.html) enum. Check the [source code](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/src-html/org/nasdanika/cdo/web/routes/app/Renderer.html#line.136) for literals to use in the model annotations.
+
+Below is a list of render annotations with short descriptions grouped by the model element type:
+
+* EModelElement
+    * ``constraint`` - defines validation constraints using XPath.
+    * ``documentation`` - can be used to define model element documentation if it is not defined in the GenModel annotation.
+    * ``icon`` - defines model element icon. If icon annotation contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``. 
+    * ``model-element-label`` - used to customize a model element label.
+    * ``sort`` - XPath expression to use for sorting of items in tables and lists.
+* EClass
+    * ``feature-items-container`` - YAML annotation which defines feature items container and its configuration.
+    * ``horizontal-form`` - set to ``false`` to change the default rendering.
+    * ``label`` - a pattern which is interpolated with values of object features to generate object label. E.g. ``{{name}} ({{code}})``.
+    * ``no-validate`` - disables HTML5 validation in forms.
+    * ``view-item`` - if ``true`` then the class view is rendered in the item container (accordion, tabs, or pills) along with references.
+* EStructuralFeature (EAttribute or EReference)
+    * ``category`` - feature category. Categories are displayed as panels in the view and field sets in edit forms.
+    * ``control`` - defines edit form control type - ``input``, ``select``, or ``textarea``.
+    * ``control-configuration`` - a YAML map of control attribute names to values.
+    * ``disabled`` - defines whether an editable feature control shall be disabled.
+    * ``editable`` - defines editability of a visible feature.
+    * ``feature-location`` - defines feature location - view, left panel, item container (tabs, pills, accordion), or inline (work in progress).
+    * ``form-input-group`` - overrides the default decision of rendering control in a FormGroup or FormInputGroup.
+    * ``input-type`` - input type if control is set to ``input``.
+    * ``placeholder`` - XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the default value.
+    * ``visible`` - defines visibility of a feature in the object view.
+* EAttribute
+    * ``choices`` - a YAML map of values to labels or a list if values and labels are the same.
+    * ``content-type`` - set to ``text/html`` on attribute rendered in ``textarea`` to wrap the area into [TinyMCE](https://www.tinymce.com) editor.
+    * ``format`` - to use for rendering and parsing number and date values.
+* EReference
+    * ``choices-selector`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
+    * ``choice-tree`` - allows to display choices in a containment tree. 
+    * ``element-types`` - specifies EClass'es of elements which can be instantiated and set/added to the reference.
+    * ``type-column`` - indicates that the table listing reference elements shall display elements type in a type column.
+    * ``view`` - Set this annotation to ``list`` on to have elements rendered in a list instead of a table.
+    * ``view-features`` - list of features to show in a reference item table.
+
+Consult JavaDoc and source code for details.
+
+
+By default render annotations source is ``org.nasdanika.cdo.web.render``. It can be customized by overriding ``Renderer.getRenderAnnotationSource()``. 
+One possibility which this customization opens is having multiple sets of render annotations and switching between them at runtime based on some criterion. 
+
+You may also override ``String getRenderAnnotation(C context, EModelElement modelElement, String key)`` method to load annotations from other sources, e.g. from
+a database.
 
 
 ### Generate model code, edit support, and editor
 ### Customize editor, e.g. add ``Set password`` action
 ### Create the initial application model to be loaded into the repository on first start
 ### Create Web UI generator model and generate renderers, routes, resource bundles and renderer/route registrations in ``plugin.xml``
+Optional for renderers. Only routes are required and can be added manually.
+
+Dealing with resource bundles - @, documentation localization.
 ### Customize/localize the Web UI
 ### Secure the application
 ### Additional generation targets
