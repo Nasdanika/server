@@ -177,9 +177,214 @@ After installation read how to create and generate the model in the ``Nasdanika 
 
 ### Customize/localize the Web UI
 
-Default methods are reference impls.
-Dealing with resource bundles - @, documentation localization.
+There are three ways to customize the Web UI in addition to annotating the model:
 
+* Resource bundles
+* Override renderer methods
+* Override route methods
+
+
+#### Resource bundles
+
+The obvious use of resource bundles is localization. Out-of-the box the framework provides some localized messages for Russian and Spanish (thanks to Google Translate). 
+You can use resource bundles to customize the UI if you did not annotate the model and/or to override model-level annotations. Resource property name format is ``<model element type>.<model element name>.<annotation>``, e.g. 
+
+* ``class.Account.label``
+* ``reference.transactions.icon``
+
+You can also use resource bundles for contextual customization. For example, let's say you have have class ``Account`` with containment reference to class ``Transaction`` with attribute ``amount``.
+ 
+To define an icon for ``amount`` attribute you can annotate the attribute in the model or add ``attribute.amount.icon=...`` property to  the ``Transaction.properties`` resource. If you want to have a different icon when transactions are displayed in the account view you can set the following property in ``Account.properties`` - ``reference.transactions.attribute.amount.icon``.   
+
+##### Resource references 
+
+Values of some resource properties can be rather large, e.g. localizations of model elements documentation. Such values can be put to their own files and be referenced by adding ``@`` at the end of the property. For example, ``attribute.amount.documentation@=<relative or absolute url of documentation resource>``. 
+This technique can also be used for pulling dynamic values, e.g. ``attribute.currency.choices@=http://...`` will pull a list of currencies from an external URL.
+
+#### Renderer methods
+
+Renderer has quite a few methods, which might be scary at first. This section groups these methods by their purpose and provides quick overview of what each method does. As usual, JavaDoc provides more details, and source code is the final authority.
+
+many methods - fine grained. reference impl.
+
+##### General
+
+* ``getHTMLFactory(C)``
+* ``getObjectURI(C, T)``
+
+##### Resource (strings) and annotations
+
+* ``chain(ResourceProvider<C>)`` -
+* ``getLocale(C)`` -
+* ``getMasterResourceProvider(C)`` -
+* ``getRenderAnnotation(C, EModelElement, RenderAnnotation)`` -
+* ``getRenderAnnotation(C, EModelElement, String)`` -
+* ``getRenderAnnotationSource(C)`` -
+* ``getRenderer(EClass)`` -
+* ``getRenderer(M)`` -
+* ``getResource(C, ENamedElement, String)`` - 
+* ``getResource(C, String)`` - 
+* ``getResourceBundleClasses(C)`` - 
+* ``getResourceString(C, ENamedElement, String, boolean)`` - 
+* ``getResourceString(C, String)`` - 
+* ``getResourceString(C, String, boolean)`` - 
+* ``getYamlRenderAnnotation(C, EModelElement, RenderAnnotation)`` - 
+* ``getYamlRenderAnnotation(C, EModelElement, String)`` - 
+* ``
+
+##### Documentation
+
+* ``createPegDownLinkRenderer(C)`` - 
+* ``firstHtmlSentence(C, String)`` - 
+* ``firstSentence(C, String)`` - 
+* ``getEClassifierDocRef(C, EClassifier)`` - 
+* ``getMaxFirstSentenceLength()`` - 
+* ``getMinFirstSentenceLength()`` - 
+* ``markdownToHtml(C, String)`` - 
+* ``renderDocumentation(C, EModelElement)`` - 
+* ``renderDocumentationIcon(C, EModelElement, Modal, boolean)`` - 
+* ``renderDocumentationModal(C, EModelElement)`` - 
+* ``renderEditableFeaturesDocModals(C, T)`` - 
+* ``renderFeatureFormGroupHelpText(C, T, EStructuralFeature, Modal)`` - 
+* ``renderFeaturesDocModals(C, T, Collection<EStructuralFeature>)`` - 
+* ``renderFirstDocumentationSentence(C, EModelElement)`` - 
+* ``renderHelpIcon(C)`` - 
+* ``renderVisibleFeaturesDocModals(C, T)`` - 
+
+##### Viewing
+
+* ``getFeatureCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` -
+* ``getAutoCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
+* ``getFeatureLocation(C, EStructuralFeature)`` - 
+* ``getFeatureSortKey(C, T, EStructuralFeature, Object)`` - 
+* ``getIcon(C, T)`` - 
+* ``getModelElementIcon(C, EModelElement)`` - 
+* ``getPlaceholder(C, T, EStructuralFeature)`` - 
+* ``getReferenceElementTypes(C, T, EReference)`` - 
+* ``getReferenceRenderer(EReference, M)`` - 
+* ``getVisibleFeatures(C, T, FeaturePredicate)`` - 
+* ``isObjectPathRoot(C, T, EObject)`` - 
+* ``isRequired(C, T, EStructuralFeature)`` - 
+* ``isSortFeatureValues(C, T, EStructuralFeature)`` - 
+* ``isViewItem(C, T)`` - 
+* ``nameToLabel(String)`` - 
+* ``renderAddIcon(C)`` - 
+* ``renderCancelButton(C, T)`` - 
+* ``renderCancelIcon(C)`` - 
+* ``renderClearIcon(C)`` - 
+* ``renderCreateIcon(C)`` - 
+* ``renderDeleteButton(C, T)`` - 
+* ``renderDeleteIcon(C)`` - 
+* ``renderDetailsIcon(C)`` - 
+* ``renderEditButton(C, T)`` - 
+* ``renderEditIcon(C)`` - 
+* ``renderFalse(C)`` - 
+* ``renderFeatureAddButton(C, T, EStructuralFeature)`` - 
+* ``renderFeatureCategoryIcon(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
+* ``renderFeatureCategoryIconAndLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
+* ``renderFeatureCategoryLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
+* ``renderFeatureIconAndLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
+* ``renderFeatureItemsContainer(C, T, Map<EStructuralFeature, Modal>)`` - 
+* ``renderFeatureLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
+* ``renderFeaturePath(C, T, EStructuralFeature, String, Breadcrumbs)`` - 
+* ``renderFeatureValue(C, EStructuralFeature, Object)`` - 
+* ``renderFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object)`` - 
+* ``renderFeatureValueEditButton(C, T, EStructuralFeature, int, Object)`` - 
+* ``renderFeatureValueViewButton(C, T, EStructuralFeature, int, EObject)`` - 
+* ``renderFeatureView(C, T, EStructuralFeature, boolean, Predicate<Object>, Comparator<Object>)`` - 
+* ``renderIcon(C, T)`` - 
+* ``renderIconAndLabel(C, T)`` - 
+* ``renderLabel(C, T)`` - 
+* ``renderLeftPanel(C, T)`` - 
+* ``renderLink(C, T, boolean)`` - 
+* ``renderModelElementIcon(C, EModelElement)`` - 
+* ``renderNamedElementIconAndLabel(C, ENamedElement)`` - 
+* ``renderNamedElementLabel(C, ENamedElement)`` - 
+* ``renderObjectHeader(C, T, Modal)`` - 
+* ``renderObjectPath(C, T, Object)`` - 
+* ``renderObjectPath(C, T, String, Breadcrumbs)`` - 
+* ``renderReferencesTree(C, T, int, Function<Object, Object>, boolean)`` - 
+* ``renderTreeItem(C, T, int, Function<Object, Object>, boolean)`` - 
+* ``renderTrue(C)`` - 
+* ``renderView(C, T, Map<EStructuralFeature, Modal>)`` - 
+* ``renderViewButtons(C, T)`` - 
+* ``renderViewFeatures(C, T, Map<EStructuralFeature, Modal>)`` - 
+* ``renderViewItemLabel(C, T)`` - 
+* ``wireDeleteButton(C, T, Button)`` - 
+* ``wireEditButton(C, T, Button)`` - 
+* ``wireFeatureAddButton(C, T, EStructuralFeature, Button)`` - 
+* ``wireFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object, Button)`` - 
+* ``wireFeatureValueEditButton(C, T, EStructuralFeature, int, Object, Button)`` - 
+* ``wireFeatureValueViewButton(C, T, EStructuralFeature, int, EObject, Button)`` - 
+
+##### Editing
+
+* ``compareEditableFeatures(C, T, Consumer<Diagnostic>)`` - 
+* ``getEditableFeatures(C, T)`` - 
+* ``getFeatureChoices(C, T, EStructuralFeature)`` - 
+* ``getFormControlValue(C, T, EStructuralFeature, Object)`` - 
+* ``getReferenceChoices(C, T, EReference)`` - 
+* ``parseFeatureValue(C, EStructuralFeature, String)`` - 
+* ``renderEditableFeaturesFormGroups(C, T, FieldContainer<?>, Map<EStructuralFeature, Modal>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - 
+* ``renderEditForm(C, T, List<ValidationResult>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - 
+* ``renderFeatureControl(C, T, EStructuralFeature, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
+* ``renderFeatureEditForm(C, T, EStructuralFeature, List<ValidationResult>, boolean)`` - 
+* ``renderFeatureFormGroup(C, T, EStructuralFeature, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
+* ``renderSaveButton(C, T)`` - 
+* ``renderSaveIcon(C)`` - 
+* ``renderTinymceInitScript(C, TextArea)`` - 
+* ``setEditableFeatures(C, T, Consumer<Diagnostic>)`` - 
+* ``setFeatureValue(C, T, EStructuralFeature)`` - 
+* ``validate(C, T)`` - 
+* ``validate(C, T, EModelElement, DiagnosticChain)`` - 
+* ``wireCancelButton(C, T, Button)`` - 
+* ``wireSaveButton(C, T, Button)`` - 
+
+#### Route methods
+
+
+##### Page rendering
+
+* ``createRenderPageEnvironment(C)`` - 
+* ``renderBody(C, Object, Object, Object, Object)`` - 
+* ``renderFooter(C, T)`` - 
+* ``renderHead(C, T)`` - 
+* ``renderHeader(C, T)`` - 
+* ``renderPage(C, T, String, Object)`` - 
+* ``getPageTemplate(C)`` - 
+* ``getTheme(C, T)`` - 
+* ``setLeftPanelAndContentColSizes(C, UIElement<?>, UIElement<?>)`` - 
+
+##### Viewing
+
+* ``getIndexHtml(C, T)`` - 
+* ``viewFeature(C, String, T)`` - 
+
+##### Creation
+
+* ``createContainementFeatureElement(C, T, String, String, String, String, String)`` - 
+
+##### Editing
+ 
+* ``edit(C, T, String, String, String)`` - 
+* ``editFeature(C, String, T)`` - 
+* ``editFeatureElement(C, String, String, T)`` - 
+* ``selectReferenceFeatureElement(C, T, String, String, String)`` -
+ 
+##### Deleting
+ 
+* ``deleteFeature(C, T, String, String)`` - 
+* ``deleteFeatureElement(C, T, String, String, String)`` - 
+* ``getDeleteHtml(C, T, String)`` - 
+
+##### Security
+
+* ``processLogin(C, String, String, String)`` - 
+* ``getLogoutHtml(C, String)`` - 
+
+##### Developer routes 
+* ``getApiDocPath()`` - 
+* ``xPathEvaluator(C, T, String, String)`` - 
 ### Secure the application
 
 This section describes how to secure the web application.
