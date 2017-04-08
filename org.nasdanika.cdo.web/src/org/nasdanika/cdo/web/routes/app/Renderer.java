@@ -3253,7 +3253,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default List<EStructuralFeature> getEditableFeatures(C context, T obj) throws Exception {
 		List<EStructuralFeature> ret = new ArrayList<>();
-		for (EStructuralFeature vsf: getVisibleFeatures(context, obj, vf -> context.authorizeUpdate(obj, vf.getName(), null))) {
+		for (EStructuralFeature vsf: getVisibleFeatures(context, obj, vf -> vf.isChangeable() && context.authorizeUpdate(obj, vf.getName(), null))) {
 			String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
 			if (CoreUtil.isBlank(eav)) {
 				if (getFeatureLocation(context, vsf) == FeatureLocation.view && !(vsf instanceof EReference && ((EReference) vsf).isContainment())) {
