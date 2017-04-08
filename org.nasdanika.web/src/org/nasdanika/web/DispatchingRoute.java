@@ -35,8 +35,20 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 /**
  * Dispatches requests to target's methods with {@link RouteMethod} annotation. Route methods parameters can be annotated with
- * {@link ContextParameter}, {@link ServiceParameter}, {@link ExtensionParameter}, {@link PathParameter}, {@link QueryParameter}, 
- * {@link BodyParameter}, or {@link CookieParameter} annotations.
+ * 
+ * * {@link BodyParameter},
+ * * {@link CookieParameter},
+ * * {@link HeaderParameter},
+ * * {@link ModelParameter},
+ * * {@link PartParameter},
+ * * {@link PathParameter},
+ * * {@link QueryParameter},
+ * * {@link TargetParameter},
+ * * {@link ContextParameter}, 
+ * * {@link ServiceParameter}, 
+ * * {@link ExtensionParameter}
+ * 
+ * annotations.
  * 
  * Also serves resources as instructed by {@link Resource} annotations on the target's class and its superclasses and interfaces.
  * Route methods are matched before resources. 
