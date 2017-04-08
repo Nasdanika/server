@@ -15,6 +15,7 @@ import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -212,7 +213,11 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 */
 	@Override
 	public boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
-		if (globMatch(action + ":" + qualifier, getName())) {
+		StringBuilder toMatch = new StringBuilder(action);
+		if (!CoreUtil.isBlank(qualifier)) {
+			toMatch.append(":").append(qualifier);
+		}
+		if (globMatch(toMatch.toString(), getName())) {
 			return true;
 		}
 		
