@@ -225,7 +225,7 @@ public class PrincipalAuthorizationHelper {
 			
 			// Everyone
 			Principal everyone = principal.getRealm().getEveryone();
-			if (everyone != null && principal.getRealm().getGuest() != principal) {
+			if (everyone != null && everyone != principal && principal.getRealm().getGuest() != principal) {
 				AccessDecision accessDecision = authorize(everyone, context, target, action, qualifier, path, environment, traversed);
 				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 					return accessDecision;
