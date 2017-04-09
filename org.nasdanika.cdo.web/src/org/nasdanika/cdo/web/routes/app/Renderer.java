@@ -1370,21 +1370,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Parses/converts string value to be compatible with the feature value type.
+	 * Parses/converts string value to be compatible with the typed element value type.
 	 * 
 	 * * Booleans - ``true`` and ``on`` are truthy values, ``false``, ``null``, ``off`` and empty string are falsey, all other values are illegal.
 	 * * Date - uses ``format`` annotation, if present, to parse using {@link SimpleDateFormat}.
 	 * * Number - uses ``format`` annotation, if present, to parse using {@link DecimalFormat}.
 	 * * Otherwise uses context.convert() method.
 	 * @param context
-	 * @param feature
+	 * @param typedElement
 	 * @param strValue
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default Object parseFeatureValue(C context, EStructuralFeature feature, String strValue) throws Exception {		
-		Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+	default Object parseTypedElementValue(C context, ETypedElement typedElement, String strValue) throws Exception {		
+		Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
 		if (featureTypeInstanceClass.isInstance(strValue)) {
 			return strValue;
 		}
@@ -1426,7 +1426,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		if (Date.class == featureTypeInstanceClass) {
-			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
+			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
 			if (format == null) {
 				format = "yyyy-MM-dd"; // Default web format for dates.
 			}
@@ -1435,7 +1435,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
-			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
+			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
 			if (format == null) {
 				if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
 					return Byte.parseByte(strValue);
@@ -1517,7 +1517,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				String[] values = request.getParameterValues(feature.getName());
 				if (values != null) {
 					for (String val: values) {
-						fv.add(parseFeatureValue(context, feature, val));
+						fv.add(parseTypedElementValue(context, feature, val));
 					}
 				}						
 			} else {
@@ -1525,7 +1525,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (value == null) {
 					obj.eUnset(feature);
 				} else {
-					obj.eSet(feature, parseFeatureValue(context, feature, value));
+					obj.eSet(feature, parseTypedElementValue(context, feature, value));
 				}
 			}
 		}		
