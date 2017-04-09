@@ -203,133 +203,158 @@ This technique can also be used for pulling dynamic values, e.g. ``attribute.cur
 
 #### Renderer methods
 
-Renderer has quite a few methods, which might be scary at first. This section groups these methods by their purpose and provides quick overview of what each method does. As usual, JavaDoc provides more details, and source code is the final authority.
+Renderer has quite a few methods, which might be scary at first. The reason of having so many methods is to keep them relatively
+short and make it easier to override specific parts of functionality. 
+A few long methods deal with different permutations of rendering metadata and if you are to override them for a specific model element, the overridden method would typically be much shorter.
 
-many methods - fine grained. reference impl.
+The default implementations also serve as reference implementations - you are encouraged to review them, copy the necessary code fragments to your implementation and customize them as needed.
+ 
+The snippet below shows customization for a specific feature and falling back to the default behavior for other typed elements. The code below resolves object from a String attribute.
 
-##### General
+```java
+	@Override
+	default Object renderTypedElementValue(
+			CDOTransactionHttpServletRequestContext<LoginPasswordCredentials> context,
+			ETypedElement typedElement, 
+			Object value) throws Exception {
+		
+		Renderer<CDOTransactionHttpServletRequestContext<LoginPasswordCredentials>, EObject> customerRenderer = getRenderer(MyPackage.Literals.CUSTOMER);
+		if (typedElement instanceof EStructuralFeature 
+				&& typedElement == MyPackage.Literals.MY_CLASS__CUSTOMER_SSN 
+				&& value instanceof String && ((String) value).trim().length() > 0) {
+			Customer customer = resolveCustomerBySSN(context, (String) value);
+			if (customer != null) {
+				return customerRenderer.renderLink(context, myObj, true);
+			}
+		}
+		return Renderer.super.renderTypedElementValue(context, typedElement, value);
+	}
+```  
 
-* ``getHTMLFactory(C)``
-* ``getObjectURI(C, T)``
+This section groups these methods by their purpose and provides quick overview of what each method does. As usual, JavaDoc provides more details, and source code is the final authority.
+
+##### General purpose methods
+
+* ``getHTMLFactory(C)`` - returns [HTMLFactory](http://www.nasdanika.org/products/html/apidocs/org.nasdanika.html/apidocs/org/nasdanika/html/HTMLFactory.html) for building Web UI.
+* ``getObjectURI(C, T)`` - returns object URI to construct links.
 
 ##### Resource (strings) and annotations
 
-* ``chain(ResourceProvider<C>)`` -
-* ``getLocale(C)`` -
-* ``getMasterResourceProvider(C)`` -
-* ``getRenderAnnotation(C, EModelElement, RenderAnnotation)`` -
-* ``getRenderAnnotation(C, EModelElement, String)`` -
-* ``getRenderAnnotationSource(C)`` -
-* ``getRenderer(EClass)`` -
-* ``getRenderer(M)`` -
-* ``getResource(C, ENamedElement, String)`` - 
-* ``getResource(C, String)`` - 
-* ``getResourceBundleClasses(C)`` - 
-* ``getResourceString(C, ENamedElement, String, boolean)`` - 
-* ``getResourceString(C, String)`` - 
-* ``getResourceString(C, String, boolean)`` - 
-* ``getYamlRenderAnnotation(C, EModelElement, RenderAnnotation)`` - 
-* ``getYamlRenderAnnotation(C, EModelElement, String)`` - 
-* ``
+* ``chain(ResourceProvider<C>)`` - Returns an instance of renderer chained with the masterResourceProvider.
+* ``getLocale(C)`` - Returns locale. The default implementation returns the locale of the HTTP request. You may override it, e.g. to use locale from the user profile. 
+* ``getMasterResourceProvider(C)`` - If this method returns non-null value, then the master resource provider is used first to retrieve resources and the renderer's own logic is used only if the provider doesn't contain requested resource. 
+* ``getRenderAnnotation(C, EModelElement, RenderAnnotation)`` - Returns render annotation.
+* ``getRenderAnnotation(C, EModelElement, String)`` - Returns render annotation. 
+* ``getRenderAnnotationSource(C)`` - Returns render annotation source, ``org.nasdanika.cdo.web.render`` by default.
+* ``getRenderer(EClass)`` - Returns a renderer instance for a class. The default implementation returns renderer from the renderer registry which is populated by extensions of ``org.nasdanika.cdo.web.renderer`` extension point.
+* ``getRenderer(M)`` - Returns a renderer for an object.
+* ``getResource(C, ENamedElement, String)`` - Returns named element resource.
+* ``getResource(C, String)`` - Returns resource.
+* ``getResourceBundleClasses(C)`` - Returns a list of classes to use to look for resources. 
+* ``getResourceString(C, ENamedElement, String, boolean)`` - Returns resource string for a named element.
+* ``getResourceString(C, String)`` - Returns resource string without interpolation.
+* ``getResourceString(C, String, boolean)`` - Returns resource string optionally interpolating ``{{<token name>}}`` tokens with values of other resource strings.
+* ``getYamlRenderAnnotation(C, EModelElement, RenderAnnotation)`` - Returns render annotations parsed as [YAML](https://en.wikipedia.org/wiki/YAML) by [SnakeYAML](https://bitbucket.org/asomov/snakeyaml). 
+* ``getYamlRenderAnnotation(C, EModelElement, String)`` - Returns render annotations parsed as YAML.
 
 ##### Documentation
 
-* ``createPegDownLinkRenderer(C)`` - 
-* ``firstHtmlSentence(C, String)`` - 
-* ``firstSentence(C, String)`` - 
-* ``getEClassifierDocRef(C, EClassifier)`` - 
-* ``getMaxFirstSentenceLength()`` - 
-* ``getMinFirstSentenceLength()`` - 
-* ``markdownToHtml(C, String)`` - 
-* ``renderDocumentation(C, EModelElement)`` - 
-* ``renderDocumentationIcon(C, EModelElement, Modal, boolean)`` - 
-* ``renderDocumentationModal(C, EModelElement)`` - 
-* ``renderEditableFeaturesDocModals(C, T)`` - 
-* ``renderFeatureFormGroupHelpText(C, T, EStructuralFeature, Modal)`` - 
-* ``renderFeaturesDocModals(C, T, Collection<EStructuralFeature>)`` - 
-* ``renderFirstDocumentationSentence(C, EModelElement)`` - 
-* ``renderHelpIcon(C)`` - 
-* ``renderVisibleFeaturesDocModals(C, T)`` - 
+* ``createPegDownLinkRenderer(C)`` - Creates [Pegdown](https://github.com/weavejester/pegdown) [LinkRenderer](http://static.javadoc.io/org.pegdown/pegdown/1.6.0/org/pegdown/LinkRenderer.html) which opens links in a new window/tab.  
+* ``firstHtmlSentence(C, String)`` - Extracts the first sentence from HTML text as plain text.
+* ``firstSentence(C, String)`` - Extracts the first sentence from plain text.
+* ``getEClassifierDocRef(C, EClassifier)`` - Returns documentation link for EClassifier. Returns null by default. Override as needed. 
+* ``getMaxFirstSentenceLength()`` - Returns maximum length of the fist documentation sentence for showing as a tooltip. Defaults to ``250``.  
+* ``getMinFirstSentenceLength()`` - Returns minimum length of the fist documentation sentence for showing as a tooltip. Defaults to ``20``.  
+* ``markdownToHtml(C, String)`` - Converts [Markdown](http://daringfireball.net/projects/markdown/) to HTML. Used to render model documentation which is expected to be in markdown.
+* ``renderDocumentation(C, EModelElement)`` - Renders model element documentation. 
+* ``renderDocumentationIcon(C, EModelElement, Modal, boolean)`` - Renders model element documentation icon with a tooltip. Click on the help icon opens either a documentation dialog or a model element documentation page.
+* ``renderDocumentationModal(C, EModelElement)`` - Renders model element documentation [Modal Dialog](http://getbootstrap.com/javascript/#modals)
+* ``renderEditableFeaturesDocModals(C, T)`` - Renders documentation modal dialogs for editable features.
+* ``renderFirstDocumentationSentence(C, EModelElement)`` - Renders the first documentation sentence. 
+* ``renderHelpIcon(C)`` - Renders help icon.
+* ``renderModelElementFormGroupHelpText(C, T, EModelElement, Modal)`` - Renders help text as the first documentation sentence with a help icon.
+* ``renderModelElementsDocModals(C, T, Collection<EStructuralFeature>)`` - Renders documentation modal dialogs for a collection of model elements.
+* ``renderVisibleFeaturesDocModals(C, T)`` - Renders documentation modal dialogs for visible features.
 
 ##### Viewing
 
-* ``getFeatureCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` -
-* ``getAutoCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
-* ``getFeatureLocation(C, EStructuralFeature)`` - 
-* ``getFeatureSortKey(C, T, EStructuralFeature, Object)`` - 
-* ``getIcon(C, T)`` - 
-* ``getModelElementIcon(C, EModelElement)`` - 
-* ``getPlaceholder(C, T, EStructuralFeature)`` - 
-* ``getReferenceElementTypes(C, T, EReference)`` - 
-* ``getReferenceRenderer(EReference, M)`` - 
-* ``getVisibleFeatures(C, T, FeaturePredicate)`` - 
-* ``isObjectPathRoot(C, T, EObject)`` - 
-* ``isRequired(C, T, EStructuralFeature)`` - 
-* ``isSortFeatureValues(C, T, EStructuralFeature)`` - 
-* ``isViewItem(C, T)`` - 
-* ``nameToLabel(String)`` - 
-* ``renderAddIcon(C)`` - 
-* ``renderCancelButton(C, T)`` - 
-* ``renderCancelIcon(C)`` - 
-* ``renderClearIcon(C)`` - 
-* ``renderCreateIcon(C)`` - 
-* ``renderDeleteButton(C, T)`` - 
-* ``renderDeleteIcon(C)`` - 
-* ``renderDetailsIcon(C)`` - 
-* ``renderEditButton(C, T)`` - 
-* ``renderEditIcon(C)`` - 
-* ``renderFalse(C)`` - 
-* ``renderFeatureAddButton(C, T, EStructuralFeature)`` - 
-* ``renderFeatureCategoryIcon(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
-* ``renderFeatureCategoryIconAndLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
-* ``renderFeatureCategoryLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
-* ``renderFeatureIconAndLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
-* ``renderFeatureItemsContainer(C, T, Map<EStructuralFeature, Modal>)`` - 
-* ``renderFeatureLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - 
-* ``renderFeaturePath(C, T, EStructuralFeature, String, Breadcrumbs)`` - 
-* ``renderFeatureValue(C, EStructuralFeature, Object)`` - 
-* ``renderFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object)`` - 
-* ``renderFeatureValueEditButton(C, T, EStructuralFeature, int, Object)`` - 
-* ``renderFeatureValueViewButton(C, T, EStructuralFeature, int, EObject)`` - 
-* ``renderFeatureView(C, T, EStructuralFeature, boolean, Predicate<Object>, Comparator<Object>)`` - 
-* ``renderIcon(C, T)`` - 
-* ``renderIconAndLabel(C, T)`` - 
-* ``renderLabel(C, T)`` - 
-* ``renderLeftPanel(C, T)`` - 
-* ``renderLink(C, T, boolean)`` - 
-* ``renderModelElementIcon(C, EModelElement)`` - 
-* ``renderNamedElementIconAndLabel(C, ENamedElement)`` - 
-* ``renderNamedElementLabel(C, ENamedElement)`` - 
-* ``renderObjectHeader(C, T, Modal)`` - 
-* ``renderObjectPath(C, T, Object)`` - 
-* ``renderObjectPath(C, T, String, Breadcrumbs)`` - 
-* ``renderReferencesTree(C, T, int, Function<Object, Object>, boolean)`` - 
-* ``renderTreeItem(C, T, int, Function<Object, Object>, boolean)`` - 
-* ``renderTrue(C)`` - 
-* ``renderView(C, T, Map<EStructuralFeature, Modal>)`` - 
-* ``renderViewButtons(C, T)`` - 
-* ``renderViewFeatures(C, T, Map<EStructuralFeature, Modal>)`` - 
-* ``renderViewItemLabel(C, T)`` - 
-* ``wireDeleteButton(C, T, Button)`` - 
-* ``wireEditButton(C, T, Button)`` - 
-* ``wireFeatureAddButton(C, T, EStructuralFeature, Button)`` - 
-* ``wireFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object, Button)`` - 
-* ``wireFeatureValueEditButton(C, T, EStructuralFeature, int, Object, Button)`` - 
-* ``wireFeatureValueViewButton(C, T, EStructuralFeature, int, EObject, Button)`` - 
+* ``getFeatureCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - returns feature category for grouping features into panels in views and fieldsets in edit forms.
+* ``getAutoCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - returns auto-category for a feature, which is inferred as a common prefix for two or more features. 
+* ``getFeatureLocation(C, EStructuralFeature)`` - returns location where a feature shall be rendered - view, left panel, item container (tabs, pills or accordion), or inline.
+* ``getFeatureSortKey(C, T, EStructuralFeature, Object)`` - returns an object for sorting feature values or null if feature values shall not be sorted. 
+* ``getIcon(C, T)`` - returns icon "location" for a given object. If the location contains ``/`` it is treated as icon URL, otherwise it is treated as icon class, e.g. ``fa fa-user``.
+* ``getModelElementIcon(C, EModelElement)`` - returns icon location for a model element, e.g. attribute or reference.
+* ``getPlaceholder(C, T, EStructuralFeature)`` - returns feature value "placeholder".
+* ``getReferenceElementTypes(C, T, EReference)`` - returns a list or EClass'es which can be instantiated and instances can be added to a given reference.
+* ``getReferenceRenderer(EReference, M)`` - Returns renderer for a feature. The renderer is chained with this renderer as its master resource provider with ``<feature class>.<feature name>.`` prefix.
+* ``getVisibleFeatures(C, T, FeaturePredicate)`` - returns a list of features to include into the the object view.
+* ``isObjectPathRoot(C, T, EObject)`` - checks if a given object is the object path root, i.e. it shall be the first entry in the breadcrumbs. 
+* ``isSortFeatureValues(C, T, EStructuralFeature)`` - returns true if feature values shall be sorted.
+* ``isViewItem(C, T)`` - if this method returns true, then object view is rendered in the item container.
+* ``nameToLabel(String)`` - Derives label (display name) from a name. The default implementation splits name by camel case, capitalizes the first segment, uncapitalizes the rest and joins them with a space. E.g. ``customerFirstName`` -> ``Customer first name``.
+* ``renderAddIcon(C)`` - renders an icon for the ``Add`` button.
+* ``renderCancelButton(C, T)`` - renders ``Cancel`` button.
+* ``renderCancelIcon(C)`` - renders an icon for ``Cancel`` button.
+* ``renderClearIcon(C)`` - renders an icon for ``Clear`` button.
+* ``renderCreateIcon(C)`` - renders an icon for ``Create`` button.
+* ``renderDeleteButton(C, T)`` - renders ``Delete`` button.
+* ``renderDeleteIcon(C)`` - renders an icon for ``Delete`` button.
+* ``renderDetailsIcon(C)`` - renders an icon for navigating to object view.
+* ``renderEditButton(C, T)`` - renders ``Edit`` button.
+* ``renderEditIcon(C)`` - renders an icon for ``Edit`` button.
+* ``renderFalse(C)`` - renders ``false``. The default implementation returns an empty string.
+* ``renderFeatureAddButton(C, T, EStructuralFeature)`` - Renders feature ``Add`` button.
+* ``renderFeatureCategoryIcon(C, EStructuralFeature, Collection<EStructuralFeature>)`` - renders feature category icon. 
+* ``renderFeatureCategoryIconAndLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - renders feature category icon and label. 
+* ``renderFeatureCategoryLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - renders feature category label. 
+* ``renderFeatureItemsContainer(C, T, Map<EStructuralFeature, Modal>)`` - renders feature items container - [tabs](http://getbootstrap.com/javascript/#tabs) (default), pills, or [accordion](http://getbootstrap.com/javascript/#collapse-example-accordion).  
+* ``renderFeaturePath(C, T, EStructuralFeature, String, Breadcrumbs)`` - renders feature path which includes the object path, feature category (if any) and feature name. 
+* ``renderFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object)`` - renders feature value ``Delete`` button. 
+* ``renderFeatureValueEditButton(C, T, EStructuralFeature, int, Object)`` - renders feature value ``Edit`` button. 
+* ``renderFeatureValueViewButton(C, T, EStructuralFeature, int, EObject)`` - renders feature value ``View`` button. 
+* ``renderFeatureView(C, T, EStructuralFeature, boolean, Predicate<Object>, Comparator<Object>)`` - renders feature view.
+* ``renderIcon(C, T)`` - renders object icon.
+* ``renderIconAndLabel(C, T)`` - renders object icon and label.
+* ``renderLabel(C, T)`` - renders object label.
+* ``renderLeftPanel(C, T)`` - renders the left panel. This implementation renders link groups for visible features with location set to ``leftPanel``.
+* ``renderLink(C, T, boolean)`` - renders object link.
+* ``renderModelElementIcon(C, EModelElement)`` - renders model element icon.
+* ``renderNamedElementIconAndLabel(C, ENamedElement)`` - renders model element icon and label.
+* ``renderNamedElementIconAndLabel(C, ENamedElement, Collection<EStructuralFeature>)`` - renders named element icon and label. 
+* ``renderNamedElementLabel(C, ENamedElement)`` - renders model element label.
+* ``renderNamedElementLabel(C, ENamedElement, Collection<EStructuralFeature>)`` - renders named element label. 
+* ``renderObjectHeader(C, T, Modal)`` - renders object header. The default implementation renders object class label, object label, and a documentation icon.
+* ``renderObjectPath(C, T, Object)`` - renders object path to a fragment with given separator.
+* ``renderObjectPath(C, T, String, Breadcrumbs)`` - renders object path to breadcrumbs.
+* ``renderReferencesTree(C, T, int, Function<Object, Object>, boolean)`` - Renders an object tree of tree references of the argument object. 
+* ``renderTreeItem(C, T, int, Function<Object, Object>, boolean)`` - Renders a tree item for the object with the tree features under.
+* ``renderTrue(C)`` - renders ``true``. The default implementation renders a green check mark (Bootstrap's ``glyphicon glyphicon-ok``).
+* ``renderTypedElementValue(C, ETypedElement, Object)`` - renders display value of a typed element. 
+* ``renderView(C, T, Map<EStructuralFeature, Modal>)`` - renders object view.
+* ``renderViewButtons(C, T)`` - renders object view buttons bar.
+* ``renderViewFeatures(C, T, Map<EStructuralFeature, Modal>)`` - renders object view features.
+* ``renderViewItemLabel(C, T)`` - Renders label for the view item, if view is rendered in an item container.
+* ``wireDeleteButton(C, T, Button)`` - wires ``Delete`` button.
+* ``wireEditButton(C, T, Button)`` - wires ``Edit`` button. 
+* ``wireFeatureAddButton(C, T, EStructuralFeature, Button)`` - wires feature value ``Add`` button. 
+* ``wireFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object, Button)`` - wires feature value ``Delete`` button. 
+* ``wireFeatureValueEditButton(C, T, EStructuralFeature, int, Object, Button)`` - wires feature value ``Edit`` button. 
+* ``wireFeatureValueViewButton(C, T, EStructuralFeature, int, EObject, Button)`` - wires feature value ``View`` button. 
 
 ##### Editing
 
 * ``compareEditableFeatures(C, T, Consumer<Diagnostic>)`` - 
 * ``getEditableFeatures(C, T)`` - 
-* ``getFeatureChoices(C, T, EStructuralFeature)`` - 
-* ``getFormControlValue(C, T, EStructuralFeature, Object)`` - 
+* ``getTypedElementChoices(C, T, ETypedElement)`` - 
+* ``getFormControlValue(C, T, ETypedElement, Object)`` - 
 * ``getReferenceChoices(C, T, EReference)`` - 
+* ``isRequired(C, T, ETypedElement)`` - return ``true`` if form control for the typed element shall have ``required`` attribute. 
 * ``parseFeatureValue(C, EStructuralFeature, String)`` - 
 * ``renderEditableFeaturesFormGroups(C, T, FieldContainer<?>, Map<EStructuralFeature, Modal>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - 
 * ``renderEditForm(C, T, List<ValidationResult>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - 
-* ``renderFeatureControl(C, T, EStructuralFeature, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
+* ``renderTypedElementControl(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
 * ``renderFeatureEditForm(C, T, EStructuralFeature, List<ValidationResult>, boolean)`` - 
-* ``renderFeatureFormGroup(C, T, EStructuralFeature, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
+* ``renderTypedElementFormGroup(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
 * ``renderSaveButton(C, T)`` - 
 * ``renderSaveIcon(C)`` - 
 * ``renderTinymceInitScript(C, TextArea)`` - 
@@ -339,6 +364,7 @@ many methods - fine grained. reference impl.
 * ``validate(C, T, EModelElement, DiagnosticChain)`` - 
 * ``wireCancelButton(C, T, Button)`` - 
 * ``wireSaveButton(C, T, Button)`` - 
+
 
 #### Route methods
 
