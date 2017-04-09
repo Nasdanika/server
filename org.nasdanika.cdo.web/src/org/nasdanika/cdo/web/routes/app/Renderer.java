@@ -62,6 +62,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.Diagnostician;
@@ -786,9 +787,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
 		}
 		if (action == null) {
-			breadCrumbs.item(null, renderFeatureIconAndLabel(context, feature, visibleFeatures));
+			breadCrumbs.item(null, renderNamedElementIconAndLabel(context, feature, visibleFeatures));
 		} else {
-			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/feature/"+feature.getName()+"/view.html", renderFeatureIconAndLabel(context, feature, visibleFeatures));
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/feature/"+feature.getName()+"/view.html", renderNamedElementIconAndLabel(context, feature, visibleFeatures));
 			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
 		}
 	}
@@ -1080,21 +1081,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	
 	/**
-	 * Renders feature label. Returns value of ``model-element-label`` render annotation if it is present.
+	 * Renders {@link ENamedElement} label. Returns value of ``model-element-label`` render annotation if it is present.
 	 * If it is not present, this implementation return element name suffix after the auto-category (if any) passed through nameToLabel() conversion.
 	 * @param context
-	 * @param feature
+	 * @param namedElement
 	 * @param eClass
 	 * @throws Exception
 	 */
-	default String renderFeatureLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
-		String label = getRenderAnnotation(context, feature, RenderAnnotation.MODEL_ELEMENT_LABEL);
+	default String renderNamedElementLabel(C context, ENamedElement namedElement, Collection<EStructuralFeature> features) throws Exception {
+		String label = getRenderAnnotation(context, namedElement, RenderAnnotation.MODEL_ELEMENT_LABEL);
 		if (label != null) {
 			return label;
 		}		
-		String featureName = feature.getName();
-		String autoCategory = getAutoCategory(context, feature, features);
-		return nameToLabel(autoCategory == null ? featureName : featureName.substring(autoCategory.length()));		
+		String name = namedElement.getName();
+		String autoCategory = namedElement instanceof EStructuralFeature ? getAutoCategory(context, (EStructuralFeature) namedElement, features) : null;
+		return nameToLabel(autoCategory == null ? name : name.substring(autoCategory.length()));		
 	}
 	
 	default Object renderFeatureCategoryLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
@@ -1155,17 +1156,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * 
 	 * @param context
-	 * @param feature
+	 * @param namedElement
 	 * @return Named element icon and label.
 	 * @throws Exception
 	 */
-	default Object renderFeatureIconAndLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
-		Object label = renderFeatureLabel(context, feature, features);
+	default Object renderNamedElementIconAndLabel(C context, ENamedElement namedElement, Collection<EStructuralFeature> features) throws Exception {		
+		Object label = renderNamedElementLabel(context, namedElement, features);
 		if (label == null) {
-			return renderModelElementIcon(context, feature);
+			return renderModelElementIcon(context, namedElement);
 		}
 		
-		Object icon = renderModelElementIcon(context, feature);
+		Object icon = renderModelElementIcon(context, namedElement);
 		if (icon == null) {
 			return label;
 		}
@@ -1288,7 +1289,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders individual feature value. This implementation: 
+	 * Renders individual {@link ETypedElement} value. This implementation: 
 	 * 
 	 * * Unreadable targets of single references are treated as nulls.
 	 * * Nulls are rendered as empty strings.
@@ -1297,25 +1298,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * * For numbers uses ``format`` annotation to format with {@link DecimalFormat}, if the annotation is present.
 	 * * Otherwise converts value to string and then html-escapes it.
 	 * @param context
-	 * @param feature
+	 * @param typedElement
 	 * @param value
 	 * @return
 	 * @throws Exception 
 	 */
-	default Object renderFeatureValue(C context, EStructuralFeature feature, Object value) throws Exception {
-		if (feature instanceof EReference && !feature.isMany() && !context.authorize(value, StandardAction.read, null, null)) {
+	default Object renderTypedElementValue(C context, ETypedElement typedElement, Object value) throws Exception {
+		if (typedElement instanceof EReference && !typedElement.isMany() && !context.authorize(value, StandardAction.read, null, null)) {
 			value = null;
 		}
 		
 		if (value == null || (value instanceof String && ((String) value).length() == 0)) {
-			String pra = getRenderAnnotation(context, feature, RenderAnnotation.PLACEHOLDER);
+			String pra = getRenderAnnotation(context, typedElement, RenderAnnotation.PLACEHOLDER);
 			if (!CoreUtil.isBlank(pra) && context instanceof HttpServletRequestContext) {
 				Object target = ((HttpServletRequestContext) context).getTarget();
 				if (target instanceof CDOObject) {
 					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) target);
 					Object pv = jxPathContext.getValue(pra);
 					if (pv != null) {
-						return getHTMLFactory(context).well(renderFeatureValue(context, feature, pv)).small();
+						return getHTMLFactory(context).well(renderTypedElementValue(context, typedElement, pv)).small();
 					}
 				}
 			}
@@ -1325,7 +1326,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return Base64.getEncoder().encodeToString((byte[]) value);
 		}
 		if (value instanceof EObject) {
-			return getReferenceRenderer((EReference) feature, (EObject) value).renderLink(context, (EObject) value, true);
+			return getReferenceRenderer((EReference) typedElement, (EObject) value).renderLink(context, (EObject) value, true);
 		}
 		if (value instanceof Boolean) {
 			return (Boolean) value ?  renderTrue(context) : renderFalse(context);
@@ -1333,7 +1334,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (value instanceof Enumerator) {
 			Enumerator enumeratorValue = (Enumerator) value;
 			String ret = StringEscapeUtils.escapeHtml4(enumeratorValue.getLiteral());
-			EClassifier featureType = feature.getEType();
+			EClassifier featureType = typedElement.getEType();
 			if (featureType instanceof EEnum) {
 				EEnum featureEnum = (EEnum) featureType;
 				EEnumLiteral enumLiteral = featureEnum.getEEnumLiteral(enumeratorValue.getName());
@@ -1347,21 +1348,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		if (value instanceof Date) {
-			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
+			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
 			if (format == null) {
 				format = "yyyy-MM-dd"; // Default web format for dates.
 			}
 			SimpleDateFormat sdf = new SimpleDateFormat(format, getLocale(context));
 			return sdf.format((Date) value);
 		} else if (value instanceof Number) {
-			String format = getRenderAnnotation(context, feature, RenderAnnotation.FORMAT);
+			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
 			if (format != null) {
 				DecimalFormat df = new DecimalFormat(format,  DecimalFormatSymbols.getInstance(getLocale(context)));
 				return df.format(value);
 			}
 		}	
 		
-		if ("text/html".equals(getRenderAnnotation(context, feature, RenderAnnotation.CONTENT_TYPE))) {
+		if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 			return value;
 		}
 			
@@ -2124,7 +2125,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String category = getFeatureCategory(context, vf, viewFeatures);
 			if (category == null) {
 				Row fRow = featuresTable.body().row();
-				Cell fLabelCell = fRow.header(renderFeatureIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
+				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
 				Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
@@ -2157,7 +2158,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			categoryFeaturesTable.col().bootstrap().grid().col(11);
 			for (EStructuralFeature vf: ce.getValue()) {
 				Row fRow = categoryFeaturesTable.body().row();
-				Cell fLabelCell = fRow.header(renderFeatureIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
+				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
 				Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
@@ -2512,7 +2513,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		for (EStructuralFeature vf: leftPanelFeatures) {
 			String category = getFeatureCategory(context, vf, leftPanelFeatures);
 			if (category == null) {
-				linkGroup.item(renderFeatureIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
+				linkGroup.item(renderNamedElementIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
 			} else {
 				List<EStructuralFeature> categoryFeatures = categories.get(category);
 				if (categoryFeatures == null) {
@@ -2533,7 +2534,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 			LinkGroup categoryFeaturesLinkGroup = htmlFactory.linkGroup();
 			for (EStructuralFeature vf: ce.getValue()) {
-				categoryFeaturesLinkGroup.item(renderFeatureIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
+				categoryFeaturesLinkGroup.item(renderNamedElementIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
 			}
 			ret.content(htmlFactory.panel(Style.DEFAULT, categoriesIconsAndLabels.get(ce.getKey()), categoryFeaturesLinkGroup, null));
 		}
@@ -2772,7 +2773,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				for (EStructuralFeature sf: uncategorizedTableFeatures) {					
 					// TODO - colgroups, alignments, widths.
 					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
-					Cell headerCell = headerRow.header(renderFeatureIconAndLabel(context, sf, tableFeatures));
+					Cell headerCell = headerRow.header(renderNamedElementIconAndLabel(context, sf, tableFeatures));
 					if (featureDocIcon != null) {
 						headerCell.content(featureDocIcon);
 					}
@@ -2795,7 +2796,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 						for (EStructuralFeature sf: ce.getValue()) {
 							Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
-							Cell featureHeader = cfhr.header(renderFeatureIconAndLabel(context, sf, tableFeatures));
+							Cell featureHeader = cfhr.header(renderNamedElementIconAndLabel(context, sf, tableFeatures));
 							if (featureDocIcon != null) {
 								featureHeader.content(featureDocIcon);
 							}
@@ -2879,7 +2880,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				if (featureValues.size() == 1) {
 					Object v = featureValues.iterator().next();
-					ret.content(renderFeatureValue(context, feature, v));
+					ret.content(renderTypedElementValue(context, feature, v));
 					if (feature instanceof EAttribute) {
 						if (showActionButtons) {
 							ret.content(renderFeatureValueEditButton(context, obj, feature, 0, v));
@@ -2905,7 +2906,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 					
 					for (FeatureValueEntry<Object> featureValueEntry: featureValueEntries) {
-						Fragment liFragment = ret.getFactory().fragment(renderFeatureValue(context, feature, featureValueEntry.value));
+						Fragment liFragment = ret.getFactory().fragment(renderTypedElementValue(context, feature, featureValueEntry.value));
 						if (feature instanceof EAttribute) {
 							if (showActionButtons) {
 								liFragment.content(renderFeatureValueEditButton(context, obj, feature, featureValueEntry.position, featureValueEntry.value));
@@ -2923,7 +2924,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		} else {
-			ret.content(renderFeatureValue(context, feature, featureValue));
+			ret.content(renderTypedElementValue(context, feature, featureValue));
 			if (feature instanceof EReference) {
 				if (showActionButtons) {
 					if (((EReference) feature).isContainment()) {
@@ -3273,37 +3274,37 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 
 	/**
-	 * Returns feature value to be used in form controls like input, select, e.t.c.
+	 * Returns typed element value to be used in form controls like input, select, e.t.c.
 	 * This implementation returns name for enums and {@link CDOID} encoded with {@link CDOIDCodec} for {@link CDOObject}'s.
 	 * For all other values it returns HTML-escaped result of ``renderFeatureValue()``  
 	 * @param context
 	 * @param obj
-	 * @param feature
-	 * @param featureValue
+	 * @param typedElement
+	 * @param value
 	 * @return
 	 * @throws Exception 
 	 */
-	default String getFormControlValue(C context, T obj, EStructuralFeature feature, Object featureValue) throws Exception {
-		if (featureValue == null) {
+	default String getFormControlValue(C context, T obj, ETypedElement typedElement, Object value) throws Exception {
+		if (value == null) {
 			return "";
 		}
 		
-		if (featureValue.getClass().isEnum()) {
-			return ((Enum<?>) featureValue).name();
+		if (value.getClass().isEnum()) {
+			return ((Enum<?>) value).name();
 		} 
 		
-		if (featureValue instanceof CDOObject) {
-			return CDOIDCodec.INSTANCE.encode(context, ((CDOObject) featureValue).cdoID());
+		if (value instanceof CDOObject) {
+			return CDOIDCodec.INSTANCE.encode(context, ((CDOObject) value).cdoID());
 		}
 			
-		Object rfv = renderFeatureValue(context, feature, featureValue);
+		Object rfv = renderTypedElementValue(context, typedElement, value);
 		return rfv == null ? "" : StringEscapeUtils.escapeHtml4(rfv.toString());						
 	}
 	
 	// TODO - placeholder - might be an implicit default, placeholder selector
 	
 	/**
-	 * Renders control for the feature, e.g. input, select, or text area.
+	 * Renders control for {@link ETypedElement}, e.g. input, select, or text area.
 	 * 
 	 * Annotations:
 	 * 
@@ -3318,40 +3319,40 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 *  
 	 * @param context
 	 * @param obj
-	 * @param feature
+	 * @param typedElement
 	 * @return Null for checkboxes and radios - they are added directly to the fieldContainer. Control to add to a field group otherwise.
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked" })
-	default UIElement<?> renderFeatureControl(
+	default UIElement<?> renderTypedElementControl(
 			C context, 
 			T obj, 
-			EStructuralFeature feature, 
+			ETypedElement typedElement, 
+			Object value,
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip) throws Exception {
 
-		Object fv = obj.eGet(feature);
-		String controlTypeStr = getRenderAnnotation(context, feature, RenderAnnotation.CONTROL);
+		String controlTypeStr = getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL);
 		TagName controlType = controlTypeStr == null ? null : TagName.valueOf(controlTypeStr); 
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		if (controlType == null) {
-			if (feature.isMany()) {
+			if (typedElement.isMany()) {
 				controlType = TagName.input;
-			} else if (feature instanceof EAttribute) {		
-				Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+			} else if (typedElement instanceof EAttribute) {		
+				Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
 				controlType = featureTypeInstanceClass.isEnum() ? TagName.select : TagName.input;
-			} else if (((EReference) feature).isContainment()) {				
+			} else if (((EReference) typedElement).isContainment()) {				
 				// Link and create button.
-				return htmlFactory.well(renderFeatureValue(context, feature, fv), renderFeatureAddButton(context, obj, feature)).small();
+				return htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureAddButton(context, obj, (EStructuralFeature) typedElement)).small();
 			} else {
 				controlType = TagName.select;
 			}
 		}
 		
 		Map<String, String> controlConfiguration = new HashMap<>();
-		Object controlConfigurationYaml = getYamlRenderAnnotation(context, feature, RenderAnnotation.CONTROL_CONFIGURATION);
+		Object controlConfigurationYaml = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL_CONFIGURATION);
 		if (controlConfigurationYaml instanceof Map) {
 			for (Entry<String, Object> e: ((Map<String,Object>) controlConfigurationYaml).entrySet()) {
 				Object v = e.getValue();
@@ -3379,10 +3380,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		Object label = renderFeatureIconAndLabel(context, feature, getVisibleFeatures(context, obj, vf -> context.authorize(obj, StandardAction.update, feature.getName(), null)));
+		Object label = renderNamedElementIconAndLabel(context, typedElement, getVisibleFeatures(context, obj, vf -> context.authorize(obj, StandardAction.update, typedElement.getName(), null)));
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
-			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, feature, docModal, true));			
+			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, typedElement, docModal, true));			
 		}
 
 		Comparator<? super EObject> labelComparator = (e1, e2) -> {
@@ -3395,13 +3396,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		};		
 		
-		String choiceTreeAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.CHOICE_TREE);
+		String choiceTreeAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.CHOICE_TREE);
 		boolean isChoiceTreeReferenceNodes = "reference-nodes".equals(choiceTreeAnnotation);
-		boolean isChoiceTree = feature instanceof EReference && ("true".equals(choiceTreeAnnotation) || isChoiceTreeReferenceNodes); 
+		boolean isChoiceTree = typedElement instanceof EReference && ("true".equals(choiceTreeAnnotation) || isChoiceTreeReferenceNodes); 
 		List<EObject> choices = new ArrayList<>();
 		List<EObject> roots = new ArrayList<>();
 		if (isChoiceTree) {
-			choices.addAll(getReferenceChoices(context, obj, (EReference) feature));
+			choices.addAll(getReferenceChoices(context, obj, (EReference) typedElement));
 			roots.addAll(choices);
 			for (int i=0; i < roots.size() - 1; ++i) {
 				for (EObject eObj = roots.get(i); eObj != null; eObj = eObj.eContainer()) {
@@ -3497,7 +3498,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}		
 				
 		boolean disabled;
-		String disabledRenderAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.DISABLED);
+		String disabledRenderAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.DISABLED);
 		if (CoreUtil.isBlank(disabledRenderAnnotation) || "false".equals(disabledRenderAnnotation)) {
 			disabled = false;
 		} else if ("true".equals(disabledRenderAnnotation)) {
@@ -3512,13 +3513,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		switch (controlType) {
 		case input:
-			String inputTypeStr = isChoiceTree ? "radio" : getRenderAnnotation(context, feature, RenderAnnotation.INPUT_TYPE);
+			String inputTypeStr = isChoiceTree ? "radio" : getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE);
 			InputType inputType = inputTypeStr == null ? null : HTMLFactory.InputType.valueOf(inputTypeStr);
 			if (inputType == null) {
-				if (feature.isMany()) {
+				if (typedElement.isMany()) {
 					inputType = InputType.checkbox;
 				} else {
-					Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+					Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
 					if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
 						inputType = InputType.checkbox;
 					} else if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
@@ -3534,20 +3535,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			// TODO - hidden inputs for disabled controls.
 			switch (inputType) {
 			case checkbox:
-				if (feature.isMany()) {
+				if (typedElement.isMany()) {
 					// Render a checkbox per choice.
 					Set<String> valuesToSelect = new HashSet<>();
-					String[] requestValues = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameterValues(feature.getName()) : null;
+					String[] requestValues = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameterValues(typedElement.getName()) : null;
 					if (requestValues == null) {
-						for (Object fev: ((Collection<Object>) fv)) {
-							valuesToSelect.add(getFormControlValue(context, obj, feature, fev));
+						for (Object fev: ((Collection<Object>) value)) {
+							valuesToSelect.add(getFormControlValue(context, obj, typedElement, fev));
 						}
 					} else {
 						valuesToSelect.addAll(Arrays.asList(requestValues));
 					}
 					if (isChoiceTree) {
 						if (roots.isEmpty()) {
-							if (isRequired(context, obj, feature)) {
+							if (isRequired(context, obj, typedElement)) {
 								return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
 							}
 							return null;
@@ -3557,7 +3558,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								
 								@Override
 								Object renderControl(EObject obj) throws Exception {
-									Input checkbox = htmlFactory.input(InputType.checkbox).name(feature.getName());
+									Input checkbox = htmlFactory.input(InputType.checkbox).name(typedElement.getName());
 									for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 										checkbox.attribute(ce.getKey(), ce.getValue());
 									}
@@ -3583,9 +3584,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							checkboxesFieldSet.content(ul);
 						}
 					} else {					
-						Collection<Entry<String, String>> featureChoices = getFeatureChoices(context, obj, feature);
+						Collection<Entry<String, String>> featureChoices = getTypedElementChoices(context, obj, typedElement);
 						if (featureChoices.isEmpty()) {
-							if (isRequired(context, obj, feature)) {
+							if (isRequired(context, obj, typedElement)) {
 								return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
 							}
 							return null;
@@ -3600,7 +3601,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 									checkbox.attribute(ce.getKey(), ce.getValue());
 								}
-								checkbox.name(feature.getName());
+								checkbox.name(typedElement.getName());
 								checkbox.value(StringEscapeUtils.escapeHtml4(fc.getKey()));
 								if (valuesToSelect.contains(fc.getKey())) {
 									checkbox.attribute("checked", "true");
@@ -3616,21 +3617,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 					checkbox.attribute(ce.getKey(), ce.getValue());
 				}
-				checkbox.name(feature.getName());
+				checkbox.name(typedElement.getName());
 				checkbox.value("true");
-				if (Boolean.TRUE.equals(fv)) {
+				if (Boolean.TRUE.equals(value)) {
 					checkbox.attribute("checked", "true");					
 				}
 
-				fieldContainer.checkbox(renderFeatureLabel(context, feature, getEditableFeatures(context, obj)), checkbox, true);
+				fieldContainer.checkbox(renderNamedElementLabel(context, typedElement, getEditableFeatures(context, obj)), checkbox, true);
 				return null;
 			case radio:
 				// Radio - get values and labels from options.
-				String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(feature.getName()) : null;				
-				String valueToSelect = requestValue == null ? getFormControlValue(context, obj, feature, fv) : requestValue;
+				String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;				
+				String valueToSelect = requestValue == null ? getFormControlValue(context, obj, typedElement, value) : requestValue;
 				if (isChoiceTree) {
 					if (roots.isEmpty()) {
-						if (isRequired(context, obj, feature)) {
+						if (isRequired(context, obj, typedElement)) {
 							return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
 						}
 						return null;
@@ -3640,7 +3641,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							
 							@Override
 							Object renderControl(EObject obj) throws Exception {
-								Input radio = htmlFactory.input(InputType.radio).name(feature.getName()).disabled(disabled);
+								Input radio = htmlFactory.input(InputType.radio).name(typedElement.getName()).disabled(disabled);
 								for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 									radio.attribute(ce.getKey(), ce.getValue());
 								}
@@ -3666,9 +3667,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						radiosFieldSet.content(ul);
 					}
 				} else {										
-					Collection<Entry<String, String>> featureChoices = getFeatureChoices(context, obj, feature);
+					Collection<Entry<String, String>> featureChoices = getTypedElementChoices(context, obj, typedElement);
 					if (featureChoices.isEmpty()) {
-						if (isRequired(context, obj, feature)) {
+						if (isRequired(context, obj, typedElement)) {
 							return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
 						}
 						return null;
@@ -3681,7 +3682,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						for (Entry<String, String> fc: featureChoices) {  
 							Input radio = htmlFactory.input(inputType)
 									.disabled(disabled)
-									.name(feature.getName())
+									.name(typedElement.getName())
 									.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
 									.placeholder(textLabel);
 							for (Entry<String, String> ce: controlConfiguration.entrySet()) {
@@ -3696,13 +3697,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				return null;
 			default:
-				requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(feature.getName()) : null;
+				requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;
 				Input input = htmlFactory.input(inputType)
 					.disabled(disabled)
-					.name(feature.getName())
-					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, fv)) : requestValue)
+					.name(typedElement.getName())
+					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, typedElement, value)) : requestValue)
 					.placeholder(textLabel)
-					.required(isRequired(context, obj, feature));
+					.required(isRequired(context, obj, typedElement));
 
 				for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 					input.attribute(ce.getKey(), ce.getValue());
@@ -3711,29 +3712,29 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				return input;
 			}
 		case select:
-			Collection<Entry<String, String>> selectFeatureChoices = getFeatureChoices(context, obj, feature);
-			Select select = htmlFactory.select().required(isRequired(context, obj, feature));
+			Collection<Entry<String, String>> selectFeatureChoices = getTypedElementChoices(context, obj, typedElement);
+			Select select = htmlFactory.select().required(isRequired(context, obj, typedElement));
 			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 				select.attribute(ce.getKey(), ce.getValue());
 			}
 			
-			if (feature.getLowerBound() == 0) {
+			if (typedElement.getLowerBound() == 0) {
 				select.option("", "", false, false);
 			}
-			String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(feature.getName()) : null;
-			String valueToSelect = requestValue == null ? getFormControlValue(context, obj, feature, fv) : requestValue;				
+			String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;
+			String valueToSelect = requestValue == null ? getFormControlValue(context, obj, typedElement, value) : requestValue;				
 			if (disabled) {
-				fieldContainer.content(htmlFactory.input(InputType.hidden).name(feature.getName()).value(valueToSelect));
+				fieldContainer.content(htmlFactory.input(InputType.hidden).name(typedElement.getName()).value(valueToSelect));
 				select.disabled();
 			} else {
-				select.name(feature.getName());
+				select.name(typedElement.getName());
 			}
 			for (Entry<String, String> fc: selectFeatureChoices) {
 				select.option(StringEscapeUtils.escapeHtml4(fc.getKey()), StringEscapeUtils.escapeHtml4(Jsoup.parse(fc.getValue()).text()), valueToSelect != null && valueToSelect.equals(fc.getKey()), false);
 			}
 			if (selectFeatureChoices.isEmpty()) {
 				select.disabled();
-				if (isRequired(context, obj, feature)) {
+				if (isRequired(context, obj, typedElement)) {
 					select.setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
 				}
 			} 
@@ -3742,14 +3743,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		case textarea:
 			TextArea textArea = htmlFactory.textArea()
 				.disabled(disabled)
-				.name(feature.getName())
+				.name(typedElement.getName())
 				.placeholder(textLabel)
-				.required(isRequired(context, obj, feature));			
+				.required(isRequired(context, obj, typedElement));			
 			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 				textArea.attribute(ce.getKey(), ce.getValue());
 			}
-			textArea.content(getFormControlValue(context, obj, feature, fv));
-			if ("text/html".equals(getRenderAnnotation(context, feature, RenderAnnotation.CONTENT_TYPE))) {
+			textArea.content(getFormControlValue(context, obj, typedElement, value));
+			if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 				textArea.id(htmlFactory.nextId());
 				fieldContainer.content(renderTinymceInitScript(context, textArea));
 			}
@@ -3778,11 +3779,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * Returns true if given feature is required. This implementation returns true if feature is not many and lower bound is not 0.
 	 * @param context
 	 * @param obj
-	 * @param feature
+	 * @param typedElement
 	 * @throws Exception
 	 */
-	default boolean isRequired(C context, T obj, EStructuralFeature feature) throws Exception {
-		return !feature.isMany() && feature.getLowerBound() != 0;
+	default boolean isRequired(C context, T obj, ETypedElement typedElement) throws Exception {
+		return !typedElement.isMany() && typedElement.getLowerBound() != 0;
 	}
 	
 	/**
@@ -3848,16 +3849,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	default Collection<Map.Entry<String, String>> getFeatureChoices(C context, T obj, EStructuralFeature feature) throws Exception {
+	default Collection<Map.Entry<String, String>> getTypedElementChoices(C context, T obj, ETypedElement typedElement) throws Exception {
 		Map<String,String> collector = new LinkedHashMap<>();
 		
-		if (feature instanceof EReference) {
+		if (typedElement instanceof EReference) {
 			// Accumulates selections for sorting before adding to the collector.
 			List<String[]> accumulator = new ArrayList<>(); 
-			for (EObject choice: getReferenceChoices(context, obj, (EReference) feature)) {
+			for (EObject choice: getReferenceChoices(context, obj, (EReference) typedElement)) {
 				if (choice instanceof CDOObject) {
 					CDOObject cdoNext = (CDOObject) choice;
-					Object iconAndLabel = getReferenceRenderer((EReference) feature, cdoNext).renderIconAndLabel(context, cdoNext);
+					Object iconAndLabel = getReferenceRenderer((EReference) typedElement, cdoNext).renderIconAndLabel(context, cdoNext);
 					if (iconAndLabel != null) {
 						accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoNext.cdoID()), iconAndLabel.toString() });
 					}
@@ -3873,7 +3874,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 						
 		} else {		
-			Object choicesAnnotation = getYamlRenderAnnotation(context, feature, RenderAnnotation.CHOICES);
+			Object choicesAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.CHOICES);
 			if (choicesAnnotation instanceof Map) { // key-value pairs
 				for (Entry<String, Object> e: ((Map<String,Object>) choicesAnnotation).entrySet()) {
 					collector.put(e.getKey(), String.valueOf(e.getValue()));							
@@ -3884,7 +3885,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					collector.put(strVal, strVal);							
 				}				
 			} else { // null or not supported
-				Class<?> featureTypeInstanceClass = feature.getEType().getInstanceClass();
+				Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
 				if (featureTypeInstanceClass.isEnum()) {
 					for (Field field: featureTypeInstanceClass.getFields()) {
 						if (field.isEnumConstant()) {
@@ -3916,10 +3917,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return renderFeaturesDocModals(context, obj, getEditableFeatures(context, obj));
 	}	
 	
-	default Object renderFeatureFormGroupHelpText(C context, T obj, EStructuralFeature feature, Modal docModal) throws Exception {		
+	default Object renderModelElementFormGroupHelpText(C context, T obj, EModelElement modelElement, Modal docModal) throws Exception {		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();		
-		String doc = renderDocumentation(context, feature);
+		String doc = renderDocumentation(context, modelElement);
 		if (doc != null) {
 			String textDoc = Jsoup.parse(doc).text();
 			String firstSentence = firstSentence(context, textDoc);			
@@ -3956,7 +3957,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * 
 	 * @param context
 	 * @param obj
-	 * @param feature
+	 * @param typedElement
 	 * @param fieldContainer
 	 * @param docModal
 	 * @param errorMessage
@@ -3965,32 +3966,33 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return FormGroup. 
 	 * @throws Exception
 	 */
-	default FormGroup<?> renderFeatureFormGroup(
+	default FormGroup<?> renderTypedElementFormGroup(
 			C context, 
 			T obj, 
-			EStructuralFeature feature, 
+			ETypedElement typedElement, 
+			Object value,
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip) throws Exception {
 		
-		UIElement<?> control = renderFeatureControl(context, obj, feature, fieldContainer, docModal, validationResults, helpTooltip);
+		UIElement<?> control = renderTypedElementControl(context, obj, typedElement, value, fieldContainer, docModal, validationResults, helpTooltip);
 		if (control == null) {
 			return null;
 		}
 		
-		Object icon = renderModelElementIcon(context, feature);
-		Tag docIcon = renderDocumentationIcon(context, feature, docModal, false);
+		Object icon = renderModelElementIcon(context, typedElement);
+		Tag docIcon = renderDocumentationIcon(context, typedElement, docModal, false);
 		
 		boolean isFormInputGroup;
-		String formInputGroupAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.FORM_INPUT_GROUP);
+		String formInputGroupAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.FORM_INPUT_GROUP);
 		if (formInputGroupAnnotation == null) {
 			isFormInputGroup = control instanceof Input && (icon != null || docIcon != null);	
 		} else {
 			isFormInputGroup = "true".equals(formInputGroupAnnotation);
 		}
 		
-		Object helpText = helpTooltip ? null : renderFeatureFormGroupHelpText(context, obj, feature, docModal);
+		Object helpText = helpTooltip ? null : renderModelElementFormGroupHelpText(context, obj, typedElement, docModal);
 
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 				
@@ -4013,8 +4015,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		if (isFormInputGroup) {
-			Object label = renderFeatureLabel(context, feature, getEditableFeatures(context, obj));
-			if (isRequired(context, obj, feature)) {
+			Object label = renderNamedElementLabel(context, typedElement, getEditableFeatures(context, obj));
+			if (isRequired(context, obj, typedElement)) {
 				label = htmlFactory.fragment(label, "*");
 			}
 			FormInputGroup ret = fieldContainer.formInputGroup(label, control, helpText);
@@ -4030,8 +4032,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return ret;
 		}
 				
-		Object label = renderFeatureIconAndLabel(context, feature, getEditableFeatures(context, obj));
-		if (isRequired(context, obj, feature)) {
+		Object label = renderNamedElementIconAndLabel(context, typedElement, getEditableFeatures(context, obj));
+		if (isRequired(context, obj, typedElement)) {
 			label = htmlFactory.fragment(label, "*");
 		}
 		
@@ -4096,7 +4098,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			String category = getFeatureCategory(context, esf, editableFeatures);
 			if (category == null) {
-				FormGroup<?> fg = renderFeatureFormGroup(context, obj, esf, fieldContainer, docModals.get(esf), validationResults.get(esf), helpTooltip);
+				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, esf, obj.eGet(esf), fieldContainer, docModals.get(esf), validationResults.get(esf), helpTooltip);
 				if (fg != null) {
 					ret.add(fg);
 				}
@@ -4117,7 +4119,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			categoryFieldSet.legend(categoriesIconsAndLabels.get(ce.getKey()));
 			
 			for (EStructuralFeature cesf: ce.getValue()) {
-				FormGroup<?> fg = renderFeatureFormGroup(context, obj, cesf, categoryFieldSet, docModals.get(cesf), validationResults.get(cesf), helpTooltip);
+				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, cesf, obj.eGet(cesf), categoryFieldSet, docModals.get(cesf), validationResults.get(cesf), helpTooltip);
 				if (fg != null) {
 					ret.add(fg);
 				}
@@ -4199,7 +4201,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						String currentValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, obj.eGet(feature)));
 						if (!originalValue.equals(currentValue)) {
 							Map<String, Object> env = new HashMap<>();
-							env.put("value", renderFeatureValue(context, feature, obj.eGet(feature)));
+							env.put("value", renderTypedElementValue(context, feature, obj.eGet(feature)));
 							String msg = getHTMLFactory(context).interpolate(getResourceString(context, "concurrentModification.feature"), env);
 							diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, msg, new Object[] { obj, feature }));
 							noDiscrepancies = false;
@@ -4546,7 +4548,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			selectForm.content(errorList);
 		}
 		
-		FormGroup<?> fg = renderFeatureFormGroup(context, obj, feature, selectForm, featureDocModal, featureValidationResults, horizontalForm);
+		FormGroup<?> fg = renderTypedElementFormGroup(context, obj, feature, obj.eGet(feature), selectForm, featureDocModal, featureValidationResults, horizontalForm);
 		if (fg != null) {
 			fg.feedback(!horizontalForm);
 		}
