@@ -2494,7 +2494,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 		
 	/**
-	 * Renders left panel. This implementation renders nav pill for visible features with location set to ``leftPanel``.
+	 * Renders left panel. This implementation renders link groups for visible features with location set to ``leftPanel``.
 	 * @param context
 	 * @return
 	 * @throws Exception
