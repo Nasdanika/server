@@ -40,6 +40,7 @@ The development process includes the following steps:
 * Customize editor, e.g. add ``Set password`` action.
 * Create the initial application model to be loaded into the repository on first start.
 * Create Web UI generator model and generate renderers, routes, resource bundles and renderer/route registrations in ``plugin.xml``.
+* Run the application in Eclipse.
 * Customize/localize the Web UI.
 * Secure the application.
 * Additional generation targets.
@@ -175,6 +176,10 @@ After installation read how to create and generate the model in the ``Nasdanika 
 * [Ecore Code Generator](https://github.com/Nasdanika/codegen-ecore/blob/master/org.nasdanika.codegen.ecore.editor/doc/ecore.md)
 * [Web UI code generation target](https://github.com/Nasdanika/codegen-ecore-web-ui/blob/master/org.nasdanika.codegen.ecore.web.ui/doc/web-ui-generation-target.md)
 
+### Run the application in Eclipse
+
+See [Run the application in Eclipse](https://server-side-java-development-for-innovators.books.nasdanika.org/chapter-0-setup/run-application-in-eclipse.html) chapter.
+
 ### Customize/localize the Web UI
 
 There are three ways to customize the Web UI in addition to annotating the model:
@@ -278,6 +283,15 @@ This section groups these methods by their purpose and provides quick overview o
 
 ##### Viewing
 
+This section lists methods used to render object view. Features in the object view can be displayed in several locations:
+
+* View - attributes and single-references by default.
+* Left panel - many references.
+* Item container - tabs, pills, or accordion.
+* Inline - contained object view is merged with the container view.
+
+Many features can be displayed as tables or as lists.
+
 * ``getFeatureCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - returns feature category for grouping features into panels in views and fieldsets in edit forms.
 * ``getAutoCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - returns auto-category for a feature, which is inferred as a common prefix for two or more features. 
 * ``getFeatureLocation(C, EStructuralFeature)`` - returns location where a feature shall be rendered - view, left panel, item container (tabs, pills or accordion), or inline.
@@ -343,6 +357,15 @@ This section groups these methods by their purpose and provides quick overview o
 
 ##### Editing
 
+This section lists methods used to render object edit form. Selection of (multiple) choices for a value can be done with:
+
+* select - many choices for a single value element.
+* radio - many choices for a single value element.
+* radio tree - hierachical representation of many choices for a single value element.
+* checkbox list - many choices for a many value element.
+* checkbox tree - hierarchical representation of many choices for a many value element.
+
+
 * ``compareEditableFeatures(C, T, Consumer<Diagnostic>)`` - Compares feature values from the object with the original values stored in hidden fields. Creates error diagnostics for concurrently modified features.
 * ``getEditableFeatures(C, T)`` - returns a list of structural features to include into the object edit form.
 * ``getTypedElementChoices(C, T, ETypedElement)`` - invoked for select, radio and checkbox on non-boolean types.
@@ -368,6 +391,7 @@ This section groups these methods by their purpose and provides quick overview o
 
 #### Route methods
 
+Route is responsible for handling HTTP requests and rendering object UI delegating to methods inherited from Renderer.
 
 ##### Page rendering
 
@@ -414,9 +438,10 @@ This section groups these methods by their purpose and provides quick overview o
 	  
 ### Secure the application
 
-This section describes how to secure the web application.
+This section describes how to secure the web application, which includes implementing authentication and authorization.
 
-#### Set redirection to principal home
+#### Authentication
+##### Set redirection to principal home
 
 In ``plugin.xml`` add the following route:
 
@@ -443,9 +468,9 @@ And change redirect in the application ``index.html``:
 
 As a result ``index.html`` will redirect to the principal's ``index.html``, which in case of ``Guest`` will display the log-in form.
 
-#### Change default access decision to deny
+##### Change default access decision to deny
 
-##### Routing servlet
+###### Routing servlet
 
 Open ``plugin.xml`` and set ``default-access-decision`` init parameter to ``deny``. 
 
@@ -474,7 +499,7 @@ Also set ``login-url`` to ``${context-path}/router/index.html``.
 </servlet>
 ```
 
-#### CDO transaction context provider
+##### CDO transaction context provider
 
 Open ``xxx-cdo-transaction-context-provider.xml`` in the application project ``OSGI-INF`` folder and add the following property:
 
@@ -484,11 +509,11 @@ Open ``xxx-cdo-transaction-context-provider.xml`` in the application project ``O
 
 Also make sure that your ``<app name>CDOTransactionContextProviderComponent`` class correctly implements ``getSecurityRealm()``. 
 
-#### Implement login form
+##### Implement login form
 
 Create and register ``GuestRenderer`` and ``GuestRoute``.
 
-##### Guest renderer
+###### Guest renderer
 
 ```java
 import org.nasdanika.cdo.security.Guest;
@@ -531,7 +556,7 @@ Registration in ``plugin.xml``:
 </extension>
 ```
 
-##### Guest route
+###### Guest route
 
 ```java
 import org.nasdanika.cdo.security.Guest;
@@ -616,15 +641,15 @@ Registration in ``plugin.xml``:
    </eobject-route>
 ```   
 
-#### User home
+##### User home
 
 Implement the user route as required by your application.
 
-#### NTLM authentication
+##### NTLM authentication
 
 This section describes how to set up NTLM authentication by putting the application behind Apache HTTPD (inspired by [Jenkins Reverse Proxy Auth Plugin](https://wiki.jenkins-ci.org/display/JENKINS/Reverse+Proxy+Auth+Plugin). Another option is to use [WAFFLE](https://github.com/Waffle/waffle) or similar products.
 
-##### Apache HTTPD
+###### Apache HTTPD
 
 * Enable proxy, ntlm and rewrite modules, 
 * Proxy to your app 
@@ -672,7 +697,7 @@ AllowEncodedSlashes NoDecode
 </Location>
 ```
 
-##### plugin.xml
+###### plugin.xml
 
 Add ``user-name-header`` init parameter to the router servlet:
 
@@ -681,31 +706,56 @@ Add ``user-name-header`` init parameter to the router servlet:
       name="user-name-header"
       value="X-Forwarded-User">
 </init-param>
-```
- 
+``` 
 
 #### Authorization
 
-Define packages, classes, and actions in the initial model.
+Renderer and Route methods use [Context](http://www.nasdanika.org/server/apidocs/org.nasdanika.core/apidocs/org/nasdanika/core/Context.html).authorizeXXX() methods to customize UI based on the principal permissions. 
+E.g. ``Edit`` button would only be rendered if the request principal has ``edit`` permission on the object.
+
+[Security model](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/apidocs/index.html) handles authorization is the following way (a simplified description, see [PrincipalAuthorizationHelper](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/apidocs/org/nasdanika/cdo/security/PrincipalAuthorizationHelper.html) [source code](https://github.com/Nasdanika/server/blob/master/org.nasdanika.cdo.security/src/org/nasdanika/cdo/security/PrincipalAuthorizationHelper.java) for details):
+
+* If the principal is ``root`` then it has all permissions.
+* If the current object is [Protected](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/apidocs/org/nasdanika/cdo/security/Protected.html), then its ``authorize()`` method is invoked. By default protected iterates over its permissions and if the permission matches and the access decision is not ``Abstain`` then this decision is used.
+* If the current [Principal](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/apidocs/org/nasdanika/cdo/security/Principal.html) has a permission associated with the current object then its ``AccessDecisioin`` is used if it is not ``Abstain``.  
+* If none of the above is true then authorization on the parent object is checked with the containment feature path as a qualifier. E.g. if ``Customer`` contains ``Account`` in ``accounts`` reference, then check for ``read`` permission on ``Account.amount`` attribute would bubble up as a check for ``read`` permission with ``accounts/amount`` qualifier on the ``Customer`` object. 
+* As the last resort the default access decision is used, which should be set to ``deny`` for secured applications.
+
+There are three primary ways to implement authorization in the application:
+
+* Define actions and permissions.
+* Override Protected.authorize().
+* Override Principal.authorize().
+
+All these approaches can co-exist.
+
+##### Define actions and permissions
+
+* Use the model editor and add Package and Class objects representing classes in your object model on which you would define protected actions.
+* If you decide to keep permissions at model objects, have protected objects extend ``Protected``. 
+* Define [actions](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.security/apidocs/org/nasdanika/cdo/security/Action.html) for classes, designate some actions as grantable and have other fine-grained actions be implied by grantable actions.
+* Create Web UI for granting permissions to grantable actions. (Such UI might be implemented as part of Route in future versions).
+ 
+This approach is flexible and declarative, but may not be applicable or require custom actions and permissions in some advanced cases. 
 
 ##### Protected
 
-Some model classes extend protected. Web UI to edit permissions for grantable actions. 
+Another way is to override ``Protected.authorize()``. E.g. you may pull authorization information from some external source.  
 
 ##### Principal
 
-Permissions are kept @Principal. Web UI to edit permissions on model objects. 
-
-##### Custom
-
-Override ``authorize()``.
+In a similar fashion you may override ``Principal.authorize()``. 
 
 ### Additional generation targets
 
-* Stories
-* UI Driver and tests
-* Custom 
+In the future the following generation targets may be created:
+
+* User stories for application Web UI referencing the domain objects, e.g. "As a <role> I want to create a new Customer object".
+* UI Driver and tests for application Web UI referencing the user stories.
 
 ### Build and deploy
 
+See the following chapters:
 
+* [Build and launch locally](https://server-side-java-development-for-innovators.books.nasdanika.org/chapter-0-setup/build-and-launch-locally/).
+* [Set up an automated build](https://server-side-java-development-for-innovators.books.nasdanika.org/chapter-0-setup/automated-build/).
