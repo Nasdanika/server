@@ -58,8 +58,10 @@ import org.eclipse.emf.ecore.EEnumLiteral;
 import org.eclipse.emf.ecore.EModelElement;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EPackage.Registry;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
@@ -3947,7 +3949,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders form group if renderFeatureControl() returns non-null value.
+	 * Renders form group if renderTypedElementControl() returns non-null value.
 	 * This implementation renders FormInputGroup if:
 	 * 
 	 * * ``form-input-group`` annotation is true.
@@ -4257,7 +4259,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 
 	/**
-	 * Validates {@link EClass} or {@link EStructuralFeature} using {@link RenderAnnotation}.CONSTRAINT annotations.
+	 * Validates {@link EClass} or {@link ETypedElement} using {@link RenderAnnotation}.CONSTRAINT annotations.
 	 * @param context
 	 * @param obj
 	 * @param modelElement
@@ -4310,7 +4312,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								}
 							}
 							
-							Object[] data = modelElement instanceof EStructuralFeature ? new Object[] { obj, modelElement } : new Object[] { obj }; 							
+							Object[] data;
+							if (modelElement instanceof EStructuralFeature || modelElement instanceof EParameter) {
+								data = new Object[] { obj, modelElement };
+							} else {
+								data = new Object[] { obj };
+							}							
 							diagnosticChain.add(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, errMsg, data));
 						}						
 					}
