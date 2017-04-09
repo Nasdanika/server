@@ -1725,8 +1725,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			@Override
-			public Rendering render(WikiLinkNode arg0) {
-				return super.render(arg0).withAttribute("target", "_blank");
+			public Rendering render(WikiLinkNode wikiLinkNode) {
+				return super.render(wikiLinkNode).withAttribute("target", "_blank");
 			}
 			
 		};		
@@ -2059,21 +2059,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders feature documentation modal dialogs.
+	 * Renders {@link EModelElement} documentation modal dialogs.
 	 * @param context
 	 * @param obj
 	 * @return
 	 * @throws Exception
 	 */
-	default Map<EStructuralFeature, Modal> renderFeaturesDocModals(C context, T obj, Collection<EStructuralFeature> features) throws Exception {
-		Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
-		for (EStructuralFeature feature: features) {
-			Modal fdm = renderDocumentationModal(context, feature);
+	default <M extends EModelElement> Map<M, Modal> renderModelElementsDocModals(C context, T obj, Collection<M> modelElements) throws Exception {
+		Map<M, Modal> modelElementDocModals = new HashMap<>();
+		for (M modelElement: modelElements) {
+			Modal fdm = renderDocumentationModal(context, modelElement);
 			if (fdm != null) {
-				featureDocModals.put(feature, fdm);
+				modelElementDocModals.put(modelElement, fdm);
 			}
 		}		
-		return featureDocModals;
+		return modelElementDocModals;
 	}
 
 	/**
@@ -2084,7 +2084,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Map<EStructuralFeature, Modal> renderVisibleFeaturesDocModals(C context, T obj) throws Exception {
-		return renderFeaturesDocModals(context, obj, getVisibleFeatures(context, obj, null));
+		return renderModelElementsDocModals(context, obj, getVisibleFeatures(context, obj, null));
 	}
 	
 	/**
@@ -3914,7 +3914,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Map<EStructuralFeature, Modal> renderEditableFeaturesDocModals(C context, T obj) throws Exception {
-		return renderFeaturesDocModals(context, obj, getEditableFeatures(context, obj));
+		return renderModelElementsDocModals(context, obj, getEditableFeatures(context, obj));
 	}	
 	
 	default Object renderModelElementFormGroupHelpText(C context, T obj, EModelElement modelElement, Modal docModal) throws Exception {		
