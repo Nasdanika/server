@@ -343,27 +343,27 @@ This section groups these methods by their purpose and provides quick overview o
 
 ##### Editing
 
-* ``compareEditableFeatures(C, T, Consumer<Diagnostic>)`` - 
-* ``getEditableFeatures(C, T)`` - 
-* ``getTypedElementChoices(C, T, ETypedElement)`` - 
-* ``getFormControlValue(C, T, ETypedElement, Object)`` - 
-* ``getReferenceChoices(C, T, EReference)`` - 
+* ``compareEditableFeatures(C, T, Consumer<Diagnostic>)`` - Compares feature values from the object with the original values stored in hidden fields. Creates error diagnostics for concurrently modified features.
+* ``getEditableFeatures(C, T)`` - returns a list of structural features to include into the object edit form.
+* ``getTypedElementChoices(C, T, ETypedElement)`` - invoked for select, radio and checkbox on non-boolean types.
+* ``getFormControlValue(C, T, ETypedElement, Object)`` - Returns typed element value to be used in form controls like input, select, etc.
+* ``getReferenceChoices(C, T, EReference)`` - invoked for select, radio and checkbox on non-boolean types.  
 * ``isRequired(C, T, ETypedElement)`` - return ``true`` if form control for the typed element shall have ``required`` attribute. 
-* ``parseFeatureValue(C, EStructuralFeature, String)`` - 
-* ``renderEditableFeaturesFormGroups(C, T, FieldContainer<?>, Map<EStructuralFeature, Modal>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - 
-* ``renderEditForm(C, T, List<ValidationResult>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - 
-* ``renderTypedElementControl(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
-* ``renderFeatureEditForm(C, T, EStructuralFeature, List<ValidationResult>, boolean)`` - 
-* ``renderTypedElementFormGroup(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - 
-* ``renderSaveButton(C, T)`` - 
-* ``renderSaveIcon(C)`` - 
-* ``renderTinymceInitScript(C, TextArea)`` - 
-* ``setEditableFeatures(C, T, Consumer<Diagnostic>)`` - 
-* ``setFeatureValue(C, T, EStructuralFeature)`` - 
-* ``validate(C, T)`` - 
-* ``validate(C, T, EModelElement, DiagnosticChain)`` - 
-* ``wireCancelButton(C, T, Button)`` - 
-* ``wireSaveButton(C, T, Button)`` - 
+* ``parseTypedElementValue(C, EStructuralFeature, String)`` -  
+* ``renderEditableFeaturesFormGroups(C, T, FieldContainer<?>, Map<EStructuralFeature, Modal>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - Renders form groups for editable features.
+* ``renderEditForm(C, T, List<ValidationResult>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - Renders object edit form with feature documentation modals and error messages if any.
+* ``renderFeatureEditForm(C, T, EStructuralFeature, List<ValidationResult>, boolean)`` - Renders an edit form for a single feature, e.g. a reference with checkboxes for selecting multiple values and radios or select for selecting a single value.  
+* ``renderTypedElementControl(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - Renders control for ETypedElement, e.g. input, select, or text area.
+* ``renderTypedElementFormGroup(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - Renders form group if renderTypedElementControl() returns non-null value.
+* ``renderSaveButton(C, T)`` - renders ``Save`` button.
+* ``renderSaveIcon(C)`` - renders ``Save`` icon.
+* ``renderTinymceInitScript(C, TextArea)`` - renders [TinyMCE](https://www.tinymce.com/) initalization script for textareas with content type ``text/html``.
+* ``setEditableFeatures(C, T, Consumer<Diagnostic>)`` - Reads feature values for editable features from the request, parses them and sets feature values. 
+* ``setFeatureValue(C, T, EStructuralFeature)`` - Sets feature value from the context to the object. The default implementation loads feature value(s) from the [HttpServletRequest](http://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletRequest.html) parameters. 
+* ``validate(C, T)`` - Validates object using Ecore validation and ``validate(C,T,EModelElement,DiagnosticChain)`` method.
+* ``validate(C, T, EModelElement, DiagnosticChain)`` - Validates model element using ``constraint`` annotations.
+* ``wireCancelButton(C, T, Button)`` - wires ``Cancel`` button. 
+* ``wireSaveButton(C, T, Button)`` - wires ``Save`` button.
 
 
 #### Route methods
@@ -371,46 +371,47 @@ This section groups these methods by their purpose and provides quick overview o
 
 ##### Page rendering
 
-* ``createRenderPageEnvironment(C)`` - 
-* ``renderBody(C, Object, Object, Object, Object)`` - 
-* ``renderFooter(C, T)`` - 
-* ``renderHead(C, T)`` - 
-* ``renderHeader(C, T)`` - 
-* ``renderPage(C, T, String, Object)`` - 
-* ``getPageTemplate(C)`` - 
-* ``getTheme(C, T)`` - 
-* ``setLeftPanelAndContentColSizes(C, UIElement<?>, UIElement<?>)`` - 
+* ``createRenderPageEnvironment(C)`` - creates interpolation environment for page rendering.
+* ``renderBody(C, Object, Object, Object, Object)`` - renders page body. 
+* ``renderFooter(C, T)`` - renders page footer.
+* ``renderHead(C, T)`` - renders custom part of the ``<head>`` element.
+* ``renderHeader(C, T)`` - renders page header.
+* ``renderPage(C, T, String, Object)`` - renders page.
+* ``getPageTemplate(C)`` - returns page template resource.
+* ``getTheme(C, T)`` - returns [Bootstrap theme](http://www.nasdanika.org/products/html/apidocs/org.nasdanika.html/apidocs/org/nasdanika/html/Theme.html).
+* ``setLeftPanelAndContentColSizes(C, UIElement<?>, UIElement<?>)`` - sets [bootstrap grid column sizes](http://www.nasdanika.org/products/html/apidocs/org.nasdanika.html/apidocs/org/nasdanika/html/Bootstrap.Grid.html#col-org.nasdanika.html.Bootstrap.DeviceSize-int-) for the left panel and content.  
 
 ##### Viewing
 
-* ``getIndexHtml(C, T)`` - 
-* ``viewFeature(C, String, T)`` - 
+* ``getIndexHtml(C, T)`` - route method rendering breadcrumbs, object header, object view, object action buttons (e.g. edit and delete), and item container features.
+* ``viewFeature(C, String, T)`` - route method for a feature view, e.g. a table of reference elements.
 
 ##### Creation
 
-* ``createContainementFeatureElement(C, T, String, String, String, String, String)`` - 
+* ``createContainementFeatureElement(C, T, String, String, String, String, String)`` - route method for creation of containment feature elements. Renders create form on GET, validates input on POST and either creates a new object or re-renders the form with error messages. 
 
 ##### Editing
  
-* ``edit(C, T, String, String, String)`` - 
-* ``editFeature(C, String, T)`` - 
-* ``editFeatureElement(C, String, String, T)`` - 
-* ``selectReferenceFeatureElement(C, T, String, String, String)`` -
+* ``edit(C, T, String, String, String)`` - route method which renders and processes edit form.
+* ``editFeature(C, String, T)`` - route method which renders and processes feature target edit form.
+* ``editFeatureElement(C, String, String, T)`` - route method which renders and processes many feature element edit form.
+* ``selectReferenceFeatureElement(C, T, String, String, String)`` - route method which renders a page for adding a reference to a non-containment feature. 
  
 ##### Deleting
  
-* ``deleteFeature(C, T, String, String)`` - 
-* ``deleteFeatureElement(C, T, String, String, String)`` - 
-* ``getDeleteHtml(C, T, String)`` - 
+* ``deleteFeature(C, T, String, String)`` - Clears single-value feature and redirects to the referrer.
+* ``deleteFeatureElement(C, T, String, String, String)`` - Removes an element from a multi-value feature and redirects to the referrer.
+* ``getDeleteHtml(C, T, String)`` - Deletes this element and redirects either to the referrer or to the parent's index.html if the referrer is one of 'this' object pages.
 
 ##### Security
 
-* ``processLogin(C, String, String, String)`` - 
-* ``getLogoutHtml(C, String)`` - 
+* ``processLogin(C, String, String, String)`` - Processes login. If isPost is true, checks that login and password are not blank and authenticates the user. If authentication is successful, redirects to the returnURL or to the authenticated principal home page.
+* ``getLogoutHtml(C, String)`` - route method which invalidates session.
 
 ##### Developer routes 
-* ``getApiDocPath()`` - 
-* ``xPathEvaluator(C, T, String, String)`` - 
+* ``getApiDocPath()`` - returns ``api.html`` so the dispatching route renders API documentation at ``<object path>/api.html``.
+* ``xPathEvaluator(C, T, String, String)`` - Renders and processes a form for evaluating XPath expressions. This route method is intended to be used by application/model developers.
+	  
 ### Secure the application
 
 This section describes how to secure the web application.
