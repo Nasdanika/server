@@ -11,7 +11,7 @@ This bundle contains classes and interfaces which allow to expose objects in a C
 * Application rendering
     * Support of ``inline`` feature location.
     * Web operation
-        * Button in the action bar.
+        * Location - button in the action bar or a link in the left panel (typically for operations with unbound parameters and as such input forms).
         * ``feature`` annotation to associate operation with a feature, i.e. display the button in the feature view, not the object view.
         * Bindings of parameters similar to method parameter binding performed by [DispatchingRoute](http://www.nasdanika.org/server/apidocs/org.nasdanika.web/apidocs/org/nasdanika/web/DispatchingRoute.html?is-external=true)
             * BodyParameter - Request body is passed as parameter value. Converts body to the parameter type, e.g. String or JSONObject. 
