@@ -6,8 +6,7 @@
 
 <plugin>
 
-   <extension
-         point="org.eclipse.emf.ecore.generated_package">
+   <extension point="org.eclipse.emf.ecore.generated_package">
       <!-- @generated scheduler -->
       <package
             uri="urn:org.nasdanika.cdo.scheduler"

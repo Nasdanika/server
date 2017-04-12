@@ -3,6 +3,7 @@
 package org.nasdanika.cdo.function.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -116,12 +117,12 @@ public abstract class AbstractFunctionImpl<CR, T, R> extends CDOObjectImpl imple
 	@Override
 	public R execute(CDOTransactionContext<CR> context, @SuppressWarnings("unchecked") T... args) throws Exception {
 		BundleContext bundleContext = FrameworkUtil.getBundle(this.getClass()).getBundleContext();
-		if (getRunAs()!=null && getRunAs()!=context.getPrincipal()) {
+		if (getRunAs()!=null && context.getPrincipals().contains(getRunAs())) {
 			context = new CDOTransactionContextFilter<CR>(context) {
 				
 				@Override
-				public Principal getPrincipal() throws Exception {
-					return getRunAs();
+				public List<Principal> getPrincipals() throws Exception {
+					return Collections.singletonList(getRunAs());
 				}
 				
 			};			

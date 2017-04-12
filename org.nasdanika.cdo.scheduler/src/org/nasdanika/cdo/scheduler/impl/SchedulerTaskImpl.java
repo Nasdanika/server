@@ -2,6 +2,7 @@
  */
 package org.nasdanika.cdo.scheduler.impl;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
@@ -15,6 +16,7 @@ import org.nasdanika.cdo.security.Principal;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getRunAt <em>Run At</em>}</li>
@@ -22,7 +24,6 @@ import org.nasdanika.cdo.security.Principal;
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#isFixedRate <em>Fixed Rate</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getRunAs <em>Run As</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */
@@ -133,17 +134,9 @@ public class SchedulerTaskImpl extends CDOObjectImpl implements SchedulerTask {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Principal getRunAs() {
-		return (Principal)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AS, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setRunAs(Principal newRunAs) {
-		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AS, newRunAs);
+	@SuppressWarnings("unchecked")
+	public EList<Principal> getRunAs() {
+		return (EList<Principal>)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AS, true);
 	}
 
 } //SchedulerTaskImpl

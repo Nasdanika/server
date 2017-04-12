@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.scheduler;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -106,11 +107,11 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 		th.printStackTrace(); 
 	}
 	
-	public CDOTransactionContext<CR> createCommandContext(CDOTransactionContext<CR> transactionContext, final Principal runAs) {
+	public CDOTransactionContext<CR> createCommandContext(CDOTransactionContext<CR> transactionContext, List<Principal> runAs) {
 		return new CDOTransactionContextFilter<CR>(transactionContext) {
 
 			@Override
-			public Principal getPrincipal() {
+			public List<Principal> getPrincipals() {
 				return runAs;
 			}
 			
@@ -185,7 +186,7 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 		final SchedulerTask task = SchedulerFactory.eINSTANCE.createSchedulerTask();
 		task.setRunAt(timeUnit.toMillis(delay)+System.currentTimeMillis());
 		task.setTarget(BoxUtil.box(command, transactionContext));
-		task.setRunAs(transactionContext.getPrincipal());
+		task.getRunAs().addAll(transactionContext.getPrincipals());
 		transaction.addTransactionHandler(new CDOTransactionHandler2() {
 			
 			@Override
@@ -234,7 +235,7 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 		task.setFixedRate(true);
 		task.setPeriod(timeUnit.toMillis(period));
 		task.setTarget(BoxUtil.box(command, transactionContext));
-		task.setRunAs(transactionContext.getPrincipal());
+		task.getRunAs().addAll(transactionContext.getPrincipals());
 		transaction.addTransactionHandler(new CDOTransactionHandler2() {
 			
 			@Override
@@ -282,7 +283,7 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 		task.setRunAt(timeUnit.toMillis(initialDelay)+System.currentTimeMillis());
 		task.setPeriod(timeUnit.toMillis(delay));
 		task.setTarget(BoxUtil.box(command, transactionContext));
-		task.setRunAs(transactionContext.getPrincipal());
+		task.getRunAs().addAll(transactionContext.getPrincipals());
 		transaction.addTransactionHandler(new CDOTransactionHandler2() {
 			
 			@Override
@@ -344,7 +345,7 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 		final SchedulerTask task = SchedulerFactory.eINSTANCE.createSchedulerTask();
 		task.setRunAt(System.currentTimeMillis());
 		task.setTarget(BoxUtil.box(command, transactionContext));
-		task.setRunAs(transactionContext.getPrincipal());
+		task.getRunAs().addAll(transactionContext.getPrincipals());
 		transaction.addTransactionHandler(new CDOTransactionHandler2() {
 			
 			@Override
@@ -393,8 +394,8 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 				AtomicReference<String> ret = new AtomicReference<String>();
 				
 				try (CDOTransactionContext<CR> ctx = createContext()) {
-					Principal principal = ctx.authenticate(credentials);
-					if (principal==null) {
+					List<Principal> principals = ctx.authenticate(credentials);
+					if (principals.isEmpty()) {
 						throw new SchedulerException("Invalid credentials");
 					}
 					
@@ -416,8 +417,8 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 				AtomicReference<String> ret = new AtomicReference<String>();
 				
 				try (CDOTransactionContext<CR> ctx = createContext()) {
-					Principal principal = ctx.authenticate(credentials);
-					if (principal==null) {
+					List<Principal> principals = ctx.authenticate(credentials);
+					if (principals.isEmpty()) {
 						throw new SchedulerException("Invalid credentials");
 					}
 					
@@ -439,8 +440,8 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 				AtomicReference<String> ret = new AtomicReference<String>();
 				
 				try (CDOTransactionContext<CR> ctx = createContext()) {
-					Principal principal = ctx.authenticate(credentials);
-					if (principal==null) {
+					List<Principal> principals = ctx.authenticate(credentials);
+					if (principals.isEmpty()) {
 						throw new SchedulerException("Invalid credentials");
 					}
 					
@@ -455,8 +456,8 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 			@Override
 			public boolean cancel(String taskKey) {
 				try (CDOTransactionContext<CR> ctx = createContext()) {
-					Principal principal = ctx.authenticate(credentials);
-					if (principal==null) {
+					List<Principal> principals = ctx.authenticate(credentials);
+					if (principals.isEmpty()) {
 						throw new SchedulerException("Invalid credentials");
 					}
 					
@@ -472,8 +473,8 @@ public abstract class AbstractSchedulerProviderComponent<CR> implements Schedule
 				AtomicReference<String> ret = new AtomicReference<String>();
 				
 				try (CDOTransactionContext<CR> ctx = createContext()) {
-					Principal principal = ctx.authenticate(credentials);
-					if (principal==null) {
+					List<Principal> principals = ctx.authenticate(credentials);
+					if (principals.isEmpty()) {
 						throw new SchedulerException("Invalid credentials");
 					}
 					

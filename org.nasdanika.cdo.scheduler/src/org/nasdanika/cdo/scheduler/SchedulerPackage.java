@@ -103,7 +103,7 @@ public interface SchedulerPackage extends EPackage {
 	int SCHEDULER_TASK__FIXED_RATE = 3;
 
 	/**
-	 * The feature id for the '<em><b>Run As</b></em>' reference.
+	 * The feature id for the '<em><b>Run As</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -185,10 +185,10 @@ public interface SchedulerPackage extends EPackage {
 	EAttribute getSchedulerTask_FixedRate();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs <em>Run As</em>}'.
+	 * Returns the meta object for the reference list '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs <em>Run As</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Run As</em>'.
+	 * @return the meta object for the reference list '<em>Run As</em>'.
 	 * @see org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs()
 	 * @see #getSchedulerTask()
 	 * @generated
@@ -261,7 +261,7 @@ public interface SchedulerPackage extends EPackage {
 		EAttribute SCHEDULER_TASK__FIXED_RATE = eINSTANCE.getSchedulerTask_FixedRate();
 
 		/**
-		 * The meta object literal for the '<em><b>Run As</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Run As</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated

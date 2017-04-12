@@ -7,6 +7,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="runAt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELongObject"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedRate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="runAs" eType="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//Principal"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="runAs" upperBound="-1"
+        eType="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//Principal"/>
   </eClassifiers>
 </ecore:EPackage>

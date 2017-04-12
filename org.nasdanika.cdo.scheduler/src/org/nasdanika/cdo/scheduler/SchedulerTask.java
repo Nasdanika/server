@@ -3,6 +3,7 @@
 package org.nasdanika.cdo.scheduler;
 
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.security.Principal;
 
@@ -13,6 +14,7 @@ import org.nasdanika.cdo.security.Principal;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAt <em>Run At</em>}</li>
@@ -20,7 +22,6 @@ import org.nasdanika.cdo.security.Principal;
  *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#isFixedRate <em>Fixed Rate</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs <em>Run As</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask()
  * @model
@@ -133,29 +134,19 @@ public interface SchedulerTask extends CDOObject {
 	void setFixedRate(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Run As</b></em>' reference.
+	 * Returns the value of the '<em><b>Run As</b></em>' reference list.
+	 * The list contents are of type {@link org.nasdanika.cdo.security.Principal}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Run As</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Run As</em>' reference.
-	 * @see #setRunAs(Principal)
+	 * @return the value of the '<em>Run As</em>' reference list.
 	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask_RunAs()
 	 * @model
 	 * @generated
 	 */
-	Principal getRunAs();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs <em>Run As</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Run As</em>' reference.
-	 * @see #getRunAs()
-	 * @generated
-	 */
-	void setRunAs(Principal value);
+	EList<Principal> getRunAs();
 
 } // SchedulerTask
