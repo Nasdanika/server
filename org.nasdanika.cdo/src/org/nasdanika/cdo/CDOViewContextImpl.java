@@ -2,6 +2,7 @@ package org.nasdanika.cdo;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -54,16 +55,21 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 
 	@Override
 	public final List<Principal> getPrincipals() throws Exception {
-		if (subject!=null) {
-			authenticatedPrincipals = subject.getPrincipals(this);
+		Realm<CR> securityRealm = getSecurityRealm();
+		if (subject!=null && securityRealm != null) {
+			authenticatedPrincipals = new ArrayList<>();
+			for (Principal principal: subject.getPrincipals(this)) {
+				if (principal != getSecurityRealm().getGuest()) {
+					authenticatedPrincipals.add(principal);
+				}
+			}
 		}
 
 		if (!authenticatedPrincipals.isEmpty()) {
 			return authenticatedPrincipals;
 		}
 		
-		Realm<CR> pd = getSecurityRealm();
-		Principal guest = pd == null ? null : pd.getGuest();
+		Principal guest = securityRealm == null ? null : securityRealm.getGuest();
 		return guest == null ? Collections.emptyList() : Collections.singletonList(guest);
 	}
 
