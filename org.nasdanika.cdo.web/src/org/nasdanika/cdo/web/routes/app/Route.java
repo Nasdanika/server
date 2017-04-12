@@ -1106,7 +1106,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				invalidPassword = true;
 			}
 			if (errorMessages.isEmpty()) {
-				Principal authenticatedPrincipal = ((CDOViewContext<?, LoginPasswordCredentials>) context).authenticate(new LoginPasswordCredentials() {
+				List<Principal> authenticatedPrincipals = ((CDOViewContext<?, LoginPasswordCredentials>) context).authenticate(new LoginPasswordCredentials() {
 					
 					@Override
 					public String getPassword() {
@@ -1118,12 +1118,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						return login;
 					}
 				});
-				if (authenticatedPrincipal==null) {
+				if (authenticatedPrincipals.isEmpty()) {
 					errorMessages.add(getResourceString(context, "invalidLoginPasswordCombination"));
 					invalidLogin = true;
 					invalidPassword = true;
 				} else {
-					String principalHome = context.getObjectPath(authenticatedPrincipal)+"/index.html";
+					String principalHome = context.getObjectPath(authenticatedPrincipals.get(0))+"/index.html";
 					context.getResponse().sendRedirect(CoreUtil.isBlank(returnURL) ? principalHome : returnURL);
 					return null;
 				}

@@ -75,13 +75,13 @@ public class CDOViewHttpServletRequestContextImpl<CR> extends HttpServletRequest
 	}
 
 	@Override
-	public Principal authenticate(CR credentials) throws Exception {
+	public List<Principal> authenticate(CR credentials) throws Exception {
 		return viewContext.authenticate(credentials);
 	}
 	
 	@Override
-	public Principal getPrincipal() throws Exception {
-		return viewContext.getPrincipal();
+	public List<Principal> getPrincipals() throws Exception {
+		return viewContext.getPrincipals();
 	}
 	
 	@Override

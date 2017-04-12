@@ -440,8 +440,8 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 							}
 
 							@Override
-							public Principal getPrincipal() throws Exception {
-								return cdoTransactionContext.getPrincipal();
+							public List<Principal> getPrincipals() throws Exception {
+								return cdoTransactionContext.getPrincipals();
 							}
 
 							@Override
@@ -450,7 +450,7 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 							}
 
 							@Override
-							public Principal authenticate(CR credentials) throws Exception {
+							public List<Principal> authenticate(CR credentials) throws Exception {
 								return cdoTransactionContext.authenticate(credentials);
 							}
 

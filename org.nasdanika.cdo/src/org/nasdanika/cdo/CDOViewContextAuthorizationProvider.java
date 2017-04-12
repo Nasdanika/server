@@ -18,14 +18,12 @@ public class CDOViewContextAuthorizationProvider implements	AuthorizationProvide
 			Map<String, Object> environment) throws Exception {
 		
 		if (context instanceof CDOViewContext) {
-			Principal principal = ((CDOViewContext<?,?>) context).getPrincipal();
-			if (principal!=null && target instanceof EObject) {
-				// TODO - cache CDOID,action -> AccessDecision in session.
-				try {
-					return principal.authorize(context, (EObject) target, action, qualifier, environment);
-				} catch (Exception e) {
-					e.printStackTrace();
-					return AccessDecision.DENY; // To be on the safe side.
+			if (target instanceof EObject) {
+				for (Principal principal: ((CDOViewContext<?,?>) context).getPrincipals()) {
+					AccessDecision ad = principal.authorize(context, (EObject) target, action, qualifier, environment);
+					if (ad != AccessDecision.ABSTAIN) {
+						return ad;
+					}
 				}
 			}
 		}

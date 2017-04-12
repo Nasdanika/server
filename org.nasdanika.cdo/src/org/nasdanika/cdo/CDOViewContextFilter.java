@@ -1,5 +1,6 @@
 package org.nasdanika.cdo;
 
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.cdo.view.CDOView;
@@ -18,35 +19,43 @@ public class CDOViewContextFilter<V extends CDOView, CR> implements CDOViewConte
 	
 	protected  CDOViewContext<V, CR> target;
 
+	@Override
 	public <T> T adapt(Class<T> targetType) throws Exception {
 		return target.adapt(targetType);
 	}
 
+	@Override
 	public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		return this.target.authorize(target, action, qualifier, environment);
 	}
 
+	@Override
 	public V getView() {
 		return target.getView();
 	}
 
-	public Principal getPrincipal() throws Exception {
-		return target.getPrincipal();
+	@Override
+	public List<Principal> getPrincipals() throws Exception {
+		return target.getPrincipals();
 	}
 
+	@Override
 	public void close() throws Exception {
 		target.close();
 	}
 
+	@Override
 	public <T> T convert(Object source, Class<T> targetType) throws Exception {
 		return target.convert(source, targetType);
 	}
 
+	@Override
 	public Realm<CR> getSecurityRealm() {
 		return target.getSecurityRealm();
 	}
 
-	public Principal authenticate(CR credentials) throws Exception {
+	@Override
+	public List<Principal> authenticate(CR credentials) throws Exception {
 		return target.authenticate(credentials);
 	}
 

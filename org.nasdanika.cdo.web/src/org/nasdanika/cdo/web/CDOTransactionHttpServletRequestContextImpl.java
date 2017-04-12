@@ -80,7 +80,7 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 	}
 
 	@Override
-	public Principal authenticate(CR credentials) throws Exception {
+	public List<Principal> authenticate(CR credentials) throws Exception {
 		return transactionContext.authenticate(credentials);
 	}
 	
@@ -90,8 +90,8 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 	}
 	
 	@Override
-	public Principal getPrincipal() throws Exception {
-		return transactionContext.getPrincipal();
+	public List<Principal> getPrincipals() throws Exception {
+		return transactionContext.getPrincipals();
 	}
 
 	@Override

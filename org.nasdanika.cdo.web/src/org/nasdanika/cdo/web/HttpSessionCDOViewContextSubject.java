@@ -1,5 +1,8 @@
 package org.nasdanika.cdo.web;
 
+import java.util.Collections;
+import java.util.List;
+
 import javax.servlet.http.HttpSession;
 
 import org.eclipse.emf.cdo.common.id.CDOID;
@@ -19,28 +22,28 @@ public class HttpSessionCDOViewContextSubject<V extends CDOView, CR> extends Abs
 	private static final String PRINCIPAL_ID_KEY = Principal.class.getName()+":id";
 
 	private HttpSession session;
-	private String principalName;
+	private List<String> principalNames;
 
-	public HttpSessionCDOViewContextSubject(HttpSession session, String principalName) {			
+	public HttpSessionCDOViewContextSubject(HttpSession session, List<String> principalNames) {			
 		this.session = session;
-		this.principalName = principalName;
-	}
-	
-	protected void setPrincipalID(CDOID cdoID) {
-		if (cdoID==null) {
-			session.removeAttribute(PRINCIPAL_ID_KEY);		
-		} else {
-			session.setAttribute(PRINCIPAL_ID_KEY, cdoID);
-		}
-	}
-
-	protected CDOID getPrincipalID() {
-		return (CDOID) session.getAttribute(PRINCIPAL_ID_KEY);
+		this.principalNames = principalNames;
 	}
 	
 	@Override
-	protected String getPrincipalName() {
-		return principalName;
+	protected void setPrincipalIDs(List<CDOID> principalIDs) {
+		session.setAttribute(PRINCIPAL_ID_KEY, principalIDs);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	protected List<CDOID> getPrincipalIDs() {
+		Object pincipalIDs = session.getAttribute(PRINCIPAL_ID_KEY);
+		return pincipalIDs instanceof List ? (List<CDOID>) pincipalIDs : Collections.emptyList();
+	}
+	
+	@Override
+	protected List<String> getPrincipalNames() {
+		return principalNames;
 	}
 		
 }

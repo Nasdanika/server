@@ -1,5 +1,7 @@
 package org.nasdanika.cdo;
 
+import java.util.List;
+
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Realm;
@@ -10,12 +12,12 @@ public interface CDOViewContext<V extends CDOView, CR> extends Context {
 	V getView();
 	
 	/**
-	 * Returns CDO principal. 
+	 * Returns Nasdanika CDO security principals. 
 	 * @param masterContext Master or merged context, e.g. HttpContext merged with CDO View context. Master context can 
-	 * be used to map a principal from the merged context (e.g. HTTP request principal) to CDO principal.
+	 * be used to map a principal from the merged context (e.g. HTTP request principal) to Nasdanika CDO security principals.
 	 * @return
 	 */
-	Principal getPrincipal() throws Exception;
+	List<Principal> getPrincipals() throws Exception;
 	
 	/**
 	 * Subject holds principal identity and can be used to obtain the principal from the context.
@@ -29,8 +31,8 @@ public interface CDOViewContext<V extends CDOView, CR> extends Context {
 	 * Authenticates user with provided credentials. 
 	 * Associates user with context/session upon successfull authentication. 
 	 * @param credentials
-	 * @return authenticated principal if authentication was successful, or null.
+	 * @return authenticated principals if authentication was successful, or empty list.
 	 */
-	Principal authenticate(CR credentials) throws Exception;
+	List<Principal> authenticate(CR credentials) throws Exception;
 	
 }

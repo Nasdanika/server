@@ -2,6 +2,7 @@ package org.nasdanika.cdo.web;
 
 import java.security.Principal;
 import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -82,7 +83,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	}
 	
 	/**
-	 * Forbidden for Guest is the same as unauthorized.
+	 * Forbidden for Guest is the same as unauthorized - unauthorized requests are redirected to the login page.
 	 * @throws Exception 
 	 */
 	@Override
@@ -91,7 +92,8 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			@SuppressWarnings("unchecked")
 			C ctx = (C) context;
 			Realm<CR> securityRealm = ctx.getSecurityRealm();
-			if (securityRealm != null && ctx.getPrincipal() == securityRealm.getGuest()) {
+			List<org.nasdanika.cdo.security.Principal> principals = ctx.getPrincipals();
+			if (securityRealm != null && principals.size() == 1 && principals.get(0) == securityRealm.getGuest()) {
 				return Action.UNAUTHORIZED;
 			}
 			
@@ -108,8 +110,7 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			throw new ServletException("View provider not found");
 		}
 		
-		String principalName = getPrincipalName(req);
-		HttpSessionCDOViewContextSubject<V, CR> subject = new HttpSessionCDOViewContextSubject<V, CR>(req.getSession(), principalName);
+		HttpSessionCDOViewContextSubject<V, CR> subject = new HttpSessionCDOViewContextSubject<V, CR>(req.getSession(), getPrincipalNames(req));
 		C viewContext = provider.createContext(subject);
 		HttpServletRequestContext compositeContext = createCompositeContext(path, req, resp, reqUrl, viewContext, chain);
 		compositeContext.getRootObjectsPaths().put(viewContext.getView(), reqUrl);
@@ -117,17 +118,23 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	}
 
 	/**
-	 * Retrieves principal name from the request.
-	 * Returns user principal name if user principal is not null. Otherwise returns value of the header specified in ``user-name-header`` init parameter, if any.
+	 * Retrieves principals names from the request.
+	 * Returns singleton list with user principal name if user principal is not null. Otherwise returns singleton list with the value of the header specified in ``user-name-header`` init parameter, if any.
+	 * Override to derive principal name(s) by some other means, e.g. decryption of authentication token and/or pulling principal roles from LDAP or by iterating over a list of roles and invoking isUserInRole().  
 	 * @param req
 	 * @return
 	 */
-	protected String getPrincipalName(HttpServletRequest req) {
+	protected List<String> getPrincipalNames(HttpServletRequest req) {
 		Principal userPrincipal = req.getUserPrincipal();
-		if (userPrincipal==null) {
-			return userNameHeader == null ? null : req.getHeader(userNameHeader);
+		if (userPrincipal!=null) {
+			return Collections.singletonList(userPrincipal.getName());
 		}
-		return userPrincipal.getName();
+		if (userNameHeader == null) {
+			return Collections.emptyList();
+		}
+		
+		String principalName = req.getHeader(userNameHeader);
+		return principalName == null ? Collections.emptyList() : Collections.singletonList(principalName);
 	}
 	
 	protected abstract HttpServletRequestContext createCompositeContext(String[] path, final HttpServletRequest req, HttpServletResponse resp, String reqUrl, C viewContext, Context[] chain) throws Exception;

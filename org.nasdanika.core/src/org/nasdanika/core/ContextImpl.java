@@ -124,7 +124,6 @@ public class ContextImpl implements Context {
 		return authorizationProvider;
 	}
 	
-
 	@Override
 	public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		return AccessDecision.ALLOW.equals(getAuthorizationProvider().authorize(this, target, action, qualifier, environment));
