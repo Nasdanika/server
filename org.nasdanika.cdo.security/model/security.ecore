@@ -7,13 +7,10 @@
       <details key="documentation" value="Realm establishes associations between users and actions on model objects which users are allowed to perform.&#xD;&#xA;There is no Role class/interface in the domain. A grantable actions is Role.&#xD;&#xA;&#xD;&#xA;Typically the root of the application model would implement this interface."/>
     </eAnnotations>
     <eTypeParameters name="CR"/>
-    <eOperations name="authenticate">
+    <eOperations name="authenticate" upperBound="-1" eType="#//Principal">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Authenticates user given provided credentials, e.g. user login and password pair."/>
+        <details key="documentation" value="Authenticates provided credentials, e.g. user login and password pair.&#xD;&#xA;Returns a list of principals (subject) associated with the provided credentials."/>
       </eAnnotations>
-      <eGenericType eClassifier="#//User">
-        <eTypeArguments eTypeParameter="#//Realm/CR"/>
-      </eGenericType>
       <eParameters name="credentials">
         <eGenericType eTypeParameter="#//Realm/CR"/>
       </eParameters>

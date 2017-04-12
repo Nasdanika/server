@@ -139,12 +139,13 @@ public interface Realm<CR> extends CDOObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Authenticates user given provided credentials, e.g. user login and password pair.
+	 * Authenticates provided credentials, e.g. user login and password pair.
+	 * Returns a list of principals (subject) associated with the provided credentials.
 	 * <!-- end-model-doc -->
 	 * @model
 	 * @generated
 	 */
-	User<CR> authenticate(CR credentials);
+	EList<Principal> authenticate(CR credentials);
 
 	/**
 	 * <!-- begin-user-doc -->

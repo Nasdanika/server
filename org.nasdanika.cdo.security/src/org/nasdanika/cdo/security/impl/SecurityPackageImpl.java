@@ -1035,13 +1035,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEReference(getRealm_Everyone(), this.getPrincipal(), null, "everyone", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRealm_Packages(), this.getPackage(), null, "packages", null, 0, -1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		EOperation op = initEOperation(getRealm__Authenticate__Object(), null, "authenticate", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EOperation op = initEOperation(getRealm__Authenticate__Object(), this.getPrincipal(), "authenticate", 0, -1, IS_UNIQUE, IS_ORDERED);
 		g1 = createEGenericType(realmEClass_CR);
 		addEParameter(op, g1, "credentials", 0, 1, IS_UNIQUE, IS_ORDERED);
-		g1 = createEGenericType(this.getUser());
-		g2 = createEGenericType(realmEClass_CR);
-		g1.getETypeArguments().add(g2);
-		initEOperation(op, g1);
 
 		op = initEOperation(getRealm__GetAllUsers(), null, "getAllUsers", 0, -1, IS_UNIQUE, IS_ORDERED);
 		ETypeParameter t1 = addETypeParameter(op, "U");
@@ -1223,7 +1219,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getRealm__Authenticate__Object(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Authenticates user given provided credentials, e.g. user login and password pair."
+			 "documentation", "Authenticates provided credentials, e.g. user login and password pair.\r\nReturns a list of principals (subject) associated with the provided credentials."
 		   });	
 		addAnnotation
 		  (getRealm__GetAllUsers(), 

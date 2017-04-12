@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.MessageDigest;
 import java.util.Arrays;
 
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
@@ -36,6 +37,7 @@ import org.nasdanika.core.NasdanikaException;
  */
 public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements LoginPasswordRealm {
 	
+	private static final String DIGEST_ALGORITHM = "SHA-256";
 	private static final String UTF_8 = "UTF-8";
 	
 	/**
@@ -138,7 +140,7 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	 */
 	public void setPasswordHash(LoginPasswordHashUser lphUser, String password) {
 		try {
-			MessageDigest md = MessageDigest.getInstance("SHA");
+			MessageDigest md = MessageDigest.getInstance(DIGEST_ALGORITHM);
 			md.update(lphUser.getLogin().getBytes(UTF_8));
 			md.update((byte) 0); // Separator
 			md.update(password.getBytes(UTF_8));
@@ -169,19 +171,19 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	 * @generated NOT
 	 */
 	@Override
-	public LoginPasswordHashUser authenticate(LoginPasswordCredentials credentials) {
+	public EList<Principal> authenticate(LoginPasswordCredentials credentials) {
 		for (User<LoginPasswordCredentials> user: getAllUsers()) {
 			if (user instanceof LoginPasswordHashUser && !((LoginPasswordHashUser) user).isDisabled() && ((LoginPasswordHashUser) user).getPasswordHash()!=null) {
 				LoginPasswordHashUser lphUser = (LoginPasswordHashUser) user;
 				try {
 					if (lphUser.getLogin()!=null && lphUser.getLogin().equalsIgnoreCase(credentials.getLogin())) {
 						try {
-							MessageDigest md = MessageDigest.getInstance("SHA");
+							MessageDigest md = MessageDigest.getInstance(DIGEST_ALGORITHM);
 							md.update(lphUser.getLogin().getBytes(UTF_8));
 							md.update((byte) 0); // Separator
 							md.update(credentials.getPassword().getBytes(UTF_8));
 							if (Arrays.equals(md.digest(), lphUser.getPasswordHash())) {
-								return lphUser;
+								return ECollections.singletonEList(lphUser);
 							}
 						} catch (Exception e) {
 							throw new NasdanikaException(e);
@@ -193,7 +195,7 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 				}
 			}
 		}
-		return null;
+		return ECollections.emptyEList();
 	}
 
 	/**

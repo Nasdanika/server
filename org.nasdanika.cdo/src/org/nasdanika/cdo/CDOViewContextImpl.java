@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.emf.cdo.view.CDOView;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Realm;
-import org.nasdanika.cdo.security.User;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.ClassLoadingContext;
 import org.nasdanika.core.Context;
@@ -76,9 +76,9 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 		if (pd == null) {
 			return Collections.emptyList();
 		}
-		User<CR> ap = pd.authenticate(credentials);
-		if (ap != null) {
-			authenticatedPrincipals = Collections.singletonList(ap);
+		EList<Principal> ap = pd.authenticate(credentials);
+		if (!ap.isEmpty()) {
+			authenticatedPrincipals = ap;
 			if (subject!=null) {
 				subject.setPrincipals(this, authenticatedPrincipals);
 			}
