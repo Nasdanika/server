@@ -97,6 +97,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public enum PageTemplateTokens {
 		
 		RESOURCES_PATH("resources-path"),
+		CONTEXT_PATH("context-path"),
 		TITLE("title"),
 		HEAD("head"),
 		HEADER("header"),
@@ -258,6 +259,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	protected HashMap<String, Object> createRenderPageEnvironment(C context) throws Exception {
 		HashMap<String, Object> ret = new HashMap<>();		
 		ret.put(PageTemplateTokens.RESOURCES_PATH.literal, context.getObjectPath(context.getTarget())+"/resources");
+		ret.put(PageTemplateTokens.CONTEXT_PATH.literal, context.getRequest().getContextPath());
 		return ret;
 	}
 	
