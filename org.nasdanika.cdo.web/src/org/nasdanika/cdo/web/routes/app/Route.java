@@ -63,6 +63,7 @@ import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.RouteMethod.Lock.Type;
 import org.nasdanika.web.TargetParameter;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Application route providing CRUD operations for the underlying EObject.
@@ -116,7 +117,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	private static final String BOOTSTRAP_THEME_TOKEN = "bootstrap-theme";
 
 	protected Route(BundleContext bundleContext, Object... targets) throws Exception {
-		super(bundleContext, targets);
+		super(bundleContext == null ? FrameworkUtil.getBundle(Route.class).getBundleContext() : bundleContext, targets);
 	} 
 
 	/**
