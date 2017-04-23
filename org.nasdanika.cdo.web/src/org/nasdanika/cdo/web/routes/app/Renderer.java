@@ -343,7 +343,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 *     * ``path`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) path of the object to apply the lock to. If not set, the lock is applied to the target object.
 		 *     * ``type`` - Lock type, one of ``none``, ``read``, ``write``, or ``imply-from-http-method`` (default). ``imply-from-http-method`` implies ``write`` for ``DELETE``, ``PATCH``, ``POST``, and ``PUT`` and ``read`` otherwise.
 		 *     * ``timeout`` - Lock timeout in milliseconds. Defaults to one minute.
-		 * * ``path`` - Web operation path. It may contain path parameters in the form ``{<parameter name>}``.
+		 * * ``method`` - HTTP method which matches the operation. If not set then it defaults to ``POST`` for EOperation invocation. If EOperation has unbound parameters, then ``GET`` method renders a form with those parameters.
+		 * * ``path`` - Web operation path. It may contain path parameters in the form ``{<parameter name>}``. Defaults to the EOperation name.
 		 * * ``produces`` - Content type produced by the operation.
 		 */
 		WEB_OPERATION("web-operation"),

@@ -96,7 +96,7 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 		
 	}
 	
-	protected abstract List<? extends Target> getTargets(HttpServletRequestContext context);
+	protected abstract List<? extends Target> getTargets(HttpServletRequestContext context) throws Exception;
 
 	@Override
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {						
@@ -429,8 +429,12 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 		hRow.header("Comment");
 		
 		List<ApiInfo> apiInfos = new ArrayList<>();
-		for (Target target: getTargets(context)) {
-			apiInfos.add(new ApiInfo(target));
+		try {
+			for (Target target: getTargets(context)) {
+				apiInfos.add(new ApiInfo(target));
+			}
+		} catch (Exception e) {
+			apiTable.row("Error", e.toString());
 		}
 		
 		Collections.sort(apiInfos);
@@ -508,8 +512,12 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 		tableBuilder.append("-----|-------------|:---------:|:--------:|:--------:|--------").append(System.lineSeparator());
 
 		List<ApiInfo> apiInfos = new ArrayList<>();
-		for (Target target: getTargets(null)) {
-			apiInfos.add(new ApiInfo(target));
+		try {
+			for (Target target: getTargets(null)) {
+				apiInfos.add(new ApiInfo(target));
+			}
+		} catch (Exception e) {
+			tableBuilder.append("Error | "+e.toString());
 		}
 		
 		Collections.sort(apiInfos);

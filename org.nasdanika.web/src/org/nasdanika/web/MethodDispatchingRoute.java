@@ -129,7 +129,7 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 	private Object[] targets;
 		
 	@Override
-	protected List<? extends Target> getTargets(HttpServletRequestContext context) {
+	protected List<? extends Target> getTargets(HttpServletRequestContext context) throws Exception {
 		return routeMethodEntries;
 	}	
 	

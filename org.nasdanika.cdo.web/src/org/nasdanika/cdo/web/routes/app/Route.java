@@ -19,7 +19,9 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
+import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -1185,5 +1187,27 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		return Action.NOP;
 	}
 
+	@SuppressWarnings("unchecked")
+	protected List<? extends Target> getTargets(HttpServletRequestContext context) throws Exception {
+		List<Target> ret = new ArrayList<>(super.getTargets(context));
+		Object target = context.getTarget();
+		if (target instanceof EObject) {
+			for (EOperation eOperation: ((EObject) target).eClass().getEAllOperations()) {
+				Object webOperationAnnotation = getYamlRenderAnnotation((C) context, eOperation, RenderAnnotation.WEB_OPERATION);
+				if (webOperationAnnotation != null) {
+					Map<EParameter, Object> parameterBindings = new HashMap<>();
+					for (EParameter eParameter: eOperation.getEParameters()) {
+						Object bindingAnnotation = getYamlRenderAnnotation((C) context, eParameter, RenderAnnotation.BIND);
+						if (bindingAnnotation != null) {
+							parameterBindings.put(eParameter, bindingAnnotation);
+						}
+					}
+					ret.add(new EOperationTarget(eOperation, webOperationAnnotation, parameterBindings));
+				}
+			}
+		}		
+		
+		return ret;
+	}	
 	
 }
