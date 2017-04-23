@@ -44,8 +44,8 @@ import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.BodyParameter;
-import org.nasdanika.web.DispatchingRoute;
 import org.nasdanika.web.HttpServletRequestContext;
+import org.nasdanika.web.MethodDispatchingRoute;
 import org.nasdanika.web.RouteMethodCommand;
 import org.osgi.framework.BundleContext;
 
@@ -60,7 +60,7 @@ import org.osgi.framework.BundleContext;
  * @author Pavel Vlasov
  *
  */
-public class EDispatchingRoute extends DispatchingRoute {
+public class EDispatchingRoute extends MethodDispatchingRoute {
 	
 	static {
 		JXPathContextReferenceImpl.addNodePointerFactory(new CDOObjectPointerFactory());

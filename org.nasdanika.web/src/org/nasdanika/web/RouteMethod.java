@@ -68,7 +68,7 @@ public @interface RouteMethod {
 	boolean keepWebSocketContext() default false;
 	
 	/**
-	 * Authorization action. If not set a standar action corresponding to request method is used:
+	 * Authorization action. If not set a standard action corresponding to request method is used:
 	 * 
 	 * * GET, OPTIONS, TRACE - read
 	 * * POST - create
@@ -130,7 +130,7 @@ public @interface RouteMethod {
 		Type type() default Type.IMPLY_FROM_HTTP_METHOD;
 		
 		/**
-		 * Lock timeout in milliseconds, 0 means infinite.
+		 * Lock timeout in time units, 0 means infinite.
 		 * @return
 		 */
 		long timeout() default 1;
