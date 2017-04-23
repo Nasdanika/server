@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.io.InputStream;
+import java.io.Reader;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -330,6 +331,44 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * {@link EStructuralFeature} or {@link EClass} annotation - XPath expression to use for sorting of items in tables and lists.  
 		 */
 		SORT("sort"),
+		
+		/**
+		 * {@link EOperation} annotation which exposes the EOperation through the web UI. The value of this annotation shall be a YAML map
+		 * with the following keys:
+		 * 
+		 * * ``action`` - Security action. Defaults to ``execute`` standard action.
+		 * * ``consumes`` - Single value or a list or content types which this web operation can consume.
+		 * * ``feature`` - Feature to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature view instead of the object view.
+		 * * ``lock`` - Lock to apply on the repository in order to execute the operation 
+		 *     * ``path`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) path of the object to apply the lock to. If not set, the lock is applied to the target object.
+		 *     * ``type`` - Lock type, one of ``none``, ``read``, ``write``, or ``imply-from-http-method`` (default). ``imply-from-http-method`` implies ``write`` for ``DELETE``, ``PATCH``, ``POST``, and ``PUT`` and ``read`` otherwise.
+		 *     * ``timeout`` - Lock timeout in milliseconds. Defaults to one minute.
+		 * * ``path`` - Web operation path. It may contain path parameters in the form ``{<parameter name>}``.
+		 * * ``produces`` - Content type produced by the operation.
+		 */
+		WEB_OPERATION("web-operation"),
+		
+		/**
+		 * {@link EParameter} annotation binding web operation parameter to one request or context values. Unbound parameters are implicitly bound to the request query parameter with the same name.
+		 * The value of this annotation is a single value or a single-entry YAML map:
+		 * 
+		 * * ``body`` - Binds the parameter to request body.
+		 * * ``cookie`` - Binds the parameter to a cookie with the same name as the parameter name.
+		 * * ``cookie: name`` - Binds the parameter to the named cookie.
+		 * * ``header`` - Binds the parameter to a header with the same name as the parameter name.
+		 * * ``header: name`` - Binds the parameter to the named header.
+		 * * ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be {@link InputStream}, byte[], {@link Reader}, or String.
+		 * * ``part: name`` - Binds the parameter to the named part.
+		 * * ``path`` - Binds the parameter to a path parameter with the same name as the parameter name.
+		 * * ``path: name`` - Binds the parameter to the named path parameter.
+		 * * ``service`` - Binds the parameter to an OSGi service with the same type as the parameter type.
+		 * * ``service: filter`` - Binds the parameter to an OSGi service applying the specified filter.
+		 * * ``extension`` - Binds the parameter to registered extension(s). This key's value shall be a map with the following elements:
+		 *     * ``point`` - Extension point ID.
+		 *     * ``configuration-element`` - Configuration element name.
+		 *     * ``class-attribute`` - Attribute containing the class name. Defaults to ``class``.
+		 */
+		BIND("bind"),		
 
 //---		
 		/**
