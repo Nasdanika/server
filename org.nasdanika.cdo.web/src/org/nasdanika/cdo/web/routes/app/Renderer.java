@@ -356,6 +356,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * * ``body`` - Binds the parameter to request body.
 		 * * ``cookie`` - Binds the parameter to a cookie with the same name as the parameter name.
 		 * * ``cookie: name`` - Binds the parameter to the named cookie.
+		 * * ``expression`` - JXPath expression (which can also be a constant) to evaluate  
+		 * * ``extension`` - Binds the parameter to registered extension(s). This key's value shall be a map with the following elements:
+		 *     * ``point`` - Extension point ID.
+		 *     * ``configuration-element`` - Configuration element name.
+		 *     * ``class-attribute`` - Attribute containing the class name. Defaults to ``class``.
 		 * * ``header`` - Binds the parameter to a header with the same name as the parameter name.
 		 * * ``header: name`` - Binds the parameter to the named header.
 		 * * ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be {@link InputStream}, byte[], {@link Reader}, or String.
@@ -364,10 +369,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 * * ``path: name`` - Binds the parameter to the named path parameter.
 		 * * ``service`` - Binds the parameter to an OSGi service with the same type as the parameter type.
 		 * * ``service: filter`` - Binds the parameter to an OSGi service applying the specified filter.
-		 * * ``extension`` - Binds the parameter to registered extension(s). This key's value shall be a map with the following elements:
-		 *     * ``point`` - Extension point ID.
-		 *     * ``configuration-element`` - Configuration element name.
-		 *     * ``class-attribute`` - Attribute containing the class name. Defaults to ``class``.
 		 */
 		BIND("bind"),		
 
