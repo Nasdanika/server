@@ -29,6 +29,7 @@ import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
+import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.TransactionContext;
@@ -1193,16 +1194,26 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Object target = context.getTarget();
 		if (target instanceof EObject) {
 			for (EOperation eOperation: ((EObject) target).eClass().getEAllOperations()) {
-				Object webOperationAnnotation = getYamlRenderAnnotation((C) context, eOperation, RenderAnnotation.WEB_OPERATION);
+				Map<String, Object> webOperationAnnotation = (Map<String, Object>) getYamlRenderAnnotation((C) context, eOperation, RenderAnnotation.WEB_OPERATION);
 				if (webOperationAnnotation != null) {
-					Map<EParameter, Object> parameterBindings = new HashMap<>();
-					for (EParameter eParameter: eOperation.getEParameters()) {
-						Object bindingAnnotation = getYamlRenderAnnotation((C) context, eParameter, RenderAnnotation.BIND);
-						if (bindingAnnotation != null) {
-							parameterBindings.put(eParameter, bindingAnnotation);
-						}
+					String action = (String) webOperationAnnotation.get("action");
+					if (action == null) {
+						action = AuthorizationProvider.StandardAction.execute.name();
 					}
-					ret.add(new EOperationTarget(eOperation, webOperationAnnotation, parameterBindings));
+					String qualifier = (String) webOperationAnnotation.get("qualifier");
+					if (qualifier == null) {
+						qualifier = eOperation.getName();
+					}					
+					if (context.authorize(context.getTarget(), action, qualifier, null)) {
+						Map<EParameter, Object> parameterBindings = new HashMap<>();
+						for (EParameter eParameter: eOperation.getEParameters()) {
+							Object bindingAnnotation = getYamlRenderAnnotation((C) context, eParameter, RenderAnnotation.BIND);
+							if (bindingAnnotation != null) {
+								parameterBindings.put(eParameter, bindingAnnotation);
+							}
+						}
+						ret.add(new EOperationTarget(eOperation, webOperationAnnotation, parameterBindings));
+					}
 				}
 			}
 		}		

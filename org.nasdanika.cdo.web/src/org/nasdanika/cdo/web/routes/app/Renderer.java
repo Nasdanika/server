@@ -1,7 +1,6 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.io.InputStream;
-import java.io.Reader;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -75,6 +74,7 @@ import org.json.JSONTokener;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.web.CDOIDCodec;
+import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
@@ -113,7 +113,6 @@ import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.TextArea;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Event;
-import org.nasdanika.html.Well;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
@@ -137,334 +136,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
 	
 
-	enum RenderAnnotation {
-		
-		/**
-		 * {@link EStructuralFeature} annotation defining whether the feature is visible in the object view.
-		 * The value of this annotation can be one of the following:
-		 * 
-		 *   * Blank string (or annotation is not present) - the feature is editable if it is not an item (``isItem()`` returns false)
-		 *   * ``true`` boolean literal - the feature is visible.
-		 *   * ``false`` boolean literal - the feature is hidden.
-		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is visible.
-		 */
-		VISIBLE("visible"),
-
-		/**
-		 * {@link EStructuralFeature} annotation defining whether a visible feature is editable, i.e. shall be displayed in the edit form. A feature might be editable, but disabled.
-		 * The value of this annotation can be one of the following:
-		 * 
-		 *   * ``true`` boolean literal or empty string - the feature is visible (default).
-		 *   * ``false`` boolean literal - the feature is hidden.
-		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is editable.
-		 */
-		EDITABLE("editable"),
-		
-		/**
-		 * {@link EStructuralFeature} annotation defining whether an editable feature is disabled, i.e. it shall be displayed in the edit form, but the edit control shall be disabled.
-		 * The value of this annotation can be one of the following:
-		 * 
-		 *   * ``false`` boolean literal or empty string - the feature is enabled (default).
-		 *   * ``true`` boolean literal - the feature is disabled.
-		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is disabled.
-		 */
-		DISABLED("disabled"),
-		
-		/**
-		 * On EClass this annotation is a pattern which is interpolated to generate object label.
-		 */
-		LABEL("label"),
-		
-		/**
-		 * Value of ``model-element-label`` render annotation is used to customize/localize name of a model element such as {@link EClass} or {@link EStructuralFeature}.
-		 */
-		MODEL_ELEMENT_LABEL("model-element-label"),
-		
-		/**
-		 * Documentation annotation can be used to:
-		 * 
-		 * * Provide documentation for model elements if they are not documented in the model.
-		 * * Localize model element documentation.
-		 * 
-		 */
-		DOCUMENTATION("documentation"), 
-
-		/**
-		 * Format is used for rendering and parsing date and number feature values. {@link SimpleDateFormat} for dates, {@link DecimalFormat} for numbers.
-		 */
-		FORMAT("format"),
-
-		/**
-		 * Annotation to provide an icon for a model element such as {@link EClass} or {@link EStructuralFeature}.
-		 * If icon contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``.
-		 */
-		ICON("icon"),
-		
-		/**
-		 * Set this annotation on {@link EClass} to ``true`` to have the class view rendered in the item container. 
-		 */
-		VIEW_ITEM("view-item"),
-
-		/**
-		 * Defines {@link EStructuralFeature} location - view, left panel, or item container (tabs, pills, accordion). The value shall be one of {@link FeatureLocation} constants.
-		 */
-		FEATURE_LOCATION("feature-location"),		
-		
-		/**
-		 * {@link EReference} annotation - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
-		 * The path is evaluated with the current object as context.
-		 */
-		CHOICES_SELECTOR("choices-selector"),
-		
-		/**
-		 * {@link EStructuralFeature} category. Categories are displayed as panels in the view and field sets in edit forms.
-		 */
-		CATEGORY("category"),
-		
-		/**
-		 * Set this annotation to ``list`` on {@link EReference} to have elements rendered in a list instead of a table.
-		 */
-		VIEW("view"),
-		
-		/**
-		 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference item table.
-		 * The value of this annotation can be one of the following:
-		 * 
-		 * * A space-separated list of feature names.
-		 * * A YAML document list of feature names or mappings of feature name to feature configuration definition, which may include:
-		 *     * ``visible`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is included in the list.
-		 *     * ``align`` - left, center, or right. Defaults to right for numbers, center for dates and booleans and left for other types.
-		 *     * ``width`` - if this key maps to a number, then the number is used for all device sizes. Otherwise is shall map to a map of device-size to number mappings.
-		 *       
-		 * Example:
-		 * ```yaml
-		 * - name:
-		 *     align: right
-		 *     width: 5
-		 * - age:
-		 *     aligh: left
-		 *     width:
-		 *         xs: 3        
-		 * - ssn
-		 * ```
-		 *        
-		 */
-		VIEW_FEATURES("view-features"),
-		
-		/**
-		 * {@link EReference} annotation specifying {@link EClass}es of elements which can be instantiated and set/added to the reference.  
-		 * The list of element types shall be space-separated. Elements shall be in
-		 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
-		 * feature's declaring EClass.
-		 * 
-		 */
-		ELEMENT_TYPES("element-types"),
-
-		/**
-		 * {@link EStructuralFeature} annotation specifying edit form control type for the feature. 
-		 * Defaults to input for attributes and multi-value features and select for references.
-		 * 
-		 * Valid values:
-		 * 
-		 *     * input (default for {@link EAttribute}),
-		 *     * select (default for {@link EReference},
-		 *     * textarea
-		 */
-		CONTROL("control"),
-		
-		/**
-		 * Control configuration shall be a YAML map of control attribute names to values. 
-		 * If value is a map, then it is output as css values - colon separated keys and values and semicolon separated entries. E.g. style attribute can be specified as a map.
-		 * If value is a list, then it is output as space-separated entries. E.g. class attribute can be specified as a list.
-		 */
-		CONTROL_CONFIGURATION("control-configuration"),
-		
-		/**
-		 * {@link EStructuralFeature} annotation for ``input`` control - one of {@link HTMLFactory.InputType} values. 
-		 * Defaults to checkbox for booleans and multi-value features, text otherwise.
-		 */
-		INPUT_TYPE("input-type"),
-
-		/**
-		 * {@link EAttribute} annotation for select, radio and checkbox on non-boolean types. 
-		 * 
-		 * YAML map of values to labels or list if values and labels are the same.   
-		 */
-		CHOICES("choices"),
-		/**
-		 * {@link EStructuralFeature} annotation. 
-		 */
-		FORM_INPUT_GROUP("form-input-group"),
-		
-		/**
-		 * By default EClass edit forms are rendered as horizontal forms by the {@link Route}. Set this annotation to ``false`` to change the default rendering.
-		 */
-		HORIZONTAL_FORM("horizontal-form"),
-		
-		/**
-		 * {@link EClass} annotation. Set it to true to disable HTML 5 form validation, e.g. if you have a required component with HTML content rendered by
-		 * TinyMCE in Chrome.
-		 */
-		NO_VALIDATE("no-validate"),
-		
-		/**
-		 * {@link EAttribute} annotation specifying feature value content type. If attribute control is ``textarea`` and content type is ``text/html`` then 
-		 * the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor. 
-		 */
-		CONTENT_TYPE("content-type"),
-		
-		/**
-		 * Defines model element ({@link EClass} or {@link EStructuralFeature}) constraint used for validation. Constraint shall be a YML text which defines a single constraint or a list of constraints. 
-		 * 
-		 * Constraint can be a string or a map containing:
-		 * 
-		 * * ``condition`` - XPath expression boolean expression.
-		 * * ``errorMessageKey`` - Optional error message key. If it is present, error message is retrieved as resource string.
-		 * * ``errorMessage`` - Error message to display if the expression evaluates to false. It is used if ``errorMessageKey`` is not defined or if there is no resource string for the key. 
-		 * 
-		 * If the constraint is a String, then it is treated as ``condition`` XPath expression and error message is constructed as ``Constraint violation: <condition>``. 
-		 * 
-		 */
-		CONSTRAINT("constraint"),
-		
-		/**
-		 * {@link EStructuralFeature} or {@link EClass} annotation - XPath expression to use for sorting of items in tables and lists.  
-		 */
-		SORT("sort"),
-		
-		/**
-		 * {@link EOperation} annotation which exposes the EOperation through the web UI. The value of this annotation shall be a YAML map
-		 * with the following keys:
-		 * 
-		 * * ``action`` - Security action. Defaults to ``execute`` standard action.
-		 * * ``consumes`` - Single value or a list or content types which this web operation can consume.
-		 * * ``feature`` - Feature to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature view instead of the object view.
-		 * * ``lock`` - Lock to apply on the repository in order to execute the operation 
-		 *     * ``path`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) path of the object to apply the lock to. If not set, the lock is applied to the target object.
-		 *     * ``type`` - Lock type, one of ``none``, ``read``, ``write``, or ``imply-from-http-method`` (default). ``imply-from-http-method`` implies ``write`` for ``DELETE``, ``PATCH``, ``POST``, and ``PUT`` and ``read`` otherwise.
-		 *     * ``timeout`` - Lock timeout in milliseconds. Defaults to one minute.
-		 * * ``method`` - HTTP method which matches the operation. If not set then it defaults to ``POST`` for EOperation invocation. If EOperation has unbound parameters, then ``GET`` method renders a form with those parameters.
-		 * * ``path`` - Web operation path. It may contain path parameters in the form ``{<parameter name>}``. Defaults to the EOperation name.
-		 * * ``produces`` - Content type produced by the operation.
-		 */
-		WEB_OPERATION("web-operation"),
-		
-		/**
-		 * {@link EParameter} annotation binding web operation parameter to one request or context values. Unbound parameters are implicitly bound to the request query parameter with the same name.
-		 * The value of this annotation is a single value or a single-entry YAML map:
-		 * 
-		 * * ``body`` - Binds the parameter to request body.
-		 * * ``cookie`` - Binds the parameter to a cookie with the same name as the parameter name.
-		 * * ``cookie: name`` - Binds the parameter to the named cookie.
-		 * * ``expression`` - JXPath expression (which can also be a constant) to evaluate  
-		 * * ``extension`` - Binds the parameter to registered extension(s). This key's value shall be a map with the following elements:
-		 *     * ``point`` - Extension point ID.
-		 *     * ``configuration-element`` - Configuration element name.
-		 *     * ``class-attribute`` - Attribute containing the class name. Defaults to ``class``.
-		 * * ``header`` - Binds the parameter to a header with the same name as the parameter name.
-		 * * ``header: name`` - Binds the parameter to the named header.
-		 * * ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be {@link InputStream}, byte[], {@link Reader}, or String.
-		 * * ``part: name`` - Binds the parameter to the named part.
-		 * * ``path`` - Binds the parameter to a path parameter with the same name as the parameter name.
-		 * * ``path: name`` - Binds the parameter to the named path parameter.
-		 * * ``service`` - Binds the parameter to an OSGi service with the same type as the parameter type.
-		 * * ``service: filter`` - Binds the parameter to an OSGi service applying the specified filter.
-		 */
-		BIND("bind"),		
-
-//---		
-		/**
-		 * {@link EReference} annotation indicating that the table listing reference elements shall display elements type in a type column. 
-		 * The value of this annotation is a pattern which is interpolated with the following tokens:
-		 * 
-		 * * ``icon`` - Element icon.
-		 * * ``eclass-icon`` - Element type icon.
-		 * * ``eclass-label`` - Element type label.
-		 * * ``documentation-icon`` - Documentation icon or blank string if there is no documentation.
-		 * 
-		 * This annotation is useful for references containing elements of different types.
-		 */
-		TYPE_COLUMN("type-column"),		
-		
-		/**
-		 * {@link EClass} yaml annotation which defines feature items container and its configuration.
-		 * If not present, features items are rendered as tabs.
-		 * 
-		 * Supported containers:
-		 * 
-		 * * ``tabs`` - may contain ``justified`` sub-element set to ``true``. 
-		 * * ``pills`` - may contain sub-elements:
-		 *     * ``stacked``
-		 *     * ``justified``
-		 *     * ``width``
-		 * * ``accordion`` - may contain ``style`` sub-element with value corresponding to one of {@link Bootstrap.Style} enum constants.
-		 * 
-		 * Examples:
-		 * 
-		 * ```
-		 * tabs
-		 * 
-		 * tabs:
-		 *     justified: true
-		 *     
-		 * pills
-		 * 
-		 * pills:
-		 *     stacked: true
-		 *     justified: true
-		 *     width: 2
-		 *  
-		 * pills:
-		 *     stacked: true
-		 *     justified: true
-		 *     width: 
-		 *         xs: 5
-		 *         lg: 1
-		 *         
-		 * accordion
-		 * 
-		 * accordion
-		 *     style: PRIMARY         
-		 * ```
-		 */
-		FEATURE_ITEMS_CONTAINER("feature-items-container"),
-		
-		/**
-		 * {@link EStructuralFeature} annotation specifying XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the 
-		 * default value. For example, in hierarchical structures children may implicitly inherit parent feature value, unless it is explicitly set (overridden) in the child.
-		 * 
-		 * In the absence of feature value (null or blank string for strings) placeholder values are displayed in the view in a small {@link Well}.
-		 */
-		PLACEHOLDER("placeholder"),				
-
-//===		
-		/**
-		 * {@link EReference} annotation. 
-		 * If value is ``true``, for radios and checkboxes choices are represented according to their containment hierarchy in the model. 
-		 * If value is ``reference-nodes``, then containing references are shown as nodes in the tree. 
-		 */
-		CHOICE_TREE("choice-tree"), 
-				
-		/**
-		 * {@link EClass} annotation. It lists references to render as children of the class object in the tree representation. Feature names shall be space-separated.
-		 * In the absense of this annotation containing many features are considered as tree features. 
-		 */
-		TREE_REFERENCES("tree-references"),
-		
-		/**
-		  * {@link EStructuralFeature} annotation. If it is set to false, then feature elements
-		  * appear directly under the container in the tree. 
-		  * Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 		 
-		  */
-		TREE_NODE("tree-node");		
-				
-		public final String literal;
-		
-		private RenderAnnotation(String literal) {
-			this.literal = literal;
-		}
-	}
-			
 	String TITLE_KEY = "title";
 
 	String NAME_KEY = "name";
@@ -668,7 +339,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return null;
 		}
 		Yaml yaml = new Yaml();
-		return yaml.load(yamlStr);
+		Object ret = yaml.load(yamlStr);		
+		return ret == null ? Collections.emptyMap() : ret; // An empty document is different from the annotation not being present.
 	}
 	
 	/**
@@ -1716,7 +1388,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (eClassifier != null) {
 			String href = getEClassifierDocRef(context, eClassifier);
 			if (href != null) {
-				helpTag.on(Event.click, "window.open('"+href+"', '_blank');");
+				helpTag.on(Event.click, "window.open('"+href+"', '_blank');return false;");
 				helpTag.style("cursor", "pointer");
 				return helpTag;
 			}
@@ -2218,7 +1890,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders view buttons. This implementation renders Edit and Delete buttons.
+	 * Renders view buttons. This implementation renders Edit and Delete buttons plus buttons to invoke web-operations with location ``view``.
 	 * @param context
 	 * @param obj
 	 * @param featureDocModals
@@ -2229,7 +1901,65 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Tag ret = getHTMLFactory(context).div().style().margin("5px"); 
 		ret.content(renderEditButton(context, obj));
 		ret.content(renderDeleteButton(context, obj));
+		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
+			if (getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION) instanceof Map) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+				if (!"left-panel".equals(spec.get("location")) && spec.get("feature") == null) {
+					ret.content(renderEOperationButton(context, obj, eOperation));
+				}				
+			}
+		}
 		return ret;
+	}
+	
+	default Fragment renderEOperationButton(C context, T obj, EOperation eOperation) throws Exception {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+		String action = (String) spec.get("action");
+		if (action == null) {
+			action = AuthorizationProvider.StandardAction.execute.name();
+		}
+		String qualifier = (String) spec.get("qualifier");
+		if (qualifier == null) {
+			qualifier = eOperation.getName();
+		}		
+		if (context.authorize(obj, action, qualifier, null)) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			Fragment ret = htmlFactory.fragment(); 
+			Modal docModal = renderDocumentationModal(context, eOperation);
+			if (docModal != null) {
+				ret.content(docModal);
+			}
+			Button eOperationButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation));
+			String style = (String) spec.get("style");
+			if (style == null) {
+				eOperationButton.style(Style.INFO);
+			} else {
+				eOperationButton.style(Style.valueOf(style));				
+			}
+			Tag documentationIcon = renderDocumentationIcon(context, eOperation, docModal, false);
+			if (documentationIcon == null) {
+				ret.content(eOperationButton);
+			} else {
+				Button documentationButton = htmlFactory.button(documentationIcon);
+				if (style == null) {
+					documentationButton.style(Style.INFO);
+				} else {
+					documentationButton.style(Style.valueOf(style));				
+				}
+				ret.content(htmlFactory.buttonGroup(eOperationButton, documentationButton));
+			}
+			
+			String path = (String) spec.get("path");
+			if (path == null) {
+				path = eOperation.getName();
+			}
+			
+			eOperationButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+path+"';");					
+			return ret;
+		}
+		return null;		
 	}
 
 	/**
@@ -2262,7 +1992,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param editButton
 	 */
 	default void wireEditButton(C context, T obj, Button editButton) throws Exception {
-		editButton.on(Event.click, "window.location='edit.html';");		
+		editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/edit.html';");		
 	}	
 	
 	/**
@@ -2912,7 +2642,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				ret.content(featureTable);
-				ret.content(renderFeatureAddButton(context, obj, feature));
+				ret.content(renderFeatureViewButtons(context, obj, feature));
 			} else {
 				Tag ul = htmlFactory.tag(TagName.ul);
 				List<Object> featureValues = new ArrayList<>();
@@ -2963,7 +2693,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					ret.content(ul);
 				}
 				if (showActionButtons) { 
-					ret.content(renderFeatureAddButton(context, obj, feature));							
+					ret.content(renderFeatureViewButtons(context, obj, feature));							
 				}
 			}
 		} else {
@@ -2971,7 +2701,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (feature instanceof EReference) {
 				if (showActionButtons) {
 					if (((EReference) feature).isContainment()) {
-						ret.content(renderFeatureAddButton(context, obj, feature));
+						ret.content(renderFeatureViewButtons(context, obj, feature));
 						if (featureValue != null) {
 							ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
 						}
@@ -2985,6 +2715,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return ret;
 	}
 
+	/**
+	 * Renders a button to add a new value to the feature, maybe by creating one. 
+	 * @param context
+	 * @param obj
+	 * @param feature
+	 * @return
+	 * @throws Exception
+	 */
+	default Fragment renderFeatureViewButtons(C context, T obj, EStructuralFeature feature)	throws Exception {
+		Fragment ret = getHTMLFactory(context).fragment(renderFeatureAddButton(context, obj, feature));
+
+		// TODO feature view operations 
+		return ret;
+	}
+	
 	/**
 	 * Renders a button to add a new value to the feature, maybe by creating one. 
 	 * @param context
@@ -3012,7 +2757,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return addButton;
 		}
 		return null;
-	}
+	}	
 
 	/**
 	 * Assigns an action to the button. For containment references this feature invokes getFeatureElementTypes() and creates a drop-down button if there is more than one type. 
@@ -3388,7 +3133,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				controlType = featureTypeInstanceClass.isEnum() ? TagName.select : TagName.input;
 			} else if (((EReference) typedElement).isContainment()) {				
 				// Link and create button.
-				return htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureAddButton(context, obj, (EStructuralFeature) typedElement)).small();
+				return htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).small();
 			} else {
 				controlType = TagName.select;
 			}
