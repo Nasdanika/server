@@ -132,7 +132,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 	
-	String ORIGINAL_FEATURE_VALUE_NAME_PREFIX = ".original.";
+	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
 	
 
@@ -439,7 +439,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param breadCrumbs
 	 * @throws Exception
 	 */
-	default void renderObjectPath(C context, T obj, String action, Breadcrumbs breadCrumbs) throws Exception {
+	default void renderObjectPath(C context, T obj, Object action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
 		if (!isObjectPathRoot(context, obj, obj)) {
 			for (EObject c = obj.eContainer(); c != null && context.authorize(c, StandardAction.read, null, null); c = c.eContainer()) {
@@ -497,7 +497,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String objectURI = getObjectURI(context, obj);
 		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));		
 		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj, null);
-		Object categoryIconAndLabel = renderFeatureCategoryIconAndLabel(context, feature, visibleFeatures);
+		Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, feature, visibleFeatures);
 		if (categoryIconAndLabel != null) {
 			breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
 		}
@@ -722,50 +722,50 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	
 	/**
-	 * Detect common prefix in feature names and uses it as a category. E.g. ``miscKey`` and miscValue`` will 
-	 * get an auto-category ``Misc``. Feature names are tokenized by camel case. Category contains at least two
-	 * features. If a feature belongs to two categories, e.g. ``miscFeatureA`` would belong to ``misc` and to ``miscFeature`` categories, 
+	 * Detect common prefix in named element and uses it as a category. E.g. ``miscKey`` and miscValue`` will 
+	 * get an auto-category ``Misc``. Names are tokenized by camel case. Category contains at least two
+	 * named elements. If an element belongs to two categories, e.g. ``miscFeatureA`` would belong to ``misc` and to ``miscFeature`` categories, 
 	 * the category with larger number of features in it wins. If the number of features in two categories is equal, then the longest category wins.
-	 * @param feature
+	 * @param namedElement
 	 * @param eClass
 	 * @return
 	 */
-	default String getAutoCategory(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
-		if (!features.contains(feature)) {
+	default <NE extends ENamedElement> String getAutoCategory(C context, NE namedElement, Collection<NE> namedElements) throws Exception {
+		if (!namedElements.contains(namedElement)) {
 			throw new IllegalArgumentException("Features do not contain the feature");
 		}
-		if (getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY) != null) {
+		if (getRenderAnnotation(context, namedElement, RenderAnnotation.CATEGORY) != null) {
 			return null;
 		}
-		Map<String, Set<EStructuralFeature>> categories = new HashMap<>();
-		for (EStructuralFeature esf: features) {
-			String categoryAnnotation = getRenderAnnotation(context, esf, RenderAnnotation.CATEGORY);
+		Map<String, Set<NE>> categories = new HashMap<>();
+		for (NE ene: namedElements) {
+			String categoryAnnotation = getRenderAnnotation(context, ene, RenderAnnotation.CATEGORY);
 			if (categoryAnnotation == null) {
-				String[] esfn = StringUtils.splitByCharacterTypeCamelCase(esf.getName());
+				String[] esfn = StringUtils.splitByCharacterTypeCamelCase(ene.getName());
 				for (int i = 1; i < esfn.length; ++i) {
 					String category = StringUtils.join(esfn, null, 0, i);
-					Set<EStructuralFeature> cf = categories.get(category);
+					Set<NE> cf = categories.get(category);
 					if (cf == null) {
 						cf = new HashSet<>();
 						categories.put(category, cf);
 					}
-					cf.add(esf);
+					cf.add(ene);
 				}
 			} else {
-				Set<EStructuralFeature> cf = categories.get(categoryAnnotation);
+				Set<NE> cf = categories.get(categoryAnnotation);
 				if (cf == null) {
 					cf = new HashSet<>();
 					categories.put(categoryAnnotation, cf);
 				}
-				cf.add(esf);				
+				cf.add(ene);				
 			}
 		}
 		
 		// Remove irrelevant
-		Iterator<Entry<String, Set<EStructuralFeature>>> eit = categories.entrySet().iterator();
+		Iterator<Entry<String, Set<NE>>> eit = categories.entrySet().iterator();
 		while (eit.hasNext()) {
-			Entry<String, Set<EStructuralFeature>> entry = eit.next();
-			if (entry.getValue().size()==1 || !entry.getValue().contains(feature)) {
+			Entry<String, Set<NE>> entry = eit.next();
+			if (entry.getValue().size()==1 || !entry.getValue().contains(namedElement)) {
 				eit.remove();
 			}
 		}
@@ -781,8 +781,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		// Sort by size and then by length - largest/longest first.		
 		List<String> cList = new ArrayList<>(categories.keySet());
 		Collections.sort(cList, (c1, c2) -> {
-			Set<EStructuralFeature> fs1 = categories.get(c1);
-			Set<EStructuralFeature> fs2 = categories.get(c2);
+			Set<NE> fs1 = categories.get(c1);
+			Set<NE> fs2 = categories.get(c2);
 			
 			int cmp = fs2.size() - fs1.size();
 			if (cmp != 0) {
@@ -803,26 +803,32 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param eClass
 	 * @throws Exception
 	 */
-	default String renderNamedElementLabel(C context, ENamedElement namedElement, Collection<EStructuralFeature> features) throws Exception {
+	default <NE extends ENamedElement> String renderNamedElementLabel(C context, NE namedElement, Collection<NE> namedElements) throws Exception {
 		String label = getRenderAnnotation(context, namedElement, RenderAnnotation.MODEL_ELEMENT_LABEL);
 		if (label != null) {
 			return label;
 		}		
 		String name = namedElement.getName();
-		String autoCategory = namedElement instanceof EStructuralFeature ? getAutoCategory(context, (EStructuralFeature) namedElement, features) : null;
+		String autoCategory = (namedElement instanceof EStructuralFeature || namedElement instanceof EParameter) ? getAutoCategory(context, namedElement, namedElements) : null;
 		return nameToLabel(autoCategory == null ? name : name.substring(autoCategory.length()));		
 	}
 	
-	default Object renderFeatureCategoryLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
-		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
+	default <NE extends ENamedElement> Object renderNamedElementCategoryLabel(C context, NE namedElement, Collection<NE> namedElements) throws Exception {
+		String category = getRenderAnnotation(context, namedElement, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = getAutoCategory(context, feature, features);
+			category = getAutoCategory(context, namedElement, namedElements);
 		}
 		if (category == null) {
 			return null;
 		}
 		
-		String categoryLabelAnnotation = getRenderAnnotation(context, feature.getEContainingClass(), "category."+category+".label");
+		String categoryLabelAnnotation = null;
+		if (namedElement instanceof EStructuralFeature) {
+			categoryLabelAnnotation = getRenderAnnotation(context, ((EStructuralFeature) namedElement).getEContainingClass(), "category."+category+".label");
+		}
+		if (namedElement instanceof EParameter) {
+			categoryLabelAnnotation = getRenderAnnotation(context, ((EParameter) namedElement).getEOperation(), "category."+category+".label");
+		}
 		if (categoryLabelAnnotation != null) {
 			return categoryLabelAnnotation;
 		}
@@ -835,16 +841,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return StringUtils.join(cca, " ");		
 	}
 	
-	default Object renderFeatureCategoryIcon(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
-		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
+	default <NE extends ENamedElement> Object renderNamedElementCategoryIcon(C context, NE namedElement, Collection<NE> namedElements) throws Exception {
+		String category = getRenderAnnotation(context, namedElement, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = getAutoCategory(context, feature, features);
+			category = getAutoCategory(context, namedElement, namedElements);
 		}
 		if (category == null) {
 			return null;
 		}
 		
-		String iconAnnotation = getRenderAnnotation(context, feature.getEContainingClass(), "category."+category+".icon");
+		String iconAnnotation = null;
+		if (namedElement instanceof EStructuralFeature) {
+			iconAnnotation = getRenderAnnotation(context, ((EStructuralFeature) namedElement).getEContainingClass(), "category."+category+".icon");
+		}
+		if (namedElement instanceof EParameter) {
+			iconAnnotation = getRenderAnnotation(context, ((EParameter) namedElement).getEOperation(), "category."+category+".icon");
+		}
 		if (iconAnnotation == null) {
 			return null;
 		}
@@ -855,13 +867,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return htmlFactory.tag(TagName.img).attribute("src", iconAnnotation);
 	}
 	
-	default Object renderFeatureCategoryIconAndLabel(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
-		Object label = renderFeatureCategoryLabel(context, feature, features);
+	default <NE extends ENamedElement> Object renderNamedElementCategoryIconAndLabel(C context, NE namedElement, Collection<NE> namedElements) throws Exception {
+		Object label = renderNamedElementCategoryLabel(context, namedElement, namedElements);
 		if (label == null) {
-			return renderFeatureCategoryIcon(context, feature, features);
+			return renderNamedElementCategoryIcon(context, namedElement, namedElements);
 		}
 		
-		Object icon = renderFeatureCategoryIcon(context, feature, features);
+		Object icon = renderNamedElementCategoryIcon(context, namedElement, namedElements);
 		if (icon == null) {
 			return label;
 		}
@@ -875,8 +887,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return Named element icon and label.
 	 * @throws Exception
 	 */
-	default Object renderNamedElementIconAndLabel(C context, ENamedElement namedElement, Collection<EStructuralFeature> features) throws Exception {		
-		Object label = renderNamedElementLabel(context, namedElement, features);
+	default <NE extends ENamedElement> Object renderNamedElementIconAndLabel(C context, NE namedElement, Collection<NE> namedElements) throws Exception {		
+		Object label = renderNamedElementLabel(context, namedElement, namedElements);
 		if (label == null) {
 			return renderModelElementIcon(context, namedElement);
 		}
@@ -895,10 +907,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param eClass
 	 * @return
 	 */
-	default String getFeatureCategory(C context, EStructuralFeature feature, Collection<EStructuralFeature> features) throws Exception {
-		String category = getRenderAnnotation(context, feature, RenderAnnotation.CATEGORY);
+	default <NE extends ENamedElement> String getNamedElementCategory(C context, NE namedElement, Collection<NE> namedElements) throws Exception {
+		String category = getRenderAnnotation(context, namedElement, RenderAnnotation.CATEGORY);
 		if (category == null) {
-			category = getAutoCategory(context, feature, features);
+			category = getAutoCategory(context, namedElement, namedElements);
 		}
 		return category;
 	}
@@ -1892,7 +1904,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 		for (EStructuralFeature vf: viewFeatures) {
-			String category = getFeatureCategory(context, vf, viewFeatures);
+			String category = getNamedElementCategory(context, vf, viewFeatures);
 			if (category == null) {
 				Row fRow = featuresTable.body().row();
 				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
@@ -1910,7 +1922,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (categoryFeatures == null) {
 					categoryFeatures = new ArrayList<>();
 					categories.put(category, categoryFeatures);
-					categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, vf, viewFeatures));
+					categoriesIconsAndLabels.put(category, renderNamedElementCategoryIconAndLabel(context, vf, viewFeatures));
 				}
 				categoryFeatures.add(vf);
 			}
@@ -2085,7 +2097,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}	
 	
 	/**
-	 * Renders Save button.   
+	 * Renders Cancel button.   
 	 * @param context
 	 * @param obj
 	 * @return
@@ -2340,7 +2352,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		Object feature = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY) : null;
 		for (EStructuralFeature vf: leftPanelFeatures) {
-			String category = getFeatureCategory(context, vf, leftPanelFeatures);
+			String category = getNamedElementCategory(context, vf, leftPanelFeatures);
 			if (category == null) {
 				linkGroup.item(renderNamedElementIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
 			} else {
@@ -2348,7 +2360,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (categoryFeatures == null) {
 					categoryFeatures = new ArrayList<>();
 					categories.put(category, categoryFeatures);
-					categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, vf, leftPanelFeatures));
+					categoriesIconsAndLabels.put(category, renderNamedElementCategoryIconAndLabel(context, vf, leftPanelFeatures));
 				}
 				categoryFeatures.add(vf);
 			}					
@@ -2578,7 +2590,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 				List<EStructuralFeature> uncategorizedTableFeatures = new ArrayList<>();
 				for (EStructuralFeature tf: tableFeatures) {
-					String category = getFeatureCategory(context, tf, tableFeatures);
+					String category = getNamedElementCategory(context, tf, tableFeatures);
 					if (category == null) {
 						uncategorizedTableFeatures.add(tf);
 					} else {
@@ -2586,7 +2598,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if (categoryFeatures == null) {
 							categoryFeatures = new ArrayList<>();
 							categories.put(category, categoryFeatures);
-							categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, tf, tableFeatures));
+							categoriesIconsAndLabels.put(category, renderNamedElementCategoryIconAndLabel(context, tf, tableFeatures));
 						}
 						categoryFeatures.add(tf);
 					}
@@ -3175,10 +3187,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	@SuppressWarnings({ "unchecked" })
-	default UIElement<?> renderTypedElementControl(
+	default <TE extends ETypedElement> UIElement<?> renderTypedElementControl(
 			C context, 
 			T obj, 
-			ETypedElement typedElement, 
+			TE typedElement,
+			Collection<TE> typedElements,
 			Object value,
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
@@ -3191,9 +3204,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (controlType == null) {
 			if (typedElement.isMany()) {
 				controlType = TagName.input;
-			} else if (typedElement instanceof EAttribute) {		
+			} else if (typedElement instanceof EAttribute || typedElement instanceof EParameter) {		
 				Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
-				controlType = featureTypeInstanceClass.isEnum() ? TagName.select : TagName.input;
+				controlType = featureTypeInstanceClass.isEnum() || EObject.class.isAssignableFrom(featureTypeInstanceClass) ? TagName.select : TagName.input;
 			} else if (((EReference) typedElement).isContainment()) {				
 				// Link and create button.
 				return htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).small();
@@ -3231,7 +3244,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		Object label = renderNamedElementIconAndLabel(context, typedElement, getVisibleFeatures(context, obj, vf -> context.authorize(obj, StandardAction.update, typedElement.getName(), null)));
+		Object label = renderNamedElementIconAndLabel(context, typedElement, typedElements);
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
 			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, typedElement, docModal, true));			
@@ -3474,7 +3487,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					checkbox.attribute("checked", "true");					
 				}
 
-				fieldContainer.checkbox(renderNamedElementLabel(context, typedElement, getEditableFeatures(context, obj)), checkbox, true);
+				fieldContainer.checkbox(renderNamedElementLabel(context, typedElement, typedElements), checkbox, true); 
 				return null;
 			case radio:
 				// Radio - get values and labels from options.
@@ -3817,17 +3830,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return FormGroup. 
 	 * @throws Exception
 	 */
-	default FormGroup<?> renderTypedElementFormGroup(
+	default <TE extends ETypedElement> FormGroup<?> renderTypedElementFormGroup(
 			C context, 
 			T obj, 
-			ETypedElement typedElement, 
+			TE typedElement, 
+			Collection<TE> typedElements,
 			Object value,
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip) throws Exception {
 		
-		UIElement<?> control = renderTypedElementControl(context, obj, typedElement, value, fieldContainer, docModal, validationResults, helpTooltip);
+		UIElement<?> control = renderTypedElementControl(context, obj, typedElement, typedElements, value, fieldContainer, docModal, validationResults, helpTooltip);
 		if (control == null) {
 			return null;
 		}
@@ -3866,7 +3880,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		if (isFormInputGroup) {
-			Object label = renderNamedElementLabel(context, typedElement, getEditableFeatures(context, obj));
+			Object label = renderNamedElementLabel(context, typedElement, typedElements);
 			if (isRequired(context, obj, typedElement)) {
 				label = htmlFactory.fragment(label, "*");
 			}
@@ -3883,7 +3897,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return ret;
 		}
 				
-		Object label = renderNamedElementIconAndLabel(context, typedElement, getEditableFeatures(context, obj));
+		Object label = renderNamedElementIconAndLabel(context, typedElement, typedElements);
 		if (isRequired(context, obj, typedElement)) {
 			label = htmlFactory.fragment(label, "*");
 		}
@@ -3934,50 +3948,70 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			T obj, 
 			FieldContainer<?> fieldContainer, 
 			Map<EStructuralFeature, Modal> docModals, 
-			Map<EStructuralFeature,List<ValidationResult>> validationResults,
+			Map<ENamedElement,List<ValidationResult>> validationResults,
 			boolean helpTooltip) throws Exception {
 		
-		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
-		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
+		Map<EStructuralFeature, Object> editableFeatures = new LinkedHashMap<>();
+		for (EStructuralFeature ef: getEditableFeatures(context, obj)) {
+			editableFeatures.put(ef, obj.eGet(ef));
+		}
+		
+		// TODO - add support of inlined features.
+		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip);
+	}
+
+	default <TE extends ETypedElement> List<FormGroup<?>> renderTypedElementsFormGroups(
+			C context, T obj, 
+			FieldContainer<?> fieldContainer,
+			Map<TE, Modal> docModals, 
+			Map<ENamedElement, 
+			List<ValidationResult>> validationResults,
+			Map<TE, Object> formElements, 
+			boolean helpTooltip) throws Exception {
+		
 		List<FormGroup<?>> ret = new ArrayList<>();
-		List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
-		for (EStructuralFeature esf: editableFeatures) {
-			// Original value
-			String originalName = ORIGINAL_FEATURE_VALUE_NAME_PREFIX+esf.getName();
-			String originalValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, esf, obj.eGet(esf)));
-			fieldContainer.content(InputType.hidden.create().name(originalName).value(originalValue));
+		Map<String,List<TE>> categories = new TreeMap<>();
+		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
+		for (TE fe: formElements.keySet()) {
+			// Original value for features
+			if (fe instanceof EStructuralFeature) {
+				Object ov = formElements.get(fe);
+				if (ov != null) {
+					String originalName = ORIGINAL_ELEMENT_VALUE_NAME_PREFIX+fe.getName();
+					String originalValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, fe, ov));
+					fieldContainer.content(InputType.hidden.create().name(originalName).value(originalValue));
+				}
+			}
 			
-			String category = getFeatureCategory(context, esf, editableFeatures);
+			String category = getNamedElementCategory(context, fe, formElements.keySet());
 			if (category == null) {
-				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, esf, obj.eGet(esf), fieldContainer, docModals.get(esf), validationResults.get(esf), helpTooltip);
+				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, fe, formElements.keySet(), formElements.get(fe), fieldContainer, docModals.get(fe), validationResults.get(fe), helpTooltip);
 				if (fg != null) {
 					ret.add(fg);
 				}
 			} else {
-				List<EStructuralFeature> categoryFeatures = categories.get(category);
-				if (categoryFeatures == null) {
-					categoryFeatures = new ArrayList<>();
-					categories.put(category, categoryFeatures);
-					categoriesIconsAndLabels.put(category, renderFeatureCategoryIconAndLabel(context, esf, editableFeatures));
+				List<TE> categoryElements = categories.get(category);
+				if (categoryElements == null) {
+					categoryElements = new ArrayList<>();
+					categories.put(category, categoryElements);
+					categoriesIconsAndLabels.put(category, renderNamedElementCategoryIconAndLabel(context, fe, formElements.keySet()));
 				}
-				categoryFeatures.add(esf);
+				categoryElements.add(fe);
 			}				
 		}
 
-		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
+		for (Entry<String, List<TE>> ce: categories.entrySet()) {
 			FieldSet categoryFieldSet = fieldContainer.fieldset();
 			categoryFieldSet.style().margin().bottom("5px");
 			categoryFieldSet.legend(categoriesIconsAndLabels.get(ce.getKey()));
 			
-			for (EStructuralFeature cesf: ce.getValue()) {
-				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, cesf, obj.eGet(cesf), categoryFieldSet, docModals.get(cesf), validationResults.get(cesf), helpTooltip);
+			for (TE cete: ce.getValue()) {
+				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, cete, formElements.keySet(), formElements.get(cete), categoryFieldSet, docModals.get(cete), validationResults.get(cete), helpTooltip);
 				if (fg != null) {
 					ret.add(fg);
 				}
 			}
 		}
-		
-		// TODO - add support of inlined features.
 		
 		return ret;
 	}
@@ -4038,7 +4072,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			List<EStructuralFeature> editableFeatures = getEditableFeatures(context, obj);
 			for (EStructuralFeature feature: editableFeatures) {
 				if (feature.isMany()) {
-					String[] originalValues = request.getParameterValues(ORIGINAL_FEATURE_VALUE_NAME_PREFIX+feature.getName());
+					String[] originalValues = request.getParameterValues(ORIGINAL_ELEMENT_VALUE_NAME_PREFIX+feature.getName());
 					if (originalValues != null) {
 						@SuppressWarnings("unchecked")
 						Collection<Object> fv = (Collection<Object>) obj.eGet(feature);
@@ -4047,7 +4081,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}
 					}
 				} else {
-					String originalValue = request.getParameter(ORIGINAL_FEATURE_VALUE_NAME_PREFIX+feature.getName());
+					String originalValue = request.getParameter(ORIGINAL_ELEMENT_VALUE_NAME_PREFIX+feature.getName());
 					if (originalValue != null) {
 						String currentValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, obj.eGet(feature)));
 						if (!originalValue.equals(currentValue)) {
@@ -4100,9 +4134,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (!validationResult.getChildren().isEmpty()) {
 			bd.merge(validationResult);
 		}
-		validate(context, obj, obj.eClass(), bd);
+		validate(context, obj, obj.eClass(), bd, null);
 		for (EStructuralFeature sf: obj.eClass().getEAllStructuralFeatures()) {
-			validate(context, obj, sf, bd);			
+			validate(context, obj, sf, bd, null);			
 		}
 		return bd;
 	}
@@ -4113,8 +4147,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param obj
 	 * @param modelElement
 	 * @param diagnosticChain
+	 * @param variables Additional variables for JXPath context, used for EOperation and EParameter validation.
 	 */
-	default void validate(C context, T obj, EModelElement modelElement, DiagnosticChain diagnosticChain) throws Exception {
+	default void validate(C context, T obj, EModelElement modelElement, DiagnosticChain diagnosticChain, Map<String, Object> variables) throws Exception {
 		if (obj instanceof CDOObject) {
 			Object classConstraintSpec = getYamlRenderAnnotation(context, modelElement, RenderAnnotation.CONSTRAINT);
 			if (classConstraintSpec != null) {
@@ -4147,6 +4182,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 					if (!CoreUtil.isBlank(conditionStr)) {
 						JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+						if (variables != null) {
+							for (Entry<String, Object> ve: variables.entrySet()) {
+								jxPathContext.getVariables().declareVariable(ve.getKey(), ve.getValue());
+							}
+						}
 						if (!Boolean.TRUE.equals(jxPathContext.getValue(conditionStr, Boolean.TYPE))) {
 							String errMsg = null;
 							if (errorMessageKey != null) {
@@ -4174,6 +4214,40 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}		
 	}
+	
+	/**
+	 * Validates EOperation input with ``validate(C,T,EModelElement,DiagnosticChain)`` method.
+	 * EOperation constraint has access to ``$arguments`` variable of type ``Map<String, Object>``. 
+	 * EParameter constraint also has access to ``$argument`` variable.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Diagnostic validate(C context, T obj, EOperation eOperation, Map<String, Object> arguments) throws Exception {
+		BasicDiagnostic bd = new BasicDiagnostic();
+		Map<String, Object> variables = new HashMap<>();
+		variables.put("arguments", arguments);
+		validate(context, obj, eOperation, bd, variables);
+		for (EParameter ep: eOperation.getEParameters()) {
+			Object argument = arguments.get(ep.getName());
+			variables.put("argument", argument);
+			validate(context, obj, ep, bd, variables);
+			if (ep.isRequired()) {
+				if (ep.isMany()) {
+					if (argument == null || ((Collection<?>) argument).isEmpty()) {
+						bd.add(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, "Required parameter", new Object[] { obj, ep }));
+					}					
+				} else {
+					if (argument == null) {
+						bd.add(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, "Required parameter", new Object[] { obj, ep }));
+					}
+				}
+			}
+		}
+		return bd;
+	}
+	
 	
 	/**
 	 * Renders a tree item for the object with the tree features under.
@@ -4327,7 +4401,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @param obj
 	 * @param validationResults
-	 * @param featureValidationResults
+	 * @param namedElementValidationResults
 	 * @param horizontalForm
 	 * @return
 	 * @throws Exception
@@ -4336,7 +4410,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			C context, 
 			T obj, 
 			List<ValidationResult> validationResults, 
-			Map<EStructuralFeature, List<ValidationResult>> featureValidationResults, 
+			Map<ENamedElement, List<ValidationResult>> namedElementValidationResults, 
 			boolean horizontalForm) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
@@ -4353,7 +4427,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		if (horizontalForm) {
-			for (Entry<EStructuralFeature, List<ValidationResult>> fe: featureValidationResults.entrySet()) {
+			for (Entry<ENamedElement, List<ValidationResult>> fe: namedElementValidationResults.entrySet()) {
 				for (ValidationResult fvr: fe.getValue()) {
 					Object featureNameLabel = renderNamedElementIconAndLabel(context, fe.getKey());
 					errorList.item(htmlFactory.label(fvr.status.toStyle(), featureNameLabel) + " " + fvr.message, fvr.status.toStyle());											
@@ -4365,9 +4439,58 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			editForm.content(errorList);
 		}
 				
-		renderEditableFeaturesFormGroups(context, obj, editForm, featureDocModals, featureValidationResults, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
+		renderEditableFeaturesFormGroups(context, obj, editForm, featureDocModals, namedElementValidationResults, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
 		return editForm;
 	}
+	
+	/**
+	 * Renders operation input form with parameter documentation modals and error messages if any. Action buttons are not rendered.
+	 * @param context
+	 * @param obj
+	 * @param validationResults
+	 * @param namedElementValidationResults
+	 * @param horizontalForm
+	 * @return
+	 * @throws Exception
+	 */
+	default Form renderInputForm(
+			C context, 
+			T obj, 
+			Map<EParameter, Object> formParameters, 
+			List<ValidationResult> validationResults, 
+			Map<ENamedElement, List<ValidationResult>> namedElementValidationResults, 
+			boolean horizontalForm) throws Exception {
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);		
+		Form editForm = htmlFactory.form();
+		
+		Map<EParameter, Modal> parameterDocModals = renderModelElementsDocModals(context, obj, formParameters.keySet());
+		for (Modal pdm: parameterDocModals.values()) {
+			editForm.content(pdm);
+		}
+		
+		ListGroup errorList = htmlFactory.listGroup();
+		for (ValidationResult vr: validationResults) {
+			errorList.item(vr.message, vr.status.toStyle());			
+		}
+		
+		if (horizontalForm) {
+			for (Entry<ENamedElement, List<ValidationResult>> nee: namedElementValidationResults.entrySet()) {
+				for (ValidationResult nevr: nee.getValue()) {
+					Object featureNameLabel = renderNamedElementIconAndLabel(context, nee.getKey());
+					errorList.item(htmlFactory.label(nevr.status.toStyle(), featureNameLabel) + " " + nevr.message, nevr.status.toStyle());											
+				}
+			}
+		}
+		
+		if (!errorList.isEmpty()) {
+			editForm.content(errorList);
+		}
+				
+		renderTypedElementsFormGroups(context, obj, editForm, parameterDocModals, namedElementValidationResults, formParameters, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
+		return editForm;
+	}
+	
 	
 	/**
 	 * Renders an edit form for a single feature, e.g. a reference with checkboxes for selecting multiple values and radios or select for selecting a single value.
@@ -4404,7 +4527,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			selectForm.content(errorList);
 		}
 		
-		FormGroup<?> fg = renderTypedElementFormGroup(context, obj, feature, obj.eGet(feature), selectForm, featureDocModal, featureValidationResults, horizontalForm);
+		FormGroup<?> fg = renderTypedElementFormGroup(context, obj, feature, Collections.emptyList(), obj.eGet(feature), selectForm, featureDocModal, featureValidationResults, horizontalForm);
 		if (fg != null) {
 			fg.feedback(!horizontalForm);
 		}

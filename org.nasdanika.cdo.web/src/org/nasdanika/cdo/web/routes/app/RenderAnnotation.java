@@ -261,7 +261,12 @@ public enum RenderAnnotation {
 		 * * ``service: filter`` - Binds the parameter to an OSGi service applying the specified filter.
 		 * * ``value: value`` - Binds the parameter to a constant value.
 		 */
-		BIND("bind"),		
+		BIND("bind"),	
+		
+		/**
+		 * Provides default value for {@link EParameter}.
+		 */
+		DEFAULT_VALUE("deafult-value"),
 
 //---		
 		/**

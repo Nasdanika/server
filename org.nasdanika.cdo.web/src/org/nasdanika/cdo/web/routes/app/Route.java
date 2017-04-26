@@ -1,20 +1,33 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringEscapeUtils;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicDiagnostic;
+import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.Diagnostic;
+import org.eclipse.emf.common.util.ECollections;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -25,15 +38,20 @@ import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
 import org.nasdanika.core.AuthorizationProvider;
+import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.TransactionContext;
 import org.nasdanika.html.Bootstrap;
+import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
@@ -65,8 +83,10 @@ import org.nasdanika.web.Resource;
 import org.nasdanika.web.RouteMethod;
 import org.nasdanika.web.RouteMethod.Lock.Type;
 import org.nasdanika.web.TargetParameter;
+import org.nasdanika.web.WebMethodCommand;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Application route providing CRUD operations for the underlying EObject.
@@ -355,8 +375,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
 				
 				@Override
-				protected String getResourceString(EStructuralFeature feature, String key) throws Exception {
-					return Route.this.getResourceString(context, (ENamedElement) (feature == null ? targetEClass : feature), key, true);
+				protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+					return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? targetEClass : namedElement), key, true);
 				}
 				
 			};
@@ -373,7 +393,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 				
 				boolean ok = true;
-				List<ValidationResult> featureValidationResults = diagnosticConsumer.getFeatureValidationResults().get(tsf);
+				List<ValidationResult> featureValidationResults = diagnosticConsumer.getNamedElementValidationResults().get(tsf);
 				if (featureValidationResults != null) {
 					for (ValidationResult validationResult: featureValidationResults) {
 						if (validationResult.status == Status.ERROR) {
@@ -425,23 +445,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
 			boolean noValidate = "true".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.NO_VALIDATE));
-			Form editForm = renderFeatureEditForm(context, target, tsf, diagnosticConsumer.getFeatureValidationResults().get(tsf), horizontalForm)
+			Form editForm = renderFeatureEditForm(context, target, tsf, diagnosticConsumer.getNamedElementValidationResults().get(tsf), horizontalForm)
 				.novalidate(noValidate)
 				.action("select.html")				
-				.method(Method.post)
-				.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
-				.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
-				.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
-				.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
+				.method(Method.post);
 			
-			if (horizontalForm) {
-				editForm
-					.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
-					.horizontal(Bootstrap.DeviceSize.SMALL, 5)
-					.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
-					.horizontal(Bootstrap.DeviceSize.LARGE, 3);
-				
-			}
+			configureForm(editForm, horizontalForm);
 			
 			String originalReferrer = referrerParameter;
 			if (originalReferrer == null) {
@@ -497,8 +506,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
 							
 							@Override
-							protected String getResourceString(EStructuralFeature feature, String key) throws Exception {
-								return Route.this.getResourceString(context, (ENamedElement) (feature == null ? eClass : feature), key, true);
+							protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+								return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? eClass : namedElement), key, true);
 							}
 							
 						};
@@ -556,23 +565,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 																
 						boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
 						boolean noValidate = "true".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
-						Form editForm = renderer.renderEditForm(context, instance, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getFeatureValidationResults(), horizontalForm)
+						Form editForm = renderer.renderEditForm(context, instance, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm)
 							.novalidate(noValidate)
 							.action(eclass)
-							.method(Method.post)
-							.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
-							.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
-							.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
-							.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
+							.method(Method.post);
 						
-						if (horizontalForm) {
-							editForm
-								.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
-								.horizontal(Bootstrap.DeviceSize.SMALL, 5)
-								.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
-								.horizontal(Bootstrap.DeviceSize.LARGE, 3);
-							
-						}
+						configureForm(editForm, horizontalForm);
 						
 						String originalReferrer = referrerParameter;
 						if (originalReferrer == null) {
@@ -717,8 +715,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
 			
 			@Override
-			protected String getResourceString(EStructuralFeature feature, String key) throws Exception {
-				return Route.this.getResourceString(context, (ENamedElement) (feature == null ? targetEClass : feature), key, true);
+			protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+				return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? targetEClass : namedElement), key, true);
 			}
 			
 		};
@@ -778,23 +776,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
 		boolean noValidate = "true".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.NO_VALIDATE));
-		Form editForm = renderEditForm(context, target, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getFeatureValidationResults(), horizontalForm)
+		Form editForm = renderEditForm(context, target, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm)
 			.novalidate(noValidate)
 			.action("edit.html")
-			.method(Method.post)
-			.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
-			.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
-			.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
-			.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
+			.method(Method.post);
 		
-		if (horizontalForm) {
-			editForm
-				.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
-				.horizontal(Bootstrap.DeviceSize.SMALL, 5)
-				.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
-				.horizontal(Bootstrap.DeviceSize.LARGE, 3);
-			
-		}
+		configureForm(editForm, horizontalForm);
 		
 		String originalReferrer = referrerParameter;
 		if (originalReferrer == null) {
@@ -1190,6 +1177,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		return Action.NOP;
 	}
 
+	// --- Web Operations ---
+
 	@SuppressWarnings("unchecked")
 	protected List<? extends Target> getTargets(HttpServletRequestContext context) throws Exception {
 		List<Target> ret = new ArrayList<>(super.getTargets(context));
@@ -1214,7 +1203,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								parameterBindings.put(eParameter, bindingAnnotation);
 							}
 						}
-						ret.add(new EOperationTarget<C,T>(bundleContext, this, eOperation, webOperationAnnotation, parameterBindings));
+						ret.add(new EOperationTarget<C,T>(this, eOperation, webOperationAnnotation, parameterBindings));
 					}
 				}
 			}
@@ -1223,4 +1212,451 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		return ret;
 	}	
 	
+	/**
+	 * Binds EParameter to a value from the context/request. This implementation binds according to the {@link RenderAnnotation}.BIND specification.
+	 * @param context
+	 * @param pathParameters
+	 * @param eParameter
+	 * @param bindingSpec
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	protected EParameterBinding bindEParameter(C context, Map<String, String> pathParameters, EParameter eParameter, Object bindingSpec) throws Exception {		
+		Class<?> parameterType = eParameter.isMany() ? EList.class : eParameter.getEType().getInstanceClass();
+		if (bindingSpec == null) {
+			bindingSpec = "form";
+		}
+		if (bindingSpec instanceof String) {
+			switch ((String) bindingSpec) {
+			case "body":
+				if (WebMethodCommand.JSON_CONTENT_TYPE.equals(context.getRequest().getContentType())) {
+					if (parameterType == JSONArray.class) {
+						return new EParameterBinding(eParameter, new JSONArray(new JSONTokener(context.getRequest().getReader())));
+					}
+					
+					if (parameterType == JSONObject.class) {
+						return new EParameterBinding(eParameter, new JSONObject(new JSONTokener(context.getRequest().getReader())));
+					}			
+				}
+				
+				return new EParameterBinding(eParameter, context.convert(context.getRequest().getInputStream(), parameterType));
+			case "cookie":
+			case "header":
+			case "form":
+			case "part":
+			case "path":
+			case "query":				
+				bindingSpec = Collections.singletonMap((String) bindingSpec, eParameter.getName()); 
+				break;
+			case "null":
+				return null;
+			case "service":
+				bindingSpec = Collections.singletonMap((String) bindingSpec, null); 
+				break;				
+			default:
+				throw new IllegalArgumentException("Unsupported single-value parameter binding: "+bindingSpec);
+			}
+		} 
+		
+		if (bindingSpec instanceof Map) {
+			for (Entry<String, Object> be: ((Map<String, Object>) bindingSpec).entrySet()) {
+				switch (be.getKey()) {
+				case "cookie":
+					BasicEList<Object> cookieList = ECollections.newBasicEList();
+					for (Cookie cookie: context.getRequest().getCookies()) {
+						if (be.getValue().equals(cookie.getName())) {
+							if (parameterType.isAssignableFrom(Cookie.class)) {
+								if (eParameter.isMany()) {
+									cookieList.add(cookie);									
+								} else {
+									return new EParameterBinding(eParameter, cookie);
+								}
+							}
+						} else {
+							if (parameterType.isAssignableFrom(Cookie.class)) {
+								if (eParameter.isMany()) {
+									cookieList.add(parseTypedElementValue((C) context, eParameter, cookie.getValue()));									
+								} else {
+									return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, cookie.getValue()));
+								}
+							}							
+						}
+					}
+					return new EParameterBinding(eParameter, cookieList);
+				case "expression":
+					Object target = context.getTarget();
+					if (target instanceof CDOObject) {
+						JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) target);
+						if (eParameter.isMany()) {
+							BasicEList<Object> values = ECollections.newBasicEList();							
+							Iterator<?> cit = jxPathContext.iterate((String) be.getValue());
+							while (cit.hasNext()) {
+								Object value = cit.next();
+								if (!(value instanceof CDOObject) || context.authorize(value, StandardAction.read, null, null)) {
+									values.add(value);
+								}
+							}
+							return new EParameterBinding(eParameter, values);
+						}
+						return new EParameterBinding(eParameter, jxPathContext.getValue((String) be.getValue(), parameterType)); 
+					}
+					return null;
+				case "extension":
+					Map<String,String> extensionConfig = (Map<String,String>) be.getValue();
+					BasicEList<Object> extensions = ECollections.newBasicEList();												
+					for (IConfigurationElement ce: Platform.getExtensionRegistry().getConfigurationElementsFor(extensionConfig.get("point"))) {
+						if (extensionConfig.get("configuration-element").equals(ce.getName())) {	
+							String classAttribute = extensionConfig.get("class-attribute");
+							Object ev = ce.createExecutableExtension(classAttribute == null ? "class" : classAttribute);
+							CoreUtil.injectProperties(ce, ev);
+							if (eParameter.isMany()) {
+								extensions.add(ev);
+							} else {
+								return new EParameterBinding(eParameter, ev);
+							}
+						}					
+					}
+					return new EParameterBinding(eParameter, extensions);
+				case "header":
+					if (eParameter.isMany()) {
+						BasicEList<Object> ret = ECollections.newBasicEList();
+						for (String str: Collections.list(context.getRequest().getHeaders((String) be.getValue()))) {
+							ret.add(parseTypedElementValue((C) context, eParameter, str));
+						}
+						return new EParameterBinding(eParameter, ret);
+					}
+					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, context.getRequest().getHeader((String) be.getValue())));					
+				case "part":
+					if (context.getMethod() == RequestMethod.POST && "multipart/form-data".equals(context.getRequest().getContentType())) {
+						if (!eParameter.isMany()) {
+							Part part = context.getRequest().getPart((String) be.getValue());
+							if (parameterType.isAssignableFrom(Part.class)) {
+								return new EParameterBinding(eParameter, part);
+							}
+							if (part == null) {
+								return new EParameterBinding(eParameter, part);
+							}
+							if (parameterType.isAssignableFrom(InputStream.class)) {
+								return new EParameterBinding(eParameter, part.getInputStream());
+							}
+							Object ret = context.convert(part.getInputStream(), parameterType);
+							if (ret != null) {
+								return new EParameterBinding(eParameter, ret);
+							}
+						}
+						throw new IllegalArgumentException("Parameter type "+parameterType+" is not assignable from "+Part.class);
+					}
+					return new EParameterBinding(eParameter, null);
+				case "path":
+					return new EParameterBinding(eParameter, pathParameters.get(be.getValue()));
+				case "form":
+					if (context.getMethod() != RequestMethod.POST) {
+						return new EParameterBinding(eParameter, null);
+					}
+				case "query":
+					if (eParameter.isMany()) {
+						BasicEList<Object> ret = ECollections.newBasicEList();
+						for (String str: context.getRequest().getParameterValues((String) be.getValue())) {
+							ret.add(parseTypedElementValue((C) context, eParameter, str));
+						}
+						return new EParameterBinding(eParameter, ret);
+					}
+					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, context.getRequest().getParameter((String) be.getValue())));
+				case "service":
+					Collection<ServiceReference<Object>> srs = bundleContext.getServiceReferences((Class<Object>) parameterType, (String) be.getValue());
+					if (eParameter.isMany()) {
+						BasicEList<Object> ret = ECollections.newBasicEList();
+						for (ServiceReference<Object> sr: srs) {
+							ret.add(bundleContext.getService(sr));
+						}
+						return new EParameterBinding(eParameter, ret) {
+							
+							public void close() throws Exception {
+								for (ServiceReference<Object> sr: srs) {
+									bundleContext.ungetService(sr);
+								}
+							};
+							
+						};
+					}
+					ServiceReference<Object> sr = srs.isEmpty() ? null : srs.iterator().next();
+					return new EParameterBinding(eParameter, sr == null ? null : bundleContext.getService(sr)) {
+						
+						@Override
+						public void close() throws Exception {
+							if (sr != null) {
+								bundleContext.ungetService(sr);
+							}
+						}
+						
+					};					
+				case "value":
+					if (eParameter.isMany()) {
+						BasicEList<Object> ret = ECollections.newBasicEList();						
+						if (be.getValue() instanceof Collection) {
+							for (String bev: (Collection<String>) be.getValue()) {
+								 ret.add(parseTypedElementValue((C) context, eParameter, bev));
+							}
+						} else {
+							 ret.add(parseTypedElementValue((C) context, eParameter, (String) be.getValue()));
+						}
+						return new EParameterBinding(eParameter, ret);
+					}
+					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, (String) be.getValue()));
+				default:
+					throw new IllegalArgumentException("Unsupported parameter binding: "+be.getKey());
+				}				
+			}			
+		}
+		throw new IllegalArgumentException("Unsupported parameter binding type: "+bindingSpec);
+	}
+	
+	/**
+	 * Executes EOperation. This method is invoked by {@link EOperationTarget}
+	 * @param context
+	 * @param eOperation
+	 * @param pathParameters
+	 * @param arguments
+	 * @param spec Web operation specification from {@link RenderAnnotation}.WEB_OPERATION annotation.
+	 * @return
+	 * @throws Exception
+	 */
+	protected Object executeEOperation(C context, EOperationTarget<C, T> eOperationTarget, Map<String, String> pathParameters, Object[] arguments) throws Exception {
+		EOperation eOperation = eOperationTarget.getEOperation();				
+		@SuppressWarnings("unchecked")
+		T target = (T) context.getTarget();
+		
+		String methodName = (String) eOperationTarget.getSpec().get("method");
+		
+		if (methodName == null) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			
+			String title = StringEscapeUtils.escapeHtml4(nameToLabel(target.eClass().getName())+" :: "+nameToLabel(eOperation.getName()));
+			Fragment content = htmlFactory.fragment();
+			
+			Modal eOperationDocModal = renderDocumentationModal(context, eOperation);
+			if (eOperationDocModal != null) {
+				content.content(eOperationDocModal);
+			}
+			
+			if (context.getMethod() == RequestMethod.GET) {
+				if (eOperationTarget.hasFormParameters()) {					
+					// Render form
+					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+					String inputFormStr = "Input form"; // TODO - resource string
+					renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(inputFormStr).style().color().bootstrapColor(Color.INFO) , breadCrumbs);
+					if (!breadCrumbs.isEmpty()) {
+						content.content(breadCrumbs);
+					}
+							
+					Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+					content.content(objectHeader);							
+					
+					content.content(htmlFactory.tag(TagName.h4, inputFormStr).style().color().bootstrapColor(Color.INFO));
+					
+					boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.HORIZONTAL_FORM));
+					boolean noValidate = "true".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.NO_VALIDATE));
+					Map<EParameter, Object> formParameters = new LinkedHashMap<EParameter, Object>();
+					for (EParameter eParameter: eOperation.getEParameters()) {
+						if (eOperationTarget.isFormParameter(eParameter)) {
+							formParameters.put(eParameter, getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE));
+						}
+					}
+					Form inputForm = renderInputForm(context, target, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm)
+						.novalidate(noValidate)
+						.action(context.getRequest().getRequestURL())
+						.method(Method.post);
+					
+					configureForm(inputForm, horizontalForm);
+					Tag buttonBar = htmlFactory.div().style().text().align().right();
+					
+					Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
+					executeButton.type(org.nasdanika.html.Button.Type.SUBMIT);
+					buttonBar.content(executeButton.style().margin().right("5px"));
+					
+					buttonBar.content(renderCancelButton(context, target));
+					inputForm.content(buttonBar);
+					
+					content.content(inputForm);					
+				} else {
+					// Validate, invoke, render result
+					EList<EParameterBinding> bindings = ECollections.newBasicEList();
+					for (EParameter eParameter: eOperation.getEParameters()) {
+						bindings.add(eOperationTarget.bind(context, pathParameters, eParameter));
+					}
+					Map<String, Object> args = new HashMap<>();
+					for (EParameterBinding binding: bindings) {
+						args.put(binding.getEParameter().getName(), binding.getValue());
+					}
+					@SuppressWarnings("unchecked")
+					Diagnostic diagnostic = validate(context, (T) context.getTarget(), eOperation, args);
+					if (diagnostic.getSeverity() == Diagnostic.ERROR) {
+						ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+							
+							@Override
+							protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+								return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? eOperation : namedElement), key, true);
+							}
+							
+						};
+						
+						for (Diagnostic dc: diagnostic.getChildren()) {
+							diagnosticConsumer.accept(dc);
+						}
+						
+						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+						String invalidInputStr = "Invalid input"; // TODO - resource string
+						renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER) , breadCrumbs);
+						if (!breadCrumbs.isEmpty()) {
+							content.content(breadCrumbs);
+						}
+								
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+						content.content(objectHeader);							
+						
+						content.content(htmlFactory.tag(TagName.h4, invalidInputStr).style().color().bootstrapColor(Color.DANGER)); 
+						ListGroup errorList = htmlFactory.listGroup();
+						content.content(errorList);
+						for (ValidationResult vr: diagnosticConsumer.getValidationResults()) {
+							errorList.item(vr.message, vr.status.toStyle());			
+						}
+						
+						for (Entry<ENamedElement, List<ValidationResult>> fe: diagnosticConsumer.getNamedElementValidationResults().entrySet()) {
+							for (ValidationResult nevr: fe.getValue()) {
+								Object nameLabel = renderNamedElementIconAndLabel(context, fe.getKey());
+								errorList.item(htmlFactory.label(nevr.status.toStyle(), nameLabel) + " " + nevr.message, nevr.status.toStyle());											
+							}
+						}			
+					} else {
+						try {
+							Object result = eOperationTarget.invoke(context, bindings);				
+							// Breadcrumbs
+							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+							String resultStr = "Result"; // TODO - resource string
+							renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS) , breadCrumbs);
+							if (!breadCrumbs.isEmpty()) {
+								content.content(breadCrumbs);
+							}
+									
+							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+							content.content(objectHeader);							
+							
+							if (result == null) {
+								content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
+							} else {
+								content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
+								content.content(renderTypedElementValue(context, eOperation, result));					
+							}
+						} catch (Exception e) {
+							// Breadcrumbs
+							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+							String errorStr = "Error"; // TODO - resource string
+							renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(errorStr).style().color().bootstrapColor(Color.DANGER) , breadCrumbs);
+							if (!breadCrumbs.isEmpty()) {
+								content.content(breadCrumbs);
+							}
+									
+							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+							content.content(objectHeader);							
+							
+							content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER)); 
+							content.content(htmlFactory.alert(Style.DANGER, false, e.toString()));
+						}
+					}
+				}				
+			} else {
+				// POST
+			}
+						
+			return renderPage(context, target, title, content);					
+		}
+		
+		// API invocation - no UI rendering.
+		
+		// Validate and invoke		
+		EList<EParameterBinding> bindings = ECollections.newBasicEList();
+		for (EParameter eParameter: eOperation.getEParameters()) {
+			bindings.add(eOperationTarget.bind(context, pathParameters, eParameter));
+		}
+		Map<String, Object> args = new HashMap<>();
+		for (EParameterBinding binding: bindings) {
+			args.put(binding.getEParameter().getName(), binding.getValue());
+		}
+		@SuppressWarnings("unchecked")
+		Diagnostic diagnostic = validate(context, (T) context.getTarget(), eOperation, args);
+		if (diagnostic.getSeverity() == Diagnostic.ERROR) {
+			ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+				
+				@Override
+				protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+					return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? eOperation : namedElement), key, true);
+				}
+				
+			};
+			
+			for (Diagnostic dc: diagnostic.getChildren()) {
+				diagnosticConsumer.accept(dc);
+			}
+			
+			JSONArray msg = new JSONArray();
+			for (ValidationResult vr: diagnosticConsumer.getValidationResults()) {
+				JSONObject jvr = new JSONObject();
+				msg.put(jvr);
+				jvr.put("message", vr.message);
+				jvr.put("status", vr.status.name());			
+			}
+			
+			for (Entry<ENamedElement, List<ValidationResult>> nevre: diagnosticConsumer.getNamedElementValidationResults().entrySet()) {
+				JSONObject nejvr = new JSONObject();
+				nejvr.put("name", nevre.getKey().getName());
+				msg.put(nejvr);
+				JSONArray jDiagnostic = new JSONArray();
+				nejvr.put("diagnostic", jDiagnostic);
+				for (ValidationResult nevr: nevre.getValue()) {
+					JSONObject jvr = new JSONObject();
+					jDiagnostic.put(jvr);
+					jvr.put("message", nevr.message);
+					jvr.put("status", nevr.status.name());			
+				}
+			}
+			context.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, msg.toString());
+			return Action.NOP;
+		}
+		
+		return filterEOperationResult(context, eOperation, eOperationTarget.invoke(context, bindings));				
+	}
+		
+	/**
+	 * Override to replace eOperation result with something else if needed. 
+	 * @param context
+	 * @param eOperation
+	 * @param result
+	 * @return
+	 * @throws Exception
+	 */
+	public Object filterEOperationResult(C context, EOperation eOperation, Object result) throws Exception {
+		return result;
+	}
+
+	/**
+	 * Configures form appearance
+	 * @param form
+	 * @param horizontalForm
+	 */
+	protected void configureForm(Form form, boolean horizontalForm) {
+		form
+			.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
+			.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
+			.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
+			.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
+	
+		if (horizontalForm) {
+			form
+				.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
+				.horizontal(Bootstrap.DeviceSize.SMALL, 5)
+				.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
+				.horizontal(Bootstrap.DeviceSize.LARGE, 3);						
+		}		
+	}
 }

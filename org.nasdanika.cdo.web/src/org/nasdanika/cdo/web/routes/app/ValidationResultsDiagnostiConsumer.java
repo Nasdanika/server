@@ -9,28 +9,30 @@ import java.util.function.Consumer;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ENamedElement;
+import org.eclipse.emf.ecore.EParameter;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.cdo.web.routes.app.Renderer.ValidationResult;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
 
 /**
- * Converts consumed diagnostics to validation results and groups them by structural features, if any.
+ * Converts consumed diagnostics to validation results and groups them by structural features or {@link EParameter}'s, if any.
  * @author Pavel Vlasov
  *
  */
 public abstract class ValidationResultsDiagnostiConsumer implements Consumer<Diagnostic> {
 	
 	private List<ValidationResult> validationResults = new ArrayList<>();
-	private Map<EStructuralFeature, List<ValidationResult>> featureValidationResults = new LinkedHashMap<>();
+	private Map<ENamedElement, List<ValidationResult>> namedElementValidationResults = new LinkedHashMap<>();
 	
 	/**
 	 * 
 	 * @return Feature validation results.
 	 */
-	public Map<EStructuralFeature, List<ValidationResult>> getFeatureValidationResults() {
-		return featureValidationResults;
+	public Map<ENamedElement, List<ValidationResult>> getNamedElementValidationResults() {
+		return namedElementValidationResults;
 	}
 	
 	/**
@@ -44,10 +46,10 @@ public abstract class ValidationResultsDiagnostiConsumer implements Consumer<Dia
 	@Override
 	public void accept(Diagnostic diagnostic) {
 		List<?> dData = diagnostic.getData();
-		EStructuralFeature esf = null;
+		ENamedElement ene = null;
 		// Second element, if present.
-		if (dData.size() > 1 && dData.get(1) instanceof EStructuralFeature) {
-			esf = (EStructuralFeature) dData.get(1);
+		if (dData.size() > 1 && dData.get(1) instanceof ENamedElement) {
+			ene = (ENamedElement) dData.get(1);
 		}
 		String messageKey = null; 
 		// Last element, if present.
@@ -68,32 +70,32 @@ public abstract class ValidationResultsDiagnostiConsumer implements Consumer<Dia
 		String message = diagnostic.getMessage();
 		if (messageKey != null) {
 			try {
-				message = getResourceString(esf, messageKey);
+				message = getResourceString(ene, messageKey);
 			} catch (Exception ex) {
 				ex.printStackTrace();
 			}			
 		}
 		String escapedMessage = CoreUtil.isBlank(message) ? status.name() : StringEscapeUtils.escapeHtml4(message);
 		ValidationResult validationResult = new ValidationResult(status, escapedMessage);
-		if (esf == null) {
+		if (ene == null) {
 			validationResults.add(validationResult);
 		} else {
-			List<ValidationResult> fvrl = featureValidationResults.get(esf);
+			List<ValidationResult> fvrl = namedElementValidationResults.get(ene);
 			if (fvrl == null) {
 				fvrl = new ArrayList<>();
-				featureValidationResults.put(esf, fvrl);
+				namedElementValidationResults.put(ene, fvrl);
 			}
 			fvrl.add(validationResult);
 		}
 	}
 
 	/**
-	 * Retrieves resource string for error message for {@link EStructuralFeature}. 
-	 * @param feature Feature. If null, the message is retrieved from/for the diagnostic target {@link EClass}.
+	 * Retrieves resource string for error message for {@link ETypedElement}. 
+	 * @param typedElement typedElement. If null, the message is retrieved from/for the diagnostic target {@link EClass}.
 	 * @param key
 	 * @return
 	 * @throws Exception
 	 */
-	protected abstract String getResourceString(EStructuralFeature feature, String key) throws Exception;
+	protected abstract String getResourceString(ENamedElement namedElement, String key) throws Exception;
 	
 }
