@@ -228,6 +228,9 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 				resp.sendRedirect(loginURL+"?url="+URLEncoder.encode(requestURL.toString(), StandardCharsets.UTF_8.toString()));
 			} else {
 				try {
+					resp.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate"); // Dynamic.
+					resp.setHeader("Pragma", "no-cache");
+					resp.setHeader("Expires", "-1");
 					resultToResponse(action.execute(), resp);
 				} catch (IOException | ServletException e) {
 					throw e;
