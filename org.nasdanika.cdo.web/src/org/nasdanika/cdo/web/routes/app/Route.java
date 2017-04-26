@@ -118,9 +118,11 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	}
 	private static final String BOOTSTRAP_THEME_TOKEN = "bootstrap-theme";
+	protected BundleContext bundleContext;
 
 	protected Route(BundleContext bundleContext, Object... targets) throws Exception {
 		super(bundleContext == null ? FrameworkUtil.getBundle(Route.class).getBundleContext() : bundleContext, targets);
+		this.bundleContext = bundleContext == null ? FrameworkUtil.getBundle(Route.class).getBundleContext() : bundleContext;
 	} 
 
 	/**
@@ -649,7 +651,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.content(objectHeader);
 		
 		// view 
-		content.content(renderFeatureView(context, target, sf, true, null, null));
+		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, null, null));
 		
 		context.getRequest().setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, sf);
 		return renderPage(context, target, title, content);
@@ -1212,7 +1214,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								parameterBindings.put(eParameter, bindingAnnotation);
 							}
 						}
-						ret.add(new EOperationTarget(eOperation, webOperationAnnotation, parameterBindings));
+						ret.add(new EOperationTarget<C,T>(bundleContext, this, eOperation, webOperationAnnotation, parameterBindings));
 					}
 				}
 			}

@@ -90,9 +90,18 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 						if (parameterType.isAssignableFrom(Part.class)) {
 							return part;
 						}
-						if (parameterType.isAssignableFrom(InputStream.class)) {
-							return part==null ? null : part.getInputStream();
+						if (part == null) {
+							return part;
 						}
+						if (parameterType.isAssignableFrom(InputStream.class)) {
+							return part.getInputStream();
+						}
+						
+						Object ret = context.convert(part.getInputStream(), parameterType);
+						if (ret != null) {
+							return ret;
+						}
+						
 						throw new NasdanikaException("Parameter type "+parameterType+" is not assignable from "+Part.class);
 					}
 					

@@ -11,7 +11,8 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.nasdanika.cdo.web.routes.app.Renderer.FeatureLocation;
+import org.eclipse.emf.ecore.ETypedElement;
+import org.nasdanika.cdo.web.routes.app.Renderer.TypedElementLocation;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.HTMLFactory;
@@ -86,9 +87,9 @@ public enum RenderAnnotation {
 		VIEW_ITEM("view-item"),
 
 		/**
-		 * Defines {@link EStructuralFeature} location - view, left panel, or item container (tabs, pills, accordion). The value shall be one of {@link FeatureLocation} constants.
+		 * Defines {@link ETypedElement} location - view, left panel, or item container (tabs, pills, accordion). The value shall be one of {@link TypedElementLocation} constants.
 		 */
-		FEATURE_LOCATION("feature-location"),		
+		TYPED_ELEMENT_LOCATION("typed-element-location"),		
 		
 		/**
 		 * {@link EReference} annotation - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
@@ -217,11 +218,9 @@ public enum RenderAnnotation {
 		 * with the following keys:
 		 * 
 		 * * ``action`` - Security action. Defaults to {@link AuthorizationProvider.StandardAction}.execute.
+		 * * ``confirm`` - If set to ``true``, then click on the button shows a confirmation message before executing the operation.
 		 * * ``consumes`` - Single value or a list or content types which this web operation can consume.
 		 * * ``feature`` - Feature to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature view instead of the object view.
-		 * * ``location``
-		 *     * ``left-panel`` - a left panel item is rendered to invoke the operation.
-		 *     * ``view`` (default) - a button in the object/feature view is rendered to invoke the operation.
 		 * * ``lock`` - Lock to apply on the repository in order to execute the operation 
 		 *     * ``path`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) path of the object to apply the lock to. If not set, the lock is applied to the target object.
 		 *     * ``type`` - Lock type, one of ``none``, ``read``, ``write``, or ``imply-from-http-method`` (default). ``imply-from-http-method`` implies ``write`` for ``DELETE``, ``PATCH``, ``POST``, and ``PUT`` and ``read`` otherwise.
@@ -242,11 +241,13 @@ public enum RenderAnnotation {
 		 * * ``body`` - Binds the parameter to request body.
 		 * * ``cookie`` - Binds the parameter to a cookie with the same name as the parameter name.
 		 * * ``cookie: name`` - Binds the parameter to the named cookie.
-		 * * ``expression`` - JXPath expression (which can also be a constant) to evaluate.   
+		 * * ``expression: expression`` - JXPath expression (which can also be a constant) to evaluate.   
 		 * * ``extension`` - Binds the parameter to registered extension(s). This key's value shall be a map with the following elements:
 		 *     * ``point`` - Extension point ID.
 		 *     * ``configuration-element`` - Configuration element name.
 		 *     * ``class-attribute`` - Attribute containing the class name. Defaults to ``class``.
+		 * * ``form`` (default) - Binds the parameter to the query parameter with the same name as {@link EParameter} if request method is ``POST``.
+		 * * ``form: name`` - Binds the parameter to the named query parameter if request method is ``POST``.
 		 * * ``header`` - Binds the parameter to a header with the same name as the parameter name.
 		 * * ``header: name`` - Binds the parameter to the named header.
 		 * * ``null`` - Binds parameter to ``null``.
@@ -254,6 +255,8 @@ public enum RenderAnnotation {
 		 * * ``part: name`` - Binds the parameter to the named part.
 		 * * ``path`` - Binds the parameter to a path parameter with the same name as the parameter name.
 		 * * ``path: name`` - Binds the parameter to the named path parameter.
+		 * * ``query`` - Binds the parameter to the query parameter with the same name as {@link EParameter}.
+		 * * ``query: name`` - Binds the parameter to the named query parameter.
 		 * * ``service`` - Binds the parameter to an OSGi service with the same type as the parameter type.
 		 * * ``service: filter`` - Binds the parameter to an OSGi service applying the specified filter.
 		 * * ``value: value`` - Binds the parameter to a constant value.

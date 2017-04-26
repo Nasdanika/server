@@ -215,7 +215,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Returns renderer for a feature. The renderer is chained with this renderer as its master
+	 * Returns renderer for a reference. The renderer is chained with this renderer as its master
 	 * resource provider with ``<feature class>.<feature name>.`` prefix. 
 	 * 
 	 * For example if a renderer is requested for {@link EAttribute} ``myAttribute`` then call to its
@@ -1400,6 +1400,56 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
+	 * If EOperation has documentation this method renders a button with a question mark glyph icon with a tooltip containing the first sentence of documentation.
+	 * If docModal is not null, then the cursor is set to pointer and click on the icon opens the doc modal.
+	 * @param context
+	 * @param modelElement
+	 * @param docModal Doc modal to open on icon click. Can be null.
+	 * @return
+	 * @throws Exception
+	 */
+	default Button renderDocumentationButton(C context, EModelElement modelElement, Modal docModal) throws Exception {
+		String doc = renderDocumentation(context, modelElement);
+		if (doc == null) {
+			return null;
+		}
+		String textDoc = Jsoup.parse(doc).text();
+		String firstSentence = firstSentence(context, textDoc);					
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Tag helpTag = renderHelpIcon(context);
+		Button button = htmlFactory.button(helpTag);
+		button.attribute(TITLE_KEY, firstSentence);
+		
+		// More than one sentence - opens doc modal.
+		if (!textDoc.equals(firstSentence) && docModal != null) {
+			button.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
+//			button.style("cursor", "pointer");
+			return button;
+		}
+		
+		// Opens EClass documentation, if configured.
+		EClassifier eClassifier = null;
+		if (modelElement instanceof EClassifier) {
+			eClassifier = (EClassifier) modelElement;
+		} else if (modelElement.eContainer() instanceof EClassifier) {
+			eClassifier = (EClassifier) modelElement.eContainer();
+		}
+		if (eClassifier != null) {
+			String href = getEClassifierDocRef(context, eClassifier);
+			if (href != null) {
+				button.on(Event.click, "window.open('"+href+"', '_blank');return false;");
+//				button.style("cursor", "pointer");
+				return button;
+			}
+		}
+		
+		// Shows help icon
+		button.style("cursor", "help");			
+		return button;
+	}
+	
+	
+	/**
 	 * Converts markdown to HTML using {@link PegDownProcessor}.
 	 * @param context
 	 * @param markdown
@@ -1512,44 +1562,49 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @author Pavel Vlasov
 	 *
 	 */
-	enum FeatureLocation {
+	enum TypedElementLocation {
 		/**
-		 * Display as part of object view. Default for single features.
+		 * Display as part of object view. Default for single features and operations
 		 */
 		view, 
 		
 		/**
-		 * Display a link to feature view page in the left panel. Default for many features.
+		 * Display a link to feature view page or operation page in the left panel. Default for many features.
 		 */
 		leftPanel,
 		
 		/**
-		 * Display a link in an item container below the object view. 
+		 * Display a feature or result of operation invocation in an item container below the object view. 
 		 */
 		item,
 		
 		/**
-		 * Applicable to single {@link EReference}. This location has the target object attributes "inlined" in the containing object 
-		 * view and edit form. The inlined attributes will be categorized using the reference label. For example if ``Customer`` can have one and only one ``Address`` set at ``Customer``
+		 * Applicable to single {@link EReference} and {@link EOperation} results. This location has the target object attributes "inlined" in the containing object 
+		 * view and edit form. The inlined attributes will be categorized using the reference/operation label. For example if ``Customer`` can have one and only one ``Address`` set at ``Customer``
 		 * object creation time, then the address may be inlined into the customer object. When a reference is inlined, it is not possible to change the reference target to another object 
 		 * through the UI, but it is possible to view and edit it.  
 		 */
-		inline
+		inline,
+		
+		/**
+		 * Applicable to {@link EOperation}'s which shall be invocable, but do not need UI elements, e.g. API operations or operations invoked from manually constructed pages. 
+		 */
+		none
 	}
 	
 	/**
 	 * @param context
 	 * @param obj
-	 * @return feature location. 
-	 * This implementation returns value of {@link RenderAnnotation}.FEATURE_LOCATION render annotation. 
-	 * If there is no annotation this method returns ``leftPanel`` if <code>isMany()</code> returns true and ``view`` otherwise.
+	 * @return typed element location. 
+	 * This implementation returns value of {@link RenderAnnotation}.TYPED_ELEMENT_LOCATION render annotation. 
+	 * If there is no annotation this method returns ``leftPanel`` for {@link EStructuralFeature}'s if <code>isMany()</code> returns true and ``view`` otherwise.
 	 */
-	default FeatureLocation getFeatureLocation(C context, EStructuralFeature structuralFeature) throws Exception {
-		String featureLocationAnnotation = getRenderAnnotation(context, structuralFeature, RenderAnnotation.FEATURE_LOCATION);
-		if (featureLocationAnnotation == null) {
-			return !(structuralFeature.getEType() instanceof EEnum) && structuralFeature.isMany() ? FeatureLocation.leftPanel : FeatureLocation.view;
+	default TypedElementLocation getTypedElementLocation(C context, ETypedElement typedElement) throws Exception {
+		String typedElementLocationAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.TYPED_ELEMENT_LOCATION);
+		if (typedElementLocationAnnotation == null) {
+			return !(typedElement.getEType() instanceof EEnum) && typedElement.isMany() && typedElement instanceof EStructuralFeature ? TypedElementLocation.leftPanel : TypedElementLocation.view;
 		}
-		return FeatureLocation.valueOf(featureLocationAnnotation);
+		return TypedElementLocation.valueOf(typedElementLocationAnnotation);
 	}
 	
 	/**
@@ -1831,7 +1886,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		featuresTable.col().bootstrap().grid().col(1);
 		featuresTable.col().bootstrap().grid().col(11);
 
-		List<EStructuralFeature> viewFeatures = getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.view);
+		List<EStructuralFeature> viewFeatures = getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.view);
 		// TODO - add support of inlined features. 
 		
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
@@ -1849,7 +1904,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
 					showActionButtons = true;
 				}
-				fRow.cell(renderFeatureView(context, obj, vf, showActionButtons, null, null));
+				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null));
 			} else {
 				List<EStructuralFeature> categoryFeatures = categories.get(category);
 				if (categoryFeatures == null) {
@@ -1882,7 +1937,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
 					showActionButtons = true;
 				}
-				fRow.cell(renderFeatureView(context, obj, vf, showActionButtons, null, null));
+				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null));
 			}
 			ret.content(htmlFactory.panel(Style.DEFAULT, categoriesIconsAndLabels.get(ce.getKey()), categoryFeaturesTable, null));
 		}
@@ -1905,7 +1960,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION) instanceof Map) {
 				@SuppressWarnings("unchecked")
 				Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-				if (!"left-panel".equals(spec.get("location")) && spec.get("feature") == null) {
+				Object location = spec.get("location");
+				if ((location == null || "view".equals(location)) && spec.get("feature") == null) {
 					ret.content(renderEOperationButton(context, obj, eOperation));
 				}				
 			}
@@ -1938,11 +1994,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			} else {
 				eOperationButton.style(Style.valueOf(style));				
 			}
-			Tag documentationIcon = renderDocumentationIcon(context, eOperation, docModal, false);
-			if (documentationIcon == null) {
-				ret.content(eOperationButton);
+			Button documentationButton = renderDocumentationButton(context, eOperation, docModal);
+			if (documentationButton == null) {
+				ret.content(eOperationButton.style().margin().right("5px"));
 			} else {
-				Button documentationButton = htmlFactory.button(documentationIcon);
+				documentationButton.style().margin().right("5px");
 				if (style == null) {
 					documentationButton.style(Style.INFO);
 				} else {
@@ -2250,13 +2306,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (isViewItem(context, obj)) {
 			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, featureDocModals));
 		}
-		for (EStructuralFeature vf: getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.item)) {
+		for (EStructuralFeature vf: getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.item)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 			Tag nameSpan = htmlFactory.span(renderNamedElementIconAndLabel(context, vf));
 			if (featureDocIcon != null) {
 				nameSpan.content(featureDocIcon);
 			}
-			ret.item(nameSpan, htmlFactory.div(renderFeatureView(context, obj, vf, true, null, null)).style().margin("3px"));
+			ret.item(nameSpan, htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, null, null)).style().margin("3px"));
 		}	
 		
 		// TODO - add support of inlined features.
@@ -2277,7 +2333,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		LinkGroup linkGroup = htmlFactory.linkGroup();
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
-		List<EStructuralFeature> leftPanelFeatures = getVisibleFeatures(context, obj, vf -> getFeatureLocation(context, vf) == FeatureLocation.leftPanel);
+		List<EStructuralFeature> leftPanelFeatures = getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.leftPanel);
 		if (leftPanelFeatures.isEmpty()) {
 			return null;
 		}
@@ -2315,22 +2371,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}	
 	
 	/**
-	 * Returns object to use for feature value sorting. This implementation uses {@link RenderAnnotation}.SORT annotation
+	 * Returns object to use for value sorting. This implementation uses {@link RenderAnnotation}.SORT annotation
 	 * to compute the value. It returns null if there is not annotation. 
 	 * @param context
 	 * @param obj
-	 * @param feature
-	 * @param featureValue
+	 * @param typedElement
+	 * @param value
 	 * @return
 	 * @throws Exception
 	 */
-	default Object getFeatureSortKey(C context, T obj, EStructuralFeature feature, Object featureValue) throws Exception {
-		String sortRenderAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.SORT);
+	default Object getTypedElementSortKey(C context, T obj, ETypedElement typedElement, Object value) throws Exception {
+		String sortRenderAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.SORT);
 		if (sortRenderAnnotation == null) {
-			sortRenderAnnotation = getRenderAnnotation(context, feature.getEType(), RenderAnnotation.SORT);
+			sortRenderAnnotation = getRenderAnnotation(context, typedElement.getEType(), RenderAnnotation.SORT);
 		}			
-		if (sortRenderAnnotation != null && featureValue instanceof CDOObject) {
-			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) featureValue);
+		if (sortRenderAnnotation != null && value instanceof CDOObject) {
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) value);
 			jxPathContext.getVariables().declareVariable("owner", obj);
 			return jxPathContext.getValue(sortRenderAnnotation);
 		}
@@ -2342,15 +2398,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * is present on the feature or the feature type. 
 	 * @param context
 	 * @param obj
-	 * @param feature
+	 * @param typedElement
 	 * @param featureValue
 	 * @return
 	 * @throws Exception
 	 */
-	default boolean isSortFeatureValues(C context, T obj, EStructuralFeature feature) throws Exception {		
-		String sortRenderAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.SORT);
+	default boolean isSortTypedElementValues(C context, T obj, ETypedElement typedElement) throws Exception {		
+		String sortRenderAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.SORT);
 		if (sortRenderAnnotation == null) {
-			sortRenderAnnotation = getRenderAnnotation(context, feature.getEType(), RenderAnnotation.SORT);
+			sortRenderAnnotation = getRenderAnnotation(context, typedElement.getEType(), RenderAnnotation.SORT);
 		}			
 		return sortRenderAnnotation != null;
 	}	
@@ -2368,7 +2424,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * If this annotation is not present, all visible single-value features are shown in the order of their declaration.
 	 * @param context
 	 * @param obj
-	 * @param feature
+	 * @param typedElement
 	 * @param showButtons if true, action buttons such as edit/delete/add/create/clear/select are shown if user is authorized to perform action.
 	 * @param filter Used for many-value features to filter, if not null.
 	 * @param If not null it is used for sorting, overrides annotation-defined sorting.
@@ -2376,17 +2432,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default Object renderFeatureView(C context, T obj, EStructuralFeature feature, boolean showActionButtons, Predicate<Object> filter, Comparator<Object> comparator) throws Exception {
+	default Object renderTypedElementView(C context, T obj, ETypedElement typedElement, Object typedElementValue, boolean showActionButtons, Predicate<Object> filter, Comparator<Object> comparator) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 		Map<String, Object> env = new HashMap<>();
-		env.put(NAME_KEY, feature.getName());
-		Object featureValue = obj.eGet(feature);
-		if (feature.isMany()) {
-			String viewAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.VIEW);
+		env.put(NAME_KEY, typedElement.getName());
+		if (typedElement.isMany()) {
+			String viewAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.VIEW);
 			boolean asTable = false;
-			if (feature instanceof EReference) {
-				boolean isView = getFeatureLocation(context, feature) == FeatureLocation.view;
+			if (EObject.class.isAssignableFrom(typedElement.getEType().getInstanceClass())) {
+				boolean isView = getTypedElementLocation(context, typedElement) == TypedElementLocation.view;
 				if (viewAnnotation == null) {
 					asTable = !isView;
 				} else {
@@ -2398,22 +2453,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 			
-			boolean isSort = comparator == null && isSortFeatureValues(context, obj, feature);					
+			boolean isSort = comparator == null && isSortTypedElementValues(context, obj, typedElement);					
 									
 			if (asTable) {
-				EClass refType = ((EReference) feature).getEReferenceType();
+				EClass refType = (EClass) typedElement.getEType();
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
 				// TODO - add support of inlined references.
-				Object viewFeaturesAnnotation = getYamlRenderAnnotation(context, feature, RenderAnnotation.VIEW_FEATURES);
+				Object viewFeaturesAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.VIEW_FEATURES);
 				if (viewFeaturesAnnotation == null) {
 					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
-						if (!sf.isMany() && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+						if (!sf.isMany() && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
 							tableFeatures.add(sf);
 						}
 					}
 				} else {
 					/**
-					 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference item table.
+					 * {@link EReference} or EOperation annotation listing reference elements {@link EStructuralFeature}s to show in a reference item table.
 					 * The value of this annotation can be one of the following:
 					 * 
 					 * * A space-separated list of feature names.
@@ -2441,7 +2496,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						for (String vf: ((String) viewFeaturesAnnotation).split("\\s+")) {
 							if (!CoreUtil.isBlank(vf)) {
 								EStructuralFeature sf = refType.getEStructuralFeature(vf.trim());
-								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+								if (sf != null && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
 									tableFeatures.add(sf);
 								}
 							}
@@ -2451,14 +2506,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						for (Object fe: (List<Object>) viewFeaturesAnnotation) {
 							if (fe instanceof String) {
 								EStructuralFeature sf = refType.getEStructuralFeature(((String) fe).trim());
-								if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+								if (sf != null && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
 									tableFeatures.add(sf);
 								}								
 							} else if (fe instanceof Map) {
 								// Should be a single-entry map
 								for (Entry<String, Object> fme: ((Map<String, Object>) fe).entrySet()) {
 									EStructuralFeature sf = refType.getEStructuralFeature(fme.getKey().trim());
-									if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+									if (sf != null && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
 										boolean visible = true;
 										if (fme.getValue() instanceof Map) {
 											Object vspec = ((Map<?,?>) fme.getValue()).get(RenderAnnotation.VISIBLE.literal);
@@ -2484,7 +2539,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					} else if (viewFeaturesAnnotation instanceof Map) {
 						for (Entry<String, Object> fme: ((Map<String, Object>) viewFeaturesAnnotation).entrySet()) {
 							EStructuralFeature sf = refType.getEStructuralFeature(fme.getKey().trim());
-							if (sf != null && context.authorizeRead(obj, feature.getName()+"/"+sf.getName(), null)) {
+							if (sf != null && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
 								boolean visible = true;
 								if (fme.getValue() instanceof Map) {
 									Object vspec = ((Map<?,?>) fme.getValue()).get(RenderAnnotation.VISIBLE.literal);
@@ -2538,7 +2593,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				Row headerRow = featureTable.header().row().style(Style.INFO);
-				String typeColumnAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.TYPE_COLUMN);
+				String typeColumnAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.TYPE_COLUMN);
 				if (!CoreUtil.isBlank(typeColumnAnnotation)) {
 					headerRow.header(getResourceString(context, "type"));					
 				}				
@@ -2582,8 +2637,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}				
 				
 				int pos = 0;
-				List<FeatureValueEntry<EObject>> featureValueEntries = new ArrayList<>();
-				FV: for (EObject fv: (Collection<EObject>) featureValue) {
+				List<ValueEntry<EObject>> typedElementValueEntries = new ArrayList<>();
+				FV: for (EObject fv: (Collection<EObject>) typedElementValue) {
 					if (context.authorize(fv, StandardAction.read, null, null)) {
 						// Testing readability of all single table features
 						for (EStructuralFeature tf: tableFeatures) {
@@ -2595,80 +2650,82 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							}
 						}
 						if (filter == null || filter.test(fv)) {
-							featureValueEntries.add(new FeatureValueEntry<EObject>(fv, pos++, isSort ? getFeatureSortKey(context, obj, feature, fv) : null));
+							typedElementValueEntries.add(new ValueEntry<EObject>(fv, pos++, isSort ? getTypedElementSortKey(context, obj, typedElement, fv) : null));
 						}
 					}
 				}
 				
 				if (comparator != null) {
-					Collections.sort(featureValueEntries, (e1, e2) -> comparator.compare(e1.value, e2.value));
+					Collections.sort(typedElementValueEntries, (e1, e2) -> comparator.compare(e1.value, e2.value));
 				} else if (isSort) {
-					Collections.sort(featureValueEntries);
+					Collections.sort(typedElementValueEntries);
 				}
 				
-				for (FeatureValueEntry<EObject> fve: featureValueEntries) {
+				for (ValueEntry<EObject> teve: typedElementValueEntries) {
 					Row vRow = featureTable.body().row();
 					if (!CoreUtil.isBlank(typeColumnAnnotation)) {
 						Map<String, Object> typeEnv = new HashMap<>();
-						Renderer<C, EObject> fvr = getRenderer(fve.value);
+						Renderer<C, EObject> tevr = getRenderer(teve.value);
 						
-						Object icon = fvr.renderIcon(context, fve.value);
+						Object icon = tevr.renderIcon(context, teve.value);
 						typeEnv.put("icon", icon == null ? "" : icon);
 						
-						EClass fvClass = fve.value.eClass();
-						Object eClassIcon = fvr.renderModelElementIcon(context, fvClass);
+						EClass fvClass = teve.value.eClass();
+						Object eClassIcon = tevr.renderModelElementIcon(context, fvClass);
 						typeEnv.put("eclass-icon", eClassIcon == null ? "" : eClassIcon);
 						
-						Object eClassLabel = fvr.renderNamedElementLabel(context, fvClass);
+						Object eClassLabel = tevr.renderNamedElementLabel(context, fvClass);
 						typeEnv.put("eclass-label", eClassLabel);
 						
-						Tag classDocIcon = fvr.renderDocumentationIcon(context, fvClass, null, true);		
+						Tag classDocIcon = tevr.renderDocumentationIcon(context, fvClass, null, true);		
 						typeEnv.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
 						
 						vRow.cell(htmlFactory.interpolate(typeColumnAnnotation, typeEnv));
 					}
 					
 					for (EStructuralFeature sf: uncategorizedTableFeatures) {
-						vRow.cell(getReferenceRenderer((EReference) feature, fve.value).renderFeatureView(context, fve.value, sf, false, null, null));						
+						vRow.cell(getReferenceRenderer((EReference) typedElement, teve.value).renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));						
 					}
 					for (List<EStructuralFeature> cv: categories.values()) {
 						for (EStructuralFeature sf: cv) {
-							vRow.cell(getReferenceRenderer((EReference) feature, fve.value).renderFeatureView(context, fve.value, sf, false, null, null));													
+							vRow.cell(getReferenceRenderer((EReference) typedElement, teve.value).renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));													
 						}						
 					}
 					Cell actionCell = vRow.cell().style().text().align().center();
-					actionCell.content(renderFeatureValueViewButton(context, obj, feature, fve.position, fve.value));
-					actionCell.content(renderFeatureValueDeleteButton(context, obj, feature, fve.position, fve.value));
+					actionCell.content(renderTypedElementValueViewButton(context, obj, typedElement, teve.position, teve.value));
+					actionCell.content(renderTypedElementValueDeleteButton(context, obj, typedElement, teve.position, teve.value));
 				}
 				
 				ret.content(featureTable);
-				ret.content(renderFeatureViewButtons(context, obj, feature));
+				if (typedElement instanceof EStructuralFeature) {
+					ret.content(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement));
+				}
 			} else {
 				Tag ul = htmlFactory.tag(TagName.ul);
-				List<Object> featureValues = new ArrayList<>();
-				for (Object fv: (Collection<Object>) featureValue) {
+				List<Object> typedElementValues = new ArrayList<>();
+				for (Object fv: (Collection<Object>) typedElementValue) {
 					if (context.authorize(fv, StandardAction.read, null, null)) {
-						featureValues.add(fv);
+						typedElementValues.add(fv);
 					}
 				}
-				if (featureValues.size() == 1) {
-					Object v = featureValues.iterator().next();
-					ret.content(renderTypedElementValue(context, feature, v));
-					if (feature instanceof EAttribute) {
+				if (typedElementValues.size() == 1) {
+					Object v = typedElementValues.iterator().next();
+					ret.content(renderTypedElementValue(context, typedElement, v));
+					if (typedElement instanceof EAttribute) {
 						if (showActionButtons) {
-							ret.content(renderFeatureValueEditButton(context, obj, feature, 0, v));
+							ret.content(renderFeatureValueEditButton(context, obj, (EAttribute) typedElement, 0, v));
 						}												
 					}
 					if (showActionButtons) {
-						ret.content(renderFeatureValueDeleteButton(context, obj, feature, 0, v));
+						ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, 0, v));
 					}
 					
-				} else if (!featureValues.isEmpty()) {
+				} else if (!typedElementValues.isEmpty()) {
 					int pos = 0;
-					List<FeatureValueEntry<Object>> featureValueEntries = new ArrayList<>();
-					for (Object fv: featureValues) {
+					List<ValueEntry<Object>> featureValueEntries = new ArrayList<>();
+					for (Object fv: typedElementValues) {
 						if (filter == null || filter.test(fv)) {
-							featureValueEntries.add(new FeatureValueEntry<Object>(fv, pos++, isSort ? getFeatureSortKey(context, obj, feature, fv) : null));
+							featureValueEntries.add(new ValueEntry<Object>(fv, pos++, isSort ? getTypedElementSortKey(context, obj, typedElement, fv) : null));
 						}
 					}
 					
@@ -2678,36 +2735,36 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						Collections.sort(featureValueEntries);
 					}
 					
-					for (FeatureValueEntry<Object> featureValueEntry: featureValueEntries) {
-						Fragment liFragment = ret.getFactory().fragment(renderTypedElementValue(context, feature, featureValueEntry.value));
-						if (feature instanceof EAttribute) {
+					for (ValueEntry<Object> featureValueEntry: featureValueEntries) {
+						Fragment liFragment = ret.getFactory().fragment(renderTypedElementValue(context, typedElement, featureValueEntry.value));
+						if (typedElement instanceof EAttribute) {
 							if (showActionButtons) {
-								liFragment.content(renderFeatureValueEditButton(context, obj, feature, featureValueEntry.position, featureValueEntry.value));
+								liFragment.content(renderFeatureValueEditButton(context, obj, (EAttribute) typedElement, featureValueEntry.position, featureValueEntry.value));
 							}												
 						}
 						if (showActionButtons) {
-							liFragment.content(renderFeatureValueDeleteButton(context, obj, feature, featureValueEntry.position, featureValueEntry.value));
+							liFragment.content(renderTypedElementValueDeleteButton(context, obj, typedElement, featureValueEntry.position, featureValueEntry.value));
 						}
 						ul.content(htmlFactory.tag(TagName.li, liFragment).style().margin().bottom("3px"));
 					}
 					ret.content(ul);
 				}
-				if (showActionButtons) { 
-					ret.content(renderFeatureViewButtons(context, obj, feature));							
+				if (showActionButtons && typedElement instanceof EStructuralFeature) { 
+					ret.content(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement));							
 				}
 			}
 		} else {
-			ret.content(renderTypedElementValue(context, feature, featureValue));
-			if (feature instanceof EReference) {
+			ret.content(renderTypedElementValue(context, typedElement, typedElementValue));
+			if (typedElement instanceof EReference) {
 				if (showActionButtons) {
-					if (((EReference) feature).isContainment()) {
-						ret.content(renderFeatureViewButtons(context, obj, feature));
-						if (featureValue != null) {
-							ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
+					if (((EReference) typedElement).isContainment()) {
+						ret.content(renderFeatureViewButtons(context, obj, (EReference) typedElement));
+						if (typedElementValue != null) {
+							ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, -1, typedElementValue));
 						}
 					} else {
-						ret.content(renderFeatureValueEditButton(context, obj, feature, -1, featureValue));
-						ret.content(renderFeatureValueDeleteButton(context, obj, feature, -1, featureValue));
+						ret.content(renderFeatureValueEditButton(context, obj, (EReference) typedElement, -1, typedElementValue));
+						ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, -1, typedElementValue));
 					}
 				}
 			}						
@@ -2865,25 +2922,26 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * Renders delete button for feature value.
 	 * @param context
 	 * @param obj
-	 * @param feature
+	 * @param typedElement
 	 * @param idx
 	 * @param value
 	 * @return
 	 * @throws Exception
 	 */
-	default Button renderFeatureValueDeleteButton(C context, T obj, EStructuralFeature feature, int idx, Object value) throws Exception {
+	default Button renderTypedElementValueDeleteButton(C context, T obj, ETypedElement typedElement, int idx, Object value) throws Exception {
 		boolean authorized;
-		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
+		boolean isDelete = typedElement instanceof EOperation || typedElement instanceof EReference && ((EReference) typedElement).isContainment();
+		if (value instanceof EObject && isDelete) {
 			// Deletion from the repository.
 			authorized = context.authorizeDelete(value, null, null); 
 		} else {
-			// Removal from feature.
-			authorized = context.authorizeDelete(obj, feature.getName(), null);
+			// Removal from the feature.
+			authorized = context.authorizeDelete(obj, typedElement.getName(), null);
 		}
 		if (authorized) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
-			env.put(NAME_KEY, Jsoup.parse(renderNamedElementLabel(context, feature).toString()).text());
+			env.put(NAME_KEY, Jsoup.parse(renderNamedElementLabel(context, typedElement).toString()).text());
 			env.put("element", value);
 			if (value instanceof EObject) {
 				Renderer<C, EObject> vr = getRenderer((EObject) value);
@@ -2898,7 +2956,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (idx == -1) {
 				tooltipResourceString = getResourceString(context, "clearTooltip");
 			} else {
-				tooltipResourceString = getResourceString(context, feature instanceof EReference && !((EReference) feature).isContainment() ? "removeTooltip" : "deleteTooltip");
+				tooltipResourceString = getResourceString(context, isDelete ? "deleteTooltip" : "removeTooltip");
 			}
 			String tooltip = htmlFactory.interpolate(tooltipResourceString, env);
 	
@@ -2908,7 +2966,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					.style().margin().left("5px")
 					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
-			wireFeatureValueDeleteButton(context, obj, feature, idx, value, deleteButton);
+			wireTypedElementValueDeleteButton(context, obj, typedElement, idx, value, deleteButton);
 			return deleteButton;
 		}
 		return null;
@@ -2916,13 +2974,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 
 	/**
 	 * Assigns an action to the button. This implementation adds onClick handler which navigates to delete page.
-	 * @param feature
+	 * @param typedElement
 	 * @param idx
 	 * @param editButton
 	 */
-	default void wireFeatureValueDeleteButton(C context, T obj, EStructuralFeature feature, int idx, Object value, Button deleteButton) throws Exception {
+	default void wireTypedElementValueDeleteButton(C context, T obj, ETypedElement typedElement, int idx, Object value, Button deleteButton) throws Exception {
 		Map<String, Object> env = new HashMap<>();
-		env.put(NAME_KEY, Jsoup.parse(renderNamedElementLabel(context, feature).toString()).text());
+		env.put(NAME_KEY, Jsoup.parse(renderNamedElementLabel(context, typedElement).toString()).text());
 		env.put("element", value);
 		if (value instanceof EObject) {
 			Renderer<C, EObject> vr = getRenderer((EObject) value);
@@ -2933,20 +2991,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		}
+		boolean isDelete = typedElement instanceof EOperation || typedElement instanceof EReference && ((EReference) typedElement).isContainment();
 		String confirmationResourceString;
 		if (idx == -1) {
 			confirmationResourceString = getResourceString(context, "confirmClear");
 		} else {
-			confirmationResourceString = getResourceString(context, feature instanceof EReference && !((EReference) feature).isContainment() ? "confirmRemove" : "confirmDelete");
+			confirmationResourceString = getResourceString(context, isDelete ? "confirmDelete" : "confirmRemove");
 		}
 		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(confirmationResourceString, env));
 		String deleteLocation;
-		if (value instanceof EObject && feature instanceof EReference && ((EReference) feature).isContainment()) {
-			deleteLocation = getReferenceRenderer((EReference) feature, (EObject) value).getObjectURI(context, (EObject) value)+"/delete.html";
+		if (value instanceof EObject && isDelete) {
+			deleteLocation = getReferenceRenderer((EReference) typedElement, (EObject) value).getObjectURI(context, (EObject) value)+"/delete.html";
 		} else if (idx == -1) {
-			deleteLocation = "feature/"+feature.getName()+"/delete.html";
+			deleteLocation = "feature/"+typedElement.getName()+"/delete.html";
 		} else {
-			deleteLocation = "feature/"+feature.getName()+"/"+idx+"/delete.html";			
+			deleteLocation = "feature/"+typedElement.getName()+"/"+idx+"/delete.html";			
 		}
 		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"')) window.location='"+deleteLocation+"';");
 	}
@@ -2992,18 +3051,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders button which navigates to feature value details page.
+	 * Renders button which navigates to the value details page.
 	 * @param context
-	 * @param feature
+	 * @param typedElement
 	 * @param idx Value index, shall be -1 for single-value features.
 	 * @return
 	 * @throws Exception
 	 */
-	default Button renderFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value) throws Exception {		
+	default Button renderTypedElementValueViewButton(C context, T obj, ETypedElement typedElement, int idx, EObject value) throws Exception {		
 		if (context.authorizeRead(value, null, null)) {
 			Map<String, Object> env = new HashMap<>();
-			if (feature instanceof EReference) {
-				env.put(NAME_KEY, getReferenceRenderer((EReference) feature, value).renderLabel(context, value));				
+			if (typedElement instanceof EReference) {
+				env.put(NAME_KEY, getReferenceRenderer((EReference) typedElement, value).renderLabel(context, value));				
 			} else {
 				env.put(NAME_KEY, getRenderer(value).renderLabel(context, value));
 			}
@@ -3014,7 +3073,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				.style().margin().left("5px")
 				.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
-			wireFeatureValueViewButton(context, obj, feature, idx, value, viewButton); 
+			wireTypedElementValueViewButton(context, obj, typedElement, idx, value, viewButton); 
 			return viewButton;
 		}
 		return null;
@@ -3022,13 +3081,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 
 	/**
 	 * Assigns an action to the button. This implementation adds onClick handler which navigates to the value object page.
-	 * @param feature
+	 * @param typedElement
 	 * @param idx
 	 * @param editButton
 	 * @throws Exception 
 	 */
-	default void wireFeatureValueViewButton(C context, T obj, EStructuralFeature feature, int idx, EObject value, Button viewButton) throws Exception {
-		viewButton.on(Event.click, "window.location='"+getReferenceRenderer((EReference) feature, (EObject) value).getObjectURI(context, (EObject) value)+"/index.html'");
+	default void wireTypedElementValueViewButton(C context, T obj, ETypedElement typedElement, int idx, EObject value, Button viewButton) throws Exception {
+		if (typedElement instanceof EReference) {
+			viewButton.on(Event.click, "window.location='"+getReferenceRenderer((EReference) typedElement, value).getObjectURI(context, value)+"/index.html'");
+		} else {
+			viewButton.on(Event.click, "window.location='"+getRenderer(value).getObjectURI(context, value)+"/index.html'");			
+		}
 	}
 	
 	// Forms rendering 
@@ -3045,7 +3108,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		for (EStructuralFeature vsf: getVisibleFeatures(context, obj, vf -> vf.isChangeable() && context.authorizeUpdate(obj, vf.getName(), null))) {
 			String eav = getRenderAnnotation(context, vsf, RenderAnnotation.EDITABLE);
 			if (CoreUtil.isBlank(eav)) {
-				if (getFeatureLocation(context, vsf) == FeatureLocation.view && !(vsf instanceof EReference && ((EReference) vsf).isContainment())) {
+				if (getTypedElementLocation(context, vsf) == TypedElementLocation.view && !(vsf instanceof EReference && ((EReference) vsf).isContainment())) {
 					ret.add(vsf);
 				}
 			} else if ("true".equals(eav)) {
@@ -3611,8 +3674,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					ret.add((EObject) next);
 				}
 			}
-		} else {
-			Iterator<?> cit = JXPathContext.newContext(obj).iterate(choicesSelector);
+		} else if (obj instanceof CDOObject) {
+			Iterator<?> cit = RenderUtil.newJXPathContext(context, (CDOObject) obj).iterate(choicesSelector);
 			while (cit.hasNext()) {
 				Object selection = cit.next();
 				if (reference.getEType().isInstance(selection) && context.authorize(selection, StandardAction.read, null, null)) {

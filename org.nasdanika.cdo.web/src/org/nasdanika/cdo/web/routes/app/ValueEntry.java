@@ -1,14 +1,14 @@
 package org.nasdanika.cdo.web.routes.app;
 
 /**
- * Helper class for sorting feature values.
+ * Helper class for sorting values.
  * @author Pavel Vlasov
  *
  * @param <V>
  */
-public class FeatureValueEntry<V> implements Comparable<FeatureValueEntry<V>> {
+public class ValueEntry<V> implements Comparable<ValueEntry<V>> {
 	
-	public FeatureValueEntry(V value, int position, Object sortValue) throws Exception {
+	public ValueEntry(V value, int position, Object sortValue) throws Exception {
 		this.value = value;
 		this.position = position;
 		this.sortValue = sortValue;
@@ -20,7 +20,7 @@ public class FeatureValueEntry<V> implements Comparable<FeatureValueEntry<V>> {
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	public int compareTo(FeatureValueEntry<V> o) {
+	public int compareTo(ValueEntry<V> o) {
 		Object sv = sortValue;					
 		Object osv = o.sortValue;
 		
