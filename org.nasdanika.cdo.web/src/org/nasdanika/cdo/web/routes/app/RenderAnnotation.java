@@ -251,8 +251,9 @@ public enum RenderAnnotation {
 		 * * ``header`` - Binds the parameter to a header with the same name as the parameter name.
 		 * * ``header: name`` - Binds the parameter to the named header.
 		 * * ``null`` - Binds parameter to ``null``.
-		 * * ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be {@link InputStream}, byte[], {@link Reader}, or String.
+		 * * ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be Part, {@link InputStream}, byte[], {@link Reader}, or String.
 		 * * ``part: name`` - Binds the parameter to the named part.
+		 * * ``part-file-name: name`` - Binds the parameter to the named part. Parameter type shall be String. This binding would typically be used with ``part`` binding to avoid introducing dependency on the servlet API in the model.
 		 * * ``path`` - Binds the parameter to a path parameter with the same name as the parameter name.
 		 * * ``path: name`` - Binds the parameter to the named path parameter.
 		 * * ``query`` - Binds the parameter to the query parameter with the same name as {@link EParameter}.

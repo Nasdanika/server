@@ -475,7 +475,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param breadCrumbs
 	 * @throws Exception
 	 */
-	default void renderFeaturePath(C context, T obj, EStructuralFeature feature, String action, Breadcrumbs breadCrumbs) throws Exception {
+	default void renderFeaturePath(C context, T obj, EStructuralFeature feature, Object action, Breadcrumbs breadCrumbs) throws Exception {
 		List<EObject> cPath = new ArrayList<EObject>();
 		if (!isObjectPathRoot(context, obj, obj)) {
 			for (EObject c = obj.eContainer(); c != null && context.authorize(c, StandardAction.read, null, null); c = c.eContainer()) {
@@ -2792,10 +2792,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Fragment renderFeatureViewButtons(C context, T obj, EStructuralFeature feature)	throws Exception {
-		Fragment ret = getHTMLFactory(context).fragment(renderFeatureAddButton(context, obj, feature));
-
-		// TODO feature view operations 
+	default Tag renderFeatureViewButtons(C context, T obj, EStructuralFeature feature)	throws Exception {
+		Tag ret = getHTMLFactory(context).div().style().margin("5px"); 
+		ret.content(renderFeatureAddButton(context, obj, feature));
+		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
+			Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+			if (yamlRenderAnnotation instanceof Map) {
+				@SuppressWarnings("unchecked")
+				Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
+				Object location = spec.get("location");
+				if ((location == null || "view".equals(location)) && feature.getName().equals(spec.get("feature"))) {
+					ret.content(renderEOperationButton(context, obj, eOperation));
+				}				
+			}
+		}
 		return ret;
 	}
 	
@@ -3262,11 +3272,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		String choiceTreeAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.CHOICE_TREE);
 		boolean isChoiceTreeReferenceNodes = "reference-nodes".equals(choiceTreeAnnotation);
-		boolean isChoiceTree = typedElement instanceof EReference && ("true".equals(choiceTreeAnnotation) || isChoiceTreeReferenceNodes); 
+		boolean isChoiceTree = EObject.class.isAssignableFrom(typedElement.getEType().getInstanceClass()) && ("true".equals(choiceTreeAnnotation) || isChoiceTreeReferenceNodes); 
 		List<EObject> choices = new ArrayList<>();
 		List<EObject> roots = new ArrayList<>();
 		if (isChoiceTree) {
-			choices.addAll(getReferenceChoices(context, obj, (EReference) typedElement));
+			choices.addAll(getEObjectTypedElementChoices(context, obj, typedElement));
 			roots.addAll(choices);
 			for (int i=0; i < roots.size() - 1; ++i) {
 				for (EObject eObj = roots.get(i); eObj != null; eObj = eObj.eContainer()) {
@@ -3656,11 +3666,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * This implementation evaluates selector read from ``choices-selector`` annotation, if it is present. The selector expression 
 	 * is evaluated with [Apache Commons JXPath](https://commons.apache.org/proper/commons-jxpath/index.html). 
 	 * 
-	 * If ``choices-selector`` annotation is not present, then this implementation finds all objects compatible with the reference type in the object's containing resource set. 
+	 * If ``choices-selector`` annotation is not present, then this implementation finds all objects compatible with the element's type in the object's containing resource set. 
 	 * 
 	 */
-	default Collection<EObject> getReferenceChoices(C context, T obj, EReference reference) throws Exception {
-		String choicesSelector = getRenderAnnotation(context, reference, RenderAnnotation.CHOICES_SELECTOR);
+	default Collection<EObject> getEObjectTypedElementChoices(C context, T obj, ETypedElement eObjectTypedElement) throws Exception {
+		String choicesSelector = getRenderAnnotation(context, eObjectTypedElement, RenderAnnotation.CHOICES_SELECTOR);
 		List<EObject> ret = new ArrayList<>(); 
 		if (choicesSelector == null) {
 			Resource eResource = obj.eResource();
@@ -3683,7 +3693,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			while (tit != null && tit.hasNext()) {
 				Notifier next = tit.next();
-				if (reference.getEType().isInstance(next) && context.authorize(next, StandardAction.read, null, null)) {
+				if (eObjectTypedElement.getEType().isInstance(next) && context.authorize(next, StandardAction.read, null, null)) {
 					ret.add((EObject) next);
 				}
 			}
@@ -3691,7 +3701,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Iterator<?> cit = RenderUtil.newJXPathContext(context, (CDOObject) obj).iterate(choicesSelector);
 			while (cit.hasNext()) {
 				Object selection = cit.next();
-				if (reference.getEType().isInstance(selection) && context.authorize(selection, StandardAction.read, null, null)) {
+				if (eObjectTypedElement.getEType().isInstance(selection) && context.authorize(selection, StandardAction.read, null, null)) {
 					ret.add((EObject) selection);
 				}
 			}
@@ -3716,13 +3726,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default Collection<Map.Entry<String, String>> getTypedElementChoices(C context, T obj, ETypedElement typedElement) throws Exception {
 		Map<String,String> collector = new LinkedHashMap<>();
 		
-		if (typedElement instanceof EReference) {
+		if (EObject.class.isAssignableFrom(typedElement.getEType().getInstanceClass())) {
 			// Accumulates selections for sorting before adding to the collector.
 			List<String[]> accumulator = new ArrayList<>(); 
-			for (EObject choice: getReferenceChoices(context, obj, (EReference) typedElement)) {
+			for (EObject choice: getEObjectTypedElementChoices(context, obj, typedElement)) {
 				if (choice instanceof CDOObject) {
 					CDOObject cdoNext = (CDOObject) choice;
-					Object iconAndLabel = getReferenceRenderer((EReference) typedElement, cdoNext).renderIconAndLabel(context, cdoNext);
+					Renderer<C, CDOObject> choiceRenderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, cdoNext) : getRenderer(cdoNext);
+					Object iconAndLabel = choiceRenderer.renderIconAndLabel(context, cdoNext);
 					if (iconAndLabel != null) {
 						accumulator.add(new String[] { CDOIDCodec.INSTANCE.encode(context, cdoNext.cdoID()), iconAndLabel.toString() });
 					}

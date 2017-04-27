@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
@@ -57,6 +58,7 @@ import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
+import org.nasdanika.html.Form.EncType;
 import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
@@ -1227,10 +1229,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (bindingSpec == null) {
 			bindingSpec = "form";
 		}
+		String contentType = context.getRequest().getContentType();
+		boolean isMultiPart = context.getMethod() == RequestMethod.POST && contentType != null && contentType.startsWith(Form.EncType.multipart.literal+";");
+		if (isMultiPart) {
+			String multipartConfigElementKey = "org.eclipse.jetty.multipartConfig";
+			if (context.getRequest().getAttribute(multipartConfigElementKey) == null) {
+				context.getRequest().setAttribute(multipartConfigElementKey, new MultipartConfigElement((String) null));
+			};	
+		}
 		if (bindingSpec instanceof String) {
 			switch ((String) bindingSpec) {
 			case "body":
-				if (WebMethodCommand.JSON_CONTENT_TYPE.equals(context.getRequest().getContentType())) {
+				if (WebMethodCommand.JSON_CONTENT_TYPE.equals(contentType)) {
 					if (parameterType == JSONArray.class) {
 						return new EParameterBinding(eParameter, new JSONArray(new JSONTokener(context.getRequest().getReader())));
 					}
@@ -1328,24 +1338,37 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, context.getRequest().getHeader((String) be.getValue())));					
 				case "part":
-					if (context.getMethod() == RequestMethod.POST && "multipart/form-data".equals(context.getRequest().getContentType())) {
-						if (!eParameter.isMany()) {
-							Part part = context.getRequest().getPart((String) be.getValue());
-							if (parameterType.isAssignableFrom(Part.class)) {
-								return new EParameterBinding(eParameter, part);
-							}
-							if (part == null) {
-								return new EParameterBinding(eParameter, part);
-							}
-							if (parameterType.isAssignableFrom(InputStream.class)) {
-								return new EParameterBinding(eParameter, part.getInputStream());
-							}
-							Object ret = context.convert(part.getInputStream(), parameterType);
-							if (ret != null) {
-								return new EParameterBinding(eParameter, ret);
+					if (isMultiPart) {
+						BasicEList<Object> partValues = ECollections.newBasicEList();
+						String partName = (String) be.getValue();
+						for (Part part: context.getRequest().getParts()) {
+							if (partName.equals(part.getName())) {
+								if (parameterType.isAssignableFrom(Part.class)) {
+									partValues.add(part);
+								} else if (parameterType.isAssignableFrom(InputStream.class)) {
+									partValues.add(part.getInputStream());
+								} else {
+									Object val = context.convert(part.getInputStream(), parameterType);
+									if (val == null) {
+										throw new IllegalArgumentException("Parameter type "+parameterType+" is not assignable from "+Part.class);
+									}
+									partValues.add(val);
+								}
 							}
 						}
-						throw new IllegalArgumentException("Parameter type "+parameterType+" is not assignable from "+Part.class);
+						return new EParameterBinding(eParameter, eParameter.isMany() ? partValues : partValues.isEmpty() ? null : partValues.get(0));
+					}
+					return new EParameterBinding(eParameter, null);
+				case "part-file-name":
+					if (isMultiPart) {
+						BasicEList<Object> partFileNames = ECollections.newBasicEList();
+						String partName = (String) be.getValue();
+						for (Part part: context.getRequest().getParts()) {
+							if (partName.equals(part.getName())) {
+								partFileNames.add(part.getSubmittedFileName());
+							}
+						}
+						return new EParameterBinding(eParameter, eParameter.isMany() ? partFileNames : partFileNames.isEmpty() ? null : partFileNames.get(0));
 					}
 					return new EParameterBinding(eParameter, null);
 				case "path":
@@ -1353,6 +1376,16 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				case "form":
 					if (context.getMethod() != RequestMethod.POST) {
 						return new EParameterBinding(eParameter, null);
+					}
+					if (isMultiPart) {
+						BasicEList<Object> parameterValues = ECollections.newBasicEList();
+						String partName = (String) be.getValue();
+						for (Part part: context.getRequest().getParts()) {
+							if (partName.equals(part.getName())) {
+								parameterValues.add(parseTypedElementValue((C) context, eParameter, CoreUtil.stringify(part.getInputStream())));
+							}
+						}
+						return new EParameterBinding(eParameter, eParameter.isMany() ? parameterValues : parameterValues.isEmpty() ? null : parameterValues.get(0));
 					}
 				case "query":
 					if (eParameter.isMany()) {
@@ -1428,6 +1461,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		T target = (T) context.getTarget();
 		
 		String methodName = (String) eOperationTarget.getSpec().get("method");
+		String featureName = (String) eOperationTarget.getSpec().get("feature");
+		EStructuralFeature operationFeature = featureName == null ? null : target.eClass().getEStructuralFeature(featureName);
 		
 		if (methodName == null) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -1445,7 +1480,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					// Render form
 					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 					String inputFormStr = "Input form"; // TODO - resource string
-					renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(inputFormStr).style().color().bootstrapColor(Color.INFO) , breadCrumbs);
+						
+					String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(inputFormStr).style().color().bootstrapColor(Color.INFO);
+					if (operationFeature == null) {
+						renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+					} else {
+						renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+					}
 					if (!breadCrumbs.isEmpty()) {
 						content.content(breadCrumbs);
 					}
@@ -1467,6 +1508,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						.novalidate(noValidate)
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);
+					
+					if (eOperationTarget.hasPartParameters()) {
+						inputForm.enctype(EncType.multipart);
+					}
 					
 					configureForm(inputForm, horizontalForm);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
@@ -1507,7 +1552,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						
 						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 						String invalidInputStr = "Invalid input"; // TODO - resource string
-						renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER) , breadCrumbs);
+						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER);
+						if (operationFeature == null) {
+							renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+						} else {
+							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+						}						
 						if (!breadCrumbs.isEmpty()) {
 							content.content(breadCrumbs);
 						}
@@ -1534,7 +1584,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							// Breadcrumbs
 							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 							String resultStr = "Result"; // TODO - resource string
-							renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS) , breadCrumbs);
+							String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
+							if (operationFeature == null) {
+								renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+							} else {
+								renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+							}						
 							if (!breadCrumbs.isEmpty()) {
 								content.content(breadCrumbs);
 							}
@@ -1552,7 +1607,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							// Breadcrumbs
 							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 							String errorStr = "Error"; // TODO - resource string
-							renderObjectPath(context, target, renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(errorStr).style().color().bootstrapColor(Color.DANGER) , breadCrumbs);
+							String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(errorStr).style().color().bootstrapColor(Color.DANGER);
+							if (operationFeature == null) {
+								renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+							} else {
+								renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+							}						
 							if (!breadCrumbs.isEmpty()) {
 								content.content(breadCrumbs);
 							}
@@ -1566,7 +1626,122 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 				}				
 			} else {
-				// POST
+				// POST - validate, re-render form if failure, invoke and render result or error if validation passed.
+				EList<EParameterBinding> bindings = ECollections.newBasicEList();
+				for (EParameter eParameter: eOperation.getEParameters()) {
+					bindings.add(eOperationTarget.bind(context, pathParameters, eParameter));
+				}
+				Map<String, Object> args = new HashMap<>();
+				for (EParameterBinding binding: bindings) {
+					args.put(binding.getEParameter().getName(), binding.getValue());
+				}
+				@SuppressWarnings("unchecked")
+				Diagnostic diagnostic = validate(context, (T) context.getTarget(), eOperation, args);
+				if (diagnostic.getSeverity() == Diagnostic.ERROR) {
+					ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+						
+						@Override
+						protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+							return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? eOperation : namedElement), key, true);
+						}
+						
+					};
+					
+					for (Diagnostic dc: diagnostic.getChildren()) {
+						diagnosticConsumer.accept(dc);
+					}
+					
+					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+					String invalidInputStr = "Invalid input"; // TODO - resource string
+					String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER);
+					if (operationFeature == null) {
+						renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+					} else {
+						renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+					}						
+					if (!breadCrumbs.isEmpty()) {
+						content.content(breadCrumbs);
+					}
+							
+					Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+					content.content(objectHeader);							
+					
+					content.content(htmlFactory.tag(TagName.h4, invalidInputStr).style().color().bootstrapColor(Color.DANGER)); 
+					
+					boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.HORIZONTAL_FORM));
+					boolean noValidate = "true".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.NO_VALIDATE));
+					Map<EParameter, Object> formParameters = new LinkedHashMap<EParameter, Object>();
+					for (EParameter eParameter: eOperation.getEParameters()) {
+						if (eOperationTarget.isFormParameter(eParameter)) {
+							formParameters.put(eParameter, args.get(eParameter.getName()));
+						}
+					}
+					Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm)
+						.novalidate(noValidate)
+						.action(context.getRequest().getRequestURL())
+						.method(Method.post);
+					
+					if (eOperationTarget.hasPartParameters()) {
+						inputForm.enctype(EncType.multipart);
+					}
+					
+					configureForm(inputForm, horizontalForm);
+					Tag buttonBar = htmlFactory.div().style().text().align().right();
+					
+					Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
+					executeButton.type(org.nasdanika.html.Button.Type.SUBMIT);
+					buttonBar.content(executeButton.style().margin().right("5px"));
+					
+					buttonBar.content(renderCancelButton(context, target));
+					inputForm.content(buttonBar);
+					
+					content.content(inputForm);					
+				} else {
+					try {
+						Object result = eOperationTarget.invoke(context, bindings);				
+						// Breadcrumbs
+						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+						String resultStr = "Result"; // TODO - resource string
+						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
+						if (operationFeature == null) {
+							renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+						} else {
+							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+						}						
+						if (!breadCrumbs.isEmpty()) {
+							content.content(breadCrumbs);
+						}
+								
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+						content.content(objectHeader);							
+						
+						if (result == null) {
+							content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
+						} else {
+							content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
+							content.content(renderTypedElementValue(context, eOperation, result));					
+						}
+					} catch (Exception e) {
+						// Breadcrumbs
+						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+						String errorStr = "Error"; // TODO - resource string
+						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(errorStr).style().color().bootstrapColor(Color.DANGER);
+						if (operationFeature == null) {
+							renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+						} else {
+							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+						}						
+						if (!breadCrumbs.isEmpty()) {
+							content.content(breadCrumbs);
+						}
+								
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+						content.content(objectHeader);							
+						
+						content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER)); 
+						content.content(htmlFactory.alert(Style.DANGER, false, e.toString()));
+					}
+				}								
 			}
 						
 			return renderPage(context, target, title, content);					

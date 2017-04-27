@@ -49,6 +49,22 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 		return false;
 	}
 	
+	public boolean hasPartParameters() {
+		for (Object binding: parameterBindings.values()) {
+			if ("part".equals(binding)) {
+				return true;
+			}
+			if (binding instanceof Map) {
+				for (Object key: ((Map<?,?>) binding).keySet()) {
+					if ("part".equals(key)) {
+						return true;
+					}					
+				}
+			}
+		}
+		return false;
+	}
+			
 	public boolean isFormParameter(EParameter eParameter) {
 		Object binding = parameterBindings.get(eParameter);
 		if (binding == null) {
