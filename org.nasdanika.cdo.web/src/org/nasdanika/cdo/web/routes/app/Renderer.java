@@ -353,7 +353,94 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default String getRenderAnnotation(C context, EModelElement modelElement, RenderAnnotation renderAnnotation) throws Exception {
 		return getRenderAnnotation(context, modelElement, renderAnnotation.literal);
-	}	
+	}
+	
+	/**
+	 * Returns true if ``visible`` annotation is absent, its value is ``true``, or its value is not ``false``
+	 * , obj is and instance of {@link CDOObject} and the value is an XPath expression evaluating to ``true``.
+	 * is evaluated as 
+	 * @param context
+	 * @param obj
+	 * @param modelElement
+	 * @return
+	 * @throws Exception 
+	 */
+	default boolean isVisible(C context, T obj, EModelElement modelElement) throws Exception {
+		String visibleRenderAnnotation = getRenderAnnotation(context, modelElement, RenderAnnotation.VISIBLE);
+		if (CoreUtil.isBlank(visibleRenderAnnotation) || "true".equals(visibleRenderAnnotation)) {
+			return true;
+		} 
+		
+		if ("false".equals(visibleRenderAnnotation)) {
+			return false;
+		}
+		
+		if (obj instanceof CDOObject) {
+			// XPath
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+			return Boolean.TRUE.equals(jxPathContext.getValue(visibleRenderAnnotation, Boolean.class));
+		}	
+		
+		return true;
+	}
+
+	/**
+	 * Returns true if ``editable`` annotation is absent, its value is ``true``, or its value is not ``false``
+	 * , obj is and instance of {@link CDOObject} and the value is an XPath expression evaluating to ``true``.
+	 * is evaluated as 
+	 * @param context
+	 * @param obj
+	 * @param modelElement
+	 * @return
+	 * @throws Exception 
+	 */
+	default boolean isEditable(C context, T obj, EModelElement modelElement) throws Exception {
+		String editableRenderAnnotation = getRenderAnnotation(context, modelElement, RenderAnnotation.EDITABLE);
+		if (CoreUtil.isBlank(editableRenderAnnotation) || "true".equals(editableRenderAnnotation)) {
+			return true;
+		} 
+		
+		if ("false".equals(editableRenderAnnotation)) {
+			return false;
+		}
+		
+		if (obj instanceof CDOObject) {
+			// XPath
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+			return Boolean.TRUE.equals(jxPathContext.getValue(editableRenderAnnotation, Boolean.class));
+		}	
+		
+		return true;		
+	}
+
+	/**
+	 * Returns true if ``deletable`` annotation is absent, its value is ``true``, or its value is not ``false``
+	 * , obj is and instance of {@link CDOObject} and the value is an XPath expression evaluating to ``true``.
+	 * is evaluated as 
+	 * @param context
+	 * @param obj
+	 * @param modelElement
+	 * @return
+	 * @throws Exception 
+	 */
+	default boolean isDeletable(C context, T obj, EModelElement modelElement) throws Exception {
+		String editableRenderAnnotation = getRenderAnnotation(context, modelElement, RenderAnnotation.DELETABLE);
+		if (CoreUtil.isBlank(editableRenderAnnotation) || "true".equals(editableRenderAnnotation)) {
+			return true;
+		} 
+		
+		if ("false".equals(editableRenderAnnotation)) {
+			return false;
+		}
+		
+		if (obj instanceof CDOObject) {
+			// XPath
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+			return Boolean.TRUE.equals(jxPathContext.getValue(editableRenderAnnotation, Boolean.class));
+		}	
+		
+		return true;		
+	}
 	
 	/**
 	 * Parses result of getRenderAnnotation() as {@link Yaml}.
@@ -404,15 +491,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						continue; // Single reference with unreadable value.
 					}
 				}
-				String visibleRenderAnnotation = getRenderAnnotation(context, sf, RenderAnnotation.VISIBLE);
-				if (CoreUtil.isBlank(visibleRenderAnnotation) || "true".equals(visibleRenderAnnotation)) {
+				if (isVisible(context, obj, obj.eClass())) {
 					ret.add(sf);
-				} else if (!"false".equals(visibleRenderAnnotation) && obj instanceof CDOObject) {
-					// XPath
-					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
-					if (Boolean.TRUE.equals(jxPathContext.getValue(visibleRenderAnnotation, Boolean.class))) {
-						ret.add(sf);
-					}
 				}
 			}
 		}
@@ -1008,8 +1088,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		if (modelElement instanceof EStructuralFeature) {
-			return getModelElementIcon(context, ((EStructuralFeature) modelElement).getEType());
+		if (modelElement instanceof ETypedElement) {
+			EClassifier eType = ((ETypedElement) modelElement).getEType();
+			return (eType instanceof EClass ? getRenderer((EClass) eType) : this).getModelElementIcon(context, eType);
 		}
 		
 		return null;
@@ -1973,15 +2054,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				@SuppressWarnings("unchecked")
 				Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 				Object location = spec.get("location");
-				if ((location == null || "view".equals(location)) && spec.get("feature") == null) {
-					ret.content(renderEOperationButton(context, obj, eOperation));
+				if ((location == null || "view".equals(location)) && spec.get("feature") == null && spec.get("feature-value") == null) {
+					ret.content(renderEOperationButton(context, obj, eOperation, null));
 				}				
 			}
 		}
 		return ret;
 	}
 	
-	default Fragment renderEOperationButton(C context, T obj, EOperation eOperation) throws Exception {
+	default Fragment renderEOperationButton(C context, T obj, EOperation eOperation, String query) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 		String action = (String) spec.get("action");
@@ -2024,6 +2105,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				path = eOperation.getName();
 			}
 			
+			if (!CoreUtil.isBlank(query)) {
+				path += "?" + query;
+			}
+			
 			eOperationButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+path+"';");					
 			return ret;
 		}
@@ -2038,7 +2123,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Button renderEditButton(C context, T obj) throws Exception {
-		if (context.authorizeUpdate(obj, null, null)) {
+		if (isEditable(context, obj, obj.eClass()) && context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button editButton = htmlFactory.button(renderEditIcon(context).style().margin().right("5px"), getResourceString(context, "edit")).style(Style.PRIMARY);
 			wireEditButton(context, obj, editButton);
@@ -2236,7 +2321,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Button renderDeleteButton(C context, T obj) throws Exception {
-		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null)) {
+		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isDeletable(context, obj, obj.eContainingFeature())) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete")).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
@@ -2703,14 +2788,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							vRow.cell(getReferenceRenderer((EReference) typedElement, teve.value).renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));													
 						}						
 					}
-					Cell actionCell = vRow.cell().style().text().align().center();
-					actionCell.content(renderTypedElementValueViewButton(context, obj, typedElement, teve.position, teve.value));
-					actionCell.content(renderTypedElementValueDeleteButton(context, obj, typedElement, teve.position, teve.value));
+					Cell actionCell = vRow.cell().style().text().align().center();					
+					actionCell.content(renderTypedElementValueButtons(context, obj, typedElement, teve.position, teve.value));
 				}
 				
 				ret.content(featureTable);
 				if (typedElement instanceof EStructuralFeature) {
-					ret.content(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement));
+					ret.content(htmlFactory.div(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).style().margin("5px"));
 				}
 			} else {
 				Tag ul = htmlFactory.tag(TagName.ul);
@@ -2729,7 +2813,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}												
 					}
 					if (showActionButtons) {
-						ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, 0, v));
+						ret.content(renderTypedElementValueButtons(context, obj, typedElement, 0, v));
 					}
 					
 				} else if (!typedElementValues.isEmpty()) {
@@ -2755,7 +2839,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							}												
 						}
 						if (showActionButtons) {
-							liFragment.content(renderTypedElementValueDeleteButton(context, obj, typedElement, featureValueEntry.position, featureValueEntry.value));
+							liFragment.content(renderTypedElementValueButtons(context, obj, typedElement, featureValueEntry.position, featureValueEntry.value));
 						}
 						ul.content(htmlFactory.tag(TagName.li, liFragment).style().margin().bottom("3px"));
 					}
@@ -2767,18 +2851,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		} else {
 			ret.content(renderTypedElementValue(context, typedElement, typedElementValue));
-			if (typedElement instanceof EReference) {
-				if (showActionButtons) {
-					if (((EReference) typedElement).isContainment()) {
-						ret.content(renderFeatureViewButtons(context, obj, (EReference) typedElement));
-						if (typedElementValue != null) {
-							ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, -1, typedElementValue));
-						}
-					} else {
-						ret.content(renderFeatureValueEditButton(context, obj, (EReference) typedElement, -1, typedElementValue));
-						ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, -1, typedElementValue));
-					}
-				}
+			if (showActionButtons) {
+				ret.content(renderTypedElementValueButtons(context, obj, (EReference) typedElement, -1, typedElementValue));
 			}						
 		}
 		return ret;
@@ -2792,8 +2866,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Tag renderFeatureViewButtons(C context, T obj, EStructuralFeature feature)	throws Exception {
-		Tag ret = getHTMLFactory(context).div().style().margin("5px"); 
+	default Object renderFeatureViewButtons(C context, T obj, EStructuralFeature feature)	throws Exception {
+		Fragment ret = getHTMLFactory(context).fragment(); 
 		ret.content(renderFeatureAddButton(context, obj, feature));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
 			Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
@@ -2802,7 +2876,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
 				Object location = spec.get("location");
 				if ((location == null || "view".equals(location)) && feature.getName().equals(spec.get("feature"))) {
-					ret.content(renderEOperationButton(context, obj, eOperation));
+					ret.content(renderEOperationButton(context, obj, eOperation, "feature="+feature.getName()));
 				}				
 			}
 		}
@@ -2818,7 +2892,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Button renderFeatureAddButton(C context, T obj, EStructuralFeature feature)	throws Exception {
-		if (context.authorizeCreate(obj, feature.getName(), null)) { // Adding to a reference is considered create.
+		if (feature.isChangeable() && isEditable(context, obj, feature) && context.authorizeCreate(obj, feature.getName(), null)) { // Adding to a reference is considered create.
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, feature.getName());
@@ -2952,6 +3026,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default Button renderTypedElementValueDeleteButton(C context, T obj, ETypedElement typedElement, int idx, Object value) throws Exception {
 		boolean authorized;
+		if (typedElement instanceof EStructuralFeature && !(((EStructuralFeature) typedElement).isChangeable() && isDeletable(context, obj, typedElement))) {
+			return null;
+		}
 		boolean isDelete = typedElement instanceof EOperation || typedElement instanceof EReference && ((EReference) typedElement).isContainment();
 		if (value instanceof EObject && isDelete) {
 			// Deletion from the repository.
@@ -3072,6 +3149,63 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 	}
 	
+	
+	default Object renderTypedElementValueButtons(C context, T obj, ETypedElement typedElement, int idx, Object value) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();
+
+		if (value instanceof EObject) {
+			ret.content(renderTypedElementValueViewButton(context, obj, typedElement, idx, (EObject) value));
+		}
+		if (value != null) {
+			ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, idx, value));
+		}
+		if (typedElement instanceof EStructuralFeature) {
+			// ??? - ret.content(renderFeatureViewButtons(context, obj, (EReference) typedElement));
+			for (EOperation eOperation: obj.eClass().getEAllOperations()) {
+				Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+				if (yamlRenderAnnotation instanceof Map) {
+					@SuppressWarnings("unchecked")
+					Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
+					Object location = spec.get("location");
+					if ((location == null || "view".equals(location)) && typedElement.getName().equals(spec.get("feature-value"))) {
+						StringBuilder queryBuilder = new StringBuilder("feature=").append(typedElement.getName());					
+						if (idx != -1) {
+							queryBuilder.append("&").append("position=").append(idx);
+						}
+						if (value instanceof CDOObject) {
+							queryBuilder.append("&").append("element=").append(getFormControlValue(context, obj, typedElement, value));
+						}
+						
+						ret.content(renderEOperationButton(context, obj, eOperation, queryBuilder.toString()));
+					}				
+				}
+			}
+		}
+				
+//		if (typedElement instanceof EReference) {
+//			if (((EReference) typedElement).isContainment()) {
+//				ret.content(renderFeatureViewButtons(context, obj, (EReference) typedElement));
+//				if (value != null) {
+//					ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, -1, value));
+//				}
+//			} else {
+//				ret.content(renderFeatureValueEditButton(context, obj, (EReference) typedElement, -1, value));
+//				ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, -1, value));
+//			}
+//		} else {
+//			if (value instanceof EObject) {
+//				ret.content(renderTypedElementValueViewButton(context, obj, typedElement, idx, (EObject) value));
+//			}
+//			if (value != null) {
+//				ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, idx, value));
+//			}			
+//		}		
+				
+		return ret;
+	}
+	
+	
 	/**
 	 * Renders button which navigates to the value details page.
 	 * @param context
@@ -3133,14 +3267,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (getTypedElementLocation(context, vsf) == TypedElementLocation.view && !(vsf instanceof EReference && ((EReference) vsf).isContainment())) {
 					ret.add(vsf);
 				}
-			} else if ("true".equals(eav)) {
+			} else if (isEditable(context, obj, vsf)) {
 				ret.add(vsf);
-			} else if (!"false".equals(eav) && obj instanceof CDOObject) {
-				// XPath
-				JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
-				if (Boolean.TRUE.equals(jxPathContext.getValue(eav, Boolean.class))) {
-					ret.add(vsf);
-				}
 			}
 		}
 		return ret;

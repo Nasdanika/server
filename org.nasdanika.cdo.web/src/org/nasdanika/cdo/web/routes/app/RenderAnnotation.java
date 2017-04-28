@@ -32,14 +32,24 @@ public enum RenderAnnotation {
 		VISIBLE("visible"),
 
 		/**
-		 * {@link EStructuralFeature} annotation defining whether a visible feature is editable, i.e. shall be displayed in the edit form. A feature might be editable, but disabled.
+		 * {@link EStructuralFeature} or {@link EClass} annotation defining whether a visible feature or object is editable, i.e. shall be displayed in the edit form or an edit button shall be displayed. A feature might be editable, but disabled.
 		 * The value of this annotation can be one of the following:
 		 * 
-		 *   * ``true`` boolean literal or empty string - the feature is visible (default).
-		 *   * ``false`` boolean literal - the feature is hidden.
+		 *   * ``true`` boolean literal or empty string - the feature is editable (default).
+		 *   * ``false`` boolean literal - the feature not editable.
 		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is editable.
 		 */
 		EDITABLE("editable"),
+		
+		/**
+		 * {@link EStructuralFeature} annotation defining whether elements can be deleted from the feature, i.e. delete or clear buttons shall be shown next to the element values. 
+		 * The value of this annotation can be one of the following:
+		 * 
+		 *   * ``true`` boolean literal or empty string - the feature is deletable (default).
+		 *   * ``false`` boolean literal - the feature is not deletables.
+		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is deletable.
+		 */
+		DELETABLE("deletable"),
 		
 		/**
 		 * {@link EStructuralFeature} annotation defining whether an editable feature is disabled, i.e. it shall be displayed in the edit form, but the edit control shall be disabled.
@@ -220,7 +230,8 @@ public enum RenderAnnotation {
 		 * * ``action`` - Security action. Defaults to {@link AuthorizationProvider.StandardAction}.execute.
 		 * * ``confirm`` - If set to ``true``, then click on the button shows a confirmation message before executing the operation.
 		 * * ``consumes`` - Single value or a list or content types which this web operation can consume.
-		 * * ``feature`` - Feature to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature view instead of the object view.
+		 * * ``feature`` - Feature name to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature view instead of the object view. Feature name is passed to the eOperation as ``feature`` query parameter.
+		 * * ``feature-value`` - Feature name to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature value element instead of the object view. Feature name is passed to the eOperation as ``feature`` query parameter. Element CDO ID is passed to the eOperation as ``element`` query parameter and its position as ``position`` parameter.
 		 * * ``lock`` - Lock to apply on the repository in order to execute the operation 
 		 *     * ``path`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) path of the object to apply the lock to. If not set, the lock is applied to the target object.
 		 *     * ``type`` - Lock type, one of ``none``, ``read``, ``write``, or ``imply-from-http-method`` (default). ``imply-from-http-method`` implies ``write`` for ``DELETE``, ``PATCH``, ``POST``, and ``PUT`` and ``read`` otherwise.
