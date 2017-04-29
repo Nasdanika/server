@@ -742,9 +742,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String ra = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.ICON);
 		if (ra != null) {
 			boolean[] hasTokenExpansionFailures = { false };
+			String objectURI = getObjectURI(context, obj);
 			TokenSource contextPathTokenSource = token -> {
 				if ("context-path".equals(token) && context instanceof HttpServletRequestContext) {
 					return ((HttpServletRequestContext) context).getRequest().getContextPath();
+				}
+				if ("object-uri".equals(token)) {
+					return objectURI;
 				}
 				return null;
 			};
@@ -1066,9 +1070,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String ra = getRenderAnnotation(context, modelElement, RenderAnnotation.ICON);
 		if (ra != null) {
 			boolean[] hasTokenExpansionFailures = { false };
+			@SuppressWarnings("unchecked")
+			String objectURI = context instanceof HttpServletRequestContext ? getObjectURI(context, (T) ((HttpServletRequestContext) context).getTarget()) : null;				
 			TokenSource contextPathTokenSource = token -> {
 				if ("context-path".equals(token) && context instanceof HttpServletRequestContext) {
 					return ((HttpServletRequestContext) context).getRequest().getContextPath();
+				}
+				if ("object-uri".equals(token)) {
+					return objectURI;
 				}
 				return null;
 			};
