@@ -112,6 +112,11 @@ import org.osgi.framework.ServiceReference;
 		bundle="org.nasdanika.web.resources", 
 		path="resources/", 
 		comment="Web resources")
+@Resource(
+		value="/", 
+		bundle="org.nasdanika.icons", 
+		path="icons/", 
+		comment="Icons library")
 public class Route<C extends HttpServletRequestContext, T extends EObject> extends EDispatchingRoute implements Renderer<C, T> {
 
 
