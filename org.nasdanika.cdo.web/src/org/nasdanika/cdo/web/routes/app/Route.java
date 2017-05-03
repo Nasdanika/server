@@ -484,6 +484,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	@RouteMethod(
 			value = { RequestMethod.GET, RequestMethod.POST }, 
 			path = "feature/{feature}/create/{epackage}/{eclass}",
+			action = "create",
 			qualifier = "{feature}",
 			produces = "text/html",
 			lock = @RouteMethod.Lock(type = Type.WRITE), 
@@ -526,23 +527,23 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							target.eSet(tsf, instance);
 						}					
 						
-						if (context.getMethod() == RequestMethod.POST) {			
-							if (renderer.setEditableFeatures(context, instance, diagnosticConsumer)) {							
-								// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
-								if (context instanceof HttpServletRequestContext) {
-									String referrer = referrerParameter;
-									if (referrer == null) {
-										referrer = referrerHeader;
-									}
-									if (referrer == null) {
-										referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
-									}
-									((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
-									return Action.NOP;
+						// Set for GET from query parameters and for POST from form inputs. Display validation results only for POST.
+						boolean setSuccessful = renderer.setEditableFeatures(context, instance, diagnosticConsumer);
+						if (context.getMethod() == RequestMethod.POST && setSuccessful) {			
+							// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
+							if (context instanceof HttpServletRequestContext) {
+								String referrer = referrerParameter;
+								if (referrer == null) {
+									referrer = referrerHeader;
 								}
-								
-								return "Update successful";
+								if (referrer == null) {
+									referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+								}
+								((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+								return Action.NOP;
 							}
+							
+							return "Update successful";
 						} 
 						
 						// Rollback transaction to remove the instance.
