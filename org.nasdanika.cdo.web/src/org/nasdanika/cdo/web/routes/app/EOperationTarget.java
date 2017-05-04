@@ -33,12 +33,22 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 	private Map<String, Object> spec;
 	private Map<EParameter, Object> parameterBindings;
 	private Route<C, T> route;
+	private String path;
 
 	public EOperationTarget(Route<C,T> route, EOperation eOperation, Map<String, Object> spec, Map<EParameter, Object> parameterBindings) {
 		this.route = route;
 		this.eOperation = eOperation;
 		this.spec = spec;
 		this.parameterBindings = parameterBindings;
+		String path = (String) spec.get("path");
+		if (path == null) {
+			path = eOperation.getName();
+//			for (EParameter eParameter: eOperation.getEParameters()) {
+//				path += "-" + eParameter.getEType().getInstanceTypeName();
+//			}
+		}
+		
+		this.path = path;
 	}
 	
 	public boolean hasFormParameters() {
@@ -106,8 +116,7 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 
 	@Override
 	public String getPath() {
-		String path = (String) spec.get("path");
-		return path == null ? eOperation.getName() : path;
+		return path;
 	}
 
 	@Override
