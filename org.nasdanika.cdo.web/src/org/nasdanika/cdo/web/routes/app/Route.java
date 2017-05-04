@@ -518,6 +518,14 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? eClass : namedElement), key, true);
 							}
 							
+							@Override
+							public void accept(Diagnostic diagnostic) {
+								// Ignore in GET
+								if (context.getMethod() == RequestMethod.POST) {
+									super.accept(diagnostic);
+								}
+							}
+							
 						};
 						
 						// Adding the new instance to the object graph for selectors to work. 

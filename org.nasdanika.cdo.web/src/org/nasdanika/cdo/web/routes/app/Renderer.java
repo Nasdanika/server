@@ -4278,12 +4278,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (vc.getSeverity() == Diagnostic.ERROR) {
 					noErrors = false;
 				}
+				
+				if (diagnosticConsumer != null) {
+					diagnosticConsumer.accept(vc);
+				}
 			}
-			
-			if (diagnosticConsumer != null) {
-				diagnosticConsumer.accept(vc);
-			}
-
 		}
 		return noErrors;
 	}
