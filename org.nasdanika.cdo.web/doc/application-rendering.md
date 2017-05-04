@@ -7,7 +7,12 @@ the time of this writing.
 
 ## Overview
 
-The core concept of the approach described here is that Web UI can be rendered using metadata of the model elements such as [EClass](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EClass.html), [EAttribute](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EAttribute.html), and [EReference](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EReference.html). 
+The core concept of the approach described here is that Web UI can be rendered using metadata of the model elements such as
+[EClass](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EClass.html),
+[EAttribute](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EAttribute.html),
+[EReference](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EReference.html),
+[EOperation](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EOperation.html),
+and [EParameter](http://download.eclipse.org/modeling/emf/emf/javadoc/2.11/org/eclipse/emf/ecore/EParameter.html). 
 
 Rendering is performed by the Renderer interface with default method implementations or by its sub-interfaces. Renderers shall be registered with ``org.nasdanika.cdo.web.renderer`` extension point in order to be discoverable by ``Renderer.getRenderer()`` methods.
 
@@ -75,7 +80,7 @@ The way the Web UI is rendered can be customized in several ways, one of them be
 On the one hand it mixes the domain and the UI concerns, but on the other it allows to keep all things in one place - the model. 
 This approach might be handy if the model developer is also responsible for the model UI so they have an idea how a particular model element shall appear in the UI.
 
-The up-to date list of supported render annotations can be found in [RenderAnnotation](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/org/nasdanika/cdo/web/routes/app/Renderer.RenderAnnotation.html) enum. Check the [source code](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/src-html/org/nasdanika/cdo/web/routes/app/Renderer.html#line.136) for literals to use in the model annotations.
+The up-to date list of supported render annotations can be found in [RenderAnnotation](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/org/nasdanika/cdo/web/routes/app/Renderer.RenderAnnotation.html) enum. Check the [source code](http://www.nasdanika.org/server/apidocs/org.nasdanika.cdo.web/apidocs/src-html/org/nasdanika/cdo/web/routes/app/RenderAnnotation.html) for literals to use in the model annotations.
 
 Below is a list of render annotations with short descriptions grouped by the model element type:
 
@@ -85,40 +90,49 @@ Below is a list of render annotations with short descriptions grouped by the mod
     * ``icon`` - defines model element icon. If icon annotation contains ``/`` it is treated as URL, otherwise it is treated as css class, e.g. Bootstrap's ``glyphicon glyphicon-close``. 
     * ``model-element-label`` - used to customize a model element label.
     * ``sort`` - XPath expression to use for sorting of items in tables and lists.
+* ENamedElement
+    * ``category`` - element category. Categories are displayed as panels in the view and field sets in edit forms.    
+* ETypedElement (e.g. EStructuralFeature, EParameter, EOperation)
+    * ``choices`` - a YAML map of values to labels or a list if values and labels are the same.
+    * ``choices-selector`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference or EParameter which type is a subtype of EObject.
+    * ``control`` - defines edit form control type - ``input``, ``select``, or ``textarea``.
+    * ``content-type`` - set to ``text/html`` on attribute rendered in ``textarea`` to wrap the area into [TinyMCE](https://www.tinymce.com) editor.
+    * ``control-configuration`` - a YAML map of control attribute names to values.
+    * ``format`` - to use for rendering and parsing number and date values.
+    * ``input-type`` - input type if control is set to ``input``.
+    * ``type-column`` - indicates that the table listing reference elements shall display elements type in a type column.
+    * ``typed-element-location`` - defines typed element location - view, left panel, item container (tabs, pills, accordion), or inline (work in progress).
 * EClass
     * ``feature-items-container`` - YAML annotation which defines feature items container and its configuration.
     * ``horizontal-form`` - set to ``false`` to change the default rendering.
     * ``label`` - a pattern which is interpolated with values of object features to generate object label. E.g. ``{{name}} ({{code}})``.
     * ``no-validate`` - disables HTML5 validation in forms.
-    * ``view-item`` - if ``true`` then the class view is rendered in the item container (accordion, tabs, or pills) along with references.
+    * ``view-item`` - if ``true`` then the class view is rendered in the item container (accordion, tabs, or pills) along with references.    
 * EStructuralFeature (EAttribute or EReference)
-    * ``category`` - feature category. Categories are displayed as panels in the view and field sets in edit forms.
-    * ``control`` - defines edit form control type - ``input``, ``select``, or ``textarea``.
-    * ``control-configuration`` - a YAML map of control attribute names to values.
     * ``disabled`` - defines whether an editable feature control shall be disabled.
     * ``editable`` - defines editability of a visible feature.
-    * ``feature-location`` - defines feature location - view, left panel, item container (tabs, pills, accordion), or inline (work in progress).
+    * ``deletable`` - defines deletability of feature value/elements.
     * ``form-input-group`` - overrides the default decision of rendering control in a FormGroup or FormInputGroup.
-    * ``input-type`` - input type if control is set to ``input``.
     * ``placeholder`` - XPath expression evaluating to the placeholder value for features. Placeholder value is an implicit application-specific value, different from the default value.
     * ``visible`` - defines visibility of a feature in the object view.
-* EAttribute
-    * ``choices`` - a YAML map of values to labels or a list if values and labels are the same.
-    * ``content-type`` - set to ``text/html`` on attribute rendered in ``textarea`` to wrap the area into [TinyMCE](https://www.tinymce.com) editor.
-    * ``format`` - to use for rendering and parsing number and date values.
 * EReference
-    * ``choices-selector`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
     * ``choice-tree`` - allows to display choices in a containment tree. 
     * ``element-types`` - specifies EClass'es of elements which can be instantiated and set/added to the reference.
-    * ``type-column`` - indicates that the table listing reference elements shall display elements type in a type column.
     * ``view`` - Set this annotation to ``list`` on to have elements rendered in a list instead of a table.
     * ``view-features`` - list of features to show in a reference item table.
+* EOperation
+    * ``web-operation`` - defines how the operation shall be exposed through the Web 
+      UI.
+* EParameter
+    * ``bind`` - binds value of web operation parameter. 
+
 
 Consult JavaDoc and source code for details.
 
-
-By default render annotations source is ``org.nasdanika.cdo.web.render``. It can be customized by overriding ``Renderer.getRenderAnnotationSource()``. 
-One possibility which this customization opens is having multiple sets of render annotations and switching between them at runtime based on some criterion. 
+The default render annotations source is ``org.nasdanika.cdo.web.render``. It can be customized by setting 
+``org.nasdanika.cdo.web.render:annotation-source`` system property or overriding ``Renderer.getRenderAnnotationSource()``. 
+One possibility which this customization opens is having multiple sets of render annotations and switching between them from 
+deployment to deployment or even at runtime based on some criterion. 
 
 You may also override ``String getRenderAnnotation(C context, EModelElement modelElement, String key)`` method to load annotations from other sources, e.g. from
 a database.
@@ -188,7 +202,6 @@ There are three ways to customize the Web UI in addition to annotating the model
 * Override renderer methods
 * Override route methods
 
-
 #### Resource bundles
 
 The obvious use of resource bundles is localization. Out-of-the box the framework provides some localized messages for Russian and Spanish (thanks to Google Translate). 
@@ -238,6 +251,7 @@ The snippet below shows customization for a specific feature and falling back to
 
 This section groups these methods by their purpose and provides quick overview of what each method does. As usual, JavaDoc provides more details, and source code is the final authority.
 
+
 ##### General purpose methods
 
 * ``getHTMLFactory(C)`` - returns [HTMLFactory](http://www.nasdanika.org/products/html/apidocs/org.nasdanika.html/apidocs/org/nasdanika/html/HTMLFactory.html) for building Web UI.
@@ -272,6 +286,7 @@ This section groups these methods by their purpose and provides quick overview o
 * ``getMinFirstSentenceLength()`` - Returns minimum length of the fist documentation sentence for showing as a tooltip. Defaults to ``20``.  
 * ``markdownToHtml(C, String)`` - Converts [Markdown](http://daringfireball.net/projects/markdown/) to HTML. Used to render model documentation which is expected to be in markdown.
 * ``renderDocumentation(C, EModelElement)`` - Renders model element documentation. 
+* ``renderDocumentationButton(C, EModelElement, Modal)`` - Renders documentation button for EOperation buttons.
 * ``renderDocumentationIcon(C, EModelElement, Modal, boolean)`` - Renders model element documentation icon with a tooltip. Click on the help icon opens either a documentation dialog or a model element documentation page.
 * ``renderDocumentationModal(C, EModelElement)`` - Renders model element documentation [Modal Dialog](http://getbootstrap.com/javascript/#modals)
 * ``renderEditableFeaturesDocModals(C, T)`` - Renders documentation modal dialogs for editable features.
@@ -290,21 +305,24 @@ This section lists methods used to render object view. Features in the object vi
 * Item container - tabs, pills, or accordion.
 * Inline - contained object view is merged with the container view.
 
-Many features can be displayed as tables or as lists.
+"Many" features can be displayed as tables or as lists.
 
-* ``getFeatureCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - returns feature category for grouping features into panels in views and fieldsets in edit forms.
-* ``getAutoCategory(C, EStructuralFeature, Collection<EStructuralFeature>)`` - returns auto-category for a feature, which is inferred as a common prefix for two or more features. 
-* ``getFeatureLocation(C, EStructuralFeature)`` - returns location where a feature shall be rendered - view, left panel, item container (tabs, pills or accordion), or inline.
-* ``getFeatureSortKey(C, T, EStructuralFeature, Object)`` - returns an object for sorting feature values or null if feature values shall not be sorted. 
+* ``getNamedElementCategory(C, NE, Collection<NE>)`` - returns category for grouping named elements into panels in views and fieldsets in edit forms.
+* ``getAutoCategory(C, NE, Collection<NE>)`` - returns auto-category for a named element, which is inferred as a common prefix for two or more elements. 
+* ``getTypedElementLocation(C, ETypedElement)`` - returns location where the element value shall be rendered - view, left panel, item container (tabs, pills or accordion), or inline.
+* ``getTypedElementSortKey(C, T, ETypedElement, Object)`` - returns an object for sorting values or null if values shall not be sorted. 
 * ``getIcon(C, T)`` - returns icon "location" for a given object. If the location contains ``/`` it is treated as icon URL, otherwise it is treated as icon class, e.g. ``fa fa-user``.
 * ``getModelElementIcon(C, EModelElement)`` - returns icon location for a model element, e.g. attribute or reference.
 * ``getPlaceholder(C, T, EStructuralFeature)`` - returns feature value "placeholder".
 * ``getReferenceElementTypes(C, T, EReference)`` - returns a list or EClass'es which can be instantiated and instances can be added to a given reference.
 * ``getReferenceRenderer(EReference, M)`` - Returns renderer for a feature. The renderer is chained with this renderer as its master resource provider with ``<feature class>.<feature name>.`` prefix.
 * ``getVisibleFeatures(C, T, FeaturePredicate)`` - returns a list of features to include into the the object view.
+* ``isDeletable(C, T, EModelElement)`` - returns true if model element value can be deleted and as such a delete button shall be rendered.
+* ``isEditable(C, T, EModelElement)`` - returns true if model element value can be edited and as such an edit button shall be rendered.
 * ``isObjectPathRoot(C, T, EObject)`` - checks if a given object is the object path root, i.e. it shall be the first entry in the breadcrumbs. 
-* ``isSortFeatureValues(C, T, EStructuralFeature)`` - returns true if feature values shall be sorted.
+* ``isSortTypedElementValues(C, T, ETypedElement)`` - returns true if values shall be sorted.
 * ``isViewItem(C, T)`` - if this method returns true, then object view is rendered in the item container.
+* ``isVisible(C, T, EModelElement)`` - returns true if model element value shall be visible.
 * ``nameToLabel(String)`` - Derives label (display name) from a name. The default implementation splits name by camel case, capitalizes the first segment, uncapitalizes the rest and joins them with a space. E.g. ``customerFirstName`` -> ``Customer first name``.
 * ``renderAddIcon(C)`` - renders an icon for the ``Add`` button.
 * ``renderCancelButton(C, T)`` - renders ``Cancel`` button.
@@ -316,23 +334,22 @@ Many features can be displayed as tables or as lists.
 * ``renderDetailsIcon(C)`` - renders an icon for navigating to object view.
 * ``renderEditButton(C, T)`` - renders ``Edit`` button.
 * ``renderEditIcon(C)`` - renders an icon for ``Edit`` button.
+* ``renderEOperationButton(C, T, EOperation, String, Map<String, Object>)`` - render a button for invoking EOperation.
 * ``renderFalse(C)`` - renders ``false``. The default implementation returns an empty string.
 * ``renderFeatureAddButton(C, T, EStructuralFeature)`` - Renders feature ``Add`` button.
-* ``renderFeatureCategoryIcon(C, EStructuralFeature, Collection<EStructuralFeature>)`` - renders feature category icon. 
-* ``renderFeatureCategoryIconAndLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - renders feature category icon and label. 
-* ``renderFeatureCategoryLabel(C, EStructuralFeature, Collection<EStructuralFeature>)`` - renders feature category label. 
 * ``renderFeatureItemsContainer(C, T, Map<EStructuralFeature, Modal>)`` - renders feature items container - [tabs](http://getbootstrap.com/javascript/#tabs) (default), pills, or [accordion](http://getbootstrap.com/javascript/#collapse-example-accordion).  
 * ``renderFeaturePath(C, T, EStructuralFeature, String, Breadcrumbs)`` - renders feature path which includes the object path, feature category (if any) and feature name. 
-* ``renderFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object)`` - renders feature value ``Delete`` button. 
-* ``renderFeatureValueEditButton(C, T, EStructuralFeature, int, Object)`` - renders feature value ``Edit`` button. 
-* ``renderFeatureValueViewButton(C, T, EStructuralFeature, int, EObject)`` - renders feature value ``View`` button. 
-* ``renderFeatureView(C, T, EStructuralFeature, boolean, Predicate<Object>, Comparator<Object>)`` - renders feature view.
+* ``renderFeatureValueEditButton(C, T, EStructuralFeature, int, Object)`` - renders feature value ``Edit`` button.
+* ``renderFeatureViewButtons(C, T, EStructuralFeature)`` - renders buttons for feature view, e.g. "Add" button and EOperation buttons. 
 * ``renderIcon(C, T)`` - renders object icon.
 * ``renderIconAndLabel(C, T)`` - renders object icon and label.
 * ``renderLabel(C, T)`` - renders object label.
 * ``renderLeftPanel(C, T)`` - renders the left panel. This implementation renders link groups for visible features with location set to ``leftPanel``.
 * ``renderLink(C, T, boolean)`` - renders object link.
 * ``renderModelElementIcon(C, EModelElement)`` - renders model element icon.
+* ``renderNamedElementCategoryIcon(C, NE, Collection<NE>)`` - renders category icon. 
+* ``renderNamedElementCategoryIconAndLabel(C, NE, Collection<NE>)`` - renders category icon and label. 
+* ``renderNamedElementCategoryLabel(C, NE, Collection<NE>)`` - renders category label. 
 * ``renderNamedElementIconAndLabel(C, ENamedElement)`` - renders model element icon and label.
 * ``renderNamedElementIconAndLabel(C, ENamedElement, Collection<EStructuralFeature>)`` - renders named element icon and label. 
 * ``renderNamedElementLabel(C, ENamedElement)`` - renders model element label.
@@ -343,7 +360,11 @@ Many features can be displayed as tables or as lists.
 * ``renderReferencesTree(C, T, int, Function<Object, Object>, boolean)`` - Renders an object tree of tree references of the argument object. 
 * ``renderTreeItem(C, T, int, Function<Object, Object>, boolean)`` - Renders a tree item for the object with the tree features under.
 * ``renderTrue(C)`` - renders ``true``. The default implementation renders a green check mark (Bootstrap's ``glyphicon glyphicon-ok``).
-* ``renderTypedElementValue(C, ETypedElement, Object)`` - renders display value of a typed element. 
+* ``renderTypedElementValue(C, ETypedElement, Object)`` - renders display value of a typed element.
+* ``renderTypedElementValueButtons(C, T, ETypedElement, int, Object)`` - renders buttons associated with typed element value, e.g. view, edit, delete, and EOperation buttons. 
+* ``renderTypedElementValueDeleteButton(C, T, ETypedElement, int, Object)`` - renders value ``Delete`` button. 
+* ``renderTypedElementValueViewButton(C, T, ETypedElement, int, EObject)`` - renders value ``View`` button. 
+* ``renderTypedElementView(C, T, ETypedElement, Object, boolean, Predicate<Object>, Comparator<Object>)`` - renders typed element view.
 * ``renderView(C, T, Map<EStructuralFeature, Modal>)`` - renders object view.
 * ``renderViewButtons(C, T)`` - renders object view buttons bar.
 * ``renderViewFeatures(C, T, Map<EStructuralFeature, Modal>)`` - renders object view features.
@@ -351,9 +372,9 @@ Many features can be displayed as tables or as lists.
 * ``wireDeleteButton(C, T, Button)`` - wires ``Delete`` button.
 * ``wireEditButton(C, T, Button)`` - wires ``Edit`` button. 
 * ``wireFeatureAddButton(C, T, EStructuralFeature, Button)`` - wires feature value ``Add`` button. 
-* ``wireFeatureValueDeleteButton(C, T, EStructuralFeature, int, Object, Button)`` - wires feature value ``Delete`` button. 
+* ``wireTypedElementValueDeleteButton(C, T, ETypedElement, int, Object, Button)`` - wires typed element value ``Delete`` button. 
 * ``wireFeatureValueEditButton(C, T, EStructuralFeature, int, Object, Button)`` - wires feature value ``Edit`` button. 
-* ``wireFeatureValueViewButton(C, T, EStructuralFeature, int, EObject, Button)`` - wires feature value ``View`` button. 
+* ``wireTypedElementValueViewButton(C, T, ETypedElement, int, EObject, Button)`` - wires typed element value ``View`` button.
 
 ##### Editing
 
@@ -369,13 +390,14 @@ This section lists methods used to render object edit form. Selection of (multip
 * ``compareEditableFeatures(C, T, Consumer<Diagnostic>)`` - Compares feature values from the object with the original values stored in hidden fields. Creates error diagnostics for concurrently modified features.
 * ``getEditableFeatures(C, T)`` - returns a list of structural features to include into the object edit form.
 * ``getTypedElementChoices(C, T, ETypedElement)`` - invoked for select, radio and checkbox on non-boolean types.
+* ``getEObjectTypedElementChoices(C, T, ETypedElement)`` - returns choices for a typed element with a type which is subtype of EObject, e.g. EReference or EParameter.
 * ``getFormControlValue(C, T, ETypedElement, Object)`` - Returns typed element value to be used in form controls like input, select, etc.
-* ``getReferenceChoices(C, T, EReference)`` - invoked for select, radio and checkbox on non-boolean types.  
 * ``isRequired(C, T, ETypedElement)`` - return ``true`` if form control for the typed element shall have ``required`` attribute. 
 * ``parseTypedElementValue(C, EStructuralFeature, String)`` -  
 * ``renderEditableFeaturesFormGroups(C, T, FieldContainer<?>, Map<EStructuralFeature, Modal>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - Renders form groups for editable features.
-* ``renderEditForm(C, T, List<ValidationResult>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - Renders object edit form with feature documentation modals and error messages if any.
+* ``renderEditForm(C, T, List<ValidationResult>, Map<ENamedElement, List<ValidationResult>>, boolean)`` - Renders object edit form with feature documentation modals and error messages if any.
 * ``renderFeatureEditForm(C, T, EStructuralFeature, List<ValidationResult>, boolean)`` - Renders an edit form for a single feature, e.g. a reference with checkboxes for selecting multiple values and radios or select for selecting a single value.  
+* ``renderInputForm(C, T, Map<EParameter, Object>, List<ValidationResult>, Map<ENamedElement, List<ValidationResult>>, boolean)`` - Renders input form for EOperation.
 * ``renderTypedElementControl(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - Renders control for ETypedElement, e.g. input, select, or text area.
 * ``renderTypedElementFormGroup(C, T, ETypedElement, Object, FieldContainer<?>, Modal, List<ValidationResult>, boolean)`` - Renders form group if renderTypedElementControl() returns non-null value.
 * ``renderSaveButton(C, T)`` - renders ``Save`` button.
@@ -385,6 +407,7 @@ This section lists methods used to render object edit form. Selection of (multip
 * ``setFeatureValue(C, T, EStructuralFeature)`` - Sets feature value from the context to the object. The default implementation loads feature value(s) from the [HttpServletRequest](http://docs.oracle.com/javaee/7/api/javax/servlet/http/HttpServletRequest.html) parameters. 
 * ``validate(C, T)`` - Validates object using Ecore validation and ``validate(C,T,EModelElement,DiagnosticChain)`` method.
 * ``validate(C, T, EModelElement, DiagnosticChain)`` - Validates model element using ``constraint`` annotations.
+* ``validate(C, T, EOperation, Map<String, Object>)`` - Validates EOperation input using ``constraint`` annotations and parameter bounds.
 * ``wireCancelButton(C, T, Button)`` - wires ``Cancel`` button. 
 * ``wireSaveButton(C, T, Button)`` - wires ``Save`` button.
 
@@ -432,7 +455,58 @@ Route is responsible for handling HTTP requests and rendering object UI delegati
 * ``processLogin(C, String, String, String)`` - Processes login. If isPost is true, checks that login and password are not blank and authenticates the user. If authentication is successful, redirects to the returnURL or to the authenticated principal home page.
 * ``getLogoutHtml(C, String)`` - route method which invalidates session.
 
+##### Web Operations
+
+EOperations can be annotated to be invocable through the Web UI. EParameters can be annotated to be bound to request and other context values. Before invoking the operation the framework applies a lock to the repository as specified in the annotation. 
+If the operation throws an exception, the framework marks rolls back any changes performed by the operation.  
+
+To make an EOperation invocable through the Web UI add ``web-operation`` details entry to the render annotation. The value of the entry shall be a YAML map with the following keys (all optional):
+
+* ``action`` - Security action. Defaults to {@link AuthorizationProvider.StandardAction}.execute.
+* ``confirm`` - If set, then click on the button shows this confirmation message before executing the operation. May contain {{object-label}} token. For feature-value operations the message may contain ``{{element-label}}`` token.
+* ``consumes`` - Single value or a list or content types which this web operation can consume.
+* ``feature`` - Feature name to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature view instead of the object view. Feature name is passed to the eOperation as ``feature`` query parameter.
+* ``feature-value`` - Feature name to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature value element instead of the object view. Feature name is passed to the eOperation as ``feature`` query parameter. Element CDO ID is passed to the eOperation as ``element`` query parameter and its position as ``position`` parameter.
+* ``lock`` - Lock to apply on the repository in order to execute the operation 
+     * ``path`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/) path of the object to apply the lock to. If not set, the lock is applied to the target object.
+     * ``type`` - Lock type, one of ``none``, ``read``, ``write``, or ``imply-from-http-method`` (default). ``imply-from-http-method`` implies ``write`` for ``DELETE``, ``PATCH``, ``POST``, and ``PUT`` and ``read`` otherwise.
+     * ``timeout`` - Lock timeout in milliseconds. Defaults to one minute.
+* ``method`` - HTTP method which matches the operation. If not set then it defaults to ``GET`` for EOperation invocation (so it can be invoked by clicking on a button). If EOperation has unbound parameters, then ``GET`` method renders a form with those parameters and ``POST`` by the form invokes the operation after input validation against operation and parameter ``constraint``'s. If method is explicitly set, then the operation is considered an "API" operation as opposed to "UI" operation and no buttons are automatically rendered for it.
+* ``path`` - Web operation path. It may contain path parameters in the form ``{<parameter name>}``. Defaults to the EOperation name.
+* ``produces`` - Content type produced by the operation.
+* ``style`` - {@link org.nasdanika.html.Bootstrap.Style} enum value for a button or a left panel item depending on location. Defaults to ``INFO`` for buttons and ``DEFAULT`` for left panel items.
+
+If you have a web operation with all defaults put a comment or a document start (``---``) or both in the details.
+
+
+By default EOperation parameters have ``form`` binding with the name equal to the parameter name. To customize binding add ``bind`` details entry to the render annotation of EParameter. The value of the entry shall be a single string or a single-entry YAML map as described below:  
+
+* ``body`` - Binds the parameter to request body.
+* ``cookie`` - Binds the parameter to a cookie with the same name as the parameter name.
+* ``cookie: name`` - Binds the parameter to the named cookie.
+* ``expression: expression`` - JXPath expression (which can also be a constant) to evaluate.   
+* ``extension`` - Binds the parameter to registered extension(s). This key's value shall be a map with the following elements:
+     * ``point`` - Extension point ID.
+     * ``configuration-element`` - Configuration element name.
+     * ``class-attribute`` - Attribute containing the class name. Defaults to ``class``.
+* ``form`` (default) - Binds the parameter to the query parameter with the same name as {@link EParameter} if request method is ``POST``.
+* ``form: name`` - Binds the parameter to the named query parameter if request method is ``POST``.
+* ``header`` - Binds the parameter to a header with the same name as the parameter name.
+* ``header: name`` - Binds the parameter to the named header.
+* ``null`` - Binds parameter to ``null``.
+* ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be Part, {@link InputStream}, byte[], {@link Reader}, or String.
+* ``part: name`` - Binds the parameter to the named part.
+* ``part-file-name: name`` - Binds the parameter to the named part. Parameter type shall be String. This binding would typically be used with ``part`` binding to avoid introducing dependency on the servlet API in the model.
+* ``path`` - Binds the parameter to a path parameter with the same name as the parameter name.
+* ``path: name`` - Binds the parameter to the named path parameter.
+* ``query`` - Binds the parameter to the query parameter with the same name as {@link EParameter}.
+* ``query: name`` - Binds the parameter to the named query parameter.
+* ``service`` - Binds the parameter to an OSGi service with the same type as the parameter type.
+* ``service: filter`` - Binds the parameter to an OSGi service applying the specified filter.
+* ``value: value`` - Binds the parameter to a constant value.
+
 ##### Developer routes 
+
 * ``getApiDocPath()`` - returns ``api.html`` so the dispatching route renders API documentation at ``<object path>/api.html``.
 * ``xPathEvaluator(C, T, String, String)`` - Renders and processes a form for evaluating XPath expressions. This route method is intended to be used by application/model developers.
 	  
