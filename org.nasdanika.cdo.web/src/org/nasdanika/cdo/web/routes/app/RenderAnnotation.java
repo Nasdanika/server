@@ -248,7 +248,7 @@ public enum RenderAnnotation {
 		WEB_OPERATION("web-operation"),
 		
 		/**
-		 * {@link EParameter} annotation binding web operation parameter to one request or context values. Unbound parameters are implicitly bound to the request query parameter with the same name.
+		 * {@link EParameter} annotation binding web operation parameter to one request or context values. Unbound parameters are implicitly bound to the form input with the same name.
 		 * The value of this annotation is a single value or a single-entry YAML map or a single value:
 		 * 
 		 * * ``body`` - Binds the parameter to request body.
