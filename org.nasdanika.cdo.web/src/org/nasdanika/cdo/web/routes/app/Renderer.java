@@ -2149,13 +2149,32 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String path = (String) spec.get("path");
 			if (path == null) {
 				path = eOperation.getName();
+//				for (EParameter eParameter: eOperation.getEParameters()) {
+//					path += "-" + eParameter.getEType().getInstanceTypeName();
+//				}
 			}
 			
 			if (!CoreUtil.isBlank(query)) {
 				path += "?" + query;
 			}
 			
-			eOperationButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+path+"';");			
+			String guard = "";
+			
+			Object confirm = spec.get("confirm");
+			if (confirm instanceof String) {
+				Map<String, Object> env = new HashMap<>();
+				env.put("object-label", renderLabel(context, obj));
+				if (jxPathContextVariables != null) {
+					Object element = jxPathContextVariables.get("element");
+					if (element instanceof EObject) {
+						env.put("element-label", getRenderer((EObject) element).renderLabel(context, (EObject) element));						
+					}						
+				}
+				String confirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(confirm, env));			
+				guard = "if (confirm('"+confirmationMessage+"')) ";
+			}			
+			
+			eOperationButton.on(Event.click, guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"';");			
 			
 			// Disabled 
 			boolean disabled;
@@ -3791,7 +3810,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				select.attribute(ce.getKey(), ce.getValue());
 			}
 			
-			if (typedElement.getLowerBound() == 0) {
+			if (!isRequired(context, obj, typedElement)) {
 				select.option("", "", false, false);
 			}
 			String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;
@@ -3945,8 +3964,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			for (String[] e: accumulator) {
 				collector.put(e[0], e[1]);
-			}
-						
+			}						
 		} else {		
 			Object choicesAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.CHOICES);
 			if (choicesAnnotation instanceof Map) { // key-value pairs
