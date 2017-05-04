@@ -1211,6 +1211,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								parameterBindings.put(eParameter, bindingAnnotation);
 							}
 						}
+						
 						ret.add(new EOperationTarget<C,T>(this, eOperation, webOperationAnnotation, parameterBindings));
 					}
 				}
@@ -1470,6 +1471,20 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		String featureName = (String) eOperationTarget.getSpec().get("feature");
 		EStructuralFeature operationFeature = featureName == null ? null : target.eClass().getEStructuralFeature(featureName);
 		
+		String contentType = context.getRequest().getContentType();
+		boolean isMultiPart = context.getMethod() == RequestMethod.POST && contentType != null && contentType.startsWith(Form.EncType.multipart.literal+";");
+		String originalReferrer = context.getRequest().getParameter(REFERRER_KEY);
+		if (isMultiPart) {
+			for (Part part: context.getRequest().getParts()) {
+				if (REFERRER_KEY.equals(part.getName())) {
+					originalReferrer = CoreUtil.stringify(part.getInputStream());
+				}
+			}
+		}
+		if (originalReferrer == null) {
+			originalReferrer = context.getRequest().getHeader(REFERRER_HEADER);
+		}
+		
 		if (methodName == null) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			
@@ -1518,6 +1533,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					if (eOperationTarget.hasPartParameters()) {
 						inputForm.enctype(EncType.multipart);
 					}
+					
+					if (originalReferrer != null) {
+						inputForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+					}							
 					
 					configureForm(inputForm, horizontalForm);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
@@ -1586,7 +1605,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						}			
 					} else {
 						try {
-							Object result = eOperationTarget.invoke(context, bindings);				
+							Object result = eOperationTarget.invoke(context, bindings);	
+							
+							if (result == null && originalReferrer != null) {
+								context.getResponse().sendRedirect(originalReferrer);
+								return Action.NOP;
+							}
+							
 							// Breadcrumbs
 							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 							String resultStr = "Result"; // TODO - resource string
@@ -1692,6 +1717,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						inputForm.enctype(EncType.multipart);
 					}
 					
+					if (originalReferrer != null) {
+						inputForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+					}							
+					
 					configureForm(inputForm, horizontalForm);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
 					
@@ -1705,7 +1734,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					content.content(inputForm);					
 				} else {
 					try {
-						Object result = eOperationTarget.invoke(context, bindings);				
+						Object result = eOperationTarget.invoke(context, bindings);			
+						
+						if (result == null && originalReferrer != null) {
+							context.getResponse().sendRedirect(originalReferrer);
+							return Action.NOP;
+						}						
+						
 						// Breadcrumbs
 						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 						String resultStr = "Result"; // TODO - resource string
