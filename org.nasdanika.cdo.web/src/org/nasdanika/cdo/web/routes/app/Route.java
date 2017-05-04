@@ -1628,6 +1628,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							
 							content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER)); 
 							content.content(htmlFactory.alert(Style.DANGER, false, e.toString()));
+							
 						}
 					}
 				}				

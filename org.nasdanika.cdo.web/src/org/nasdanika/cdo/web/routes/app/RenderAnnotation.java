@@ -7,6 +7,7 @@ import java.text.SimpleDateFormat;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
@@ -102,13 +103,13 @@ public enum RenderAnnotation {
 		TYPED_ELEMENT_LOCATION("typed-element-location"),		
 		
 		/**
-		 * {@link EReference} annotation - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
+		 * {@link EReference} or {@link EParameter} annotation - [JXPath](https://commons.apache.org/proper/commons-jxpath/) selector of choices to assign to the reference.
 		 * The path is evaluated with the current object as context.
 		 */
 		CHOICES_SELECTOR("choices-selector"),
 		
 		/**
-		 * {@link EStructuralFeature} category. Categories are displayed as panels in the view and field sets in edit forms.
+		 * {@link ENamedElement} category. Categories are displayed as panels in the view and field sets in edit forms.
 		 */
 		CATEGORY("category"),
 		
@@ -152,7 +153,7 @@ public enum RenderAnnotation {
 		ELEMENT_TYPES("element-types"),
 
 		/**
-		 * {@link EStructuralFeature} annotation specifying edit form control type for the feature. 
+		 * {@link ETypedElement} annotation specifying edit form control type for a feature or parameter. 
 		 * Defaults to input for attributes and multi-value features and select for references.
 		 * 
 		 * Valid values:
@@ -171,19 +172,20 @@ public enum RenderAnnotation {
 		CONTROL_CONFIGURATION("control-configuration"),
 		
 		/**
-		 * {@link EStructuralFeature} annotation for ``input`` control - one of {@link HTMLFactory.InputType} values. 
+		 * {@link ETypedElement} annotation for ``input`` control - one of {@link HTMLFactory.InputType} values. 
 		 * Defaults to checkbox for booleans and multi-value features, text otherwise.
 		 */
 		INPUT_TYPE("input-type"),
 
 		/**
-		 * {@link EAttribute} annotation for select, radio and checkbox on non-boolean types. 
+		 * {@link ETypedElement} (attribute or parameter) annotation for select, radio and checkbox on non-boolean types. 
 		 * 
 		 * YAML map of values to labels or list if values and labels are the same.   
 		 */
 		CHOICES("choices"),
+		
 		/**
-		 * {@link EStructuralFeature} annotation. 
+		 * {@link ETypedElement} annotation to explicitly specify whether to use form input group or not. 
 		 */
 		FORM_INPUT_GROUP("form-input-group"),
 		
@@ -199,13 +201,13 @@ public enum RenderAnnotation {
 		NO_VALIDATE("no-validate"),
 		
 		/**
-		 * {@link EAttribute} annotation specifying feature value content type. If attribute control is ``textarea`` and content type is ``text/html`` then 
+		 * {@link ETypedElement} annotation specifying feature value content type. If attribute control is ``textarea`` and content type is ``text/html`` then 
 		 * the textarea is initialized with [TinyMCE](https://www.tinymce.com) editor. 
 		 */
 		CONTENT_TYPE("content-type"),
 		
 		/**
-		 * Defines model element ({@link EClass} or {@link EStructuralFeature}) constraint used for validation. Constraint shall be a YML text which defines a single constraint or a list of constraints. 
+		 * Defines model element ({@link EClass} or {@link ETypedElement}) constraint used for validation. Constraint shall be a YML text which defines a single constraint or a list of constraints. 
 		 * 
 		 * Constraint can be a string or a map containing:
 		 * 
@@ -219,7 +221,7 @@ public enum RenderAnnotation {
 		CONSTRAINT("constraint"),
 		
 		/**
-		 * {@link EStructuralFeature} or {@link EClass} annotation - XPath expression to use for sorting of items in tables and lists.  
+		 * {@link ETypedElement} or {@link EClass} annotation - XPath expression to use for sorting of items in tables and lists.  
 		 */
 		SORT("sort"),
 		
@@ -228,7 +230,7 @@ public enum RenderAnnotation {
 		 * with the following keys:
 		 * 
 		 * * ``action`` - Security action. Defaults to {@link AuthorizationProvider.StandardAction}.execute.
-		 * * ``confirm`` - If set to ``true``, then click on the button shows a confirmation message before executing the operation.
+		 * * ``confirm`` - If set, then click on the button shows this confirmation message before executing the operation. May contain {{object-label}} token. For feature-value operations the message may contain ``{{element-label}}`` token.
 		 * * ``consumes`` - Single value or a list or content types which this web operation can consume.
 		 * * ``feature`` - Feature name to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature view instead of the object view. Feature name is passed to the eOperation as ``feature`` query parameter.
 		 * * ``feature-value`` - Feature name to associate this web operation with. If this value is present, web operation invocation button will be displayed in the corresponding feature value element instead of the object view. Feature name is passed to the eOperation as ``feature`` query parameter. Element CDO ID is passed to the eOperation as ``element`` query parameter and its position as ``position`` parameter.
@@ -282,7 +284,7 @@ public enum RenderAnnotation {
 
 //---		
 		/**
-		 * {@link EReference} annotation indicating that the table listing reference elements shall display elements type in a type column. 
+		 * {@link ETypedElement} annotation indicating that the table listing reference elements shall display elements type in a type column. 
 		 * The value of this annotation is a pattern which is interpolated with the following tokens:
 		 * 
 		 * * ``icon`` - Element icon.

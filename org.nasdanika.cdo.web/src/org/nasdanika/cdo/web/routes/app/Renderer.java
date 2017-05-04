@@ -267,7 +267,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	/**
 	 * Returns source value for model annotations to use as the source of rendering annotations.
-	 * This implementation returns RENDER_ANNOTATION_SOURCE constant value ``org.nasdanika.cdo.web.render``.
+	 * This implementation returns value of ``org.nasdanika.cdo.web.render:annotation-source`` system property or RENDER_ANNOTATION_SOURCE constant value ``org.nasdanika.cdo.web.render``
+	 * if the system property is not set.
 	 * This method can be overridden to "white-label" the model, i.e. to use rendering annotations with source
 	 * specific to the development organization, e.g. ``com.mycompany.render``. 
 	 * 
@@ -277,7 +278,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 */
 	default String getRenderAnnotationSource(C context) {
-		return RENDER_ANNOTATION_SOURCE;		
+		return System.getProperty("org.nasdanika.cdo.web.render:annotation-source", RENDER_ANNOTATION_SOURCE);
 	}
 		
 	/**
@@ -2047,7 +2048,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders view buttons. This implementation renders Edit and Delete buttons plus buttons to invoke web-operations with location ``view``.
+	 * Renders view buttons. This implementation renders Edit and Delete buttons plus buttons to invoke web-operations with location ``view``
+	 * and container web operations with ``feature-value`` spec equal to the containment feature of this object.
 	 * @param context
 	 * @param obj
 	 * @param featureDocModals
@@ -2064,14 +2066,49 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 				Object location = spec.get("location");
 				if ((location == null || "view".equals(location)) && spec.get("feature") == null && spec.get("feature-value") == null) {
-					ret.content(renderEOperationButton(context, obj, eOperation, null));
+					ret.content(renderEOperationButton(context, obj, eOperation, null, null));
 				}				
 			}
 		}
+		
+		EObject eContainer = obj.eContainer();
+		EStructuralFeature containingFeature = obj.eContainingFeature();
+		if (eContainer != null && containingFeature != null) {
+			for (EOperation eOperation: eContainer.eClass().getEAllOperations()) {
+				Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+				if (yamlRenderAnnotation instanceof Map) {
+					@SuppressWarnings("unchecked")
+					Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
+					Object location = spec.get("location");
+					if ((location == null || "view".equals(location)) && containingFeature.getName().equals(spec.get("feature-value"))) {
+						StringBuilder queryBuilder = new StringBuilder("feature=").append(containingFeature.getName());					
+						if (obj instanceof CDOObject) {
+							queryBuilder.append("&").append("element=").append(getFormControlValue(context, obj, containingFeature, obj));
+						}
+						
+						Map<String, Object> vars = new HashMap<>();
+						vars.put("element", obj);
+						ret.content(getRenderer(eContainer).renderEOperationButton(context, eContainer, eOperation, queryBuilder.toString(), vars));
+					}				
+				}
+			}
+			
+		}
+		
 		return ret;
 	}
 	
-	default Fragment renderEOperationButton(C context, T obj, EOperation eOperation, String query) throws Exception {
+	/**
+	 * Renders Web {@link EOperation} button
+	 * @param context
+	 * @param obj
+	 * @param eOperation
+	 * @param query
+	 * @param jxPathContextVariables Variables for evaluating disabled state. 
+	 * @return
+	 * @throws Exception
+	 */
+	default Fragment renderEOperationButton(C context, T obj, EOperation eOperation, String query, Map<String, Object> jxPathContextVariables) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 		String action = (String) spec.get("action");
@@ -2118,7 +2155,29 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				path += "?" + query;
 			}
 			
-			eOperationButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+path+"';");					
+			eOperationButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+path+"';");			
+			
+			// Disabled 
+			boolean disabled;
+			String disabledRenderAnnotation = getRenderAnnotation(context, eOperation, RenderAnnotation.DISABLED);
+			if (CoreUtil.isBlank(disabledRenderAnnotation) || "false".equals(disabledRenderAnnotation)) {
+				disabled = false;
+			} else if ("true".equals(disabledRenderAnnotation)) {
+				disabled = true;
+			} else if (obj instanceof CDOObject) {
+				// XPath
+				JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+				if (jxPathContextVariables != null) {
+					for (Entry<String, Object> ve: jxPathContextVariables.entrySet()) {
+						jxPathContext.getVariables().declareVariable(ve.getKey(), ve.getValue());
+					}
+				}
+				disabled = Boolean.TRUE.equals(jxPathContext.getValue(disabledRenderAnnotation, Boolean.class));
+			} else {
+				disabled = false;
+			}
+			eOperationButton.disabled(disabled);			
+			
 			return ret;
 		}
 		return null;		
@@ -2861,7 +2920,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		} else {
 			ret.content(renderTypedElementValue(context, typedElement, typedElementValue));
 			if (showActionButtons) {
-				ret.content(renderTypedElementValueButtons(context, obj, (EReference) typedElement, -1, typedElementValue));
+				ret.content(renderTypedElementValueButtons(context, obj, typedElement, -1, typedElementValue));
 			}						
 		}
 		return ret;
@@ -2885,7 +2944,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
 				Object location = spec.get("location");
 				if ((location == null || "view".equals(location)) && feature.getName().equals(spec.get("feature"))) {
-					ret.content(renderEOperationButton(context, obj, eOperation, "feature="+feature.getName()));
+					ret.content(renderEOperationButton(context, obj, eOperation, "feature="+feature.getName(), null));
 				}				
 			}
 		}
@@ -3186,7 +3245,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							queryBuilder.append("&").append("element=").append(getFormControlValue(context, obj, typedElement, value));
 						}
 						
-						ret.content(renderEOperationButton(context, obj, eOperation, queryBuilder.toString()));
+						Map<String, Object> vars = new HashMap<>();
+						vars.put("element", value);
+						vars.put("position", idx);
+						ret.content(renderEOperationButton(context, obj, eOperation, queryBuilder.toString(), vars));
 					}				
 				}
 			}

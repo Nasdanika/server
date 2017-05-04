@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.TransactionContext;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.DispatchingRoute.Target;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -238,6 +239,11 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 			}
 			
 			return Action.SERVICE_UNAVAILABLE;
+		} catch (Exception e) {
+			if (context instanceof TransactionContext) {
+				((TransactionContext) context).setRollbackOnly();
+			}
+			throw e;
 		} finally {
 			for (EParameterBinding binding: bindings) {
 				binding.close();
