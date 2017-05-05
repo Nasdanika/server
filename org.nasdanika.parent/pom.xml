@@ -104,7 +104,7 @@
 						<link>http://stleary.github.io/JSON-java</link>			
 						<link>https://osgi.org/javadoc/r4v42/</link>
 						<link>http://seleniumhq.github.io/selenium/docs/api/java/</link>
-						<link>http://www.nasdanika.org/products/html/apidocs</link>
+						<link>http://www.nasdanika.org/products/html/apidocs/org.nasdanika.html/apidocs</link>
 					</links>
 				</configuration>				
 			</plugin>
