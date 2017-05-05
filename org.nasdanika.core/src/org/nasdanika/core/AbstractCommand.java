@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Base class for commands which does nothing in <code>close()</code> and returns true from
- * <code>canExecute()</code>. Also provides <code>bind()</code> methods.
+ * Base class for commands which does nothing in ``close()`` and returns true from
+ * ``canExecute()``. Also provides ``bind()`` methods.
  * @author Pavel
  *
  * @param <C>
