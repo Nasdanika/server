@@ -1144,7 +1144,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return Base64.getEncoder().encodeToString((byte[]) value);
 		}
 		if (value instanceof EObject) {
-			return getReferenceRenderer((EReference) typedElement, (EObject) value).renderLink(context, (EObject) value, true);
+			EObject eObjectValue = (EObject) value;
+			if (typedElement instanceof EReference) {
+				return getReferenceRenderer((EReference) typedElement, eObjectValue).renderLink(context, eObjectValue, true);
+			}			
+			
+			if (eObjectValue.eResource() == null) {
+				// Not part of a resource, render as view, not as link.
+				return getRenderer(eObjectValue).renderViewFeatures(context, eObjectValue, null);
+			}
+			return getRenderer(eObjectValue).renderLink(context, eObjectValue, true);
 		}
 		if (value instanceof Boolean) {
 			return (Boolean) value ?  renderTrue(context) : renderFalse(context);
@@ -2596,13 +2605,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}	
 	
 	/**
-	 * Renders a view of the feature value. 
-	 * A feature is rendered as a list if <code>view</code> annotation value is <code>list</code> or 
-	 * if it is not present and the feature is rendered in the view.
+	 * Renders a view of the typed element value. 
+	 * A value is rendered as a list if <code>view</code> annotation value is <code>list</code> or 
+	 * if it is not present and the value is rendered in the view.
 	 * <P/>
 	 * If <code>view</code> annotation value is <code>table</code> or 
-	 * if it is not present and the feature is rendered in an item container, 
-	 * then the feature value is rendered as a table. Object features to show and their order in the
+	 * if it is not present and the value is rendered in an item container, 
+	 * then the value is rendered as a table. Object features to show and their order in the
 	 * table can be defined using <code>view-features</code> annotation. Annotation value shall list 
 	 * the features in the order in appearance, whitespace separated. 
 	 * If this annotation is not present, all visible single-value features are shown in the order of their declaration.
@@ -2627,7 +2636,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (EObject.class.isAssignableFrom(typedElement.getEType().getInstanceClass())) {
 				boolean isView = getTypedElementLocation(context, typedElement) == TypedElementLocation.view;
 				if (viewAnnotation == null) {
-					asTable = !isView;
+					asTable = typedElement instanceof EOperation ? true : !isView;  
 				} else {
 					if (!isView) {
 						asTable = !"list".equals(viewAnnotation);
@@ -2867,12 +2876,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						vRow.cell(htmlFactory.interpolate(typeColumnAnnotation, typeEnv));
 					}
 					
+					Renderer<C, EObject> renderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, teve.value) : getRenderer(teve.value);
 					for (EStructuralFeature sf: uncategorizedTableFeatures) {
-						vRow.cell(getReferenceRenderer((EReference) typedElement, teve.value).renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));						
+						vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));						
 					}
 					for (List<EStructuralFeature> cv: categories.values()) {
 						for (EStructuralFeature sf: cv) {
-							vRow.cell(getReferenceRenderer((EReference) typedElement, teve.value).renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));													
+							vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));													
 						}						
 					}
 					Cell actionCell = vRow.cell().style().text().align().center();					
@@ -3187,7 +3197,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(getHTMLFactory(context).interpolate(confirmationResourceString, env));
 		String deleteLocation;
 		if (value instanceof EObject && isDelete) {
-			deleteLocation = getReferenceRenderer((EReference) typedElement, (EObject) value).getObjectURI(context, (EObject) value)+"/delete.html";
+			Renderer<C, EObject> renderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, (EObject) value) : getRenderer((EObject) value);
+			deleteLocation = renderer.getObjectURI(context, (EObject) value)+"/delete.html";
 		} else if (idx == -1) {
 			deleteLocation = "feature/"+typedElement.getName()+"/delete.html";
 		} else {
@@ -3307,11 +3318,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default Button renderTypedElementValueViewButton(C context, T obj, ETypedElement typedElement, int idx, EObject value) throws Exception {		
 		if (context.authorizeRead(value, null, null)) {
 			Map<String, Object> env = new HashMap<>();
-			if (typedElement instanceof EReference) {
-				env.put(NAME_KEY, getReferenceRenderer((EReference) typedElement, value).renderLabel(context, value));				
-			} else {
-				env.put(NAME_KEY, getRenderer(value).renderLabel(context, value));
-			}
+			Renderer<C, EObject> renderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, value) : getRenderer(value);
+			env.put(NAME_KEY, renderer.renderLabel(context, value));				
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "viewTooltip"), env);
 			Button viewButton = htmlFactory.button(renderDetailsIcon(context))
@@ -3333,11 +3341,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default void wireTypedElementValueViewButton(C context, T obj, ETypedElement typedElement, int idx, EObject value, Button viewButton) throws Exception {
-		if (typedElement instanceof EReference) {
-			viewButton.on(Event.click, "window.location='"+getReferenceRenderer((EReference) typedElement, value).getObjectURI(context, value)+"/index.html'");
-		} else {
-			viewButton.on(Event.click, "window.location='"+getRenderer(value).getObjectURI(context, value)+"/index.html'");			
-		}
+		Renderer<C, EObject> renderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, value) : getRenderer(value);
+		viewButton.on(Event.click, "window.location='"+renderer.getObjectURI(context, value)+"/index.html'");
 	}
 	
 	// Forms rendering 
