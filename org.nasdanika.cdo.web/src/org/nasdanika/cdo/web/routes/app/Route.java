@@ -1,6 +1,8 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.io.InputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -1477,6 +1479,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		String methodName = (String) eOperationTarget.getSpec().get("method");
 		String featureName = (String) eOperationTarget.getSpec().get("feature");
+		if (featureName == null) {
+			featureName = (String) eOperationTarget.getSpec().get("feature-value");
+		}
 		EStructuralFeature operationFeature = featureName == null ? null : target.eClass().getEStructuralFeature(featureName);
 		
 		String contentType = context.getRequest().getContentType();
@@ -1640,7 +1645,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 							} else {
 								content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-								content.content(renderTypedElementValue(context, eOperation, result));					
+								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null));					
 							}
 						} catch (Exception e) {
 							// Breadcrumbs
@@ -1659,9 +1664,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
 							content.content(objectHeader);							
 							
-							content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER)); 
-							content.content(htmlFactory.alert(Style.DANGER, false, e.toString()));
+							Throwable rootCause = e;
+							while (rootCause.getCause() != null) {
+								rootCause = rootCause.getCause();
+							}
 							
+							content.content(htmlFactory.tag(TagName.h4, errorStr, ": ", rootCause.toString()).style().color().bootstrapColor(Color.DANGER));
+							StringWriter sw = new StringWriter();
+							try (PrintWriter pw = new PrintWriter(sw)) {
+								rootCause.printStackTrace(pw);
+							}
+							content.content(htmlFactory.div(sw.toString()).style().whiteSpace().pre().style().color().bootstrapColor(Color.DANGER));
+							rootCause.printStackTrace(); // To console for troubleshooting.
 						}
 					}
 				}				
