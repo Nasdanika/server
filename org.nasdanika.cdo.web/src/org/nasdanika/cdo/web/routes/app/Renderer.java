@@ -73,6 +73,13 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.security.Action;
+import org.nasdanika.cdo.security.Package;
+import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.security.Protected;
+import org.nasdanika.cdo.security.ProtectedPermission;
+import org.nasdanika.cdo.security.Realm;
+import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
@@ -2627,6 +2634,76 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	@SuppressWarnings("unchecked")
 	default Object renderTypedElementView(C context, T obj, ETypedElement typedElement, Object typedElementValue, boolean showActionButtons, Predicate<Object> filter, Comparator<Object> comparator) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
+		
+		// Special handling of Protected.permissions reference
+//		if (SecurityPackage.Literals.PROTECTED__PERMISSIONS == typedElement && context instanceof CDOViewContext && context.authorizeRead(obj, "permissions", null)) {
+//			Realm<?> realm = ((CDOViewContext<?, ?>) context).getSecurityRealm();
+//			if (realm != null) {
+//				List<Action> grantableActions = new ArrayList<>();
+//				List<EClass> classesToMatch = new ArrayList<>();
+//				classesToMatch.add(obj.eClass());
+//				classesToMatch.addAll(obj.eClass().getEAllSuperTypes());
+//				for (Package pkg: realm.getPackages()) {
+//					for (org.nasdanika.cdo.security.Class cls: pkg.getClasses()) {
+//						for (EClass eClass: classesToMatch) {
+//							if (eClass.getName().equals(cls.getName()) && eClass.getEPackage().getNsURI().equals(pkg.getNsURI())) {
+//								for (Action action: cls.getActions()) {
+//									grantableActions.add(action);
+//								}
+//							}
+//						}
+//					}					
+//				}
+//				
+//				if (grantableActions.isEmpty()) {
+//					return htmlFactory.alert(Style.DANGER, false, "There are no grantable acitons for "+obj.eClass().getName());
+//				} else {
+//					grantableActions.sort((a,b) -> a.getName().compareTo(b.getName()));															
+//					Table permissionsTable = htmlFactory.table().bordered();
+//					Row headerRow = permissionsTable.header().row().style(Style.INFO);
+//					headerRow.header("User");
+//					
+//					for (Action ga: grantableActions) { // TODO - group by categories
+//						headerRow.header(getRenderer(ga).renderLabel(context, ga));
+//					}
+//					
+//					headerRow.header("Actions");
+//					
+//					List<Principal> principals = new ArrayList<>();
+//					Protected protectedObj = (Protected) obj;
+//					for (ProtectedPermission p: protectedObj.getPermissions()) {
+//						if (!principals.contains(p.getPrincipal())) {
+//							principals.add(p.getPrincipal());
+//						}
+//					}
+//					
+//					principals.sort((a,b) -> {
+//						try {
+//							return getRenderer(a).renderLabel(context, a).toString().compareTo(getRenderer(b).renderLabel(context, b).toString());							
+//						} catch (Exception e) {
+//							return a.hashCode() - b.hashCode();
+//						}						
+//					});
+//					
+//					for (Principal principal: principals) {
+//						Row principalRow = permissionsTable.body().row();
+//						principalRow.cell(getRenderer(principal).renderLink(context, principal, false));
+//						for (Action ga: grantableActions) {
+//							Cell actionCell = principalRow.cell();
+//							for (ProtectedPermission p: protectedObj.getPermissions()) {
+//								if (p.getAction() == ga) {
+//									actionCell.content(p.isAllow() ? "Allow" : "Deny");
+////									if (p.get)
+//								}
+//							}
+//						}
+//					}
+//					
+//					return "TODO - table of principals, grantable actions, grants and actions (edit, delete) ";
+//				}
+//			}
+//		}
+		
 		Fragment ret = htmlFactory.fragment();
 		Map<String, Object> env = new HashMap<>();
 		env.put(NAME_KEY, typedElement.getName());
