@@ -52,6 +52,7 @@ public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEdi
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
+			addPatternsPropertyDescriptor(object);
 			addGrantablePropertyDescriptor(object);
 			addDescriptionPropertyDescriptor(object);
 			addImpliesPropertyDescriptor(object);
@@ -75,6 +76,28 @@ public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEdi
 				 getString("_UI_Action_name_feature"),
 				 getString("_UI_PropertyDescriptor_description", "_UI_Action_name_feature", "_UI_Action_type"),
 				 SecurityPackage.Literals.ACTION__NAME,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Patterns feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addPatternsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Action_patterns_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Action_patterns_feature", "_UI_Action_type"),
+				 SecurityPackage.Literals.ACTION__PATTERNS,
 				 true,
 				 false,
 				 false,
@@ -262,6 +285,7 @@ public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEdi
 
 		switch (notification.getFeatureID(Action.class)) {
 			case SecurityPackage.ACTION__NAME:
+			case SecurityPackage.ACTION__PATTERNS:
 			case SecurityPackage.ACTION__GRANTABLE:
 			case SecurityPackage.ACTION__DESCRIPTION:
 			case SecurityPackage.ACTION__CATEGORY:

@@ -157,7 +157,13 @@
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Action name, which is used as a pattern to match ``&lt;action>:&lt;qualifier>`` string.  ``*`` matches any character sequence."/>
+        <details key="documentation" value="Action display name, e.g. &quot;Post transaction&quot;."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="patterns" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Patterns to match - ``&lt;action>:&lt;qualifier>`` string.  ``*`` matches any character sequence.&#xD;&#xA;If empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. "/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="grantable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
@@ -307,10 +313,20 @@
     </eOperations>
     <eOperations name="getPrincipal" eType="#//Principal"/>
     <eOperations name="getTarget" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//Action">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Permission's action."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="allow" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="If true, action is allowed. Otherwise it is denied."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).&#xD;&#xA;&#xD;&#xA;The expression is evaluated in the context of the target object with the following variables:&#xD;&#xA;&#xD;&#xA;* ``context``&#xD;&#xA;* ``environment``&#xD;&#xA;* ``action``&#xD;&#xA;* ``qualifier``&#xD;&#xA;* ``permission``"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="startDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
@@ -326,16 +342,6 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Comment."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//Action">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Permission's action."/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="condition" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).&#xD;&#xA;&#xD;&#xA;The expression is evaluated in the context of the target object with the following variables:&#xD;&#xA;&#xD;&#xA;* ``context``&#xD;&#xA;* ``environment``&#xD;&#xA;* ``action``&#xD;&#xA;* ``qualifier``&#xD;&#xA;* ``permission``"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>

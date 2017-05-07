@@ -597,16 +597,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAction_Description() {
-		return (EAttribute)actionEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getAction_Grantable() {
+	public EAttribute getAction_Patterns() {
 		return (EAttribute)actionEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -615,8 +606,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getAction_Implies() {
-		return (EReference)actionEClass.getEStructuralFeatures().get(3);
+	public EAttribute getAction_Description() {
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -624,7 +615,16 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getAction_ImpliedBy() {
+	public EAttribute getAction_Grantable() {
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAction_Implies() {
 		return (EReference)actionEClass.getEStructuralFeatures().get(4);
 	}
 
@@ -633,8 +633,17 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getAction_ImpliedBy() {
+		return (EReference)actionEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EAttribute getAction_Category() {
-		return (EAttribute)actionEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -643,7 +652,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EReference getAction_Children() {
-		return (EReference)actionEClass.getEStructuralFeatures().get(6);
+		return (EReference)actionEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -688,15 +697,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EAttribute getPermission_Allow() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getPermission_StartDate() {
 		return (EAttribute)permissionEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -705,16 +705,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getPermission_EndDate() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getPermission_Comment() {
+	public EAttribute getPermission_StartDate() {
 		return (EAttribute)permissionEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -723,8 +714,26 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getPermission_EndDate() {
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPermission_Comment() {
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EReference getPermission_Action() {
-		return (EReference)permissionEClass.getEStructuralFeatures().get(4);
+		return (EReference)permissionEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -733,7 +742,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EAttribute getPermission_Condition() {
-		return (EAttribute)permissionEClass.getEStructuralFeatures().get(5);
+		return (EAttribute)permissionEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -912,6 +921,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		actionEClass = createEClass(ACTION);
 		createEAttribute(actionEClass, ACTION__NAME);
+		createEAttribute(actionEClass, ACTION__PATTERNS);
 		createEAttribute(actionEClass, ACTION__GRANTABLE);
 		createEAttribute(actionEClass, ACTION__DESCRIPTION);
 		createEReference(actionEClass, ACTION__IMPLIES);
@@ -931,12 +941,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEOperation(principalEClass, PRINCIPAL___GET_REALM);
 
 		permissionEClass = createEClass(PERMISSION);
+		createEReference(permissionEClass, PERMISSION__ACTION);
 		createEAttribute(permissionEClass, PERMISSION__ALLOW);
+		createEAttribute(permissionEClass, PERMISSION__CONDITION);
 		createEAttribute(permissionEClass, PERMISSION__START_DATE);
 		createEAttribute(permissionEClass, PERMISSION__END_DATE);
 		createEAttribute(permissionEClass, PERMISSION__COMMENT);
-		createEReference(permissionEClass, PERMISSION__ACTION);
-		createEAttribute(permissionEClass, PERMISSION__CONDITION);
 		createEOperation(permissionEClass, PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP);
 		createEOperation(permissionEClass, PERMISSION___GET_PRINCIPAL);
 		createEOperation(permissionEClass, PERMISSION___GET_TARGET);
@@ -1064,6 +1074,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAction_Patterns(), ecorePackage.getEString(), "patterns", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAction_Grantable(), ecorePackage.getEBoolean(), "grantable", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAction_Description(), ecorePackage.getEString(), "description", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAction_Implies(), this.getAction(), this.getAction_ImpliedBy(), "implies", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1114,12 +1125,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEOperation(op, g1);
 
 		initEClass(permissionEClass, Permission.class, "Permission", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEReference(getPermission_Action(), this.getAction(), null, "action", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_Allow(), ecorePackage.getEBoolean(), "allow", "true", 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getPermission_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_StartDate(), ecorePackage.getEDate(), "startDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_EndDate(), ecorePackage.getEDate(), "endDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_Comment(), ecorePackage.getEString(), "comment", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getPermission_Action(), this.getAction(), null, "action", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getPermission_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		op = initEOperation(getPermission__Authorize__Context_String_String_Map(), this.getAccessDecision(), "authorize", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getContext(), "context", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1375,7 +1386,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getAction_Name(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Action name, which is used as a pattern to match ``<action>:<qualifier>`` string.  ``*`` matches any character sequence."
+			 "documentation", "Action display name, e.g. \"Post transaction\"."
+		   });	
+		addAnnotation
+		  (getAction_Patterns(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Patterns to match - ``<action>:<qualifier>`` string.  ``*`` matches any character sequence.\r\nIf empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. "
 		   });	
 		addAnnotation
 		  (getAction_Grantable(), 
@@ -1528,10 +1545,22 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", ""
 		   });	
 		addAnnotation
+		  (getPermission_Action(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Permission\'s action."
+		   });	
+		addAnnotation
 		  (getPermission_Allow(), 
 		   source, 
 		   new String[] {
 			 "documentation", "If true, action is allowed. Otherwise it is denied."
+		   });	
+		addAnnotation
+		  (getPermission_Condition(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).\r\n\r\nThe expression is evaluated in the context of the target object with the following variables:\r\n\r\n* ``context``\r\n* ``environment``\r\n* ``action``\r\n* ``qualifier``\r\n* ``permission``"
 		   });	
 		addAnnotation
 		  (getPermission_StartDate(), 
@@ -1550,18 +1579,6 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Comment."
-		   });	
-		addAnnotation
-		  (getPermission_Action(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Permission\'s action."
-		   });	
-		addAnnotation
-		  (getPermission_Condition(), 
-		   source, 
-		   new String[] {
-			 "documentation", "Condition is a boolean XPath expression evaluated by [JXPath](http://commons.apache.org/proper/commons-jxpath/).\r\n\r\nThe expression is evaluated in the context of the target object with the following variables:\r\n\r\n* ``context``\r\n* ``environment``\r\n* ``action``\r\n* ``qualifier``\r\n* ``permission``"
 		   });	
 		addAnnotation
 		  (principalPermissionEClass, 

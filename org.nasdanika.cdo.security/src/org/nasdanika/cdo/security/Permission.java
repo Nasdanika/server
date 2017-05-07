@@ -23,12 +23,12 @@ import org.nasdanika.core.Context;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#isAllow <em>Allow</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Permission#getCondition <em>Condition</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getStartDate <em>Start Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getEndDate <em>End Date</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Permission#getComment <em>Comment</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Permission#getAction <em>Action</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Permission#getCondition <em>Condition</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getPermission()

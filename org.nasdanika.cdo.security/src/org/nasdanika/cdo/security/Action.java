@@ -23,6 +23,7 @@ import org.nasdanika.core.Context;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Action#getName <em>Name</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Action#getPatterns <em>Patterns</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#isGrantable <em>Grantable</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getImplies <em>Implies</em>}</li>
@@ -42,7 +43,7 @@ public interface Action extends CDOObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Action name, which is used as a pattern to match ``<action>:<qualifier>`` string.  ``*`` matches any character sequence.
+	 * Action display name, e.g. "Post transaction".
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
@@ -61,6 +62,22 @@ public interface Action extends CDOObject {
 	 * @generated
 	 */
 	void setName(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Patterns</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Patterns to match - ``<action>:<qualifier>`` string.  ``*`` matches any character sequence.
+	 * If empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. 
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Patterns</em>' attribute list.
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_Patterns()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getPatterns();
 
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.

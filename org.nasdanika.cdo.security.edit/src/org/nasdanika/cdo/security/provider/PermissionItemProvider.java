@@ -49,12 +49,12 @@ public class PermissionItemProvider extends CDOItemProviderAdapterEx implements 
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
+			addActionPropertyDescriptor(object);
 			addAllowPropertyDescriptor(object);
+			addConditionPropertyDescriptor(object);
 			addStartDatePropertyDescriptor(object);
 			addEndDatePropertyDescriptor(object);
 			addCommentPropertyDescriptor(object);
-			addActionPropertyDescriptor(object);
-			addConditionPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
@@ -228,10 +228,10 @@ public class PermissionItemProvider extends CDOItemProviderAdapterEx implements 
 
 		switch (notification.getFeatureID(Permission.class)) {
 			case SecurityPackage.PERMISSION__ALLOW:
+			case SecurityPackage.PERMISSION__CONDITION:
 			case SecurityPackage.PERMISSION__START_DATE:
 			case SecurityPackage.PERMISSION__END_DATE:
 			case SecurityPackage.PERMISSION__COMMENT:
-			case SecurityPackage.PERMISSION__CONDITION:
 				fireNotifyChanged(new ViewerNotification(notification, notification.getNotifier(), false, true));
 				return;
 		}

@@ -348,13 +348,22 @@ public interface SecurityPackage extends EPackage {
 	int ACTION__NAME = 0;
 
 	/**
+	 * The feature id for the '<em><b>Patterns</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__PATTERNS = 1;
+
+	/**
 	 * The feature id for the '<em><b>Grantable</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__GRANTABLE = 1;
+	int ACTION__GRANTABLE = 2;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -363,7 +372,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__DESCRIPTION = 2;
+	int ACTION__DESCRIPTION = 3;
 
 	/**
 	 * The feature id for the '<em><b>Implies</b></em>' reference list.
@@ -372,7 +381,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__IMPLIES = 3;
+	int ACTION__IMPLIES = 4;
 
 	/**
 	 * The feature id for the '<em><b>Implied By</b></em>' reference list.
@@ -381,7 +390,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__IMPLIED_BY = 4;
+	int ACTION__IMPLIED_BY = 5;
 
 	/**
 	 * The feature id for the '<em><b>Category</b></em>' attribute.
@@ -390,7 +399,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__CATEGORY = 5;
+	int ACTION__CATEGORY = 6;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -399,7 +408,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__CHILDREN = 6;
+	int ACTION__CHILDREN = 7;
 
 	/**
 	 * The number of structural features of the '<em>Action</em>' class.
@@ -408,7 +417,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION_FEATURE_COUNT = 7;
+	int ACTION_FEATURE_COUNT = 8;
 
 	/**
 	 * The operation id for the '<em>Match</em>' operation.
@@ -529,49 +538,22 @@ public interface SecurityPackage extends EPackage {
 	int PERMISSION = 5;
 
 	/**
-	 * The feature id for the '<em><b>Allow</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERMISSION__ALLOW = 0;
-
-	/**
-	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERMISSION__START_DATE = 1;
-
-	/**
-	 * The feature id for the '<em><b>End Date</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERMISSION__END_DATE = 2;
-
-	/**
-	 * The feature id for the '<em><b>Comment</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERMISSION__COMMENT = 3;
-
-	/**
 	 * The feature id for the '<em><b>Action</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__ACTION = 4;
+	int PERMISSION__ACTION = 0;
+
+	/**
+	 * The feature id for the '<em><b>Allow</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__ALLOW = 1;
 
 	/**
 	 * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -580,7 +562,34 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERMISSION__CONDITION = 5;
+	int PERMISSION__CONDITION = 2;
+
+	/**
+	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__START_DATE = 3;
+
+	/**
+	 * The feature id for the '<em><b>End Date</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__END_DATE = 4;
+
+	/**
+	 * The feature id for the '<em><b>Comment</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERMISSION__COMMENT = 5;
 
 	/**
 	 * The number of structural features of the '<em>Permission</em>' class.
@@ -638,6 +647,15 @@ public interface SecurityPackage extends EPackage {
 	int PRINCIPAL_PERMISSION = 6;
 
 	/**
+	 * The feature id for the '<em><b>Action</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__ACTION = PERMISSION__ACTION;
+
+	/**
 	 * The feature id for the '<em><b>Allow</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -645,6 +663,15 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PRINCIPAL_PERMISSION__ALLOW = PERMISSION__ALLOW;
+
+	/**
+	 * The feature id for the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PRINCIPAL_PERMISSION__CONDITION = PERMISSION__CONDITION;
 
 	/**
 	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
@@ -672,24 +699,6 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PRINCIPAL_PERMISSION__COMMENT = PERMISSION__COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Action</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PRINCIPAL_PERMISSION__ACTION = PERMISSION__ACTION;
-
-	/**
-	 * The feature id for the '<em><b>Condition</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PRINCIPAL_PERMISSION__CONDITION = PERMISSION__CONDITION;
 
 	/**
 	 * The feature id for the '<em><b>Target</b></em>' reference.
@@ -756,6 +765,15 @@ public interface SecurityPackage extends EPackage {
 	int PROTECTED_PERMISSION = 7;
 
 	/**
+	 * The feature id for the '<em><b>Action</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__ACTION = PERMISSION__ACTION;
+
+	/**
 	 * The feature id for the '<em><b>Allow</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -763,6 +781,15 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROTECTED_PERMISSION__ALLOW = PERMISSION__ALLOW;
+
+	/**
+	 * The feature id for the '<em><b>Condition</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION__CONDITION = PERMISSION__CONDITION;
 
 	/**
 	 * The feature id for the '<em><b>Start Date</b></em>' attribute.
@@ -790,24 +817,6 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int PROTECTED_PERMISSION__COMMENT = PERMISSION__COMMENT;
-
-	/**
-	 * The feature id for the '<em><b>Action</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROTECTED_PERMISSION__ACTION = PERMISSION__ACTION;
-
-	/**
-	 * The feature id for the '<em><b>Condition</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PROTECTED_PERMISSION__CONDITION = PERMISSION__CONDITION;
 
 	/**
 	 * The feature id for the '<em><b>Principal</b></em>' reference.
@@ -1963,6 +1972,17 @@ public interface SecurityPackage extends EPackage {
 	EAttribute getAction_Name();
 
 	/**
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.cdo.security.Action#getPatterns <em>Patterns</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Patterns</em>'.
+	 * @see org.nasdanika.cdo.security.Action#getPatterns()
+	 * @see #getAction()
+	 * @generated
+	 */
+	EAttribute getAction_Patterns();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Action#getDescription <em>Description</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2639,6 +2659,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute ACTION__NAME = eINSTANCE.getAction_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Patterns</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTION__PATTERNS = eINSTANCE.getAction_Patterns();
 
 		/**
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.

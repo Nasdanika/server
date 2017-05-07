@@ -26,6 +26,7 @@ import org.nasdanika.core.CoreUtil;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getPatterns <em>Patterns</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#isGrantable <em>Grantable</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getImplies <em>Implies</em>}</li>
@@ -82,6 +83,16 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 */
 	public void setName(String newName) {
 		eSet(SecurityPackage.Literals.ACTION__NAME, newName);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<String> getPatterns() {
+		return (EList<String>)eGet(SecurityPackage.Literals.ACTION__PATTERNS, true);
 	}
 
 	/**
@@ -217,8 +228,11 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 		if (!CoreUtil.isBlank(qualifier)) {
 			toMatch.append(":").append(qualifier);
 		}
-		if (globMatch(toMatch.toString(), getName())) {
-			return true;
+		String matchStr = toMatch.toString();
+		for (String pattern: getPatterns()) {
+			if (globMatch(matchStr, pattern) || pattern.equals(matchStr+":*")) { // So read:* pattern would match read without a qualifer.
+				return true;
+			}
 		}
 		
 		for (Action a: getImplies()) {
