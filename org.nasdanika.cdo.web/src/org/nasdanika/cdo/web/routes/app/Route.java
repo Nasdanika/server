@@ -550,7 +550,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								if (referrer == null) {
 									referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
 								}
-								referrer += referrer.indexOf("?") == -1 ? "?" : "&";
+								int referrerQueryStart = referrer.indexOf("?");
+								if (referrerQueryStart == -1) {
+									referrer +=  "?";
+								} else {
+									StringBuilder queryBuilder = new StringBuilder();
+									for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+										if (!qe.startsWith("context-feature=")) {
+											queryBuilder.append(qe).append("&");
+										}
+									}
+									referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+								}
 								referrer += "context-feature="+URLEncoder.encode(feature, "UTF-8");
 								((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
 								return Action.NOP;
@@ -910,7 +921,19 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			if (redirectURL == null) {
 				return "Cleared";
 			}
-			redirectURL += redirectURL.indexOf("?") == -1 ? "?" : "&";
+			
+			int redirectQueryStart = redirectURL.indexOf("?");
+			if (redirectQueryStart == -1) {
+				redirectURL +=  "?";
+			} else {
+				StringBuilder queryBuilder = new StringBuilder();
+				for (String qe: redirectURL.substring(redirectQueryStart+1).split("&")) {
+					if (!qe.startsWith("context-feature=")) {
+						queryBuilder.append(qe).append("&");
+					}
+				}
+				redirectURL = redirectURL.substring(0, redirectQueryStart+1)+queryBuilder;
+			}
 			redirectURL += "context-feature="+URLEncoder.encode(feature, "UTF-8");
 			
 			context.getResponse().sendRedirect(redirectURL);
@@ -956,7 +979,19 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			if (redirectURL == null) {
 				return "Removed "+idx;
 			}
-			redirectURL += redirectURL.indexOf("?") == -1 ? "?" : "&";
+			
+			int redirectQueryStart = redirectURL.indexOf("?");
+			if (redirectQueryStart == -1) {
+				redirectURL +=  "?";
+			} else {
+				StringBuilder queryBuilder = new StringBuilder();
+				for (String qe: redirectURL.substring(redirectQueryStart+1).split("&")) {
+					if (!qe.startsWith("context-feature=")) {
+						queryBuilder.append(qe).append("&");
+					}
+				}
+				redirectURL = redirectURL.substring(0, redirectQueryStart+1)+queryBuilder;
+			}
 			redirectURL += "context-feature="+URLEncoder.encode(feature, "UTF-8");
 			
 			context.getResponse().sendRedirect(redirectURL);
