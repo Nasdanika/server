@@ -509,6 +509,69 @@ By default EOperation parameters have ``form`` binding with the name equal to th
 
 * ``getApiDocPath()`` - returns ``api.html`` so the dispatching route renders API documentation at ``<object path>/api.html``.
 * ``xPathEvaluator(C, T, String, String)`` - Renders and processes a form for evaluating XPath expressions. This route method is intended to be used by application/model developers.
+
+#### Client-side logic
+
+The framework uses the server-side logic and HTML5/Boostrap features on the client side. There is a number of situations where it is desirable to have client-side logic. For example:
+
+* Forms with master-detail relationships between inputs.
+* Wizard-like forms where different parts of the form (e.g. fieldsets) appear sequentially.
+
+There is a number of ways to introduce client-side logic. One of them is to override a corresponding method, e.g. ``createContainmentFeatureElement()``, but it will result in a good deal of coding.
+This section describes how to introduce client-side logic with minimal amount of coding. The examples below use [KnockoutJS](http://knockoutjs.com/).
+
+##### Bind controls
+
+You can add bindings to form controls using ``control-configuration`` render annotation or programmatically as shown below:
+
+```java
+/**
+ * Счёт и актив привязаны к KnockoutJS модели чтобы список астивов содержал активы поддерживаемые счётом.
+ */
+@Override
+default <TE extends ETypedElement> UIElement<?> renderTypedElementControl(
+        CDOTransactionHttpServletRequestContext<LoginPasswordCredentials> context, T obj, TE typedElement,
+        Collection<TE> typedElements, Object value, FieldContainer<?> fieldContainer, Modal docModal,
+        List<ValidationResult> validationResults, boolean helpTooltip) throws Exception {
+
+    UIElement<?> control = ЭлементМоделиRenderer.super.renderTypedElementControl(context, obj, typedElement,
+            typedElements, value, fieldContainer, docModal, validationResults, helpTooltip);
+
+    if (LedgerPackage.Literals.ПРОВОДКА__СЧЁТ == typedElement) {
+        ((Select) control).knockout().bind("value", "счёт", "\'" + value + "\'");
+    } else if (LedgerPackage.Literals.ПРОВОДКА__АКТИВ == typedElement) {
+        ((Select) control)
+            .knockout().bind("options", "активыСчёта", null)
+            .knockout().bind("optionsText", "'наименование'", null)
+            .knockout().bind("optionsValue", "'cdoID'", null);
+    }
+
+    return control;
+}
+```
+
+##### Write JavaScript module
+
+Example: 
+
+```javascript
+function СчётАктивПроводки() {
+
+    var активыСчетов  = {{активыСчетов}};
+    this.счёт = ko.observable({{счёт}});
+    
+    this.активыСчёта = ko.pureComputed(function() {
+        return активыСчетов[this.счёт()];
+    }.bind(this));
+    
+}
+
+ko.applyBindings(new СчётАктивПроводки());
+```
+
+##### Inject the script into the page
+
+One of possible ways to inject the module script into the page is to override ``renderPage()`` method as in [ОперацияRoute](https://github.com/Nasdanika/ledger/blob/master/org.nasdanika.ledger.app/src/org/nasdanika/ledger/app/routes/ledger/%D0%9E%D0%BF%D0%B5%D1%80%D0%B0%D1%86%D0%B8%D1%8FRoute.java).  
 	  
 ### Secure the application
 
