@@ -3,6 +3,7 @@ package org.nasdanika.cdo.web.routes.app;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -549,6 +550,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								if (referrer == null) {
 									referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
 								}
+								referrer += referrer.indexOf("?") == -1 ? "?" : "&";
+								referrer += "context-feature="+URLEncoder.encode(feature, "UTF-8");
 								((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
 								return Action.NOP;
 							}
@@ -907,6 +910,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			if (redirectURL == null) {
 				return "Cleared";
 			}
+			redirectURL += redirectURL.indexOf("?") == -1 ? "?" : "&";
+			redirectURL += "context-feature="+URLEncoder.encode(feature, "UTF-8");
 			
 			context.getResponse().sendRedirect(redirectURL);
 			
@@ -951,6 +956,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			if (redirectURL == null) {
 				return "Removed "+idx;
 			}
+			redirectURL += redirectURL.indexOf("?") == -1 ? "?" : "&";
+			redirectURL += "context-feature="+URLEncoder.encode(feature, "UTF-8");
 			
 			context.getResponse().sendRedirect(redirectURL);
 			
