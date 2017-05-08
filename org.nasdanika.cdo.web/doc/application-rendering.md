@@ -137,6 +137,16 @@ deployment to deployment or even at runtime based on some criterion.
 You may also override ``String getRenderAnnotation(C context, EModelElement modelElement, String key)`` method to load annotations from other sources, e.g. from
 a database.
 
+#### Constraint example
+
+The below constraint can be defined on user name attribute:
+
+```
+condition: count(../users[name=$this/name]) = 1
+errorMessage: Duplicate user
+errorMessageKey: duplicateUser
+```
+
 ### Generate model code, edit support, and editor
 
 Edit and editor support are needed to create the initial model for your application. If you are planning building the application model from scratch in the web UI or programmatically then you 
@@ -508,7 +518,7 @@ By default EOperation parameters have ``form`` binding with the name equal to th
 ##### Developer routes 
 
 * ``getApiDocPath()`` - returns ``api.html`` so the dispatching route renders API documentation at ``<object path>/api.html``.
-* ``xPathEvaluator(C, T, String, String)`` - Renders and processes a form for evaluating XPath expressions. This route method is intended to be used by application/model developers.
+* ``xPathEvaluator(C, T, String, String)`` - Renders and processes a form for evaluating XPath expressions. This route method is intended to be used by application/model developers to build/troubleshoot XPath expressions, e.g. constraints. Replace ``/index.html`` with ``XPathEvaluator.html`` for an object to open the evaluator page.
 
 #### Client-side logic
 
