@@ -1286,40 +1286,41 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
 					return Short.parseShort(strValue);
+				}					
+			} else {			
+				DecimalFormat df = new DecimalFormat(format);
+				if (BigDecimal.class == featureTypeInstanceClass) {
+					df.setParseBigDecimal(true);
+					return df.parse(strValue);
 				}				
+				Number parsed = df.parse(strValue);				
+				if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
+					return parsed.byteValue();
+				}
+				if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
+					return parsed.doubleValue();
+				}
+				if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
+					return parsed.floatValue();
+				}
+				if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
+					return parsed.intValue();
+				}
+				if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
+					return parsed.longValue();
+				}
+				if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
+					return parsed.shortValue();
+				}				
+				Object cp = context.convert(parsed, featureTypeInstanceClass);
+				if (parsed != null && cp == null) {
+					Map<String,Object> env = new HashMap<>();
+					env.put("value", parsed);
+					env.put("type", featureTypeInstanceClass.getName());
+					throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));				
+				}
+				return cp;
 			}
-			DecimalFormat df = new DecimalFormat(format);
-			if (BigDecimal.class == featureTypeInstanceClass) {
-				df.setParseBigDecimal(true);
-				return df.parse(strValue);
-			}				
-			Number parsed = df.parse(strValue);				
-			if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
-				return parsed.byteValue();
-			}
-			if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
-				return parsed.doubleValue();
-			}
-			if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
-				return parsed.floatValue();
-			}
-			if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
-				return parsed.intValue();
-			}
-			if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
-				return parsed.longValue();
-			}
-			if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
-				return parsed.shortValue();
-			}				
-			Object cp = context.convert(parsed, featureTypeInstanceClass);
-			if (parsed != null && cp == null) {
-				Map<String,Object> env = new HashMap<>();
-				env.put("value", parsed);
-				env.put("type", featureTypeInstanceClass.getName());
-				throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));				
-			}
-			return cp;
 		}
 		
 		Object ret = context.convert(strValue, featureTypeInstanceClass);
@@ -2504,13 +2505,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (isViewItem(context, obj)) {
 			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, featureDocModals));
 		}
+		String contextFeatureName = null;
+		if (context instanceof HttpServletRequestContext) {
+			contextFeatureName = ((HttpServletRequestContext) context).getRequest().getParameter("context-feature");
+		}
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.item)) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
 			Tag nameSpan = htmlFactory.span(renderNamedElementIconAndLabel(context, vf));
 			if (featureDocIcon != null) {
 				nameSpan.content(featureDocIcon);
 			}
-			ret.item(nameSpan, htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, null, null)).style().margin("3px"));
+			ret.item(
+					nameSpan, 
+					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, null, null)).style().margin("3px"), 
+					contextFeatureName == null ? ret.isEmpty() : vf.getName().equals(contextFeatureName));
 		}	
 		
 		// TODO - add support of inlined features.
@@ -3273,11 +3281,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String deleteLocation;
 		if (value instanceof EObject && isDelete) {
 			Renderer<C, EObject> renderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, (EObject) value) : getRenderer((EObject) value);
-			deleteLocation = renderer.getObjectURI(context, (EObject) value)+"/delete.html";
+			String objectURI = renderer.getObjectURI(context, (EObject) value);
+			deleteLocation = objectURI+"/delete.html";
 		} else if (idx == -1) {
-			deleteLocation = "feature/"+typedElement.getName()+"/delete.html";
+			deleteLocation = getObjectURI(context, obj)+"/feature/"+typedElement.getName()+"/delete.html";
 		} else {
-			deleteLocation = "feature/"+typedElement.getName()+"/"+idx+"/delete.html";			
+			deleteLocation = getObjectURI(context, obj)+"/feature/"+typedElement.getName()+"/"+idx+"/delete.html";			
 		}
 		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"')) window.location='"+deleteLocation+"';");
 	}
@@ -4292,9 +4301,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		// TODO - add support of inlined features.
-		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip);
+		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip, null);
 	}
 
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param fieldContainer
+	 * @param docModals
+	 * @param validationResults
+	 * @param formElements
+	 * @param helpTooltip
+	 * @param categoryFieldSetConfigurator Optional configuration. May be used in dynamic forms to show/hide fieldsets depending on form state.
+	 * @return
+	 * @throws Exception
+	 */
 	default <TE extends ETypedElement> List<FormGroup<?>> renderTypedElementsFormGroups(
 			C context, T obj, 
 			FieldContainer<?> fieldContainer,
@@ -4302,7 +4324,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Map<ENamedElement, 
 			List<ValidationResult>> validationResults,
 			Map<TE, Object> formElements, 
-			boolean helpTooltip) throws Exception {
+			boolean helpTooltip,
+			Consumer<FieldSet> categoryFieldSetConfigurator) throws Exception {
 		
 		List<FormGroup<?>> ret = new ArrayList<>();
 		Map<String,List<TE>> categories = new TreeMap<>();
@@ -4345,6 +4368,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (fg != null) {
 					ret.add(fg);
 				}
+			}
+			if (categoryFieldSetConfigurator != null) {
+				categoryFieldSetConfigurator.accept(categoryFieldSet);
 			}
 		}
 		
@@ -4821,7 +4847,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			editForm.content(errorList);
 		}
 				
-		renderTypedElementsFormGroups(context, obj, editForm, parameterDocModals, namedElementValidationResults, formParameters, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
+		renderTypedElementsFormGroups(
+				context, 
+				obj, 
+				editForm, 
+				parameterDocModals, 
+				namedElementValidationResults, 
+				formParameters, 
+				horizontalForm, null).forEach((fg) -> fg.feedback(!horizontalForm));
+		
 		return editForm;
 	}
 	
@@ -4861,7 +4895,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			selectForm.content(errorList);
 		}
 		
-		FormGroup<?> fg = renderTypedElementFormGroup(context, obj, feature, Collections.emptyList(), obj.eGet(feature), selectForm, featureDocModal, featureValidationResults, horizontalForm);
+		FormGroup<?> fg = renderTypedElementFormGroup(context, obj, feature, Collections.singletonList(feature), obj.eGet(feature), selectForm, featureDocModal, featureValidationResults, horizontalForm);
 		if (fg != null) {
 			fg.feedback(!horizontalForm);
 		}
