@@ -52,7 +52,8 @@ public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEdi
 			super.getPropertyDescriptors(object);
 
 			addNamePropertyDescriptor(object);
-			addPatternsPropertyDescriptor(object);
+			addIncludePatternsPropertyDescriptor(object);
+			addExcludePatternsPropertyDescriptor(object);
 			addGrantablePropertyDescriptor(object);
 			addDescriptionPropertyDescriptor(object);
 			addImpliesPropertyDescriptor(object);
@@ -85,19 +86,41 @@ public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEdi
 	}
 
 	/**
-	 * This adds a property descriptor for the Patterns feature.
+	 * This adds a property descriptor for the Include Patterns feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addPatternsPropertyDescriptor(Object object) {
+	protected void addIncludePatternsPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Action_patterns_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Action_patterns_feature", "_UI_Action_type"),
-				 SecurityPackage.Literals.ACTION__PATTERNS,
+				 getString("_UI_Action_includePatterns_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Action_includePatterns_feature", "_UI_Action_type"),
+				 SecurityPackage.Literals.ACTION__INCLUDE_PATTERNS,
+				 true,
+				 false,
+				 false,
+				 ItemPropertyDescriptor.GENERIC_VALUE_IMAGE,
+				 null,
+				 null));
+	}
+
+	/**
+	 * This adds a property descriptor for the Exclude Patterns feature.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected void addExcludePatternsPropertyDescriptor(Object object) {
+		itemPropertyDescriptors.add
+			(createItemPropertyDescriptor
+				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
+				 getResourceLocator(),
+				 getString("_UI_Action_excludePatterns_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Action_excludePatterns_feature", "_UI_Action_type"),
+				 SecurityPackage.Literals.ACTION__EXCLUDE_PATTERNS,
 				 true,
 				 false,
 				 false,
@@ -285,7 +308,8 @@ public class ActionItemProvider extends CDOItemProviderAdapterEx implements IEdi
 
 		switch (notification.getFeatureID(Action.class)) {
 			case SecurityPackage.ACTION__NAME:
-			case SecurityPackage.ACTION__PATTERNS:
+			case SecurityPackage.ACTION__INCLUDE_PATTERNS:
+			case SecurityPackage.ACTION__EXCLUDE_PATTERNS:
 			case SecurityPackage.ACTION__GRANTABLE:
 			case SecurityPackage.ACTION__DESCRIPTION:
 			case SecurityPackage.ACTION__CATEGORY:

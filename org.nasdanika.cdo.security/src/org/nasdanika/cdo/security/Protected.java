@@ -4,7 +4,10 @@ package org.nasdanika.cdo.security;
 
 import java.util.Map;
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.common.util.BasicEList;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -77,5 +80,39 @@ public interface Protected extends CDOObject {
 		}
 		return AccessDecision.ABSTAIN;
 	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Returns a list of principals which can be granted access to this protected. 
+	 * The default implementation returns a list of all realm users excluding roots
+	 * plus everyone group.
+	 * <!-- end-model-doc -->
+	 * @model kind="operation"
+	 * @generated NOT
+	 */
+	default EList<Principal> getGrantees() {
+		BasicEList<Principal> grantees = ECollections.newBasicEList();
+		for (EObject container = eContainer(); container != null; container = container.eContainer()) {
+			if (container instanceof Realm) {
+				Realm<?> realm = (Realm<?>) container;
+				U: for (User<?> u: realm.getAllUsers()) {
+					if (u == realm.getRoot()) {
+						continue U;
+					}
+					if (realm.getRoot() instanceof Group && ((Group) realm.getRoot()).isMember(u)) {
+						continue U;
+					}
+					grantees.add(u);
+				}
+				if (realm.getEveryone() != null) {
+					grantees.add(realm.getEveryone());
+				}
+				break;
+			}
+		}
+		return grantees;
+	};
 
 } // Protected

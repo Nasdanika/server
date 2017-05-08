@@ -160,10 +160,16 @@
         <details key="documentation" value="Action display name, e.g. &quot;Post transaction&quot;."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="patterns" upperBound="-1"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="includePatterns" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Patterns to match - ``&lt;action>:&lt;qualifier>`` string.  ``*`` matches any character sequence.&#xD;&#xA;If empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. "/>
+        <details key="documentation" value="Patterns to match - ``&lt;action>:&lt;qualifier>`` string.  ``*`` matches any character sequence.&#xD;&#xA;Action is matched if it matches at least one include pattern and none of exclude patterns.&#xD;&#xA;If empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. "/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="excludePatterns" upperBound="-1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Patterns to exclude from the match - ``&lt;action>:&lt;qualifier>`` string.  ``*`` matches any character sequence. &#xD;&#xA;Action is matched if it matches at least one include pattern and none of exclude patterns.&#xD;&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="grantable" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
@@ -527,6 +533,11 @@
           <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
         </eGenericType>
       </eParameters>
+    </eOperations>
+    <eOperations name="getGrantees" upperBound="-1" eType="#//Principal">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Returns a list of principals which can be granted access to this protected. &#xD;&#xA;The default implementation returns a list of all realm users excluding roots&#xD;&#xA;plus everyone group."/>
+      </eAnnotations>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="permissions" upperBound="-1"
         eType="#//ProtectedPermission" containment="true">

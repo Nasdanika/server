@@ -42,7 +42,8 @@
     </genClasses>
     <genClasses ecoreClass="security.ecore#//Action">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/name"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/patterns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/includePatterns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/excludePatterns"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute security.ecore#//Action/grantable"/>
       <genFeatures createChild="false" propertyMultiLine="true" ecoreFeature="ecore:EAttribute security.ecore#//Action/description"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Action/implies"/>
@@ -135,6 +136,7 @@
         <genParameters ecoreParameter="security.ecore#//Protected/authorize/qualifier"/>
         <genParameters ecoreParameter="security.ecore#//Protected/authorize/environment"/>
       </genOperations>
+      <genOperations ecoreOperation="security.ecore#//Protected/getGrantees"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

@@ -48,7 +48,7 @@ public class PrincipalAuthorizationHelper {
 			environment = environment == null ? new HashMap<String, Object>() : new HashMap<String, Object>(environment); 
 			environment.put("target", target);
 		}
-		return authorize(principal, context, target, action, qualifier, new ArrayList<>(), environment, new HashSet<Principal>());
+		return authorize(principal, context, target, action, qualifier, Collections.emptyList(), environment, new HashSet<Principal>());
 	}
 	
 	/**
@@ -238,12 +238,13 @@ public class PrincipalAuthorizationHelper {
 			EObject targetContainer = ((EObject) target).eContainer();
 			EStructuralFeature targetContainingFeature = ((EObject) target).eContainingFeature();
 			if (targetContainer!=null && targetContainingFeature!=null) {
+				List<EStructuralFeature> subPath = new ArrayList<>(path);
 				if (qualifier!=null && qualifier.startsWith(PARENT_NAVIGATION)) {
 					qualifier = qualifier.substring(PARENT_NAVIGATION.length());
 				} else {
-					path.add(0, targetContainingFeature);
+					subPath.add(0, targetContainingFeature);
 				}
-				AccessDecision accessDecision = authorize(principal, context, targetContainer, action, qualifier, path, environment, traversed);
+				AccessDecision accessDecision = authorize(principal, context, targetContainer, action, qualifier, Collections.unmodifiableList(subPath), environment, traversed);
 				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 					return accessDecision;
 				}

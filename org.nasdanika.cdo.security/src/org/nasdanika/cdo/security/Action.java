@@ -23,7 +23,8 @@ import org.nasdanika.core.Context;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.Action#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.Action#getPatterns <em>Patterns</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Action#getIncludePatterns <em>Include Patterns</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Action#getExcludePatterns <em>Exclude Patterns</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#isGrantable <em>Grantable</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Action#getImplies <em>Implies</em>}</li>
@@ -64,20 +65,38 @@ public interface Action extends CDOObject {
 	void setName(String value);
 
 	/**
-	 * Returns the value of the '<em><b>Patterns</b></em>' attribute list.
+	 * Returns the value of the '<em><b>Include Patterns</b></em>' attribute list.
 	 * The list contents are of type {@link java.lang.String}.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * Patterns to match - ``<action>:<qualifier>`` string.  ``*`` matches any character sequence.
+	 * Action is matched if it matches at least one include pattern and none of exclude patterns.
 	 * If empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. 
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Patterns</em>' attribute list.
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_Patterns()
+	 * @return the value of the '<em>Include Patterns</em>' attribute list.
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_IncludePatterns()
 	 * @model
 	 * @generated
 	 */
-	EList<String> getPatterns();
+	EList<String> getIncludePatterns();
+
+	/**
+	 * Returns the value of the '<em><b>Exclude Patterns</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Patterns to exclude from the match - ``<action>:<qualifier>`` string.  ``*`` matches any character sequence. 
+	 * Action is matched if it matches at least one include pattern and none of exclude patterns.
+	 * 
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Exclude Patterns</em>' attribute list.
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getAction_ExcludePatterns()
+	 * @model
+	 * @generated
+	 */
+	EList<String> getExcludePatterns();
 
 	/**
 	 * Returns the value of the '<em><b>Description</b></em>' attribute.

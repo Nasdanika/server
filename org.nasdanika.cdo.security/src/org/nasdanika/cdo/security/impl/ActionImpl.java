@@ -26,7 +26,8 @@ import org.nasdanika.core.CoreUtil;
  * </p>
  * <ul>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getPatterns <em>Patterns</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getIncludePatterns <em>Include Patterns</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getExcludePatterns <em>Exclude Patterns</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#isGrantable <em>Grantable</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.ActionImpl#getImplies <em>Implies</em>}</li>
@@ -91,8 +92,18 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<String> getPatterns() {
-		return (EList<String>)eGet(SecurityPackage.Literals.ACTION__PATTERNS, true);
+	public EList<String> getIncludePatterns() {
+		return (EList<String>)eGet(SecurityPackage.Literals.ACTION__INCLUDE_PATTERNS, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<String> getExcludePatterns() {
+		return (EList<String>)eGet(SecurityPackage.Literals.ACTION__EXCLUDE_PATTERNS, true);
 	}
 
 	/**
@@ -224,14 +235,22 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 */
 	@Override
 	public boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
-		StringBuilder toMatch = new StringBuilder(action);
-		if (!CoreUtil.isBlank(qualifier)) {
-			toMatch.append(":").append(qualifier);
+		String[] toMatch;
+		if (CoreUtil.isBlank(qualifier)) {
+			toMatch = new String[] {action, action+":this"}; // So, say read:* matches read because read is the same as read:this
+		} else {
+			toMatch = new String[] {action+":"+qualifier};
 		}
-		String matchStr = toMatch.toString();
-		for (String pattern: getPatterns()) {
-			if (globMatch(matchStr, pattern) || pattern.equals(matchStr+":*")) { // So read:* pattern would match read without a qualifer.
-				return true;
+		for (String matchStr: toMatch) {
+			I: for (String includePattern: getIncludePatterns()) {
+				if (globMatch(matchStr, includePattern)) { 
+					for (String excludePattern: getExcludePatterns()) {
+						if (globMatch(matchStr, excludePattern)) {
+							continue I;
+						}
+					}
+					return true;
+				}
 			}
 		}
 		

@@ -579,6 +579,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getProtected__GetGrantees() {
+		return protectedEClass.getEOperations().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getAction() {
 		return actionEClass;
 	}
@@ -597,7 +606,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAction_Patterns() {
+	public EAttribute getAction_IncludePatterns() {
 		return (EAttribute)actionEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -606,16 +615,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getAction_Description() {
-		return (EAttribute)actionEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getAction_Grantable() {
+	public EAttribute getAction_ExcludePatterns() {
 		return (EAttribute)actionEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -624,8 +624,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getAction_Implies() {
-		return (EReference)actionEClass.getEStructuralFeatures().get(4);
+	public EAttribute getAction_Description() {
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -633,7 +633,16 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getAction_ImpliedBy() {
+	public EAttribute getAction_Grantable() {
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getAction_Implies() {
 		return (EReference)actionEClass.getEStructuralFeatures().get(5);
 	}
 
@@ -642,8 +651,17 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getAction_ImpliedBy() {
+		return (EReference)actionEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EAttribute getAction_Category() {
-		return (EAttribute)actionEClass.getEStructuralFeatures().get(6);
+		return (EAttribute)actionEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -652,7 +670,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * @generated
 	 */
 	public EReference getAction_Children() {
-		return (EReference)actionEClass.getEStructuralFeatures().get(7);
+		return (EReference)actionEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -921,7 +939,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		actionEClass = createEClass(ACTION);
 		createEAttribute(actionEClass, ACTION__NAME);
-		createEAttribute(actionEClass, ACTION__PATTERNS);
+		createEAttribute(actionEClass, ACTION__INCLUDE_PATTERNS);
+		createEAttribute(actionEClass, ACTION__EXCLUDE_PATTERNS);
 		createEAttribute(actionEClass, ACTION__GRANTABLE);
 		createEAttribute(actionEClass, ACTION__DESCRIPTION);
 		createEReference(actionEClass, ACTION__IMPLIES);
@@ -982,6 +1001,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		protectedEClass = createEClass(PROTECTED);
 		createEReference(protectedEClass, PROTECTED__PERMISSIONS);
 		createEOperation(protectedEClass, PROTECTED___AUTHORIZE__CONTEXT_PRINCIPAL_STRING_STRING_MAP);
+		createEOperation(protectedEClass, PROTECTED___GET_GRANTEES);
 
 		// Create data types
 		contextEDataType = createEDataType(CONTEXT);
@@ -1074,7 +1094,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		initEClass(actionEClass, Action.class, "Action", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getAction_Name(), ecorePackage.getEString(), "name", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getAction_Patterns(), ecorePackage.getEString(), "patterns", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAction_IncludePatterns(), ecorePackage.getEString(), "includePatterns", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getAction_ExcludePatterns(), ecorePackage.getEString(), "excludePatterns", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAction_Grantable(), ecorePackage.getEBoolean(), "grantable", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getAction_Description(), ecorePackage.getEString(), "description", null, 0, 1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getAction_Implies(), this.getAction(), this.getAction_ImpliedBy(), "implies", null, 0, -1, Action.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1196,6 +1217,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		initEOperation(getProtected__GetGrantees(), this.getPrincipal(), "getGrantees", 0, -1, IS_UNIQUE, IS_ORDERED);
 
 		// Initialize data types
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
@@ -1389,10 +1412,16 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "Action display name, e.g. \"Post transaction\"."
 		   });	
 		addAnnotation
-		  (getAction_Patterns(), 
+		  (getAction_IncludePatterns(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Patterns to match - ``<action>:<qualifier>`` string.  ``*`` matches any character sequence.\r\nIf empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. "
+			 "documentation", "Patterns to match - ``<action>:<qualifier>`` string.  ``*`` matches any character sequence.\r\nAction is matched if it matches at least one include pattern and none of exclude patterns.\r\nIf empty, then action is not matched. E.g. grantable actions may not define their own patterns, but be just gropings of lower level actions. "
+		   });	
+		addAnnotation
+		  (getAction_ExcludePatterns(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Patterns to exclude from the match - ``<action>:<qualifier>`` string.  ``*`` matches any character sequence. \r\nAction is matched if it matches at least one include pattern and none of exclude patterns.\r\n"
 		   });	
 		addAnnotation
 		  (getAction_Grantable(), 
@@ -1759,6 +1788,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "documentation", "Authorization environment, e.g. for ``transferFunds`` environment may contain ``transferAmount`` key.\r\nEnvironment may be used by conditional actions and/or conditional permissions."
+		   });	
+		addAnnotation
+		  (getProtected__GetGrantees(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Returns a list of principals which can be granted access to this protected. \r\nThe default implementation returns a list of all realm users excluding roots\r\nplus everyone group."
 		   });	
 		addAnnotation
 		  (getProtected_Permissions(), 

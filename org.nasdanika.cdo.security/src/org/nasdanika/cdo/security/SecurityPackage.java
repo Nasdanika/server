@@ -348,13 +348,22 @@ public interface SecurityPackage extends EPackage {
 	int ACTION__NAME = 0;
 
 	/**
-	 * The feature id for the '<em><b>Patterns</b></em>' attribute list.
+	 * The feature id for the '<em><b>Include Patterns</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__PATTERNS = 1;
+	int ACTION__INCLUDE_PATTERNS = 1;
+
+	/**
+	 * The feature id for the '<em><b>Exclude Patterns</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION__EXCLUDE_PATTERNS = 2;
 
 	/**
 	 * The feature id for the '<em><b>Grantable</b></em>' attribute.
@@ -363,7 +372,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__GRANTABLE = 2;
+	int ACTION__GRANTABLE = 3;
 
 	/**
 	 * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -372,7 +381,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__DESCRIPTION = 3;
+	int ACTION__DESCRIPTION = 4;
 
 	/**
 	 * The feature id for the '<em><b>Implies</b></em>' reference list.
@@ -381,7 +390,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__IMPLIES = 4;
+	int ACTION__IMPLIES = 5;
 
 	/**
 	 * The feature id for the '<em><b>Implied By</b></em>' reference list.
@@ -390,7 +399,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__IMPLIED_BY = 5;
+	int ACTION__IMPLIED_BY = 6;
 
 	/**
 	 * The feature id for the '<em><b>Category</b></em>' attribute.
@@ -399,7 +408,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__CATEGORY = 6;
+	int ACTION__CATEGORY = 7;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -408,7 +417,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION__CHILDREN = 7;
+	int ACTION__CHILDREN = 8;
 
 	/**
 	 * The number of structural features of the '<em>Action</em>' class.
@@ -417,7 +426,7 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION_FEATURE_COUNT = 8;
+	int ACTION_FEATURE_COUNT = 9;
 
 	/**
 	 * The operation id for the '<em>Match</em>' operation.
@@ -1470,13 +1479,22 @@ public interface SecurityPackage extends EPackage {
 	int PROTECTED___AUTHORIZE__CONTEXT_PRINCIPAL_STRING_STRING_MAP = 0;
 
 	/**
+	 * The operation id for the '<em>Get Grantees</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED___GET_GRANTEES = 1;
+
+	/**
 	 * The number of operations of the '<em>Protected</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTED_OPERATION_COUNT = 1;
+	int PROTECTED_OPERATION_COUNT = 2;
 
 	/**
 	 * The meta object id for the '<em>Context</em>' data type.
@@ -1951,6 +1969,16 @@ public interface SecurityPackage extends EPackage {
 	EOperation getProtected__Authorize__Context_Principal_String_String_Map();
 
 	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Protected#getGrantees() <em>Get Grantees</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Get Grantees</em>' operation.
+	 * @see org.nasdanika.cdo.security.Protected#getGrantees()
+	 * @generated
+	 */
+	EOperation getProtected__GetGrantees();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Action <em>Action</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1972,15 +2000,26 @@ public interface SecurityPackage extends EPackage {
 	EAttribute getAction_Name();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link org.nasdanika.cdo.security.Action#getPatterns <em>Patterns</em>}'.
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.cdo.security.Action#getIncludePatterns <em>Include Patterns</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Patterns</em>'.
-	 * @see org.nasdanika.cdo.security.Action#getPatterns()
+	 * @return the meta object for the attribute list '<em>Include Patterns</em>'.
+	 * @see org.nasdanika.cdo.security.Action#getIncludePatterns()
 	 * @see #getAction()
 	 * @generated
 	 */
-	EAttribute getAction_Patterns();
+	EAttribute getAction_IncludePatterns();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.nasdanika.cdo.security.Action#getExcludePatterns <em>Exclude Patterns</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Exclude Patterns</em>'.
+	 * @see org.nasdanika.cdo.security.Action#getExcludePatterns()
+	 * @see #getAction()
+	 * @generated
+	 */
+	EAttribute getAction_ExcludePatterns();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.security.Action#getDescription <em>Description</em>}'.
@@ -2643,6 +2682,14 @@ public interface SecurityPackage extends EPackage {
 		EOperation PROTECTED___AUTHORIZE__CONTEXT_PRINCIPAL_STRING_STRING_MAP = eINSTANCE.getProtected__Authorize__Context_Principal_String_String_Map();
 
 		/**
+		 * The meta object literal for the '<em><b>Get Grantees</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation PROTECTED___GET_GRANTEES = eINSTANCE.getProtected__GetGrantees();
+
+		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.ActionImpl <em>Action</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -2661,12 +2708,20 @@ public interface SecurityPackage extends EPackage {
 		EAttribute ACTION__NAME = eINSTANCE.getAction_Name();
 
 		/**
-		 * The meta object literal for the '<em><b>Patterns</b></em>' attribute list feature.
+		 * The meta object literal for the '<em><b>Include Patterns</b></em>' attribute list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ACTION__PATTERNS = eINSTANCE.getAction_Patterns();
+		EAttribute ACTION__INCLUDE_PATTERNS = eINSTANCE.getAction_IncludePatterns();
+
+		/**
+		 * The meta object literal for the '<em><b>Exclude Patterns</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute ACTION__EXCLUDE_PATTERNS = eINSTANCE.getAction_ExcludePatterns();
 
 		/**
 		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.

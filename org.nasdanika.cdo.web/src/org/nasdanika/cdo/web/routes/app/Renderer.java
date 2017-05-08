@@ -75,6 +75,7 @@ import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Package;
+import org.nasdanika.cdo.security.Protected;
 import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
@@ -3980,32 +3981,31 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String choicesSelector = getRenderAnnotation(context, eObjectTypedElement, RenderAnnotation.CHOICES_SELECTOR);
 		List<EObject> ret = new ArrayList<>(); 
 		if (choicesSelector == null) {
-			if (context instanceof CDOViewContext) {
+			if (SecurityPackage.Literals.PERMISSION__ACTION == eObjectTypedElement  && obj instanceof ProtectedPermission && context instanceof CDOViewContext) {
 				Realm<?> realm = ((CDOViewContext<?, ?>) context).getSecurityRealm();
 				if (realm != null) {
-				// Special handling for permissions.
-					if (SecurityPackage.Literals.PERMISSION__ACTION == eObjectTypedElement  && obj instanceof ProtectedPermission) {
-						List<Action> grantableActions = new ArrayList<>();
-						List<EClass> classesToMatch = new ArrayList<>();
-						classesToMatch.add(obj.eContainer().eClass());
-						classesToMatch.addAll(obj.eClass().getEAllSuperTypes());
-						for (Package pkg: realm.getPackages()) {
-							for (org.nasdanika.cdo.security.Class cls: pkg.getClasses()) {
-								for (EClass eClass: classesToMatch) {
-									if (eClass.getName().equals(cls.getName()) && eClass.getEPackage().getNsURI().equals(pkg.getNsURI())) {
-										for (Action action: cls.getActions()) {
-											grantableActions.add(action);
-										}
+					List<Action> grantableActions = new ArrayList<>();
+					List<EClass> classesToMatch = new ArrayList<>();
+					classesToMatch.add(obj.eContainer().eClass());
+					classesToMatch.addAll(obj.eClass().getEAllSuperTypes());
+					for (Package pkg: realm.getPackages()) {
+						for (org.nasdanika.cdo.security.Class cls: pkg.getClasses()) {
+							for (EClass eClass: classesToMatch) {
+								if (eClass.getName().equals(cls.getName()) && eClass.getEPackage().getNsURI().equals(pkg.getNsURI())) {
+									for (Action action: cls.getActions()) {
+										grantableActions.add(action);
 									}
 								}
-							}					
-						}
-						return grantableActions;
-					} else if (SecurityPackage.Literals.PROTECTED_PERMISSION__PRINCIPAL == eObjectTypedElement) {
-						return realm.getAllUsers(); // Simple implementation - granting permissions only to users in the Web UI as there is no getAllGroups() method in Realm.
+							}
+						}					
 					}
+					return grantableActions;
 				}
-			}
+			} 
+			
+			if (SecurityPackage.Literals.PROTECTED_PERMISSION__PRINCIPAL == eObjectTypedElement) {
+				return ((Protected) obj.eContainer()).getGrantees(); 
+			}			
 			
 			Resource eResource = obj.eResource();
 			TreeIterator<? extends Notifier> tit = null;
