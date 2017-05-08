@@ -10,23 +10,6 @@ This bundle contains classes and interfaces which allow to expose objects in a C
 
 * Application rendering
     * Support of ``inline`` feature location.
-    * Web operation
-        * Location - button in the action bar or a link in the left panel (typically for operations with unbound parameters and as such input forms).
-        * ``feature`` annotation to associate operation with a feature, i.e. display the button in the feature view, not the object view.
-        * Bindings of parameters similar to method parameter binding performed by [DispatchingRoute](http://www.nasdanika.org/server/apidocs/org.nasdanika.web/apidocs/org/nasdanika/web/DispatchingRoute.html?is-external=true)
-            * BodyParameter - Request body is passed as parameter value. Converts body to the parameter type, e.g. String or JSONObject. 
-            * CookieParameter
-            * HeaderParameter
-            * ModelParameter
-            * PartParameter - For file uploads.
-            * PathParameter
-            * QueryParameter
-            * TargetParameter
-            * ContextParameter 
-            * ServiceParameter - Looks up OSGi service of parameter type and passes it to the method.
-            * ExtensionParameter - Instantiates executable extension and passes it to the method.
-        * If all parameter are bound, then click on the button shall invoke the operation.
-        * Otherwise click on the button shall do GET which renders a form requesting values for un-bound parameters. Form submission shall do POST on the same URL which would validate input and invoke the operation on successful validation. Un-bound parameters can be annotated with the same annotations as structural features - icon, control, input, label, constraint, ... The EOperation can also be annotated with icon, label, enabled, visible, constraints, ... The renderer shall have validateEOperationInput() method validating parameter bounds by default (e.g. if lower bound != 0 and parameter value is null or empty string). Sub-renderers may override this method to provide custom validations.
     * Wizard for EClass'es and EOperation's. Auto-wizard for EClass'es. 
         * Auto-wizard for classes with non-view (tab) references - many references by default. 
             * Show the edit form for view features - attributes and single references by default.
