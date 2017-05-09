@@ -183,6 +183,11 @@ public class PrincipalAuthorizationHelper {
 		if (realm.getRoot() instanceof Group && ((Group) realm.getRoot()).isMember(principal)) {
 			return AccessDecision.ALLOW;
 		}
+				
+		// Containment ownership
+		if (isContainmentOwnership() && EcoreUtil.isAncestor(principal, target)) {
+			return AccessDecision.ALLOW;
+		}		
 		
 		StringBuilder qualifierBuilder = new StringBuilder();
 		for (EStructuralFeature pe: path) {
@@ -213,25 +218,6 @@ public class PrincipalAuthorizationHelper {
 				return accessDecision;
 			}			
 		}
-				
-		if (traversed.add(principal)) { // prevention of infinite loops if groups are cyclically nested.
-			// Groups
-			for (Group g: principal.getMemberOf()) {
-				AccessDecision accessDecision = authorize(g, context, target, action, qualifier, path, environment, traversed);
-				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
-					return accessDecision;
-				}			
-			}
-			
-			// Everyone
-			Principal everyone = principal.getRealm().getEveryone();
-			if (everyone != null && everyone != principal && principal.getRealm().getGuest() != principal) {
-				AccessDecision accessDecision = authorize(everyone, context, target, action, qualifier, path, environment, traversed);
-				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
-					return accessDecision;
-				}
-			}
-		}
 
 		// Containment
 		if (target instanceof EObject) {
@@ -250,10 +236,25 @@ public class PrincipalAuthorizationHelper {
 				}
 			}
 		}
-		
-		// Containment ownership
-		if (isContainmentOwnership() && EcoreUtil.isAncestor(principal, target)) {
-			return AccessDecision.ALLOW;
+
+		// Membership
+		if (traversed.add(principal)) { // prevention of infinite loops if groups are cyclically nested.
+			// Groups
+			for (Group g: principal.getMemberOf()) {
+				AccessDecision accessDecision = authorize(g, context, target, action, qualifier, path, environment, traversed);
+				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
+					return accessDecision;
+				}			
+			}
+			
+			// Everyone
+			Principal everyone = principal.getRealm().getEveryone();
+			if (everyone != null && everyone != principal && principal.getRealm().getGuest() != principal) {
+				AccessDecision accessDecision = authorize(everyone, context, target, action, qualifier, path, environment, traversed);
+				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
+					return accessDecision;
+				}
+			}
 		}
 					
 		return AccessDecision.ABSTAIN;
