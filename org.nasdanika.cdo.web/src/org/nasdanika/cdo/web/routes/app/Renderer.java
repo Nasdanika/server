@@ -272,9 +272,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Returns source value for model annotations to use as the source of rendering annotations.
-	 * This implementation returns value of ``org.nasdanika.cdo.web.render:annotation-source`` system property or RENDER_ANNOTATION_SOURCE constant value ``org.nasdanika.cdo.web.render``
-	 * if the system property is not set.
+	 * Returns source values for model annotations to use as the source of rendering annotations.
+	 * Annotation sources are read sequentially until the annotation is found.
+	 * This implementation returns values of ``org.nasdanika.cdo.web.render:annotation-source`` system property split by semicolon plus RENDER_ANNOTATION_SOURCE constant value ``org.nasdanika.cdo.web.render``.
 	 * This method can be overridden to "white-label" the model, i.e. to use rendering annotations with source
 	 * specific to the development organization, e.g. ``com.mycompany.render``. 
 	 * 
@@ -283,8 +283,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @return
 	 */
-	default String getRenderAnnotationSource(C context) {
-		return System.getProperty("org.nasdanika.cdo.web.render:annotation-source", RENDER_ANNOTATION_SOURCE);
+	default List<String> getRenderAnnotationSources(C context) {
+		List<String> ret = new ArrayList<>();
+		String annotationSourceProperty = System.getProperty("org.nasdanika.cdo.web.render:annotation-source");
+		if (annotationSourceProperty != null) {
+			for (String as: annotationSourceProperty.split(";")) {
+				ret.add(as);
+			}
+		}
+		ret.add(RENDER_ANNOTATION_SOURCE);
+		return ret;
 	}
 		
 	/**
@@ -318,15 +326,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		EAnnotation ra = modelElement.getEAnnotation(getRenderAnnotationSource(context));
-		if (ra != null) {
-			String value = ra.getDetails().get(key);
-			if (value != null) {
-				return value;
+		for (String ras: getRenderAnnotationSources(context)) {
+			EAnnotation ra = modelElement.getEAnnotation(ras);
+			if (ra != null) {
+				String value = ra.getDetails().get(key);
+				if (value != null) {
+					return value;
+				}
 			}
 		}
-		if (modelElement instanceof EClass) {
-			return RenderUtil.getRenderAnnotation(getRenderAnnotationSource(context), (EClass) modelElement, key);
+		for (String ras: getRenderAnnotationSources(context)) {
+			if (modelElement instanceof EClass) {
+				String cra = RenderUtil.getRenderAnnotation(ras, (EClass) modelElement, key);
+				if (cra != null) {
+					return cra;
+				}
+			}
 		}
 		
 		return null;
@@ -1706,7 +1721,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		inline,
 		
 		/**
-		 * Applicable to {@link EOperation}'s which shall be invocable, but do not need UI elements, e.g. API operations or operations invoked from manually constructed pages. 
+		 * Applicable to {@link EOperation}'s which shall be invocable, but does not need UI elements, e.g. API operations or operations invoked from custom code. 
 		 */
 		none
 	}
@@ -2641,76 +2656,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	@SuppressWarnings("unchecked")
 	default Object renderTypedElementView(C context, T obj, ETypedElement typedElement, Object typedElementValue, boolean showActionButtons, Predicate<Object> filter, Comparator<Object> comparator) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
-		
-		// Special handling of Protected.permissions reference
-//		if (SecurityPackage.Literals.PROTECTED__PERMISSIONS == typedElement && context instanceof CDOViewContext && context.authorizeRead(obj, "permissions", null)) {
-//			Realm<?> realm = ((CDOViewContext<?, ?>) context).getSecurityRealm();
-//			if (realm != null) {
-//				List<Action> grantableActions = new ArrayList<>();
-//				List<EClass> classesToMatch = new ArrayList<>();
-//				classesToMatch.add(obj.eClass());
-//				classesToMatch.addAll(obj.eClass().getEAllSuperTypes());
-//				for (Package pkg: realm.getPackages()) {
-//					for (org.nasdanika.cdo.security.Class cls: pkg.getClasses()) {
-//						for (EClass eClass: classesToMatch) {
-//							if (eClass.getName().equals(cls.getName()) && eClass.getEPackage().getNsURI().equals(pkg.getNsURI())) {
-//								for (Action action: cls.getActions()) {
-//									grantableActions.add(action);
-//								}
-//							}
-//						}
-//					}					
-//				}
-//				
-//				if (grantableActions.isEmpty()) {
-//					return htmlFactory.alert(Style.DANGER, false, "There are no grantable acitons for "+obj.eClass().getName());
-//				} else {
-//					grantableActions.sort((a,b) -> a.getName().compareTo(b.getName()));															
-//					Table permissionsTable = htmlFactory.table().bordered();
-//					Row headerRow = permissionsTable.header().row().style(Style.INFO);
-//					headerRow.header("User");
-//					
-//					for (Action ga: grantableActions) { // TODO - group by categories
-//						headerRow.header(getRenderer(ga).renderLabel(context, ga));
-//					}
-//					
-//					headerRow.header("Actions");
-//					
-//					List<Principal> principals = new ArrayList<>();
-//					Protected protectedObj = (Protected) obj;
-//					for (ProtectedPermission p: protectedObj.getPermissions()) {
-//						if (!principals.contains(p.getPrincipal())) {
-//							principals.add(p.getPrincipal());
-//						}
-//					}
-//					
-//					principals.sort((a,b) -> {
-//						try {
-//							return getRenderer(a).renderLabel(context, a).toString().compareTo(getRenderer(b).renderLabel(context, b).toString());							
-//						} catch (Exception e) {
-//							return a.hashCode() - b.hashCode();
-//						}						
-//					});
-//					
-//					for (Principal principal: principals) {
-//						Row principalRow = permissionsTable.body().row();
-//						principalRow.cell(getRenderer(principal).renderLink(context, principal, false));
-//						for (Action ga: grantableActions) {
-//							Cell actionCell = principalRow.cell();
-//							for (ProtectedPermission p: protectedObj.getPermissions()) {
-//								if (p.getAction() == ga) {
-//									actionCell.content(p.isAllow() ? "Allow" : "Deny");
-////									if (p.get)
-//								}
-//							}
-//						}
-//					}
-//					
-//					return "TODO - table of principals, grantable actions, grants and actions (edit, delete) ";
-//				}
-//			}
-//		}
-		
+				
 		Fragment ret = htmlFactory.fragment();
 		Map<String, Object> env = new HashMap<>();
 		env.put(NAME_KEY, typedElement.getName());
