@@ -1826,6 +1826,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "icon", "fa fa-group"
 		   });	
 		addAnnotation
+		  (getGroup_Members(), 
+		   source, 
+		   new String[] {
+			 "typed-element-location", "item",
+			 "view", "list"
+		   });	
+		addAnnotation
 		  (userEClass, 
 		   source, 
 		   new String[] {

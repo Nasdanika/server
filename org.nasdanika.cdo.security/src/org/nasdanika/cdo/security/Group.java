@@ -44,6 +44,7 @@ public interface Group extends Principal {
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getGroup_Members()
 	 * @see org.nasdanika.cdo.security.Principal#getMemberOf
 	 * @model opposite="memberOf"
+	 *        annotation="org.nasdanika.cdo.web.render typed-element-location='item' view='list'"
 	 * @generated
 	 */
 	EList<Principal> getMembers();

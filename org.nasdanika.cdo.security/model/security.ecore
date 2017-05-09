@@ -435,6 +435,10 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Group members."/>
       </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="typed-element-location" value="item"/>
+        <details key="view" value="list"/>
+      </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
