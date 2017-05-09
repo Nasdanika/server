@@ -27,7 +27,7 @@ import org.nasdanika.core.NasdanikaException;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getRoot <em>Root</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getAdministrators <em>Administrators</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getGuest <em>Guest</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getEveryone <em>Everyone</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.impl.LoginPasswordRealmImpl#getPackages <em>Packages</em>}</li>
@@ -74,17 +74,9 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Principal getRoot() {
-		return (Principal)eGet(SecurityPackage.Literals.REALM__ROOT, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setRoot(Principal newRoot) {
-		eSet(SecurityPackage.Literals.REALM__ROOT, newRoot);
+	@SuppressWarnings("unchecked")
+	public EList<User<LoginPasswordCredentials>> getAdministrators() {
+		return (EList<User<LoginPasswordCredentials>>)eGet(SecurityPackage.Literals.REALM__ADMINISTRATORS, true);
 	}
 
 	/**
@@ -221,6 +213,15 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public boolean isAdministrator(Principal principal) {
+		return LoginPasswordRealm.super.isAdministrator(principal);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -238,6 +239,8 @@ public abstract class LoginPasswordRealmImpl extends CDOObjectImpl implements Lo
 			case SecurityPackage.LOGIN_PASSWORD_REALM___CLEAR_PERMISSIONS__EOBJECT:
 				clearPermissions((EObject)arguments.get(0));
 				return null;
+			case SecurityPackage.LOGIN_PASSWORD_REALM___IS_ADMINISTRATOR__PRINCIPAL:
+				return isAdministrator((Principal)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

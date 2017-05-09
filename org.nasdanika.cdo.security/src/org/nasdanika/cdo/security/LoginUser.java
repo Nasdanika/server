@@ -46,6 +46,7 @@ public interface LoginUser<CR> extends User<CR> {
 	 * @see #setLogin(String)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getLoginUser_Login()
 	 * @model id="true"
+	 *        annotation="org.nasdanika.cdo.web.render editable='false'"
 	 * @generated
 	 */
 	String getLogin();

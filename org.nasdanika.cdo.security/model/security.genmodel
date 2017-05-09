@@ -15,7 +15,7 @@
     <genDataTypes ecoreDataType="security.ecore#//AccessDecision"/>
     <genClasses image="false" ecoreClass="security.ecore#//Realm">
       <genTypeParameters ecoreTypeParameter="security.ecore#//Realm/CR"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Realm/root"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Realm/administrators"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Realm/guest"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Realm/everyone"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference security.ecore#//Realm/packages"/>
@@ -27,6 +27,9 @@
       </genOperations>
       <genOperations ecoreOperation="security.ecore#//Realm/clearPermissions">
         <genParameters ecoreParameter="security.ecore#//Realm/clearPermissions/target"/>
+      </genOperations>
+      <genOperations ecoreOperation="security.ecore#//Realm/isAdministrator">
+        <genParameters ecoreParameter="security.ecore#//Realm/isAdministrator/principal"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="security.ecore#//Package">

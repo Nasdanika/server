@@ -40,7 +40,7 @@ public interface LoginPasswordHashUser extends LoginUser<LoginPasswordCredential
 	 * @return the value of the '<em>Password Hash</em>' attribute.
 	 * @see #setPasswordHash(byte[])
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getLoginPasswordHashUser_PasswordHash()
-	 * @model
+	 * @model annotation="org.nasdanika.cdo.web.render visible='false'"
 	 * @generated
 	 */
 	byte[] getPasswordHash();

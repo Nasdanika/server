@@ -69,13 +69,13 @@ public interface SecurityPackage extends EPackage {
 	int REALM = 0;
 
 	/**
-	 * The feature id for the '<em><b>Root</b></em>' reference.
+	 * The feature id for the '<em><b>Administrators</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REALM__ROOT = 0;
+	int REALM__ADMINISTRATORS = 0;
 
 	/**
 	 * The feature id for the '<em><b>Guest</b></em>' containment reference.
@@ -141,13 +141,22 @@ public interface SecurityPackage extends EPackage {
 	int REALM___CLEAR_PERMISSIONS__EOBJECT = 2;
 
 	/**
+	 * The operation id for the '<em>Is Administrator</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int REALM___IS_ADMINISTRATOR__PRINCIPAL = 3;
+
+	/**
 	 * The number of operations of the '<em>Realm</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int REALM_OPERATION_COUNT = 3;
+	int REALM_OPERATION_COUNT = 4;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.security.impl.PackageImpl <em>Package</em>}' class.
@@ -900,13 +909,13 @@ public interface SecurityPackage extends EPackage {
 	int LOGIN_PASSWORD_CREDENTIALS_OPERATION_COUNT = 0;
 
 	/**
-	 * The feature id for the '<em><b>Root</b></em>' reference.
+	 * The feature id for the '<em><b>Administrators</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int LOGIN_PASSWORD_REALM__ROOT = REALM__ROOT;
+	int LOGIN_PASSWORD_REALM__ADMINISTRATORS = REALM__ADMINISTRATORS;
 
 	/**
 	 * The feature id for the '<em><b>Guest</b></em>' containment reference.
@@ -970,6 +979,15 @@ public interface SecurityPackage extends EPackage {
 	 * @ordered
 	 */
 	int LOGIN_PASSWORD_REALM___CLEAR_PERMISSIONS__EOBJECT = REALM___CLEAR_PERMISSIONS__EOBJECT;
+
+	/**
+	 * The operation id for the '<em>Is Administrator</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int LOGIN_PASSWORD_REALM___IS_ADMINISTRATOR__PRINCIPAL = REALM___IS_ADMINISTRATOR__PRINCIPAL;
 
 	/**
 	 * The operation id for the '<em>Set Password Hash</em>' operation.
@@ -1538,15 +1556,15 @@ public interface SecurityPackage extends EPackage {
 	EClass getRealm();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.nasdanika.cdo.security.Realm#getRoot <em>Root</em>}'.
+	 * Returns the meta object for the reference list '{@link org.nasdanika.cdo.security.Realm#getAdministrators <em>Administrators</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Root</em>'.
-	 * @see org.nasdanika.cdo.security.Realm#getRoot()
+	 * @return the meta object for the reference list '<em>Administrators</em>'.
+	 * @see org.nasdanika.cdo.security.Realm#getAdministrators()
 	 * @see #getRealm()
 	 * @generated
 	 */
-	EReference getRealm_Root();
+	EReference getRealm_Administrators();
 
 	/**
 	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.security.Realm#getGuest <em>Guest</em>}'.
@@ -1610,6 +1628,16 @@ public interface SecurityPackage extends EPackage {
 	 * @generated
 	 */
 	EOperation getRealm__ClearPermissions__EObject();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Realm#isAdministrator(org.nasdanika.cdo.security.Principal) <em>Is Administrator</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Is Administrator</em>' operation.
+	 * @see org.nasdanika.cdo.security.Realm#isAdministrator(org.nasdanika.cdo.security.Principal)
+	 * @generated
+	 */
+	EOperation getRealm__IsAdministrator__Principal();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Package <em>Package</em>}'.
@@ -2332,12 +2360,12 @@ public interface SecurityPackage extends EPackage {
 		EClass REALM = eINSTANCE.getRealm();
 
 		/**
-		 * The meta object literal for the '<em><b>Root</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Administrators</b></em>' reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference REALM__ROOT = eINSTANCE.getRealm_Root();
+		EReference REALM__ADMINISTRATORS = eINSTANCE.getRealm_Administrators();
 
 		/**
 		 * The meta object literal for the '<em><b>Guest</b></em>' containment reference feature.
@@ -2386,6 +2414,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EOperation REALM___CLEAR_PERMISSIONS__EOBJECT = eINSTANCE.getRealm__ClearPermissions__EObject();
+
+		/**
+		 * The meta object literal for the '<em><b>Is Administrator</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation REALM___IS_ADMINISTRATOR__PRINCIPAL = eINSTANCE.getRealm__IsAdministrator__Principal();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.PackageImpl <em>Package</em>}' class.

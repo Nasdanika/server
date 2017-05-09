@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.security.Realm#getRoot <em>Root</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.security.Realm#getAdministrators <em>Administrators</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Realm#getGuest <em>Guest</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Realm#getEveryone <em>Everyone</em>}</li>
  *   <li>{@link org.nasdanika.cdo.security.Realm#getPackages <em>Packages</em>}</li>
@@ -38,31 +38,21 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  */
 public interface Realm<CR> extends CDOObject {
 	/**
-	 * Returns the value of the '<em><b>Root</b></em>' reference.
+	 * Returns the value of the '<em><b>Administrators</b></em>' reference list.
+	 * The list contents are of type {@link org.nasdanika.cdo.security.User}&lt;CR>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Root has all permissions. 
-	 * If root is not set or root is a group with no members, then any user is treated as a superuser. 
-	 * This functionality allows to configure the system after installation and then secure it by setting/adding root(s).
+	 * Administrators have all permissions. 
+	 * If administrators collection is empty, then any user is treated as a superuser. 
+	 * This functionality allows to configure the system after installation and then secure it by adding administrators.
 	 * <!-- end-model-doc -->
-	 * @return the value of the '<em>Root</em>' reference.
-	 * @see #setRoot(Principal)
-	 * @see org.nasdanika.cdo.security.SecurityPackage#getRealm_Root()
-	 * @model
+	 * @return the value of the '<em>Administrators</em>' reference list.
+	 * @see org.nasdanika.cdo.security.SecurityPackage#getRealm_Administrators()
+	 * @model annotation="org.nasdanika.cdo.web.render view='list'"
 	 * @generated
 	 */
-	Principal getRoot();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.security.Realm#getRoot <em>Root</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Root</em>' reference.
-	 * @see #getRoot()
-	 * @generated
-	 */
-	void setRoot(Principal value);
+	EList<User<CR>> getAdministrators();
 
 	/**
 	 * Returns the value of the '<em><b>Guest</b></em>' containment reference.
@@ -183,6 +173,20 @@ public interface Realm<CR> extends CDOObject {
 				}
 			}
 		}
-	}	
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Returns true if principal is administrator. The default implementation returns true
+	 * if principal is part of the administrators reference or if the administrators reference is empty.
+	 * <!-- end-model-doc -->
+	 * @model
+	 * @generated NOT
+	 */
+	default boolean isAdministrator(Principal principal) {
+		return principal != getGuest() && (getAdministrators().isEmpty() || getAdministrators().contains(principal));
+	};	
 
 } // Realm

@@ -19,7 +19,7 @@ package org.nasdanika.cdo.security;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getProtectedPermission()
- * @model
+ * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-key'"
  * @generated
  */
 public interface ProtectedPermission extends Permission {

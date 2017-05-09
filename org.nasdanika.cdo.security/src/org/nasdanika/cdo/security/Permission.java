@@ -135,7 +135,7 @@ public interface Permission extends CDOObject {
 	 * @return the value of the '<em>Comment</em>' attribute.
 	 * @see #setComment(String)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_Comment()
-	 * @model
+	 * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-pencil' control='textarea' content-type='text/html'"
 	 * @generated
 	 */
 	String getComment();

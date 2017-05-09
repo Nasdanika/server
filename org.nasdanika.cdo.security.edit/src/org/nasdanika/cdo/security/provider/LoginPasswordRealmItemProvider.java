@@ -61,25 +61,25 @@ public class LoginPasswordRealmItemProvider
 		if (itemPropertyDescriptors == null) {
 			super.getPropertyDescriptors(object);
 
-			addRootPropertyDescriptor(object);
+			addAdministratorsPropertyDescriptor(object);
 		}
 		return itemPropertyDescriptors;
 	}
 
 	/**
-	 * This adds a property descriptor for the Root feature.
+	 * This adds a property descriptor for the Administrators feature.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected void addRootPropertyDescriptor(Object object) {
+	protected void addAdministratorsPropertyDescriptor(Object object) {
 		itemPropertyDescriptors.add
 			(createItemPropertyDescriptor
 				(((ComposeableAdapterFactory)adapterFactory).getRootAdapterFactory(),
 				 getResourceLocator(),
-				 getString("_UI_Realm_root_feature"),
-				 getString("_UI_PropertyDescriptor_description", "_UI_Realm_root_feature", "_UI_Realm_type"),
-				 SecurityPackage.Literals.REALM__ROOT,
+				 getString("_UI_Realm_administrators_feature"),
+				 getString("_UI_PropertyDescriptor_description", "_UI_Realm_administrators_feature", "_UI_Realm_type"),
+				 SecurityPackage.Literals.REALM__ADMINISTRATORS,
 				 true,
 				 false,
 				 true,

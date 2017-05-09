@@ -177,10 +177,7 @@ public class PrincipalAuthorizationHelper {
 		
 		// Root
 		Realm<?> realm = principal.getRealm();
-		if (realm.getRoot() == principal) {
-			return AccessDecision.ALLOW;
-		}
-		if (realm.getRoot() instanceof Group && ((Group) realm.getRoot()).isMember(principal)) {
+		if (realm.isAdministrator(principal)) {
 			return AccessDecision.ALLOW;
 		}
 				

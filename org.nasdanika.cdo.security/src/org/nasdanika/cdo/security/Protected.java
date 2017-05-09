@@ -97,14 +97,10 @@ public interface Protected extends CDOObject {
 		for (EObject container = eContainer(); container != null; container = container.eContainer()) {
 			if (container instanceof Realm) {
 				Realm<?> realm = (Realm<?>) container;
-				U: for (User<?> u: realm.getAllUsers()) {
-					if (u == realm.getRoot()) {
-						continue U;
+				for (User<?> u: realm.getAllUsers()) {
+					if (!realm.isAdministrator(u)) {
+						grantees.add(u);
 					}
-					if (realm.getRoot() instanceof Group && ((Group) realm.getRoot()).isMember(u)) {
-						continue U;
-					}
-					grantees.add(u);
 				}
 				if (realm.getEveryone() != null) {
 					grantees.add(realm.getEveryone());

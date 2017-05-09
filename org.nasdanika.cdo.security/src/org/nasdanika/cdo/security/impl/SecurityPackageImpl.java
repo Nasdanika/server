@@ -246,7 +246,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getRealm_Root() {
+	public EReference getRealm_Administrators() {
 		return (EReference)realmEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -302,6 +302,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 */
 	public EOperation getRealm__ClearPermissions__EObject() {
 		return realmEClass.getEOperations().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getRealm__IsAdministrator__Principal() {
+		return realmEClass.getEOperations().get(3);
 	}
 
 	/**
@@ -918,13 +927,14 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		// Create classes and their features
 		realmEClass = createEClass(REALM);
-		createEReference(realmEClass, REALM__ROOT);
+		createEReference(realmEClass, REALM__ADMINISTRATORS);
 		createEReference(realmEClass, REALM__GUEST);
 		createEReference(realmEClass, REALM__EVERYONE);
 		createEReference(realmEClass, REALM__PACKAGES);
 		createEOperation(realmEClass, REALM___AUTHENTICATE__OBJECT);
 		createEOperation(realmEClass, REALM___GET_ALL_USERS);
 		createEOperation(realmEClass, REALM___CLEAR_PERMISSIONS__EOBJECT);
+		createEOperation(realmEClass, REALM___IS_ADMINISTRATOR__PRINCIPAL);
 
 		packageEClass = createEClass(PACKAGE);
 		createEAttribute(packageEClass, PACKAGE__NAME);
@@ -1060,7 +1070,10 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		// Initialize classes, features, and operations; add parameters
 		initEClass(realmEClass, Realm.class, "Realm", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getRealm_Root(), this.getPrincipal(), null, "root", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		g1 = createEGenericType(this.getUser());
+		g2 = createEGenericType(realmEClass_CR);
+		g1.getETypeArguments().add(g2);
+		initEReference(getRealm_Administrators(), g1, null, "administrators", null, 0, -1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRealm_Guest(), this.getPrincipal(), null, "guest", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRealm_Everyone(), this.getPrincipal(), null, "everyone", null, 0, 1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getRealm_Packages(), this.getPackage(), null, "packages", null, 0, -1, Realm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1080,6 +1093,9 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		op = initEOperation(getRealm__ClearPermissions__EObject(), null, "clearPermissions", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, ecorePackage.getEObject(), "target", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getRealm__IsAdministrator__Principal(), ecorePackage.getEBoolean(), "isAdministrator", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getPrincipal(), "principal", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(packageEClass, org.nasdanika.cdo.security.Package.class, "Package", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getPackage_Name(), ecorePackage.getEString(), "name", null, 0, 1, org.nasdanika.cdo.security.Package.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1274,10 +1290,16 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "Target object."
 		   });	
 		addAnnotation
-		  (getRealm_Root(), 
+		  (getRealm__IsAdministrator__Principal(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Root has all permissions. \r\nIf root is not set or root is a group with no members, then any user is treated as a superuser. \r\nThis functionality allows to configure the system after installation and then secure it by setting/adding root(s)."
+			 "documentation", "Returns true if principal is administrator. The default implementation returns true\r\nif principal is not guest, is part of the administrators reference or if the administrators reference is empty."
+		   });	
+		addAnnotation
+		  (getRealm_Administrators(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Administrators have all permissions. \r\nIf administrators collection is empty, then any user is treated as a superuser. \r\nThis functionality allows to configure the system after installation and then secure it by adding administrators."
 		   });	
 		addAnnotation
 		  (getRealm_Guest(), 
@@ -1812,11 +1834,31 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	protected void createOrgAnnotations() {
 		String source = "org.nasdanika.cdo.web.render";	
 		addAnnotation
+		  (getRealm_Administrators(), 
+		   source, 
+		   new String[] {
+			 "view", "list"
+		   });	
+		addAnnotation
 		  (principalEClass, 
 		   source, 
 		   new String[] {
 			 "label", "{{eclass-name}}",
 			 "icon", "fa fa-user-o"
+		   });	
+		addAnnotation
+		  (getPermission_Comment(), 
+		   source, 
+		   new String[] {
+			 "icon", "fa fa-pencil",
+			 "control", "textarea",
+			 "content-type", "text/html"
+		   });	
+		addAnnotation
+		  (protectedPermissionEClass, 
+		   source, 
+		   new String[] {
+			 "icon", "fa fa-key"
 		   });	
 		addAnnotation
 		  (groupEClass, 
@@ -1843,6 +1885,18 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "label", "{{login}}"
+		   });	
+		addAnnotation
+		  (getLoginUser_Login(), 
+		   source, 
+		   new String[] {
+			 "editable", "false"
+		   });	
+		addAnnotation
+		  (getLoginPasswordHashUser_PasswordHash(), 
+		   source, 
+		   new String[] {
+			 "visible", "false"
 		   });	
 		addAnnotation
 		  (guestEClass, 

@@ -36,10 +36,22 @@
         </eAnnotations>
       </eParameters>
     </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="root" eType="#//Principal">
+    <eOperations name="isAdministrator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Root has all permissions. &#xD;&#xA;If root is not set or root is a group with no members, then any user is treated as a superuser. &#xD;&#xA;This functionality allows to configure the system after installation and then secure it by setting/adding root(s)."/>
+        <details key="documentation" value="Returns true if principal is administrator. The default implementation returns true&#xD;&#xA;if principal is not guest, is part of the administrators reference or if the administrators reference is empty."/>
       </eAnnotations>
+      <eParameters name="principal" eType="#//Principal"/>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="administrators" upperBound="-1">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Administrators have all permissions. &#xD;&#xA;If administrators collection is empty, then any user is treated as a superuser. &#xD;&#xA;This functionality allows to configure the system after installation and then secure it by adding administrators."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="view" value="list"/>
+      </eAnnotations>
+      <eGenericType eClassifier="#//User">
+        <eTypeArguments eTypeParameter="#//Realm/CR"/>
+      </eGenericType>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="guest" eType="#//Principal"
         containment="true">
@@ -349,6 +361,11 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Comment."/>
       </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-pencil"/>
+        <details key="control" value="textarea"/>
+        <details key="content-type" value="text/html"/>
+      </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PrincipalPermission" eSuperTypes="#//Permission">
@@ -364,6 +381,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="ProtectedPermission" eSuperTypes="#//Permission">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Permission owned by a protected object to execute action by the referenced principal."/>
+    </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-key"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="principal" eType="#//Principal">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -473,6 +493,9 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="A unique string identifying the user."/>
       </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="editable" value="false"/>
+      </eAnnotations>
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//User">
       <eTypeArguments eTypeParameter="#//LoginUser/CR"/>
@@ -486,6 +509,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="passwordHash" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Password one-way hash allows to verify a password provided during authentication, &#xD;&#xA;but recovery of the original password from hash would require considerable &#xD;&#xA;computational resources."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="visible" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//LoginUser">
