@@ -293,7 +293,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @param context
 	 * @return Map containing tokens to use for interpolation of the page template.
 	 */
-	protected HashMap<String, Object> createRenderPageEnvironment(C context) throws Exception {
+	protected Map<String, Object> createRenderPageEnvironment(C context) throws Exception {
 		HashMap<String, Object> ret = new HashMap<>();		
 		ret.put(PageTemplateTokens.RESOURCES_PATH.literal, context.getObjectPath(context.getTarget())+"/resources");
 		ret.put(PageTemplateTokens.CONTEXT_PATH.literal, context.getRequest().getContextPath());
@@ -643,6 +643,11 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		EStructuralFeature sf = target.eClass().getEStructuralFeature(feature);
 		if (sf == null) {
 			return Action.NOT_FOUND;
+		}
+		
+		if (getTypedElementLocation(context, sf) == TypedElementLocation.item) {
+			context.getResponse().sendRedirect(context.getObjectPath(target)+"/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(feature, "UTF-8"));
+			return Action.NOP;
 		}
 		
 		EClass targetEClass = target.eClass();
