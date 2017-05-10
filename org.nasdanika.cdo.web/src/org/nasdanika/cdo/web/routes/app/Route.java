@@ -48,6 +48,7 @@ import org.json.JSONTokener;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
@@ -121,7 +122,11 @@ import org.osgi.framework.ServiceReference;
 		path="icons/", 
 		comment="Icons library")
 public class Route<C extends HttpServletRequestContext, T extends EObject> extends EDispatchingRoute implements Renderer<C, T> {
-
+	
+	/**
+	 * If request attribute with this name is set to ``false`` then left panel is not rendered.
+	 */
+	public static final String LEFT_PANEL_GUARD_KEY = Route.class.getName()+":left-panel";
 
 	/**
 	 * Interpolation tokens used by the page template
@@ -226,7 +231,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Object header = renderHeader(context, obj);
 		env.put(PageTemplateTokens.HEADER.literal, header == null ? "" : header);
 				
-		Object leftPanel = renderLeftPanel(context, obj);
+		Object leftPanel = Boolean.FALSE.equals(context.getRequest().getAttribute(LEFT_PANEL_GUARD_KEY)) ? null : renderLeftPanel(context, obj);
 		env.put(PageTemplateTokens.LEFT_PANEL.literal, leftPanel == null ? "" : leftPanel);
 
 		env.put(PageTemplateTokens.CONTENT.literal, content == null ? "" : content);
@@ -643,11 +648,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		EStructuralFeature sf = target.eClass().getEStructuralFeature(feature);
 		if (sf == null) {
 			return Action.NOT_FOUND;
-		}
-		
-		if (getTypedElementLocation(context, sf) == TypedElementLocation.item) {
-			context.getResponse().sendRedirect(context.getObjectPath(target)+"/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(feature, "UTF-8"));
-			return Action.NOP;
 		}
 		
 		EClass targetEClass = target.eClass();
@@ -1527,11 +1527,28 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		T target = (T) context.getTarget();
 		
 		String methodName = (String) eOperationTarget.getSpec().get("method");
+
+		EObject contextObject = target;
 		String featureName = (String) eOperationTarget.getSpec().get("feature");
 		if (featureName == null) {
 			featureName = (String) eOperationTarget.getSpec().get("feature-value");
+			if (featureName != null) {
+				String contextObjectID = context.getRequest().getParameter("context-object");
+				if (contextObjectID != null && context instanceof CDOViewContext) {
+					contextObject = ((CDOViewContext<?, ?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, contextObjectID));
+					featureName = null;
+					context.getRequest().setAttribute(LEFT_PANEL_GUARD_KEY, false);
+				}
+			}
 		}
+		
 		EStructuralFeature operationFeature = featureName == null ? null : target.eClass().getEStructuralFeature(featureName);
+		
+		if (operationFeature != null) {
+			if (getTypedElementLocation(context, operationFeature) == TypedElementLocation.item) {
+				operationFeature = null;
+			}
+		}
 		
 		String contentType = context.getRequest().getContentType();
 		boolean isMultiPart = context.getMethod() == RequestMethod.POST && contentType != null && contentType.startsWith(Form.EncType.multipart.literal+";");
@@ -1566,7 +1583,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						
 					String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(inputFormStr).style().color().bootstrapColor(Color.INFO);
 					if (operationFeature == null) {
-						renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+						getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
 					} else {
 						renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
 					}
@@ -1641,7 +1658,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						String invalidInputStr = "Invalid input"; // TODO - resource string
 						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER);
 						if (operationFeature == null) {
-							renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+							getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
 						} else {
 							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
 						}						
@@ -1679,7 +1696,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							String resultStr = "Result"; // TODO - resource string
 							String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
 							if (operationFeature == null) {
-								renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+								getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
 							} else {
 								renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
 							}						
@@ -1702,7 +1719,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							String errorStr = "Error"; // TODO - resource string
 							String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(errorStr).style().color().bootstrapColor(Color.DANGER);
 							if (operationFeature == null) {
-								renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+								getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
 							} else {
 								renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
 							}						
@@ -1758,7 +1775,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					String invalidInputStr = "Invalid input"; // TODO - resource string
 					String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER);
 					if (operationFeature == null) {
-						renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+						getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
 					} else {
 						renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
 					}						
@@ -1817,7 +1834,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						String resultStr = "Result"; // TODO - resource string
 						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
 						if (operationFeature == null) {
-							renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+							getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
 						} else {
 							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
 						}						
@@ -1840,7 +1857,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						String errorStr = "Error"; // TODO - resource string
 						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(errorStr).style().color().bootstrapColor(Color.DANGER);
 						if (operationFeature == null) {
-							renderObjectPath(context, target, breadcrumbAction, breadCrumbs);
+							getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
 						} else {
 							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
 						}						
