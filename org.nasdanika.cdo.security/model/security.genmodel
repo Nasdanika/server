@@ -100,6 +100,10 @@
     </genClasses>
     <genClasses ecoreClass="security.ecore#//ProtectedPermission">
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//ProtectedPermission/principal"/>
+      <genOperations ecoreOperation="security.ecore#//ProtectedPermission/validate">
+        <genParameters ecoreParameter="security.ecore#//ProtectedPermission/validate/diagnostics"/>
+        <genParameters ecoreParameter="security.ecore#//ProtectedPermission/validate/context"/>
+      </genOperations>
     </genClasses>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordCredentials"/>
     <genClasses image="false" ecoreClass="security.ecore#//LoginPasswordRealm">

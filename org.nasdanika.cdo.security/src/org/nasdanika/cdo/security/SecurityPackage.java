@@ -882,13 +882,22 @@ public interface SecurityPackage extends EPackage {
 	int PROTECTED_PERMISSION___GET_TARGET = PERMISSION___GET_TARGET;
 
 	/**
+	 * The operation id for the '<em>Validate</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PROTECTED_PERMISSION___VALIDATE__DIAGNOSTICCHAIN_MAP = PERMISSION_OPERATION_COUNT + 0;
+
+	/**
 	 * The number of operations of the '<em>Protected Permission</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PROTECTED_PERMISSION_OPERATION_COUNT = PERMISSION_OPERATION_COUNT + 0;
+	int PROTECTED_PERMISSION_OPERATION_COUNT = PERMISSION_OPERATION_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Login Password Credentials</em>' class.
@@ -2294,6 +2303,16 @@ public interface SecurityPackage extends EPackage {
 	EReference getProtectedPermission_Principal();
 
 	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.ProtectedPermission#validate(org.eclipse.emf.common.util.DiagnosticChain, java.util.Map) <em>Validate</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Validate</em>' operation.
+	 * @see org.nasdanika.cdo.security.ProtectedPermission#validate(org.eclipse.emf.common.util.DiagnosticChain, java.util.Map)
+	 * @generated
+	 */
+	EOperation getProtectedPermission__Validate__DiagnosticChain_Map();
+
+	/**
 	 * Returns the meta object for data type '{@link org.nasdanika.core.Context <em>Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2948,6 +2967,14 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EReference PROTECTED_PERMISSION__PRINCIPAL = eINSTANCE.getProtectedPermission_Principal();
+
+		/**
+		 * The meta object literal for the '<em><b>Validate</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation PROTECTED_PERMISSION___VALIDATE__DIAGNOSTICCHAIN_MAP = eINSTANCE.getProtectedPermission__Validate__DiagnosticChain_Map();
 
 		/**
 		 * The meta object literal for the '<em>Context</em>' data type.

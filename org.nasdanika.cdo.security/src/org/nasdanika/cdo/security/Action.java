@@ -34,7 +34,7 @@ import org.nasdanika.core.Context;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getAction()
- * @model
+ * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-cog'"
  * @extends CDOObject
  * @generated
  */

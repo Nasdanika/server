@@ -10,6 +10,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
+import org.eclipse.emf.ecore.EValidator;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Group;
@@ -28,6 +29,7 @@ import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityFactory;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.security.User;
+import org.nasdanika.cdo.security.util.SecurityValidator;
 import org.nasdanika.core.AuthorizationProvider.AccessDecision;
 import org.nasdanika.core.Context;
 
@@ -222,6 +224,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		// Initialize created meta-data
 		theSecurityPackage.initializePackageContents();
+
+		// Register package validator
+		EValidator.Registry.INSTANCE.put
+			(theSecurityPackage, 
+			 new EValidator.Descriptor() {
+				 public EValidator getEValidator() {
+					 return SecurityValidator.INSTANCE;
+				 }
+			 });
 
 		// Mark meta-data to indicate it can't be changed
 		theSecurityPackage.freeze();
@@ -840,6 +851,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getProtectedPermission__Validate__DiagnosticChain_Map() {
+		return protectedPermissionEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getLoginPasswordCredentials() {
 		return loginPasswordCredentialsEClass;
 	}
@@ -985,6 +1005,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 
 		protectedPermissionEClass = createEClass(PROTECTED_PERMISSION);
 		createEReference(protectedPermissionEClass, PROTECTED_PERMISSION__PRINCIPAL);
+		createEOperation(protectedPermissionEClass, PROTECTED_PERMISSION___VALIDATE__DIAGNOSTICCHAIN_MAP);
 
 		loginPasswordCredentialsEClass = createEClass(LOGIN_PASSWORD_CREDENTIALS);
 
@@ -1162,7 +1183,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEOperation(op, g1);
 
 		initEClass(permissionEClass, Permission.class, "Permission", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPermission_Action(), this.getAction(), null, "action", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPermission_Action(), this.getAction(), null, "action", null, 1, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_Allow(), ecorePackage.getEBoolean(), "allow", "true", 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getPermission_StartDate(), ecorePackage.getEDate(), "startDate", null, 0, 1, Permission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1185,10 +1206,19 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEOperation(getPermission__GetTarget(), ecorePackage.getEObject(), "getTarget", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(principalPermissionEClass, PrincipalPermission.class, "PrincipalPermission", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getPrincipalPermission_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, PrincipalPermission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getPrincipalPermission_Target(), ecorePackage.getEObject(), null, "target", null, 1, 1, PrincipalPermission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(protectedPermissionEClass, ProtectedPermission.class, "ProtectedPermission", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getProtectedPermission_Principal(), this.getPrincipal(), null, "principal", null, 0, 1, ProtectedPermission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getProtectedPermission_Principal(), this.getPrincipal(), null, "principal", null, 1, 1, ProtectedPermission.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		op = initEOperation(getProtectedPermission__Validate__DiagnosticChain_Map(), ecorePackage.getEBoolean(), "validate", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, ecorePackage.getEDiagnosticChain(), "diagnostics", 0, 1, IS_UNIQUE, IS_ORDERED);
+		g1 = createEGenericType(ecorePackage.getEMap());
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		g2 = createEGenericType(ecorePackage.getEJavaObject());
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(loginPasswordCredentialsEClass, LoginPasswordCredentials.class, "LoginPasswordCredentials", IS_ABSTRACT, IS_INTERFACE, !IS_GENERATED_INSTANCE_CLASS);
 
@@ -1650,6 +1680,24 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "documentation", "Permission owned by a protected object to execute action by the referenced principal."
 		   });	
 		addAnnotation
+		  (getProtectedPermission__Validate__DiagnosticChain_Map(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Validates element."
+		   });	
+		addAnnotation
+		  ((getProtectedPermission__Validate__DiagnosticChain_Map()).getEParameters().get(0), 
+		   source, 
+		   new String[] {
+			 "documentation", "Diagnostics to add validation messages to."
+		   });	
+		addAnnotation
+		  ((getProtectedPermission__Validate__DiagnosticChain_Map()).getEParameters().get(1), 
+		   source, 
+		   new String[] {
+			 "documentation", "Validation context."
+		   });	
+		addAnnotation
 		  (getProtectedPermission_Principal(), 
 		   source, 
 		   new String[] {
@@ -1840,11 +1888,29 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 			 "view", "list"
 		   });	
 		addAnnotation
+		  (actionEClass, 
+		   source, 
+		   new String[] {
+			 "icon", "fa fa-cog"
+		   });	
+		addAnnotation
 		  (principalEClass, 
 		   source, 
 		   new String[] {
 			 "label", "{{eclass-name}}",
 			 "icon", "fa fa-user-o"
+		   });	
+		addAnnotation
+		  (getPermission_StartDate(), 
+		   source, 
+		   new String[] {
+			 "icon", "fa fa-calendar"
+		   });	
+		addAnnotation
+		  (getPermission_EndDate(), 
+		   source, 
+		   new String[] {
+			 "icon", "fa fa-calendar"
 		   });	
 		addAnnotation
 		  (getPermission_Comment(), 

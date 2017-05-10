@@ -81,7 +81,7 @@ public interface Permission extends CDOObject {
 	 * @return the value of the '<em>Start Date</em>' attribute.
 	 * @see #setStartDate(Date)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_StartDate()
-	 * @model
+	 * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-calendar'"
 	 * @generated
 	 */
 	Date getStartDate();
@@ -106,7 +106,7 @@ public interface Permission extends CDOObject {
 	 * @return the value of the '<em>End Date</em>' attribute.
 	 * @see #setEndDate(Date)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_EndDate()
-	 * @model
+	 * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-calendar'"
 	 * @generated
 	 */
 	Date getEndDate();
@@ -164,7 +164,7 @@ public interface Permission extends CDOObject {
 	 * @return the value of the '<em>Action</em>' reference.
 	 * @see #setAction(Action)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getPermission_Action()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	Action getAction();

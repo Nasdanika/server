@@ -2,6 +2,9 @@
  */
 package org.nasdanika.cdo.security;
 
+import java.util.Map;
+import org.eclipse.emf.common.util.DiagnosticChain;
+
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Protected Permission</b></em>'.
@@ -33,7 +36,7 @@ public interface ProtectedPermission extends Permission {
 	 * @return the value of the '<em>Principal</em>' reference.
 	 * @see #setPrincipal(Principal)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getProtectedPermission_Principal()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	Principal getPrincipal();
@@ -47,5 +50,18 @@ public interface ProtectedPermission extends Permission {
 	 * @generated
 	 */
 	void setPrincipal(Principal value);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Validates element.
+	 * @param diagnostics Diagnostics to add validation messages to.
+	 * @param context Validation context.
+	 * <!-- end-model-doc -->
+	 * @model
+	 * @generated
+	 */
+	boolean validate(DiagnosticChain diagnostics, Map<Object, Object> context);
 
 } // ProtectedPermission

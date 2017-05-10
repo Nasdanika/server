@@ -123,6 +123,9 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="&lt;html>Action defined for instances of given EClass&lt;/html>"/>
     </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-cog"/>
+    </eAnnotations>
     <eOperations name="match" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Matches this action to action string, qualifier in a given context and environment.&#xD;&#xA;The default implementation constructs a string ``&lt;action>:&lt;qualifier>`` and uses name as a simplified glob pattern to match the string.&#xD;&#xA;&#xD;&#xA;For example:&#xD;&#xA;&#xD;&#xA;* ``*:*`` matches any request.&#xD;&#xA;* ``read:description`` matches action ``read`` for the qualifier ``descriptor``.&#xD;&#xA;* ``*:accounts`` matches any action for the ``accounts`` qualifier."/>
@@ -331,7 +334,8 @@
     </eOperations>
     <eOperations name="getPrincipal" eType="#//Principal"/>
     <eOperations name="getTarget" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="action" eType="#//Action">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="action" lowerBound="1"
+        eType="#//Action">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Permission's action."/>
       </eAnnotations>
@@ -351,10 +355,16 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Permission effective start date. Can be ``null``."/>
       </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-calendar"/>
+      </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="endDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Permission effective end date, can be ``null``."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-calendar"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
@@ -372,7 +382,8 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Permission owned by a principal to execute action on the target object."/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="target" lowerBound="1"
+        eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Target object."/>
       </eAnnotations>
@@ -385,7 +396,27 @@
     <eAnnotations source="org.nasdanika.cdo.web.render">
       <details key="icon" value="fa fa-key"/>
     </eAnnotations>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="principal" eType="#//Principal">
+    <eOperations name="validate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Validates element."/>
+      </eAnnotations>
+      <eParameters name="diagnostics" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDiagnosticChain">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Diagnostics to add validation messages to."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="context">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Validation context."/>
+        </eAnnotations>
+        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="principal" lowerBound="1"
+        eType="#//Principal">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Target object."/>
       </eAnnotations>

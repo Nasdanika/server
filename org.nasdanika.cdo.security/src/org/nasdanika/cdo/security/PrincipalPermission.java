@@ -35,7 +35,7 @@ public interface PrincipalPermission extends Permission {
 	 * @return the value of the '<em>Target</em>' reference.
 	 * @see #setTarget(EObject)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getPrincipalPermission_Target()
-	 * @model
+	 * @model required="true"
 	 * @generated
 	 */
 	EObject getTarget();
