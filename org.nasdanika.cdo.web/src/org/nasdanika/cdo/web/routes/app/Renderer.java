@@ -555,11 +555,41 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Renderer<C, EObject> cRenderer = getRenderer(c);
 				Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);
 				if (cIconAndLabel != null) {
+					EObject cContainer = c.eContainer();
+					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
+						EReference containmentFeature = c.eContainmentFeature();
+						Renderer<C, EObject> containerRenderer = getRenderer(cContainer);
+						if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
+							List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
+							Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+							if (categoryIconAndLabel != null) {
+								breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+							}
+							String containerURI = containerRenderer.getObjectURI(context, cContainer);
+							breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+						}
+					}
 					String objectURI = cRenderer.getObjectURI(context, c);
 					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
 				}
 			}
 		}
+		
+		EObject objContainer = obj.eContainer();
+		if (!breadCrumbs.isEmpty() && cPath.contains(objContainer)) { // Double-check to be on the safe side.
+			EReference containmentFeature = obj.eContainmentFeature();
+			Renderer<C, EObject> containerRenderer = getRenderer(objContainer);
+			if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
+				List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
+				Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+				if (categoryIconAndLabel != null) {
+					breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+				}
+				String containerURI = containerRenderer.getObjectURI(context, objContainer);
+				breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+			}
+		}
+				
 		if (action == null) {
 			breadCrumbs.item(null , renderIconAndLabel(context, obj));
 		} else {
@@ -591,11 +621,41 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Renderer<C, EObject> cRenderer = getRenderer(c);
 				Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);
 				if (cIconAndLabel != null) {
+					EObject cContainer = c.eContainer();
+					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
+						EReference containmentFeature = c.eContainmentFeature();
+						Renderer<C, EObject> containerRenderer = getRenderer(cContainer);
+						if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
+							List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
+							Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+							if (categoryIconAndLabel != null) {
+								breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+							}
+							String containerURI = containerRenderer.getObjectURI(context, cContainer);
+							breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+						}
+					}
 					String objectURI = cRenderer.getObjectURI(context, c);
 					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
 				}
 			}
 		}
+		
+		EObject objContainer = obj.eContainer();
+		if (!breadCrumbs.isEmpty() && cPath.contains(objContainer)) { // Double-check to be on the safe side.
+			EReference containmentFeature = obj.eContainmentFeature();
+			Renderer<C, EObject> containerRenderer = getRenderer(objContainer);
+			if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
+				List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
+				Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+				if (categoryIconAndLabel != null) {
+					breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+				}
+				String containerURI = containerRenderer.getObjectURI(context, objContainer);
+				breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+			}
+		}
+		
 		String objectURI = getObjectURI(context, obj);
 		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));		
 		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj, null);
@@ -1089,7 +1149,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default String getModelElementIcon(C context, EModelElement modelElement) throws Exception {
-		String ra = getRenderAnnotation(context, modelElement, RenderAnnotation.ICON);
+		String ra = getRenderAnnotation(context, modelElement, RenderAnnotation.ICON);	
 		if (ra != null) {
 			boolean[] hasTokenExpansionFailures = { false };
 			@SuppressWarnings("unchecked")
@@ -1122,6 +1182,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (modelElement instanceof ETypedElement) {
 			EClassifier eType = ((ETypedElement) modelElement).getEType();
 			return (eType instanceof EClass ? getRenderer((EClass) eType) : this).getModelElementIcon(context, eType);
+		}
+		
+		if (modelElement instanceof EClassifier) {
+			String instanceClassName = ((EClassifier) modelElement).getInstanceClassName();
+			String rs = getResourceString(context, "javaClass."+instanceClassName+".icon");
+			if (rs != null) {
+				return rs;
+			}
+			// TODO - super-classes and interfaces
 		}
 		
 		return null;
@@ -2114,7 +2183,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if ((location == null || "view".equals(location)) && containingFeature.getName().equals(spec.get("feature-value"))) {
 						StringBuilder queryBuilder = new StringBuilder("feature=").append(containingFeature.getName());					
 						if (obj instanceof CDOObject) {
-							queryBuilder.append("&").append("element=").append(getFormControlValue(context, obj, containingFeature, obj));
+							String formControlValue = getFormControlValue(context, obj, containingFeature, obj);
+							queryBuilder
+								.append("&element=").append(formControlValue)
+								.append("&context-object=").append(formControlValue);
 						}
 						
 						Map<String, Object> vars = new HashMap<>();
