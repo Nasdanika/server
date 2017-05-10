@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -559,14 +560,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
 						EReference containmentFeature = c.eContainmentFeature();
 						Renderer<C, EObject> containerRenderer = getRenderer(cContainer);
-						if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
-							List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
-							Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
-							if (categoryIconAndLabel != null) {
-								breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+						if (containmentFeature != null) {
+							TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
+							if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
+								List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
+								Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+								if (categoryIconAndLabel != null) {
+									breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+								}
+								String containerURI = containerRenderer.getObjectURI(context, cContainer);
+								String featureURI = containerURI;
+								if (featureURI != null) {
+									if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
+										featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
+									} else {
+										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+									}
+								}
+								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 							}
-							String containerURI = containerRenderer.getObjectURI(context, cContainer);
-							breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 						}
 					}
 					String objectURI = cRenderer.getObjectURI(context, c);
@@ -579,14 +591,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (!breadCrumbs.isEmpty() && cPath.contains(objContainer)) { // Double-check to be on the safe side.
 			EReference containmentFeature = obj.eContainmentFeature();
 			Renderer<C, EObject> containerRenderer = getRenderer(objContainer);
-			if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
-				List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
-				Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
-				if (categoryIconAndLabel != null) {
-					breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+			if (containmentFeature != null) {
+				TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
+				if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
+					List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
+					Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+					if (categoryIconAndLabel != null) {
+						breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+					}
+					String containerURI = containerRenderer.getObjectURI(context, objContainer);
+					String featureURI = containerURI;
+					if (featureURI != null) {
+						if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
+							featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
+						} else {
+							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+						}
+					}
+					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 				}
-				String containerURI = containerRenderer.getObjectURI(context, objContainer);
-				breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 			}
 		}
 				
@@ -625,14 +648,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
 						EReference containmentFeature = c.eContainmentFeature();
 						Renderer<C, EObject> containerRenderer = getRenderer(cContainer);
-						if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
-							List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
-							Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
-							if (categoryIconAndLabel != null) {
-								breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+						if (containmentFeature != null) {
+							TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
+							if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
+								List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
+								Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+								if (categoryIconAndLabel != null) {
+									breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+								}
+								String containerURI = containerRenderer.getObjectURI(context, cContainer);
+								String featureURI = containerURI;
+								if (featureURI != null) {
+									if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
+										featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
+									} else {
+										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+									}
+								}
+								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 							}
-							String containerURI = containerRenderer.getObjectURI(context, cContainer);
-							breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 						}
 					}
 					String objectURI = cRenderer.getObjectURI(context, c);
@@ -645,14 +679,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (!breadCrumbs.isEmpty() && cPath.contains(objContainer)) { // Double-check to be on the safe side.
 			EReference containmentFeature = obj.eContainmentFeature();
 			Renderer<C, EObject> containerRenderer = getRenderer(objContainer);
-			if (containmentFeature != null && containerRenderer.getTypedElementLocation(context, containmentFeature) == TypedElementLocation.leftPanel) {
-				List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
-				Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
-				if (categoryIconAndLabel != null) {
-					breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+			if (containmentFeature != null) {
+				TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
+				if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
+					List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
+					Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
+					if (categoryIconAndLabel != null) {
+						breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+					}
+					String containerURI = containerRenderer.getObjectURI(context, objContainer);
+					String featureURI = containerURI;
+					if (featureURI != null) {
+						if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
+							featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
+						} else {
+							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+						}
+					}
+					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 				}
-				String containerURI = containerRenderer.getObjectURI(context, objContainer);
-				breadCrumbs.item(containerURI == null ? containerURI : containerURI+"/feature/"+containmentFeature.getName()+"/view.html", TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
 			}
 		}
 		
