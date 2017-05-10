@@ -3,8 +3,10 @@ package org.nasdanika.cdo.web;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.core.Context;
 import org.nasdanika.web.HttpServletRequestContext;
 
@@ -75,5 +77,14 @@ public interface CDOIDCodec {
 	default CDOID decode(Context context, String idStr) throws Exception {
 		return CDOIDUtil.read(idStr);
 	}
+	
+	default String encode(Context context, CDOObject cdoObject) throws Exception {
+		return encode(context, cdoObject.cdoID());
+	}
+	
+	default CDOObject decodeObject(CDOViewContext<?,?> context, String idStr) throws Exception {
+		return context.getView().getObject(CDOIDUtil.read(idStr));
+	}
+	
 
 }
