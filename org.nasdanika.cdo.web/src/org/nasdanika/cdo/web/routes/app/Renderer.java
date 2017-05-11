@@ -3091,8 +3091,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 					ret.content(ul);
 				}
-				if (showActionButtons && typedElement instanceof EStructuralFeature) { 
-					ret.content(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement));							
+				if (showActionButtons && typedElement instanceof EStructuralFeature) {
+					Object featureViewButtons = renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement);
+					if (typedElement.isMany()) {
+						featureViewButtons = TagName.div.create(featureViewButtons).style().margin().top("5px"); // Many feature - display buttons below.
+					}
+					ret.content(featureViewButtons);							
 				}
 			}
 		} else {
