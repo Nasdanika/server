@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
@@ -94,21 +95,31 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 
 	@Override
 	public final boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
-		if (target instanceof EObject) {
+		if (target instanceof CDOObject && ((CDOObject) target).cdoView() != null) {
 			for (Principal principal: getPrincipals()) {
 				AccessDecision accessDecision = principal.authorize(this, (EObject) target, action, qualifier, environment);
 				if (!AccessDecision.ABSTAIN.equals(accessDecision)) {
 					return AccessDecision.ALLOW.equals(accessDecision);
 				}
 			}
-
-			// Authorize any action on objects which are not yet part of the repository.
-			if (((EObject) target).eResource() == null && ((EObject) target).eContainer() == null) {
-				return true;
-			}
 		}
-		return super.authorize(target, action, qualifier, environment);
+		return authorizeNonViewObject(target, action, qualifier, environment);
 	}
+	
+	/**
+	 * Authorizes access to a non-view object. This implementation returns true to allow access to non-view objects because the realm can only check permissions on view objects.
+	 * @param target
+	 * @param action
+	 * @param qualifier
+	 * @param environment
+	 * @return
+	 * @throws Exception
+	 */
+	protected boolean authorizeNonViewObject(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
+		return true; // TODO - customize as necessary
+//		return super.authorize(target, action, qualifier, environment);
+	}
+	
 	
 	private V view;
 	
