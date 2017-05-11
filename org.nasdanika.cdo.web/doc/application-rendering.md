@@ -259,8 +259,20 @@ The snippet below shows customization for a specific feature and falling back to
 	}
 ```  
 
-This section groups these methods by their purpose and provides quick overview of what each method does. As usual, JavaDoc provides more details, and source code is the final authority.
+This section groups these methods by their purpose and provides quick overview of what each method does. As usual, JavaDoc provides more details, and the source code is the final authority.
 
+##### Method call graphs
+
+The following two graphs may help to grasp the "big picture" of interdependencies of rendering and routing methods:
+
+* [Highlighting](http://www.nasdanika.org/rendering-2.html) - Route methods are red and render methods are green.
+    * Dragable nodes.
+    * Zoom (mouse wheel) and pan. 
+    * Double-click to center node.
+    * Hover to highlight 1st-order neighborhood and show a tooltip with method name. Click to fade surroundings.  
+* [Layered](http://www.nasdanika.org/rendering.html) - a slightly different graph without highlighting, but with layering. Route methods are blue and render methods are green. 
+
+The graphs do not contain all the Route/Renderer methods - some foundational methods, which are called by a large number of other methods (e.g. ``getRenderAnnotation()``) were excluded from the graph for clarity.
 
 ##### General purpose methods
 
