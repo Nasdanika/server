@@ -3044,7 +3044,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Tag ul = htmlFactory.tag(TagName.ul);
 				List<Object> typedElementValues = new ArrayList<>();
 				for (Object fv: (Collection<Object>) typedElementValue) {
-					if (context.authorize(fv, StandardAction.read, null, null)) {
+					if (!(fv instanceof EObject) || context.authorize(fv, StandardAction.read, null, null)) {
 						typedElementValues.add(fv);
 					}
 				}
@@ -3140,16 +3140,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, feature.getName());
-			boolean isCreate = feature instanceof EReference && ((EReference) feature).isContainment();
-			String tooltip = htmlFactory.interpolate(getResourceString(context, isCreate ? "createTooltip" : "selectTooltip"), env);
-	
-			@SuppressWarnings("resource")
-			Tag icon = isCreate ? renderCreateIcon(context) : renderAddIcon(context);
-			Button addButton = htmlFactory.button(icon.style().margin().right("5px"), getResourceString(context, isCreate ? "create" : "select"))
-					.style(Style.PRIMARY)
-					.style().margin().left("5px")
-					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
+			Button addButton;
+			if (feature instanceof EReference && ((EReference) feature).isContainment()) {
+				String tooltip = htmlFactory.interpolate(getResourceString(context, "createTooltip"), env);
+				Tag icon = renderCreateIcon(context).style().margin().right("5px");
+				addButton = htmlFactory.button(icon, getResourceString(context, "create"))
+						.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
+				
+			} else if (feature instanceof EAttribute) {
+				Tag icon = renderAddIcon(context).style().margin().right("5px");
+				addButton = htmlFactory.button(icon, getResourceString(context, "add"));
+			} else {
+				String tooltip = htmlFactory.interpolate(getResourceString(context, "selectTooltip"), env);
+				Tag icon = renderAddIcon(context).style().margin().right("5px");
+				addButton = htmlFactory.button(icon, getResourceString(context, "select"))
+						.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
+			}
+
+			addButton.style(Style.PRIMARY).style().margin().left("5px");
 			wireFeatureAddButton(context, obj, feature, addButton);
 			return addButton;
 		}
@@ -3186,14 +3195,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			} else if (featureElementTypes.size() == 1) {
 				EClass featureElementType = featureElementTypes.iterator().next();
 				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-				addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
+				addButton.on(Event.click, "window.location='"+objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
 			} else {
 				for (EClass featureElementType: featureElementTypes) {
 					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-					String createURL = objectURI+"/feature/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
+					String createURL = objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
 					addButton.item(getHTMLFactory(context).link(createURL, getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
 				}
 			}
+		} else if (feature instanceof EAttribute) {
+			addButton.on(Event.click, "window.location='"+objectURI+"/attribute/"+feature.getName()+"/add.html';");
 		} else {
 			addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/select.html';");
 		}
@@ -3581,13 +3592,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 
 		String controlTypeStr = getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL);
 		TagName controlType = controlTypeStr == null ? null : TagName.valueOf(controlTypeStr); 
+		Class<?> instanceClass = typedElement.getEType().getInstanceClass();
+		boolean isEObjectInstanceClass = EObject.class.isAssignableFrom(instanceClass);
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		if (controlType == null) {
 			if (typedElement.isMany()) {
 				controlType = TagName.input;
 			} else if (typedElement instanceof EAttribute || typedElement instanceof EParameter) {		
-				Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
-				controlType = featureTypeInstanceClass.isEnum() || EObject.class.isAssignableFrom(featureTypeInstanceClass) ? TagName.select : TagName.input;
+				controlType = instanceClass.isEnum() || isEObjectInstanceClass ? TagName.select : TagName.input;
 			} else if (((EReference) typedElement).isContainment()) {				
 				// Link and create button.
 				return htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).small();
@@ -3761,7 +3773,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String inputTypeStr = isChoiceTree ? "radio" : getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE);
 			InputType inputType = inputTypeStr == null ? null : HTMLFactory.InputType.valueOf(inputTypeStr);
 			if (inputType == null) {
-				if (typedElement.isMany()) {
+				if (typedElement.isMany() && isEObjectInstanceClass) {
 					inputType = InputType.checkbox;
 				} else {
 					Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();

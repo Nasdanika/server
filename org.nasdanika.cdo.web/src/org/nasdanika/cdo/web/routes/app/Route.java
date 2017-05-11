@@ -32,6 +32,7 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -493,22 +494,22 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	@SuppressWarnings("unchecked")
 	@RouteMethod(
 			value = { RequestMethod.GET, RequestMethod.POST }, 
-			path = "feature/{feature}/create/{epackage}/{eclass}",
+			path = "reference/{reference}/create/{epackage}/{eclass}",
 			action = "create",
-			qualifier = "{feature}",
+			qualifier = "{reference}",
 			produces = "text/html",
 			lock = @RouteMethod.Lock(type = Type.WRITE), 
-			comment="Renders a page for creating an object and adding it to a containment feature.")
-	public Object createContainementFeatureElement(
+			comment="Renders a page for creating an object and adding it to a containment reference.")
+	public Object createContainementReferenceElement(
 			@ContextParameter C context,
 			@TargetParameter T target,
 			@HeaderParameter(REFERRER_HEADER) String referrerHeader,			
-			@PathParameter("feature") String feature,
+			@PathParameter("reference") String reference,
 			@PathParameter("epackage") String epackage,
 			@PathParameter("eclass") String eclass,
 			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
 
-		EStructuralFeature tsf = target.eClass().getEStructuralFeature(feature);
+		EStructuralFeature tsf = target.eClass().getEStructuralFeature(reference);
 		if (tsf instanceof EReference && context instanceof CDOViewContext) {
 			String ePackageNsURI = new String(Hex.decodeHex(epackage.toCharArray()));
 			EPackage ePackage = ((CDOViewContext<CDOView, ?>) context).getView().getSession().getPackageRegistry().getEPackage(ePackageNsURI);
@@ -569,7 +570,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 									}
 									referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 								}
-								referrer += "context-feature="+URLEncoder.encode(feature, "UTF-8");
+								referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
 								((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
 								return Action.NOP;
 							}
@@ -633,6 +634,211 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		return Action.BAD_REQUEST;		
 	}
+	
+	
+	@SuppressWarnings("unchecked")
+	@RouteMethod(
+			value = { RequestMethod.GET, RequestMethod.POST }, 
+			path = "attribute/{attribute}/add.html",
+			action = "update",
+			qualifier = "{attribute}",
+			produces = "text/html",
+			lock = @RouteMethod.Lock(type = Type.WRITE), 
+			comment="Renders a page for adding a new element to a muliti-value attribute.")
+	public Object addAttributeElement(
+			@ContextParameter C context,
+			@TargetParameter T target,
+			@HeaderParameter(REFERRER_HEADER) String referrerHeader,			
+			@PathParameter("attribute") String attribute,
+			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
+
+		EStructuralFeature tsf = target.eClass().getEStructuralFeature(attribute);
+		if (tsf instanceof EAttribute && tsf.isMany()) {
+			ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+				
+				@Override
+				protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+					return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? target.eClass() : namedElement), key, true);
+				}
+				
+				@Override
+				public void accept(Diagnostic diagnostic) {
+					// Ignore in GET
+					if (context.getMethod() == RequestMethod.POST) {
+						super.accept(diagnostic);
+					}
+				}
+				
+			};
+			
+			boolean setSuccessful = true;
+			// Adding the new value to the attribute.
+			String value = context.getRequest().getParameter(tsf.getName());
+			if (value == null) {
+				diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, "Required value", new Object[] { target, tsf }));
+				setSuccessful = false;
+			} else {
+				try {
+					((Collection<Object>) target.eGet(tsf)).add(parseTypedElementValue(context, tsf, value));
+				} catch (Exception e) {
+					Throwable rootCause = e;
+					while (rootCause.getCause() != null) {
+						rootCause = rootCause.getCause();
+					}
+					setSuccessful = false;
+					if (diagnosticConsumer != null) {
+						String rootCauseMessage = rootCause.getMessage() == null ? rootCause.toString() : rootCause.getMessage();
+						diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, rootCauseMessage, new Object[] { target, tsf, e }));
+					}
+				}
+				Diagnostic vr = validate(context, target);
+				for (Diagnostic vc: vr.getChildren()) {
+					List<?> vcData = vc.getData();
+					if (!vcData.isEmpty() 
+							&& vcData.get(0) == target 
+							&& (vcData.size() == 1 || tsf == vcData.get(1))) {
+
+						if (vc.getSeverity() == Diagnostic.ERROR) {
+							setSuccessful = false;
+						}
+						
+						diagnosticConsumer.accept(vc);
+					}
+				}
+			}
+			
+			if (context.getMethod() == RequestMethod.POST && setSuccessful) {			
+				// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
+				if (context instanceof HttpServletRequestContext) {
+					String referrer = referrerParameter;
+					if (referrer == null) {
+						referrer = referrerHeader;
+					}
+					if (referrer == null) {
+						referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+					}
+					int referrerQueryStart = referrer.indexOf("?");
+					if (referrerQueryStart == -1) {
+						referrer +=  "?";
+					} else {
+						StringBuilder queryBuilder = new StringBuilder();
+						for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+							if (!qe.startsWith("context-feature=")) {
+								queryBuilder.append(qe).append("&");
+							}
+						}
+						referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+					}
+					referrer += "context-feature="+URLEncoder.encode(attribute, "UTF-8");
+					((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+					return Action.NOP;
+				}
+				
+				return "Update successful";
+			} 
+			
+			// Rollback transaction to undo the change.
+			if (context instanceof TransactionContext) {
+				((TransactionContext) context).setRollbackOnly();
+			}
+
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			String title = StringEscapeUtils.escapeHtml4(nameToLabel(tsf.getName())+" - add value");
+			Fragment content = htmlFactory.fragment();
+			
+			// Breadcrumbs
+			Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+			String addResourceString = getResourceString(context, "add", true);
+			renderFeaturePath(context, target, tsf, addResourceString, breadCrumbs);
+			if (!breadCrumbs.isEmpty()) {
+				content.content(breadCrumbs);
+			}
+			
+			// Object header
+			Modal classDocModal = renderDocumentationModal(context, target.eClass());
+			if (classDocModal != null) {
+				content.content(classDocModal);
+			}
+			
+			Modal attributeDocModal = renderDocumentationModal(context, tsf);
+			if (attributeDocModal != null) {
+				content.content(attributeDocModal);
+			}			
+			
+			Tag attributeHeader = content.getFactory().tag(TagName.h3,
+					addResourceString, 
+					" ", 
+					renderNamedElementIconAndLabel(context, tsf), 
+					renderDocumentationIcon(context, tsf, attributeDocModal, true));
+			content.content(attributeHeader);
+			
+			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+			content.content(objectHeader);
+													
+			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, tsf, RenderAnnotation.HORIZONTAL_FORM));
+			boolean noValidate = "true".equals(getRenderAnnotation(context, tsf, RenderAnnotation.NO_VALIDATE));
+			Form addForm = htmlFactory.form();
+			
+			ListGroup errorList = htmlFactory.listGroup();
+			for (ValidationResult vr: diagnosticConsumer.getValidationResults()) {
+				errorList.item(vr.message, vr.status.toStyle());			
+			}
+			
+			if (horizontalForm) {
+				for (Entry<ENamedElement, List<ValidationResult>> fe: diagnosticConsumer.getNamedElementValidationResults().entrySet()) {
+					for (ValidationResult fvr: fe.getValue()) {
+						Object featureNameLabel = renderNamedElementIconAndLabel(context, fe.getKey());
+						errorList.item(htmlFactory.label(fvr.status.toStyle(), featureNameLabel) + " " + fvr.message, fvr.status.toStyle());											
+					}
+				}
+			}
+			
+			if (!errorList.isEmpty()) {
+				addForm.content(errorList);
+			}
+			
+			renderTypedElementFormGroup(
+					context, 
+					target, 
+					tsf, 
+					Collections.singletonList(tsf), 
+					value, 
+					addForm, 
+					attributeDocModal, 
+					diagnosticConsumer.getNamedElementValidationResults().get(tsf), 
+					horizontalForm);
+			
+			addForm
+				.novalidate(noValidate)
+				.action("add.html")
+				.method(Method.post);
+			
+			configureForm(addForm, horizontalForm);
+			
+			String originalReferrer = referrerParameter;
+			if (originalReferrer == null) {
+				originalReferrer = referrerHeader;
+			}
+			if (originalReferrer != null) {
+				addForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+			}		
+			
+			Tag buttonBar = htmlFactory.div().style().text().align().right();
+			
+			Button addButton = htmlFactory.button(renderAddIcon(context).style().margin().right("5px"), addResourceString)
+					.style(Style.PRIMARY)
+					.style().margin().right("5px");
+			
+			addButton.type(org.nasdanika.html.Button.Type.SUBMIT);
+			buttonBar.content(addButton, renderCancelButton(context, target));
+			addForm.content(buttonBar);
+			
+			content.content(addForm);		
+			return renderPage(context, target, title, content);
+		}
+		
+		return Action.BAD_REQUEST;		
+	}			
 		
 	@RouteMethod(
 			value = RequestMethod.GET,
