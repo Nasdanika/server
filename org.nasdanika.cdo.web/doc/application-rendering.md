@@ -266,6 +266,7 @@ This section groups these methods by their purpose and provides quick overview o
 The following two graphs may help to grasp the "big picture" of interdependencies of rendering and routing methods:
 
 * [Highlighting](http://www.nasdanika.org/rendering-2.html) - Route methods are red and render methods are green.
+    * Use browser find in page (Ctrl-F) to highlight methods of interest on the graph.
     * Dragable nodes.
     * Zoom (mouse wheel) and pan. 
     * Double-click to center node.
