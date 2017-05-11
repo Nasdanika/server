@@ -554,7 +554,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Collections.reverse(cPath);
 			for (EObject c: cPath) {
 				Renderer<C, EObject> cRenderer = getRenderer(c);
-				Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);
+				Object cIconAndLabel = cRenderer.renderIconAndLabel(context, c);  				
 				if (cIconAndLabel != null) {
 					EObject cContainer = c.eContainer();
 					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
@@ -566,7 +566,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
 								Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
 								if (categoryIconAndLabel != null) {
-									breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+									breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel).attribute("title", "Category"));
 								}
 								String containerURI = containerRenderer.getObjectURI(context, cContainer);
 								String featureURI = containerURI;
@@ -577,12 +577,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
 									}
 								}
-								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
 							}
 						}
 					}
 					String objectURI = cRenderer.getObjectURI(context, c);
-					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
+					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(cIconAndLabel).attribute("title", nameToLabel(c.eClass().getName()))); // TODO - class label and then Jsoup to plain text
 				}
 			}
 		}
@@ -597,7 +597,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
 					Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
 					if (categoryIconAndLabel != null) {
-						breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+						breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel).attribute("title", "Category"));
 					}
 					String containerURI = containerRenderer.getObjectURI(context, objContainer);
 					String featureURI = containerURI;
@@ -608,17 +608,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
 						}
 					}
-					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
 				}
 			}
 		}
 				
+		String objTitle = nameToLabel(obj.eClass().getName()); // TODO - class label and to text.
 		if (action == null) {
-			breadCrumbs.item(null , renderIconAndLabel(context, obj));
+			breadCrumbs.item(null , TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", objTitle)); 
 		} else {
 			String objectURI = getObjectURI(context, obj);
-			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));
-			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", objTitle));
+			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action).attribute("title", "Action"));
 		}
 	}
 	
@@ -654,7 +655,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
 								Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
 								if (categoryIconAndLabel != null) {
-									breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+									breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel).attribute("title", "Category"));
 								}
 								String containerURI = containerRenderer.getObjectURI(context, cContainer);
 								String featureURI = containerURI;
@@ -665,12 +666,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
 									}
 								}
-								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
 							}
 						}
 					}
 					String objectURI = cRenderer.getObjectURI(context, c);
-					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabel);
+					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(cIconAndLabel).attribute("title", nameToLabel(c.eClass().getName()))); // TODO class label to text with JSoup
 				}
 			}
 		}
@@ -685,7 +686,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
 					Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, containmentFeature, containerVisibleFeatures);
 					if (categoryIconAndLabel != null) {
-						breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+						breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel).attribute("title", "Category"));
 					}
 					String containerURI = containerRenderer.getObjectURI(context, objContainer);
 					String featureURI = containerURI;
@@ -696,23 +697,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
 						}
 					}
-					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)));
+					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
 				}
 			}
 		}
 		
 		String objectURI = getObjectURI(context, obj);
-		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, renderIconAndLabel(context, obj));		
+		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", nameToLabel(obj.eClass().getName())));	// TODO class label to text with JSoup	
 		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj, null);
 		Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, feature, visibleFeatures);
 		if (categoryIconAndLabel != null) {
-			breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel));
+			breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel).attribute("title", "Category"));
 		}
+		Tag featureCrumb = TagName.i.create(renderNamedElementIconAndLabel(context, feature, visibleFeatures)).attribute("title", "Feature");
 		if (action == null) {
-			breadCrumbs.item(null, renderNamedElementIconAndLabel(context, feature, visibleFeatures));
+			breadCrumbs.item(null, featureCrumb);
 		} else {
-			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/feature/"+feature.getName()+"/view.html", renderNamedElementIconAndLabel(context, feature, visibleFeatures));
-			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action));
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/feature/"+feature.getName()+"/view.html", featureCrumb);
+			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action).attribute("title", "Action"));
 		}
 	}
 
@@ -3044,7 +3046,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Tag ul = htmlFactory.tag(TagName.ul);
 				List<Object> typedElementValues = new ArrayList<>();
 				for (Object fv: (Collection<Object>) typedElementValue) {
-					if (!(fv instanceof EObject) || context.authorize(fv, StandardAction.read, null, null)) {
+					if (context.authorize(fv, StandardAction.read, null, null)) {
 						typedElementValues.add(fv);
 					}
 				}
