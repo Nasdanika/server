@@ -917,6 +917,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 	}
 		
+	@SuppressWarnings("unchecked")
 	@RouteMethod(
 			value = { RequestMethod.GET, RequestMethod.POST }, 
 			action = "update",
@@ -927,11 +928,204 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object editFeatureElement(
 			@ContextParameter C context,
 			@PathParameter("feature") String feature,
-			@PathParameter("element") String element,
-			@TargetParameter T target) throws Exception {
+			@PathParameter("element") int element,
+			@TargetParameter T target,
+			@HeaderParameter(REFERRER_HEADER) String referrerHeader,			
+			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
 		
-		// TODO
-		return "Edit "+feature+" "+element;		
+		EStructuralFeature tsf = target.eClass().getEStructuralFeature(feature);
+		
+		// Supporting only attributes - references shall be edited using their edit route, although it is possible to do it here as well, if needed.  
+		if (tsf instanceof EAttribute && tsf.isMany()) {
+			ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+				
+				@Override
+				protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+					return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? target.eClass() : namedElement), key, true);
+				}
+				
+				@Override
+				public void accept(Diagnostic diagnostic) {
+					// Ignore in GET
+					if (context.getMethod() == RequestMethod.POST) {
+						super.accept(diagnostic);
+					}
+				}
+				
+			};
+
+			List<Object> attributeValues = (List<Object>) target.eGet(tsf);
+			if (element < 0 || attributeValues.size() <= element) {
+				return Action.BAD_REQUEST;
+			}
+			
+			if (context.getMethod() == RequestMethod.POST) {
+				boolean setSuccessful = true;
+				// Adding the new value to the attribute.
+				String value = context.getRequest().getParameter(tsf.getName());
+				if (value == null) {
+					diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, "Required value", new Object[] { target, tsf }));
+					setSuccessful = false;
+				} else {
+					try {
+						attributeValues.set(element, parseTypedElementValue(context, tsf, value));
+					} catch (Exception e) {
+						Throwable rootCause = e;
+						while (rootCause.getCause() != null) {
+							rootCause = rootCause.getCause();
+						}
+						setSuccessful = false;
+						if (diagnosticConsumer != null) {
+							String rootCauseMessage = rootCause.getMessage() == null ? rootCause.toString() : rootCause.getMessage();
+							diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.ERROR, getClass().getName(), 0, rootCauseMessage, new Object[] { target, tsf, e }));
+						}
+					}
+					Diagnostic vr = validate(context, target);
+					for (Diagnostic vc: vr.getChildren()) {
+						List<?> vcData = vc.getData();
+						if (!vcData.isEmpty() 
+								&& vcData.get(0) == target 
+								&& (vcData.size() == 1 || tsf == vcData.get(1))) {
+
+							if (vc.getSeverity() == Diagnostic.ERROR) {
+								setSuccessful = false;
+							}
+							
+							diagnosticConsumer.accept(vc);
+						}
+					}
+				}
+								
+				// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
+				if (context instanceof HttpServletRequestContext) {
+					String referrer = referrerParameter;
+					if (referrer == null) {
+						referrer = referrerHeader;
+					}
+					if (referrer == null) {
+						referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+					}
+					int referrerQueryStart = referrer.indexOf("?");
+					if (referrerQueryStart == -1) {
+						referrer +=  "?";
+					} else {
+						StringBuilder queryBuilder = new StringBuilder();
+						for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+							if (!qe.startsWith("context-feature=")) {
+								queryBuilder.append(qe).append("&");
+							}
+						}
+						referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+					}
+					referrer += "context-feature="+URLEncoder.encode(feature, "UTF-8");
+					((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+					return Action.NOP;
+				}
+				
+				return "Update successful";
+			} 
+			
+			// Rollback transaction to undo the change.
+			if (context instanceof TransactionContext) {
+				((TransactionContext) context).setRollbackOnly();
+			}
+
+			HTMLFactory htmlFactory = getHTMLFactory(context);
+			String title = StringEscapeUtils.escapeHtml4(nameToLabel(tsf.getName())+" - edit value");
+			Fragment content = htmlFactory.fragment();
+			
+			// Breadcrumbs
+			Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+			String addResourceString = getResourceString(context, "edit", true);
+			renderFeaturePath(context, target, tsf, addResourceString, breadCrumbs);
+			if (!breadCrumbs.isEmpty()) {
+				content.content(breadCrumbs);
+			}
+			
+			// Object header
+			Modal classDocModal = renderDocumentationModal(context, target.eClass());
+			if (classDocModal != null) {
+				content.content(classDocModal);
+			}
+			
+			Modal attributeDocModal = renderDocumentationModal(context, tsf);
+			if (attributeDocModal != null) {
+				content.content(attributeDocModal);
+			}			
+			
+			Tag attributeHeader = content.getFactory().tag(TagName.h3,
+					addResourceString, 
+					" ", 
+					renderNamedElementIconAndLabel(context, tsf), 
+					renderDocumentationIcon(context, tsf, attributeDocModal, true));
+			content.content(attributeHeader);
+			
+			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+			content.content(objectHeader);
+													
+			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, tsf, RenderAnnotation.HORIZONTAL_FORM));
+			boolean noValidate = "true".equals(getRenderAnnotation(context, tsf, RenderAnnotation.NO_VALIDATE));
+			Form editForm = htmlFactory.form();
+			
+			ListGroup errorList = htmlFactory.listGroup();
+			for (ValidationResult vr: diagnosticConsumer.getValidationResults()) {
+				errorList.item(vr.message, vr.status.toStyle());			
+			}
+			
+			if (horizontalForm) {
+				for (Entry<ENamedElement, List<ValidationResult>> fe: diagnosticConsumer.getNamedElementValidationResults().entrySet()) {
+					for (ValidationResult fvr: fe.getValue()) {
+						Object featureNameLabel = renderNamedElementIconAndLabel(context, fe.getKey());
+						errorList.item(htmlFactory.label(fvr.status.toStyle(), featureNameLabel) + " " + fvr.message, fvr.status.toStyle());											
+					}
+				}
+			}
+			
+			if (!errorList.isEmpty()) {
+				editForm.content(errorList);
+			}
+			
+			renderTypedElementFormGroup(
+					context, 
+					target, 
+					tsf, 
+					Collections.singletonList(tsf), 
+					attributeValues.get(element), 
+					editForm, 
+					attributeDocModal, 
+					diagnosticConsumer.getNamedElementValidationResults().get(tsf), 
+					horizontalForm);
+			
+			editForm
+				.novalidate(noValidate)
+				.action("edit.html")
+				.method(Method.post);
+			
+			configureForm(editForm, horizontalForm);
+			
+			String originalReferrer = referrerParameter;
+			if (originalReferrer == null) {
+				originalReferrer = referrerHeader;
+			}
+			if (originalReferrer != null) {
+				editForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+			}		
+			
+			Tag buttonBar = htmlFactory.div().style().text().align().right();
+			
+			Button saveButton = htmlFactory.button(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save", true))
+					.style(Style.PRIMARY)
+					.style().margin().right("5px");
+			
+			saveButton.type(org.nasdanika.html.Button.Type.SUBMIT);
+			buttonBar.content(saveButton, renderCancelButton(context, target));
+			editForm.content(buttonBar);
+			
+			content.content(editForm);		
+			return renderPage(context, target, title, content);
+		}
+		
+		return Action.BAD_REQUEST;		
 	}
 	
 	/**
