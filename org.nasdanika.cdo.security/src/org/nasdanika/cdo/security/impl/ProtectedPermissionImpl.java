@@ -5,17 +5,17 @@ package org.nasdanika.cdo.security.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
-import org.eclipse.emf.common.util.BasicDiagnostic;
-import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.nasdanika.cdo.security.Permission;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Protected;
 import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.security.util.DiagnosticHelper;
 import org.nasdanika.cdo.security.util.SecurityValidator;
 
 /**
@@ -75,26 +75,64 @@ public class ProtectedPermissionImpl extends PermissionImpl implements Protected
 	 * @generated NOT
 	 */
 	public boolean validate(DiagnosticChain diagnostics, Map<Object, Object> context) {
-		boolean hasDuplicates = false;
-		if (diagnostics != null) {
-			for (ProtectedPermission pp: ((Protected) eContainer()).getPermissions()) {
-				if (pp != this && EcoreUtil.equals(pp, this)) {
-					hasDuplicates = true;
-					break;
+		if (diagnostics == null) {
+			return true;
+		}
+		DiagnosticHelper diagnosticHelper = new DiagnosticHelper(diagnostics, SecurityValidator.DIAGNOSTIC_SOURCE, SecurityValidator.PROTECTED_PERMISSION__VALIDATE, this);
+		EList<ProtectedPermission> protectedPermissions = ((Protected) eContainer()).getPermissions();
+		for (ProtectedPermission pp: protectedPermissions) {
+			if (pp != this && EcoreUtil.equals(pp, this)) {
+				diagnosticHelper.error("Duplicate permission");
+				break;
+			}			
+		}
+		
+		// Imply relationships
+		protectedPermissions.forEach(pp -> {
+			if (pp != this) {
+				if (pp.getAction().implies(getAction()) && withinEffectiveDates(pp, this)) {
+					if (pp.isAllow()) {
+						if (isAllow()) {
+							diagnosticHelper.error("Action '"+getAction().getName()+"' is implied by already granted action '"+pp.getAction().getName()+"' with encompassing date range.");							
+						}
+						// Else is legal - deny some functionality.
+					} else {
+						if (isAllow()) {
+							diagnosticHelper.error("Action '"+getAction().getName()+"' is denied by already granted action '"+pp.getAction().getName()+"' with encompassing date range.");							
+						} else {
+							diagnosticHelper.error("Action '"+getAction().getName()+"' is implied by already granted action '"+pp.getAction().getName()+"' with encompassing date range.");														
+						}						
+					}
+				}
+				
+				if (pp.getAction().impliedBy(getAction()) && withinEffectiveDates(this, pp)) {
+					if (isAllow()) {
+						if (pp.isAllow()) {
+							diagnosticHelper.error("Action '"+getAction().getName()+"' implies already granted action '"+pp.getAction().getName()+"' with encompassed date range.");							
+						}
+						// Else is legal - deny some functionality.
+					} else {
+						if (pp.isAllow()) {
+							diagnosticHelper.error("Action '"+getAction().getName()+"' denies already granted (denied) action '"+pp.getAction().getName()+"' with encompassed date range.");							
+						} else {
+							diagnosticHelper.error("Action '"+getAction().getName()+"' implies already granted (denied) action '"+pp.getAction().getName()+"' with encompassed date range.");														
+						}						
+					}
 				}
 			}
-			
-			if (hasDuplicates) {
-				diagnostics.add
-					(new BasicDiagnostic
-						(Diagnostic.ERROR,
-						 SecurityValidator.DIAGNOSTIC_SOURCE,
-						 SecurityValidator.PROTECTED_PERMISSION__VALIDATE,
-						 "Duplicate permission",
-						 new Object [] { this }));
-			}
+		});
+
+		return diagnosticHelper.isSuccess();
+	}
+	
+	static boolean withinEffectiveDates(Permission including, Permission included) {
+		if (including.getStartDate() != null && (including.getStartDate() == null || including.getStartDate().before(included.getStartDate()))) {
+			return false;
 		}
-		return !hasDuplicates;
+		if (including.getEndDate() != null && (including.getEndDate() == null || including.getEndDate().after(included.getEndDate()))) {
+			return false;
+		}
+		return true;
 	}
 
 	/**
