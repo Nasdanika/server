@@ -289,6 +289,40 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public boolean implies(Action action) {
+		if (action == this) {
+			return true;
+		}
+		for (Action ia: getImplies()) {
+			if (ia == action || ia.implies(action)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated NOT
+	 */
+	public boolean impliedBy(Action action) {
+		if (action == this) {
+			return true;
+		}
+		for (Action iba: getImpliedBy()) {
+			if (iba == action || iba.impliedBy(action)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	@Override
@@ -301,6 +335,10 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 				return createPrincipalPermission();
 			case SecurityPackage.ACTION___CREATE_PROTECTED_PERMISSION:
 				return createProtectedPermission();
+			case SecurityPackage.ACTION___IMPLIES__ACTION:
+				return implies((Action)arguments.get(0));
+			case SecurityPackage.ACTION___IMPLIED_BY__ACTION:
+				return impliedBy((Action)arguments.get(0));
 		}
 		return super.eInvoke(operationID, arguments);
 	}

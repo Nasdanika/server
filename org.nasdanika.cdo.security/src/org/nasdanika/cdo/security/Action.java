@@ -291,4 +291,20 @@ public interface Action extends CDOObject {
 	 */
 	ProtectedPermission createProtectedPermission();
 
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	boolean implies(Action action);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @model
+	 * @generated
+	 */
+	boolean impliedBy(Action action);
+
 } // Action
