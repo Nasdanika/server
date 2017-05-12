@@ -923,8 +923,25 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 					HTMLFactory htmlFactory = featureHeader.getFactory();
 					Dropdown<?> filterDropDown = htmlFactory.caretDropdown();
-					String filterParameterValue = context.getRequest().getParameter(FEATURE_FILTER_PARAMETER_PREFIX+tableFeature.getName());
+					String filterParameterName = FEATURE_FILTER_PARAMETER_PREFIX+tableFeature.getName();
+					String filterParameterValue = context.getRequest().getParameter(filterParameterName);
 					Renderer<C, EObject> typeRenderer = getRenderer((EClass) typedElement.getEType());
+					
+					StringBuilder queryBuilder = new StringBuilder();
+					String requestQueryString = context.getRequest().getQueryString();					
+					if (requestQueryString != null) {
+						for (String segment: requestQueryString.split("&")) {
+							if (!segment.startsWith(filterParameterName+"=")) {
+								if (queryBuilder.length() == 0) {
+									queryBuilder.append("?");
+								} else {
+									queryBuilder.append("&");
+								}
+								queryBuilder.append(segment);
+							}
+						}
+					}
+					
 					if (filterParameterValue == null) {
 						filterDropDown.header("Filter");						
 					} else {						
@@ -937,7 +954,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue);
 						}
 						Tag trashCanIcon = htmlFactory.fontAwesome().webApplication(WebApplication.trash_o).getTarget().style().color().bootstrapColor(Color.PRIMARY);
-						StringBuilder queryBuilder = new StringBuilder();
 						// TODO - build query
 						Tag clearFilterLink = htmlFactory.link("view.html"+queryBuilder, trashCanIcon).attribute("title", "Clear filter");						
 						filterDropDown.header(htmlFactory.span("Filter: ", filterIconAndLabel, " ", clearFilterLink).style().color().bootstrapColor(Color.PRIMARY));						
@@ -962,9 +978,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 												
 						dropDownItems.sort((a,b) -> ((String) a[2]).compareTo((String) b[2]));
 						for (Object[] dropDownItem: dropDownItems) {
-							StringBuilder queryBuilder = new StringBuilder();
-							// TODO - build query
-							filterDropDown.item(htmlFactory.link("view.html"+queryBuilder, dropDownItem[1]));
+							String filterSegment = filterParameterName+"="+URLEncoder.encode(typeRenderer.getFormControlValue(context, null, tableFeature, dropDownItem[0]), "UTF-8");
+							String href = "view.html" + queryBuilder + (queryBuilder.length() == 0 ? "?" : "&") + filterSegment;
+							filterDropDown.item(htmlFactory.link(href, dropDownItem[1]));
 						}
 						featureHeader.content(filterDropDown);
 					}
