@@ -725,6 +725,24 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EOperation getAction__Implies__Action() {
+		return actionEClass.getEOperations().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EOperation getAction__ImpliedBy__Action() {
+		return actionEClass.getEOperations().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getPermission() {
 		return permissionEClass;
 	}
@@ -980,6 +998,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		createEOperation(actionEClass, ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP);
 		createEOperation(actionEClass, ACTION___CREATE_PRINCIPAL_PERMISSION);
 		createEOperation(actionEClass, ACTION___CREATE_PROTECTED_PERMISSION);
+		createEOperation(actionEClass, ACTION___IMPLIES__ACTION);
+		createEOperation(actionEClass, ACTION___IMPLIED_BY__ACTION);
 
 		principalEClass = createEClass(PRINCIPAL);
 		createEReference(principalEClass, PRINCIPAL__MEMBER_OF);
@@ -1155,6 +1175,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEOperation(getAction__CreatePrincipalPermission(), this.getPrincipalPermission(), "createPrincipalPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEOperation(getAction__CreateProtectedPermission(), this.getProtectedPermission(), "createProtectedPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getAction__Implies__Action(), ecorePackage.getEBoolean(), "implies", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAction(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		op = initEOperation(getAction__ImpliedBy__Action(), ecorePackage.getEBoolean(), "impliedBy", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getAction(), "action", 0, 1, IS_UNIQUE, IS_ORDERED);
 
 		initEClass(principalEClass, Principal.class, "Principal", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getPrincipal_MemberOf(), this.getGroup(), this.getGroup_Members(), "memberOf", null, 0, -1, Principal.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1924,7 +1950,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (protectedPermissionEClass, 
 		   source, 
 		   new String[] {
-			 "icon", "fa fa-key"
+			 "icon", "fa fa-key",
+			 "sort", "principal"
 		   });	
 		addAnnotation
 		  (groupEClass, 

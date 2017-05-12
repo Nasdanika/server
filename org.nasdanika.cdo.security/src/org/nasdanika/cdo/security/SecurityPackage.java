@@ -465,13 +465,31 @@ public interface SecurityPackage extends EPackage {
 	int ACTION___CREATE_PROTECTED_PERMISSION = 2;
 
 	/**
+	 * The operation id for the '<em>Implies</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION___IMPLIES__ACTION = 3;
+
+	/**
+	 * The operation id for the '<em>Implied By</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ACTION___IMPLIED_BY__ACTION = 4;
+
+	/**
 	 * The number of operations of the '<em>Action</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ACTION_OPERATION_COUNT = 3;
+	int ACTION_OPERATION_COUNT = 5;
 
 	/**
 	 * The feature id for the '<em><b>Member Of</b></em>' reference list.
@@ -2155,6 +2173,26 @@ public interface SecurityPackage extends EPackage {
 	EOperation getAction__CreateProtectedPermission();
 
 	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#implies(org.nasdanika.cdo.security.Action) <em>Implies</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Implies</em>' operation.
+	 * @see org.nasdanika.cdo.security.Action#implies(org.nasdanika.cdo.security.Action)
+	 * @generated
+	 */
+	EOperation getAction__Implies__Action();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.security.Action#impliedBy(org.nasdanika.cdo.security.Action) <em>Implied By</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Implied By</em>' operation.
+	 * @see org.nasdanika.cdo.security.Action#impliedBy(org.nasdanika.cdo.security.Action)
+	 * @generated
+	 */
+	EOperation getAction__ImpliedBy__Action();
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Permission <em>Permission</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2849,6 +2887,22 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EOperation ACTION___CREATE_PROTECTED_PERMISSION = eINSTANCE.getAction__CreateProtectedPermission();
+
+		/**
+		 * The meta object literal for the '<em><b>Implies</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ACTION___IMPLIES__ACTION = eINSTANCE.getAction__Implies__Action();
+
+		/**
+		 * The meta object literal for the '<em><b>Implied By</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation ACTION___IMPLIED_BY__ACTION = eINSTANCE.getAction__ImpliedBy__Action();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.security.impl.PermissionImpl <em>Permission</em>}' class.

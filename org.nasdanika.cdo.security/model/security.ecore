@@ -170,6 +170,12 @@
         <details key="documentation" value="Creates a permission for this action. &#xD;&#xA;Subclasses may customize permissions created for actions. &#xD;&#xA;E.g. ``transferFunds`` action may create a conditional permission&#xD;&#xA;wich checks transfer amount and matches only if the amount is less or greater&#xD;&#xA;than a specified limit.&#xD;&#xA;"/>
       </eAnnotations>
     </eOperations>
+    <eOperations name="implies" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eParameters name="action" eType="#//Action"/>
+    </eOperations>
+    <eOperations name="impliedBy" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eParameters name="action" eType="#//Action"/>
+    </eOperations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Action display name, e.g. &quot;Post transaction&quot;."/>
@@ -198,13 +204,13 @@
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="implies" upperBound="-1"
-        eType="#//Action" eOpposite="#//Action/impliedBy">
+        eType="#//Action" eOpposite="#//Action/impliedBy.1">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="References actions which are explicitly implied by this action. &#xD;&#xA;"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="impliedBy" upperBound="-1"
-        eType="#//Action" eOpposite="#//Action/implies">
+        eType="#//Action" eOpposite="#//Action/implies.1">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Opposite to ``implies``."/>
       </eAnnotations>
@@ -395,6 +401,7 @@
     </eAnnotations>
     <eAnnotations source="org.nasdanika.cdo.web.render">
       <details key="icon" value="fa fa-key"/>
+      <details key="sort" value="principal"/>
     </eAnnotations>
     <eOperations name="validate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
