@@ -22,7 +22,7 @@ import org.eclipse.emf.common.util.DiagnosticChain;
  * </ul>
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getProtectedPermission()
- * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-key'"
+ * @model annotation="org.nasdanika.cdo.web.render icon='fa fa-key' sort='principal'"
  * @generated
  */
 public interface ProtectedPermission extends Permission {
