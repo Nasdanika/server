@@ -387,7 +387,7 @@ This section lists methods used to render object view. Features in the object vi
 * ``renderTypedElementValueButtons(C, T, ETypedElement, int, Object)`` - renders buttons associated with typed element value, e.g. view, edit, delete, and EOperation buttons. 
 * ``renderTypedElementValueDeleteButton(C, T, ETypedElement, int, Object)`` - renders value ``Delete`` button. 
 * ``renderTypedElementValueViewButton(C, T, ETypedElement, int, EObject)`` - renders value ``View`` button. 
-* ``renderTypedElementView(C, T, ETypedElement, Object, boolean, Predicate<Object>, Comparator<Object>)`` - renders typed element view.
+* ``renderTypedElementView(C, T, ETypedElement, Object, boolean, Predicate<Object>, Comparator<Object>, TypedElementTableRendererListener<C,T>)`` - renders typed element view.
 * ``renderView(C, T, Map<EStructuralFeature, Modal>)`` - renders object view.
 * ``renderViewButtons(C, T)`` - renders object view buttons bar.
 * ``renderViewFeatures(C, T, Map<EStructuralFeature, Modal>)`` - renders object view features.
