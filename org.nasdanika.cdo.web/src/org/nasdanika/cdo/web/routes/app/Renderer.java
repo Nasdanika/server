@@ -138,7 +138,7 @@ import org.yaml.snakeyaml.Yaml;
  * @param <T>
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
-	
+		
 	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
 	
@@ -2154,7 +2154,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
 					showActionButtons = true;
 				}
-				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null));
+				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null, null));
 			} else {
 				List<EStructuralFeature> categoryFeatures = categories.get(category);
 				if (categoryFeatures == null) {
@@ -2187,7 +2187,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
 					showActionButtons = true;
 				}
-				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null));
+				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null, null));
 			}
 			ret.content(htmlFactory.panel(Style.DEFAULT, categoriesIconsAndLabels.get(ce.getKey()), categoryFeaturesTable, null));
 		}
@@ -2652,7 +2652,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			ret.item(
 					nameSpan, 
-					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, null, null)).style().margin("3px"), 
+					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, null, null, null)).style().margin("3px"), 
 					contextFeatureName == null ? ret.isEmpty() : vf.getName().equals(contextFeatureName));
 		}	
 		
@@ -2753,6 +2753,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}	
 	
 	/**
+	 * Filters table renderer listener. This implementation returns the passed listener.
+	 * @return 
+	 */
+	default TypedElementTableRenderListener<C,T> filterTypedElementTableRendererListener(
+			C context, 
+			T obj, 
+			ETypedElement typedElement, 
+			Object typedElementValue, 
+			TypedElementTableRenderListener<C,T> typedElementTableRenderListener) {
+
+		return typedElementTableRenderListener;
+	}
+	
+	/**
 	 * Renders a view of the typed element value. 
 	 * A value is rendered as a list if <code>view</code> annotation value is <code>list</code> or 
 	 * if it is not present and the value is rendered in the view.
@@ -2768,12 +2782,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param typedElement
 	 * @param showButtons if true, action buttons such as edit/delete/add/create/clear/select are shown if user is authorized to perform action.
 	 * @param filter Used for many-value features to filter, if not null.
-	 * @param If not null it is used for sorting, overrides annotation-defined sorting.
+	 * @param comparator If not null it is used for sorting, overrides annotation-defined sorting.
+	 * @param
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default Object renderTypedElementView(C context, T obj, ETypedElement typedElement, Object typedElementValue, boolean showActionButtons, Predicate<Object> filter, Comparator<Object> comparator) throws Exception {
+	default Object renderTypedElementView(
+			C context, 
+			T obj, 
+			ETypedElement typedElement, 
+			Object typedElementValue, 
+			boolean showActionButtons, 
+			Predicate<Object> filter, 
+			Comparator<Object> comparator,
+			TypedElementTableRenderListener<C,T> typedElementTableRenderListener) throws Exception {
+		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 				
 		Fragment ret = htmlFactory.fragment();
@@ -2802,6 +2826,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
 				// TODO - add support of inlined references.
 				Object viewFeaturesAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.VIEW_FEATURES);
+				Map<EStructuralFeature, Object> featureSpecs = new HashMap<>();
 				if (viewFeaturesAnnotation == null) {
 					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
 						if (!sf.isMany() && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
@@ -2809,31 +2834,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}
 					}
 				} else {
-					/**
-					 * {@link EReference} or EOperation annotation listing reference elements {@link EStructuralFeature}s to show in a reference item table.
-					 * The value of this annotation can be one of the following:
-					 * 
-					 * * A space-separated list of feature names.
-					 * * A YAML document list of feature names or mappings of feature name to feature configuration definition, which may include:
-					 *     * ``visible`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is included in the list.
-					 *     * ``align`` - left, center, or right. Defaults to right for numbers, center for dates and booleans and left for other types.
-					 *     * ``width`` - if this key maps to a number, then the number is used for all device sizes. Otherwise is shall map to a map of device-size to number mappings.
-					 *       
-					 * Example:
-					 * ```yaml
-					 * - name:
-					 *     align: right
-					 *     width: 5
-					 * - age:
-					 *     aligh: left
-					 *     width:
-					 *         xs: 3        
-					 * - ssn
-					 * ```
-					 *        
-					 */
-
-					Map<EStructuralFeature, Object> featureSpecs = new HashMap<>();
 					if (viewFeaturesAnnotation instanceof String) {
 						for (String vf: ((String) viewFeaturesAnnotation).split("\\s+")) {
 							if (!CoreUtil.isBlank(vf)) {
@@ -2914,8 +2914,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					ret.content(fdm);
 				}		
 				
-				Table featureTable = ret.getFactory().table().bordered().style().margin().bottom("5px");
-				
+				Table typedElementTable = ret.getFactory().table().bordered().style().margin().bottom("5px");				
 				Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 				Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 				List<EStructuralFeature> uncategorizedTableFeatures = new ArrayList<>();
@@ -2934,11 +2933,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 				}
 				
-				Row headerRow = featureTable.header().row().style(Style.INFO);
+				Row headerRow = typedElementTable.header().row().style(Style.INFO);
 				String typeColumnAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.TYPE_COLUMN);
 				if (!CoreUtil.isBlank(typeColumnAnnotation)) {
 					headerRow.header(getResourceString(context, "type"));					
 				}				
+				
+				TypedElementTableRenderListener<C , T> filteredTableRendererListener = filterTypedElementTableRendererListener(context, obj, typedElement, typedElementValue, typedElementTableRenderListener);
+				if (filteredTableRendererListener == null) {
+					filteredTableRendererListener = new TypedElementTableRenderListener<>();
+				}
 				
 				for (EStructuralFeature sf: uncategorizedTableFeatures) {					
 					// TODO - colgroups, alignments, widths.
@@ -2950,6 +2954,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if (!categories.isEmpty()) {
 						headerCell.rowspan(2);
 					}
+					filteredTableRendererListener.onFeatureHeader(context, obj, typedElement, typedElementValue, sf, featureSpecs.get(sf), headerCell);
 				}
 					
 				for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
@@ -2962,7 +2967,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				if (!categories.isEmpty()) { // second row
-					Row cfhr = featureTable.header().row().style(Style.INFO);
+					Row cfhr = typedElementTable.header().row().style(Style.INFO);
 					for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 						for (EStructuralFeature sf: ce.getValue()) {
 							Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
@@ -2970,6 +2975,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							if (featureDocIcon != null) {
 								featureHeader.content(featureDocIcon);
 							}
+							filteredTableRendererListener.onFeatureHeader(context, obj, typedElement, typedElementValue, sf, featureSpecs.get(sf), featureHeader);
 							if (!categories.isEmpty()) {
 								featureHeader.rowspan(2);
 							}							
@@ -3003,8 +3009,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Collections.sort(typedElementValueEntries);
 				}
 				
+				int rowCounter = 0;
 				for (ValueEntry<EObject> teve: typedElementValueEntries) {
-					Row vRow = featureTable.body().row();
+					Row vRow = typedElementTable.body().row();
 					if (!CoreUtil.isBlank(typeColumnAnnotation)) {
 						Map<String, Object> typeEnv = new HashMap<>();
 						Renderer<C, EObject> tevr = getRenderer(teve.value);
@@ -3027,18 +3034,26 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					
 					Renderer<C, EObject> renderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, teve.value) : getRenderer(teve.value);
 					for (EStructuralFeature sf: uncategorizedTableFeatures) {
-						vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));						
+						Object eValue = teve.value.eGet(sf);
+						Cell vCell = vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, eValue, false, null, null, null));						
+						filteredTableRendererListener.onElementFeatureCell(context, obj, typedElement, typedElementValue, teve.value, sf, featureSpecs.get(sf), eValue, vCell);					
 					}
 					for (List<EStructuralFeature> cv: categories.values()) {
 						for (EStructuralFeature sf: cv) {
-							vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, teve.value.eGet(sf), false, null, null));													
+							Object eValue = teve.value.eGet(sf);
+							Cell vCell = vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, eValue, false, null, null, null));													
+							filteredTableRendererListener.onElementFeatureCell(context, obj, typedElement, typedElementValue, teve.value, sf, featureSpecs.get(sf), eValue, vCell);					
 						}						
 					}
 					Cell actionCell = vRow.cell().style().text().align().center();					
 					actionCell.content(renderTypedElementValueButtons(context, obj, typedElement, teve.position, teve.value));
+					
+					filteredTableRendererListener.onElementRow(context, obj, typedElement, typedElementValue, teve.value, rowCounter++, vRow);					
 				}
 				
-				ret.content(featureTable);
+				filteredTableRendererListener.onTable(context, obj, typedElement, typedElementValueEntries, typedElementTable);
+				
+				ret.content(typedElementTable);
 				if (typedElement instanceof EStructuralFeature) {
 					ret.content(htmlFactory.div(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).style().margin("5px"));
 				}

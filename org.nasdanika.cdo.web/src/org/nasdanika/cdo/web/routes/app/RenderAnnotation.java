@@ -125,18 +125,21 @@ public enum RenderAnnotation {
 		 * * A space-separated list of feature names.
 		 * * A YAML document list of feature names or mappings of feature name to feature configuration definition, which may include:
 		 *     * ``visible`` - [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is included in the list.
-		 *     * ``align`` - left, center, or right. Defaults to right for numbers, center for dates and booleans and left for other types.
-		 *     * ``width`` - if this key maps to a number, then the number is used for all device sizes. Otherwise is shall map to a map of device-size to number mappings.
+		 *     * ``filter`` - if set to true, then a filter drop-down is shown in the feature column header in the feature view.
+		 *     * ``attributes`` - a map of attributes to apply to the feature cells.
+		 *     * ``classes`` - a string or a list of CSS classes to apply (can also be specified through the ``class`` attribute)
+		 *     * ``style`` - a string or a map of css style attributes to their values (can also be specified through the ``style`` attribute)
 		 *       
 		 * Example:
 		 * ```yaml
 		 * - name:
-		 *     align: right
-		 *     width: 5
+		 *     classes: bg-success
+		 *     attributes: 
+		 *         width: 5px
 		 * - age:
-		 *     aligh: left
-		 *     width:
-		 *         xs: 3        
+		 *     classes: 
+		 *         - col-xs-3
+		 *         - bg-info
 		 * - ssn
 		 * ```
 		 *        

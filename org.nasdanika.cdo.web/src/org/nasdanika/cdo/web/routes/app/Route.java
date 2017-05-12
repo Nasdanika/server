@@ -8,11 +8,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.function.Predicate;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Cookie;
@@ -42,10 +45,12 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
@@ -61,6 +66,7 @@ import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
+import org.nasdanika.html.Dropdown;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.Form.EncType;
@@ -74,6 +80,7 @@ import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
+import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -124,6 +131,7 @@ import org.osgi.framework.ServiceReference;
 		comment="Icons library")
 public class Route<C extends HttpServletRequestContext, T extends EObject> extends EDispatchingRoute implements Renderer<C, T> {
 	
+	private static final String FEATURE_FILTER_PARAMETER_PREFIX = "filter-";
 	/**
 	 * If request attribute with this name is set to ``false`` then left panel is not rendered.
 	 */
@@ -873,10 +881,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(breadCrumbs);
 		}
 				
-//		if (modelElement instanceof EClass) {
-//			return RenderUtil.getRenderAnnotation((EClass) modelElement, key);
-//		}
-				
 		// Headers
 		Tag featureHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, sf));
 		Modal fdm = renderDocumentationModal(context, sf);
@@ -893,8 +897,108 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Tag objectHeader = content.getFactory().tag(TagName.h4, renderObjectHeader(context, target, classDocModal));
 		content.content(objectHeader);
 		
+		TypedElementTableRenderListener<C, T> typedElementTableRendererListener = new TypedElementTableRenderListener<C,T>() {
+			
+			@SuppressWarnings("unchecked")
+			@Override
+			public void onFeatureHeader(
+					C context, 
+					T obj, 
+					ETypedElement typedElement, 
+					Object typedElementValue,
+					EStructuralFeature tableFeature, 
+					Object featureSpec, 
+					Cell featureHeader) throws Exception {
+				
+				if (featureSpec instanceof Map && "true".equals(((Map<?,?>) featureSpec).get("filter"))) {
+					Set<Object> filterChoices = new HashSet<>(); 
+					((Collection<EObject>) typedElementValue).forEach(element -> {
+						Object fv = element.eGet(tableFeature);
+						if (fv != null) {
+							filterChoices.add(fv);
+						}
+					});
+					
+					boolean showFilter = filterChoices.size() > 1;
+					
+					HTMLFactory htmlFactory = featureHeader.getFactory();
+					Dropdown<?> filterDropDown = htmlFactory.caretDropdown();
+					String filterParameterValue = context.getRequest().getParameter(FEATURE_FILTER_PARAMETER_PREFIX+tableFeature.getName());
+					Renderer<C, EObject> typeRenderer = getRenderer((EClass) typedElement.getEType());
+					if (filterParameterValue == null) {
+						filterDropDown.header("Filter");						
+					} else {						
+						Object filterValue = typeRenderer.parseTypedElementValue(context, tableFeature, filterParameterValue);
+						filterChoices.remove(filterValue);
+						Object filterIconAndLabel;
+						if (filterValue instanceof EObject) {
+							filterIconAndLabel = getRenderer((EObject) filterValue).renderIconAndLabel(context, (EObject) filterValue);
+						} else {
+							filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue);
+						}
+						Tag trashCanIcon = htmlFactory.fontAwesome().webApplication(WebApplication.trash_o).getTarget().style().color().bootstrapColor(Color.PRIMARY);
+						StringBuilder queryBuilder = new StringBuilder();
+						// TODO - build query
+						Tag clearFilterLink = htmlFactory.link("view.html"+queryBuilder, trashCanIcon).attribute("title", "Clear filter");						
+						filterDropDown.header(htmlFactory.span("Filter: ", filterIconAndLabel, " ", clearFilterLink).style().color().bootstrapColor(Color.PRIMARY));						
+						filterDropDown.style().color().bootstrapColor(Color.PRIMARY);
+					}
+					
+					if (showFilter) {
+						// Object, icon and label, text
+						List<Object[]> dropDownItems = new ArrayList<>();
+						for (Object filterChoice: filterChoices) {
+							Object filterChoiceIconAndLabel;
+							if (filterChoice instanceof EObject) {
+								filterChoiceIconAndLabel = getRenderer((EObject) filterChoice).renderIconAndLabel(context, (EObject) filterChoice);
+							} else {
+								filterChoiceIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterChoice);
+							}			
+							dropDownItems.add(new Object[] { 
+									filterChoice, 
+									filterChoiceIconAndLabel, 
+									Jsoup.parse(String.valueOf(filterChoiceIconAndLabel)).text() });
+						}
+												
+						dropDownItems.sort((a,b) -> ((String) a[2]).compareTo((String) b[2]));
+						for (Object[] dropDownItem: dropDownItems) {
+							StringBuilder queryBuilder = new StringBuilder();
+							// TODO - build query
+							filterDropDown.item(htmlFactory.link("view.html"+queryBuilder, dropDownItem[1]));
+						}
+						featureHeader.content(filterDropDown);
+					}
+				}
+				
+				super.onFeatureHeader(context, obj, typedElement, typedElementValue, tableFeature, featureSpec, featureHeader);							
+			}
+			
+		}; 
+		
+		EClassifier featureType = sf.getEType();
+		// Applies filter-<feature name>=control value filters
+		Predicate<Object> featureFilter = null;
+		if (featureType instanceof EClass) {
+			featureFilter = element -> {
+				for (EStructuralFeature esf: ((EClass) featureType).getEAllStructuralFeatures()) {
+					String filterParameterValue = context.getRequest().getParameter(FEATURE_FILTER_PARAMETER_PREFIX+esf.getName());
+					if (filterParameterValue != null) {
+						try {
+							Object filterValue = getRenderer((EObject) element).parseTypedElementValue(context, esf, filterParameterValue);
+							if (!filterValue.equals(((EObject) element).eGet(esf))) {
+								return false;
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+				return true;
+			};
+		}
+		
 		// view 
-		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, null, null));
+		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, featureFilter, null, typedElementTableRendererListener));
 		
 		context.getRequest().setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, sf);
 		return renderPage(context, target, title, content);
@@ -997,32 +1101,34 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 								
 				// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
-				if (context instanceof HttpServletRequestContext) {
-					String referrer = referrerParameter;
-					if (referrer == null) {
-						referrer = referrerHeader;
-					}
-					if (referrer == null) {
-						referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
-					}
-					int referrerQueryStart = referrer.indexOf("?");
-					if (referrerQueryStart == -1) {
-						referrer +=  "?";
-					} else {
-						StringBuilder queryBuilder = new StringBuilder();
-						for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
-							if (!qe.startsWith("context-feature=")) {
-								queryBuilder.append(qe).append("&");
-							}
+				if (setSuccessful) {
+					if (context instanceof HttpServletRequestContext) {
+						String referrer = referrerParameter;
+						if (referrer == null) {
+							referrer = referrerHeader;
 						}
-						referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+						if (referrer == null) {
+							referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+						}
+						int referrerQueryStart = referrer.indexOf("?");
+						if (referrerQueryStart == -1) {
+							referrer +=  "?";
+						} else {
+							StringBuilder queryBuilder = new StringBuilder();
+							for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+								if (!qe.startsWith("context-feature=")) {
+									queryBuilder.append(qe).append("&");
+								}
+							}
+							referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+						}
+						referrer += "context-feature="+URLEncoder.encode(feature, "UTF-8");
+						((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+						return Action.NOP;
 					}
-					referrer += "context-feature="+URLEncoder.encode(feature, "UTF-8");
-					((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
-					return Action.NOP;
+					
+					return "Update successful";
 				}
-				
-				return "Update successful";
 			} 
 			
 			// Rollback transaction to undo the change.
@@ -2111,7 +2217,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 							} else {
 								content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null));					
+								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null));					
 							}
 						} catch (Exception e) {
 							// Breadcrumbs
