@@ -864,6 +864,11 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			return Action.NOT_FOUND;
 		}
 		
+		if (!getVisibleFeatures(context, target, null).contains(sf)) {
+			context.getResponse().sendRedirect("../../index.html"); // For conditionally visible features if the condition has changed.
+			return Action.NOP;
+		}
+		
 		EClass targetEClass = target.eClass();
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 		Fragment content = getHTMLFactory(context).fragment();
@@ -897,6 +902,25 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Tag objectHeader = content.getFactory().tag(TagName.h4, renderObjectHeader(context, target, classDocModal));
 		content.content(objectHeader);
 		
+		// Applies filter-<feature name>=control value filters		
+		EClassifier featureType = sf.getEType();
+		Predicate<Object> featureFilter = featureType instanceof EClass ? element -> {
+			for (EStructuralFeature esf: ((EClass) featureType).getEAllStructuralFeatures()) {
+				String filterParameterValue = context.getRequest().getParameter(FEATURE_FILTER_PARAMETER_PREFIX+esf.getName());
+				if (filterParameterValue != null) {
+					try {
+						Object filterValue = getRenderer((EObject) element).parseTypedElementValue(context, esf, filterParameterValue);
+						if (!filterValue.equals(((EObject) element).eGet(esf))) {
+							return false;
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			return true;
+		} : null;
+				
 		TypedElementTableRenderListener<C, T> typedElementTableRendererListener = new TypedElementTableRenderListener<C,T>() {
 			
 			@SuppressWarnings("unchecked")
@@ -910,19 +934,21 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					Object featureSpec, 
 					Cell featureHeader) throws Exception {
 				
-				if (featureSpec instanceof Map && "true".equals(((Map<?,?>) featureSpec).get("filter"))) {
+				if (featureSpec instanceof Map && Boolean.TRUE.equals(((Map<?,?>) featureSpec).get("filter"))) {
 					Set<Object> filterChoices = new HashSet<>(); 
 					((Collection<EObject>) typedElementValue).forEach(element -> {
-						Object fv = element.eGet(tableFeature);
-						if (fv != null) {
-							filterChoices.add(fv);
+						if (featureFilter == null || featureFilter.test(element)) {
+							Object fv = element.eGet(tableFeature);
+							if (fv != null) {
+								filterChoices.add(fv);
+							}
 						}
 					});
 					
 					boolean showFilter = filterChoices.size() > 1;
 					
 					HTMLFactory htmlFactory = featureHeader.getFactory();
-					Dropdown<?> filterDropDown = htmlFactory.caretDropdown();
+					Dropdown<?> filterDropDown = htmlFactory.caretDropdown().attribute("title", "Filters rows by column value");
 					String filterParameterName = FEATURE_FILTER_PARAMETER_PREFIX+tableFeature.getName();
 					String filterParameterValue = context.getRequest().getParameter(filterParameterName);
 					Renderer<C, EObject> typeRenderer = getRenderer((EClass) typedElement.getEType());
@@ -945,6 +971,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					if (filterParameterValue == null) {
 						filterDropDown.header("Filter");						
 					} else {						
+						showFilter = true;
 						Object filterValue = typeRenderer.parseTypedElementValue(context, tableFeature, filterParameterValue);
 						filterChoices.remove(filterValue);
 						Object filterIconAndLabel;
@@ -990,28 +1017,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			}
 			
 		}; 
-		
-		EClassifier featureType = sf.getEType();
-		// Applies filter-<feature name>=control value filters
-		Predicate<Object> featureFilter = null;
-		if (featureType instanceof EClass) {
-			featureFilter = element -> {
-				for (EStructuralFeature esf: ((EClass) featureType).getEAllStructuralFeatures()) {
-					String filterParameterValue = context.getRequest().getParameter(FEATURE_FILTER_PARAMETER_PREFIX+esf.getName());
-					if (filterParameterValue != null) {
-						try {
-							Object filterValue = getRenderer((EObject) element).parseTypedElementValue(context, esf, filterParameterValue);
-							if (!filterValue.equals(((EObject) element).eGet(esf))) {
-								return false;
-							}
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
-				return true;
-			};
-		}
 		
 		// view 
 		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, featureFilter, null, typedElementTableRendererListener));
