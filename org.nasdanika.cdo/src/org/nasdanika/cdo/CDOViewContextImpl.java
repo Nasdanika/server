@@ -102,8 +102,10 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 					return AccessDecision.ALLOW.equals(accessDecision);
 				}
 			}
+		} else {
+			return authorizeNonViewObject(target, action, qualifier, environment);
 		}
-		return authorizeNonViewObject(target, action, qualifier, environment);
+		return super.authorize(target, action, qualifier, environment);
 	}
 	
 	/**
