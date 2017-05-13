@@ -91,7 +91,7 @@ public class ProtectedPermissionImpl extends PermissionImpl implements Protected
 		
 		// Imply relationships
 		for (ProtectedPermission pp: protectedPermissions) {
-			if (pp != this && pp != duplicate) {
+			if (pp.getPrincipal() == getPrincipal() && pp != this && pp != duplicate) { // TODO - check group membership relationships too or would it be too complex?
 				if (pp.getAction().implies(getAction()) && withinEffectiveDates(pp, this)) {
 					if (pp.isAllow()) {
 						if (isAllow()) {
@@ -105,9 +105,7 @@ public class ProtectedPermissionImpl extends PermissionImpl implements Protected
 							diagnosticHelper.error("Action '"+getAction().getName()+"' is implied by already granted action '"+pp.getAction().getName()+"' with encompassing date range.");														
 						}						
 					}
-				}
-				
-				if (pp.getAction().impliedBy(getAction()) && withinEffectiveDates(this, pp)) {
+				} else if (pp.getAction().impliedBy(getAction()) && withinEffectiveDates(this, pp)) {
 					if (isAllow()) {
 						if (pp.isAllow()) {
 							diagnosticHelper.error("Action '"+getAction().getName()+"' implies already granted action '"+pp.getAction().getName()+"' with encompassed date range.");							
