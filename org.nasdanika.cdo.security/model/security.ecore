@@ -612,6 +612,9 @@
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Permissions on this object."/>
       </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="view-features" value="- principal:&#xD;&#xA;    filter: true&#xD;&#xA;- action:&#xD;&#xA;    filter: true&#xD;&#xA;- allow&#xD;&#xA;- startDate&#xD;&#xA;- endDate&#xD;&#xA;- condition&#xD;&#xA;- comment"/>
+      </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
 </ecore:EPackage>

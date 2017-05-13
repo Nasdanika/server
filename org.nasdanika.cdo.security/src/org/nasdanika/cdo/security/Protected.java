@@ -45,6 +45,7 @@ public interface Protected extends CDOObject {
 	 * @return the value of the '<em>Permissions</em>' containment reference list.
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getProtected_Permissions()
 	 * @model containment="true"
+	 *        annotation="org.nasdanika.cdo.web.render view-features='- principal:\r\n    filter: true\r\n- action:\r\n    filter: true\r\n- allow\r\n- startDate\r\n- endDate\r\n- condition\r\n- comment'"
 	 * @generated
 	 */
 	EList<ProtectedPermission> getPermissions();

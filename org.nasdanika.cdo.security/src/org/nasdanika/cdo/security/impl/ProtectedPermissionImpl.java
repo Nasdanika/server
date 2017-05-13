@@ -4,7 +4,6 @@ package org.nasdanika.cdo.security.impl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
-
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
@@ -78,18 +77,21 @@ public class ProtectedPermissionImpl extends PermissionImpl implements Protected
 		if (diagnostics == null) {
 			return true;
 		}
+		
+		ProtectedPermission duplicate = null;
 		DiagnosticHelper diagnosticHelper = new DiagnosticHelper(diagnostics, SecurityValidator.DIAGNOSTIC_SOURCE, SecurityValidator.PROTECTED_PERMISSION__VALIDATE, this);
 		EList<ProtectedPermission> protectedPermissions = ((Protected) eContainer()).getPermissions();
 		for (ProtectedPermission pp: protectedPermissions) {
 			if (pp != this && EcoreUtil.equals(pp, this)) {
 				diagnosticHelper.error("Duplicate permission");
+				duplicate = pp;
 				break;
 			}			
 		}
 		
 		// Imply relationships
-		protectedPermissions.forEach(pp -> {
-			if (pp != this) {
+		for (ProtectedPermission pp: protectedPermissions) {
+			if (pp != this && pp != duplicate) {
 				if (pp.getAction().implies(getAction()) && withinEffectiveDates(pp, this)) {
 					if (pp.isAllow()) {
 						if (isAllow()) {
@@ -120,7 +122,7 @@ public class ProtectedPermissionImpl extends PermissionImpl implements Protected
 					}
 				}
 			}
-		});
+		}
 
 		return diagnosticHelper.isSuccess();
 	}

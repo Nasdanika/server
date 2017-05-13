@@ -1996,6 +1996,12 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		   source, 
 		   new String[] {
 			 "icon", "fa fa-user-secret"
+		   });	
+		addAnnotation
+		  (getProtected_Permissions(), 
+		   source, 
+		   new String[] {
+			 "view-features", "- principal:\r\n    filter: true\r\n- action:\r\n    filter: true\r\n- allow\r\n- startDate\r\n- endDate\r\n- condition\r\n- comment"
 		   });
 	}
 
