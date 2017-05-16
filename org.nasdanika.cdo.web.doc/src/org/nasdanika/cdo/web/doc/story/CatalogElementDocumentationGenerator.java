@@ -83,6 +83,7 @@ abstract class CatalogElementDocumentationGenerator<T extends CatalogElement> im
 					catalogElement.getName(), 
 					storyDocumentationGenerator.getObjectPath(catalogElement)+"/index.html",
 					getIcon(), 
+					null, 
 					null,
 					obj -> obj == catalogElement, 
 					false);

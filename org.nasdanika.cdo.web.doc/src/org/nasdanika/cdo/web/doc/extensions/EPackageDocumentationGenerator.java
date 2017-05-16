@@ -182,7 +182,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 		// Mounted doc - "#" section
 		Map<String, PackageTocNodeFactoryEntry> packageTocNodeFactories = docRoute.getPackageTocNodeFactories();		
 		
-		TocNode elementDoc = new TocNode(null, null, null, null, false);
+		TocNode elementDoc = new TocNode(null, null, null, null, null, false);
 		
 		synchronized (packageTocNodeFactories) {
 			PackageTocNodeFactoryEntry pe = packageTocNodeFactories.get(ePackage.getNsURI());
@@ -236,7 +236,7 @@ public class EPackageDocumentationGenerator extends EModelElementDocumentationGe
 
 	protected void sectionsTabs(DocRoute docRoute, EPackage ePackage, Tabs tabs) {
 		HTMLFactory htmlFactory = docRoute.getHtmlFactory();
-		TocNode sections = new TocNode(null, null, null, null, false);
+		TocNode sections = new TocNode(null, null, null, null, null, false);
 		
 		synchronized (docRoute.getPackageTocNodeFactories()) {
 			PackageTocNodeFactoryEntry pe = docRoute.getPackageTocNodeFactories().get(ePackage.getNsURI());

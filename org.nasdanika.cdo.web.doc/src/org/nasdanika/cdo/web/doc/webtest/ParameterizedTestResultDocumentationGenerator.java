@@ -125,6 +125,7 @@ class ParameterizedTestResultDocumentationGenerator extends TestSuiteResultDocum
 							getTitle(parameterizedTestResult), 
 							testResultsDocumentationGenerator.getObjectPath(parameterizedTestResult)+"/index.html",
 							getIcon(parameterizedTestResult), 
+							null, 
 							null,
 							obj -> obj == parameterizedTestResult, 
 							false);					
@@ -133,6 +134,7 @@ class ParameterizedTestResultDocumentationGenerator extends TestSuiteResultDocum
 							StringEscapeUtils.escapeHtml4(pValue), 
 							null,
 							"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/wrench.png", 
+							null, 
 							null,
 							null, 
 							false);					

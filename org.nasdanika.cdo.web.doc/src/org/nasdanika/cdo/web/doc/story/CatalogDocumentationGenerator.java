@@ -29,7 +29,8 @@ class CatalogDocumentationGenerator extends CatalogElementDocumentationGenerator
 			TocNode catalogToc = parent.createChild(
 					catalog.getName(), 
 					storyDocumentationGenerator.getObjectPath(catalog)+"/index.html",
-					getIcon(), 
+					getIcon(),
+					null, 
 					null,
 					obj->obj == catalog, 
 					false);

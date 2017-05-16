@@ -145,6 +145,13 @@
                </appinfo>
             </annotation>
          </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  TOC node tooltip.
+               </documentation>
+            </annotation>
+         </attribute>
          <attribute name="location" type="string">
             <annotation>
                <documentation>
@@ -516,6 +523,13 @@
                <appinfo>
                   <meta.attribute translatable="true"/>
                </appinfo>
+            </annotation>
+         </attribute>
+         <attribute name="tooltip" type="string">
+            <annotation>
+               <documentation>
+                  Topic tooltip.
+               </documentation>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">

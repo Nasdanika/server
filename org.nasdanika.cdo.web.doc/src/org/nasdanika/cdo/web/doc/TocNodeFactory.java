@@ -17,6 +17,7 @@ public class TocNodeFactory {
 	private String name;
 	private String id;
 	private String icon;
+	private String tooltip;
 	private String location;
 	private String content;
 	private String linkTo;		
@@ -76,6 +77,7 @@ public class TocNodeFactory {
 				icon=icon.substring(docBaseURL.length());
 			}
 		}
+		tooltip = iConfigurationElement.getAttribute("tooltip");
 		
 		if (iConfigurationElement.getAttribute("class")==null) {
 			location = iConfigurationElement.getAttribute("location");
@@ -125,7 +127,7 @@ public class TocNodeFactory {
 		boolean doSort = false;
 		TocNode node = parent;
 		if (!merge) {
-			node = parent.createChild(name, location, icon, id, null, false);
+			node = parent.createChild(name, location, icon, tooltip, id, null, false);
 			if (topic!=null) {
 				if (CoreUtil.isBlank(topic.getLocation())) {
 					node.setContent(topic.getContent());
@@ -169,7 +171,7 @@ public class TocNodeFactory {
 	}
 	
 	private void createTocNode(TocNode parent, String name, Topic topic) {
-		TocNode node = parent.createChild(name, null, topic.getIcon(), null, null, false);					
+		TocNode node = parent.createChild(name, null, topic.getIcon(), topic.getTooltip(), null, null, false);					
 		if (CoreUtil.isBlank(topic.getLocation())) {
 			node.setContent(topic.getContent());
 		} else {

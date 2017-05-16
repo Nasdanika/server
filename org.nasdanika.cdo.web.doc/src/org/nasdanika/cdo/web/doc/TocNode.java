@@ -36,6 +36,7 @@ public class TocNode {
 	private String tocId;
 	private Predicate<Object> predicate;
 	private boolean hidden; 
+	private String tooltip;
 			
 	public String getContent() {
 		return content;
@@ -65,10 +66,19 @@ public class TocNode {
 		return id;
 	}
 	
+	public String getTooltip() {
+		return tooltip;
+	}
+	
+	public void setTooltip(String title) {
+		this.tooltip = title;
+	}
+	
 	protected TocNode(
 			String text, 
 			String href, 
 			String icon, 
+			String tooltip,
 			AtomicLong counter,
 			String tocId,
 			Predicate<Object> objectPredicate,
@@ -77,6 +87,7 @@ public class TocNode {
 		this.text = text;
 		this.href = href;
 		this.icon = icon;
+		this.tooltip = tooltip;
 		this.counter = counter;
 		this.id = "content_node_"+Long.toString(counter.incrementAndGet(), Character.MAX_RADIX);
 		this.tocId = tocId;
@@ -95,9 +106,10 @@ public class TocNode {
 			String text, 
 			String href, 
 			String icon, 
+			String tooltip,
 			Predicate<Object> objectPredicate, 
 			boolean hidden) {
-		this(text, href, icon, new AtomicLong(), null, objectPredicate, hidden);
+		this(text, href, icon, tooltip, new AtomicLong(), null, objectPredicate, hidden);
 	}
 
 	public List<TocNode> getChildren() {
@@ -108,10 +120,11 @@ public class TocNode {
 			String text, 
 			String href, 
 			String icon, 
+			String tooltip,
 			String tocId, 
 			Predicate<Object> objectPredicate,
 			boolean hidden) {
-		TocNode child = new TocNode(text, href, icon, counter, tocId, objectPredicate, hidden);
+		TocNode child = new TocNode(text, href, icon, tooltip, counter, tocId, objectPredicate, hidden);
 		children.add(child);
 		child.parent = this;
 		return child;
@@ -186,6 +199,14 @@ public class TocNode {
 		}
 		if (jsonChildren.length()>0) {
 			ret.put("children", jsonChildren);
+		}
+		
+		JSONObject aAttributes = new JSONObject();
+		if (tooltip != null) {
+			aAttributes.put("title", StringEscapeUtils.escapeHtml4(tooltip));
+		}
+		if (!aAttributes.keySet().isEmpty()) {
+			ret.put("a_attr", aAttributes);
 		}
 		return ret;
 	}

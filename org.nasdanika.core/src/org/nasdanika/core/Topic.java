@@ -26,4 +26,6 @@ public interface Topic {
 	 */
 	String getLocation(); // TODO - environment map?
 	
+	String getTooltip();
+	
 }

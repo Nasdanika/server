@@ -45,6 +45,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 					testSession.getTitle(), 
 					testResultsDocumentationGenerator.getObjectPath(testSession)+"/index.html",
 					getIcon(), 
+					null, 
 					null,
 					obj -> obj == testSession, 
 					false);
@@ -52,6 +53,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 			if (!testSession.getActorResults().isEmpty()) {
 				TocNode actorsNode = testSessionNode.createChild(
 						"Actors", 
+						null,
 						null, 
 						null, 
 						null, 
@@ -71,6 +73,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 			if (!testSession.getPageResults().isEmpty()) {
 				TocNode pagesNode = testSessionNode.createChild(
 						"Pages", 
+						null, 
 						null, 
 						null, 
 						null, 
@@ -99,6 +102,7 @@ class TestSessionDocumentationGenerator extends DescriptorDocumentationGenerator
 					void createToc(TocNode parent) {
 						TocNode categoryNode = parent.createChild(
 								name, 
+								null,
 								null, 
 								null, 
 								null, 

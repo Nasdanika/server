@@ -50,6 +50,7 @@ abstract class DescriptorDocumentationGenerator<T extends Descriptor> implements
 					getTitle(descriptor), 
 					testResultsDocumentationGenerator.getObjectPath(descriptor)+"/index.html",
 					getIcon(descriptor), 
+					null, 
 					null,
 					obj -> obj == descriptor, 
 					isTocHidden(descriptor));
