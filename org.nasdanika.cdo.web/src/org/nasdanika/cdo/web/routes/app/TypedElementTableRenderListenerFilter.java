@@ -19,7 +19,11 @@ public class TypedElementTableRenderListenerFilter<C extends Context, T extends 
 	
 	@Override
 	public void onTable(C context, T obj, ETypedElement typedElement, Object typedElementValue, Table table) throws Exception {
-		this.chain.onTable(context, obj, typedElement, typedElementValue, table);
+		if (chain == null) {
+			super.onTable(context, obj, typedElement, typedElementValue, table);			
+		} else {
+			chain.onTable(context, obj, typedElement, typedElementValue, table);
+		}
 	}
 
 	public TypedElementTableRenderListenerFilter(TypedElementTableRenderListener<C,T> chain) {
@@ -27,11 +31,19 @@ public class TypedElementTableRenderListenerFilter<C extends Context, T extends 
 	}
 	
 	public void onFeatureHeader(C context, T obj, ETypedElement typedElement, Object typedElementValue, EStructuralFeature tableFeature, Object featureSpec, Cell featureHeader) throws Exception {		
-		chain.onFeatureHeader(context, obj, typedElement, typedElementValue, tableFeature, featureSpec, featureHeader);
+		if (chain == null) {
+			super.onFeatureHeader(context, obj, typedElement, typedElementValue, tableFeature, featureSpec, featureHeader);
+		} else {
+			chain.onFeatureHeader(context, obj, typedElement, typedElementValue, tableFeature, featureSpec, featureHeader);
+		}
 	}
 	
 	public void onElementRow(C context, T obj, ETypedElement typedElement, Object typedElementValue, EObject elementValue, int rowNumber, Row row) throws Exception {		
-		chain.onElementRow(context, obj, typedElement, typedElementValue, elementValue, rowNumber, row);
+		if (chain == null) {
+			super.onElementRow(context, obj, typedElement, typedElementValue, elementValue, rowNumber, row);
+		} else {
+			chain.onElementRow(context, obj, typedElement, typedElementValue, elementValue, rowNumber, row);
+		}
 	}
 
 	public void onElementFeatureCell(
@@ -43,9 +55,13 @@ public class TypedElementTableRenderListenerFilter<C extends Context, T extends 
 			EStructuralFeature tableFeature, 
 			Object featureSpec, 
 			Object featureValue, 
-			Cell vCell) throws Exception {
-		
-		chain.onElementFeatureCell(context, obj, typedElement, typedElementValue, elementValue, tableFeature, featureSpec, featureValue, vCell);
+			Cell cell) throws Exception {
+
+		if (chain == null) {
+			super.onElementFeatureCell(context, obj, typedElement, typedElementValue, elementValue, tableFeature, featureSpec, featureValue, cell);
+		} else {
+			chain.onElementFeatureCell(context, obj, typedElement, typedElementValue, elementValue, tableFeature, featureSpec, featureValue, cell);
+		}
 	}
 	
 }
