@@ -119,6 +119,13 @@ public enum RenderAnnotation {
 		VIEW("view"),
 		
 		/**
+		 * {@link EClass} annotation, ``true`` or ``false`` defining whether a new object's view page shall be opened upon creation.
+		 * If not specified, defaults to ``true`` for objects which have visible features with feature locations different from ``view`` (e.g. ``item``) and to ``false`` otherwise.  
+		 * 
+		 */
+		VIEW_ON_CREATE("view-on-create"),		
+		
+		/**
 		 * {@link EReference} annotation listing reference elements {@link EStructuralFeature}s to show in a reference item table.
 		 * The value of this annotation can be one of the following:
 		 * 
@@ -246,7 +253,7 @@ public enum RenderAnnotation {
 		 * * ``produces`` - Content type produced by the operation.
 		 * * ``style`` - {@link org.nasdanika.html.Bootstrap.Style} enum value for button or left panel item depending on location. Defaults to ``INFO`` for buttons and ``DEFAULT`` for left panel items.
 		 * 
-		 * If you have a web operation with all defaults put a comment or a document start (``---``) or both in the details.
+		 * If you have a web operation with all defaults put a comment (``# comment``) or a document start (``---``) or both in the details.
 		 */
 		WEB_OPERATION("web-operation"),
 		
@@ -255,9 +262,10 @@ public enum RenderAnnotation {
 		 * The value of this annotation is a single value or a single-entry YAML map or a single value:
 		 * 
 		 * * ``body`` - Binds the parameter to request body.
+		 * * ``context`` - Binds the parameter to the context.
 		 * * ``cookie`` - Binds the parameter to a cookie with the same name as the parameter name.
 		 * * ``cookie: name`` - Binds the parameter to the named cookie.
-		 * * ``expression: expression`` - JXPath expression (which can also be a constant) to evaluate.   
+		 * * ``expression: expression`` - JXPath expression (which can also be a constant) to evaluate. E.g. ``$context/principals/login``   
 		 * * ``extension`` - Binds the parameter to registered extension(s). This key's value shall be a map with the following elements:
 		 *     * ``point`` - Extension point ID.
 		 *     * ``configuration-element`` - Configuration element name.

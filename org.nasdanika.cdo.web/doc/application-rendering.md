@@ -107,7 +107,8 @@ Below is a list of render annotations with short descriptions grouped by the mod
     * ``horizontal-form`` - set to ``false`` to change the default rendering.
     * ``label`` - a pattern which is interpolated with values of object features to generate object label. E.g. ``{{name}} ({{code}})``.
     * ``no-validate`` - disables HTML5 validation in forms.
-    * ``view-item`` - if ``true`` then the class view is rendered in the item container (accordion, tabs, or pills) along with references.    
+    * ``view-item`` - if ``true`` then the class view is rendered in the item container (accordion, tabs, or pills) along with references.  
+    * ``view-on-create`` - defines whether a new object's view page shall be opened upon creation.  
 * EStructuralFeature (EAttribute or EReference)
     * ``disabled`` - defines whether an editable feature control shall be disabled.
     * ``editable`` - defines editability of a visible feature.
@@ -416,6 +417,7 @@ This section lists methods used to render object edit form. Selection of (multip
 * ``getEObjectTypedElementChoices(C, T, ETypedElement)`` - returns choices for a typed element with a type which is subtype of EObject, e.g. EReference or EParameter.
 * ``getFormControlValue(C, T, ETypedElement, Object)`` - Returns typed element value to be used in form controls like input, select, etc.
 * ``isRequired(C, T, ETypedElement)`` - return ``true`` if form control for the typed element shall have ``required`` attribute. 
+* ``isViewOnCreate(C, T) - returns true if a new object's view page shall be opened upon creation.
 * ``parseTypedElementValue(C, EStructuralFeature, String)`` -  
 * ``renderEditableFeaturesFormGroups(C, T, FieldContainer<?>, Map<EStructuralFeature, Modal>, Map<EStructuralFeature, List<ValidationResult>>, boolean)`` - Renders form groups for editable features.
 * ``renderEditForm(C, T, List<ValidationResult>, Map<ENamedElement, List<ValidationResult>>, boolean)`` - Renders object edit form with feature documentation modals and error messages if any.
