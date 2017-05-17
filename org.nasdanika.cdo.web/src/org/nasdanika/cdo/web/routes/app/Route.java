@@ -8,14 +8,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.function.Predicate;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Cookie;
@@ -45,12 +42,10 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
@@ -66,7 +61,6 @@ import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
-import org.nasdanika.html.Dropdown;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.Form.EncType;
@@ -80,7 +74,6 @@ import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
-import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -131,7 +124,6 @@ import org.osgi.framework.ServiceReference;
 		comment="Icons library")
 public class Route<C extends HttpServletRequestContext, T extends EObject> extends EDispatchingRoute implements Renderer<C, T> {
 	
-	private static final String FEATURE_FILTER_PARAMETER_PREFIX = "filter-";
 	/**
 	 * If request attribute with this name is set to ``false`` then left panel is not rendered.
 	 */
@@ -559,6 +551,23 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						if (context.getMethod() == RequestMethod.POST && setSuccessful) {			
 							// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
 							if (context instanceof HttpServletRequestContext) {
+								if (renderer.isViewOnCreate(context, instance)) {
+									return new Action() {
+
+										@Override
+										public void close() throws Exception {
+											// NOP											
+										}
+
+										@Override
+										public Object execute() throws Exception {
+											context.getResponse().sendRedirect(context.getObjectPath(instance)+"/"+INDEX_HTML);
+											return null;
+										}
+										
+									};
+								}
+								
 								String referrer = referrerParameter;
 								if (referrer == null) {
 									referrer = referrerHeader;
@@ -902,124 +911,11 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Tag objectHeader = content.getFactory().tag(TagName.h4, renderObjectHeader(context, target, classDocModal));
 		content.content(objectHeader);
 		
-		// Applies filter-<feature name>=control value filters		
-		EClassifier featureType = sf.getEType();
-		Predicate<Object> featureFilter = featureType instanceof EClass ? element -> {
-			for (EStructuralFeature esf: ((EClass) featureType).getEAllStructuralFeatures()) {
-				String filterParameterValue = context.getRequest().getParameter(FEATURE_FILTER_PARAMETER_PREFIX+esf.getName());
-				if (filterParameterValue != null) {
-					try {
-						Object filterValue = getRenderer((EObject) element).parseTypedElementValue(context, esf, filterParameterValue);
-						if (!filterValue.equals(((EObject) element).eGet(esf))) {
-							return false;
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-			return true;
-		} : null;
-				
-		TypedElementTableRenderListener<C, T> typedElementTableRendererListener = new TypedElementTableRenderListener<C,T>() {
-			
-			@SuppressWarnings("unchecked")
-			@Override
-			public void onFeatureHeader(
-					C context, 
-					T obj, 
-					ETypedElement typedElement, 
-					Object typedElementValue,
-					EStructuralFeature tableFeature, 
-					Object featureSpec, 
-					Cell featureHeader) throws Exception {
-				
-				if (featureSpec instanceof Map && Boolean.TRUE.equals(((Map<?,?>) featureSpec).get("filter"))) {
-					Set<Object> filterChoices = new HashSet<>(); 
-					((Collection<EObject>) typedElementValue).forEach(element -> {
-						if (featureFilter == null || featureFilter.test(element)) {
-							Object fv = element.eGet(tableFeature);
-							if (fv != null) {
-								filterChoices.add(fv);
-							}
-						}
-					});
-					
-					boolean showFilter = filterChoices.size() > 1;
-					
-					HTMLFactory htmlFactory = featureHeader.getFactory();
-					Dropdown<?> filterDropDown = htmlFactory.caretDropdown().attribute("title", "Filters rows by column value");
-					String filterParameterName = FEATURE_FILTER_PARAMETER_PREFIX+tableFeature.getName();
-					String filterParameterValue = context.getRequest().getParameter(filterParameterName);
-					Renderer<C, EObject> typeRenderer = getRenderer((EClass) typedElement.getEType());
-					
-					StringBuilder queryBuilder = new StringBuilder();
-					String requestQueryString = context.getRequest().getQueryString();					
-					if (requestQueryString != null) {
-						for (String segment: requestQueryString.split("&")) {
-							if (!segment.startsWith(filterParameterName+"=")) {
-								if (queryBuilder.length() == 0) {
-									queryBuilder.append("?");
-								} else {
-									queryBuilder.append("&");
-								}
-								queryBuilder.append(segment);
-							}
-						}
-					}
-					
-					if (filterParameterValue == null) {
-						filterDropDown.header("Filter");						
-					} else {						
-						showFilter = true;
-						Object filterValue = typeRenderer.parseTypedElementValue(context, tableFeature, filterParameterValue);
-						filterChoices.remove(filterValue);
-						Object filterIconAndLabel;
-						if (filterValue instanceof EObject) {
-							filterIconAndLabel = getRenderer((EObject) filterValue).renderIconAndLabel(context, (EObject) filterValue);
-						} else {
-							filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue);
-						}
-						Tag trashCanIcon = htmlFactory.fontAwesome().webApplication(WebApplication.trash_o).getTarget().style().color().bootstrapColor(Color.PRIMARY);
-						// TODO - build query
-						Tag clearFilterLink = htmlFactory.link("view.html"+queryBuilder, trashCanIcon).attribute("title", "Clear filter");						
-						filterDropDown.header(htmlFactory.span("Filter: ", filterIconAndLabel, " ", clearFilterLink).style().color().bootstrapColor(Color.PRIMARY));						
-						filterDropDown.style().color().bootstrapColor(Color.PRIMARY);
-					}
-					
-					if (showFilter) {
-						// Object, icon and label, text
-						List<Object[]> dropDownItems = new ArrayList<>();
-						for (Object filterChoice: filterChoices) {
-							Object filterChoiceIconAndLabel;
-							if (filterChoice instanceof EObject) {
-								filterChoiceIconAndLabel = getRenderer((EObject) filterChoice).renderIconAndLabel(context, (EObject) filterChoice);
-							} else {
-								filterChoiceIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterChoice);
-							}			
-							dropDownItems.add(new Object[] { 
-									filterChoice, 
-									filterChoiceIconAndLabel, 
-									Jsoup.parse(String.valueOf(filterChoiceIconAndLabel)).text() });
-						}
-												
-						dropDownItems.sort((a,b) -> ((String) a[2]).compareTo((String) b[2]));
-						for (Object[] dropDownItem: dropDownItems) {
-							String filterSegment = filterParameterName+"="+URLEncoder.encode(typeRenderer.getFormControlValue(context, null, tableFeature, dropDownItem[0]), "UTF-8");
-							String href = "view.html" + queryBuilder + (queryBuilder.length() == 0 ? "?" : "&") + filterSegment;
-							filterDropDown.item(htmlFactory.link(href, dropDownItem[1]));
-						}
-						featureHeader.content(filterDropDown);
-					}
-				}
-				
-				super.onFeatureHeader(context, obj, typedElement, typedElementValue, tableFeature, featureSpec, featureHeader);							
-			}
-			
-		}; 
+		// Applies filter-<view feature name>-<column feature name>=control value filters		
+		FeatureTableFilterManager<C, T> featureTableFilterManager = sf.getEType() instanceof EClass ? new FeatureTableFilterManager<C, T>(context, sf, this) : null; 
 		
 		// view 
-		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, featureFilter, null, typedElementTableRendererListener));
+		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, featureTableFilterManager, null, featureTableFilterManager));
 		
 		context.getRequest().setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, sf);
 		return renderPage(context, target, title, content);
@@ -1988,7 +1884,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						}
 						return new EParameterBinding(eParameter, ret);
 					}
-					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, context.getRequest().getParameter((String) be.getValue())));
+					String parameterValue = context.getRequest().getParameter((String) be.getValue());
+					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, parameterValue));
 				case "service":
 					Collection<ServiceReference<Object>> srs = bundleContext.getServiceReferences((Class<Object>) parameterType, (String) be.getValue());
 					if (eParameter.isMany()) {
@@ -2055,12 +1952,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		String methodName = (String) eOperationTarget.getSpec().get("method");
 
+		String contextObjectID = context.getRequest().getParameter("context-object");
 		EObject contextObject = target;
 		String featureName = (String) eOperationTarget.getSpec().get("feature");
 		if (featureName == null) {
 			featureName = (String) eOperationTarget.getSpec().get("feature-value");
 			if (featureName != null) {
-				String contextObjectID = context.getRequest().getParameter("context-object");
 				if (contextObjectID != null && context instanceof CDOViewContext) {
 					contextObject = ((CDOViewContext<?, ?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, contextObjectID));
 					featureName = null;
@@ -2136,13 +2033,29 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);
 					
+					for (EParameter eParameter: eOperation.getEParameters()) {
+						String queryParameterName = eOperationTarget.getQueryParameterName(eParameter);
+						if (queryParameterName != null) {
+							String queryParameterValue = context.getRequest().getParameter(queryParameterName);
+							if (queryParameterValue != null) {
+								Input queryParameterInput = htmlFactory.input(InputType.hidden)
+										.name(queryParameterName)
+										.value(queryParameterValue);
+								inputForm.content(queryParameterInput);
+							}
+						}
+					}														
+					
 					if (eOperationTarget.hasPartParameters()) {
 						inputForm.enctype(EncType.multipart);
 					}
 					
 					if (originalReferrer != null) {
 						inputForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
-					}							
+					}		
+					if (contextObjectID != null) {
+						inputForm.content(htmlFactory.input(InputType.hidden).name("context-object").value(contextObjectID)); // encode?						
+					}					
 					
 					configureForm(inputForm, horizontalForm);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
@@ -2328,6 +2241,19 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);
 					
+					for (EParameter eParameter: eOperation.getEParameters()) {
+						String queryParameterName = eOperationTarget.getQueryParameterName(eParameter);
+						if (queryParameterName != null) {
+							String queryParameterValue = context.getRequest().getParameter(queryParameterName);
+							if (queryParameterValue != null) {
+								Input queryParameterInput = htmlFactory.input(InputType.hidden)
+										.name(queryParameterName)
+										.value(queryParameterValue);
+								inputForm.content(queryParameterInput);
+							}
+						}
+					}					
+					
 					if (eOperationTarget.hasPartParameters()) {
 						inputForm.enctype(EncType.multipart);
 					}
@@ -2335,6 +2261,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					if (originalReferrer != null) {
 						inputForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
 					}							
+					if (contextObjectID != null) {
+						inputForm.content(htmlFactory.input(InputType.hidden).name("context-object").value(contextObjectID)); // encode?						
+					}					
 					
 					configureForm(inputForm, horizontalForm);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
@@ -2376,7 +2305,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 						} else {
 							content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-							content.content(renderTypedElementValue(context, eOperation, result));					
+							content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null));					
 						}
 					} catch (Exception e) {
 						// Breadcrumbs
@@ -2395,8 +2324,22 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
 						content.content(objectHeader);							
 						
-						content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER)); 
-						content.content(htmlFactory.alert(Style.DANGER, false, e.toString()));
+						content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER));
+
+						Throwable rootCause = e;
+						while (rootCause.getCause() != null) {
+							rootCause = rootCause.getCause();
+						}
+						
+//						content.content(htmlFactory.alert(Style.DANGER, false, rootCause.toString()));
+						
+						StringWriter sw = new StringWriter();
+						try (PrintWriter pw = new PrintWriter(sw)) {
+							rootCause.printStackTrace(pw);
+						}
+						content.content(htmlFactory.div(sw.toString()).style().whiteSpace().pre().style().color().bootstrapColor(Color.DANGER));
+						
+						rootCause.printStackTrace();
 					}
 				}								
 			}

@@ -85,14 +85,27 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 		if ("form".equals(binding) || "part".equals(binding)) {
 			return true;
 		}
-		if (binding instanceof Map) {
-			for (Object key: ((Map<?,?>) binding).keySet()) {
-				if ("form".equals(key) || "part".equals(key)) {
-					return true;
-				}					
-			}
+		if (binding instanceof Map && (((Map<?,?>) binding).containsKey("form") || ((Map<?,?>) binding).containsKey("part"))) {
+			return true;
 		}
 		return false;
+	}
+	
+	public String getQueryParameterName(EParameter eParameter) {
+		Object binding = parameterBindings.get(eParameter);
+
+		if ("query".equals(binding)) {
+			return eParameter.getName();
+		}
+		
+		if (binding instanceof Map) {
+			Object val = ((Map<?, ?>) binding).get("query");
+			if (val instanceof String) {
+				return (String) val;
+			}
+		}
+		
+		return null;
 	}	
 	
 	public Map<String, Object> getSpec() {

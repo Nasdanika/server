@@ -1808,6 +1808,30 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
+	 * @param context
+	 * @param obj
+	 * @return true if a new object view page shall be opened upon object creation. See {@link RenderAnnotation}.VIEW_ON_CREATE for details.
+	 */
+	default boolean isViewOnCreate(C context, T obj) throws Exception {
+		String viewOnCreateAnnotation = getRenderAnnotation(context, obj.eClass(), RenderAnnotation.VIEW_ON_CREATE);
+		if (viewOnCreateAnnotation != null) {
+			if ("true".equals(viewOnCreateAnnotation)) {
+				return true;
+			}
+			if ("false".equals(viewOnCreateAnnotation)) {
+				return false;
+			}
+		}
+		
+		for (EStructuralFeature vf: getVisibleFeatures(context, obj, null)) {
+			if (getTypedElementLocation(context, vf) != TypedElementLocation.view) {
+				return true;
+			}
+		}
+		return false;
+	}	
+	
+	/**
 	 * Defines where to display visible {@link EStructuralFeature} or feature link.
 	 * @author Pavel Vlasov
 	 *
@@ -1847,12 +1871,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param obj
 	 * @return typed element location. 
 	 * This implementation returns value of {@link RenderAnnotation}.TYPED_ELEMENT_LOCATION render annotation. 
-	 * If there is no annotation this method returns ``leftPanel`` for {@link EStructuralFeature}'s if <code>isMany()</code> returns true and ``view`` otherwise.
+	 * If there is no annotation this method returns ``item`` for {@link EStructuralFeature}'s if <code>isMany()</code> returns true and ``view`` otherwise.
 	 */
 	default TypedElementLocation getTypedElementLocation(C context, ETypedElement typedElement) throws Exception {
 		String typedElementLocationAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.TYPED_ELEMENT_LOCATION);
 		if (typedElementLocationAnnotation == null) {
-			return !(typedElement.getEType() instanceof EEnum) && typedElement.isMany() && typedElement instanceof EStructuralFeature ? TypedElementLocation.leftPanel : TypedElementLocation.view;
+			return !(typedElement.getEType() instanceof EEnum) && typedElement.isMany() && typedElement instanceof EStructuralFeature ? TypedElementLocation.item : TypedElementLocation.view;
 		}
 		return TypedElementLocation.valueOf(typedElementLocationAnnotation);
 	}
@@ -2650,9 +2674,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (featureDocIcon != null) {
 				nameSpan.content(featureDocIcon);
 			}
+			
+			// Applies filter-<view feature name>-<column feature name>=control value filters		
+			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this) : null; 
+						
 			ret.item(
 					nameSpan, 
-					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, null, null, null)).style().margin("3px"), 
+					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, featureTableFilterManager, null, featureTableFilterManager)).style().margin("3px"), 
 					contextFeatureName == null ? ret.isEmpty() : vf.getName().equals(contextFeatureName));
 		}	
 		
@@ -3438,6 +3466,23 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (value != null) {
 			ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, idx, value));
 		}
+		
+		if (value instanceof EObject) {
+			EObject eObjectValue = (EObject) value;
+			Renderer<C, EObject> valueRenderer = getRenderer(eObjectValue);
+			for (EOperation eOperation: eObjectValue.eClass().getEAllOperations()) {
+				Object webOperationYamlAnnotation = valueRenderer.getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+				if (webOperationYamlAnnotation instanceof Map) {
+					@SuppressWarnings("unchecked")
+					Map<String, Object> spec = (Map<String, Object>) webOperationYamlAnnotation;
+					Object location = spec.get("location");
+					if ((location == null || "view".equals(location)) && spec.get("feature") == null && spec.get("feature-value") == null) {
+						ret.content(valueRenderer.renderEOperationButton(context, eObjectValue, eOperation, null, null));
+					}				
+				}
+			}
+		}
+		
 		if (typedElement instanceof EStructuralFeature) {
 			// ??? - ret.content(renderFeatureViewButtons(context, obj, (EReference) typedElement));
 			for (EOperation eOperation: obj.eClass().getEAllOperations()) {
@@ -3614,7 +3659,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		String controlTypeStr = getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL);
 		TagName controlType = controlTypeStr == null ? null : TagName.valueOf(controlTypeStr); 
 		Class<?> instanceClass = typedElement.getEType().getInstanceClass();
-		boolean isEObjectInstanceClass = EObject.class.isAssignableFrom(instanceClass);
+		boolean isEObjectInstanceClass = EObject.class.isAssignableFrom(instanceClass) && !instanceClass.isEnum();
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		if (controlType == null) {
 			if (typedElement.isMany()) {
@@ -3676,7 +3721,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		String choiceTreeAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.CHOICE_TREE);
 		boolean isChoiceTreeReferenceNodes = "reference-nodes".equals(choiceTreeAnnotation);
-		boolean isChoiceTree = EObject.class.isAssignableFrom(typedElement.getEType().getInstanceClass()) && ("true".equals(choiceTreeAnnotation) || isChoiceTreeReferenceNodes); 
+		boolean isChoiceTree = isEObjectInstanceClass && ("true".equals(choiceTreeAnnotation) || isChoiceTreeReferenceNodes); 
 		List<EObject> choices = new ArrayList<>();
 		List<EObject> roots = new ArrayList<>();
 		if (isChoiceTree) {
@@ -3794,7 +3839,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String inputTypeStr = isChoiceTree ? "radio" : getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE);
 			InputType inputType = inputTypeStr == null ? null : HTMLFactory.InputType.valueOf(inputTypeStr);
 			if (inputType == null) {
-				if (typedElement.isMany() && isEObjectInstanceClass) {
+				if (typedElement.isMany() && (isEObjectInstanceClass || instanceClass.isEnum())) {
 					inputType = InputType.checkbox;
 				} else {
 					Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
