@@ -175,8 +175,13 @@ public class PrincipalAuthorizationHelper {
 		
 //		System.out.println("Authorizing: "+target+" "+action+" "+qualifier+" "+path);
 		
+		if (principal.isDisabled()) {
+			return AccessDecision.ABSTAIN;
+		}
+		
 		// Root
 		Realm<?> realm = principal.getRealm();
+		
 		if (realm.isAdministrator(principal)) {
 			return AccessDecision.ALLOW;
 		}
