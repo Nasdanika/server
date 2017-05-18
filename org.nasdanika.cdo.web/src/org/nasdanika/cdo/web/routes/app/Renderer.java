@@ -70,6 +70,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.jsoup.Jsoup;
@@ -107,6 +108,7 @@ import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.HTMLFactory.TokenSource;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.JsTree;
+import org.nasdanika.html.JsTreeNode;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
@@ -2699,6 +2701,38 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default Object renderLeftPanel(C context, T obj) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();
+		
+		// Tree
+		Resource eResource = obj.eResource();
+		if (eResource != null) {		
+			JSONArray data = new JSONArray();
+			TreeIterator<EObject> cit = eResource.getAllContents();
+			while (cit.hasNext()) {
+				EObject next = cit.next();
+				if (context instanceof CDOViewContext<?,?> && ((CDOViewContext<?,?>) context).getPrincipals().contains(next)) {
+					continue; // Assuming that there are other links to principal home.
+				}
+				Renderer<C, EObject> nRenderer = getRenderer(next);
+				if (nRenderer != null) {
+					JsTreeNode node = nRenderer.renderJsTreeNode(context, next, obj);
+					if (node != null) {
+						data.put(node.toJSON());
+						cit.prune();
+					}
+				}
+			}
+			if (data.length() > 0) {
+				Tag treeContainer = htmlFactory.div().id("left-panel-tree");
+				Map<String, Object> env = new HashMap<>();
+				env.put("container-id", treeContainer.getId());
+				env.put("data", data);
+				Tag treeScript = htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("jstree-initializer.js"), env));
+				ret.content(treeContainer, treeScript);
+			}
+		}		
+		
+		// Left panel features
 		LinkGroup linkGroup = htmlFactory.linkGroup();
 		Map<String,List<EStructuralFeature>> categories = new TreeMap<>();
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
@@ -2723,11 +2757,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}					
 		}		
 		
-		if (categories.isEmpty()) {
-			return linkGroup;
-		}
-		
-		Fragment ret = htmlFactory.fragment(linkGroup);
+		ret.content(linkGroup);
 		
 		for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 			LinkGroup categoryFeaturesLinkGroup = htmlFactory.linkGroup();
@@ -2735,7 +2765,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				categoryFeaturesLinkGroup.item(renderNamedElementIconAndLabel(context, vf, leftPanelFeatures), getObjectURI(context, obj)+"/feature/"+vf.getName()+"/view.html", Style.DEFAULT, vf == feature);
 			}
 			ret.content(htmlFactory.panel(Style.DEFAULT, categoriesIconsAndLabels.get(ce.getKey()), categoryFeaturesLinkGroup, null));
-		}
+		}		
+		
 		return ret;
 	}	
 	
@@ -4748,8 +4779,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		return bd;
 	}
-	
-	
+		
 	/**
 	 * Renders a tree item for the object with the tree features under.
 	 * @param context Context
@@ -4859,6 +4889,117 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		return ret.isEmpty() ? null : ret;
+	}
+	
+	/**
+	 * Creates JsTree node with containment references as children and contextObject selected if it is not null
+	 * @param context
+	 * @param obj
+	 * @param contextObject
+	 * @return
+	 * @throws Exception
+	 */
+	@SuppressWarnings("unchecked")
+	default JsTreeNode renderJsTreeNode(C context, T obj, Object contextObject) throws Exception {
+		if (obj instanceof CDOObject && ((CDOObject) obj).cdoID().isTemporary()) {
+			return null; // Not addressable.
+		}
+		if (!context.authorizeRead(obj, null, null)) {
+			return null;
+		}
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		JsTreeNode ret = htmlFactory.jsTreeNode();
+		
+		String contextFeatureName = null;
+		if (context instanceof HttpServletRequestContext) {
+			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
+			contextFeatureName = request.getParameter("context-feature");
+			if (contextFeatureName == null) {
+				Object cfa = request.getAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY);
+				if (cfa instanceof EStructuralFeature) {
+					contextFeatureName = ((EStructuralFeature) cfa).getName();
+				}
+			}
+		}
+		if (obj == contextObject && contextFeatureName == null) {
+			ret.selected();
+		}
+		
+		ret.text(renderLabel(context, obj));		
+		ret.icon(getIcon(context, obj));
+		String objID = null;
+		if (obj instanceof CDOObject && !((CDOObject) obj).cdoID().isTemporary()) {
+			objID = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
+		}
+		ret.id(objID);		
+		String objectHome = getObjectURI(context, obj)+"/"+INDEX_HTML;
+		ret.anchorAttribute("onclick", "window.location='"+objectHome+"';");
+		ret.anchorAttribute("title", renderNamedElementLabel(context, obj.eClass()));
+		
+		Map<String,JsTreeNode> categories = new TreeMap<>();
+		List<EStructuralFeature> treeFeatures = getVisibleFeatures(context, obj, feature -> feature instanceof EReference && ((EReference) feature).isContainment());
+		for (EStructuralFeature treeFeature: treeFeatures) {
+			String category = getNamedElementCategory(context, treeFeature, treeFeatures);
+			JsTreeNode featureNode = htmlFactory.jsTreeNode();
+			featureNode.icon(getModelElementIcon(context, treeFeature));
+			featureNode.text(renderNamedElementLabel(context, treeFeature, treeFeatures));
+			featureNode.anchorAttribute("title", "Feature");
+			featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), "UTF-8")+"';");
+
+			if (obj == contextObject && treeFeature.getName().equals(contextFeatureName)) {
+				featureNode.selected();
+			}			
+			
+			if (treeFeature.isMany()) {
+				for (EObject element: (Collection<EObject>) obj.eGet(treeFeature)) {
+					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject);
+					if (elementNode != null) {
+						featureNode.children().add(elementNode);
+					}					
+				}
+			} else {
+				Object val = obj.eGet(treeFeature);
+				if (val instanceof EObject) {
+					JsTreeNode valNode = getRenderer((EObject) val).renderJsTreeNode(context, (EObject) val, contextObject);
+					if (valNode != null) {
+						featureNode.children().add(valNode);
+					}
+				}
+			}
+			
+//			Collections.sort(featureNode.children());
+			
+			if (!featureNode.children().isEmpty()) {
+				if (category == null) {
+					ret.children().add(featureNode);
+				} else {
+					JsTreeNode categoryNode = categories.get(category);
+					if (categoryNode == null) {
+						categoryNode = htmlFactory.jsTreeNode();
+						categories.put(category, categoryNode);
+						ret.children().add(categoryNode);
+						categoryNode.icon(getRenderAnnotation(context, obj.eClass(), "category."+category+".icon"));
+						
+						String categoryLabel = getRenderAnnotation(context, obj.eClass(), "category."+category+".label"); 
+						if (categoryLabel == null) {
+							String[] cca = StringUtils.splitByCharacterTypeCamelCase(category);
+							cca[0] = StringUtils.capitalize(cca[0]);
+							for (int i=1; i<cca.length; ++i) {
+								cca[i] = cca[i].toLowerCase();
+							}
+							categoryLabel = StringUtils.join(cca, " ");
+						}
+						categoryNode.text(categoryLabel);
+						categoryNode.anchorAttribute("title", "Category");								
+					}
+					categoryNode.children().add(featureNode);
+//					Collections.sort(categoryNode.children());
+				}
+			}			
+		}	
+		
+//		Collections.sort(ret.children());			
+		return ret;
 	}
 		
 	/**

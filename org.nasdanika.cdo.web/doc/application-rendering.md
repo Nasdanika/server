@@ -367,6 +367,7 @@ This section lists methods used to render object view. Features in the object vi
 * ``renderFeatureViewButtons(C, T, EStructuralFeature)`` - renders buttons for feature view, e.g. "Add" button and EOperation buttons. 
 * ``renderIcon(C, T)`` - renders object icon.
 * ``renderIconAndLabel(C, T)`` - renders object icon and label.
+* ``renderJsTreeNode(C context, T obj, Object contextObject)`` - renders [JsTreeNode](http://www.nasdanika.org/products/html/apidocs/org.nasdanika.html/apidocs/org/nasdanika/html/JsTreeNode.html). This method is used to build the left panel object tree.
 * ``renderLabel(C, T)`` - renders object label.
 * ``renderLeftPanel(C, T)`` - renders the left panel. This implementation renders link groups for visible features with location set to ``leftPanel``.
 * ``renderLink(C, T, boolean)`` - renders object link.

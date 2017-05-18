@@ -510,6 +510,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
 
 		EStructuralFeature tsf = target.eClass().getEStructuralFeature(reference);
+		context.getRequest().setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, tsf);
 		if (tsf instanceof EReference && context instanceof CDOViewContext) {
 			String ePackageNsURI = new String(Hex.decodeHex(epackage.toCharArray()));
 			EPackage ePackage = ((CDOViewContext<CDOView, ?>) context).getView().getSession().getPackageRegistry().getEPackage(ePackageNsURI);
