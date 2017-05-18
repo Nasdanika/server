@@ -1268,7 +1268,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEClass(userEClass, User.class, "User", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 
 		initEClass(loginUserEClass, LoginUser.class, "LoginUser", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getLoginUser_Login(), ecorePackage.getEString(), "login", null, 0, 1, LoginUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getLoginUser_Login(), ecorePackage.getEString(), "login", null, 1, 1, LoginUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(loginPasswordHashUserEClass, LoginPasswordHashUser.class, "LoginPasswordHashUser", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getLoginPasswordHashUser_PasswordHash(), ecorePackage.getEByteArray(), "passwordHash", null, 0, 1, LoginPasswordHashUser.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -1983,7 +1983,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getLoginUser_Login(), 
 		   source, 
 		   new String[] {
-			 "editable", "false"
+			 "disabled", "not(ecore:isTemporary($this))"
 		   });	
 		addAnnotation
 		  (getLoginPasswordHashUser_PasswordHash(), 

@@ -526,13 +526,13 @@
       <details key="label" value="{{login}}"/>
     </eAnnotations>
     <eTypeParameters name="CR"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="login" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="login" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
         iD="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="A unique string identifying the user."/>
       </eAnnotations>
       <eAnnotations source="org.nasdanika.cdo.web.render">
-        <details key="editable" value="false"/>
+        <details key="disabled" value="not(ecore:isTemporary($this))"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eGenericSuperTypes eClassifier="#//User">
