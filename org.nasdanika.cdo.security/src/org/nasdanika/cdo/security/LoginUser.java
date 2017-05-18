@@ -45,8 +45,8 @@ public interface LoginUser<CR> extends User<CR> {
 	 * @return the value of the '<em>Login</em>' attribute.
 	 * @see #setLogin(String)
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getLoginUser_Login()
-	 * @model id="true"
-	 *        annotation="org.nasdanika.cdo.web.render editable='false'"
+	 * @model id="true" required="true"
+	 *        annotation="org.nasdanika.cdo.web.render disabled='not(ecore:isTemporary($this))'"
 	 * @generated
 	 */
 	String getLogin();
