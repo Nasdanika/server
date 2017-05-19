@@ -1,8 +1,12 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.core.Context;
+import org.nasdanika.html.FieldSet;
+import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.UIElement;
 
 /**
@@ -14,18 +18,27 @@ import org.nasdanika.html.UIElement;
  * @author Pavel Vlasov
  *
  */
-public class FormRenderingListener<C extends Context, T extends EObject> {
+public class FormRenderingListener<C extends Context, T extends EObject, TE extends ETypedElement> {
 	
-	private static final FormRenderingListener<Context, EObject> NOP_LISTENER = new FormRenderingListener<Context, EObject>();
+	private static final FormRenderingListener<Context, EObject, ETypedElement> NOP_LISTENER = new FormRenderingListener<Context, EObject, ETypedElement>();
 	
 	@SuppressWarnings("unchecked")
-	public static <C extends Context, T extends EObject> FormRenderingListener<C,T> nopListener() {
-		return (FormRenderingListener<C, T>) NOP_LISTENER;
+	public static <C extends Context, T extends EObject, TE extends ETypedElement> FormRenderingListener<C,T,TE> nopListener() {
+		return (FormRenderingListener<C, T, TE>) NOP_LISTENER;
 	}
 	
-	public UIElement<?> onFormControlRendering(C context, T obj, ETypedElement typedElement, Object value, UIElement<?> control) {
+	public UIElement<?> onFormControlRendering(C context, T obj, TE typedElement, Object value, UIElement<?> control) {
 		return control;
 	}
+
+	public void onFormGroupRendering(C context, T obj, TE typedElement, Object value, FormGroup<?> formGroup) {
+		
+	}
+	
+	public void onCategoryFieldSet(C context, T obj, String category, List<TE> categoryMembers, FieldSet categoryFieldSet) {
+		
+	}
+	
 	
 	// TODO - onFieldSet
 

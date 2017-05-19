@@ -3687,9 +3687,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip,
-			FormRenderingListener<C,T> formRenderingListener) throws Exception {
+			FormRenderingListener<C,T, TE> formRenderingListener) throws Exception {
 		
-		FormRenderingListener<C,T> theFormRenderingListener = formRenderingListener == null ? FormRenderingListener.nopListener() : formRenderingListener; // so no need to check for null.
+		FormRenderingListener<C,T, TE> theFormRenderingListener = formRenderingListener == null ? FormRenderingListener.nopListener() : formRenderingListener; // so no need to check for null.
 
 		String controlTypeStr = getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL);
 		TagName controlType = controlTypeStr == null ? null : TagName.valueOf(controlTypeStr); 
@@ -4372,9 +4372,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
 			List<ValidationResult> validationResults,
-			boolean helpTooltip) throws Exception {
+			boolean helpTooltip,
+			FormRenderingListener<C,T,TE> formRenderingListener) throws Exception {
 		
-		UIElement<?> control = renderTypedElementControl(context, obj, typedElement, typedElements, value, fieldContainer, docModal, validationResults, helpTooltip);
+		UIElement<?> control = renderTypedElementControl(
+				context, 
+				obj, 
+				typedElement, 
+				typedElements, 
+				value, 
+				fieldContainer, 
+				docModal, 
+				validationResults, 
+				helpTooltip, 
+				formRenderingListener); 
+		
 		if (control == null) {
 			return null;
 		}
@@ -4441,7 +4453,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		FormGroup<?> ret = fieldContainer.formGroup(label, control, helpText);
 		if (status != null) {
 			ret.status(status);
-		}			
+		}	
+		
+		if (formRenderingListener != null) {
+			formRenderingListener.onFormGroupRendering(context, obj, typedElement, value, ret);
+		}
+		
 		return ret;
 	}
 	
@@ -4507,14 +4524,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default <TE extends ETypedElement> List<FormGroup<?>> renderTypedElementsFormGroups(
-			C context, T obj, 
+			C context, 
+			T obj, 
 			FieldContainer<?> fieldContainer,
 			Map<TE, Modal> docModals, 
 			Map<ENamedElement, 
 			List<ValidationResult>> validationResults,
 			Map<TE, Object> formElements, 
 			boolean helpTooltip,
-			Consumer<FieldSet> categoryFieldSetConfigurator) throws Exception {
+			FormRenderingListener<C,T,TE> formRenderingListener) throws Exception {
 		
 		List<FormGroup<?>> ret = new ArrayList<>();
 		Map<String,List<TE>> categories = new TreeMap<>();
@@ -4532,7 +4550,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			String category = getNamedElementCategory(context, fe, formElements.keySet());
 			if (category == null) {
-				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, fe, formElements.keySet(), formElements.get(fe), fieldContainer, docModals.get(fe), validationResults.get(fe), helpTooltip);
+				FormGroup<?> fg = renderTypedElementFormGroup(
+						context, 
+						obj, 
+						fe, 
+						formElements.keySet(), 
+						formElements.get(fe), 
+						fieldContainer, 
+						docModals.get(fe), 
+						validationResults.get(fe), 
+						helpTooltip,
+						formRenderingListener);
+				
 				if (fg != null) {
 					ret.add(fg);
 				}
@@ -4553,13 +4582,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			categoryFieldSet.legend(categoriesIconsAndLabels.get(ce.getKey()));
 			
 			for (TE cete: ce.getValue()) {
-				FormGroup<?> fg = renderTypedElementFormGroup(context, obj, cete, formElements.keySet(), formElements.get(cete), categoryFieldSet, docModals.get(cete), validationResults.get(cete), helpTooltip);
+				FormGroup<?> fg = renderTypedElementFormGroup(
+						context, 
+						obj, 
+						cete, 
+						formElements.keySet(), 
+						formElements.get(cete), 
+						categoryFieldSet, 
+						docModals.get(cete), 
+						validationResults.get(cete), 
+						helpTooltip, 
+						formRenderingListener);
+				
 				if (fg != null) {
 					ret.add(fg);
 				}
 			}
-			if (categoryFieldSetConfigurator != null) {
-				categoryFieldSetConfigurator.accept(categoryFieldSet);
+			if (formRenderingListener != null) {
+				formRenderingListener.onCategoryFieldSet(context, obj, ce.getKey(), ce.getValue(), categoryFieldSet);
 			}
 		}
 		
@@ -5174,7 +5214,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			T obj, 
 			EStructuralFeature feature,
 			List<ValidationResult> featureValidationResults, 
-			boolean horizontalForm) throws Exception {
+			boolean horizontalForm,
+			FormRenderingListener<C,T,ETypedElement> formRenderingListener) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form selectForm = htmlFactory.form();
@@ -5194,7 +5235,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			selectForm.content(errorList);
 		}
 		
-		FormGroup<?> fg = renderTypedElementFormGroup(context, obj, feature, Collections.singletonList(feature), obj.eGet(feature), selectForm, featureDocModal, featureValidationResults, horizontalForm);
+		FormGroup<?> fg = renderTypedElementFormGroup(
+				context, 
+				obj, 
+				feature, 
+				Collections.singletonList(feature), 
+				obj.eGet(feature), 
+				selectForm, 
+				featureDocModal, 
+				featureValidationResults, 
+				horizontalForm,
+				formRenderingListener);
+		
 		if (fg != null) {
 			fg.feedback(!horizontalForm);
 		}
