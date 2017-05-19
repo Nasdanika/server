@@ -122,6 +122,7 @@ import org.nasdanika.html.Tag.TagName;
 import org.nasdanika.html.TextArea;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.html.UIElement.Event;
+import org.nasdanika.html.Well;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.pegdown.Extensions;
 import org.pegdown.LinkRenderer;
@@ -3678,14 +3679,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	@SuppressWarnings({ "unchecked" })
 	default <TE extends ETypedElement> UIElement<?> renderTypedElementControl(
 			C context, 
-			T obj, 
+			T contextObject, 
 			TE typedElement,
 			Collection<TE> typedElements,
 			Object value,
 			FieldContainer<?> fieldContainer, 
 			Modal docModal, 
 			List<ValidationResult> validationResults,
-			boolean helpTooltip) throws Exception {
+			boolean helpTooltip,
+			FormRenderingListener<C,T> formRenderingListener) throws Exception {
+		
+		FormRenderingListener<C,T> theFormRenderingListener = formRenderingListener == null ? FormRenderingListener.nopListener() : formRenderingListener; // so no need to check for null.
 
 		String controlTypeStr = getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL);
 		TagName controlType = controlTypeStr == null ? null : TagName.valueOf(controlTypeStr); 
@@ -3699,7 +3703,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				controlType = instanceClass.isEnum() || isEObjectInstanceClass ? TagName.select : TagName.input;
 			} else if (((EReference) typedElement).isContainment()) {				
 				// Link and create button.
-				return htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).small();
+				Well well = htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureViewButtons(context, contextObject, (EStructuralFeature) typedElement)).small();
+				return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, well);
 			} else {
 				controlType = TagName.select;
 			}
@@ -3756,7 +3761,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		List<EObject> choices = new ArrayList<>();
 		List<EObject> roots = new ArrayList<>();
 		if (isChoiceTree) {
-			choices.addAll(getEObjectTypedElementChoices(context, obj, typedElement));
+			choices.addAll(getEObjectTypedElementChoices(context, contextObject, typedElement));
 			roots.addAll(choices);
 			for (int i=0; i < roots.size() - 1; ++i) {
 				for (EObject eObj = roots.get(i); eObj != null; eObj = eObj.eContainer()) {
@@ -3786,7 +3791,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Tag li = htmlFactory.tag(TagName.li);
 					container.content(li);
 					if (choices.contains(obj)) {
-						li.content(renderControl(obj), " ");
+						UIElement<?> control = renderControl(obj);
+						li.content(theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, obj, control), " ");
 					}
 					li.content(getRenderer(obj).renderIconAndLabel(context, obj));
 					Tag ul = htmlFactory.tag(TagName.ul);
@@ -3847,7 +3853,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 			
-			abstract Object renderControl(EObject obj) throws Exception;
+			abstract UIElement<?> renderControl(EObject obj) throws Exception;
 			
 		}		
 				
@@ -3857,9 +3863,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			disabled = false;
 		} else if ("true".equals(disabledRenderAnnotation)) {
 			disabled = true;
-		} else if (obj instanceof CDOObject) {
+		} else if (contextObject instanceof CDOObject) {
 			// XPath
-			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) contextObject);
 			disabled = Boolean.TRUE.equals(jxPathContext.getValue(disabledRenderAnnotation, Boolean.class));
 		} else {
 			disabled = false;
@@ -3887,6 +3893,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			// TODO - hidden inputs for disabled controls.
+			Tag errorLabel = htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
 			switch (inputType) {
 			case checkbox:
 				if (typedElement.isMany()) {
@@ -3895,23 +3902,23 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					String[] requestValues = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameterValues(typedElement.getName()) : null;
 					if (requestValues == null) {
 						for (Object fev: ((Collection<Object>) value)) {
-							valuesToSelect.add(getFormControlValue(context, obj, typedElement, fev));
+							valuesToSelect.add(getFormControlValue(context, contextObject, typedElement, fev));
 						}
 					} else {
 						valuesToSelect.addAll(Arrays.asList(requestValues));
 					}
 					if (isChoiceTree) {
 						if (roots.isEmpty()) {
-							if (isRequired(context, obj, typedElement)) {
-								return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+							if (isRequired(context, contextObject, typedElement)) {
+								return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, errorLabel);
 							}
-							return null;
+							return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, null);
 						} else {						
 							Tag ul = htmlFactory.tag(TagName.ul);
 							ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
 								
 								@Override
-								Object renderControl(EObject obj) throws Exception {
+								UIElement<?> renderControl(EObject obj) throws Exception {
 									Input checkbox = htmlFactory.input(InputType.checkbox).name(typedElement.getName());
 									for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 										checkbox.attribute(ce.getKey(), ce.getValue());
@@ -3930,6 +3937,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							for (EObject re: roots) {
 								treeRenderer.render(re, roots.size() > 1, ul);
 							}
+							// TODO - listener onFieldSet
 							FieldSet checkboxesFieldSet = fieldContainer.fieldset();
 							checkboxesFieldSet
 								.style().border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
@@ -3938,13 +3946,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							checkboxesFieldSet.content(ul);
 						}
 					} else {					
-						Collection<Entry<String, String>> featureChoices = getTypedElementChoices(context, obj, typedElement);
+						Collection<Entry<String, String>> featureChoices = getTypedElementChoices(context, contextObject, typedElement);
 						if (featureChoices.isEmpty()) {
-							if (isRequired(context, obj, typedElement)) {
-								return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+							if (isRequired(context, contextObject, typedElement)) {
+								return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, errorLabel);
 							}
-							return null;
-						} else {						
+							return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, null);
+						} else {				
+							// TODO - listener onFieldSet
 							FieldSet checkboxesFieldSet = fieldContainer.fieldset();
 							checkboxesFieldSet
 								.style().border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
@@ -3960,7 +3969,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								if (valuesToSelect.contains(fc.getKey())) {
 									checkbox.attribute("checked", "true");
 								}
-								checkboxesFieldSet.checkbox(fc.getValue(), checkbox, false);
+								checkboxesFieldSet.checkbox(fc.getValue(), theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, checkbox), false);
 							}
 						}
 					}
@@ -3977,24 +3986,28 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					checkbox.attribute("checked", "true");					
 				}
 
-				fieldContainer.checkbox(renderNamedElementLabel(context, typedElement, typedElements), checkbox, true); 
+				fieldContainer.checkbox(
+						renderNamedElementLabel(context, typedElement, typedElements), 
+						theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, checkbox), 
+						true);
+				
 				return null;
 			case radio:
 				// Radio - get values and labels from options.
 				String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;				
-				String valueToSelect = requestValue == null ? getFormControlValue(context, obj, typedElement, value) : requestValue;
+				String valueToSelect = requestValue == null ? getFormControlValue(context, contextObject, typedElement, value) : requestValue;
 				if (isChoiceTree) {
 					if (roots.isEmpty()) {
-						if (isRequired(context, obj, typedElement)) {
-							return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+						if (isRequired(context, contextObject, typedElement)) {
+							return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, errorLabel);
 						}
-						return null;
+						return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, null);
 					} else {						
 						Tag ul = htmlFactory.tag(TagName.ul);
 						ChoiceTreeRenderer treeRenderer = new ChoiceTreeRenderer() {
 							
 							@Override
-							Object renderControl(EObject obj) throws Exception {
+							UIElement<?> renderControl(EObject obj) throws Exception {
 								Input radio = htmlFactory.input(InputType.radio).name(typedElement.getName()).disabled(disabled);
 								for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 									radio.attribute(ce.getKey(), ce.getValue());
@@ -4013,6 +4026,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						for (EObject re: roots) {
 							treeRenderer.render(re, roots.size() > 1, ul);
 						}
+						// TODO listener onFieldSet
 						FieldSet radiosFieldSet = fieldContainer.fieldset();
 						radiosFieldSet.style()
 							.border().bottom("solid 1px "+Bootstrap.Color.GRAY_LIGHT.code)
@@ -4021,12 +4035,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						radiosFieldSet.content(ul);
 					}
 				} else {										
-					Collection<Entry<String, String>> featureChoices = getTypedElementChoices(context, obj, typedElement);
+					Collection<Entry<String, String>> featureChoices = getTypedElementChoices(context, contextObject, typedElement);
 					if (featureChoices.isEmpty()) {
-						if (isRequired(context, obj, typedElement)) {
-							return htmlFactory.label(Style.DANGER, getResourceString(context, "noChoices")).setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
+						if (isRequired(context, contextObject, typedElement)) {
+							return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, errorLabel);
 						}
-						return null;
+						return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, null);
 					} else {						
 						FieldSet radiosFieldSet = fieldContainer.fieldset();
 						radiosFieldSet.style()
@@ -4045,7 +4059,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
 								radio.attribute("checked", "true");
 							}
-							radiosFieldSet.radio(fc.getValue(), radio, false);
+							radiosFieldSet.radio(
+									fc.getValue(), 
+									theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, radio), 
+									false);
 						}
 					}
 				}
@@ -4055,28 +4072,28 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Input input = htmlFactory.input(inputType)
 					.disabled(disabled)
 					.name(typedElement.getName())
-					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, typedElement, value)) : requestValue)
+					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, contextObject, typedElement, value)) : requestValue)
 					.placeholder(textLabel)
-					.required(isRequired(context, obj, typedElement));
+					.required(isRequired(context, contextObject, typedElement));
 
 				for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 					input.attribute(ce.getKey(), ce.getValue());
 				}
 				
-				return input;
+				return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, input);
 			}
 		case select:
-			Collection<Entry<String, String>> selectFeatureChoices = getTypedElementChoices(context, obj, typedElement);
-			Select select = htmlFactory.select().required(isRequired(context, obj, typedElement));
+			Collection<Entry<String, String>> selectFeatureChoices = getTypedElementChoices(context, contextObject, typedElement);
+			Select select = htmlFactory.select().required(isRequired(context, contextObject, typedElement));
 			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 				select.attribute(ce.getKey(), ce.getValue());
 			}
 			
-			if (!isRequired(context, obj, typedElement)) {
+			if (!isRequired(context, contextObject, typedElement)) {
 				select.option("", "", false, false);
 			}
 			String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;
-			String valueToSelect = requestValue == null ? getFormControlValue(context, obj, typedElement, value) : requestValue;				
+			String valueToSelect = requestValue == null ? getFormControlValue(context, contextObject, typedElement, value) : requestValue;				
 			if (disabled) {
 				fieldContainer.content(htmlFactory.input(InputType.hidden).name(typedElement.getName()).value(valueToSelect));
 				select.disabled();
@@ -4088,27 +4105,27 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			if (selectFeatureChoices.isEmpty()) {
 				select.disabled();
-				if (isRequired(context, obj, typedElement)) {
+				if (isRequired(context, contextObject, typedElement)) {
 					select.setData(FormGroup.Status.class.getName(), FormGroup.Status.ERROR);
 				}
 			} 
 			
-			return select;
+			return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, select);
 		case textarea:
 			TextArea textArea = htmlFactory.textArea()
 				.disabled(disabled)
 				.name(typedElement.getName())
 				.placeholder(textLabel)
-				.required(isRequired(context, obj, typedElement));			
+				.required(isRequired(context, contextObject, typedElement));			
 			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
 				textArea.attribute(ce.getKey(), ce.getValue());
 			}
-			textArea.content(getFormControlValue(context, obj, typedElement, value));
+			textArea.content(getFormControlValue(context, contextObject, typedElement, value));
 			if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 				textArea.id(htmlFactory.nextId());
 				fieldContainer.content(renderTinymceInitScript(context, textArea));
 			}
-			return textArea;
+			return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, textArea);
 		default:
 			throw new IllegalArgumentException("Unsupported control type: "+controlType);
 		}
