@@ -2883,14 +2883,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									
 			if (asTable) {
 				EClass refType = (EClass) typedElement.getEType();
-				List<EStructuralFeature> refTypeVisibleFeatures = getRenderer(refType).getVisibleFeatures(context, typedElement, null);
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
 				// TODO - add support of inlined references.
 				Object viewFeaturesAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.VIEW_FEATURES);
 				Map<EStructuralFeature, Object> featureSpecs = new HashMap<>();
 				if (viewFeaturesAnnotation == null) {
-					for (EStructuralFeature sf: refTypeVisibleFeatures) {
-						if (!sf.isMany()) {
+					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
+						if (!sf.isMany() && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
 							tableFeatures.add(sf);
 						}
 					}
