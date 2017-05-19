@@ -1332,7 +1332,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 			return value;
 		}
-			
+		
 		return StringEscapeUtils.escapeHtml4(value.toString());		
 	}
 	
@@ -2883,13 +2883,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									
 			if (asTable) {
 				EClass refType = (EClass) typedElement.getEType();
+				List<EStructuralFeature> refTypeVisibleFeatures = getRenderer(refType).getVisibleFeatures(context, typedElement, null);
 				List<EStructuralFeature> tableFeatures = new ArrayList<EStructuralFeature>();
 				// TODO - add support of inlined references.
 				Object viewFeaturesAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.VIEW_FEATURES);
 				Map<EStructuralFeature, Object> featureSpecs = new HashMap<>();
 				if (viewFeaturesAnnotation == null) {
-					for (EStructuralFeature sf: refType.getEAllStructuralFeatures()) {
-						if (!sf.isMany() && context.authorizeRead(obj, typedElement.getName()+"/"+sf.getName(), null)) {
+					for (EStructuralFeature sf: refTypeVisibleFeatures) {
+						if (!sf.isMany()) {
 							tableFeatures.add(sf);
 						}
 					}
@@ -2964,7 +2965,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}						
 					}
 				}
-				
+								
 				Map<EStructuralFeature, Modal> featureDocModals = new HashMap<>();
 				for (EStructuralFeature sf: tableFeatures) {
 					Modal fdm = renderDocumentationModal(context, sf);
@@ -3127,7 +3128,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				if (typedElementValues.size() == 1) {
 					Object v = typedElementValues.iterator().next();
-					ret.content(renderTypedElementValue(context, typedElement, v));
+					Object renderedValue = renderTypedElementValue(context, typedElement, v);
+					
+					// Non-html multi-line - wrap in PRE - use annotations to decide whether pre or not?
+					if (v instanceof String 
+							&& "textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))
+							&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+						renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();					
+					}						
+					ret.content(renderedValue);
+
 					if (typedElement instanceof EAttribute) {
 						if (showActionButtons) {
 							ret.content(renderFeatureValueEditButton(context, obj, (EAttribute) typedElement, 0, v));
@@ -3153,7 +3163,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 					
 					for (ValueEntry<Object> featureValueEntry: featureValueEntries) {
-						Fragment liFragment = ret.getFactory().fragment(renderTypedElementValue(context, typedElement, featureValueEntry.value));
+						Object renderedValue = renderTypedElementValue(context, typedElement, featureValueEntry.value);
+						
+						// Non-html multi-line - wrap in PRE
+						if (featureValueEntry.value instanceof String 
+								&& "textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))
+								&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+							renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();					
+						}						
+						
+						Fragment liFragment = ret.getFactory().fragment(renderedValue);
 						if (typedElement instanceof EAttribute) {
 							if (showActionButtons) {
 								liFragment.content(renderFeatureValueEditButton(context, obj, (EAttribute) typedElement, featureValueEntry.position, featureValueEntry.value));
@@ -3175,7 +3194,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		} else {
-			ret.content(renderTypedElementValue(context, typedElement, typedElementValue));
+			Object renderedValue = renderTypedElementValue(context, typedElement, typedElementValue);
+			
+			// Non-html multi-line - wrap in PRE
+			if (typedElementValue instanceof String 
+					&& "textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))
+					&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+				renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();					
+			}						
+			
+			ret.content(renderedValue);
 			if (showActionButtons) {
 				ret.content(renderTypedElementValueButtons(context, obj, typedElement, -1, typedElementValue));
 			}						
@@ -3710,14 +3738,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
-		Map<String, String> controlConfiguration = new HashMap<>();
+		Map<String, Object> controlConfiguration = new HashMap<>();
 		Object controlConfigurationYaml = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL_CONFIGURATION);
 		if (controlConfigurationYaml instanceof Map) {
 			for (Entry<String, Object> e: ((Map<String,Object>) controlConfigurationYaml).entrySet()) {
 				Object v = e.getValue();
-				if (v instanceof String) {
-					controlConfiguration.put(e.getKey(), (String) v);
-				} else if (v instanceof List) {
+				if (v instanceof List) {
 					StringBuilder sb = new StringBuilder();
 					for (Object ve: (List<Object>) v) {
 						if (sb.length() > 0) {
@@ -3735,6 +3761,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						sb.append(ve.getKey()).append(":").append(ve.getValue());
 					}
 					controlConfiguration.put(e.getKey(), sb.toString());					
+				} else {
+					controlConfiguration.put(e.getKey(), v);					
 				}
 			}
 		}
@@ -3920,7 +3948,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								@Override
 								UIElement<?> renderControl(EObject obj) throws Exception {
 									Input checkbox = htmlFactory.input(InputType.checkbox).name(typedElement.getName());
-									for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+									for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 										checkbox.attribute(ce.getKey(), ce.getValue());
 									}
 									if (obj instanceof CDOObject) {
@@ -3961,7 +3989,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							checkboxesFieldSet.legend(label);
 							for (Entry<String, String> fc: featureChoices) {
 								Input checkbox = htmlFactory.input(inputType).disabled(disabled);
-								for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+								for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 									checkbox.attribute(ce.getKey(), ce.getValue());
 								}
 								checkbox.name(typedElement.getName());
@@ -3977,7 +4005,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				Input checkbox = htmlFactory.input(inputType).disabled(disabled);
-				for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+				for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 					checkbox.attribute(ce.getKey(), ce.getValue());
 				}
 				checkbox.name(typedElement.getName());
@@ -4009,7 +4037,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							@Override
 							UIElement<?> renderControl(EObject obj) throws Exception {
 								Input radio = htmlFactory.input(InputType.radio).name(typedElement.getName()).disabled(disabled);
-								for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+								for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 									radio.attribute(ce.getKey(), ce.getValue());
 								}
 								if (obj instanceof CDOObject) {
@@ -4053,7 +4081,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									.name(typedElement.getName())
 									.value(StringEscapeUtils.escapeHtml4(fc.getKey()))
 									.placeholder(textLabel);
-							for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+							for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 								radio.attribute(ce.getKey(), ce.getValue());
 							}
 							if (valueToSelect != null && valueToSelect.equals(fc.getKey())) {
@@ -4076,7 +4104,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					.placeholder(textLabel)
 					.required(isRequired(context, contextObject, typedElement));
 
-				for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+				for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 					input.attribute(ce.getKey(), ce.getValue());
 				}
 				
@@ -4085,7 +4113,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		case select:
 			Collection<Entry<String, String>> selectFeatureChoices = getTypedElementChoices(context, contextObject, typedElement);
 			Select select = htmlFactory.select().required(isRequired(context, contextObject, typedElement));
-			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+			for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 				select.attribute(ce.getKey(), ce.getValue());
 			}
 			
@@ -4117,7 +4145,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				.name(typedElement.getName())
 				.placeholder(textLabel)
 				.required(isRequired(context, contextObject, typedElement));			
-			for (Entry<String, String> ce: controlConfiguration.entrySet()) {
+			for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 				textArea.attribute(ce.getKey(), ce.getValue());
 			}
 			textArea.content(getFormControlValue(context, contextObject, typedElement, value));
