@@ -2774,7 +2774,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}			
 			if (data.length() > 0) {
 				Tag treeContainer = htmlFactory.div().id("left-panel-tree");
-				Tag treeSearch = htmlFactory.div(htmlFactory.input(InputType.text).id(treeContainer.getId()+"-search").style().width("100%"));
+				Tag treeSearch = htmlFactory.div(htmlFactory.input(InputType.text).id(treeContainer.getId()+"-search").style().width("100%").placeholder(getResourceString(context, "search")));
 				Map<String, Object> env = new HashMap<>();
 				env.put("container-id", treeContainer.getId());
 				env.put("data", data);
