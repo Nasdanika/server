@@ -97,8 +97,10 @@ import org.nasdanika.html.Container;
 import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome;
+import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
+import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
 import org.nasdanika.html.FormInputGroup;
@@ -5477,11 +5479,46 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				formModal.title(getResourceString(context, "create"), " ", getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType));
 				
-				formModal.body("A form to come here...");
-			
-				ret.content(formModal);
+				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").knockout().visible("isWorking()");
+				Form form = htmlFactory.form()
+						.action("something")
+						.method(Method.post)
+						.knockout().submit("submit");
+						//.knockout().disable("!isWorking()");
+				
+				form.content(htmlFactory.span("z").knockout().text("test"));
+				form.formInputGroup("Test", htmlFactory.input(InputType.text).knockout().textInput("test"), "For testing purposes");
+
+				form.content(htmlFactory.tag(TagName.hr));
+				form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);//.knockout().click("submit");
+				form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
+				
+				// TODO - form configuration 				
+				
+				Tag appDiv = htmlFactory.div(overlay, form).id(appId);
+//				formModal.body(appDiv);
+//				ret.content(formModal);
+				ret.content(appDiv);
+				
+//		 		- app-id - application id, base for other ID's like modal, form, and overlay.
+//				- url - server endpoint communication url.
+//				- declarations - observables and other declarations
+//				- success-handler - invoked on AJAX success
+//				- error-handler - invoked on AJAX error
+//				- ajax-config - additional configuration for jQuery.ajax, e.g. method. Shall end with a comma, may be blank
+				Map<String, Object> scriptConfig = new HashMap<>();
+				scriptConfig.put("app-id", appId);
+				scriptConfig.put("url", "index.html"); // For testing.
+				scriptConfig.put("declarations", ""); // Use HTML gen binding.
+				scriptConfig.put("success-handler", "");
+				scriptConfig.put("error-handler", "");
+				scriptConfig.put("ajax-config", "");
+				ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));
+				
 				
 				// location.reload(); if not view-on-create
+				
+				
 			}
 		}
 		
