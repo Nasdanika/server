@@ -340,6 +340,7 @@ This section lists methods used to render object view. Features in the object vi
 * ``getPlaceholder(C, T, EStructuralFeature)`` - returns feature value "placeholder".
 * ``getReferenceElementTypes(C, T, EReference)`` - returns a list or EClass'es which can be instantiated and instances can be added to a given reference.
 * ``getReferenceRenderer(EReference, M)`` - Returns renderer for a feature. The renderer is chained with this renderer as its master resource provider with ``<feature class>.<feature name>.`` prefix.
+* ``getTreeFeatures(C, T, FeaturePredicate)`` - returns a list of features to include into the the object tree representation on the left panel.
 * ``getVisibleFeatures(C, T, FeaturePredicate)`` - returns a list of features to include into the the object view.
 * ``isDeletable(C, T, EModelElement)`` - returns true if model element value can be deleted and as such a delete button shall be rendered.
 * ``isEditable(C, T, EModelElement)`` - returns true if model element value can be edited and as such an edit button shall be rendered.
