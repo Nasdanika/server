@@ -526,6 +526,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
+	 * Features to include in a (left-panel) tree representation. 
+	 * This implementation returns visible features which are containment references.
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default List<EStructuralFeature> getTreeFeatures(C context, T obj) throws Exception {
+		return getVisibleFeatures(context, obj, feature -> feature instanceof EReference && ((EReference) feature).isContainment());
+	}
+	
+	/**
 	 * Returns true if this container argument shall be treated as the breadcrumbs path root.
 	 * @param context
 	 * @param obj
@@ -1868,7 +1880,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		 */
 		none
 	}
-	
+		
 	/**
 	 * @param context
 	 * @param obj
@@ -2232,7 +2244,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default Object renderViewButtons(C context, T obj) throws Exception {
 		Tag ret = getHTMLFactory(context).div().style().margin("5px"); 
-		ret.content(renderEditButton(context, obj));
+		ret.content(renderEditButton(context, obj, true));
 		ret.content(renderDeleteButton(context, obj));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
 			if (getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION) instanceof Map) {
@@ -2312,9 +2324,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			Button documentationButton = renderDocumentationButton(context, eOperation, docModal);
 			if (documentationButton == null) {
-				ret.content(eOperationButton.style().margin().right("5px"));
+				ret.content(eOperationButton/*.style().margin().right("5px")*/);
 			} else {
-				documentationButton.style().margin().right("5px");
+//				documentationButton.style().margin().right("5px");
 				if (style == null) {
 					documentationButton.style(Style.INFO);
 				} else {
@@ -2386,10 +2398,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Button renderEditButton(C context, T obj) throws Exception {
+	default Button renderEditButton(C context, T obj, boolean showLabel) throws Exception {
 		if (isEditable(context, obj, obj.eClass()) && context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
-			Button editButton = htmlFactory.button(renderEditIcon(context).style().margin().right("5px"), getResourceString(context, "edit")).style(Style.PRIMARY);
+			Tag editIcon = renderEditIcon(context);
+			if (showLabel) {
+				editIcon.style().margin().right("5px");
+			}
+			Button editButton = htmlFactory.button(editIcon).style(Style.PRIMARY);
+			if (showLabel) {
+				editButton.content(getResourceString(context, "edit"));
+			}
 			wireEditButton(context, obj, editButton);
 
 			Map<String, Object> env = new HashMap<>();
@@ -2705,33 +2724,64 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Fragment ret = htmlFactory.fragment();
 		
 		// Tree
-		Resource eResource = obj.eResource();
-		if (eResource != null) {		
-			JSONArray data = new JSONArray();
-			TreeIterator<EObject> cit = eResource.getAllContents();
-			while (cit.hasNext()) {
-				EObject next = cit.next();
-				if (context instanceof CDOViewContext<?,?> && ((CDOViewContext<?,?>) context).getPrincipals().contains(next)) {
-					continue; // Assuming that there are other links to principal home.
+		EObject root = EcoreUtil.getRootContainer(obj);
+		Renderer<C, EObject> rootRenderer = getRenderer(root);
+		if (rootRenderer != null) {
+			JsTreeNode rootNode = rootRenderer.renderJsTreeNode(context, root, obj);
+			// Mark nodes as has-readable
+			rootNode.<Boolean>accept((node, childResults) -> {
+				
+				if (Boolean.TRUE.equals(node.getData("readable"))) {
+					return true;
 				}
-				Renderer<C, EObject> nRenderer = getRenderer(next);
-				if (nRenderer != null) {
-					JsTreeNode node = nRenderer.renderJsTreeNode(context, next, obj);
-					if (node != null) {
-						data.put(node.toJSON());
-						cit.prune();
+				for (Boolean cr: childResults) {
+					if (cr) {
+						node.setData("has-readable", true);
+						return true;
 					}
 				}
+				return false;
+			});
+			
+			Predicate<JsTreeNode> filter = node -> Boolean.TRUE.equals(node.getData("readable")) || Boolean.TRUE.equals(node.getData("has-readable"));
+			
+			// Remove non-readable
+			rootNode.<Void>accept((node, childResult) -> {
+				Iterator<JsTreeNode> cit = node.children().iterator();
+				while (cit.hasNext()) {
+					JsTreeNode child = cit.next();
+					if (!filter.test(child)) {
+						cit.remove();
+					}
+				}
+				
+				return null;
+			});
+			
+			// Find common root
+			while (!Boolean.TRUE.equals(rootNode.getData("readable")) && rootNode.children().size() == 1) {
+				rootNode = rootNode.children().get(0);
 			}
+			
+			JSONArray data = new JSONArray();
+			
+			if (Boolean.TRUE.equals(rootNode.getData("readable"))) {
+				data.put(rootNode.toJSON(filter));
+			} else {
+				for (JsTreeNode child: rootNode.children()) {
+					data.put(child.toJSON(filter));					
+				}
+			}			
 			if (data.length() > 0) {
 				Tag treeContainer = htmlFactory.div().id("left-panel-tree");
+				Tag treeSearch = htmlFactory.div(htmlFactory.input(InputType.text).id(treeContainer.getId()+"-search").style().width("100%"));
 				Map<String, Object> env = new HashMap<>();
 				env.put("container-id", treeContainer.getId());
 				env.put("data", data);
 				Tag treeScript = htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("jstree-initializer.js"), env));
-				ret.content(treeContainer, treeScript);
+				ret.content(treeSearch, treeContainer, treeScript);
 			}
-		}		
+		}
 		
 		// Left panel features
 		LinkGroup linkGroup = htmlFactory.linkGroup();
@@ -3105,8 +3155,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							filteredTableRendererListener.onElementFeatureCell(context, obj, typedElement, typedElementValue, teve.value, sf, featureSpecs.get(sf), eValue, vCell);					
 						}						
 					}
-					Cell actionCell = vRow.cell().style().text().align().center();					
-					actionCell.content(renderTypedElementValueButtons(context, obj, typedElement, teve.position, teve.value));
+					Cell actionCell = vRow.cell().style().text().align().center();	
+					List<EStructuralFeature> valueVisibleFeatures = getRenderer(teve.value).getVisibleFeatures(context, teve.value, null);
+					actionCell.content(renderTypedElementValueButtons(context, obj, typedElement, teve.position, teve.value, tableFeatures.containsAll(valueVisibleFeatures)));
 					
 					filteredTableRendererListener.onElementRow(context, obj, typedElement, typedElementValue, teve.value, rowCounter++, vRow);					
 				}
@@ -3115,6 +3166,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				ret.content(typedElementTable);
 				if (typedElement instanceof EStructuralFeature) {
+					if (typedElement instanceof EReference) {
+						for (EClass ec: getReferenceElementTypes(context, obj, (EReference) typedElement)) {
+							Object createApp = getRenderer(ec).renderCreateContainmentReferenceElementModalDialogApplication(context, obj, (EStructuralFeature) typedElement, ec);
+							ret.content(createApp);
+						}
+					}					
 					ret.content(htmlFactory.div(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).style().margin("5px"));
 				}
 			} else {
@@ -3143,7 +3200,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}												
 					}
 					if (showActionButtons) {
-						ret.content(renderTypedElementValueButtons(context, obj, typedElement, 0, v));
+						ret.content(renderTypedElementValueButtons(context, obj, typedElement, 0, v, false));
 					}
 					
 				} else if (!typedElementValues.isEmpty()) {
@@ -3178,7 +3235,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							}												
 						}
 						if (showActionButtons) {
-							liFragment.content(renderTypedElementValueButtons(context, obj, typedElement, featureValueEntry.position, featureValueEntry.value));
+							liFragment.content(renderTypedElementValueButtons(context, obj, typedElement, featureValueEntry.position, featureValueEntry.value, false));
 						}
 						ul.content(htmlFactory.tag(TagName.li, liFragment).style().margin().bottom("3px"));
 					}
@@ -3204,7 +3261,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			ret.content(renderedValue);
 			if (showActionButtons) {
-				ret.content(renderTypedElementValueButtons(context, obj, typedElement, -1, typedElementValue));
+				ret.content(renderTypedElementValueButtons(context, obj, typedElement, -1, typedElementValue, false));
 			}						
 		}
 		return ret;
@@ -3302,19 +3359,32 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				addButton.disabled();
 			} else if (featureElementTypes.size() == 1) {
 				EClass featureElementType = featureElementTypes.iterator().next();
-				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-				addButton.on(Event.click, "window.location='"+objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");				
+				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));
+				Renderer<C, EObject> fetr = getRenderer(featureElementType);
+				if (fetr.getCreateModalType(context) == ModalType.NONE) {
+					addButton.on(Event.click, "window.location='"+objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");
+				} else {
+					String appId = fetr.getCreateContainmentReferenceElementModalDialogApplicationId(context, obj, feature, featureElementType);
+					addButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+				}
 			} else {
 				for (EClass featureElementType: featureElementTypes) {
 					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
 					String createURL = objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
-					addButton.item(getHTMLFactory(context).link(createURL, getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType)));
+					Renderer<C, EObject> fetr = getRenderer(featureElementType);
+					Object iconAndLabel = fetr.renderNamedElementIconAndLabel(context, featureElementType);
+					if (fetr.getCreateModalType(context) == ModalType.NONE) {
+						addButton.item(getHTMLFactory(context).link(createURL, iconAndLabel));
+					} else {
+						String appId = fetr.getCreateContainmentReferenceElementModalDialogApplicationId(context, obj, feature, featureElementType);
+						addButton.item(iconAndLabel).attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+					}
 				}
 			}
 		} else if (feature instanceof EAttribute) {
-			addButton.on(Event.click, "window.location='"+objectURI+"/attribute/"+feature.getName()+"/add.html';");
+			addButton.on(Event.click, "window.location='"+objectURI+"/attribute/"+feature.getName()+"/add.html';"); // TODO - modal support.
 		} else {
-			addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/select.html';");
+			addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/select.html';"); // TODO - modal support
 		}
 	}	
 	
@@ -3425,7 +3495,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
 			Button deleteButton = htmlFactory.button(idx == -1 ? renderClearIcon(context) : renderDeleteIcon(context))
 					.style(Style.DANGER)
-					.style().margin().left("5px")
+//					.style().margin().left("5px")
 					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
 			
 			wireTypedElementValueDeleteButton(context, obj, typedElement, idx, value, deleteButton);
@@ -3514,13 +3584,28 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 	}
 	
-	
-	default Object renderTypedElementValueButtons(C context, T obj, ETypedElement typedElement, int idx, Object value) throws Exception {
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param typedElement
+	 * @param idx
+	 * @param value
+	 * @param fullView true when invoked for table row and all visible features of the object are already present in the table, i.e. value view page doesn't add any information
+	 * and doesn't have to be rendered.
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderTypedElementValueButtons(C context, T obj, ETypedElement typedElement, int idx, Object value, boolean fullView) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 
 		if (value instanceof EObject) {
-			ret.content(renderTypedElementValueViewButton(context, obj, typedElement, idx, (EObject) value));
+			EObject eObjectValue = (EObject) value;
+			if (!fullView) {
+				ret.content(renderTypedElementValueViewButton(context, obj, typedElement, idx, eObjectValue));
+			}
+			ret.content(getRenderer(eObjectValue).renderEditButton(context, eObjectValue, false));
 		}
 		if (value != null) {
 			ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, idx, value));
@@ -4979,20 +5064,31 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * Creates JsTree node with containment references as children and contextObject selected if it is not null
 	 * @param context
 	 * @param obj
-	 * @param contextObject
+	 * @param contextObject object to select in the tree
+	 * @param roots Objects which this context principal(s) have read access to.  
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default JsTreeNode renderJsTreeNode(C context, T obj, Object contextObject) throws Exception {
+	default JsTreeNode renderJsTreeNode(C context, T obj, EObject contextObject) throws Exception {
 		if (obj instanceof CDOObject && ((CDOObject) obj).cdoID().isTemporary()) {
 			return null; // Not addressable.
 		}
-		if (!context.authorizeRead(obj, null, null)) {
-			return null;
-		}
+		
+		boolean readable = context.authorizeRead(obj, null, null);
+		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		JsTreeNode ret = htmlFactory.jsTreeNode();
+		ret.setData(obj);
+		ret.setData("readable", readable);
+		ret.text(renderLabel(context, obj));		
+		ret.icon(getIcon(context, obj));
+		String objID = null;
+		if (obj instanceof CDOObject && !((CDOObject) obj).cdoID().isTemporary()) {
+			objID = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
+		}
+		ret.id(objID);		
+		ret.anchorAttribute("title", renderNamedElementLabel(context, obj.eClass()));
 		
 		String contextFeatureName = null;
 		if (context instanceof HttpServletRequestContext) {
@@ -5005,32 +5101,45 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		}
-		if (obj == contextObject && contextFeatureName == null) {
+		if (readable && obj == contextObject && contextFeatureName == null) {
 			ret.selected();
 		}
-		
-		ret.text(renderLabel(context, obj));		
-		ret.icon(getIcon(context, obj));
-		String objID = null;
-		if (obj instanceof CDOObject && !((CDOObject) obj).cdoID().isTemporary()) {
-			objID = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
-		}
-		ret.id(objID);		
+
 		String objectHome = getObjectURI(context, obj)+"/"+INDEX_HTML;
-		ret.anchorAttribute("onclick", "window.location='"+objectHome+"';");
-		ret.anchorAttribute("title", renderNamedElementLabel(context, obj.eClass()));
+		if (readable) {
+			ret.anchorAttribute("onclick", "window.location='"+objectHome+"';");
+		} else {
+			ret.anchorAttribute("style", "cursor:default");
+		}
 		
 		Map<String,JsTreeNode> categories = new TreeMap<>();
-		List<EStructuralFeature> treeFeatures = getVisibleFeatures(context, obj, feature -> feature instanceof EReference && ((EReference) feature).isContainment());
+		List<EStructuralFeature> treeFeatures;
+		if (readable) {
+			treeFeatures = getTreeFeatures(context, obj);
+		} else {
+			treeFeatures = new ArrayList<>();
+			for (EStructuralFeature feature: obj.eClass().getEAllStructuralFeatures()) {
+				if (feature instanceof EReference && ((EReference) feature).isContainment()) {
+					treeFeatures.add(feature);
+				}
+			}
+		}
 		for (EStructuralFeature treeFeature: treeFeatures) {
 			String category = getNamedElementCategory(context, treeFeature, treeFeatures);
 			JsTreeNode featureNode = htmlFactory.jsTreeNode();
 			featureNode.icon(getModelElementIcon(context, treeFeature));
 			featureNode.text(renderNamedElementLabel(context, treeFeature, treeFeatures));
 			featureNode.anchorAttribute("title", "Feature");
-			featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), "UTF-8")+"';");
+			featureNode.setData(obj);
+			featureNode.setData("readable", readable);
+			featureNode.setData("feature", treeFeature);
+			if (readable) {
+				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), "UTF-8")+"';");
+			} else {
+				featureNode.anchorAttribute("style", "cursor:default");
+			}
 
-			if (obj == contextObject && treeFeature.getName().equals(contextFeatureName)) {
+			if (readable && obj == contextObject && treeFeature.getName().equals(contextFeatureName)) {
 				featureNode.selected();
 			}			
 			
@@ -5050,8 +5159,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 				}
 			}
-			
-//			Collections.sort(featureNode.children());
 			
 			if (!featureNode.children().isEmpty()) {
 				if (category == null) {
@@ -5075,14 +5182,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}
 						categoryNode.text(categoryLabel);
 						categoryNode.anchorAttribute("title", "Category");								
+						categoryNode.setData(obj);
+						categoryNode.setData("readable", readable);
+						categoryNode.setData("category", true);
+						categoryNode.anchorAttribute("style", "cursor:default");
 					}
 					categoryNode.children().add(featureNode);
-//					Collections.sort(categoryNode.children());
 				}
 			}			
 		}	
 		
-//		Collections.sort(ret.children());			
 		return ret;
 	}
 		
@@ -5291,6 +5400,139 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default Object getPlaceholder(C context, T obj, EStructuralFeature feature) throws Exception {
 		String ra = getRenderAnnotation(context, feature, RenderAnnotation.PLACEHOLDER);
 		return ra != null && obj instanceof CDOObject ? RenderUtil.newJXPathContext(context, (CDOObject) obj).getValue(ra) : null;		
-	}		
+	}
+	
+	// --- Modal dialogs ---
+	
+	/**
+	 * Type of a modal dialog to render for a particular action - create, edit, invoke EOperation.
+	 * @author Pavel Vlasov.
+	 *
+	 */
+	enum ModalType {
 		
+		NONE,		
+		SMALL,
+		MEDIUM,
+		LARGE
+		
+	}
+	
+	/**
+	 * Modal dialog type to use to display the create form. 
+	 * @param context
+	 * @return
+	 */
+	default ModalType getCreateModalType(C context) {
+		return ModalType.LARGE;
+	}
+			
+	/**
+	 * Base ID for the create application
+	 * @param context
+	 * @param container
+	 * @param containmentFeature
+	 * @param nsURI
+	 * @param eClassName
+	 * @return
+	 */
+	default String getCreateContainmentReferenceElementModalDialogApplicationId(C context, EObject container, EStructuralFeature containmentFeature, EClass featureElementType) throws Exception {
+		String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
+		return CDOIDCodec.INSTANCE.encode(context, ((CDOObject) container)) + "-create-" + containmentFeature.getName() + "-" + encodedPackageNsURI + "-" + featureElementType.getName(); 
+	}	
+	
+	/**
+	 * Renders create application which includes a modal dialog with an overlay and a form, documentation modals, and a view model script. 
+	 * @param context
+	 * @param container
+	 * @param containmentFeature
+	 * @param nsURI
+	 * @param eClassName
+	 * @return
+	 */
+	default Object renderCreateContainmentReferenceElementModalDialogApplication(C context, EObject container, EStructuralFeature containmentFeature, EClass featureElementType) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();
+		ModalType modalType = getCreateModalType(context);
+		if (modalType != ModalType.NONE) {		
+			String qualifier = containmentFeature.getName()+"/"+featureElementType.getName();
+			if (containmentFeature.getEContainingClass().getEPackage() != featureElementType.getEPackage()) {
+				qualifier += "@"+featureElementType.getEPackage().getNsURI();
+			}
+			if (context.authorizeCreate(container, qualifier, null)) {
+				String appId = getCreateContainmentReferenceElementModalDialogApplicationId(context, container, containmentFeature, featureElementType);				
+				
+				// TODO - doc modals.
+				
+				Modal formModal = htmlFactory.modal().id(appId+"-modal");
+				switch (modalType) {
+				case LARGE:
+					formModal.large();
+					break;
+				case SMALL:
+					formModal.small();
+					break;
+				default:
+					break;		
+				}
+				formModal.title(getResourceString(context, "create"), " ", getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType));
+				
+				formModal.body("A form to come here...");
+			
+				ret.content(formModal);
+				
+				// location.reload(); if not view-on-create
+			}
+		}
+		
+		return ret;
+	}
+	
+	// --- Edit ---
+	
+	/**
+	 * Modal dialog type to use to display the edit form. 
+	 * @param context
+	 * @return
+	 */
+	default ModalType getEditModalType(C context, T obj) {
+		return ModalType.LARGE;
+	}
+		
+	// --- Select ---
+	
+	/**
+	 * Modal dialog type to use to display the select form. 
+	 * @param context
+	 * @return
+	 */
+	default ModalType getSelectModalType(C context, T obj) {
+		return ModalType.LARGE;
+	}
+		
+	// --- Add attribute ---
+	
+	/**
+	 * Modal dialog type to use to display the add attribute form. 
+	 * @param context
+	 * @return
+	 */
+	default ModalType getAddAttributeModalType(C context, T obj) {
+		return ModalType.MEDIUM;
+	}
+		
+	// --- Edit attribute ---
+	
+	/**
+	 * Modal dialog type to use to display the edit form for attribute value. 
+	 * @param context
+	 * @return
+	 */
+	default ModalType getEditAttributeModalType(C context, T obj) {
+		return ModalType.MEDIUM;
+	}
+		
+	
+	
+	
 }
