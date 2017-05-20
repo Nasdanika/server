@@ -209,7 +209,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 		
 		content.content(renderFeatureItemsContainer(context, target, featureDocModals));
-		
+						
 		return renderPage(context, target, title, content);		
 	}
 		

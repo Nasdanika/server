@@ -7,39 +7,42 @@
 //		- success-handler - invoked on AJAX success
 //		- error-handler - invoked on AJAX error
 //		- ajax-config - additional configuration for jQuery.ajax, e.g. method. Shall end with a comma, may be blank
-$(function() {	
-	ko.applyBindings(function() {	
-		// Observables with inital values for edits etc.
-		// {{declarations}}
-		
-		// When set to true the overlay shall be shown and the form shall be disabled.
-		this.isWorking = ko.observable();
-		this.test = ko.observable("My value");
-		
-		var overlay = jQuery("#{{app-id}}-overlay");
-
-		this.submit = function() {
-			this.isWorking();
-			overlay.height(overlay.parent().height());
-			overlay.width(overlay.parent().width());
+$(function() {
+	var container = document.getElementById("{{app-id}}");
+	if (container) {
+		var ViewModel = function() {	
+			// Observables with inital values for edits etc.
+			{{declarations}}
 			
-			jQuery.ajax("{{url}}", 
-					{
-						{{ajax-config}}
-						
-						success: function(data) {
-							// {{success-handler}}
-							this.isWorking(false);
-						}.bind(this),
-						
-						error: function(jqXHR, textStatus, errorThrown) {
-							// {{error-handler}}
-							this.isWorking(false);
-						}.bind(this)
-					});
+			var overlay = jQuery("#{{app-id}}-overlay");
+	
+			this.submit = function() {
+				overlay.height(overlay.parent().height());
+				overlay.width(overlay.parent().width());
+				overlay.show();
+				
+				jQuery.ajax("{{url}}", 
+						{
+							{{ajax-config}}
+							
+							success: function(data) {
+								// {{success-handler}}
+								overlay.hide();
+							}.bind(this),
+							
+							error: function(jqXHR, textStatus, errorThrown) {
+								// {{error-handler}}
+								overlay.hide();
+							}.bind(this)
+						});
+			};
+			
 		};
 		
-	}, document.getElementById("{{app-id}}"));	
+		ko.applyBindings(new ViewModel(), container);
+	} else {
+		console.error("Application container '{{app-id}}' not found");
+	}
 	
 });
 	

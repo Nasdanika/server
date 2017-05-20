@@ -5479,26 +5479,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				formModal.title(getResourceString(context, "create"), " ", getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType));
 				
-				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").knockout().visible("isWorking()");
-				Form form = htmlFactory.form()
-						.action("something")
-						.method(Method.post)
-						.knockout().submit("submit");
-						//.knockout().disable("!isWorking()");
+				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none");
+				Form form = htmlFactory.form().knockout().submit("submit");
 				
-				form.content(htmlFactory.span("z").knockout().text("test"));
-				form.formInputGroup("Test", htmlFactory.input(InputType.text).knockout().textInput("test"), "For testing purposes");
 
 				form.content(htmlFactory.tag(TagName.hr));
-				form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);//.knockout().click("submit");
+				form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
 				form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
 				
 				// TODO - form configuration 				
 				
 				Tag appDiv = htmlFactory.div(overlay, form).id(appId);
-//				formModal.body(appDiv);
-//				ret.content(formModal);
-				ret.content(appDiv);
+				formModal.body(appDiv);
+				ret.content(formModal);
 				
 //		 		- app-id - application id, base for other ID's like modal, form, and overlay.
 //				- url - server endpoint communication url.
