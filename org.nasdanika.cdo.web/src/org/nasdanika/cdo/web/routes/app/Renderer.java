@@ -86,6 +86,7 @@ import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.TransactionContext;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
@@ -100,7 +101,6 @@ import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.Spinner;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
-import org.nasdanika.html.Form.Method;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.FormGroup.Status;
 import org.nasdanika.html.FormInputGroup;
@@ -3168,12 +3168,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				ret.content(typedElementTable);
 				if (typedElement instanceof EStructuralFeature) {
-					if (typedElement instanceof EReference) {
-						for (EClass ec: getReferenceElementTypes(context, obj, (EReference) typedElement)) {
-							Object createApp = getRenderer(ec).renderCreateContainmentReferenceElementModalDialogApplication(context, obj, (EStructuralFeature) typedElement, ec);
-							ret.content(createApp);
-						}
-					}					
+//					if (typedElement instanceof EReference) {
+//						for (EClass ec: getReferenceElementTypes(context, obj, (EReference) typedElement)) {
+//							Object createApp = getRenderer(ec).renderCreateContainmentReferenceElementModalDialogApplication(context, obj, (EStructuralFeature) typedElement, ec);
+//							ret.content(createApp);
+//						}
+//					}					
 					ret.content(htmlFactory.div(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).style().margin("5px"));
 				}
 			} else {
@@ -5240,6 +5240,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param validationResults
 	 * @param namedElementValidationResults
 	 * @param horizontalForm
+	 * @param docModalsContainer If form is rendered in a modal, then doc modals shall be rendered in a different container. 
 	 * @return
 	 * @throws Exception
 	 */
@@ -5248,14 +5249,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			T obj, 
 			List<ValidationResult> validationResults, 
 			Map<ENamedElement, List<ValidationResult>> namedElementValidationResults, 
-			boolean horizontalForm) throws Exception {
+			boolean horizontalForm,
+			Container<?> docModalsContainer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form editForm = htmlFactory.form();
-		
+
+		if (docModalsContainer == null) {
+			docModalsContainer = editForm;
+		}
 		Map<EStructuralFeature, Modal> featureDocModals = renderEditableFeaturesDocModals(context, obj);
 		for (Modal fdm: featureDocModals.values()) {
-			editForm.content(fdm);
+			docModalsContainer.content(fdm);
 		}
 		
 		ListGroup errorList = htmlFactory.listGroup();
@@ -5452,6 +5457,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param eClassName
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	default Object renderCreateContainmentReferenceElementModalDialogApplication(C context, EObject container, EStructuralFeature containmentFeature, EClass featureElementType) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
@@ -5477,41 +5483,66 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				default:
 					break;		
 				}
-				formModal.title(getResourceString(context, "create"), " ", getRenderer(featureElementType).renderNamedElementIconAndLabel(context, featureElementType));
+				Renderer<C, EObject> renderer = getRenderer(featureElementType);
+				formModal.title(getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, featureElementType));
 				
-				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none");
-				Form form = htmlFactory.form().knockout().submit("submit");
-				
+				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
-				form.content(htmlFactory.tag(TagName.hr));
-				form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
-				form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
+				// Form elements
+				boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, featureElementType, RenderAnnotation.HORIZONTAL_FORM));
+				boolean noValidate = "true".equals(renderer.getRenderAnnotation(context, featureElementType, RenderAnnotation.NO_VALIDATE));
+
+				Object oldValue = null;
+				EObject instance = featureElementType.getEPackage().getEFactoryInstance().create(featureElementType);
+				// Adding the new instance to the object graph for selectors to work. 
+				if (containmentFeature.isMany()) {
+					((Collection<Object>) container.eGet(containmentFeature)).add(instance);
+				} else {
+					oldValue = container.eGet(containmentFeature);
+					container.eSet(containmentFeature, instance);
+				}					
 				
-				// TODO - form configuration 				
-				
-				Tag appDiv = htmlFactory.div(overlay, form).id(appId);
-				formModal.body(appDiv);
-				ret.content(formModal);
-				
-//		 		- app-id - application id, base for other ID's like modal, form, and overlay.
-//				- url - server endpoint communication url.
-//				- declarations - observables and other declarations
-//				- success-handler - invoked on AJAX success
-//				- error-handler - invoked on AJAX error
-//				- ajax-config - additional configuration for jQuery.ajax, e.g. method. Shall end with a comma, may be blank
-				Map<String, Object> scriptConfig = new HashMap<>();
-				scriptConfig.put("app-id", appId);
-				scriptConfig.put("url", "index.html"); // For testing.
-				scriptConfig.put("declarations", ""); // Use HTML gen binding.
-				scriptConfig.put("success-handler", "");
-				scriptConfig.put("error-handler", "");
-				scriptConfig.put("ajax-config", "");
-				ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));
-				
-				
-				// location.reload(); if not view-on-create
-				
-				
+				try {
+					Form form = renderer.renderEditForm(context, instance, Collections.emptyList(), Collections.emptyMap(), horizontalForm, ret)
+							.knockout().submit("submit")
+							.novalidate(noValidate);
+					
+					configureForm(form, horizontalForm, modalType);
+	
+					form.content(htmlFactory.tag(TagName.hr));
+					form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
+					form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
+					
+					// TODO - form configuration 				
+					
+					formModal.body(overlay, form);
+					ret.content(formModal);
+					
+	//		 		- app-id - application id, base for other ID's like modal, form, and overlay.
+	//				- url - server endpoint communication url.
+	//				- declarations - observables and other declarations
+	//				- success-handler - invoked on AJAX success
+	//				- error-handler - invoked on AJAX error
+	//				- ajax-config - additional configuration for jQuery.ajax, e.g. method. Shall end with a comma, may be blank
+					Map<String, Object> scriptConfig = new HashMap<>();
+					scriptConfig.put("app-id", appId);
+					scriptConfig.put("url", "index.html"); // For testing.
+					scriptConfig.put("declarations", ""); // Use HTML gen binding.
+					scriptConfig.put("success-handler", "");
+					scriptConfig.put("error-handler", "");
+					scriptConfig.put("ajax-config", "");
+					ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));
+					
+					
+					// location.reload(); if not view-on-create
+				} finally {				
+					// Removing the new instance from the object graph. 
+					if (containmentFeature.isMany()) {
+						((Collection<Object>) container.eGet(containmentFeature)).remove(instance);
+					} else {
+						container.eSet(containmentFeature, oldValue);
+					}					
+				}				
 			}
 		}
 		
@@ -5563,6 +5594,28 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 		
 	
+
+	/**
+	 * Configures form appearance
+	 * @param form
+	 * @param horizontalForm
+	 * @param modalType
+	 */
+	default void configureForm(Form form, boolean horizontalForm, ModalType modalType) {
+		form
+			.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
+			.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
+			.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
+			.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
+	
+		if (horizontalForm) {
+			form
+				.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
+				.horizontal(Bootstrap.DeviceSize.SMALL, 5)
+				.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
+				.horizontal(Bootstrap.DeviceSize.LARGE, 3);						
+		}		
+	}
 	
 	
 }

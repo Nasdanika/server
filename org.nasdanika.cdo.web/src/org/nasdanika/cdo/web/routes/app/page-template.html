@@ -26,8 +26,55 @@
 		<script>hljs.initHighlightingOnLoad();</script>
 		
         <script src="{{resources-path}}/js/require.js"></script>
-        
-        {{head}}                       
+		
+		<script>        
+			// Code to stack bootstrap modals inspired by http://miles-by-motorcycle.com/static/bootstrap-modal/index.html
+			$(document).ready(function() {
+								
+				$('.modal').on(
+						'hidden.bs.modal', 
+						function(event) {
+							$(this).removeClass('fv-modal-stack');
+							$('body').data('fv_open_modals', $('body').data('fv_open_modals') - 1);
+						});
+			
+				$('.modal').on(
+						'shown.bs.modal',
+						function(event) {
+			
+							// keep track of the number of open modals
+			
+							if (typeof ($('body').data('fv_open_modals')) == 'undefined') {
+								$('body').data('fv_open_modals', 0);
+							}
+			
+							// if the z-index of this modal has been set, ignore.
+			
+							if ($(this).hasClass('fv-modal-stack')) {
+								return;
+							}
+										
+							$(this).addClass('fv-modal-stack');
+							$('body').data('fv_open_modals', $('body').data('fv_open_modals') + 1);
+							
+							// --- Option 1 ---
+							$(this).css('z-index', 1040 + (10 * $('body').data('fv_open_modals')));
+							$('.modal-backdrop').not('.fv-modal-stack').css('z-index', 1039 + (10 * $('body').data('fv_open_modals')));
+							$('.modal-backdrop').not('fv-modal-stack').addClass('fv-modal-stack');
+							
+							// --- Option 2 - if back-drop is inside the modal ---
+							//var zIndex = 1040 + (10 * $('body').data('fv_open_modals'));
+							//$(this).css('z-index', zIndex);
+							//$(this).find(".modal-dialog").css('z-index', zIndex + 1);
+							//$(this).find('.modal-backdrop').css('z-index', zIndex -1);
+							
+						});
+			
+			        
+			});
+		</script>
+		        
+        {{head}}    		                           
     </head>
 
     <body>

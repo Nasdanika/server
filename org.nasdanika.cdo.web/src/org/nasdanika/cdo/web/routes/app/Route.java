@@ -56,7 +56,6 @@ import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.TransactionContext;
-import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
@@ -176,6 +175,14 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		EClass targetEClass = target.eClass();
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 		Fragment content = getHTMLFactory(context).fragment();
+		
+		// Create applications
+		for (EStructuralFeature vf: getVisibleFeatures(context, target, feature -> feature instanceof EReference && getTypedElementLocation(context, feature) == TypedElementLocation.item)) {
+			for (EClass ec: getReferenceElementTypes(context, target, (EReference) vf)) {
+				Object createApp = getRenderer(ec).renderCreateContainmentReferenceElementModalDialogApplication(context, target, (EStructuralFeature) vf, ec);
+				content.content(createApp);
+			}			
+		}	
 		
 		// Documentation modals
 		Modal classDocModal = renderDocumentationModal(context, targetEClass);
@@ -474,7 +481,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				.action("select.html")				
 				.method(Method.post);
 			
-			configureForm(editForm, horizontalForm);
+			configureForm(editForm, horizontalForm, ModalType.NONE);
 			
 			String originalReferrer = referrerParameter;
 			if (originalReferrer == null) {
@@ -629,12 +636,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 																
 						boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
 						boolean noValidate = "true".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
-						Form editForm = renderer.renderEditForm(context, instance, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm)
+						Form editForm = renderer.renderEditForm(
+								context, 
+								instance, 
+								diagnosticConsumer.getValidationResults(), 
+								diagnosticConsumer.getNamedElementValidationResults(), 
+								horizontalForm,
+								content)
 							.novalidate(noValidate)
 							.action(eclass)
 							.method(Method.post);
 						
-						configureForm(editForm, horizontalForm);
+						configureForm(editForm, horizontalForm, ModalType.NONE);
 						
 						String originalReferrer = referrerParameter;
 						if (originalReferrer == null) {
@@ -838,7 +851,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				.action("add.html")
 				.method(Method.post);
 			
-			configureForm(addForm, horizontalForm);
+			configureForm(addForm, horizontalForm, ModalType.NONE);
 			
 			String originalReferrer = referrerParameter;
 			if (originalReferrer == null) {
@@ -1133,7 +1146,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				.action("edit.html")
 				.method(Method.post);
 			
-			configureForm(editForm, horizontalForm);
+			configureForm(editForm, horizontalForm, ModalType.NONE);
 			
 			String originalReferrer = referrerParameter;
 			if (originalReferrer == null) {
@@ -1247,12 +1260,18 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
 		boolean noValidate = "true".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.NO_VALIDATE));
-		Form editForm = renderEditForm(context, target, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm)
+		Form editForm = renderEditForm(
+				context, 
+				target, 
+				diagnosticConsumer.getValidationResults(), 
+				diagnosticConsumer.getNamedElementValidationResults(), 
+				horizontalForm,
+				content)
 			.novalidate(noValidate)
 			.action("edit.html")
 			.method(Method.post);
 		
-		configureForm(editForm, horizontalForm);
+		configureForm(editForm, horizontalForm, ModalType.NONE);
 		
 		String originalReferrer = referrerParameter;
 		if (originalReferrer == null) {
@@ -2066,7 +2085,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						inputForm.content(htmlFactory.input(InputType.hidden).name("context-object").value(contextObjectID)); // encode?						
 					}					
 					
-					configureForm(inputForm, horizontalForm);
+					configureForm(inputForm, horizontalForm, ModalType.NONE);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
 					
 					Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
@@ -2274,7 +2293,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						inputForm.content(htmlFactory.input(InputType.hidden).name("context-object").value(contextObjectID)); // encode?						
 					}					
 					
-					configureForm(inputForm, horizontalForm);
+					configureForm(inputForm, horizontalForm, ModalType.NONE);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
 					
 					Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
@@ -2421,27 +2440,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 */
 	public Object filterEOperationResult(C context, EOperation eOperation, Object result) throws Exception {
 		return result;
-	}
-
-	/**
-	 * Configures form appearance
-	 * @param form
-	 * @param horizontalForm
-	 */
-	protected void configureForm(Form form, boolean horizontalForm) {
-		form
-			.bootstrap().grid().col(Bootstrap.DeviceSize.EXTRA_SMALL, 12)
-			.bootstrap().grid().col(Bootstrap.DeviceSize.SMALL, 12)
-			.bootstrap().grid().col(Bootstrap.DeviceSize.MEDIUM, 9)
-			.bootstrap().grid().col(Bootstrap.DeviceSize.LARGE, 7);
-	
-		if (horizontalForm) {
-			form
-				.horizontal(Bootstrap.DeviceSize.EXTRA_SMALL, 6)
-				.horizontal(Bootstrap.DeviceSize.SMALL, 5)
-				.horizontal(Bootstrap.DeviceSize.MEDIUM, 4)
-				.horizontal(Bootstrap.DeviceSize.LARGE, 3);						
-		}		
 	}
 		
 }
