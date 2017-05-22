@@ -21,19 +21,17 @@ $(function() {
 				overlay.width(overlay.parent().width());
 				overlay.show();
 				
-				console.log(ko.toJSON(this));
-				
 				jQuery.ajax("{{url}}", 
 						{
 							{{ajax-config}}
 							
 							success: function(data) {
-								// {{success-handler}}
+								{{success-handler}}
 								overlay.hide();
 							}.bind(this),
 							
 							error: function(jqXHR, textStatus, errorThrown) {
-								// {{error-handler}}
+								{{error-handler}}
 								overlay.hide();
 							}.bind(this)
 						});
@@ -48,7 +46,7 @@ $(function() {
 	    	var form = $(this).find('.modal-body form');
 	    	var modalBody = $(this).find('.modal-body');
 	    	form.width((modalBody.width()-30)+"px");
-	    	modalBody.height(form.height() + "px");
+	    	modalBody.height((form.height() + 30) + "px"); // 30 pixes for dynamic wysiwyg toolbar, just in case.
 	    });	    
 	} else {
 		console.error("Application container '{{app-id}}'-modal not found");

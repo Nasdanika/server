@@ -16,6 +16,7 @@ import java.util.Map.Entry;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
@@ -504,6 +505,17 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		return Action.BAD_REQUEST;				
 	}
 	
+	/**
+	 * @param context
+	 * @param target
+	 * @param referrerHeader
+	 * @param reference
+	 * @param epackage
+	 * @param eclass
+	 * @param referrerParameter
+	 * @return
+	 * @throws Exception
+	 */
 	@SuppressWarnings("unchecked")
 	@RouteMethod(
 			value = { RequestMethod.GET, RequestMethod.POST }, 
@@ -521,14 +533,16 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			@PathParameter("epackage") String epackage,
 			@PathParameter("eclass") String eclass,
 			@QueryParameter(REFERRER_KEY) String referrerParameter) throws Exception {
-
+		
 		EStructuralFeature tsf = target.eClass().getEStructuralFeature(reference);
-		context.getRequest().setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, tsf);
+		HttpServletRequest request = context.getRequest();
+		request.setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, tsf);
 		if (tsf instanceof EReference && context instanceof CDOViewContext) {
 			String ePackageNsURI = new String(Hex.decodeHex(epackage.toCharArray()));
 			EPackage ePackage = ((CDOViewContext<CDOView, ?>) context).getView().getSession().getPackageRegistry().getEPackage(ePackageNsURI);
 			if (ePackage != null) {
-				EClassifier eClassifier = ePackage.getEClassifier(eclass.substring(0, eclass.length() - EXTENSION_HTML.length()));
+				boolean isJSON = CONTENT_TYPE_APPLICATION_JSON.equals(request.getContentType());
+				EClassifier eClassifier = ePackage.getEClassifier(eclass.substring(0, eclass.length() - (isJSON ? EXTENSION_JSON : EXTENSION_HTML).length()));
 				EClass eReferenceType = ((EReference) tsf).getEReferenceType();
 				if (eClassifier instanceof EClass) {
 					EClass eClass = (EClass) eClassifier;					
@@ -553,66 +567,132 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							
 						};
 						
+						Object featureValue = target.eGet(tsf);
 						// Adding the new instance to the object graph for selectors to work. 
 						if (tsf.isMany()) {
-							((Collection<Object>) target.eGet(tsf)).add(instance);
+							((Collection<Object>) featureValue).add(instance);
 						} else {
 							target.eSet(tsf, instance);
 						}					
 						
 						// Set for GET from query parameters and for POST from form inputs. Display validation results only for POST.
 						boolean setSuccessful = renderer.setEditableFeatures(context, instance, diagnosticConsumer);
-						if (context.getMethod() == RequestMethod.POST && setSuccessful) {			
-							// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
-							if (context instanceof HttpServletRequestContext) {
-								if (renderer.isViewOnCreate(context, instance)) {
-									return new Action() {
-
-										@Override
-										public void close() throws Exception {
-											// NOP											
-										}
-
-										@Override
-										public Object execute() throws Exception {
-											context.getResponse().sendRedirect(context.getObjectPath(instance)+"/"+INDEX_HTML);
-											return null;
-										}
+						if (context.getMethod() == RequestMethod.POST) {
+							if (isJSON) {
+								// AJAX 
+								if (setSuccessful) {
+									if (getRenderer(instance).isViewOnCreate(context, instance)) {
 										
-									};
+										// Rendering response post-commit to get permanent CDOID
+										return new Action() {
+
+											@Override
+											public void close() throws Exception {
+												// NOP												
+											}
+
+											@Override
+											public Object execute() throws Exception {
+//												context.getResponse().setContentType(CONTENT_TYPE_APPLICATION_JSON);
+												JSONObject result = new JSONObject();
+												result.put("location", context.getObjectPath(instance)+"/"+INDEX_HTML);
+												return result;
+											}
+											
+										};
+									} else {
+//										context.getResponse().setContentType(CONTENT_TYPE_APPLICATION_JSON);
+										JSONObject result = new JSONObject();
+										String referrer = referrerParameter;
+										if (referrer == null) {
+											referrer = referrerHeader;
+										}
+										if (referrer == null) {
+											referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+										}
+										int referrerQueryStart = referrer.indexOf("?");
+										if (referrerQueryStart == -1) {
+											referrer +=  "?";
+										} else {
+											StringBuilder queryBuilder = new StringBuilder();
+											for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+												if (!qe.startsWith("context-feature=")) {
+													queryBuilder.append(qe).append("&");
+												}
+											}
+											referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+										}
+										referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
+										result.put("location", referrer);
+										return result;
+									} 
+								} else {
+									JSONObject result = new JSONObject();
+									result.put("validationResults", diagnosticConsumer.toJSON());
+									
+									// Removing the new instance from the object graph. 
+									if (tsf.isMany()) {
+										((Collection<Object>) featureValue).remove(instance);
+									} else {
+										target.eSet(tsf, featureValue);
+									}
+									
+									return result;
+								}
+							} else if (setSuccessful) {
+								// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
+								if (context instanceof HttpServletRequestContext) {
+									if (renderer.isViewOnCreate(context, instance)) {
+										return new Action() {
+	
+											@Override
+											public void close() throws Exception {
+												// NOP											
+											}
+	
+											@Override
+											public Object execute() throws Exception {
+												context.getResponse().sendRedirect(context.getObjectPath(instance)+"/"+INDEX_HTML);
+												return null;
+											}
+											
+										};
+									}
+									
+									String referrer = referrerParameter;
+									if (referrer == null) {
+										referrer = referrerHeader;
+									}
+									if (referrer == null) {
+										referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+									}
+									int referrerQueryStart = referrer.indexOf("?");
+									if (referrerQueryStart == -1) {
+										referrer +=  "?";
+									} else {
+										StringBuilder queryBuilder = new StringBuilder();
+										for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+											if (!qe.startsWith("context-feature=")) {
+												queryBuilder.append(qe).append("&");
+											}
+										}
+										referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+									}
+									referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
+									((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
+									return Action.NOP;
 								}
 								
-								String referrer = referrerParameter;
-								if (referrer == null) {
-									referrer = referrerHeader;
-								}
-								if (referrer == null) {
-									referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
-								}
-								int referrerQueryStart = referrer.indexOf("?");
-								if (referrerQueryStart == -1) {
-									referrer +=  "?";
-								} else {
-									StringBuilder queryBuilder = new StringBuilder();
-									for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
-										if (!qe.startsWith("context-feature=")) {
-											queryBuilder.append(qe).append("&");
-										}
-									}
-									referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
-								}
-								referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
-								((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
-								return Action.NOP;
+								return "Update successful";
 							}
-							
-							return "Update successful";
 						} 
 						
-						// Rollback transaction to remove the instance.
-						if (context instanceof TransactionContext) {
-							((TransactionContext) context).setRollbackOnly();
-						}
+						// Removing the new instance from the object graph. 
+						if (tsf.isMany()) {
+							((Collection<Object>) featureValue).remove(instance);
+						} else {
+							target.eSet(tsf, featureValue);
+						}					
 	
 						HTMLFactory htmlFactory = getHTMLFactory(context);
 						String title = StringEscapeUtils.escapeHtml4(renderer.nameToLabel(eClass.getName()));

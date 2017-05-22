@@ -144,6 +144,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 		
+	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
 	
@@ -160,7 +161,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 
 	String INDEX_HTML = "index.html";
 	
-	String EXTENSION_HTML = ".html";	
+	String EXTENSION_HTML = ".html";
+	
+	String EXTENSION_JSON = ".json";	
 
 	/**
 	 * Rendering can be customized by annotating model element with
@@ -1484,7 +1487,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	/**
 	 * Sets feature value from the context to the object. This implementation loads feature value(s) 
-	 * from the {@link HttpServletRequest} parameters.
+	 * from the {@link HttpServletRequest} parameters or from the request body parsed to json object if request content type is "application/json".
 	 * @param context
 	 * @param feature
 	 * @throws Exception
@@ -1492,18 +1495,43 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default void setFeatureValue(C context, T obj, EStructuralFeature feature) throws Exception {
 		if (context instanceof HttpServletRequestContext) {
 			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
+			JSONObject jsonData = null;
+			if (CONTENT_TYPE_APPLICATION_JSON.contentEquals(request.getContentType())) {
+				// Cache in request to avoid multiple parsings.
+				String jsonDataRequestAttributeKey = Renderer.class.getName()+":jsonData";
+				jsonData = (JSONObject) request.getAttribute(jsonDataRequestAttributeKey);
+				if (jsonData == null) {
+					try (InputStream in = request.getInputStream()) {
+						jsonData = new JSONObject(new JSONTokener(in));
+					}
+					request.setAttribute(jsonDataRequestAttributeKey, jsonData);
+				}
+			}
+			String featureName = feature.getName();
 			if (feature.isMany()) {
 				@SuppressWarnings("unchecked")
 				Collection<Object> fv = (Collection<Object>) obj.eGet(feature);
 				fv.clear();
-				String[] values = request.getParameterValues(feature.getName());
-				if (values != null) {
-					for (String val: values) {
-						fv.add(parseTypedElementValue(context, feature, val));
+				if (jsonData == null) {
+					String[] values = request.getParameterValues(featureName);
+					if (values != null) {
+						for (String val: values) {
+							fv.add(parseTypedElementValue(context, feature, val));
+						}
 					}
-				}						
-			} else {
-				String value = request.getParameter(feature.getName());
+				} else if (jsonData.has(featureName)) {
+					JSONArray jva = jsonData.getJSONArray(featureName);
+					for (int i=0; i < jva.length(); ++i) {
+						fv.add(parseTypedElementValue(context, feature, jva.getString(i))); // Do we need to stringify and re-parse numbers and dates?
+					}
+				}
+			} else {				
+				String value = null;
+				if (jsonData == null) {
+					value = request.getParameter(featureName);
+				} else if (jsonData.has(featureName)) {
+					value = jsonData.getString(featureName);
+				}
 				if (value == null) {
 					obj.eUnset(feature);
 				} else {
@@ -4237,7 +4265,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			textArea.content(getFormControlValue(context, contextObject, typedElement, value));
 			if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 				textArea.id(htmlFactory.nextId());
-				//fieldContainer.content(renderTinymceInitScript(context, textArea)); - TinyMCE doesn't work with knockout OOTB, needs a plug-in - https://github.com/michaelpapworth/tinymce-knockout-binding
+				fieldContainer.content(renderWysiwygJsInitializerScript(context, textArea)); 
 //				fieldContainer.content(htmlFactory.tag(TagName.script, "$(document).ready(function() {  $('#"+textArea.getId()+"').wysiwyg({ toolbar: 'selection'|'top'|'top-focus'|'top-selection'|'top-focus-selection'|'bottom'|'bottom-focus'|'bottom-selection'|'bottom-focus-selection' }); });"));
 			}
 			return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, textArea);
@@ -4258,8 +4286,23 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (textArea.getId() == null) {
 			textArea.id(htmlFactory.nextId());
 		}
-		return htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("tinymce-init.js"), token -> "selector".equals(token) ? "#" + textArea.getId() : null));				
+		return htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("tinymce-init.js"), "selector", "#" + textArea.getId()));				
 	}
+	/**
+	 * Renders TinyMCE initialization script for the text area. This implementation interpolates ``tinymce-init.js`` script with the ``#<text area id>`` as ``selector`` token.
+	 * @param context
+	 * @param textArea
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderWysiwygJsInitializerScript(C context, TextArea textArea) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		if (textArea.getId() == null) {
+			textArea.id(htmlFactory.nextId());
+		}
+		return htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("wysiwyg-js-initializer.js"), "selector", "#" + textArea.getId()));				
+	}
+
 
 	/**
 	 * Returns true if given feature is required. This implementation returns true if feature is not many and lower bound is not 0.
@@ -4587,10 +4630,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		final FormGroup.Status status;
 		final String message;
 		
-		public ValidationResult(FormGroup.Status status, String message) {
+		ValidationResult(FormGroup.Status status, String message) {
 			super();
 			this.status = status;
 			this.message = message;
+		}
+		
+		JSONObject toJSON() {
+			JSONObject ret = new JSONObject();
+			ret.put("status", status.name());
+			ret.put("message", message);
+			return ret;
 		}
 		
 	}
@@ -5514,7 +5564,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}		
 				
 				StringBuilder koBindings = new StringBuilder();
-				
+								
 				try {
 					FormRenderingListener<C, EObject, EStructuralFeature> koBinder = new FormRenderingListener<C, EObject, EStructuralFeature>() {
 						
@@ -5565,6 +5615,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					formModal.body(overlay, form);
 					ret.content(formModal);
 					
+					StringBuilder declarationsBuilder = new StringBuilder();
+					declarationsBuilder.append("this.data = {").append(koBindings).append("};").append(System.lineSeparator());
+					
+					StringBuilder ajaxConfigBuilder = new StringBuilder();
+					ajaxConfigBuilder.append("type: 'POST',").append(System.lineSeparator());
+					ajaxConfigBuilder.append("contentType: '"+CONTENT_TYPE_APPLICATION_JSON+"',").append(System.lineSeparator());
+					ajaxConfigBuilder.append("dataType: 'json',").append(System.lineSeparator());
+					ajaxConfigBuilder.append("data: ko.toJSON(this.data),").append(System.lineSeparator());
+					
+					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
+					String createURL = getRenderer(container).getObjectURI(context, container)+"/reference/"+containmentFeature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_JSON;
+					
 	//		 		- app-id - application id, base for other ID's like modal, form, and overlay.
 	//				- url - server endpoint communication url.
 	//				- declarations - observables and other declarations
@@ -5573,15 +5635,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	//				- ajax-config - additional configuration for jQuery.ajax, e.g. method. Shall end with a comma, may be blank
 					Map<String, Object> scriptConfig = new HashMap<>();
 					scriptConfig.put("app-id", appId);
-					scriptConfig.put("url", "index.html"); // For testing.
-					scriptConfig.put("declarations", "this.data = {"+koBindings+"};"); // Use HTML gen binding.
-					scriptConfig.put("success-handler", "");
-					scriptConfig.put("error-handler", "");
-					scriptConfig.put("ajax-config", "");
-					ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));
+					scriptConfig.put("url", createURL); // For testing.
+					scriptConfig.put("declarations", declarationsBuilder.toString()); // Use HTML gen binding.
 					
+					// Success handler
+					Map<String,Object> successHandlerConfig = new HashMap<>();
+					scriptConfig.put("success-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-success-handler.js"), successHandlerConfig));
 					
-					// location.reload(); if not view-on-create
+					// Error handler
+					scriptConfig.put("error-handler", "console.dir(errorThrown);");
+					scriptConfig.put("ajax-config", ajaxConfigBuilder.toString());
+					ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));										
 				} finally {				
 					// Removing the new instance from the object graph. 
 					if (containmentFeature.isMany()) {

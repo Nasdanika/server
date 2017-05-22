@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Consumer;
 
 import org.apache.commons.lang3.StringEscapeUtils;
@@ -12,6 +13,8 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.ENamedElement;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.ETypedElement;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.nasdanika.cdo.web.routes.app.Renderer.ValidationResult;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.FormGroup;
@@ -97,5 +100,24 @@ public abstract class ValidationResultsDiagnostiConsumer implements Consumer<Dia
 	 * @throws Exception
 	 */
 	protected abstract String getResourceString(ENamedElement namedElement, String key) throws Exception;
+
+	public JSONObject toJSON() {
+		JSONObject ret = new JSONObject();
+		JSONArray jvr = new JSONArray();
+		ret.put("results", jvr);
+		for (ValidationResult vr: getValidationResults()) {
+			jvr.put(vr.toJSON());
+		}
+		JSONObject nejvr = new JSONObject();
+		ret.put("namedElementValidationResults", nejvr);
+		for (Entry<ENamedElement, List<ValidationResult>> nevr: getNamedElementValidationResults().entrySet()) {
+			JSONArray vra = new JSONArray();
+			ret.put(nevr.getKey().getName(), vra);
+			for (ValidationResult vr: nevr.getValue()) {
+				vra.put(vr.toJSON());
+			}			
+		}
+		return ret;
+	}
 	
 }
