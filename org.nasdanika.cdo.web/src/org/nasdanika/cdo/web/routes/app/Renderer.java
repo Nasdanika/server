@@ -5640,6 +5640,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					
 					// Success handler
 					Map<String,Object> successHandlerConfig = new HashMap<>();
+					successHandlerConfig.put("app-id", appId);
 					scriptConfig.put("success-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-success-handler.js"), successHandlerConfig));
 					
 					// Error handler
