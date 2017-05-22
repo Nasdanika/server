@@ -86,7 +86,6 @@ import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
-import org.nasdanika.core.TransactionContext;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Glyphicon;
@@ -109,6 +108,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.HTMLFactory.TokenSource;
 import org.nasdanika.html.Input;
+import org.nasdanika.html.InputBase;
 import org.nasdanika.html.JsTree;
 import org.nasdanika.html.JsTreeNode;
 import org.nasdanika.html.LinkGroup;
@@ -4237,7 +4237,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			textArea.content(getFormControlValue(context, contextObject, typedElement, value));
 			if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 				textArea.id(htmlFactory.nextId());
-				fieldContainer.content(renderTinymceInitScript(context, textArea));
+				//fieldContainer.content(renderTinymceInitScript(context, textArea)); - TinyMCE doesn't work with knockout OOTB, needs a plug-in - https://github.com/michaelpapworth/tinymce-knockout-binding
+//				fieldContainer.content(htmlFactory.tag(TagName.script, "$(document).ready(function() {  $('#"+textArea.getId()+"').wysiwyg({ toolbar: 'selection'|'top'|'top-focus'|'top-selection'|'top-focus-selection'|'bottom'|'bottom-focus'|'bottom-selection'|'bottom-focus-selection' }); });"));
 			}
 			return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, textArea);
 		default:
@@ -4605,6 +4606,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param docModals
 	 * @param validationResults
 	 * @param helpTooltip
+	 * @param formRenderingListener 
 	 * @throws Exception
 	 */
 	default List<FormGroup<?>> renderEditableFeaturesFormGroups(
@@ -4613,7 +4615,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			FieldContainer<?> fieldContainer, 
 			Map<EStructuralFeature, Modal> docModals, 
 			Map<ENamedElement,List<ValidationResult>> validationResults,
-			boolean helpTooltip) throws Exception {
+			boolean helpTooltip, 
+			FormRenderingListener<C, T, EStructuralFeature> formRenderingListener) throws Exception {
 		
 		Map<EStructuralFeature, Object> editableFeatures = new LinkedHashMap<>();
 		for (EStructuralFeature ef: getEditableFeatures(context, obj)) {
@@ -4621,7 +4624,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		// TODO - add support of inlined features.
-		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip, null);
+		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip, formRenderingListener);
 	}
 
 	/**
@@ -5250,6 +5253,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			List<ValidationResult> validationResults, 
 			Map<ENamedElement, List<ValidationResult>> namedElementValidationResults, 
 			boolean horizontalForm,
+			FormRenderingListener<C, T, EStructuralFeature> formRenderingListener,			
 			Container<?> docModalsContainer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
@@ -5281,7 +5285,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			editForm.content(errorList);
 		}
 				
-		renderEditableFeaturesFormGroups(context, obj, editForm, featureDocModals, namedElementValidationResults, horizontalForm).forEach((fg) -> fg.feedback(!horizontalForm));
+		renderEditableFeaturesFormGroups(
+				context, 
+				obj, 
+				editForm, 
+				featureDocModals, 
+				namedElementValidationResults, 
+				horizontalForm,
+				formRenderingListener).forEach((fg) -> fg.feedback(!horizontalForm));
 		return editForm;
 	}
 	
@@ -5500,12 +5511,48 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				} else {
 					oldValue = container.eGet(containmentFeature);
 					container.eSet(containmentFeature, instance);
-				}					
+				}		
+				
+				StringBuilder koBindings = new StringBuilder();
 				
 				try {
-					Form form = renderer.renderEditForm(context, instance, Collections.emptyList(), Collections.emptyMap(), horizontalForm, ret)
-							.knockout().submit("submit")
-							.novalidate(noValidate);
+					FormRenderingListener<C, EObject, EStructuralFeature> koBinder = new FormRenderingListener<C, EObject, EStructuralFeature>() {
+						
+						@Override
+						public UIElement<?> onFormControlRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, UIElement<?> control) {
+							if (control instanceof InputBase) {
+								control.knockout().value("data."+typedElement.getName());
+								if (koBindings.length() > 0) {
+									koBindings.append(",").append(System.lineSeparator());
+								}
+								if (typedElement.isMany()) {
+									koBindings.append(typedElement.getName()+": ko.observableArray()");
+								} else {
+									// TODO - initial/default values
+									koBindings.append(typedElement.getName()+": ko.observable()");									
+								}
+							}
+							
+							return super.onFormControlRendering(context, obj, typedElement, value, control);
+						}
+						
+						@Override
+						public void onFormGroupRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, FormGroup<?> formGroup) {
+							// TODO - has-... validation results
+							super.onFormGroupRendering(context, obj, typedElement, value, formGroup);
+						}
+						
+					};
+					Form form = renderer.renderEditForm(
+							context, 
+							instance, 
+							Collections.emptyList(), 
+							Collections.emptyMap(), 
+							horizontalForm,
+							koBinder,
+							ret)
+								.knockout().submit("submit")
+								.novalidate(noValidate);
 					
 					configureForm(form, horizontalForm, modalType);
 	
@@ -5527,7 +5574,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Map<String, Object> scriptConfig = new HashMap<>();
 					scriptConfig.put("app-id", appId);
 					scriptConfig.put("url", "index.html"); // For testing.
-					scriptConfig.put("declarations", ""); // Use HTML gen binding.
+					scriptConfig.put("declarations", "this.data = {"+koBindings+"};"); // Use HTML gen binding.
 					scriptConfig.put("success-handler", "");
 					scriptConfig.put("error-handler", "");
 					scriptConfig.put("ajax-config", "");

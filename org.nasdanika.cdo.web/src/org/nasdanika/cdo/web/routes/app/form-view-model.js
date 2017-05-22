@@ -21,6 +21,8 @@ $(function() {
 				overlay.width(overlay.parent().width());
 				overlay.show();
 				
+				console.log(ko.toJSON(this));
+				
 				jQuery.ajax("{{url}}", 
 						{
 							{{ajax-config}}
@@ -45,8 +47,8 @@ $(function() {
 	    $('#{{app-id}}-modal').on('shown.bs.modal', function() {
 	    	var form = $(this).find('.modal-body form');
 	    	var modalBody = $(this).find('.modal-body');
-	    	modalBody.height(form.height()+"px");
 	    	form.width((modalBody.width()-30)+"px");
+	    	modalBody.height(form.height() + "px");
 	    });	    
 	} else {
 		console.error("Application container '{{app-id}}'-modal not found");

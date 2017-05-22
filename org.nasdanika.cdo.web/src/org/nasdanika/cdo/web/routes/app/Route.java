@@ -642,6 +642,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								diagnosticConsumer.getValidationResults(), 
 								diagnosticConsumer.getNamedElementValidationResults(), 
 								horizontalForm,
+								null,
 								content)
 							.novalidate(noValidate)
 							.action(eclass)
@@ -1266,6 +1267,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				diagnosticConsumer.getValidationResults(), 
 				diagnosticConsumer.getNamedElementValidationResults(), 
 				horizontalForm,
+				null,
 				content)
 			.novalidate(noValidate)
 			.action("edit.html")
