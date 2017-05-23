@@ -703,8 +703,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						if (classDocModal != null) {
 							content.content(classDocModal);
 						}
+						Tag classDocIcon = renderer.renderDocumentationIcon(context, eClass, classDocModal, true);		
 						
-						Tag objectHeader = content.getFactory().tag(TagName.h3, renderer.renderObjectHeader(context, instance, classDocModal));
+						Tag objectHeader = content.getFactory().tag(TagName.h3, getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, eClass), classDocIcon);
 						content.content(objectHeader);
 																
 						boolean horizontalForm = !"false".equals(renderer.getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));

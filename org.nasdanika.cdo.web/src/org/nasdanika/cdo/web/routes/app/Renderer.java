@@ -5557,8 +5557,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (classDocModal != null) {
 					ret.content(classDocModal);
 				}
-				Tag classDocIcon = renderer.renderDocumentationIcon(context, featureElementType, classDocModal, true);		
-				
+				Tag classDocIcon = renderer.renderDocumentationIcon(context, featureElementType, classDocModal, true);						
 				formModal.title(getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, featureElementType), classDocIcon);
 				
 				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
