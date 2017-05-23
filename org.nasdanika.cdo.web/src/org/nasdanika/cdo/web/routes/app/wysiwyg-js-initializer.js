@@ -1,7 +1,7 @@
 jQuery(function() {
 	var element = $("{{selector}}");
 	element.wysiwyg({
-	    class: 'fake-bootstrap',
+	    //class: 'fake-bootstrap',
 	    toolbar: 'top-focus',
 	    buttons: {
             bold: {

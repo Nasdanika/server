@@ -6,6 +6,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.core.Context;
 import org.nasdanika.html.FieldSet;
+import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
 import org.nasdanika.html.UIElement;
 
@@ -38,7 +39,16 @@ public class FormRenderingListener<C extends Context, T extends EObject, TE exte
 	public void onCategoryFieldSet(C context, T obj, String category, List<TE> categoryMembers, FieldSet categoryFieldSet) {
 		
 	}
-	
+
+	/**
+	 * Invoked before form rendering.
+	 * @param context
+	 * @param obj
+	 * @param form
+	 */
+	public void onBeforeFormRendering(C context, T obj, Form form) {
+		
+	}
 	
 	// TODO - onFieldSet
 

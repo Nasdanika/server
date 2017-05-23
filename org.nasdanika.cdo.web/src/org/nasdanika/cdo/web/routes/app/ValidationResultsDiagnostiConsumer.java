@@ -112,7 +112,7 @@ public abstract class ValidationResultsDiagnostiConsumer implements Consumer<Dia
 		ret.put("namedElementValidationResults", nejvr);
 		for (Entry<ENamedElement, List<ValidationResult>> nevr: getNamedElementValidationResults().entrySet()) {
 			JSONArray vra = new JSONArray();
-			ret.put(nevr.getKey().getName(), vra);
+			nejvr.put(nevr.getKey().getName(), vra);
 			for (ValidationResult vr: nevr.getValue()) {
 				vra.put(vr.toJSON());
 			}			

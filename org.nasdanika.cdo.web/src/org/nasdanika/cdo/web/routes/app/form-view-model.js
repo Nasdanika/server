@@ -15,7 +15,7 @@ $(function() {
 			{{declarations}}
 			
 			var overlay = jQuery("#{{app-id}}-overlay");
-	
+				
 			this.submit = function() {
 				overlay.height(overlay.parent().height());
 				overlay.width(overlay.parent().width());
@@ -43,10 +43,13 @@ $(function() {
 		
 		// Modal resizing on shown
 	    $('#{{app-id}}-modal').on('shown.bs.modal', function() {
-	    	var form = $(this).find('.modal-body form');
 	    	var modalBody = $(this).find('.modal-body');
+	    	var form = modalBody.find('form');
 	    	form.width((modalBody.width()-30)+"px");
-	    	modalBody.height((form.height() + 30) + "px"); // 30 pixes for dynamic wysiwyg toolbar, just in case.
+	    	modalBody.height((form.height() + 30) + "px"); // 30 pixels for dynamic wysiwyg toolbar, just in case.
+	    	
+	    	// Hide overlay if it remained open due to an error.
+	    	$('#{{app-id}}-overlay').hide();
 	    });	    
 	} else {
 		console.error("Application container '{{app-id}}'-modal not found");

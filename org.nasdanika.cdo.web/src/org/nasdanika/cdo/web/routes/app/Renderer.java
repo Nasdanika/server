@@ -4597,6 +4597,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (status != null) {
 				ret.status(status);
 			}			
+			
+			if (formRenderingListener != null) {
+				formRenderingListener.onFormGroupRendering(context, obj, typedElement, value, ret);
+			}
 			return ret;
 		}
 				
@@ -4639,6 +4643,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		JSONObject toJSON() {
 			JSONObject ret = new JSONObject();
 			ret.put("status", status.name());
+			ret.put("statusStyle", status.toStyle().name());
 			ret.put("message", message);
 			return ret;
 		}
@@ -5308,6 +5313,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form editForm = htmlFactory.form();
+		
+		if (formRenderingListener != null) {
+			formRenderingListener.onBeforeFormRendering(context, obj, editForm);
+		}
 
 		if (docModalsContainer == null) {
 			docModalsContainer = editForm;
@@ -5530,9 +5539,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			if (context.authorizeCreate(container, qualifier, null)) {
 				String appId = getCreateContainmentReferenceElementModalDialogApplicationId(context, container, containmentFeature, featureElementType);				
-				
-				// TODO - doc modals.
-				
+												
 				Modal formModal = htmlFactory.modal().id(appId+"-modal");
 				switch (modalType) {
 				case LARGE:
@@ -5545,7 +5552,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					break;		
 				}
 				Renderer<C, EObject> renderer = getRenderer(featureElementType);
-				formModal.title(getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, featureElementType));
+				
+				Modal classDocModal = renderer.renderDocumentationModal(context, featureElementType);
+				if (classDocModal != null) {
+					ret.content(classDocModal);
+				}
+				Tag classDocIcon = renderer.renderDocumentationIcon(context, featureElementType, classDocModal, true);		
+				
+				formModal.title(getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, featureElementType), classDocIcon);
 				
 				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
@@ -5563,7 +5577,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					container.eSet(containmentFeature, instance);
 				}		
 				
-				StringBuilder koBindings = new StringBuilder();
+				StringBuilder koDataBindings = new StringBuilder();
+				StringBuilder koStatusBindings = new StringBuilder();
 								
 				try {
 					FormRenderingListener<C, EObject, EStructuralFeature> koBinder = new FormRenderingListener<C, EObject, EStructuralFeature>() {
@@ -5572,15 +5587,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						public UIElement<?> onFormControlRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, UIElement<?> control) {
 							if (control instanceof InputBase) {
 								control.knockout().value("data."+typedElement.getName());
-								if (koBindings.length() > 0) {
-									koBindings.append(",").append(System.lineSeparator());
+								if (koDataBindings.length() > 0) {
+									koDataBindings.append(",").append(System.lineSeparator());
 								}
 								if (typedElement.isMany()) {
-									koBindings.append(typedElement.getName()+": ko.observableArray()");
+									// TODO - values
+									koDataBindings.append(typedElement.getName()+": ko.observableArray()");
 								} else {
 									// TODO - initial/default values
-									koBindings.append(typedElement.getName()+": ko.observable()");									
+									koDataBindings.append(typedElement.getName()+": ko.observable()");									
 								}
+								
+								if (koStatusBindings.length() > 0) {
+									koStatusBindings.append(",").append(System.lineSeparator());
+								}								
+								koStatusBindings.append(typedElement.getName()+": ko.observable()");									
 							}
 							
 							return super.onFormControlRendering(context, obj, typedElement, value, control);
@@ -5588,11 +5609,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						
 						@Override
 						public void onFormGroupRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, FormGroup<?> formGroup) {
-							// TODO - has-... validation results
+							formGroup.knockout().css("status."+typedElement.getName());
 							super.onFormGroupRendering(context, obj, typedElement, value, formGroup);
 						}
 						
+						@Override
+						public void onBeforeFormRendering(C context, EObject obj, Form form) {
+							// Validation messages.
+							ListGroup messages = htmlFactory.listGroup().knockout().foreach("messages");
+							Tag labelText = htmlFactory.span().knockout().text("name");
+							Tag messageLabel = htmlFactory.label(Style.DEFAULT, labelText).style().margin().right("1em").knockout().visible("name");
+							Tag messageText = htmlFactory.span().knockout().text("message");
+							messages.item(htmlFactory.fragment(messageLabel, messageText), Style.DEFAULT).knockout().css("style");
+							form.content(messages);
+							
+							super.onBeforeFormRendering(context, obj, form);
+						}
+						
 					};
+					
 					Form form = renderer.renderEditForm(
 							context, 
 							instance, 
@@ -5610,13 +5645,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
 					form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
 					
-					// TODO - form configuration 				
-					
 					formModal.body(overlay, form);
 					ret.content(formModal);
 					
 					StringBuilder declarationsBuilder = new StringBuilder();
-					declarationsBuilder.append("this.data = {").append(koBindings).append("};").append(System.lineSeparator());
+					declarationsBuilder.append("this.data = {").append(koDataBindings).append("};").append(System.lineSeparator());
+					declarationsBuilder.append("this.status = {").append(koStatusBindings).append("};").append(System.lineSeparator());
+					declarationsBuilder.append("this.messages = ko.observableArray();").append(System.lineSeparator());
 					
 					StringBuilder ajaxConfigBuilder = new StringBuilder();
 					ajaxConfigBuilder.append("type: 'POST',").append(System.lineSeparator());
@@ -5644,7 +5679,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					scriptConfig.put("success-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-success-handler.js"), successHandlerConfig));
 					
 					// Error handler
-					scriptConfig.put("error-handler", "console.dir(errorThrown);");
+					Map<String,Object> errorHandlerConfig = new HashMap<>();
+					errorHandlerConfig.put("app-id", appId);
+					scriptConfig.put("error-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-error-handler.js"), successHandlerConfig));
+					
+					
 					scriptConfig.put("ajax-config", ajaxConfigBuilder.toString());
 					ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));										
 				} finally {				

@@ -687,13 +687,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							}
 						} 
 						
-						// Removing the new instance from the object graph. 
-						if (tsf.isMany()) {
-							((Collection<Object>) featureValue).remove(instance);
-						} else {
-							target.eSet(tsf, featureValue);
-						}					
-	
 						HTMLFactory htmlFactory = getHTMLFactory(context);
 						String title = StringEscapeUtils.escapeHtml4(renderer.nameToLabel(eClass.getName()));
 						Fragment content = htmlFactory.fragment();
@@ -743,7 +736,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						buttonBar.content(renderer.renderCancelButton(context, instance));
 						editForm.content(buttonBar);
 						
-						content.content(editForm);		
+						content.content(editForm);	
+						
+						// Removing the new instance from the object graph. 
+						if (tsf.isMany()) {
+							((Collection<Object>) featureValue).remove(instance);
+						} else {
+							target.eSet(tsf, featureValue);
+						}					
+	
 						return renderPage(context, target, title, content);
 					}
 				}							
