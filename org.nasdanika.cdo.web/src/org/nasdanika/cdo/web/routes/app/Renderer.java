@@ -1280,7 +1280,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception 
 	 */
-	default Object renderTypedElementValue(C context, ETypedElement typedElement, Object value) throws Exception {
+	default Object renderTypedElementValue(C context, ETypedElement typedElement, Object value, Consumer<Object> appConsumer) throws Exception {
 		if (typedElement instanceof EReference && !typedElement.isMany() && !context.authorize(value, StandardAction.read, null, null)) {
 			value = null;
 		}
@@ -1293,7 +1293,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) target);
 					Object pv = jxPathContext.getValue(pra);
 					if (pv != null) {
-						return getHTMLFactory(context).well(renderTypedElementValue(context, typedElement, pv)).small();
+						return getHTMLFactory(context).well(renderTypedElementValue(context, typedElement, pv, appConsumer)).small();
 					}
 				}
 			}
@@ -1310,7 +1310,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			if (eObjectValue.eResource() == null) {
 				// Not part of a resource, render as view, not as link.
-				return getRenderer(eObjectValue).renderViewFeatures(context, eObjectValue, null);
+				return getRenderer(eObjectValue).renderViewFeatures(context, eObjectValue, null, appConsumer);
 			}
 			return getRenderer(eObjectValue).renderLink(context, eObjectValue, true);
 		}
@@ -2191,11 +2191,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @param obj
 	 * @param featureDocModals
+	 * @param appConsumer consumes create/edit/eoperation modal apps to be included on the top of the page.
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderView(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
-		return getHTMLFactory(context).fragment(renderViewFeatures(context, obj, featureDocModals), renderViewButtons(context, obj));
+	default Object renderView(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals, Consumer<Object> appConsumer) throws Exception {
+		return getHTMLFactory(context).fragment(renderViewFeatures(context, obj, featureDocModals, appConsumer), renderViewButtons(context, obj, appConsumer));
 	}
 
 	/**
@@ -2209,7 +2210,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderViewFeatures(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {
+	default Object renderViewFeatures(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals, Consumer<Object> appConsumer) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Table featuresTable = htmlFactory.table();
 		featuresTable.col().bootstrap().grid().col(1);
@@ -2233,7 +2234,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
 					showActionButtons = true;
 				}
-				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null, null));
+				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null, null, appConsumer));
 			} else {
 				List<EStructuralFeature> categoryFeatures = categories.get(category);
 				if (categoryFeatures == null) {
@@ -2266,7 +2267,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (vf instanceof EReference && ((EReference) vf).isContainment() && !vf.isMany()) {
 					showActionButtons = true;
 				}
-				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null, null));
+				fRow.cell(renderTypedElementView(context, obj, vf, obj.eGet(vf), showActionButtons, null, null, null, appConsumer));
 			}
 			ret.content(htmlFactory.panel(Style.DEFAULT, categoriesIconsAndLabels.get(ce.getKey()), categoryFeaturesTable, null));
 		}
@@ -2278,11 +2279,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * and container web operations with ``feature-value`` spec equal to the containment feature of this object.
 	 * @param context
 	 * @param obj
-	 * @param featureDocModals
+	 * @param appConsumer accepts rendered apps like create/edit/eoperation to be added at the top of the page.
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderViewButtons(C context, T obj) throws Exception {
+	default Object renderViewButtons(C context, T obj, Consumer<Object> appConsumer) throws Exception {
 		Tag ret = getHTMLFactory(context).div().style().margin("5px"); 
 		ret.content(renderEditButton(context, obj, true));
 		ret.content(renderDeleteButton(context, obj));
@@ -2292,7 +2293,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 				Object location = spec.get("location");
 				if ((location == null || "view".equals(location)) && spec.get("feature") == null && spec.get("feature-value") == null) {
-					ret.content(renderEOperationButton(context, obj, eOperation, null, null));
+					ret.content(renderEOperationButton(context, obj, eOperation, null, null, appConsumer));
 				}				
 			}
 		}
@@ -2309,7 +2310,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if ((location == null || "view".equals(location)) && containingFeature.getName().equals(spec.get("feature-value"))) {
 						StringBuilder queryBuilder = new StringBuilder("feature=").append(containingFeature.getName());					
 						if (obj instanceof CDOObject) {
-							String formControlValue = getFormControlValue(context, obj, containingFeature, obj);
+							String formControlValue = getFormControlValue(context, obj, containingFeature, obj, appConsumer);
 							queryBuilder
 								.append("&element=").append(formControlValue)
 								.append("&context-object=").append(formControlValue);
@@ -2317,7 +2318,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						
 						Map<String, Object> vars = new HashMap<>();
 						vars.put("element", obj);
-						ret.content(getRenderer(eContainer).renderEOperationButton(context, eContainer, eOperation, queryBuilder.toString(), vars));
+						ret.content(getRenderer(eContainer).renderEOperationButton(context, eContainer, eOperation, queryBuilder.toString(), vars, appConsumer));
 					}				
 				}
 			}
@@ -2333,11 +2334,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param obj
 	 * @param eOperation
 	 * @param query
-	 * @param jxPathContextVariables Variables for evaluating disabled state. 
+	 * @param jxPathContextVariables Variables for evaluating disabled state.
+	 * @param eOperationAppConsumer is used to pass a rendered EOperation application to be added at the top of the page.
 	 * @return
 	 * @throws Exception
 	 */
-	default Fragment renderEOperationButton(C context, T obj, EOperation eOperation, String query, Map<String, Object> jxPathContextVariables) throws Exception {
+	default Fragment renderEOperationButton(
+			C context, 
+			T obj, 
+			EOperation eOperation, 
+			String query, 
+			Map<String, Object> jxPathContextVariables,
+			Consumer<Object> appConsumer) throws Exception {
+		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 		String action = (String) spec.get("action");
@@ -2402,8 +2411,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				String confirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(confirm, env));			
 				guard = "if (confirm('"+confirmationMessage+"')) ";
 			}			
-			
-			eOperationButton.on(Event.click, guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"';");			
+
+			if (getEOperationModalType(context, obj, eOperation) == ModalType.NONE) {					
+				eOperationButton.on(Event.click, guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"';");
+			} else {
+				String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-eoperation-"+eOperation.getName()+"-"+htmlFactory.nextId();
+				appConsumer.accept(renderEOperationModalDialogApplication(context, obj, eOperation, appId, appConsumer));
+				eOperationButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+			}
 			
 			// Disabled 
 			boolean disabled;
@@ -2685,9 +2700,16 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param obj
 	 * @param itemContainer
 	 * @param featureDocModals
+	 * @param appConsumer accepts create/edit/eoperation apps to be included on the top of the page.
 	 * @throws Exception
 	 */
-	default NamedItemsContainer<?, ?> renderFeatureItemsContainer(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals, TypedElementTableRenderListener<C,T> typedElementTableRenderListener) throws Exception {		
+	default NamedItemsContainer<?, ?> renderFeatureItemsContainer(
+			C context, 
+			T obj, 
+			Map<EStructuralFeature, Modal> featureDocModals, 
+			TypedElementTableRenderListener<C,T> typedElementTableRenderListener, 
+			Consumer<Object> appConsumer) throws Exception {
+		
 		NamedItemsContainer<?, ?> ret = null;
 		Object spec = getYamlRenderAnnotation(context, obj.eClass(), RenderAnnotation.FEATURE_ITEMS_CONTAINER);
 		HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -2729,7 +2751,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 
 		if (isViewItem(context, obj)) {
-			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, featureDocModals));
+			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, featureDocModals, appConsumer));
 		}
 		String contextFeatureName = null;
 		if (context instanceof HttpServletRequestContext) {
@@ -2747,7 +2769,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						
 			ret.item(
 					nameSpan, 
-					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, featureTableFilterManager, null, featureTableFilterManager)).style().margin("3px"), 
+					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, featureTableFilterManager, null, featureTableFilterManager, appConsumer)).style().margin("3px"), 
 					contextFeatureName == null ? ret.isEmpty() : vf.getName().equals(contextFeatureName));
 		}	
 		
@@ -2951,7 +2973,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			boolean showActionButtons, 
 			Predicate<Object> filter, 
 			Comparator<Object> comparator,
-			TypedElementTableRenderListener<C,T> typedElementTableRenderListener) throws Exception {
+			TypedElementTableRenderListener<C,T> typedElementTableRenderListener, 
+			Consumer<Object> appConsumer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 				
@@ -3190,19 +3213,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Renderer<C, EObject> renderer = typedElement instanceof EReference ? getReferenceRenderer((EReference) typedElement, teve.value) : getRenderer(teve.value);
 					for (EStructuralFeature sf: uncategorizedTableFeatures) {
 						Object eValue = teve.value.eGet(sf);
-						Cell vCell = vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, eValue, false, null, null, null));						
+						Cell vCell = vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, eValue, false, null, null, null, appConsumer));						
 						filteredTableRendererListener.onElementFeatureCell(context, obj, typedElement, typedElementValue, teve.value, sf, featureSpecs.get(sf), eValue, vCell);					
 					}
 					for (List<EStructuralFeature> cv: categories.values()) {
 						for (EStructuralFeature sf: cv) {
 							Object eValue = teve.value.eGet(sf);
-							Cell vCell = vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, eValue, false, null, null, null));													
+							Cell vCell = vRow.cell(renderer.renderTypedElementView(context, teve.value, sf, eValue, false, null, null, null, appConsumer));													
 							filteredTableRendererListener.onElementFeatureCell(context, obj, typedElement, typedElementValue, teve.value, sf, featureSpecs.get(sf), eValue, vCell);					
 						}						
 					}
 					Cell actionCell = vRow.cell().style().text().align().center();	
 					List<EStructuralFeature> valueVisibleFeatures = getRenderer(teve.value).getVisibleFeatures(context, teve.value, null);
-					actionCell.content(renderTypedElementValueButtons(context, obj, typedElement, teve.position, teve.value, tableFeatures.containsAll(valueVisibleFeatures)));
+					actionCell.content(renderTypedElementValueButtons(context, obj, typedElement, teve.position, teve.value, tableFeatures.containsAll(valueVisibleFeatures), appConsumer));
 					
 					filteredTableRendererListener.onElementRow(context, obj, typedElement, typedElementValue, teve.value, rowCounter++, vRow);					
 				}
@@ -3217,7 +3240,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 //							ret.content(createApp);
 //						}
 //					}					
-					ret.content(htmlFactory.div(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement)).style().margin("5px"));
+					ret.content(htmlFactory.div(renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement, appConsumer)).style().margin("5px"));
 				}
 			} else {
 				Tag ul = htmlFactory.tag(TagName.ul);
@@ -3229,7 +3252,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				if (typedElementValues.size() == 1) {
 					Object v = typedElementValues.iterator().next();
-					Object renderedValue = renderTypedElementValue(context, typedElement, v);
+					Object renderedValue = renderTypedElementValue(context, typedElement, v, appConsumer);
 					
 					// Non-html multi-line - wrap in PRE - use annotations to decide whether pre or not?
 					if (v instanceof String 
@@ -3245,7 +3268,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}												
 					}
 					if (showActionButtons) {
-						ret.content(renderTypedElementValueButtons(context, obj, typedElement, 0, v, false));
+						ret.content(renderTypedElementValueButtons(context, obj, typedElement, 0, v, false, appConsumer));
 					}
 					
 				} else if (!typedElementValues.isEmpty()) {
@@ -3264,7 +3287,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 					
 					for (ValueEntry<Object> featureValueEntry: featureValueEntries) {
-						Object renderedValue = renderTypedElementValue(context, typedElement, featureValueEntry.value);
+						Object renderedValue = renderTypedElementValue(context, typedElement, featureValueEntry.value, appConsumer);
 						
 						// Non-html multi-line - wrap in PRE
 						if (featureValueEntry.value instanceof String 
@@ -3280,14 +3303,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							}												
 						}
 						if (showActionButtons) {
-							liFragment.content(renderTypedElementValueButtons(context, obj, typedElement, featureValueEntry.position, featureValueEntry.value, false));
+							liFragment.content(renderTypedElementValueButtons(context, obj, typedElement, featureValueEntry.position, featureValueEntry.value, false, appConsumer));
 						}
 						ul.content(htmlFactory.tag(TagName.li, liFragment).style().margin().bottom("3px"));
 					}
 					ret.content(ul);
 				}
 				if (showActionButtons && typedElement instanceof EStructuralFeature) {
-					Object featureViewButtons = renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement);
+					Object featureViewButtons = renderFeatureViewButtons(context, obj, (EStructuralFeature) typedElement, appConsumer);
 					if (typedElement.isMany()) {
 						featureViewButtons = TagName.div.create(featureViewButtons).style().margin().top("5px"); // Many feature - display buttons below.
 					}
@@ -3295,7 +3318,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		} else {
-			Object renderedValue = renderTypedElementValue(context, typedElement, typedElementValue);
+			Object renderedValue = renderTypedElementValue(context, typedElement, typedElementValue, appConsumer);
 			
 			// Non-html multi-line - wrap in PRE
 			if (typedElementValue instanceof String 
@@ -3306,7 +3329,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			ret.content(renderedValue);
 			if (showActionButtons) {
-				ret.content(renderTypedElementValueButtons(context, obj, typedElement, -1, typedElementValue, false));
+				ret.content(renderTypedElementValueButtons(context, obj, typedElement, -1, typedElementValue, false, appConsumer));
 			}						
 		}
 		return ret;
@@ -3320,7 +3343,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderFeatureViewButtons(C context, T obj, EStructuralFeature feature)	throws Exception {
+	default Object renderFeatureViewButtons(C context, T obj, EStructuralFeature feature, Consumer<Object> appConsumer)	throws Exception {
 		Fragment ret = getHTMLFactory(context).fragment(); 
 		ret.content(renderFeatureAddButton(context, obj, feature));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
@@ -3330,7 +3353,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
 				Object location = spec.get("location");
 				if ((location == null || "view".equals(location)) && feature.getName().equals(spec.get("feature"))) {
-					ret.content(renderEOperationButton(context, obj, eOperation, "feature="+feature.getName(), null));
+					ret.content(renderEOperationButton(context, obj, eOperation, "feature="+feature.getName(), null, appConsumer));
 				}				
 			}
 		}
@@ -3641,7 +3664,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderTypedElementValueButtons(C context, T obj, ETypedElement typedElement, int idx, Object value, boolean fullView) throws Exception {
+	default Object renderTypedElementValueButtons(C context, T obj, ETypedElement typedElement, int idx, Object value, boolean fullView, Consumer<Object> appConsumer) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 
@@ -3672,7 +3695,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Map<String, Object> spec = (Map<String, Object>) webOperationYamlAnnotation;
 					Object location = spec.get("location");
 					if ((location == null || "view".equals(location)) && spec.get("feature") == null && spec.get("feature-value") == null) {
-						ret.content(valueRenderer.renderEOperationButton(context, eObjectValue, eOperation, null, null));
+						ret.content(valueRenderer.renderEOperationButton(context, eObjectValue, eOperation, null, null, appConsumer));
 					}				
 				}
 			}
@@ -3692,13 +3715,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							queryBuilder.append("&").append("position=").append(idx);
 						}
 						if (value instanceof CDOObject) {
-							queryBuilder.append("&").append("element=").append(getFormControlValue(context, obj, typedElement, value));
+							queryBuilder.append("&").append("element=").append(getFormControlValue(context, obj, typedElement, value, appConsumer));
 						}
 						
 						Map<String, Object> vars = new HashMap<>();
 						vars.put("element", value);
 						vars.put("position", idx);
-						ret.content(renderEOperationButton(context, obj, eOperation, queryBuilder.toString(), vars));
+						ret.content(renderEOperationButton(context, obj, eOperation, queryBuilder.toString(), vars, appConsumer));
 					}				
 				}
 			}
@@ -3800,7 +3823,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception 
 	 */
-	default String getFormControlValue(C context, T obj, ETypedElement typedElement, Object value) throws Exception {
+	default String getFormControlValue(C context, T obj, ETypedElement typedElement, Object value, Consumer<Object> appConsumer) throws Exception {
 		if (value == null) {
 			return "";
 		}
@@ -3817,7 +3840,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return Boolean.TRUE.equals(value) ? "true" : ""; // Is this the correct behavior?
 		}
 			
-		Object rfv = renderTypedElementValue(context, typedElement, value);
+		Object rfv = renderTypedElementValue(context, typedElement, value, appConsumer);
 		return rfv == null ? "" : StringEscapeUtils.escapeHtml4(rfv.toString());						
 	}
 	
@@ -3854,7 +3877,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip,
-			FormRenderingListener<C,T, TE> formRenderingListener) throws Exception {
+			FormRenderingListener<C,T, TE> formRenderingListener, 
+			Consumer<Object> appConsumer) throws Exception {
 		
 		FormRenderingListener<C,T, TE> theFormRenderingListener = formRenderingListener == null ? FormRenderingListener.nopListener() : formRenderingListener; // so no need to check for null.
 
@@ -3870,7 +3894,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				controlType = instanceClass.isEnum() || isEObjectInstanceClass ? TagName.select : TagName.input;
 			} else if (((EReference) typedElement).isContainment()) {				
 				// Link and create button.
-				Well well = htmlFactory.well(renderTypedElementValue(context, typedElement, value), renderFeatureViewButtons(context, contextObject, (EStructuralFeature) typedElement)).small();
+				Well well = htmlFactory.well(
+						renderTypedElementValue(context, typedElement, value, appConsumer), 
+						renderFeatureViewButtons(context, contextObject, (EStructuralFeature) typedElement, appConsumer)).small();
 				return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, well);
 			} else {
 				controlType = TagName.select;
@@ -4069,7 +4095,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					String[] requestValues = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameterValues(typedElement.getName()) : null;
 					if (requestValues == null) {
 						for (Object fev: ((Collection<Object>) value)) {
-							valuesToSelect.add(getFormControlValue(context, contextObject, typedElement, fev));
+							valuesToSelect.add(getFormControlValue(context, contextObject, typedElement, fev, appConsumer));
 						}
 					} else {
 						valuesToSelect.addAll(Arrays.asList(requestValues));
@@ -4162,7 +4188,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			case radio:
 				// Radio - get values and labels from options.
 				String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;				
-				String valueToSelect = requestValue == null ? getFormControlValue(context, contextObject, typedElement, value) : requestValue;
+				String valueToSelect = requestValue == null ? getFormControlValue(context, contextObject, typedElement, value, appConsumer) : requestValue;
 				if (isChoiceTree) {
 					if (roots.isEmpty()) {
 						if (isRequired(context, contextObject, typedElement)) {
@@ -4239,7 +4265,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Input input = htmlFactory.input(inputType)
 					.disabled(disabled)
 					.name(typedElement.getName())
-					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, contextObject, typedElement, value)) : requestValue)
+					.value(requestValue == null ? StringEscapeUtils.escapeHtml4(getFormControlValue(context, contextObject, typedElement, value, appConsumer)) : requestValue)
 					.placeholder(textLabel)
 					.required(isRequired(context, contextObject, typedElement));
 
@@ -4260,7 +4286,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				select.option("", "", false, false);
 			}
 			String requestValue = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getParameter(typedElement.getName()) : null;
-			String valueToSelect = requestValue == null ? getFormControlValue(context, contextObject, typedElement, value) : requestValue;				
+			String valueToSelect = requestValue == null ? getFormControlValue(context, contextObject, typedElement, value, appConsumer) : requestValue;				
 			if (disabled) {
 				fieldContainer.content(htmlFactory.input(InputType.hidden).name(typedElement.getName()).value(valueToSelect));
 				select.disabled();
@@ -4287,7 +4313,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			for (Entry<String, Object> ce: controlConfiguration.entrySet()) {
 				textArea.attribute(ce.getKey(), ce.getValue());
 			}
-			textArea.content(getFormControlValue(context, contextObject, typedElement, value));
+			textArea.content(getFormControlValue(context, contextObject, typedElement, value, appConsumer));
 			if ("text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
 				textArea.id(htmlFactory.nextId());
 				fieldContainer.content(renderWysiwygJsInitializerScript(context, textArea)); 
@@ -4556,7 +4582,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip,
-			FormRenderingListener<C,T,TE> formRenderingListener) throws Exception {
+			FormRenderingListener<C,T,TE> formRenderingListener, 
+			Consumer<Object> appConsumer) throws Exception {
 		
 		UIElement<?> control = renderTypedElementControl(
 				context, 
@@ -4568,7 +4595,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				docModal, 
 				validationResults, 
 				helpTooltip, 
-				formRenderingListener); 
+				formRenderingListener,
+				appConsumer); 
 		
 		if (control == null) {
 			return null;
@@ -4696,7 +4724,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Map<EStructuralFeature, Modal> docModals, 
 			Map<ENamedElement,List<ValidationResult>> validationResults,
 			boolean helpTooltip, 
-			FormRenderingListener<C, T, EStructuralFeature> formRenderingListener) throws Exception {
+			FormRenderingListener<C, T, EStructuralFeature> formRenderingListener, 
+			Consumer<Object> appConsumer) throws Exception {
 		
 		Map<EStructuralFeature, Object> editableFeatures = new LinkedHashMap<>();
 		for (EStructuralFeature ef: getEditableFeatures(context, obj)) {
@@ -4704,7 +4733,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		// TODO - add support of inlined features.
-		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip, formRenderingListener);
+		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip, formRenderingListener, appConsumer);
 	}
 
 	/**
@@ -4729,7 +4758,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			List<ValidationResult>> validationResults,
 			Map<TE, Object> formElements, 
 			boolean helpTooltip,
-			FormRenderingListener<C,T,TE> formRenderingListener) throws Exception {
+			FormRenderingListener<C,T,TE> formRenderingListener, 
+			Consumer<Object> appConsumer) throws Exception {
 		
 		List<FormGroup<?>> ret = new ArrayList<>();
 		Map<String,List<TE>> categories = new TreeMap<>();
@@ -4740,7 +4770,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Object ov = formElements.get(fe);
 				if (ov != null) {
 					String originalName = ORIGINAL_ELEMENT_VALUE_NAME_PREFIX+fe.getName();
-					String originalValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, fe, ov));
+					String originalValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, fe, ov, appConsumer));
 					fieldContainer.content(InputType.hidden.create().name(originalName).value(originalValue));
 				}
 			}
@@ -4757,7 +4787,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						docModals.get(fe), 
 						validationResults.get(fe), 
 						helpTooltip,
-						formRenderingListener);
+						formRenderingListener,
+						appConsumer);
 				
 				if (fg != null) {
 					ret.add(fg);
@@ -4789,7 +4820,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						docModals.get(cete), 
 						validationResults.get(cete), 
 						helpTooltip, 
-						formRenderingListener);
+						formRenderingListener,
+						appConsumer);
 				
 				if (fg != null) {
 					ret.add(fg);
@@ -4851,7 +4883,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * Creates error diagnostics for concurrently modified features.
 	 * @return true if there are no differences in values.
 	 */
-	default boolean compareEditableFeatures(C context, T obj, Consumer<Diagnostic> diagnosticConsumer) throws Exception {		
+	default boolean compareEditableFeatures(C context, T obj, Consumer<Diagnostic> diagnosticConsumer, Consumer<Object> appConsumer) throws Exception {		
 		boolean noDiscrepancies = true;
 		if (context instanceof HttpServletRequestContext) {
 			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
@@ -4869,10 +4901,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				} else {
 					String originalValue = request.getParameter(ORIGINAL_ELEMENT_VALUE_NAME_PREFIX+feature.getName());
 					if (originalValue != null) {
-						String currentValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, obj.eGet(feature)));
+						String currentValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, obj.eGet(feature), appConsumer));
 						if (!originalValue.equals(currentValue)) {
 							Map<String, Object> env = new HashMap<>();
-							env.put("value", renderTypedElementValue(context, feature, obj.eGet(feature)));
+							env.put("value", renderTypedElementValue(context, feature, obj.eGet(feature), appConsumer));
 							String msg = getHTMLFactory(context).interpolate(getResourceString(context, "concurrentModification.feature"), env);
 							diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, msg, new Object[] { obj, feature }));
 							noDiscrepancies = false;
@@ -5334,7 +5366,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Map<ENamedElement, List<ValidationResult>> namedElementValidationResults, 
 			boolean horizontalForm,
 			FormRenderingListener<C, T, EStructuralFeature> formRenderingListener,			
-			Container<?> docModalsContainer) throws Exception {
+			Consumer<Object> appConsumer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form editForm = htmlFactory.form();
@@ -5343,12 +5375,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			formRenderingListener.onBeforeFormRendering(context, obj, editForm);
 		}
 
-		if (docModalsContainer == null) {
-			docModalsContainer = editForm;
+		if (appConsumer == null) {
+			appConsumer = editForm;
 		}
 		Map<EStructuralFeature, Modal> featureDocModals = renderEditableFeaturesDocModals(context, obj);
 		for (Modal fdm: featureDocModals.values()) {
-			docModalsContainer.content(fdm);
+			appConsumer.accept(fdm);
 		}
 		
 		ListGroup errorList = htmlFactory.listGroup();
@@ -5376,7 +5408,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				featureDocModals, 
 				namedElementValidationResults, 
 				horizontalForm,
-				formRenderingListener).forEach((fg) -> fg.feedback(!horizontalForm));
+				formRenderingListener,
+				appConsumer).forEach((fg) -> fg.feedback(!horizontalForm));
+		
 		return editForm;
 	}
 	
@@ -5396,7 +5430,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Map<EParameter, Object> formParameters, 
 			List<ValidationResult> validationResults, 
 			Map<ENamedElement, List<ValidationResult>> namedElementValidationResults, 
-			boolean horizontalForm) throws Exception {
+			boolean horizontalForm, 
+			Consumer<Object> appConsumer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form editForm = htmlFactory.form();
@@ -5431,7 +5466,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				parameterDocModals, 
 				namedElementValidationResults, 
 				formParameters, 
-				horizontalForm, null).forEach((fg) -> fg.feedback(!horizontalForm));
+				horizontalForm, 
+				null,
+				appConsumer).forEach((fg) -> fg.feedback(!horizontalForm));
 		
 		return editForm;
 	}
@@ -5453,7 +5490,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			EStructuralFeature feature,
 			List<ValidationResult> featureValidationResults, 
 			boolean horizontalForm,
-			FormRenderingListener<C,T,ETypedElement> formRenderingListener) throws Exception {
+			FormRenderingListener<C,T,ETypedElement> formRenderingListener, 
+			Consumer<Object> appConsumer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form selectForm = htmlFactory.form();
@@ -5483,7 +5521,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				featureDocModal, 
 				featureValidationResults, 
 				horizontalForm,
-				formRenderingListener);
+				formRenderingListener,
+				appConsumer);
 		
 		if (fg != null) {
 			fg.feedback(!horizontalForm);
@@ -5527,7 +5566,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @return
 	 */
-	default ModalType getCreateModalType(C context) {
+	default ModalType getCreateModalType(C context) throws Exception {
 		return ModalType.LARGE;
 	}
 			
@@ -5555,7 +5594,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	default Object renderCreateContainmentReferenceElementModalDialogApplication(C context, EObject container, EStructuralFeature containmentFeature, EClass featureElementType) throws Exception {
+	default Object renderCreateContainmentReferenceElementModalDialogApplication(
+			C context, 
+			EObject container, 
+			EStructuralFeature containmentFeature, 
+			EClass featureElementType, 
+			Consumer<Object> appConsumer) throws Exception {
+		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 		ModalType modalType = getCreateModalType(context);
@@ -5621,7 +5666,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									koDataBindings.append(typedElement.getName()+": ko.observableArray()");
 								} else {
 									// TODO - initial/default values
-									koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(renderer.getFormControlValue(context, instance, typedElement, value))+"')");									
+									koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(renderer.getFormControlValue(context, instance, typedElement, value, appConsumer))+"')");									
 								}
 								
 								if (koStatusBindings.length() > 0) {
@@ -5727,18 +5772,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @return
 	 */
-	default ModalType getEditModalType(C context, T obj) {
+	default ModalType getEditModalType(C context, T obj) throws Exception {
 		return ModalType.LARGE;
 	}
-	
-	
+		
 	/**
 	 * Renders edit application which includes a modal dialog with an overlay and a form, documentation modals, and a view model script.
 	 * @param containerContext if true, the submitted data shall have "container-context" data element set to true, indicating that 
 	 * upon update the location shall have context-feature parameter. 
 	 * @return
 	 */
-	default Object renderEditElementModalDialogApplication(C context, T obj, boolean containerContext) throws Exception {
+	default Object renderEditModalDialogApplication(C context, T obj, boolean containerContext, Consumer<Object> appConsumer) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 		ModalType modalType = getEditModalType(context, obj);
@@ -5792,7 +5836,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							// TODO - values
 							koDataBindings.append(typedElement.getName()+": ko.observableArray()");
 						} else {
-							koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value))+"')");									
+							koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value, appConsumer))+"')");									
 						}
 						
 						if (koStatusBindings.length() > 0) {
@@ -5895,8 +5939,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		return ret;
 	}
-	
-		
+			
 	// --- Select ---
 	
 	/**
@@ -5929,7 +5972,170 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default ModalType getEditAttributeModalType(C context, T obj) {
 		return ModalType.MEDIUM;
 	}
+	
+	// --- EOperation ---
+	
+	/**
+	 * Modal dialog type to use to display the {@link EOperation} input form.  
+	 * @param context
+	 * @return NONE for EOperations with confirmation as they are typically input-less, and MEDIUM otherwise.
+	 */
+	default ModalType getEOperationModalType(C context, T obj, EOperation eOperation) throws Exception {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+		return spec != null && spec.get("confirm") instanceof String ? ModalType.NONE : ModalType.MEDIUM;
+	}		
+	
+	/**
+	 * Renders EOperation application which includes a modal dialog with an overlay, an input form, results div with a close button refreshing the referrer view, 
+	 * documentation modals, and a view model script.
+	 * @param containerContext if true, the submitted data shall have "container-context" data element set to true, indicating that 
+	 * upon update the location shall have context-feature parameter. 
+	 * @return
+	 */
+	default Object renderEOperationModalDialogApplication(C context, T obj, EOperation eOperation, String appId, Consumer<Object> appConsumer) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();
+		ModalType modalType = getEditModalType(context, obj);
+		// TODO - proper authorization...
+		if (obj instanceof CDOObject && modalType != ModalType.NONE && context.authorizeUpdate(obj, null, null)) {		
+//			String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-edit-app";				
+											
+			Modal formModal = htmlFactory.modal().id(appId+"-modal");
+			switch (modalType) {
+			case LARGE:
+				formModal.large();
+				break;
+			case SMALL:
+				formModal.small();
+				break;
+			default:
+				break;		
+			}
+			
+			// Object header
+			EClass eClass = obj.eClass();
+			Modal classDocModal = renderDocumentationModal(context, eClass);
+			if (classDocModal != null) {
+				ret.content(classDocModal);
+			}
+			
+			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, classDocModal));
+			
+			Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
+
+			// Form elements
+			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
+			boolean noValidate = "true".equals(getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
+			
+			StringBuilder koDataBindings = new StringBuilder();
+			StringBuilder koStatusBindings = new StringBuilder();
+							
+			FormRenderingListener<C, T, EStructuralFeature> koBinder = new FormRenderingListener<C, T, EStructuralFeature>() {
+				
+				@Override
+				public UIElement<?> onFormControlRendering(C context, T obj, EStructuralFeature typedElement, Object value, UIElement<?> control) throws Exception {
+					if (control instanceof InputBase) {
+						if (control instanceof Input && (((Input) control).getType() == InputType.checkbox || ((Input) control).getType() == InputType.radio)) {
+							control.knockout().checked("data."+typedElement.getName());							
+						} else {
+							control.knockout().value("data."+typedElement.getName());
+						}
+						if (koDataBindings.length() > 0) {
+							koDataBindings.append(",").append(System.lineSeparator());
+						}
+						if (typedElement.isMany()) {
+							// TODO - values
+							koDataBindings.append(typedElement.getName()+": ko.observableArray()");
+						} else {
+							koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value, appConsumer))+"')");									
+						}
+						
+						if (koStatusBindings.length() > 0) {
+							koStatusBindings.append(",").append(System.lineSeparator());
+						}								
+						koStatusBindings.append(typedElement.getName()+": ko.observable()");									
+					}
+					
+					return super.onFormControlRendering(context, obj, typedElement, value, control);
+				}
+				
+				@Override
+				public void onFormGroupRendering(C context, T obj, EStructuralFeature typedElement, Object value, FormGroup<?> formGroup) throws Exception {
+					formGroup.knockout().css("status."+typedElement.getName());
+					super.onFormGroupRendering(context, obj, typedElement, value, formGroup);
+				}
+				
+				@Override
+				public void onBeforeFormRendering(C context, T obj, Form form) throws Exception {
+					// Validation messages.
+					ListGroup messages = htmlFactory.listGroup().knockout().foreach("messages");
+					Tag labelText = htmlFactory.span().knockout().text("name");
+					Tag messageLabel = htmlFactory.label(Style.DEFAULT, labelText).style().margin().right("1em").knockout().visible("name");
+					Tag messageText = htmlFactory.span().knockout().text("message");
+					messages.item(htmlFactory.fragment(messageLabel, messageText), Style.DEFAULT).knockout().css("style");
+					form.content(messages);
+					
+					super.onBeforeFormRendering(context, obj, form);
+				}
+				
+			};
+			
+			Form form = renderEditForm(
+					context, 
+					obj, 
+					Collections.emptyList(), 
+					Collections.emptyMap(), 
+					horizontalForm,
+					koBinder,
+					ret)
+						.knockout().submit("submit")
+						.novalidate(noValidate);
+						
+			configureForm(form, horizontalForm, modalType);
+
+			form.content(htmlFactory.tag(TagName.hr));
+			form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
+			form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
+			
+			formModal.body(overlay, form);
+			ret.content(formModal);
+			
+			StringBuilder declarationsBuilder = new StringBuilder();
+			declarationsBuilder.append("this.data = {").append(koDataBindings).append("};").append(System.lineSeparator());
+			declarationsBuilder.append("this.status = {").append(koStatusBindings).append("};").append(System.lineSeparator());
+			declarationsBuilder.append("this.messages = ko.observableArray();").append(System.lineSeparator());
+			
+			StringBuilder ajaxConfigBuilder = new StringBuilder();
+			ajaxConfigBuilder.append("type: 'POST',").append(System.lineSeparator());
+			ajaxConfigBuilder.append("contentType: '"+CONTENT_TYPE_APPLICATION_JSON+"',").append(System.lineSeparator());
+			ajaxConfigBuilder.append("dataType: 'json',").append(System.lineSeparator());
+			ajaxConfigBuilder.append("data: ko.toJSON(this.data),").append(System.lineSeparator());
+			
+			String updateURL = getObjectURI(context, obj)+"/update";
+			
+			Map<String, Object> scriptConfig = new HashMap<>();
+			scriptConfig.put("app-id", appId);
+			scriptConfig.put("url", updateURL);
+			scriptConfig.put("declarations", declarationsBuilder.toString());
+			
+			// Success handler
+			Map<String,Object> successHandlerConfig = new HashMap<>();
+			successHandlerConfig.put("app-id", appId);
+			scriptConfig.put("success-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-success-handler.js"), successHandlerConfig));
+			
+			// Error handler
+			Map<String,Object> errorHandlerConfig = new HashMap<>();
+			errorHandlerConfig.put("app-id", appId);
+			scriptConfig.put("error-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-error-handler.js"), successHandlerConfig));
+			
+			scriptConfig.put("ajax-config", ajaxConfigBuilder.toString());
+			ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));										
+		}
 		
+		return ret;
+	}	
+	
 	/**
 	 * Configures form appearance
 	 * @param form
