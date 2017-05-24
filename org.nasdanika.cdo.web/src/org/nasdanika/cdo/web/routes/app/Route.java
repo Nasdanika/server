@@ -604,7 +604,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 											}
 											referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 										}
-										referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
+										referrer += "context-feature="+URLEncoder.encode(reference, "StandardCharsets.UTF_8.name()");
 										result.put("location", referrer);
 										return result;
 									} 
@@ -659,7 +659,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 									}
 									referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 								}
-								referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
+								referrer += "context-feature="+URLEncoder.encode(reference, "StandardCharsets.UTF_8.name()");
 								context.getResponse().sendRedirect(referrer);
 								return Action.NOP;
 							}
@@ -825,7 +825,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						}
 						referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 					}
-					referrer += "context-feature="+URLEncoder.encode(attribute, "UTF-8");
+					referrer += "context-feature="+URLEncoder.encode(attribute, "StandardCharsets.UTF_8.name()");
 					((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
 					return Action.NOP;
 				}
@@ -1108,7 +1108,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							}
 							referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 						}
-						referrer += "context-feature="+URLEncoder.encode(feature, "UTF-8");
+						referrer += "context-feature="+URLEncoder.encode(feature, "StandardCharsets.UTF_8.name()");
 						((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
 						return Action.NOP;
 					}
@@ -1408,7 +1408,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 					referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 				}
-				referrer += "context-feature="+URLEncoder.encode(target.eContainmentFeature().getName(), "UTF-8");
+				referrer += "context-feature="+URLEncoder.encode(target.eContainmentFeature().getName(), "StandardCharsets.UTF_8.name()");
 			}
 			result.put("location", referrer);
 			return result;
@@ -1517,7 +1517,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 				redirectURL = redirectURL.substring(0, redirectQueryStart+1)+queryBuilder;
 			}
-			redirectURL += "context-feature="+URLEncoder.encode(feature, "UTF-8");
+			redirectURL += "context-feature="+URLEncoder.encode(feature, "StandardCharsets.UTF_8.name()");
 			
 			context.getResponse().sendRedirect(redirectURL);
 			
@@ -1575,7 +1575,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 				redirectURL = redirectURL.substring(0, redirectQueryStart+1)+queryBuilder;
 			}
-			redirectURL += "context-feature="+URLEncoder.encode(feature, "UTF-8");
+			redirectURL += "context-feature="+URLEncoder.encode(feature, "StandardCharsets.UTF_8.name()");
 			
 			context.getResponse().sendRedirect(redirectURL);
 			
@@ -1836,15 +1836,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						qualifier = eOperation.getName();
 					}					
 					if (context.authorize(context.getTarget(), action, qualifier, null)) {
-						Map<EParameter, Object> parameterBindings = new HashMap<>();
-						for (EParameter eParameter: eOperation.getEParameters()) {
-							Object bindingAnnotation = getYamlRenderAnnotation((C) context, eParameter, RenderAnnotation.BIND);
-							if (bindingAnnotation != null) {
-								parameterBindings.put(eParameter, bindingAnnotation);
-							}
-						}
-						
-						ret.add(new EOperationTarget<C,T>(this, eOperation, webOperationAnnotation, parameterBindings));
+						ret.add(new EOperationTarget<C,T>((C) context, this, eOperation, webOperationAnnotation));
 					}
 				}
 			}

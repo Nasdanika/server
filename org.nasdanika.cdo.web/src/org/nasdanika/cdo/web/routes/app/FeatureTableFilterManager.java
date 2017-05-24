@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.web.routes.app;
 
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -145,7 +146,7 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 										
 				dropDownItems.sort((a,b) -> ((String) a[2]).compareTo((String) b[2]));
 				for (Object[] dropDownItem: dropDownItems) {
-					String filterSegment = filterParameterName+"="+URLEncoder.encode(typeRenderer.getFormControlValue(context, null, tableFeature, dropDownItem[0], appConsumer), "UTF-8");
+					String filterSegment = filterParameterName+"="+URLEncoder.encode(typeRenderer.getFormControlValue(context, null, tableFeature, dropDownItem[0], appConsumer), StandardCharsets.UTF_8.name());
 					String href = request.getRequestURI() + queryBuilder + (queryBuilder.length() == 0 ? "?" : "&") + filterSegment;
 					filterDropDown.item(htmlFactory.link(href, dropDownItem[1]));
 				}

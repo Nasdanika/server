@@ -5,6 +5,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -596,7 +597,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 										featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 									} else {
-										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
 									}
 								}
 								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -627,7 +628,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 							featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 						} else {
-							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
 						}
 					}
 					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -685,7 +686,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 										featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 									} else {
-										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
 									}
 								}
 								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -716,7 +717,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 							featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 						} else {
-							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "UTF-8");										
+							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
 						}
 					}
 					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -2284,17 +2285,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
 					Object location = spec.get("location");
 					if ((location == null || "view".equals(location)) && containingFeature.getName().equals(spec.get("feature-value"))) {
-						StringBuilder queryBuilder = new StringBuilder("feature=").append(containingFeature.getName());					
+						Map<String, String> queryParameters = new HashMap<>();
+						queryParameters.put("feature", containingFeature.getName());					
 						if (obj instanceof CDOObject) {
 							String formControlValue = getFormControlValue(context, obj, containingFeature, obj, appConsumer);
-							queryBuilder
-								.append("&element=").append(formControlValue)
-								.append("&context-object=").append(formControlValue);
+							queryParameters.put("element", formControlValue);
+							queryParameters.put("context-object", formControlValue);
 						}
 						
 						Map<String, Object> vars = new HashMap<>();
 						vars.put("element", obj);
-						ret.content(getRenderer(eContainer).renderEOperationButton(context, eContainer, eOperation, queryBuilder.toString(), vars, appConsumer));
+						ret.content(getRenderer(eContainer).renderEOperationButton(context, eContainer, eOperation, queryParameters, vars, appConsumer));
 					}				
 				}
 			}
@@ -2319,7 +2320,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			C context, 
 			T obj, 
 			EOperation eOperation, 
-			String query, 
+			Map<String,String> queryParameters, 
 			Map<String, Object> jxPathContextVariables,
 			Consumer<Object> appConsumer) throws Exception {
 		
@@ -2368,7 +2369,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 //				}
 			}
 			
-			if (!CoreUtil.isBlank(query)) {
+			if (queryParameters != null && !queryParameters.isEmpty()) {
+				StringBuilder query = new StringBuilder();
+				for (Entry<String, String> qp: queryParameters.entrySet()) {
+					if (query.length()>0) {
+						query.append("&");
+					}
+					query.append(qp.getKey()).append("=").append(URLEncoder.encode(qp.getValue(), StandardCharsets.UTF_8.name()));
+				}
 				path += "?" + query;
 			}
 			
@@ -2392,7 +2400,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				eOperationButton.on(Event.click, guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"';");
 			} else {
 				String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-eoperation-"+eOperation.getName()+"-"+htmlFactory.nextId();
-				appConsumer.accept(renderEOperationModalDialogApplication(context, obj, eOperation, appId, appConsumer));
+				appConsumer.accept(renderEOperationModalDialogApplication(context, obj, eOperation, queryParameters, appId, appConsumer));
 				eOperationButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
 			}
 			
@@ -3328,7 +3336,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
 				Object location = spec.get("location");
 				if ((location == null || "view".equals(location)) && feature.getName().equals(spec.get("feature"))) {
-					ret.content(renderEOperationButton(context, obj, eOperation, "feature="+feature.getName(), null, appConsumer));
+					ret.content(renderEOperationButton(context, obj, eOperation, Collections.singletonMap("feature", feature.getName()), null, appConsumer));
 				}				
 			}
 		}
@@ -3403,7 +3411,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				addButton.disabled();
 			} else if (featureElementTypes.size() == 1) {
 				EClass featureElementType = featureElementTypes.iterator().next();
-				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));
+				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* StandardCharsets.UTF_8.name()? */));
 				Renderer<C, EObject> fetr = getRenderer(featureElementType);
 				if (fetr.getCreateModalType(context) == ModalType.NONE) {
 					addButton.on(Event.click, "window.location='"+objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");
@@ -3414,7 +3422,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			} else {
 				for (EClass featureElementType: featureElementTypes) {
-					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
+					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* StandardCharsets.UTF_8.name()? */));		
 					String createURL = objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
 					Renderer<C, EObject> fetr = getRenderer(featureElementType);
 					Object iconAndLabel = fetr.renderNamedElementIconAndLabel(context, featureElementType);
@@ -3688,18 +3696,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
 					Object location = spec.get("location");
 					if ((location == null || "view".equals(location)) && typedElement.getName().equals(spec.get("feature-value"))) {
-						StringBuilder queryBuilder = new StringBuilder("feature=").append(typedElement.getName());					
+						Map<String,String> queryParameters = new HashMap<>();
+						queryParameters.put("feature", typedElement.getName());					
 						if (idx != -1) {
-							queryBuilder.append("&").append("position=").append(idx);
+							queryParameters.put("position", String.valueOf(idx));
 						}
 						if (value instanceof CDOObject) {
-							queryBuilder.append("&").append("element=").append(getFormControlValue(context, obj, typedElement, value, appConsumer));
+							queryParameters.put("element", getFormControlValue(context, obj, typedElement, value, appConsumer));
 						}
 						
 						Map<String, Object> vars = new HashMap<>();
 						vars.put("element", value);
 						vars.put("position", idx);
-						ret.content(renderEOperationButton(context, obj, eOperation, queryBuilder.toString(), vars, appConsumer));
+						ret.content(renderEOperationButton(context, obj, eOperation, queryParameters, vars, appConsumer));
 					}				
 				}
 			}
@@ -5215,7 +5224,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			featureNode.setData("readable", readable);
 			featureNode.setData("feature", treeFeature);
 			if (readable) {
-				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), "UTF-8")+"';");
+				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), "StandardCharsets.UTF_8.name()")+"';");
 			} else {
 				featureNode.anchorAttribute("style", "cursor:default");
 			}
@@ -5636,7 +5645,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							Collections.emptyMap(), 
 							horizontalForm,
 							koBinder,
-							ret)
+							appConsumer)
 								.knockout().submit("submit")
 								.novalidate(noValidate);
 					
@@ -5660,7 +5669,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					ajaxConfigBuilder.append("dataType: 'json',").append(System.lineSeparator());
 					ajaxConfigBuilder.append("data: ko.toJSON(this.data),").append(System.lineSeparator());
 					
-					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
+					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* StandardCharsets.UTF_8.name()? */));		
 					String createURL = getRenderer(container).getObjectURI(context, container)+"/reference/"+containmentFeature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_JSON;
 					
 					Map<String, Object> scriptConfig = new HashMap<>();
@@ -5800,7 +5809,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Collections.emptyMap(), 
 					horizontalForm,
 					koBinder,
-					ret)
+					appConsumer)
 						.knockout().submit("submit")
 						.novalidate(noValidate);
 			
@@ -5902,12 +5911,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	/**
 	 * Modal dialog type to use to display the {@link EOperation} input form.  
 	 * @param context
-	 * @return NONE for EOperations with confirmation as they are typically input-less, and MEDIUM otherwise.
+	 * @return NONE for EOperations with confirmation as they are typically input-less or EOperations with "part" parameter bindings (file uploads), and MEDIUM otherwise.
 	 */
 	default ModalType getEOperationModalType(C context, T obj, EOperation eOperation) throws Exception {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-		return spec != null && spec.get("confirm") instanceof String ? ModalType.NONE : ModalType.MEDIUM;
+		EOperationTargetInfo info = new EOperationTargetInfo(context, this, eOperation, spec);
+		return spec == null || spec.get("confirm") instanceof String || info.hasPartParameters() ? ModalType.NONE : ModalType.MEDIUM;
 	}		
 	
 	/**
@@ -5917,14 +5927,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * upon update the location shall have context-feature parameter. 
 	 * @return
 	 */
-	default Object renderEOperationModalDialogApplication(C context, T obj, EOperation eOperation, String appId, Consumer<Object> appConsumer) throws Exception {
+	default Object renderEOperationModalDialogApplication(C context, T obj, EOperation eOperation, Map<String,String> queryParameters, String appId, Consumer<Object> appConsumer) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 		ModalType modalType = getEditModalType(context, obj);
 		// TODO - proper authorization...
-		if (obj instanceof CDOObject && modalType != ModalType.NONE && context.authorizeUpdate(obj, null, null)) {		
-//			String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-edit-app";				
-											
+		EOperationTargetInfo info = new EOperationTargetInfo(context, this, eOperation);
+		if (obj instanceof CDOObject && modalType != ModalType.NONE && context.authorize(obj, info.getAction(), info.getQualifier(), null)) {		
 			Modal formModal = htmlFactory.modal().id(appId+"-modal");
 			switch (modalType) {
 			case LARGE:
@@ -5937,15 +5946,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				break;		
 			}
 			
-			// Object header
-			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, appConsumer));
+			// Dialog title
+			formModal.title(getResourceString(context, "execute"), " ", renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true));
 			
 			Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
 			// Form elements
-			EClass eClass = obj.eClass();
-			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
-			boolean noValidate = "true".equals(getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
+			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.HORIZONTAL_FORM));
+			boolean noValidate = "true".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.NO_VALIDATE));
 			
 			StringBuilder koDataBindings = new StringBuilder();
 			StringBuilder koStatusBindings = new StringBuilder();
@@ -6000,23 +6008,35 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 			};
 			
-			Form form = renderEditForm(
-					context, 
-					obj, 
-					Collections.emptyList(), 
-					Collections.emptyMap(), 
-					horizontalForm,
-					koBinder,
-					ret)
-						.knockout().submit("submit")
-						.novalidate(noValidate);
-						
-			configureForm(form, horizontalForm, modalType);
-
-			form.content(htmlFactory.tag(TagName.hr));
-			form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
-			form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
+			Map<EParameter, Object> formParameters = new LinkedHashMap<EParameter, Object>();
+			for (EParameter eParameter: eOperation.getEParameters()) {
+				if (info.isFormParameter(eParameter)) {
+					formParameters.put(eParameter, getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE));
+				}
+			}
+			Form form = renderInputForm(context, obj, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, appConsumer)
+				.novalidate(noValidate)
+				.knockout().submit("submit");
 			
+			for (EParameter eParameter: eOperation.getEParameters()) {
+				String queryParameterName = info.getQueryParameterName(eParameter);
+				if (queryParameterName != null) {					
+					String queryParameterValue = queryParameters.get(queryParameterName);
+					if (queryParameterValue != null) {
+						if (koDataBindings.length() > 0) {
+							koDataBindings.append(",").append(System.lineSeparator());
+						}
+						koDataBindings.append("'"+queryParameterName+"': ko.observable('"+StringEscapeUtils.escapeEcmaScript(queryParameterValue)+"')");				
+					}
+				}
+			}														
+			
+			configureForm(form, horizontalForm, modalType);
+			
+			form.content(htmlFactory.tag(TagName.hr));
+			form.button(getResourceString(context, "execute")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
+			form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
+						
 			formModal.body(overlay, form);
 			ret.content(formModal);
 			
@@ -6031,11 +6051,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			ajaxConfigBuilder.append("dataType: 'json',").append(System.lineSeparator());
 			ajaxConfigBuilder.append("data: ko.toJSON(this.data),").append(System.lineSeparator());
 			
-			String updateURL = getObjectURI(context, obj)+"/update";
+			String executeURL = getObjectURI(context, obj)+"/"+info.getPath();
 			
 			Map<String, Object> scriptConfig = new HashMap<>();
 			scriptConfig.put("app-id", appId);
-			scriptConfig.put("url", updateURL);
+			scriptConfig.put("url", executeURL);
 			scriptConfig.put("declarations", declarationsBuilder.toString());
 			
 			// Success handler
