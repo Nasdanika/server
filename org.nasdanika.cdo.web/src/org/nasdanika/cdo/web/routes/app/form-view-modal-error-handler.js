@@ -4,7 +4,7 @@ this.messages([{
 	message: errorThrown + " " + textStatus
 }]);
 
-// Modal resizing to address error messages.
-var modalBody = $('#{{app-id}} .modal-body');
+//Modal resizing to address error messages.
+var modalBody = $('#{{app-id}}-modal .modal-body');
 var form = modalBody.find('form');
-modalBody.height((form.height() + 30) + "px");
+modalBody.height((form.height() + 30) + "px");	

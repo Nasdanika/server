@@ -43,6 +43,7 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
+import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.BasicDiagnostic;
@@ -144,6 +145,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 		
+	public static final String JSON_DATA_REQUEST_ATTRIBUTE_KEY = Renderer.class.getName()+":jsonData";
 	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
@@ -1362,123 +1364,132 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * * Otherwise uses context.convert() method.
 	 * @param context
 	 * @param typedElement
-	 * @param strValue
+	 * @param value
 	 * @return
 	 * @throws Exception
 	 */
 	@SuppressWarnings("unchecked")
-	default Object parseTypedElementValue(C context, ETypedElement typedElement, String strValue) throws Exception {		
+	default Object parseTypedElementValue(C context, ETypedElement typedElement, Object value) throws Exception {		
 		Class<?> featureTypeInstanceClass = typedElement.getEType().getInstanceClass();
-		if (featureTypeInstanceClass.isInstance(strValue)) {
-			return strValue;
+		if (featureTypeInstanceClass.isInstance(value)) {
+			return value;
 		}
 		
 		if (Boolean.class == featureTypeInstanceClass || boolean.class == featureTypeInstanceClass) {
-			if (CoreUtil.isBlank(strValue)) {
-				return boolean.class == featureTypeInstanceClass ? false : null;
+			if (value instanceof Boolean) {
+				return (Boolean) value;
 			}
-			switch (strValue) {
-			case "true":
-			case "on":
-				return true;
-			case "false":
-			case "off":
-				return false;
-			default:
-				Map<String,Object> env = new HashMap<>();
-				env.put("value", strValue);
-				env.put("type", "boolean");
-				throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));
+			
+			if (value instanceof String) {
+				if (CoreUtil.isBlank((String) value)) {
+					return boolean.class == featureTypeInstanceClass ? false : null;
+				}
+				switch ((String) value) {
+				case "true":
+				case "on":
+					return true;
+				case "false":
+				case "off":
+					return false;
+				default:
+					Map<String,Object> env = new HashMap<>();
+					env.put("value", value);
+					env.put("type", "boolean");
+					throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));
+				}
 			}
 		}
 		
 		// Blank is treated as null for non-string values.
-		if (CoreUtil.isBlank(strValue)) {
-			return null;
-		}
-		
-		if (byte[].class == featureTypeInstanceClass) {
-			return Base64.getDecoder().decode(strValue.trim());
-		}
-		
-		if (featureTypeInstanceClass.isEnum()) {
-			return featureTypeInstanceClass.getField(strValue).get(null);
-		}
-		
-		if (CDOObject.class.isAssignableFrom(featureTypeInstanceClass) && context instanceof CDOViewContext<?, ?>) {
-			return ((CDOViewContext<CDOView, ?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, strValue));
-		}
-		
-		if (Date.class == featureTypeInstanceClass) {
-			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
-			if (format == null) {
-				format = "yyyy-MM-dd"; // Default web format for dates.
+		if (value instanceof String) {
+			String strValue = (String) value;
+			if (strValue.trim().length() == 0) {
+				return null;
 			}
-			SimpleDateFormat sdf = new SimpleDateFormat(format);
-			return sdf.parse(strValue);
-		}
 		
-		if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
-			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
-			if (format == null) {
-				if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
-					return Byte.parseByte(strValue);
+			if (byte[].class == featureTypeInstanceClass) {
+				return Base64.getDecoder().decode(strValue);
+			}
+			
+			if (featureTypeInstanceClass.isEnum()) {
+				return featureTypeInstanceClass.getField(strValue).get(null);
+			}
+			
+			if (CDOObject.class.isAssignableFrom(featureTypeInstanceClass) && context instanceof CDOViewContext<?, ?>) {
+				return ((CDOViewContext<CDOView, ?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, strValue));
+			}
+			
+			if (Date.class == featureTypeInstanceClass) {
+				String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
+				if (format == null) {
+					format = "yyyy-MM-dd"; // Default web format for dates.
 				}
-				if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
-					return Double.parseDouble(strValue);
+				SimpleDateFormat sdf = new SimpleDateFormat(format);
+				return sdf.parse(strValue);
+			}
+			
+			if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
+				String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
+				if (format == null) {
+					if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
+						return Byte.parseByte(strValue);
+					}
+					if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
+						return Double.parseDouble(strValue);
+					}
+					if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
+						return Float.parseFloat(strValue);
+					}
+					if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
+						return Integer.parseInt(strValue);
+					}
+					if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
+						return Long.parseLong(strValue);
+					}
+					if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
+						return Short.parseShort(strValue);
+					}					
+				} else {			
+					DecimalFormat df = new DecimalFormat(format);
+					if (BigDecimal.class == featureTypeInstanceClass) {
+						df.setParseBigDecimal(true);
+						return df.parse(strValue);
+					}				
+					Number parsed = df.parse(strValue);				
+					if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
+						return parsed.byteValue();
+					}
+					if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
+						return parsed.doubleValue();
+					}
+					if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
+						return parsed.floatValue();
+					}
+					if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
+						return parsed.intValue();
+					}
+					if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
+						return parsed.longValue();
+					}
+					if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
+						return parsed.shortValue();
+					}				
+					Object cp = context.convert(parsed, featureTypeInstanceClass);
+					if (parsed != null && cp == null) {
+						Map<String,Object> env = new HashMap<>();
+						env.put("value", parsed);
+						env.put("type", featureTypeInstanceClass.getName());
+						throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));				
+					}
+					return cp;
 				}
-				if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
-					return Float.parseFloat(strValue);
-				}
-				if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
-					return Integer.parseInt(strValue);
-				}
-				if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
-					return Long.parseLong(strValue);
-				}
-				if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
-					return Short.parseShort(strValue);
-				}					
-			} else {			
-				DecimalFormat df = new DecimalFormat(format);
-				if (BigDecimal.class == featureTypeInstanceClass) {
-					df.setParseBigDecimal(true);
-					return df.parse(strValue);
-				}				
-				Number parsed = df.parse(strValue);				
-				if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
-					return parsed.byteValue();
-				}
-				if (Double.class == featureTypeInstanceClass || double.class == featureTypeInstanceClass) {
-					return parsed.doubleValue();
-				}
-				if (Float.class == featureTypeInstanceClass || float.class == featureTypeInstanceClass) {
-					return parsed.floatValue();
-				}
-				if (Integer.class == featureTypeInstanceClass || int.class == featureTypeInstanceClass) {
-					return parsed.intValue();
-				}
-				if (Long.class == featureTypeInstanceClass || long.class == featureTypeInstanceClass) {
-					return parsed.longValue();
-				}
-				if (Short.class == featureTypeInstanceClass || short.class == featureTypeInstanceClass) {
-					return parsed.shortValue();
-				}				
-				Object cp = context.convert(parsed, featureTypeInstanceClass);
-				if (parsed != null && cp == null) {
-					Map<String,Object> env = new HashMap<>();
-					env.put("value", parsed);
-					env.put("type", featureTypeInstanceClass.getName());
-					throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));				
-				}
-				return cp;
 			}
 		}
 		
-		Object ret = context.convert(strValue, featureTypeInstanceClass);
-		if (strValue != null && ret == null) {
+		Object ret = context.convert(value, featureTypeInstanceClass);
+		if (value != null && ret == null) {
 			Map<String,Object> env = new HashMap<>();
-			env.put("value", strValue);
+			env.put("value", value);
 			env.put("type", featureTypeInstanceClass.getName());
 			throw new IllegalArgumentException(getHTMLFactory(context).interpolate(getResourceString(context, "convertError"), env));
 		}
@@ -1498,13 +1509,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			JSONObject jsonData = null;
 			if (CONTENT_TYPE_APPLICATION_JSON.contentEquals(request.getContentType())) {
 				// Cache in request to avoid multiple parsings.
-				String jsonDataRequestAttributeKey = Renderer.class.getName()+":jsonData";
-				jsonData = (JSONObject) request.getAttribute(jsonDataRequestAttributeKey);
+				jsonData = (JSONObject) request.getAttribute(JSON_DATA_REQUEST_ATTRIBUTE_KEY);
 				if (jsonData == null) {
 					try (InputStream in = request.getInputStream()) {
 						jsonData = new JSONObject(new JSONTokener(in));
 					}
-					request.setAttribute(jsonDataRequestAttributeKey, jsonData);
+					request.setAttribute(JSON_DATA_REQUEST_ATTRIBUTE_KEY, jsonData);
 				}
 			}
 			String featureName = feature.getName();
@@ -1522,15 +1532,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				} else if (jsonData.has(featureName)) {
 					JSONArray jva = jsonData.getJSONArray(featureName);
 					for (int i=0; i < jva.length(); ++i) {
-						fv.add(parseTypedElementValue(context, feature, jva.getString(i))); // Do we need to stringify and re-parse numbers and dates?
+						fv.add(parseTypedElementValue(context, feature, jva.get(i)));
 					}
 				}
 			} else {				
-				String value = null;
+				Object value = null;
 				if (jsonData == null) {
 					value = request.getParameter(featureName);
 				} else if (jsonData.has(featureName)) {
-					value = jsonData.getString(featureName);
+					value = jsonData.get(featureName);
 				}
 				if (value == null) {
 					obj.eUnset(feature);
@@ -2458,7 +2468,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param editButton
 	 */
 	default void wireEditButton(C context, T obj, Button editButton) throws Exception {
-		editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/edit.html';");		
+		if (getEditModalType(context, obj) == ModalType.NONE) {
+			editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/edit.html';");		
+		} else {
+			String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-edit-app";				
+			editButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+		}
 	}	
 	
 	/**
@@ -2672,7 +2687,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param featureDocModals
 	 * @throws Exception
 	 */
-	default NamedItemsContainer<?, ?> renderFeatureItemsContainer(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals) throws Exception {		
+	default NamedItemsContainer<?, ?> renderFeatureItemsContainer(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals, TypedElementTableRenderListener<C,T> typedElementTableRenderListener) throws Exception {		
 		NamedItemsContainer<?, ?> ret = null;
 		Object spec = getYamlRenderAnnotation(context, obj.eClass(), RenderAnnotation.FEATURE_ITEMS_CONTAINER);
 		HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -2728,7 +2743,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			// Applies filter-<view feature name>-<column feature name>=control value filters		
-			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this) : null; 
+			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this, typedElementTableRenderListener) : null; 
 						
 			ret.item(
 					nameSpan, 
@@ -3632,11 +3647,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 
 		if (value instanceof EObject) {
 			EObject eObjectValue = (EObject) value;
-			if (!fullView) {
+			boolean isContained = typedElement instanceof EReference && ((EReference) typedElement).isContainment();
+			// View (...) button is shown only if there is no edit button (not contained) or not all the features are shown (e.g. an object with "many" references).
+			if (!isContained || !fullView) {
 				ret.content(renderTypedElementValueViewButton(context, obj, typedElement, idx, eObjectValue));
 			}
-			ret.content(getRenderer(eObjectValue).renderEditButton(context, eObjectValue, false));
+			// Avoiding locking issues by staying within the object containment tree. 
+			if (isContained) {
+				ret.content(getRenderer(eObjectValue).renderEditButton(context, eObjectValue, false));
+			}
 		}
+		
 		if (value != null) {
 			ret.content(renderTypedElementValueDeleteButton(context, obj, typedElement, idx, value));
 		}
@@ -3790,6 +3811,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		if (value instanceof CDOObject) {
 			return CDOIDCodec.INSTANCE.encode(context, ((CDOObject) value).cdoID());
+		}
+		
+		if (value instanceof Boolean) {
+			return Boolean.TRUE.equals(value) ? "true" : ""; // Is this the correct behavior?
 		}
 			
 		Object rfv = renderTypedElementValue(context, typedElement, value);
@@ -5495,6 +5520,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 	}
 	
+	// --- Create ---
+	
 	/**
 	 * Modal dialog type to use to display the create form. 
 	 * @param context
@@ -5583,7 +5610,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					FormRenderingListener<C, EObject, EStructuralFeature> koBinder = new FormRenderingListener<C, EObject, EStructuralFeature>() {
 						
 						@Override
-						public UIElement<?> onFormControlRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, UIElement<?> control) {
+						public UIElement<?> onFormControlRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, UIElement<?> control) throws Exception {
 							if (control instanceof InputBase) {
 								control.knockout().value("data."+typedElement.getName());
 								if (koDataBindings.length() > 0) {
@@ -5594,7 +5621,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									koDataBindings.append(typedElement.getName()+": ko.observableArray()");
 								} else {
 									// TODO - initial/default values
-									koDataBindings.append(typedElement.getName()+": ko.observable()");									
+									koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(renderer.getFormControlValue(context, instance, typedElement, value))+"')");									
 								}
 								
 								if (koStatusBindings.length() > 0) {
@@ -5607,13 +5634,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						}
 						
 						@Override
-						public void onFormGroupRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, FormGroup<?> formGroup) {
+						public void onFormGroupRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, FormGroup<?> formGroup) throws Exception {
 							formGroup.knockout().css("status."+typedElement.getName());
 							super.onFormGroupRendering(context, obj, typedElement, value, formGroup);
 						}
 						
 						@Override
-						public void onBeforeFormRendering(C context, EObject obj, Form form) {
+						public void onBeforeFormRendering(C context, EObject obj, Form form) throws Exception {
 							// Validation messages.
 							ListGroup messages = htmlFactory.listGroup().knockout().foreach("messages");
 							Tag labelText = htmlFactory.span().knockout().text("name");
@@ -5661,16 +5688,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
 					String createURL = getRenderer(container).getObjectURI(context, container)+"/reference/"+containmentFeature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_JSON;
 					
-	//		 		- app-id - application id, base for other ID's like modal, form, and overlay.
-	//				- url - server endpoint communication url.
-	//				- declarations - observables and other declarations
-	//				- success-handler - invoked on AJAX success
-	//				- error-handler - invoked on AJAX error
-	//				- ajax-config - additional configuration for jQuery.ajax, e.g. method. Shall end with a comma, may be blank
 					Map<String, Object> scriptConfig = new HashMap<>();
 					scriptConfig.put("app-id", appId);
-					scriptConfig.put("url", createURL); // For testing.
-					scriptConfig.put("declarations", declarationsBuilder.toString()); // Use HTML gen binding.
+					scriptConfig.put("url", createURL); 
+					scriptConfig.put("declarations", declarationsBuilder.toString()); 
 					
 					// Success handler
 					Map<String,Object> successHandlerConfig = new HashMap<>();
@@ -5709,6 +5730,172 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default ModalType getEditModalType(C context, T obj) {
 		return ModalType.LARGE;
 	}
+	
+	
+	/**
+	 * Renders edit application which includes a modal dialog with an overlay and a form, documentation modals, and a view model script.
+	 * @param containerContext if true, the submitted data shall have "container-context" data element set to true, indicating that 
+	 * upon update the location shall have context-feature parameter. 
+	 * @return
+	 */
+	default Object renderEditElementModalDialogApplication(C context, T obj, boolean containerContext) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment ret = htmlFactory.fragment();
+		ModalType modalType = getEditModalType(context, obj);
+		if (obj instanceof CDOObject && modalType != ModalType.NONE && context.authorizeUpdate(obj, null, null)) {		
+			String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-edit-app";				
+											
+			Modal formModal = htmlFactory.modal().id(appId+"-modal");
+			switch (modalType) {
+			case LARGE:
+				formModal.large();
+				break;
+			case SMALL:
+				formModal.small();
+				break;
+			default:
+				break;		
+			}
+			
+			// Object header
+			EClass eClass = obj.eClass();
+			Modal classDocModal = renderDocumentationModal(context, eClass);
+			if (classDocModal != null) {
+				ret.content(classDocModal);
+			}
+			
+			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, classDocModal));
+			
+			Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
+
+			// Form elements
+			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
+			boolean noValidate = "true".equals(getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
+			
+			StringBuilder koDataBindings = new StringBuilder();
+			StringBuilder koStatusBindings = new StringBuilder();
+							
+			FormRenderingListener<C, T, EStructuralFeature> koBinder = new FormRenderingListener<C, T, EStructuralFeature>() {
+				
+				@Override
+				public UIElement<?> onFormControlRendering(C context, T obj, EStructuralFeature typedElement, Object value, UIElement<?> control) throws Exception {
+					if (control instanceof InputBase) {
+						if (control instanceof Input && (((Input) control).getType() == InputType.checkbox || ((Input) control).getType() == InputType.radio)) {
+							control.knockout().checked("data."+typedElement.getName());							
+						} else {
+							control.knockout().value("data."+typedElement.getName());
+						}
+						if (koDataBindings.length() > 0) {
+							koDataBindings.append(",").append(System.lineSeparator());
+						}
+						if (typedElement.isMany()) {
+							// TODO - values
+							koDataBindings.append(typedElement.getName()+": ko.observableArray()");
+						} else {
+							koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value))+"')");									
+						}
+						
+						if (koStatusBindings.length() > 0) {
+							koStatusBindings.append(",").append(System.lineSeparator());
+						}								
+						koStatusBindings.append(typedElement.getName()+": ko.observable()");									
+					}
+					
+					return super.onFormControlRendering(context, obj, typedElement, value, control);
+				}
+				
+				@Override
+				public void onFormGroupRendering(C context, T obj, EStructuralFeature typedElement, Object value, FormGroup<?> formGroup) throws Exception {
+					formGroup.knockout().css("status."+typedElement.getName());
+					super.onFormGroupRendering(context, obj, typedElement, value, formGroup);
+				}
+				
+				@Override
+				public void onBeforeFormRendering(C context, T obj, Form form) throws Exception {
+					// Validation messages.
+					ListGroup messages = htmlFactory.listGroup().knockout().foreach("messages");
+					Tag labelText = htmlFactory.span().knockout().text("name");
+					Tag messageLabel = htmlFactory.label(Style.DEFAULT, labelText).style().margin().right("1em").knockout().visible("name");
+					Tag messageText = htmlFactory.span().knockout().text("message");
+					messages.item(htmlFactory.fragment(messageLabel, messageText), Style.DEFAULT).knockout().css("style");
+					form.content(messages);
+					
+					super.onBeforeFormRendering(context, obj, form);
+				}
+				
+			};
+			
+			Form form = renderEditForm(
+					context, 
+					obj, 
+					Collections.emptyList(), 
+					Collections.emptyMap(), 
+					horizontalForm,
+					koBinder,
+					ret)
+						.knockout().submit("submit")
+						.novalidate(noValidate);
+			
+			// Optimistic locking
+			CDORevision revision = ((CDOObject) obj).cdoRevision();
+			if (revision != null) {
+				if (koDataBindings.length() > 0) {
+					koDataBindings.append(",").append(System.lineSeparator());
+				}
+				koDataBindings.append("'"+OBJECT_VERSION_KEY+"': ko.observable("+revision.getVersion()+")");
+			}
+			
+			if (containerContext) {
+				if (koDataBindings.length() > 0) {
+					koDataBindings.append(",").append(System.lineSeparator());
+				}
+				koDataBindings.append("'.container-context': ko.observable(true)");				
+			}
+			
+			configureForm(form, horizontalForm, modalType);
+
+			form.content(htmlFactory.tag(TagName.hr));
+			form.button(getResourceString(context, "submit")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
+			form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
+			
+			formModal.body(overlay, form);
+			ret.content(formModal);
+			
+			StringBuilder declarationsBuilder = new StringBuilder();
+			declarationsBuilder.append("this.data = {").append(koDataBindings).append("};").append(System.lineSeparator());
+			declarationsBuilder.append("this.status = {").append(koStatusBindings).append("};").append(System.lineSeparator());
+			declarationsBuilder.append("this.messages = ko.observableArray();").append(System.lineSeparator());
+			
+			StringBuilder ajaxConfigBuilder = new StringBuilder();
+			ajaxConfigBuilder.append("type: 'PUT',").append(System.lineSeparator());
+			ajaxConfigBuilder.append("contentType: '"+CONTENT_TYPE_APPLICATION_JSON+"',").append(System.lineSeparator());
+			ajaxConfigBuilder.append("dataType: 'json',").append(System.lineSeparator());
+			ajaxConfigBuilder.append("data: ko.toJSON(this.data),").append(System.lineSeparator());
+			
+			String updateURL = getObjectURI(context, obj)+"/update";
+			
+			Map<String, Object> scriptConfig = new HashMap<>();
+			scriptConfig.put("app-id", appId);
+			scriptConfig.put("url", updateURL);
+			scriptConfig.put("declarations", declarationsBuilder.toString());
+			
+			// Success handler
+			Map<String,Object> successHandlerConfig = new HashMap<>();
+			successHandlerConfig.put("app-id", appId);
+			scriptConfig.put("success-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-success-handler.js"), successHandlerConfig));
+			
+			// Error handler
+			Map<String,Object> errorHandlerConfig = new HashMap<>();
+			errorHandlerConfig.put("app-id", appId);
+			scriptConfig.put("error-handler", htmlFactory.interpolate(Renderer.class.getResource("form-view-modal-error-handler.js"), successHandlerConfig));
+			
+			scriptConfig.put("ajax-config", ajaxConfigBuilder.toString());
+			ret.content(htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("form-view-model.js"), scriptConfig)));										
+		}
+		
+		return ret;
+	}
+	
 		
 	// --- Select ---
 	
@@ -5743,8 +5930,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return ModalType.MEDIUM;
 	}
 		
-	
-
 	/**
 	 * Configures form appearance
 	 * @param form

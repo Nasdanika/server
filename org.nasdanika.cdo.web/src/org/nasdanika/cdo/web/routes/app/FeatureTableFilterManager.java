@@ -32,7 +32,7 @@ import org.nasdanika.web.HttpServletRequestContext;
  * @param <C>
  * @param <T>
  */
-public class FeatureTableFilterManager<C extends Context, T extends EObject> extends TypedElementTableRenderListener<C, T> implements Predicate<Object> {
+public class FeatureTableFilterManager<C extends Context, T extends EObject> extends TypedElementTableRenderListenerFilter<C, T> implements Predicate<Object> {
 	
 	private final String featureFilterParameterPrefix;
 	private C context;
@@ -40,7 +40,8 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 	private Renderer<C, T> renderer;
 	private EClass featureType;	
 	
-	public FeatureTableFilterManager(C context, EStructuralFeature feature, Renderer<C,T> renderer) {
+	public FeatureTableFilterManager(C context, EStructuralFeature feature, Renderer<C,T> renderer, TypedElementTableRenderListener<C,T> chain) {
+		super(chain);
 		this.context = context;
 		this.feature = feature;
 		this.renderer = renderer;
@@ -58,6 +59,8 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 			EStructuralFeature tableFeature, 
 			Object featureSpec, 
 			Cell featureHeader) throws Exception {
+		
+		super.onFeatureHeader(context, obj, typedElement, typedElementValue, tableFeature, featureSpec, featureHeader);
 		
 		if (featureSpec instanceof Map && Boolean.TRUE.equals(((Map<?,?>) featureSpec).get("filter")) && context instanceof HttpServletRequestContext) {
 			Set<Object> filterChoices = new HashSet<>(); 

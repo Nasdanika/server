@@ -24,19 +24,19 @@ public class FormRenderingListener<C extends Context, T extends EObject, TE exte
 	private static final FormRenderingListener<Context, EObject, ETypedElement> NOP_LISTENER = new FormRenderingListener<Context, EObject, ETypedElement>();
 	
 	@SuppressWarnings("unchecked")
-	public static <C extends Context, T extends EObject, TE extends ETypedElement> FormRenderingListener<C,T,TE> nopListener() {
+	public static <C extends Context, T extends EObject, TE extends ETypedElement> FormRenderingListener<C,T,TE> nopListener() throws Exception {
 		return (FormRenderingListener<C, T, TE>) NOP_LISTENER;
 	}
 	
-	public UIElement<?> onFormControlRendering(C context, T obj, TE typedElement, Object value, UIElement<?> control) {
+	public UIElement<?> onFormControlRendering(C context, T obj, TE typedElement, Object value, UIElement<?> control) throws Exception {
 		return control;
 	}
 
-	public void onFormGroupRendering(C context, T obj, TE typedElement, Object value, FormGroup<?> formGroup) {
+	public void onFormGroupRendering(C context, T obj, TE typedElement, Object value, FormGroup<?> formGroup) throws Exception {
 		
 	}
 	
-	public void onCategoryFieldSet(C context, T obj, String category, List<TE> categoryMembers, FieldSet categoryFieldSet) {
+	public void onCategoryFieldSet(C context, T obj, String category, List<TE> categoryMembers, FieldSet categoryFieldSet) throws Exception {
 		
 	}
 
@@ -46,7 +46,7 @@ public class FormRenderingListener<C extends Context, T extends EObject, TE exte
 	 * @param obj
 	 * @param form
 	 */
-	public void onBeforeFormRendering(C context, T obj, Form form) {
+	public void onBeforeFormRendering(C context, T obj, Form form) throws Exception {
 		
 	}
 	

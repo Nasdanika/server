@@ -43,6 +43,7 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -74,6 +75,7 @@ import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.ListGroup;
 import org.nasdanika.html.Modal;
+import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -81,6 +83,7 @@ import org.nasdanika.html.TextArea;
 import org.nasdanika.html.Theme;
 import org.nasdanika.html.UIElement;
 import org.nasdanika.web.Action;
+import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.HeaderParameter;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.PathParameter;
@@ -175,7 +178,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		EClass targetEClass = target.eClass();
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
-		Fragment content = getHTMLFactory(context).fragment();
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment content = htmlFactory.fragment();
 		
 		// Create applications
 		for (EStructuralFeature vf: getVisibleFeatures(context, target, feature -> feature instanceof EReference && getTypedElementLocation(context, feature) == TypedElementLocation.item)) {
@@ -195,6 +199,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		for (Modal fdm: featureDocModals.values()) {
 			content.content(fdm);
 		}
+		
+		Fragment editAppsAccumulator = htmlFactory.fragment(renderEditElementModalDialogApplication(context, target, false));
+		content.content(editAppsAccumulator);
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -216,7 +223,26 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(renderView(context, target, featureDocModals));
 		}
 		
-		content.content(renderFeatureItemsContainer(context, target, featureDocModals));
+		TypedElementTableRenderListener<C, T> editAppsGenerator = new TypedElementTableRenderListener<C, T>() {
+			
+			public void onElementRow(
+					C context, 
+					T obj, 
+					ETypedElement typedElement, 
+					Object typedElementValue, 
+					EObject elementValue, 
+					int rowNumber, 
+					RowContainer.Row row) throws Exception {
+				
+				// Render edit dialog for contained elements
+				if (elementValue.eContainer() == obj) {
+					editAppsAccumulator.content(getRenderer(elementValue).renderEditElementModalDialogApplication(context, elementValue, true));
+				}				
+				
+			};
+			
+		};
+		content.content(renderFeatureItemsContainer(context, target, featureDocModals, editAppsGenerator));
 						
 		return renderPage(context, target, title, content);		
 	}
@@ -608,7 +634,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 											referrer = referrerHeader;
 										}
 										if (referrer == null) {
-											referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+											referrer = context.getObjectPath(target)+"/"+INDEX_HTML;
 										}
 										int referrerQueryStart = referrer.indexOf("?");
 										if (referrerQueryStart == -1) {
@@ -641,49 +667,45 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								}
 							} else if (setSuccessful) {
 								// Success - add/set instance to the feature and then redirect to referrer parameter or referer header or the view.
-								if (context instanceof HttpServletRequestContext) {
-									if (renderer.isViewOnCreate(context, instance)) {
-										return new Action() {
-	
-											@Override
-											public void close() throws Exception {
-												// NOP											
-											}
-	
-											@Override
-											public Object execute() throws Exception {
-												context.getResponse().sendRedirect(context.getObjectPath(instance)+"/"+INDEX_HTML);
-												return null;
-											}
-											
-										};
-									}
-									
-									String referrer = referrerParameter;
-									if (referrer == null) {
-										referrer = referrerHeader;
-									}
-									if (referrer == null) {
-										referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
-									}
-									int referrerQueryStart = referrer.indexOf("?");
-									if (referrerQueryStart == -1) {
-										referrer +=  "?";
-									} else {
-										StringBuilder queryBuilder = new StringBuilder();
-										for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
-											if (!qe.startsWith("context-feature=")) {
-												queryBuilder.append(qe).append("&");
-											}
+								if (renderer.isViewOnCreate(context, instance)) {
+									return new Action() {
+
+										@Override
+										public void close() throws Exception {
+											// NOP											
 										}
-										referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
-									}
-									referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
-									((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
-									return Action.NOP;
+
+										@Override
+										public Object execute() throws Exception {
+											context.getResponse().sendRedirect(context.getObjectPath(instance)+"/"+INDEX_HTML);
+											return null;
+										}
+										
+									};
 								}
 								
-								return "Update successful";
+								String referrer = referrerParameter;
+								if (referrer == null) {
+									referrer = referrerHeader;
+								}
+								if (referrer == null) {
+									referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+								}
+								int referrerQueryStart = referrer.indexOf("?");
+								if (referrerQueryStart == -1) {
+									referrer +=  "?";
+								} else {
+									StringBuilder queryBuilder = new StringBuilder();
+									for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+										if (!qe.startsWith("context-feature=")) {
+											queryBuilder.append(qe).append("&");
+										}
+									}
+									referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+								}
+								referrer += "context-feature="+URLEncoder.encode(reference, "UTF-8");
+								context.getResponse().sendRedirect(referrer);
+								return Action.NOP;
 							}
 						} 
 						
@@ -984,13 +1006,17 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		EClass targetEClass = target.eClass();
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
-		Fragment content = getHTMLFactory(context).fragment();
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment content = htmlFactory.fragment();
 		
 		// Documentation modals
 		Modal classDocModal = renderDocumentationModal(context, targetEClass);
 		if (classDocModal != null) {
 			content.content(classDocModal);
 		}
+		
+		Fragment editAppsAccumulator = htmlFactory.fragment();
+		content.content(editAppsAccumulator);			
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -1015,8 +1041,28 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		Tag objectHeader = content.getFactory().tag(TagName.h4, renderObjectHeader(context, target, classDocModal));
 		content.content(objectHeader);
 		
+		TypedElementTableRenderListener<C, T> editAppsGenerator = new TypedElementTableRenderListener<C, T>() {
+			
+			public void onElementRow(
+					C context, 
+					T obj, 
+					ETypedElement typedElement, 
+					Object typedElementValue, 
+					EObject elementValue, 
+					int rowNumber, 
+					RowContainer.Row row) throws Exception {
+				
+				// Render edit dialog for contained elements
+				if (elementValue.eContainer() == obj) {
+					editAppsAccumulator.content(getRenderer(elementValue).renderEditElementModalDialogApplication(context, elementValue, true));
+				}				
+				
+			};
+			
+		};
+		
 		// Applies filter-<view feature name>-<column feature name>=control value filters		
-		FeatureTableFilterManager<C, T> featureTableFilterManager = sf.getEType() instanceof EClass ? new FeatureTableFilterManager<C, T>(context, sf, this) : null; 
+		FeatureTableFilterManager<C, T> featureTableFilterManager = sf.getEType() instanceof EClass ? new FeatureTableFilterManager<C, T>(context, sf, this, editAppsGenerator) : null; 
 		
 		// view 
 		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, featureTableFilterManager, null, featureTableFilterManager));
@@ -1381,8 +1427,87 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		content.content(editForm);
 		
 		return renderPage(context, target, title, content);		
-	}				
+	}		
 	
+	/**
+	 * Processes AJAX update.
+	 * @param context
+	 * @param target
+	 * @param referrerParameter
+	 * @param referrerHeader
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(
+			comment="Processes AJAX update.",
+			consumes=CONTENT_TYPE_APPLICATION_JSON,
+			produces=CONTENT_TYPE_APPLICATION_JSON)
+	public Object putUpdate(
+			@ContextParameter C context,
+			@TargetParameter T target,
+			@HeaderParameter(REFERRER_HEADER) String referrerHeader,	
+			@BodyParameter JSONObject data) throws Exception {
+		
+		context.getRequest().setAttribute(JSON_DATA_REQUEST_ATTRIBUTE_KEY, data); // To avoid repeat attempt to parse body.		
+		
+		EClass targetEClass = target.eClass();
+		ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
+			
+			@Override
+			protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+				return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? targetEClass : namedElement), key, true);
+			}
+			
+		};
+		
+		boolean versionMatch = true;
+		if (target instanceof CDOObject) {
+			CDORevision revision = ((CDOObject) target).cdoRevision();
+			if (revision != null && data.has(OBJECT_VERSION_KEY) && revision.getVersion() != data.getInt(OBJECT_VERSION_KEY)) {
+				versionMatch = compareEditableFeatures(context, target, diagnosticConsumer);
+				if (!versionMatch) {
+					diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, getResourceString(context, "concurrentModification.object"), new Object[] { target }));
+				}
+			}
+		}
+		
+		if (versionMatch && setEditableFeatures(context, target, diagnosticConsumer)) {
+			JSONObject result = new JSONObject();
+			String referrer = referrerHeader;
+			if (referrer == null) {
+				referrer = ((HttpServletRequestContext) context).getObjectPath(target)+"/"+INDEX_HTML;
+			}
+			String containerContextKey = ".container-context";
+			boolean containerContext = data.has(containerContextKey) ? data.getBoolean(containerContextKey) : false;
+			if (containerContext) {
+				int referrerQueryStart = referrer.indexOf("?");
+				if (referrerQueryStart == -1) {
+					referrer +=  "?";
+				} else {
+					StringBuilder queryBuilder = new StringBuilder();
+					for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+						if (!qe.startsWith("context-feature=")) {
+							queryBuilder.append(qe).append("&");
+						}
+					}
+					referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+				}
+				referrer += "context-feature="+URLEncoder.encode(target.eContainmentFeature().getName(), "UTF-8");
+			}
+			result.put("location", referrer);
+			return result;
+		}
+		
+		JSONObject result = new JSONObject();
+		result.put("validationResults", diagnosticConsumer.toJSON());
+		
+		if (context instanceof TransactionContext) {
+			((TransactionContext) context).setRollbackOnly();
+		}
+		
+		return result;
+	}		
+		
 	@RouteMethod(
 			comment="Deletes this element and redirects either to the referrer or to the parent's index.html if the referrer is one of 'this' object pages.",
 			lock = @RouteMethod.Lock(type=Type.WRITE, path=".."), 
