@@ -2172,7 +2172,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Object renderView(C context, T obj, Consumer<Object> appConsumer) throws Exception {
-		return getHTMLFactory(context).fragment(renderViewFeatures(context, obj, appConsumer), renderViewButtons(context, obj, appConsumer));
+		return getHTMLFactory(context).fragment(renderViewFeatures(context, obj, appConsumer), renderViewButtons(context, obj, false, appConsumer));
 	}
 
 	/**
@@ -2259,9 +2259,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderViewButtons(C context, T obj, Consumer<Object> appConsumer) throws Exception {
+	default Object renderViewButtons(C context, T obj, boolean containerContext, Consumer<Object> appConsumer) throws Exception {
 		Tag ret = getHTMLFactory(context).div().style().margin("5px"); 
-		ret.content(renderEditButton(context, obj, true));
+		ret.content(renderEditButton(context, obj, true, containerContext, appConsumer));
 		ret.content(renderDeleteButton(context, obj));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
 			if (getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION) instanceof Map) {
@@ -2429,7 +2429,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Button renderEditButton(C context, T obj, boolean showLabel) throws Exception {
+	default Button renderEditButton(C context, T obj, boolean showLabel, boolean containerContext, Consumer<Object> appConsumer) throws Exception {
 		if (isEditable(context, obj, obj.eClass()) && context.authorizeUpdate(obj, null, null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Tag editIcon = renderEditIcon(context);
@@ -2440,7 +2440,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (showLabel) {
 				editButton.content(getResourceString(context, "edit"));
 			}
-			wireEditButton(context, obj, editButton);
+			wireEditButton(context, obj, editButton, containerContext, appConsumer);
 
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
@@ -2458,11 +2458,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param idx
 	 * @param editButton
 	 */
-	default void wireEditButton(C context, T obj, Button editButton) throws Exception {
+	default void wireEditButton(C context, T obj, Button editButton, boolean containerContext, Consumer<Object> appConsumer) throws Exception {
 		if (getEditModalType(context, obj) == ModalType.NONE) {
 			editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/edit.html';");		
 		} else {
-			String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-edit-app";				
+			String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-edit-app-"+getHTMLFactory(context).nextId();
+			appConsumer.accept(renderEditModalDialogApplication(context, obj, containerContext, appId, appConsumer));
 			editButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
 		}
 	}	
@@ -2682,8 +2683,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default NamedItemsContainer<?, ?> renderFeatureItemsContainer(
 			C context, 
 			T obj, 
-			Map<EStructuralFeature, Modal> featureDocModals, 
-			TypedElementTableRenderListener<C,T> typedElementTableRenderListener, 
 			Consumer<Object> appConsumer) throws Exception {
 		
 		NamedItemsContainer<?, ?> ret = null;
@@ -2741,7 +2740,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			// Applies filter-<view feature name>-<column feature name>=control value filters		
-			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this, typedElementTableRenderListener, appConsumer) : null; 
+			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this, null, appConsumer) : null; 
 						
 			ret.item(
 					nameSpan, 
@@ -3321,7 +3320,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default Object renderFeatureViewButtons(C context, T obj, EStructuralFeature feature, Consumer<Object> appConsumer)	throws Exception {
 		Fragment ret = getHTMLFactory(context).fragment(); 
-		ret.content(renderFeatureAddButton(context, obj, feature));
+		ret.content(renderFeatureAddButton(context, obj, feature, appConsumer));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
 			Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 			if (yamlRenderAnnotation instanceof Map) {
@@ -3344,7 +3343,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Button renderFeatureAddButton(C context, T obj, EStructuralFeature feature)	throws Exception {
+	default Button renderFeatureAddButton(C context, T obj, EStructuralFeature feature, Consumer<Object> appConsumer) throws Exception {
 		if (feature.isChangeable() && isEditable(context, obj, feature) && context.authorizeCreate(obj, feature.getName(), null)) { // Adding to a reference is considered create.
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Map<String, Object> env = new HashMap<>();
@@ -3368,7 +3367,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 
 			addButton.style(Style.PRIMARY).style().margin().left("5px");
-			wireFeatureAddButton(context, obj, feature, addButton);
+			wireFeatureAddButton(context, obj, feature, addButton, appConsumer);
 			return addButton;
 		}
 		return null;
@@ -3385,10 +3384,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton) throws Exception {
+	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton, Consumer<Object> appConsumer) throws Exception {
 		String objectURI = getObjectURI(context, obj);	
 		addButton.type(Type.BUTTON); // No submitting.
 		if (feature instanceof EReference && ((EReference) feature).isContainment()) {
+			HTMLFactory htmlFactory = getHTMLFactory(context);
 			List<EClass> featureElementTypes = new ArrayList<>();
 			for (EClass ec: getReferenceElementTypes(context, obj, (EReference) feature)) {
 				String qualifier = feature.getName()+"/"+ec.getName();
@@ -3408,7 +3408,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				if (fetr.getCreateModalType(context) == ModalType.NONE) {
 					addButton.on(Event.click, "window.location='"+objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");
 				} else {
-					String appId = fetr.getCreateContainmentReferenceElementModalDialogApplicationId(context, obj, feature, featureElementType);
+					String appId = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj)) + "-" + feature.getName() + "-create-" + featureElementType.getName()+ "-" + htmlFactory.nextId(); 
+					appConsumer.accept(fetr.renderCreateContainmentReferenceElementModalDialogApplication(context, obj, feature, featureElementType, appId, appConsumer));					
 					addButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
 				}
 			} else {
@@ -3418,10 +3419,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Renderer<C, EObject> fetr = getRenderer(featureElementType);
 					Object iconAndLabel = fetr.renderNamedElementIconAndLabel(context, featureElementType);
 					if (fetr.getCreateModalType(context) == ModalType.NONE) {
-						addButton.item(getHTMLFactory(context).link(createURL, iconAndLabel));
+						addButton.item(htmlFactory.link(createURL, iconAndLabel));
 					} else {
-						String appId = fetr.getCreateContainmentReferenceElementModalDialogApplicationId(context, obj, feature, featureElementType);
-						addButton.item(iconAndLabel).attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+						String appId = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj)) + "-" + feature.getName() + "-create-" + featureElementType.getName()+ "-" + htmlFactory.nextId(); 
+						appConsumer.accept(fetr.renderCreateContainmentReferenceElementModalDialogApplication(context, obj, feature, featureElementType, appId, appConsumer));					
+						addButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
 					}
 				}
 			}
@@ -3653,7 +3655,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			// Avoiding locking issues by staying within the object containment tree. 
 			if (isContained) {
-				ret.content(getRenderer(eObjectValue).renderEditButton(context, eObjectValue, false));
+				ret.content(getRenderer(eObjectValue).renderEditButton(context, eObjectValue, false, true, appConsumer));
 			}
 		}
 		
@@ -5516,20 +5518,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default ModalType getCreateModalType(C context) throws Exception {
 		return ModalType.LARGE;
 	}
-			
-	/**
-	 * Base ID for the create application
-	 * @param context
-	 * @param container
-	 * @param containmentFeature
-	 * @param nsURI
-	 * @param eClassName
-	 * @return
-	 */
-	default String getCreateContainmentReferenceElementModalDialogApplicationId(C context, EObject container, EStructuralFeature containmentFeature, EClass featureElementType) throws Exception {
-		String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* UTF-8? */));		
-		return CDOIDCodec.INSTANCE.encode(context, ((CDOObject) container)) + "-create-" + containmentFeature.getName() + "-" + encodedPackageNsURI + "-" + featureElementType.getName(); 
-	}	
 	
 	/**
 	 * Renders create application which includes a modal dialog with an overlay and a form, documentation modals, and a view model script. 
@@ -5546,6 +5534,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			EObject container, 
 			EStructuralFeature containmentFeature, 
 			EClass featureElementType, 
+			String appId,
 			Consumer<Object> appConsumer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -5557,8 +5546,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				qualifier += "@"+featureElementType.getEPackage().getNsURI();
 			}
 			if (context.authorizeCreate(container, qualifier, null)) {
-				String appId = getCreateContainmentReferenceElementModalDialogApplicationId(context, container, containmentFeature, featureElementType);				
-												
 				Modal formModal = htmlFactory.modal().id(appId+"-modal");
 				switch (modalType) {
 				case LARGE:
@@ -5725,12 +5712,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * upon update the location shall have context-feature parameter. 
 	 * @return
 	 */
-	default Object renderEditModalDialogApplication(C context, T obj, boolean containerContext, Consumer<Object> appConsumer) throws Exception {
+	default Object renderEditModalDialogApplication(C context, T obj, boolean containerContext, String appId, Consumer<Object> appConsumer) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 		ModalType modalType = getEditModalType(context, obj);
 		if (obj instanceof CDOObject && modalType != ModalType.NONE && context.authorizeUpdate(obj, null, null)) {		
-			String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-edit-app";				
 											
 			Modal formModal = htmlFactory.modal().id(appId+"-modal");
 			switch (modalType) {

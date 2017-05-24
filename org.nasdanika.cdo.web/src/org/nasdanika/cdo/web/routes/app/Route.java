@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Consumer;
 
 import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Cookie;
@@ -43,7 +44,6 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
-import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -74,8 +74,6 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.ListGroup;
-import org.nasdanika.html.Modal;
-import org.nasdanika.html.RowContainer;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -180,28 +178,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment content = htmlFactory.fragment();
-		
-		// Create applications
-		for (EStructuralFeature vf: getVisibleFeatures(context, target, feature -> feature instanceof EReference && getTypedElementLocation(context, feature) == TypedElementLocation.item)) {
-			for (EClass ec: getReferenceElementTypes(context, target, (EReference) vf)) {
-				Object createApp = getRenderer(ec).renderCreateContainmentReferenceElementModalDialogApplication(context, target, (EStructuralFeature) vf, ec);
-				content.content(createApp);
-			}			
-		}	
-		
-		// Documentation modals
-		Modal classDocModal = renderDocumentationModal(context, targetEClass);
-		if (classDocModal != null) {
-			content.content(classDocModal);
-		}
-		
-		Map<EStructuralFeature, Modal> featureDocModals = renderVisibleFeaturesDocModals(context, target);
-		for (Modal fdm: featureDocModals.values()) {
-			content.content(fdm);
-		}
-		
-		Fragment editAppsAccumulator = htmlFactory.fragment(renderEditElementModalDialogApplication(context, target, false));
-		content.content(editAppsAccumulator);
+		Fragment appConsumer = htmlFactory.fragment();
+		content.content(appConsumer);
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -215,34 +193,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 //		}
 				
 		// Object header
-		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, appConsumer));
 		content.content(objectHeader);
 		
 		// view 
 		if (!isViewItem(context, target)) {
-			content.content(renderView(context, target, featureDocModals));
+			content.content(renderView(context, target, appConsumer));
 		}
 		
-		TypedElementTableRenderListener<C, T> editAppsGenerator = new TypedElementTableRenderListener<C, T>() {
-			
-			public void onElementRow(
-					C context, 
-					T obj, 
-					ETypedElement typedElement, 
-					Object typedElementValue, 
-					EObject elementValue, 
-					int rowNumber, 
-					RowContainer.Row row) throws Exception {
-				
-				// Render edit dialog for contained elements
-				if (elementValue.eContainer() == obj) {
-					editAppsAccumulator.content(getRenderer(elementValue).renderEditElementModalDialogApplication(context, elementValue, true));
-				}				
-				
-			};
-			
-		};
-		content.content(renderFeatureItemsContainer(context, target, featureDocModals, editAppsGenerator));
+		content.content(renderFeatureItemsContainer(context, target, appConsumer));
 						
 		return renderPage(context, target, title, content);		
 	}
@@ -478,6 +437,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 			String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 			Fragment content = htmlFactory.fragment();
+			Fragment appConsumer = htmlFactory.fragment();
+			content.content(appConsumer);
 			
 			// Breadcrumbs
 			Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -486,13 +447,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				content.content(breadCrumbs);
 			}
 			
-			// Object header
-			Modal classDocModal = renderDocumentationModal(context, target.eClass());
-			if (classDocModal != null) {
-				content.content(classDocModal);
-			}
-			
-			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, appConsumer));
 			content.content(objectHeader);				
 			
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
@@ -503,7 +458,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					tsf, 
 					diagnosticConsumer.getNamedElementValidationResults().get(tsf), 
 					horizontalForm,
-					null)
+					null,
+					appConsumer)
 				.novalidate(noValidate)
 				.action("select.html")				
 				.method(Method.post);
@@ -712,6 +668,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						HTMLFactory htmlFactory = getHTMLFactory(context);
 						String title = StringEscapeUtils.escapeHtml4(renderer.nameToLabel(eClass.getName()));
 						Fragment content = htmlFactory.fragment();
+						Fragment appConsumer = htmlFactory.fragment();
+						content.content(appConsumer);
 						
 						// Breadcrumbs
 						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -721,11 +679,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						}
 						
 						// Object header
-						Modal classDocModal = renderer.renderDocumentationModal(context, eClass);
-						if (classDocModal != null) {
-							content.content(classDocModal);
-						}
-						Tag classDocIcon = renderer.renderDocumentationIcon(context, eClass, classDocModal, true);		
+						Tag classDocIcon = renderer.renderDocumentationIcon(context, eClass, appConsumer, true);		
 						
 						Tag objectHeader = content.getFactory().tag(TagName.h3, getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, eClass), classDocIcon);
 						content.content(objectHeader);
@@ -887,6 +841,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			String title = StringEscapeUtils.escapeHtml4(nameToLabel(tsf.getName())+" - add value");
 			Fragment content = htmlFactory.fragment();
+			Fragment appConsumer = htmlFactory.fragment();
+			content.content(appConsumer);
 			
 			// Breadcrumbs
 			Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -897,24 +853,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			}
 			
 			// Object header
-			Modal classDocModal = renderDocumentationModal(context, target.eClass());
-			if (classDocModal != null) {
-				content.content(classDocModal);
-			}
-			
-			Modal attributeDocModal = renderDocumentationModal(context, tsf);
-			if (attributeDocModal != null) {
-				content.content(attributeDocModal);
-			}			
 			
 			Tag attributeHeader = content.getFactory().tag(TagName.h3,
 					addResourceString, 
 					" ", 
 					renderNamedElementIconAndLabel(context, tsf), 
-					renderDocumentationIcon(context, tsf, attributeDocModal, true));
+					renderDocumentationIcon(context, tsf, appConsumer, true));
 			content.content(attributeHeader);
 			
-			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, appConsumer));
 			content.content(objectHeader);
 													
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, tsf, RenderAnnotation.HORIZONTAL_FORM));
@@ -946,10 +893,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					Collections.singletonList(tsf), 
 					value, 
 					addForm, 
-					attributeDocModal, 
 					diagnosticConsumer.getNamedElementValidationResults().get(tsf), 
 					horizontalForm,
-					null);
+					null,
+					appConsumer);
 			
 			addForm
 				.novalidate(noValidate)
@@ -1008,13 +955,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment content = htmlFactory.fragment();
-		
-		// Documentation modals
-		Modal classDocModal = renderDocumentationModal(context, targetEClass);
-		if (classDocModal != null) {
-			content.content(classDocModal);
-		}
-		
+		Fragment appConsumer = htmlFactory.fragment();
+		content.content(appConsumer);
+				
 		Fragment editAppsAccumulator = htmlFactory.fragment();
 		content.content(editAppsAccumulator);			
 		
@@ -1027,45 +970,21 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				
 		// Headers
 		Tag featureHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, sf));
-		Modal fdm = renderDocumentationModal(context, sf);
-		if (fdm != null) {
-			content.content(fdm);
-		}
-		Tag featureDocIcon = renderDocumentationIcon(context, sf, fdm, true);
+		Tag featureDocIcon = renderDocumentationIcon(context, sf, appConsumer, true);
 		if (featureDocIcon != null) {
 			featureHeader.content(featureDocIcon);
 		}
 
 		content.content(featureHeader);
 		
-		Tag objectHeader = content.getFactory().tag(TagName.h4, renderObjectHeader(context, target, classDocModal));
+		Tag objectHeader = content.getFactory().tag(TagName.h4, renderObjectHeader(context, target, appConsumer));
 		content.content(objectHeader);
 		
-		TypedElementTableRenderListener<C, T> editAppsGenerator = new TypedElementTableRenderListener<C, T>() {
-			
-			public void onElementRow(
-					C context, 
-					T obj, 
-					ETypedElement typedElement, 
-					Object typedElementValue, 
-					EObject elementValue, 
-					int rowNumber, 
-					RowContainer.Row row) throws Exception {
-				
-				// Render edit dialog for contained elements
-				if (elementValue.eContainer() == obj) {
-					editAppsAccumulator.content(getRenderer(elementValue).renderEditElementModalDialogApplication(context, elementValue, true));
-				}				
-				
-			};
-			
-		};
-		
 		// Applies filter-<view feature name>-<column feature name>=control value filters		
-		FeatureTableFilterManager<C, T> featureTableFilterManager = sf.getEType() instanceof EClass ? new FeatureTableFilterManager<C, T>(context, sf, this, editAppsGenerator) : null; 
+		FeatureTableFilterManager<C, T> featureTableFilterManager = sf.getEType() instanceof EClass ? new FeatureTableFilterManager<C, T>(context, sf, this, null, appConsumer) : null; 
 		
 		// view 
-		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, featureTableFilterManager, null, featureTableFilterManager));
+		content.content(renderTypedElementView(context, target, sf, target.eGet(sf), true, featureTableFilterManager, null, featureTableFilterManager, appConsumer));
 		
 		context.getRequest().setAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY, sf);
 		return renderPage(context, target, title, content);
@@ -1206,6 +1125,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			String title = StringEscapeUtils.escapeHtml4(nameToLabel(tsf.getName())+" - edit value");
 			Fragment content = htmlFactory.fragment();
+			Fragment appConsumer = htmlFactory.fragment();
+			content.content(appConsumer);
 			
 			// Breadcrumbs
 			Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -1215,25 +1136,14 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				content.content(breadCrumbs);
 			}
 			
-			// Object header
-			Modal classDocModal = renderDocumentationModal(context, target.eClass());
-			if (classDocModal != null) {
-				content.content(classDocModal);
-			}
-			
-			Modal attributeDocModal = renderDocumentationModal(context, tsf);
-			if (attributeDocModal != null) {
-				content.content(attributeDocModal);
-			}			
-			
 			Tag attributeHeader = content.getFactory().tag(TagName.h3,
 					addResourceString, 
 					" ", 
 					renderNamedElementIconAndLabel(context, tsf), 
-					renderDocumentationIcon(context, tsf, attributeDocModal, true));
+					renderDocumentationIcon(context, tsf, appConsumer, true));
 			content.content(attributeHeader);
 			
-			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+			Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, appConsumer));
 			content.content(objectHeader);
 													
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, tsf, RenderAnnotation.HORIZONTAL_FORM));
@@ -1265,10 +1175,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					Collections.singletonList(tsf), 
 					attributeValues.get(element), 
 					editForm, 
-					attributeDocModal, 
 					diagnosticConsumer.getNamedElementValidationResults().get(tsf), 
 					horizontalForm,
-					null);
+					null,
+					appConsumer);
 			
 			editForm
 				.novalidate(noValidate)
@@ -1334,12 +1244,17 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			
 		};
 		
+		Fragment content = htmlFactory.fragment();
+		Fragment appConsumer = htmlFactory.fragment();
+		content.content(appConsumer);
+
+		
 		if (context.getMethod() == RequestMethod.POST) {
 			boolean versionMatch = true;
 			if (target instanceof CDOObject) {
 				CDORevision revision = ((CDOObject) target).cdoRevision();
 				if (revision != null && objectVersionParameter != null && revision.getVersion() != Integer.parseInt(objectVersionParameter)) {
-					versionMatch = compareEditableFeatures(context, target, diagnosticConsumer);
+					versionMatch = compareEditableFeatures(context, target, diagnosticConsumer, appConsumer);
 					if (!versionMatch) {
 						diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, getResourceString(context, "concurrentModification.object"), new Object[] { target }));
 					}
@@ -1369,7 +1284,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 				
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
-		Fragment content = htmlFactory.fragment();
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -1378,13 +1292,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(breadCrumbs);
 		}
 		
-		// Object header
-		Modal classDocModal = renderDocumentationModal(context, target.eClass());
-		if (classDocModal != null) {
-			content.content(classDocModal);
-		}
-		
-		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, classDocModal));
+		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, appConsumer));
 		content.content(objectHeader);				
 		
 		boolean horizontalForm = !"false".equals(getRenderAnnotation(context, targetEClass, RenderAnnotation.HORIZONTAL_FORM));
@@ -1464,7 +1372,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (target instanceof CDOObject) {
 			CDORevision revision = ((CDOObject) target).cdoRevision();
 			if (revision != null && data.has(OBJECT_VERSION_KEY) && revision.getVersion() != data.getInt(OBJECT_VERSION_KEY)) {
-				versionMatch = compareEditableFeatures(context, target, diagnosticConsumer);
+				Consumer<Object> appConsumer = new Consumer<Object>() {
+					
+					@Override
+					public void accept(Object content) {
+						// NOP						
+					}
+					
+				};
+				versionMatch = compareEditableFeatures(context, target, diagnosticConsumer, appConsumer);
 				if (!versionMatch) {
 					diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, getResourceString(context, "concurrentModification.object"), new Object[] { target }));
 				}
@@ -1703,6 +1619,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment content = htmlFactory.fragment();
+		Fragment appConsumer = htmlFactory.fragment();
+		content.content(appConsumer);
 		
 		// Breadcrumbs
 		Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -1712,14 +1630,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 		
 		// Object header
-		Modal classDocModal = renderDocumentationModal(context, target.eClass());
-		if (classDocModal != null) {
-			content.content(classDocModal);
-		}
-		
 		Tag objectHeader = content.getFactory().tag(
 				TagName.h3, 
-				renderObjectHeader(context, target, classDocModal), 
+				renderObjectHeader(context, target, appConsumer), 
 				" - ", 
 				// TODO - doc system article and link to the article.
 				htmlFactory.link("https://commons.apache.org/proper/commons-jxpath/users-guide.html", "XPath").attribute("title", "Use ecore:eClassName() and ecore:ePackageNsURI() functions to compute EClass details"), 
@@ -2230,11 +2143,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			
 			String title = StringEscapeUtils.escapeHtml4(nameToLabel(target.eClass().getName())+" :: "+nameToLabel(eOperation.getName()));
 			Fragment content = htmlFactory.fragment();
-			
-			Modal eOperationDocModal = renderDocumentationModal(context, eOperation);
-			if (eOperationDocModal != null) {
-				content.content(eOperationDocModal);
-			}
+			Fragment appConsumer = htmlFactory.fragment();
+			content.content(appConsumer);
 			
 			if (context.getMethod() == RequestMethod.GET) {
 				if (eOperationTarget.hasFormParameters()) {					
@@ -2252,7 +2162,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						content.content(breadCrumbs);
 					}
 							
-					Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+					Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 					content.content(objectHeader);							
 					
 					content.content(htmlFactory.tag(TagName.h4, inputFormStr).style().color().bootstrapColor(Color.INFO));
@@ -2265,7 +2175,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							formParameters.put(eParameter, getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE));
 						}
 					}
-					Form inputForm = renderInputForm(context, target, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm)
+					Form inputForm = renderInputForm(context, target, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, appConsumer)
 						.novalidate(noValidate)
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);
@@ -2343,7 +2253,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							content.content(breadCrumbs);
 						}
 								
-						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 						content.content(objectHeader);							
 						
 						content.content(htmlFactory.tag(TagName.h4, invalidInputStr).style().color().bootstrapColor(Color.DANGER)); 
@@ -2381,14 +2291,14 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								content.content(breadCrumbs);
 							}
 									
-							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 							content.content(objectHeader);							
 							
 							if (result == null) {
 								content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 							} else {
 								content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null));					
+								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer));					
 							}
 						} catch (Exception e) {
 							// Breadcrumbs
@@ -2404,7 +2314,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								content.content(breadCrumbs);
 							}
 									
-							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 							content.content(objectHeader);							
 							
 							Throwable rootCause = e;
@@ -2460,7 +2370,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						content.content(breadCrumbs);
 					}
 							
-					Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+					Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 					content.content(objectHeader);							
 					
 					content.content(htmlFactory.tag(TagName.h4, invalidInputStr).style().color().bootstrapColor(Color.DANGER)); 
@@ -2473,7 +2383,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							formParameters.put(eParameter, args.get(eParameter.getName()));
 						}
 					}
-					Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm)
+					Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm, appConsumer)
 						.novalidate(noValidate)
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);
@@ -2535,14 +2445,14 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							content.content(breadCrumbs);
 						}
 								
-						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 						content.content(objectHeader);							
 						
 						if (result == null) {
 							content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 						} else {
 							content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-							content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null));					
+							content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer));					
 						}
 					} catch (Exception e) {
 						// Breadcrumbs
@@ -2558,7 +2468,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							content.content(breadCrumbs);
 						}
 								
-						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, eOperationDocModal, true)); 
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 						content.content(objectHeader);							
 						
 						content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER));
