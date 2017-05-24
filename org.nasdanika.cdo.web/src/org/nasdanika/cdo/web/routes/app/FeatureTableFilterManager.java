@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -38,13 +39,15 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 	private C context;
 	private EStructuralFeature feature;
 	private Renderer<C, T> renderer;
-	private EClass featureType;	
+	private EClass featureType;
+	private Consumer<Object> appConsumer;	
 	
-	public FeatureTableFilterManager(C context, EStructuralFeature feature, Renderer<C,T> renderer, TypedElementTableRenderListener<C,T> chain) {
+	public FeatureTableFilterManager(C context, EStructuralFeature feature, Renderer<C,T> renderer, TypedElementTableRenderListener<C,T> chain, Consumer<Object> appConsumer) {
 		super(chain);
 		this.context = context;
 		this.feature = feature;
 		this.renderer = renderer;
+		this.appConsumer = appConsumer;
 		featureType = (EClass) feature.getEType();	
 		featureFilterParameterPrefix = "filter-"+feature.getName()+"-";
 	}
@@ -115,7 +118,7 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 				if (filterValue instanceof EObject) {
 					filterIconAndLabel = renderer.getRenderer((EObject) filterValue).renderIconAndLabel(context, (EObject) filterValue);
 				} else {
-					filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue);
+					filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue, appConsumer);
 				}
 				Tag trashCanIcon = htmlFactory.fontAwesome().webApplication(WebApplication.trash_o).getTarget().style().color().bootstrapColor(Color.PRIMARY);
 				// TODO - build query
@@ -132,7 +135,7 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 					if (filterChoice instanceof EObject) {
 						filterChoiceIconAndLabel = renderer.getRenderer((EObject) filterChoice).renderIconAndLabel(context, (EObject) filterChoice);
 					} else {
-						filterChoiceIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterChoice);
+						filterChoiceIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterChoice, appConsumer);
 					}			
 					dropDownItems.add(new Object[] { 
 							filterChoice, 
@@ -142,7 +145,7 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 										
 				dropDownItems.sort((a,b) -> ((String) a[2]).compareTo((String) b[2]));
 				for (Object[] dropDownItem: dropDownItems) {
-					String filterSegment = filterParameterName+"="+URLEncoder.encode(typeRenderer.getFormControlValue(context, null, tableFeature, dropDownItem[0]), "UTF-8");
+					String filterSegment = filterParameterName+"="+URLEncoder.encode(typeRenderer.getFormControlValue(context, null, tableFeature, dropDownItem[0], appConsumer), "UTF-8");
 					String href = request.getRequestURI() + queryBuilder + (queryBuilder.length() == 0 ? "?" : "&") + filterSegment;
 					filterDropDown.item(htmlFactory.link(href, dropDownItem[1]));
 				}
