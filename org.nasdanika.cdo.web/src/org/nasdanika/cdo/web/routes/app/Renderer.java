@@ -1310,7 +1310,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			if (eObjectValue.eResource() == null) {
 				// Not part of a resource, render as view, not as link.
-				return getRenderer(eObjectValue).renderViewFeatures(context, eObjectValue, null, appConsumer);
+				return getRenderer(eObjectValue).renderViewFeatures(context, eObjectValue, appConsumer);
 			}
 			return getRenderer(eObjectValue).renderLink(context, eObjectValue, true);
 		}
@@ -1662,7 +1662,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Tag renderDocumentationIcon(C context, EModelElement modelElement, Modal docModal, boolean superscript) throws Exception {
+	default Tag renderDocumentationIcon(C context, EModelElement modelElement, Consumer<Object> appConsumer, boolean superscript) throws Exception {
 		String doc = renderDocumentation(context, modelElement);
 		if (doc == null) {
 			return null;
@@ -1675,6 +1675,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			helpTag = htmlFactory.tag(TagName.sup, helpTag);
 		}
 		helpTag.attribute(TITLE_KEY, firstSentence);
+		
+		Modal docModal = renderDocumentationModal(context, modelElement);
+		if (docModal != null) {
+			appConsumer.accept(docModal);
+		}
 		
 		// More than one sentence - opens doc modal.
 		if (!textDoc.equals(firstSentence) && docModal != null) {
@@ -2158,35 +2163,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 	
 	/**
-	 * Renders {@link EModelElement} documentation modal dialogs.
-	 * @param context
-	 * @param obj
-	 * @return
-	 * @throws Exception
-	 */
-	default <M extends EModelElement> Map<M, Modal> renderModelElementsDocModals(C context, T obj, Collection<M> modelElements) throws Exception {
-		Map<M, Modal> modelElementDocModals = new HashMap<>();
-		for (M modelElement: modelElements) {
-			Modal fdm = renderDocumentationModal(context, modelElement);
-			if (fdm != null) {
-				modelElementDocModals.put(modelElement, fdm);
-			}
-		}		
-		return modelElementDocModals;
-	}
-
-	/**
-	 * Renders doc modals for visible features.
-	 * @param context
-	 * @param obj
-	 * @return
-	 * @throws Exception
-	 */
-	default Map<EStructuralFeature, Modal> renderVisibleFeaturesDocModals(C context, T obj) throws Exception {
-		return renderModelElementsDocModals(context, obj, getVisibleFeatures(context, obj, null));
-	}
-	
-	/**
 	 * Renders object view.
 	 * @param context
 	 * @param obj
@@ -2195,8 +2171,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderView(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals, Consumer<Object> appConsumer) throws Exception {
-		return getHTMLFactory(context).fragment(renderViewFeatures(context, obj, featureDocModals, appConsumer), renderViewButtons(context, obj, appConsumer));
+	default Object renderView(C context, T obj, Consumer<Object> appConsumer) throws Exception {
+		return getHTMLFactory(context).fragment(renderViewFeatures(context, obj, appConsumer), renderViewButtons(context, obj, appConsumer));
 	}
 
 	/**
@@ -2210,7 +2186,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception
 	 */
-	default Object renderViewFeatures(C context, T obj, Map<EStructuralFeature, Modal> featureDocModals, Consumer<Object> appConsumer) throws Exception {
+	default Object renderViewFeatures(C context, T obj, Consumer<Object> appConsumer) throws Exception {
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Table featuresTable = htmlFactory.table();
 		featuresTable.col().bootstrap().grid().col(1);
@@ -2226,7 +2202,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (category == null) {
 				Row fRow = featuresTable.body().row();
 				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
-				Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
+				Tag featureDocIcon = renderDocumentationIcon(context, vf, appConsumer, true);
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
@@ -2259,7 +2235,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			for (EStructuralFeature vf: ce.getValue()) {
 				Row fRow = categoryFeaturesTable.body().row();
 				Cell fLabelCell = fRow.header(renderNamedElementIconAndLabel(context, vf, viewFeatures)).style().whiteSpace().nowrap();
-				Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
+				Tag featureDocIcon = renderDocumentationIcon(context, vf, appConsumer, true);
 				if (featureDocIcon != null) {
 					fLabelCell.content(featureDocIcon);
 				}
@@ -2751,21 +2727,21 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 
 		if (isViewItem(context, obj)) {
-			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, featureDocModals, appConsumer));
+			ret.item(renderViewItemLabel(context, obj), renderView(context, obj, appConsumer));
 		}
 		String contextFeatureName = null;
 		if (context instanceof HttpServletRequestContext) {
 			contextFeatureName = ((HttpServletRequestContext) context).getRequest().getParameter("context-feature");
 		}
 		for (EStructuralFeature vf: getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.item)) {
-			Tag featureDocIcon = renderDocumentationIcon(context, vf, featureDocModals ==  null ? null : featureDocModals.get(vf), true);
+			Tag featureDocIcon = renderDocumentationIcon(context, vf, appConsumer, true);
 			Tag nameSpan = htmlFactory.span(renderNamedElementIconAndLabel(context, vf));
 			if (featureDocIcon != null) {
 				nameSpan.content(featureDocIcon);
 			}
 			
 			// Applies filter-<view feature name>-<column feature name>=control value filters		
-			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this, typedElementTableRenderListener) : null; 
+			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this, typedElementTableRenderListener, appConsumer) : null; 
 						
 			ret.item(
 					nameSpan, 
@@ -3124,7 +3100,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				for (EStructuralFeature sf: uncategorizedTableFeatures) {					
 					// TODO - colgroups, alignments, widths.
-					Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
+					Tag featureDocIcon = renderDocumentationIcon(context, sf, appConsumer, true);
 					Cell headerCell = headerRow.header(renderNamedElementIconAndLabel(context, sf, tableFeatures));
 					if (featureDocIcon != null) {
 						headerCell.content(featureDocIcon);
@@ -3148,7 +3124,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					Row cfhr = typedElementTable.header().row().style(Style.INFO);
 					for (Entry<String, List<EStructuralFeature>> ce: categories.entrySet()) {
 						for (EStructuralFeature sf: ce.getValue()) {
-							Tag featureDocIcon = renderDocumentationIcon(context, sf, featureDocModals ==  null ? null : featureDocModals.get(sf), true);
+							Tag featureDocIcon = renderDocumentationIcon(context, sf, appConsumer, true);
 							Cell featureHeader = cfhr.header(renderNamedElementIconAndLabel(context, sf, tableFeatures));
 							if (featureDocIcon != null) {
 								featureHeader.content(featureDocIcon);
@@ -3874,7 +3850,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Collection<TE> typedElements,
 			Object value,
 			FieldContainer<?> fieldContainer, 
-			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip,
 			FormRenderingListener<C,T, TE> formRenderingListener, 
@@ -3935,7 +3910,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Object label = renderNamedElementIconAndLabel(context, typedElement, typedElements);
 		String textLabel = Jsoup.parse(label.toString()).text();
 		if (helpTooltip) {
-			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, typedElement, docModal, true));			
+			label = getHTMLFactory(context).fragment(label, renderDocumentationIcon(context, typedElement, appConsumer, true));			
 		}
 
 		Comparator<? super EObject> labelComparator = (e1, e2) -> {
@@ -4512,18 +4487,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return Collections.unmodifiableCollection(collector.entrySet());
 	}
 	
-	/**
-	 * Renders doc modals for editable features.
-	 * @param context
-	 * @param obj
-	 * @return
-	 * @throws Exception
-	 */
-	default Map<EStructuralFeature, Modal> renderEditableFeaturesDocModals(C context, T obj) throws Exception {
-		return renderModelElementsDocModals(context, obj, getEditableFeatures(context, obj));
-	}	
-	
-	default Object renderModelElementFormGroupHelpText(C context, T obj, EModelElement modelElement, Modal docModal) throws Exception {		
+	default Object renderModelElementFormGroupHelpText(C context, T obj, EModelElement modelElement, Consumer<Object> appConsumer) throws Exception {		
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();		
 		String doc = renderDocumentation(context, modelElement);
@@ -4531,6 +4495,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String textDoc = Jsoup.parse(doc).text();
 			String firstSentence = firstSentence(context, textDoc);			
 			ret.content(firstSentence);
+			Modal docModal = renderDocumentationModal(context, modelElement);
+			if (docModal != null) {
+				appConsumer.accept(docModal);
+			}
 			if (!textDoc.equals(firstSentence) && docModal != null) {
 				Tag helpGlyph = renderHelpIcon(context);
 				helpGlyph.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
@@ -4579,7 +4547,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Collection<TE> typedElements,
 			Object value,
 			FieldContainer<?> fieldContainer, 
-			Modal docModal, 
 			List<ValidationResult> validationResults,
 			boolean helpTooltip,
 			FormRenderingListener<C,T,TE> formRenderingListener, 
@@ -4592,7 +4559,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				typedElements, 
 				value, 
 				fieldContainer, 
-				docModal, 
 				validationResults, 
 				helpTooltip, 
 				formRenderingListener,
@@ -4603,7 +4569,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		Object icon = renderModelElementIcon(context, typedElement);
-		Tag docIcon = renderDocumentationIcon(context, typedElement, docModal, false);
+		Tag docIcon = renderDocumentationIcon(context, typedElement, appConsumer, false);
 		
 		boolean isFormInputGroup;
 		String formInputGroupAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.FORM_INPUT_GROUP);
@@ -4613,7 +4579,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			isFormInputGroup = "true".equals(formInputGroupAnnotation);
 		}
 		
-		Object helpText = helpTooltip ? null : renderModelElementFormGroupHelpText(context, obj, typedElement, docModal);
+		Object helpText = helpTooltip ? null : renderModelElementFormGroupHelpText(context, obj, typedElement, appConsumer);
 
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 				
@@ -4721,7 +4687,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			C context, 
 			T obj, 
 			FieldContainer<?> fieldContainer, 
-			Map<EStructuralFeature, Modal> docModals, 
 			Map<ENamedElement,List<ValidationResult>> validationResults,
 			boolean helpTooltip, 
 			FormRenderingListener<C, T, EStructuralFeature> formRenderingListener, 
@@ -4733,7 +4698,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		// TODO - add support of inlined features.
-		return renderTypedElementsFormGroups(context, obj, fieldContainer, docModals, validationResults, editableFeatures, helpTooltip, formRenderingListener, appConsumer);
+		return renderTypedElementsFormGroups(context, obj, fieldContainer, validationResults, editableFeatures, helpTooltip, formRenderingListener, appConsumer);
 	}
 
 	/**
@@ -4753,7 +4718,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			C context, 
 			T obj, 
 			FieldContainer<?> fieldContainer,
-			Map<TE, Modal> docModals, 
 			Map<ENamedElement, 
 			List<ValidationResult>> validationResults,
 			Map<TE, Object> formElements, 
@@ -4784,7 +4748,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						formElements.keySet(), 
 						formElements.get(fe), 
 						fieldContainer, 
-						docModals.get(fe), 
 						validationResults.get(fe), 
 						helpTooltip,
 						formRenderingListener,
@@ -4817,7 +4780,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						formElements.keySet(), 
 						formElements.get(cete), 
 						categoryFieldSet, 
-						docModals.get(cete), 
 						validationResults.get(cete), 
 						helpTooltip, 
 						formRenderingListener,
@@ -5327,7 +5289,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return
 	 * @throws Exception 
 	 */
-	default Object renderObjectHeader(C context, T obj, Modal classDocModal) throws Exception {
+	default Object renderObjectHeader(C context, T obj, Consumer<Object> appConsumer) throws Exception {
 		Map<String, Object> env = new HashMap<>();
 		
 		Object icon = renderIcon(context, obj);
@@ -5342,7 +5304,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Object eClassLabel = renderNamedElementLabel(context, obj.eClass());
 		env.put("eclass-label", eClassLabel == null || eClassLabel.equals(label) ? "" : eClassLabel);
 		
-		Tag classDocIcon = renderDocumentationIcon(context, obj.eClass(), classDocModal, true);		
+		Tag classDocIcon = renderDocumentationIcon(context, obj.eClass(), appConsumer, true);		
 		env.put("documentation-icon", classDocIcon == null ? "" : classDocIcon);
 		
 		return getHTMLFactory(context).interpolate(getResourceString(context, "object.header"), env);
@@ -5378,10 +5340,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (appConsumer == null) {
 			appConsumer = editForm;
 		}
-		Map<EStructuralFeature, Modal> featureDocModals = renderEditableFeaturesDocModals(context, obj);
-		for (Modal fdm: featureDocModals.values()) {
-			appConsumer.accept(fdm);
-		}
 		
 		ListGroup errorList = htmlFactory.listGroup();
 		for (ValidationResult vr: validationResults) {
@@ -5405,7 +5363,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				context, 
 				obj, 
 				editForm, 
-				featureDocModals, 
 				namedElementValidationResults, 
 				horizontalForm,
 				formRenderingListener,
@@ -5436,11 +5393,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form editForm = htmlFactory.form();
 		
-		Map<EParameter, Modal> parameterDocModals = renderModelElementsDocModals(context, obj, formParameters.keySet());
-		for (Modal pdm: parameterDocModals.values()) {
-			editForm.content(pdm);
-		}
-		
 		ListGroup errorList = htmlFactory.listGroup();
 		for (ValidationResult vr: validationResults) {
 			errorList.item(vr.message, vr.status.toStyle());			
@@ -5463,7 +5415,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				context, 
 				obj, 
 				editForm, 
-				parameterDocModals, 
 				namedElementValidationResults, 
 				formParameters, 
 				horizontalForm, 
@@ -5496,9 +5447,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form selectForm = htmlFactory.form();
 		
-		Modal featureDocModal = renderDocumentationModal(context, feature);
-		selectForm.content(featureDocModal);
-		
 		ListGroup errorList = htmlFactory.listGroup();
 		
 		if (horizontalForm && featureValidationResults != null) {
@@ -5518,7 +5466,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Collections.singletonList(feature), 
 				obj.eGet(feature), 
 				selectForm, 
-				featureDocModal, 
 				featureValidationResults, 
 				horizontalForm,
 				formRenderingListener,
@@ -5625,11 +5572,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				Renderer<C, EObject> renderer = getRenderer(featureElementType);
 				
-				Modal classDocModal = renderer.renderDocumentationModal(context, featureElementType);
-				if (classDocModal != null) {
-					ret.content(classDocModal);
-				}
-				Tag classDocIcon = renderer.renderDocumentationIcon(context, featureElementType, classDocModal, true);						
+				Tag classDocIcon = renderer.renderDocumentationIcon(context, featureElementType, appConsumer, true);						
 				formModal.title(getResourceString(context, "create"), " ", renderer.renderNamedElementIconAndLabel(context, featureElementType), classDocIcon);
 				
 				Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
@@ -5802,17 +5745,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			// Object header
-			EClass eClass = obj.eClass();
-			Modal classDocModal = renderDocumentationModal(context, eClass);
-			if (classDocModal != null) {
-				ret.content(classDocModal);
-			}
-			
-			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, classDocModal));
+			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, appConsumer));
 			
 			Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
 			// Form elements
+			EClass eClass = obj.eClass();			
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
 			boolean noValidate = "true".equals(getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
 			
@@ -6014,17 +5952,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			// Object header
-			EClass eClass = obj.eClass();
-			Modal classDocModal = renderDocumentationModal(context, eClass);
-			if (classDocModal != null) {
-				ret.content(classDocModal);
-			}
-			
-			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, classDocModal));
+			formModal.title(getResourceString(context, "edit"), " ", renderObjectHeader(context, obj, appConsumer));
 			
 			Tag overlay = htmlFactory.spinnerOverlay(Spinner.circle_o_notch).id(appId+"-overlay").style("display", "none").addClass("nsd-form-overlay");
 
 			// Form elements
+			EClass eClass = obj.eClass();
 			boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eClass, RenderAnnotation.HORIZONTAL_FORM));
 			boolean noValidate = "true".equals(getRenderAnnotation(context, eClass, RenderAnnotation.NO_VALIDATE));
 			
