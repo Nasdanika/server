@@ -1677,16 +1677,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		helpTag.attribute(TITLE_KEY, firstSentence);
 		
-		Modal docModal = renderDocumentationModal(context, modelElement);
-		if (docModal != null) {
-			appConsumer.accept(docModal);
-		}
-		
 		// More than one sentence - opens doc modal.
-		if (!textDoc.equals(firstSentence) && docModal != null) {
-			helpTag.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
-			helpTag.style("cursor", "pointer");
-			return helpTag;
+		if (!textDoc.equals(firstSentence)) {
+			Modal docModal = renderDocumentationModal(context, modelElement);
+			if (docModal != null) {
+				appConsumer.accept(docModal);				
+				helpTag.on(Event.click, "$('#"+docModal.getId()+"').modal('show')");
+				helpTag.style("cursor", "pointer");
+				return helpTag;
+			}
 		}
 		
 		// Opens EClass documentation, if configured.
