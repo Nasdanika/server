@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -604,7 +605,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 											}
 											referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 										}
-										referrer += "context-feature="+URLEncoder.encode(reference, "StandardCharsets.UTF_8.name()");
+										referrer += "context-feature="+URLEncoder.encode(reference, StandardCharsets.UTF_8.name());
 										result.put("location", referrer);
 										return result;
 									} 
@@ -659,7 +660,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 									}
 									referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 								}
-								referrer += "context-feature="+URLEncoder.encode(reference, "StandardCharsets.UTF_8.name()");
+								referrer += "context-feature="+URLEncoder.encode(reference, StandardCharsets.UTF_8.name());
 								context.getResponse().sendRedirect(referrer);
 								return Action.NOP;
 							}
@@ -825,7 +826,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						}
 						referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 					}
-					referrer += "context-feature="+URLEncoder.encode(attribute, "StandardCharsets.UTF_8.name()");
+					referrer += "context-feature="+URLEncoder.encode(attribute, StandardCharsets.UTF_8.name());
 					((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
 					return Action.NOP;
 				}
@@ -1108,7 +1109,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							}
 							referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 						}
-						referrer += "context-feature="+URLEncoder.encode(feature, "StandardCharsets.UTF_8.name()");
+						referrer += "context-feature="+URLEncoder.encode(feature, StandardCharsets.UTF_8.name());
 						((HttpServletRequestContext) context).getResponse().sendRedirect(referrer);
 						return Action.NOP;
 					}
@@ -1408,7 +1409,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 					referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
 				}
-				referrer += "context-feature="+URLEncoder.encode(target.eContainmentFeature().getName(), "StandardCharsets.UTF_8.name()");
+				referrer += "context-feature="+URLEncoder.encode(target.eContainmentFeature().getName(), StandardCharsets.UTF_8.name());
 			}
 			result.put("location", referrer);
 			return result;
@@ -1517,7 +1518,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 				redirectURL = redirectURL.substring(0, redirectQueryStart+1)+queryBuilder;
 			}
-			redirectURL += "context-feature="+URLEncoder.encode(feature, "StandardCharsets.UTF_8.name()");
+			redirectURL += "context-feature="+URLEncoder.encode(feature, StandardCharsets.UTF_8.name());
 			
 			context.getResponse().sendRedirect(redirectURL);
 			
@@ -1575,7 +1576,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				}
 				redirectURL = redirectURL.substring(0, redirectQueryStart+1)+queryBuilder;
 			}
-			redirectURL += "context-feature="+URLEncoder.encode(feature, "StandardCharsets.UTF_8.name()");
+			redirectURL += "context-feature="+URLEncoder.encode(feature, StandardCharsets.UTF_8.name());
 			
 			context.getResponse().sendRedirect(redirectURL);
 			
@@ -1860,28 +1861,41 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (bindingSpec == null) {
 			bindingSpec = "form";
 		}
-		String contentType = context.getRequest().getContentType();
+		HttpServletRequest request = context.getRequest();
+		String contentType = request.getContentType();
 		boolean isMultiPart = context.getMethod() == RequestMethod.POST && contentType != null && contentType.startsWith(Form.EncType.multipart.literal+";");
 		if (isMultiPart) {
 			String multipartConfigElementKey = "org.eclipse.jetty.multipartConfig";
-			if (context.getRequest().getAttribute(multipartConfigElementKey) == null) {
-				context.getRequest().setAttribute(multipartConfigElementKey, new MultipartConfigElement((String) null));
+			if (request.getAttribute(multipartConfigElementKey) == null) {
+				request.setAttribute(multipartConfigElementKey, new MultipartConfigElement((String) null));
 			};	
 		}
+		JSONObject jsonData = null;
+		if (CONTENT_TYPE_APPLICATION_JSON.contentEquals(request.getContentType())) {
+			// Cache in request to avoid multiple parsing attempts.
+			jsonData = (JSONObject) request.getAttribute(JSON_DATA_REQUEST_ATTRIBUTE_KEY);
+			if (jsonData == null) {
+				try (InputStream in = request.getInputStream()) {
+					jsonData = new JSONObject(new JSONTokener(in));
+				}
+				request.setAttribute(JSON_DATA_REQUEST_ATTRIBUTE_KEY, jsonData);
+			}
+		}
+		
 		if (bindingSpec instanceof String) {
 			switch ((String) bindingSpec) {
 			case "body":
 				if (WebMethodCommand.JSON_CONTENT_TYPE.equals(contentType)) {
 					if (parameterType == JSONArray.class) {
-						return new EParameterBinding(eParameter, new JSONArray(new JSONTokener(context.getRequest().getReader())));
+						return new EParameterBinding(eParameter, new JSONArray(new JSONTokener(request.getReader())));
 					}
 					
 					if (parameterType == JSONObject.class) {
-						return new EParameterBinding(eParameter, new JSONObject(new JSONTokener(context.getRequest().getReader())));
+						return new EParameterBinding(eParameter, new JSONObject(new JSONTokener(request.getReader())));
 					}			
 				}
 				
-				return new EParameterBinding(eParameter, context.convert(context.getRequest().getInputStream(), parameterType));
+				return new EParameterBinding(eParameter, context.convert(request.getInputStream(), parameterType));
 			case "cookie":
 			case "header":
 			case "form":
@@ -1905,7 +1919,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				switch (be.getKey()) {
 				case "cookie":
 					BasicEList<Object> cookieList = ECollections.newBasicEList();
-					for (Cookie cookie: context.getRequest().getCookies()) {
+					for (Cookie cookie: request.getCookies()) {
 						if (be.getValue().equals(cookie.getName())) {
 							if (parameterType.isAssignableFrom(Cookie.class)) {
 								if (eParameter.isMany()) {
@@ -1962,17 +1976,17 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				case "header":
 					if (eParameter.isMany()) {
 						BasicEList<Object> ret = ECollections.newBasicEList();
-						for (String str: Collections.list(context.getRequest().getHeaders((String) be.getValue()))) {
+						for (String str: Collections.list(request.getHeaders((String) be.getValue()))) {
 							ret.add(parseTypedElementValue((C) context, eParameter, str));
 						}
 						return new EParameterBinding(eParameter, ret);
 					}
-					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, context.getRequest().getHeader((String) be.getValue())));					
+					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, request.getHeader((String) be.getValue())));					
 				case "part":
 					if (isMultiPart) {
 						BasicEList<Object> partValues = ECollections.newBasicEList();
 						String partName = (String) be.getValue();
-						for (Part part: context.getRequest().getParts()) {
+						for (Part part: request.getParts()) {
 							if (partName.equals(part.getName())) {
 								if (parameterType.isAssignableFrom(Part.class)) {
 									partValues.add(part);
@@ -1994,7 +2008,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					if (isMultiPart) {
 						BasicEList<Object> partFileNames = ECollections.newBasicEList();
 						String partName = (String) be.getValue();
-						for (Part part: context.getRequest().getParts()) {
+						for (Part part: request.getParts()) {
 							if (partName.equals(part.getName())) {
 								partFileNames.add(part.getSubmittedFileName());
 							}
@@ -2011,7 +2025,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					if (isMultiPart) {
 						BasicEList<Object> parameterValues = ECollections.newBasicEList();
 						String partName = (String) be.getValue();
-						for (Part part: context.getRequest().getParts()) {
+						for (Part part: request.getParts()) {
 							if (partName.equals(part.getName())) {
 								parameterValues.add(parseTypedElementValue((C) context, eParameter, CoreUtil.stringify(part.getInputStream())));
 							}
@@ -2019,15 +2033,29 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						return new EParameterBinding(eParameter, eParameter.isMany() ? parameterValues : parameterValues.isEmpty() ? null : parameterValues.get(0));
 					}
 				case "query":
-					if (eParameter.isMany()) {
-						BasicEList<Object> ret = ECollections.newBasicEList();
-						for (String str: context.getRequest().getParameterValues((String) be.getValue())) {
-							ret.add(parseTypedElementValue((C) context, eParameter, str));
+					if (jsonData == null) {
+						if (eParameter.isMany()) {
+							BasicEList<Object> ret = ECollections.newBasicEList();
+							for (String str: request.getParameterValues((String) be.getValue())) {
+								ret.add(parseTypedElementValue((C) context, eParameter, str));
+							}
+							return new EParameterBinding(eParameter, ret);
 						}
-						return new EParameterBinding(eParameter, ret);
+						String parameterValue = request.getParameter((String) be.getValue());
+						return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, parameterValue));
 					}
-					String parameterValue = context.getRequest().getParameter((String) be.getValue());
-					return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, parameterValue));
+					if (jsonData.has((String) be.getValue())) {
+						if (eParameter.isMany()) {
+							BasicEList<Object> ret = ECollections.newBasicEList();
+							JSONArray var = jsonData.getJSONArray((String) be.getValue());
+							for (int i=0; i < var.length(); ++i) {
+								ret.add(parseTypedElementValue((C) context, eParameter, var.get(i)));
+							}
+							return new EParameterBinding(eParameter, ret);
+						}
+						return new EParameterBinding(eParameter, parseTypedElementValue((C) context, eParameter, jsonData.get((String) be.getValue())));						
+					}					
+					return new EParameterBinding(eParameter, null);					
 				case "service":
 					Collection<ServiceReference<Object>> srs = bundleContext.getServiceReferences((Class<Object>) parameterType, (String) be.getValue());
 					if (eParameter.isMany()) {
@@ -2130,6 +2158,29 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			originalReferrer = context.getRequest().getHeader(REFERRER_HEADER);
 		}
 		
+		// Location to load in the page when eoperation dialog closes.
+		String location = originalReferrer;
+		// TODO - context feature injection
+//		if (referrer == null) {
+//			referrer = referrerHeader;
+//		}
+//		if (referrer == null) {
+//			referrer = context.getObjectPath(target)+"/"+INDEX_HTML;
+//		}
+//		int referrerQueryStart = referrer.indexOf("?");
+//		if (referrerQueryStart == -1) {
+//			referrer +=  "?";
+//		} else {
+//			StringBuilder queryBuilder = new StringBuilder();
+//			for (String qe: referrer.substring(referrerQueryStart+1).split("&")) {
+//				if (!qe.startsWith("context-feature=")) {
+//					queryBuilder.append(qe).append("&");
+//				}
+//			}
+//			referrer = referrer.substring(0, referrerQueryStart+1)+queryBuilder;
+//		}
+//		referrer += "context-feature="+URLEncoder.encode(reference, StandardCharsets.UTF_8.name());
+		
 		if (methodName == null) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			
@@ -2167,7 +2218,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							formParameters.put(eParameter, getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE));
 						}
 					}
-					Form inputForm = renderInputForm(context, target, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, appConsumer)
+					Form inputForm = renderInputForm(context, target, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, null, appConsumer)
 						.novalidate(noValidate)
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);
@@ -2325,6 +2376,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 				}				
 			} else {
+				boolean isJSON = CONTENT_TYPE_APPLICATION_JSON.equals(context.getRequest().getContentType());
+				
 				// POST - validate, re-render form if failure, invoke and render result or error if validation passed.
 				EList<EParameterBinding> bindings = ECollections.newBasicEList();
 				for (EParameter eParameter: eOperation.getEParameters()) {
@@ -2348,6 +2401,12 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 					for (Diagnostic dc: diagnostic.getChildren()) {
 						diagnosticConsumer.accept(dc);
+					}
+					
+					if (isJSON) {						
+						JSONObject result = new JSONObject();
+						result.put("validationResults", diagnosticConsumer.toJSON());						
+						return result;
 					}
 					
 					Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -2375,7 +2434,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							formParameters.put(eParameter, args.get(eParameter.getName()));
 						}
 					}
-					Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm, appConsumer)
+					Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm, null, appConsumer)
 						.novalidate(noValidate)
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);
@@ -2417,9 +2476,14 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					content.content(inputForm);					
 				} else {
 					try {
-						Object result = eOperationTarget.invoke(context, bindings);			
-						
+						Object result = eOperationTarget.invoke(context, bindings);													
 						if (result == null && originalReferrer != null) {
+							if (isJSON) {
+								JSONObject jsonResult = new JSONObject();
+								jsonResult.put("location", location);
+								return jsonResult;
+							} 
+							
 							context.getResponse().sendRedirect(originalReferrer);
 							return Action.NOP;
 						}						
@@ -2440,12 +2504,20 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
 						content.content(objectHeader);							
 						
+						Fragment renderedResult = htmlFactory.fragment();						
 						if (result == null) {
-							content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
+							renderedResult.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 						} else {
-							content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-							content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer));					
+							renderedResult.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
+							renderedResult.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer));					
 						}
+						if (isJSON) {
+							JSONObject jsonResult = new JSONObject();
+							jsonResult.put("result", renderedResult);
+							jsonResult.put("location", location);
+							return jsonResult;
+						}  
+						content.content(renderedResult);
 					} catch (Exception e) {
 						// Breadcrumbs
 						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
@@ -2476,7 +2548,16 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						try (PrintWriter pw = new PrintWriter(sw)) {
 							rootCause.printStackTrace(pw);
 						}
-						content.content(htmlFactory.div(sw.toString()).style().whiteSpace().pre().style().color().bootstrapColor(Color.DANGER));
+						Tag renderedException = htmlFactory.div(sw.toString()).style().whiteSpace().pre().style().color().bootstrapColor(Color.DANGER);
+						
+						if (isJSON) {
+							JSONObject jsonResult = new JSONObject();
+							jsonResult.put("result", renderedException);
+							jsonResult.put("location", location);
+							return jsonResult;
+						}
+						
+						content.content(renderedException);
 						
 						rootCause.printStackTrace();
 					}

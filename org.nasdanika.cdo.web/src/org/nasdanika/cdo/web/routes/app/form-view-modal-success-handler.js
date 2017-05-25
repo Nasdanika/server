@@ -1,4 +1,12 @@
-if (data.location) {
+if (data.result) {
+	this.result(data.result);
+	this.location(data.location);
+	
+	//Modal resizing to address result.
+	var modalBody = $('#{{app-id}}-modal .modal-body');
+	var result = modalBody.find('#{{app-id}}-result');
+	modalBody.height(result.height() + "px");			
+} else if (data.location) {
 	window.location = data.location;
 	$("#{{app-id}}-modal").modal('hide');
 } else if (data.validationResults) {

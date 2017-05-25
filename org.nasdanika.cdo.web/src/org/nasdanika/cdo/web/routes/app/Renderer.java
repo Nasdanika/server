@@ -597,7 +597,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 										featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 									} else {
-										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
+										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 									}
 								}
 								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -628,7 +628,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 							featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 						} else {
-							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
+							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 						}
 					}
 					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -686,7 +686,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 									if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 										featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 									} else {
-										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
+										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 									}
 								}
 								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -717,7 +717,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						if (containmentFeatureLocation  == TypedElementLocation.leftPanel) {
 							featureURI += "/feature/"+containmentFeature.getName()+"/view.html";
 						} else {
-							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), "StandardCharsets.UTF_8.name()");										
+							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 						}
 					}
 					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
@@ -5224,7 +5224,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			featureNode.setData("readable", readable);
 			featureNode.setData("feature", treeFeature);
 			if (readable) {
-				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), "StandardCharsets.UTF_8.name()")+"';");
+				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), StandardCharsets.UTF_8.name())+"';");
 			} else {
 				featureNode.anchorAttribute("style", "cursor:default");
 			}
@@ -5399,6 +5399,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			List<ValidationResult> validationResults, 
 			Map<ENamedElement, List<ValidationResult>> namedElementValidationResults, 
 			boolean horizontalForm, 
+			FormRenderingListener<C,T,EParameter> formRenderingListener,
 			Consumer<Object> appConsumer) throws Exception {
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
@@ -5429,7 +5430,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				namedElementValidationResults, 
 				formParameters, 
 				horizontalForm, 
-				null,
+				formRenderingListener,
 				appConsumer).forEach((fg) -> fg.feedback(!horizontalForm));
 		
 		return editForm;
@@ -5917,7 +5918,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		@SuppressWarnings("unchecked")
 		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 		EOperationTargetInfo info = new EOperationTargetInfo(context, this, eOperation, spec);
-		return spec == null || spec.get("confirm") instanceof String || info.hasPartParameters() ? ModalType.NONE : ModalType.MEDIUM;
+		return spec == null || spec.get("confirm") instanceof String || info.hasPartParameters() || !info.hasFormParameters() ? ModalType.NONE : ModalType.MEDIUM;
 	}		
 	
 	/**
@@ -5958,10 +5959,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			StringBuilder koDataBindings = new StringBuilder();
 			StringBuilder koStatusBindings = new StringBuilder();
 							
-			FormRenderingListener<C, T, EStructuralFeature> koBinder = new FormRenderingListener<C, T, EStructuralFeature>() {
+			FormRenderingListener<C, T, EParameter> koBinder = new FormRenderingListener<C, T, EParameter>() {
 				
 				@Override
-				public UIElement<?> onFormControlRendering(C context, T obj, EStructuralFeature typedElement, Object value, UIElement<?> control) throws Exception {
+				public UIElement<?> onFormControlRendering(C context, T obj, EParameter typedElement, Object value, UIElement<?> control) throws Exception {
 					if (control instanceof InputBase) {
 						if (control instanceof Input && (((Input) control).getType() == InputType.checkbox || ((Input) control).getType() == InputType.radio)) {
 							control.knockout().checked("data."+typedElement.getName());							
@@ -5988,7 +5989,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				
 				@Override
-				public void onFormGroupRendering(C context, T obj, EStructuralFeature typedElement, Object value, FormGroup<?> formGroup) throws Exception {
+				public void onFormGroupRendering(C context, T obj, EParameter typedElement, Object value, FormGroup<?> formGroup) throws Exception {
 					formGroup.knockout().css("status."+typedElement.getName());
 					super.onFormGroupRendering(context, obj, typedElement, value, formGroup);
 				}
@@ -6014,9 +6015,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					formParameters.put(eParameter, getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE));
 				}
 			}
-			Form form = renderInputForm(context, obj, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, appConsumer)
+			Form form = renderInputForm(context, obj, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, koBinder, appConsumer)
 				.novalidate(noValidate)
-				.knockout().submit("submit");
+				.knockout().submit("submit")
+				.knockout().visible("result() == undefined");
 			
 			for (EParameter eParameter: eOperation.getEParameters()) {
 				String queryParameterName = info.getQueryParameterName(eParameter);
@@ -6029,21 +6031,30 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						koDataBindings.append("'"+queryParameterName+"': ko.observable('"+StringEscapeUtils.escapeEcmaScript(queryParameterValue)+"')");				
 					}
 				}
-			}														
-			
+			}
+						
 			configureForm(form, horizontalForm, modalType);
 			
 			form.content(htmlFactory.tag(TagName.hr));
 			form.button(getResourceString(context, "execute")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
 			form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
 						
-			formModal.body(overlay, form);
+			Tag resultDiv = htmlFactory.div(
+					htmlFactory.div().knockout().html("result"), // Displays result
+					htmlFactory.tag(TagName.hr),
+					htmlFactory.button(getResourceString(context, "close")).type(Button.Type.BUTTON).style(Style.INFO).knockout().click("close")
+			).knockout().visible("result").id(appId+"-result");
+			
+			formModal.body(overlay, form, resultDiv);
 			ret.content(formModal);
 			
 			StringBuilder declarationsBuilder = new StringBuilder();
 			declarationsBuilder.append("this.data = {").append(koDataBindings).append("};").append(System.lineSeparator());
 			declarationsBuilder.append("this.status = {").append(koStatusBindings).append("};").append(System.lineSeparator());
 			declarationsBuilder.append("this.messages = ko.observableArray();").append(System.lineSeparator());
+			declarationsBuilder.append("this.result = ko.observable();").append(System.lineSeparator());
+			declarationsBuilder.append("this.location = ko.observable();").append(System.lineSeparator());
+			declarationsBuilder.append("this.close = function() { $('#"+appId+"-modal').modal('hide'); window.location = this.location(); };").append(System.lineSeparator());
 			
 			StringBuilder ajaxConfigBuilder = new StringBuilder();
 			ajaxConfigBuilder.append("type: 'POST',").append(System.lineSeparator());
