@@ -2486,24 +2486,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							
 							context.getResponse().sendRedirect(originalReferrer);
 							return Action.NOP;
-						}						
-						
-						// Breadcrumbs
-						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-						String resultStr = "Result"; // TODO - resource string
-						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
-						if (operationFeature == null) {
-							getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
-						} else {
-							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
-						}						
-						if (!breadCrumbs.isEmpty()) {
-							content.content(breadCrumbs);
 						}
-								
-						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
-						content.content(objectHeader);							
 						
+						String resultStr = "Result"; // TODO - resource string
 						Fragment renderedResult = htmlFactory.fragment();						
 						if (result == null) {
 							renderedResult.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
@@ -2517,8 +2502,42 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							jsonResult.put("location", location);
 							return jsonResult;
 						}  
+						
+						// Breadcrumbs
+						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
+						if (operationFeature == null) {
+							getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
+						} else {
+							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+						}						
+						if (!breadCrumbs.isEmpty()) {
+							content.content(breadCrumbs);
+						}
+								
+						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
+						content.content(objectHeader);							
+						
 						content.content(renderedResult);
 					} catch (Exception e) {
+						Throwable rootCause = e;
+						while (rootCause.getCause() != null) {
+							rootCause = rootCause.getCause();
+						}
+						
+						StringWriter sw = new StringWriter();
+						try (PrintWriter pw = new PrintWriter(sw)) {
+							rootCause.printStackTrace(pw);
+						}
+						Tag renderedException = htmlFactory.div(sw.toString()).style().whiteSpace().pre().style().color().bootstrapColor(Color.DANGER);
+						
+						if (isJSON) {
+							JSONObject jsonResult = new JSONObject();
+							jsonResult.put("result", renderedException);
+							jsonResult.put("location", location);
+							return jsonResult;
+						}												
+						
 						// Breadcrumbs
 						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 						String errorStr = "Error"; // TODO - resource string
@@ -2537,28 +2556,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						
 						content.content(htmlFactory.tag(TagName.h4, errorStr).style().color().bootstrapColor(Color.DANGER));
 
-						Throwable rootCause = e;
-						while (rootCause.getCause() != null) {
-							rootCause = rootCause.getCause();
-						}
-						
-//						content.content(htmlFactory.alert(Style.DANGER, false, rootCause.toString()));
-						
-						StringWriter sw = new StringWriter();
-						try (PrintWriter pw = new PrintWriter(sw)) {
-							rootCause.printStackTrace(pw);
-						}
-						Tag renderedException = htmlFactory.div(sw.toString()).style().whiteSpace().pre().style().color().bootstrapColor(Color.DANGER);
-						
-						if (isJSON) {
-							JSONObject jsonResult = new JSONObject();
-							jsonResult.put("result", renderedException);
-							jsonResult.put("location", location);
-							return jsonResult;
-						}
-						
-						content.content(renderedException);
-						
+						content.content(renderedException);						
 						rootCause.printStackTrace();
 					}
 				}								
