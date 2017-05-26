@@ -1263,6 +1263,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			// TODO - super-classes and interfaces
 		}
 		
+		if (modelElement instanceof EEnumLiteral) {
+			EEnum eEnum = ((EEnumLiteral) modelElement).getEEnum();
+			return getRenderer(eEnum).getModelElementIcon(context, eEnum);
+		}
+		
 		return null;
 	}
 	
@@ -1325,10 +1330,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			if (featureType instanceof EEnum) {
 				EEnum featureEnum = (EEnum) featureType;
 				EEnumLiteral enumLiteral = featureEnum.getEEnumLiteral(enumeratorValue.getName());
+				Object literalIcon = renderModelElementIcon(context, enumLiteral);
 				Tag literalDocumentationIcon = renderDocumentationIcon(context, enumLiteral, null, true);
-				if (literalDocumentationIcon != null) {
-					return ret + literalDocumentationIcon;
-				}
+				return getHTMLFactory(context).fragment(literalIcon, " ", ret, literalDocumentationIcon);
 			}
 			
 			return ret;
@@ -3825,6 +3829,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (value instanceof Boolean) {
 			return Boolean.TRUE.equals(value) ? "true" : ""; // Is this the correct behavior?
 		}
+		
+		if (value instanceof Enum) {
+			return ((Enum<?>) value).name();
+		}		
 			
 		Object rfv = renderTypedElementValue(context, typedElement, value, appConsumer);
 		return rfv == null ? "" : StringEscapeUtils.escapeHtml4(rfv.toString());						
