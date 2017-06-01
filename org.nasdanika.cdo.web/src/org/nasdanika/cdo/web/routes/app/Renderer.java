@@ -5354,7 +5354,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					return false;
 				}
 				for (Boolean chr: childResults) {
-					if (chr) {
+					if (!chr) {
 						return false;
 					}
 				}
