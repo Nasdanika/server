@@ -3256,13 +3256,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				if (typedElementValues.size() == 1) {
 					Object v = typedElementValues.iterator().next();
-					Object renderedValue = renderTypedElementValue(context, typedElement, v, appConsumer);
+					Object renderedValue = renderTypedElementValue(context, typedElement, v, appConsumer);					
 					
 					// Non-html multi-line - wrap in PRE - use annotations to decide whether pre or not?
-					if (v instanceof String 
-							&& "textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))
-							&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
-						renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();					
+					if (v instanceof String) { 
+						if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+							renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
+						} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
+							renderedValue = "********";
+						}
 					}						
 					ret.content(renderedValue);
 
@@ -3294,10 +3296,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						Object renderedValue = renderTypedElementValue(context, typedElement, featureValueEntry.value, appConsumer);
 						
 						// Non-html multi-line - wrap in PRE
-						if (featureValueEntry.value instanceof String 
-								&& "textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))
-								&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
-							renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();					
+						if (featureValueEntry.value instanceof String) { 
+							if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+								renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
+							} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
+								renderedValue = "********";
+							}
 						}						
 						
 						Fragment liFragment = ret.getFactory().fragment(renderedValue);
@@ -3325,10 +3329,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Object renderedValue = renderTypedElementValue(context, typedElement, typedElementValue, appConsumer);
 			
 			// Non-html multi-line - wrap in PRE
-			if (typedElementValue instanceof String 
-					&& "textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))
-					&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
-				renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();					
+			if (typedElementValue instanceof String) { 
+				if ("textarea".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTROL))	&& !"text/html".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.CONTENT_TYPE))) {
+					renderedValue = htmlFactory.div(StringEscapeUtils.escapeHtml4((String) renderedValue)).style().whiteSpace().pre();
+				} else if ("password".equals(getRenderAnnotation(context, typedElement, RenderAnnotation.INPUT_TYPE))) {
+					renderedValue = "********";
+				}
 			}						
 			
 			ret.content(renderedValue);
@@ -3850,8 +3856,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		if (value instanceof Enum) {
 			return ((Enum<?>) value).name();
-		}		
-			
+		}	
+		
 		Object rfv = renderTypedElementValue(context, typedElement, value, appConsumer);
 		return rfv == null ? "" : StringEscapeUtils.escapeHtml4(rfv.toString());						
 	}
