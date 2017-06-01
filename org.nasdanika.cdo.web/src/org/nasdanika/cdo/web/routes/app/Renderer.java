@@ -90,6 +90,7 @@ import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.html.Bootstrap;
 import org.nasdanika.html.Bootstrap.Color;
+import org.nasdanika.html.Bootstrap.DeviceSize;
 import org.nasdanika.html.Bootstrap.Glyphicon;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
@@ -2732,8 +2733,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
+		boolean itemHeader = false;
+		List<EStructuralFeature> itemFeatures = getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.item);
 		if (ret == null) {
-			ret = htmlFactory.tabs(); // Catch all
+			if (itemFeatures.size() > 7) {
+				 ret = htmlFactory.pills()
+				 	.stacked()
+				 	.pillsWidth(DeviceSize.LARGE, 2)
+				 	.pillsWidth(DeviceSize.MEDIUM, 3)
+				 	.pillsWidth(DeviceSize.SMALL, 4)
+				 	.pillsWidth(DeviceSize.EXTRA_SMALL, 5);
+				 itemHeader = true;
+			} else {
+				ret = htmlFactory.tabs();
+			}
 		}
 
 		if (isViewItem(context, obj)) {
@@ -2743,7 +2756,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (context instanceof HttpServletRequestContext) {
 			contextFeatureName = ((HttpServletRequestContext) context).getRequest().getParameter("context-feature");
 		}
-		for (EStructuralFeature vf: getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.item)) {
+		for (EStructuralFeature vf: itemFeatures) {
 			Tag featureDocIcon = renderDocumentationIcon(context, vf, appConsumer, true);
 			Tag nameSpan = htmlFactory.span(renderNamedElementIconAndLabel(context, vf));
 			if (featureDocIcon != null) {
@@ -2753,9 +2766,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			// Applies filter-<view feature name>-<column feature name>=control value filters		
 			FeatureTableFilterManager<C, T> featureTableFilterManager = vf.getEType() instanceof EClass & context instanceof HttpServletRequestContext ? new FeatureTableFilterManager<C, T>(context, vf, this, null, appConsumer) : null; 
 						
+			Tag itemContent = htmlFactory.div().style().margin("3px");
+			if (itemHeader) {
+				itemContent.content(TagName.h4.create(renderNamedElementIconAndLabel(context, vf)));
+			}
+			itemContent.content(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, featureTableFilterManager, null, featureTableFilterManager, appConsumer));
 			ret.item(
 					nameSpan, 
-					htmlFactory.div(renderTypedElementView(context, obj, vf, obj.eGet(vf), true, featureTableFilterManager, null, featureTableFilterManager, appConsumer)).style().margin("3px"), 
+					itemContent, 
 					contextFeatureName == null ? ret.isEmpty() : vf.getName().equals(contextFeatureName));
 		}	
 		
@@ -5221,34 +5239,47 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		}
+		
+		List<EStructuralFeature> nodeFeatures = new ArrayList<>();
+		List<EStructuralFeature> directFeatures = new ArrayList<>();
 		for (EStructuralFeature treeFeature: treeFeatures) {
-			String category = getNamedElementCategory(context, treeFeature, treeFeatures);
+			String treeNodeAnnotation = getRenderAnnotation(context, treeFeature, RenderAnnotation.TREE_NODE);
+			if ("false".equals(treeNodeAnnotation)) {
+				directFeatures.add(treeFeature);
+			} else {
+				nodeFeatures.add(treeFeature);
+			}			
+		}
+		
+		// Node feature
+		for (EStructuralFeature nodeFeature: nodeFeatures) {
+			String category = getNamedElementCategory(context, nodeFeature, nodeFeatures);
 			JsTreeNode featureNode = htmlFactory.jsTreeNode();
-			featureNode.icon(getModelElementIcon(context, treeFeature));
-			featureNode.text(renderNamedElementLabel(context, treeFeature, treeFeatures));
+			featureNode.icon(getModelElementIcon(context, nodeFeature));
+			featureNode.text(renderNamedElementLabel(context, nodeFeature, nodeFeatures));
 			featureNode.anchorAttribute("title", "Feature");
 			featureNode.setData(obj);
 			featureNode.setData("readable", readable);
-			featureNode.setData("feature", treeFeature);
+			featureNode.setData("feature", nodeFeature);
 			if (readable) {
-				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(treeFeature.getName(), StandardCharsets.UTF_8.name())+"';");
+				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(nodeFeature.getName(), StandardCharsets.UTF_8.name())+"';");
 			} else {
 				featureNode.anchorAttribute("style", "cursor:default");
 			}
 
-			if (readable && obj == contextObject && treeFeature.getName().equals(contextFeatureName)) {
+			if (readable && obj == contextObject && nodeFeature.getName().equals(contextFeatureName)) {
 				featureNode.selected();
 			}			
 			
-			if (treeFeature.isMany()) {
-				for (EObject element: (Collection<EObject>) obj.eGet(treeFeature)) {
+			if (nodeFeature.isMany()) {
+				for (EObject element: (Collection<EObject>) obj.eGet(nodeFeature)) {
 					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject);
 					if (elementNode != null) {
 						featureNode.children().add(elementNode);
 					}					
 				}
 			} else {
-				Object val = obj.eGet(treeFeature);
+				Object val = obj.eGet(nodeFeature);
 				if (val instanceof EObject) {
 					JsTreeNode valNode = getRenderer((EObject) val).renderJsTreeNode(context, (EObject) val, contextObject);
 					if (valNode != null) {
@@ -5287,7 +5318,43 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					categoryNode.children().add(featureNode);
 				}
 			}			
-		}	
+		}
+		
+		// Direct features
+		for (EStructuralFeature directFeature: directFeatures) {
+			if (directFeature.isMany()) {
+				for (EObject element: (Collection<EObject>) obj.eGet(directFeature)) {
+					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject);
+					if (elementNode != null) {
+						ret.children().add(elementNode);
+					}					
+				}
+			} else {
+				Object val = obj.eGet(directFeature);
+				if (val instanceof EObject) {
+					JsTreeNode valNode = getRenderer((EObject) val).renderJsTreeNode(context, (EObject) val, contextObject);
+					if (valNode != null) {
+						ret.children().add(valNode);
+					}
+				}
+			}
+		}
+		
+		if (readable && obj != contextObject && EcoreUtil.isAncestor(obj, contextObject)) {
+			// Select ancestor of context object if context object is not in the tree.
+			ret.selected(ret.<Boolean>accept((node, childResults) -> {
+				// There is a closer ancestor
+				if (node.getData() != obj && node.getData() instanceof EObject && EcoreUtil.isAncestor((EObject) node.getData(), contextObject)) {
+					return false;
+				}
+				for (Boolean chr: childResults) {
+					if (chr) {
+						return false;
+					}
+				}
+				return true;
+			}));
+		}		
 		
 		return ret;
 	}
