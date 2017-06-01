@@ -5244,7 +5244,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		List<EStructuralFeature> directFeatures = new ArrayList<>();
 		for (EStructuralFeature treeFeature: treeFeatures) {
 			String treeNodeAnnotation = getRenderAnnotation(context, treeFeature, RenderAnnotation.TREE_NODE);
-			if ("false".equals(treeNodeAnnotation)) {
+			if ("false".equals(treeNodeAnnotation) || (treeNodeAnnotation == null && treeFeatures.size() == 1)) {
 				directFeatures.add(treeFeature);
 			} else {
 				nodeFeatures.add(treeFeature);
