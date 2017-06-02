@@ -584,7 +584,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
 						EReference containmentFeature = c.eContainmentFeature();
 						Renderer<C, EObject> containerRenderer = getRenderer(cContainer);
-						if (containmentFeature != null) {
+						if (containmentFeature != null /* TODO - && containerRenderer.isPathFeature(containmentFeature) */) {
 							TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
 							if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
 								List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
@@ -615,7 +615,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (!breadCrumbs.isEmpty() && cPath.contains(objContainer)) { // Double-check to be on the safe side.
 			EReference containmentFeature = obj.eContainmentFeature();
 			Renderer<C, EObject> containerRenderer = getRenderer(objContainer);
-			if (containmentFeature != null) {
+			if (containmentFeature != null /* TODO - && containerRenderer.isPathFeature(containmentFeature) */) {
 				TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
 				if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
 					List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
@@ -647,6 +647,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 	}
 	
+	// TODO - isPathFeature() method, also use in jsTree rendering. Rename getTreeFeatures to getPathFeatures()
+	
 	/**
 	 * Renders object's feature path to breadcrumbs. This implementation traverses the object containment path up to the top level object in the resource.
 	 * @param target
@@ -673,7 +675,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					if (!breadCrumbs.isEmpty() && cPath.contains(cContainer)) { // Double-check to be on the safe side.
 						EReference containmentFeature = c.eContainmentFeature();
 						Renderer<C, EObject> containerRenderer = getRenderer(cContainer);
-						if (containmentFeature != null) {
+						if (containmentFeature != null /* TODO - && containerRenderer.isPathFeature(containmentFeature) */) {
 							TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
 							if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
 								List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, cContainer, null);
@@ -704,7 +706,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (!breadCrumbs.isEmpty() && cPath.contains(objContainer)) { // Double-check to be on the safe side.
 			EReference containmentFeature = obj.eContainmentFeature();
 			Renderer<C, EObject> containerRenderer = getRenderer(objContainer);
-			if (containmentFeature != null) {
+			if (containmentFeature != null /* TODO - && containerRenderer.isPathFeature(containmentFeature) */) {
 				TypedElementLocation containmentFeatureLocation = containerRenderer.getTypedElementLocation(context, containmentFeature);
 				if (containmentFeatureLocation  == TypedElementLocation.leftPanel || containmentFeatureLocation == TypedElementLocation.item) {
 					List<EStructuralFeature> containerVisibleFeatures = containerRenderer.getVisibleFeatures(context, objContainer, null);
