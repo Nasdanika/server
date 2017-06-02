@@ -526,7 +526,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						continue; // Single reference with unreadable value.
 					}
 				}
-				if (isVisible(context, obj, obj.eClass())) {
+				if (isVisible(context, obj, sf)) {
 					ret.add(sf);
 				}
 			}
@@ -2779,7 +2779,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		// TODO - add support of inlined features.
 		
-		return ret.isEmpty() ? null : ret;
+		return ret;
 	}
 	
 	

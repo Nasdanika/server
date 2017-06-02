@@ -75,6 +75,7 @@ import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.ListGroup;
+import org.nasdanika.html.NamedItemsContainer;
 import org.nasdanika.html.Table;
 import org.nasdanika.html.Tag;
 import org.nasdanika.html.Tag.TagName;
@@ -202,7 +203,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			content.content(renderView(context, target, appConsumer));
 		}
 		
-		content.content(renderFeatureItemsContainer(context, target, appConsumer));
+		NamedItemsContainer<?, ?> featureItemsContainer = renderFeatureItemsContainer(context, target, appConsumer);
+		if (!featureItemsContainer.isEmpty()) {
+			content.content(featureItemsContainer);
+		}
 						
 		return renderPage(context, target, title, content);		
 	}
