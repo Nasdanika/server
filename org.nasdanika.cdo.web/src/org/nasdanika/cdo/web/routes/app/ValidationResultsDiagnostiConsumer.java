@@ -50,14 +50,16 @@ public abstract class ValidationResultsDiagnostiConsumer implements Consumer<Dia
 	public void accept(Diagnostic diagnostic) {
 		List<?> dData = diagnostic.getData();
 		ENamedElement ene = null;
-		// Second element, if present.
-		if (dData.size() > 1 && dData.get(1) instanceof ENamedElement) {
-			ene = (ENamedElement) dData.get(1);
-		}
 		String messageKey = null; 
-		// Last element, if present.
-		if (dData.size() > 1 && dData.get(dData.size()-1) instanceof String) {
-			messageKey = (String) dData.get(dData.size()-1);
+		if (dData != null) {
+			// Second element, if present.
+			if (dData.size() > 1 && dData.get(1) instanceof ENamedElement) {
+				ene = (ENamedElement) dData.get(1);
+			}
+			// Last element, if present.
+			if (dData.size() > 1 && dData.get(dData.size()-1) instanceof String) {
+				messageKey = (String) dData.get(dData.size()-1);
+			}
 		}
 		FormGroup.Status status;
 		switch (diagnostic.getSeverity()) {
