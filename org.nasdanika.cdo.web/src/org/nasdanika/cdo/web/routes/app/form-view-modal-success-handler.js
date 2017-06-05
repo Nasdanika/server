@@ -14,8 +14,8 @@ if (data.result) {
 	var vr = data.validationResults;
 	for (var r in vr.results) {
 		this.messages.push({
-			name: null,
-			style: 'list-group-item-'+vr.results[r].style.toLowerCase(),
+			name: "",
+			style: 'list-group-item-'+vr.results[r].statusStyle.toLowerCase(),
 			message: vr.results[r].message
 		});
 	}
