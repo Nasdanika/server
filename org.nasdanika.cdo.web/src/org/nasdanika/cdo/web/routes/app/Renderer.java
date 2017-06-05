@@ -1282,6 +1282,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * * For booleans invokes renderTrue() or renderFalse();
 	 * * For dates uses ``format`` annotation to format with {@link SimpleDateFormat}, if the annotation is present.
 	 * * For numbers uses ``format`` annotation to format with {@link DecimalFormat}, if the annotation is present.
+	 * * For {@link Diagnostic} renders status icon, message and children.
 	 * * Otherwise converts value to string and then html-escapes it.
 	 * @param context
 	 * @param typedElement
@@ -1294,6 +1295,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			value = null;
 		}
 		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
 		if (value == null || (value instanceof String && ((String) value).length() == 0)) {
 			String pra = getRenderAnnotation(context, typedElement, RenderAnnotation.PLACEHOLDER);
 			if (!CoreUtil.isBlank(pra) && context instanceof HttpServletRequestContext) {
@@ -1302,7 +1304,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) target);
 					Object pv = jxPathContext.getValue(pra);
 					if (pv != null) {
-						return getHTMLFactory(context).well(renderTypedElementValue(context, typedElement, pv, appConsumer)).small();
+						return htmlFactory.well(renderTypedElementValue(context, typedElement, pv, appConsumer)).small();
 					}
 				}
 			}
@@ -1335,10 +1337,47 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				EEnumLiteral enumLiteral = featureEnum.getEEnumLiteral(enumeratorValue.getName());
 				Object literalIcon = renderModelElementIcon(context, enumLiteral);
 				Tag literalDocumentationIcon = renderDocumentationIcon(context, enumLiteral, null, true);
-				return getHTMLFactory(context).fragment(literalIcon, " ", ret, literalDocumentationIcon);
+				return htmlFactory.fragment(literalIcon, " ", ret, literalDocumentationIcon);
 			}
 			
 			return ret;
+		}
+		
+		if (value instanceof Diagnostic) {
+			Diagnostic diagnostic = (Diagnostic) value;
+			Fragment rdf = htmlFactory.fragment();
+			switch (diagnostic.getSeverity()) {
+			case Diagnostic.ERROR:
+				rdf.content(htmlFactory.fontAwesome().webApplication(WebApplication.exclamation_circle).getTarget().bootstrap().text().color(Style.DANGER).style().margin().right("0.5em"));
+				break;
+			case Diagnostic.WARNING:
+				rdf.content(htmlFactory.fontAwesome().webApplication(WebApplication.exclamation_triangle).getTarget().bootstrap().text().color(Style.WARNING).style().margin().right("0.5em"));
+				break;
+			case Diagnostic.OK:
+				rdf.content(htmlFactory.fontAwesome().webApplication(WebApplication.check_square).getTarget().bootstrap().text().color(Style.SUCCESS).style().margin().right("0.5em"));
+				break;
+			case Diagnostic.INFO:
+				rdf.content(htmlFactory.fontAwesome().webApplication(WebApplication.check_circle_o).getTarget().bootstrap().text().color(Style.INFO));
+				break;				
+			}
+			if (!CoreUtil.isBlank(diagnostic.getMessage())) {
+				rdf.content(StringEscapeUtils.escapeHtml4(diagnostic.getMessage()));
+			}
+			if (diagnostic.getChildren().isEmpty()) {
+				return rdf;
+			}
+			if (diagnostic.getChildren().size() == 1 && CoreUtil.isBlank(diagnostic.getMessage())) {
+				return renderTypedElementValue(context, typedElement, diagnostic.getChildren().iterator().next(), appConsumer);
+			}
+			Tag ul = htmlFactory.tag(TagName.ul);
+			for (Diagnostic child: diagnostic.getChildren()) {
+				ul.content(htmlFactory.tag(TagName.li, renderTypedElementValue(context, typedElement, child, appConsumer)));
+			}
+			if (CoreUtil.isBlank(diagnostic.getMessage())) {
+				return ul;
+			}
+			rdf.content(ul);
+			return rdf;
 		}
 		
 		if (value instanceof Date) {
@@ -5486,6 +5525,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		HTMLFactory htmlFactory = getHTMLFactory(context);		
 		Form editForm = htmlFactory.form();
+				
+		if (formRenderingListener != null) {
+			formRenderingListener.onBeforeFormRendering(context, obj, editForm);
+		}
 		
 		ListGroup errorList = htmlFactory.listGroup();
 		for (ValidationResult vr: validationResults) {
