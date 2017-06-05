@@ -6,7 +6,7 @@ import java.util.List;
 import org.eclipse.emf.common.util.BasicDiagnostic;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.DiagnosticChain;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.EModelElement;
 
 /**
  * Helper class to reduce amount of diagnostic/validation code.
@@ -41,14 +41,14 @@ public class DiagnosticHelper {
 	 * @param severity
 	 * @param message Diagnostic message.
 	 * @param messageKey Message key for localization, can be null.
-	 * @param feature Feature under diagnostic. Can be null.
+	 * @param modelElement Feature under diagnostic. Can be null.
 	 */
-	public void addDiagnostic(int severity, String message, String messageKey, EStructuralFeature feature) {
+	public void addDiagnostic(int severity, String message, String messageKey, EModelElement modelElement) {
 		if (diagnostics != null) {
 			List<Object> data = new ArrayList<>();
 			data.add(owner);
-			if (feature != null) {
-				data.add(feature);
+			if (modelElement != null) {
+				data.add(modelElement);
 			}
 			if (messageKey != null) {
 				data.add(messageKey);
@@ -62,48 +62,48 @@ public class DiagnosticHelper {
 		}
 	}
 	
-	public void error(String message, String messageKey, EStructuralFeature feature) {
-		addDiagnostic(Diagnostic.ERROR, message, messageKey, feature);
+	public void error(String message, String messageKey, EModelElement modelElement) {
+		addDiagnostic(Diagnostic.ERROR, message, messageKey, modelElement);
 	}
 	
 	public void error(String message, String messageKey) {
 		error(message, messageKey, null);
 	}
 	
-	public void error(String message, EStructuralFeature feature) {
-		error(message, null, feature);
+	public void error(String message, EModelElement modelElement) {
+		error(message, null, modelElement);
 	}
 	
 	public void error(String message) {
 		error(message, null, null);
 	}
 	
-	public void warning(String message, String messageKey, EStructuralFeature feature) {
-		addDiagnostic(Diagnostic.WARNING, message, messageKey, feature);
+	public void warning(String message, String messageKey, EModelElement modelElement) {
+		addDiagnostic(Diagnostic.WARNING, message, messageKey, modelElement);
 	}
 	
 	public void warning(String message, String messageKey) {
 		warning(message, messageKey, null);
 	}
 	
-	public void warning(String message, EStructuralFeature feature) {
-		warning(message, null, feature);
+	public void warning(String message, EModelElement modelElement) {
+		warning(message, null, modelElement);
 	}
 	
 	public void warning(String message) {
 		warning(message, null, null);
 	}
 	
-	public void info(String message, String messageKey, EStructuralFeature feature) {
-		addDiagnostic(Diagnostic.INFO, message, messageKey, feature);
+	public void info(String message, String messageKey, EModelElement modelElement) {
+		addDiagnostic(Diagnostic.INFO, message, messageKey, modelElement);
 	}
 	
 	public void info(String message, String messageKey) {
 		info(message, messageKey, null);
 	}
 	
-	public void info(String message, EStructuralFeature feature) {
-		info(message, null, feature);
+	public void info(String message, EModelElement modelElement) {
+		info(message, null, modelElement);
 	}
 	
 	public void info(String message) {
