@@ -1763,7 +1763,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					invalidLogin = true;
 					invalidPassword = true;
 				} else {
-					String principalHome = context.getObjectPath(authenticatedPrincipals.get(0))+"/index.html";
+					String principalHome = context.getObjectPath(authenticatedPrincipals.get(0))+"/home.html";
 					context.getResponse().sendRedirect(CoreUtil.isBlank(returnURL) ? principalHome : returnURL);
 					return null;
 				}
@@ -2325,6 +2325,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								return Action.NOP;
 							}
 							
+							// TODO - if result is diagnostic and level is error - copy from the above and adjust.
+							
 							// Breadcrumbs
 							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 							String resultStr = "Result"; // TODO - resource string
@@ -2345,7 +2347,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 							} else {
 								content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer));					
+								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer)); // TODO - render Diagnostic as a UL					
 							}
 						} catch (Exception e) {
 							// Breadcrumbs
@@ -2492,13 +2494,15 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							return Action.NOP;
 						}
 						
+						// TODO - handle if result is diagnostic an level is error.
+						
 						String resultStr = "Result"; // TODO - resource string
 						Fragment renderedResult = htmlFactory.fragment();						
 						if (result == null) {
 							renderedResult.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
 						} else {
 							renderedResult.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-							renderedResult.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer));					
+							renderedResult.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer)); // TODO - render diagnostic as UL (in renderer)					
 						}
 						if (isJSON) {
 							JSONObject jsonResult = new JSONObject();

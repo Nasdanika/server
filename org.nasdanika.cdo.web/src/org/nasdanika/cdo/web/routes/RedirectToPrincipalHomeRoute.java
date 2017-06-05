@@ -7,7 +7,7 @@ import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.Route;
 
 /**
- * Redirects to the first subject's principal's index.html page.
+ * Redirects to the first subject's principal's home.html page.
  * @author Pavel Vlasov
  *
  */
@@ -17,7 +17,7 @@ public class RedirectToPrincipalHomeRoute implements Route {
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
 		if (context instanceof CDOViewContext) {
 			for (Principal principal: ((CDOViewContext<?,?>) context).getPrincipals()) {
-				String principalHome = context.getObjectPath(principal)+"/index.html";
+				String principalHome = context.getObjectPath(principal)+"/home.html";
 				String queryString = context.getRequest().getQueryString();
 				context.getResponse().sendRedirect(queryString == null ? principalHome : principalHome + "?" + queryString);
 				return Action.NOP;
