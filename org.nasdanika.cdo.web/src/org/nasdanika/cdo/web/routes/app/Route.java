@@ -2325,29 +2325,75 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								return Action.NOP;
 							}
 							
-							// TODO - if result is diagnostic and level is error - copy from the above and adjust.
-							
-							// Breadcrumbs
-							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-							String resultStr = "Result"; // TODO - resource string
-							String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
-							if (operationFeature == null) {
-								getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
-							} else {
-								renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
-							}						
-							if (!breadCrumbs.isEmpty()) {
-								content.content(breadCrumbs);
-							}
+							if (result instanceof Diagnostic && ((Diagnostic) result).getSeverity() == Diagnostic.ERROR) {
+								ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
 									
-							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
-							content.content(objectHeader);							
-							
-							if (result == null) {
-								content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
+									@Override
+									protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+										return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? eOperation : namedElement), key, true);
+									}
+									
+								};
+								
+								if (((Diagnostic) result).getChildren().isEmpty()) {
+									diagnosticConsumer.accept((Diagnostic) result); // Single diagnostic
+								} else {
+									for (Diagnostic dc: ((Diagnostic) result).getChildren()) { // Multi-diagnostic
+										diagnosticConsumer.accept(dc);
+									}
+								}
+								
+								Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+								String invalidInputStr = "Invalid input"; // TODO - resource string
+								String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER);
+								if (operationFeature == null) {
+									getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
+								} else {
+									renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+								}						
+								if (!breadCrumbs.isEmpty()) {
+									content.content(breadCrumbs);
+								}
+										
+								Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
+								content.content(objectHeader);							
+								
+								content.content(htmlFactory.tag(TagName.h4, invalidInputStr).style().color().bootstrapColor(Color.DANGER)); 
+								ListGroup errorList = htmlFactory.listGroup();
+								content.content(errorList);
+								for (ValidationResult vr: diagnosticConsumer.getValidationResults()) {
+									errorList.item(vr.message, vr.status.toStyle());			
+								}
+								
+								for (Entry<ENamedElement, List<ValidationResult>> fe: diagnosticConsumer.getNamedElementValidationResults().entrySet()) {
+									for (ValidationResult nevr: fe.getValue()) {
+										Object nameLabel = renderNamedElementIconAndLabel(context, fe.getKey());
+										errorList.item(htmlFactory.label(nevr.status.toStyle(), nameLabel) + " " + nevr.message, nevr.status.toStyle());											
+									}
+								}			
 							} else {
-								content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-								content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer)); // TODO - render Diagnostic as a UL					
+								// Breadcrumbs
+								Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+								String resultStr = "Result"; // TODO - resource string
+								String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
+								if (operationFeature == null) {
+									getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
+								} else {
+									renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+								}						
+								if (!breadCrumbs.isEmpty()) {
+									content.content(breadCrumbs);
+								}
+										
+								Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
+								content.content(objectHeader);							
+								
+								if (result == null) {
+									content.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
+								} else {
+									content.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
+									content.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer)); // TODO - render Diagnostic as a UL					
+								}
 							}
 						} catch (Exception e) {
 							// Breadcrumbs
@@ -2494,39 +2540,128 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							return Action.NOP;
 						}
 						
-						// TODO - handle if result is diagnostic an level is error.
-						
-						String resultStr = "Result"; // TODO - resource string
-						Fragment renderedResult = htmlFactory.fragment();						
-						if (result == null) {
-							renderedResult.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
-						} else {
-							renderedResult.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
-							renderedResult.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer)); // TODO - render diagnostic as UL (in renderer)					
-						}
-						if (isJSON) {
-							JSONObject jsonResult = new JSONObject();
-							jsonResult.put("result", renderedResult);
-							jsonResult.put("location", location);
-							return jsonResult;
-						}  
-						
-						// Breadcrumbs
-						Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
-						String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
-						if (operationFeature == null) {
-							getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
-						} else {
-							renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
-						}						
-						if (!breadCrumbs.isEmpty()) {
-							content.content(breadCrumbs);
-						}
+						if (result instanceof Diagnostic && ((Diagnostic) result).getSeverity() == Diagnostic.ERROR) {
+							ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
 								
-						Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
-						content.content(objectHeader);							
-						
-						content.content(renderedResult);
+								@Override
+								protected String getResourceString(ENamedElement namedElement, String key) throws Exception {
+									return Route.this.getResourceString(context, (ENamedElement) (namedElement == null ? eOperation : namedElement), key, true);
+								}
+								
+							};
+							
+							if (((Diagnostic) result).getChildren().isEmpty()) {
+								diagnosticConsumer.accept((Diagnostic) result); // Single result
+							} else {
+								for (Diagnostic dc: ((Diagnostic) result).getChildren()) { // Multi-result
+									diagnosticConsumer.accept(dc);
+								}
+							}
+							
+							if (isJSON) {						
+								JSONObject jsonResult = new JSONObject();
+								jsonResult.put("validationResults", diagnosticConsumer.toJSON());						
+								return jsonResult;
+							}
+							
+							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+							String invalidInputStr = "Invalid input"; // TODO - resource string
+							String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(invalidInputStr).style().color().bootstrapColor(Color.DANGER);
+							if (operationFeature == null) {
+								getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
+							} else {
+								renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+							}						
+							if (!breadCrumbs.isEmpty()) {
+								content.content(breadCrumbs);
+							}
+									
+							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
+							content.content(objectHeader);							
+							
+							content.content(htmlFactory.tag(TagName.h4, invalidInputStr).style().color().bootstrapColor(Color.DANGER)); 
+							
+							boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.HORIZONTAL_FORM));
+							boolean noValidate = "true".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.NO_VALIDATE));
+							Map<EParameter, Object> formParameters = new LinkedHashMap<EParameter, Object>();
+							for (EParameter eParameter: eOperation.getEParameters()) {
+								if (eOperationTarget.isFormParameter(eParameter)) {
+									formParameters.put(eParameter, args.get(eParameter.getName()));
+								}
+							}
+							Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm, null, appConsumer)
+								.novalidate(noValidate)
+								.action(context.getRequest().getRequestURL())
+								.method(Method.post);
+							
+							for (EParameter eParameter: eOperation.getEParameters()) {
+								String queryParameterName = eOperationTarget.getQueryParameterName(eParameter);
+								if (queryParameterName != null) {
+									String queryParameterValue = context.getRequest().getParameter(queryParameterName);
+									if (queryParameterValue != null) {
+										Input queryParameterInput = htmlFactory.input(InputType.hidden)
+												.name(queryParameterName)
+												.value(queryParameterValue);
+										inputForm.content(queryParameterInput);
+									}
+								}
+							}					
+							
+							if (eOperationTarget.hasPartParameters()) {
+								inputForm.enctype(EncType.multipart);
+							}
+							
+							if (originalReferrer != null) {
+								inputForm.content(htmlFactory.input(InputType.hidden).name(REFERRER_KEY).value(originalReferrer)); // encode?
+							}							
+							if (contextObjectID != null) {
+								inputForm.content(htmlFactory.input(InputType.hidden).name("context-object").value(contextObjectID)); // encode?						
+							}					
+							
+							configureForm(inputForm, horizontalForm, ModalType.NONE);
+							Tag buttonBar = htmlFactory.div().style().text().align().right();
+							
+							Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
+							executeButton.type(org.nasdanika.html.Button.Type.SUBMIT);
+							buttonBar.content(executeButton.style().margin().right("5px"));
+							
+							buttonBar.content(renderCancelButton(context, target));
+							inputForm.content(buttonBar);
+							
+							content.content(inputForm);												
+						} else {						
+							String resultStr = "Result"; // TODO - resource string
+							Fragment renderedResult = htmlFactory.fragment();						
+							if (result == null) {
+								renderedResult.content(htmlFactory.tag(TagName.h4, resultStr, ": ", renderTrue(context)).style().color().bootstrapColor(Color.SUCCESS));
+							} else {
+								renderedResult.content(htmlFactory.tag(TagName.h4, resultStr).style().color().bootstrapColor(Color.SUCCESS));
+								renderedResult.content(renderTypedElementView(context, target, eOperation, result, false, null, null, null, appConsumer)); // TODO - render diagnostic as UL (in renderer)					
+							}
+							if (isJSON) {
+								JSONObject jsonResult = new JSONObject();
+								jsonResult.put("result", renderedResult);
+								jsonResult.put("location", location);
+								return jsonResult;
+							}  
+							
+							// Breadcrumbs
+							Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
+							String breadcrumbAction = renderNamedElementIconAndLabel(context, eOperation) + " / "+htmlFactory.span(resultStr).style().color().bootstrapColor(Color.SUCCESS);
+							if (operationFeature == null) {
+								getRenderer(contextObject).renderObjectPath(context, contextObject, breadcrumbAction, breadCrumbs);
+							} else {
+								renderFeaturePath(context, target, operationFeature, breadcrumbAction, breadCrumbs);						
+							}						
+							if (!breadCrumbs.isEmpty()) {
+								content.content(breadCrumbs);
+							}
+									
+							Tag objectHeader = content.getFactory().tag(TagName.h3, renderNamedElementIconAndLabel(context, eOperation), renderDocumentationIcon(context, eOperation, appConsumer, true)); 
+							content.content(objectHeader);							
+							
+							content.content(renderedResult);
+						}
 					} catch (Exception e) {
 						Throwable rootCause = e;
 						while (rootCause.getCause() != null) {
