@@ -85,7 +85,6 @@ import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.web.routes.app.EOperationTargetInfo.Role;
-import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
@@ -2406,13 +2405,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				ret.content(htmlFactory.buttonGroup(eOperationButton, documentationButton));
 			}
 			
-			String path = (String) spec.get("path");
-			if (path == null) {
-				path = eOperation.getName();
-//				for (EParameter eParameter: eOperation.getEParameters()) {
-//					path += "-" + eParameter.getEType().getInstanceTypeName();
-//				}
-			}
+			String path = eOperationTargetInfo.getPath();
 			
 			if (queryParameters != null && !queryParameters.isEmpty()) {
 				StringBuilder query = new StringBuilder();
@@ -2512,6 +2505,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param editButton
 	 */
 	default void wireEditButton(C context, T obj, Button editButton, boolean containerContext, Consumer<Object> appConsumer) throws Exception {
+		// Editor web operation
+		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
+			Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+			if (yamlRenderAnnotation instanceof Map) {
+				@SuppressWarnings("unchecked")
+				EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);				
+				if (eOperationTargetInfo.getRole() == Role.editor) {
+					if (getEOperationModalType(context, obj, eOperation) == ModalType.NONE) {					
+						editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+eOperationTargetInfo.getPath()+"';");
+					} else {
+						String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-eoperation-"+eOperation.getName()+"-"+getHTMLFactory(context).nextId();
+						appConsumer.accept(renderEOperationModalDialogApplication(context, obj, eOperation, Collections.emptyMap(), appId, appConsumer));
+						editButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+					}					
+					return;
+				}				
+			}
+		}
+		
 		if (getEditModalType(context, obj) == ModalType.NONE) {
 			editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/edit.html';");		
 		} else {
