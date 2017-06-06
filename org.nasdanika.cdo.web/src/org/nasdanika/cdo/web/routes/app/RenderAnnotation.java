@@ -251,6 +251,7 @@ public enum RenderAnnotation {
 		 * * ``method`` - HTTP method which matches the operation. If not set then it defaults to ``GET`` for EOperation invocation (so it can be invoked by clicking on a button). If EOperation has unbound parameters, then ``GET`` method renders a form with those parameters and ``POST`` by the form invokes the operation after input validation against operation and parameter ``constraint``'s.
 		 * * ``path`` - Web operation path. It may contain path parameters in the form ``{<parameter name>}``. Defaults to the EOperation name.
 		 * * ``produces`` - Content type produced by the operation.
+		 * * ``role`` - one of {@link EOperationTargetInfo.Role} constants. Defaults to ``operation`` if not present.
 		 * * ``style`` - {@link org.nasdanika.html.Bootstrap.Style} enum value for button or left panel item depending on location. Defaults to ``INFO`` for buttons and ``DEFAULT`` for left panel items.
 		 * 
 		 * If you have a web operation with all defaults put a comment (``# comment``) or a document start (``---``) or both in the details.

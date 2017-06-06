@@ -11,6 +11,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.CoreUtil;
 import org.nasdanika.web.RequestMethod;
 
 /**
@@ -19,11 +20,32 @@ import org.nasdanika.web.RequestMethod;
  *
  */
 public class EOperationTargetInfo {
+	
+	enum Role {
+		
+		/**
+		 * Default role, web operation is rendered as a button.
+		 */
+		operation, 
+		
+		/**
+		 * Builder operations are used to construct elements of containment features and contribute to the "Create" button items.
+		 */
+		builder, 
+		
+		/**
+		 * Editor operations are used to edit objects, they replace the "Edit" button default wiring.
+		 */
+		editor 
+	}
 		
 	private EOperation eOperation;
 	protected Map<String, Object> spec;
 	protected Map<EParameter, Object> parameterBindings;
-	private String path;	
+	private String path;
+	private String feature;
+	private String featureValue;
+	private Role role;	
 	
 	@SuppressWarnings("unchecked")
 	public <C extends Context, T extends EObject> EOperationTargetInfo(C context, Renderer<C,T> renderer, EOperation eOperation) throws Exception {
@@ -45,6 +67,8 @@ public class EOperationTargetInfo {
 				parameterBindings.put(eParameter, bindingAnnotation);
 			}
 		}
+		feature = (String) spec.get("feature");
+		featureValue = (String) spec.get("feature-value");
 		
 		String path = (String) spec.get("path");
 		if (path == null) {
@@ -54,7 +78,22 @@ public class EOperationTargetInfo {
 //			}
 		}
 		
+		String roleStr = (String) spec.get("role");
+		role = CoreUtil.isBlank(roleStr) ? Role.operation : Role.valueOf(roleStr);
+		
 		this.path = path;
+	}
+	
+	public String getFeature() {
+		return feature;
+	}
+	
+	public String getFeatureValue() {
+		return featureValue;
+	}
+	
+	public Role getRole() {
+		return role;
 	}
 	
 	public boolean hasFormParameters() {
@@ -153,7 +192,18 @@ public class EOperationTargetInfo {
 
 	public String getAction() {
 		String action = (String) spec.get("action");
-		return action == null ? AuthorizationProvider.StandardAction.execute.name() : action;
+		if (action != null) {
+			return action;
+		}
+		switch (getRole()) {
+		case builder:
+			return AuthorizationProvider.StandardAction.create.name();
+		case editor:
+			return AuthorizationProvider.StandardAction.update.name();
+		case operation:
+		default:
+			return AuthorizationProvider.StandardAction.execute.name();
+		}
 	}
 
 	public String getQualifier() {

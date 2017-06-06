@@ -1832,16 +1832,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			for (EOperation eOperation: ((EObject) target).eClass().getEAllOperations()) {
 				Map<String, Object> webOperationAnnotation = (Map<String, Object>) getYamlRenderAnnotation((C) context, eOperation, RenderAnnotation.WEB_OPERATION);
 				if (webOperationAnnotation != null) {
-					String action = (String) webOperationAnnotation.get("action");
-					if (action == null) {
-						action = AuthorizationProvider.StandardAction.execute.name();
-					}
-					String qualifier = (String) webOperationAnnotation.get("qualifier");
-					if (qualifier == null) {
-						qualifier = eOperation.getName();
-					}					
-					if (context.authorize(context.getTarget(), action, qualifier, null)) {
-						ret.add(new EOperationTarget<C,T>((C) context, this, eOperation, webOperationAnnotation));
+					EOperationTarget<C, T> eOperationTarget = new EOperationTarget<C,T>((C) context, this, eOperation, webOperationAnnotation);
+					if (context.authorize(context.getTarget(), eOperationTarget.getAction(), eOperationTarget.getQualifier(), null)) {
+						ret.add(eOperationTarget);
 					}
 				}
 			}

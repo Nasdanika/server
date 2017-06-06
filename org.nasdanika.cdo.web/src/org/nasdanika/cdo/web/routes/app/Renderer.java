@@ -84,6 +84,7 @@ import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
 import org.nasdanika.cdo.web.CDOIDCodec;
+import org.nasdanika.cdo.web.routes.app.EOperationTargetInfo.Role;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.Context;
@@ -2310,11 +2311,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		ret.content(renderEditButton(context, obj, true, containerContext, appConsumer));
 		ret.content(renderDeleteButton(context, obj));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
-			if (getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION) instanceof Map) {
+			Object webOperationAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+			if (webOperationAnnotation instanceof Map) {
 				@SuppressWarnings("unchecked")
-				Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-				Object location = spec.get("location");
-				if ((location == null || "view".equals(location)) && spec.get("feature") == null && spec.get("feature-value") == null) {
+				EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) webOperationAnnotation);
+				if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+						&& eOperationTargetInfo.getFeature() == null 
+						&& eOperationTargetInfo.getFeatureValue() == null 
+						&& eOperationTargetInfo.getRole() == Role.operation
+						&& isVisible(context, obj, eOperation)) {
 					ret.content(renderEOperationButton(context, obj, eOperation, null, null, appConsumer));
 				}				
 			}
@@ -2327,9 +2332,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 				if (yamlRenderAnnotation instanceof Map) {
 					@SuppressWarnings("unchecked")
-					Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
-					Object location = spec.get("location");
-					if ((location == null || "view".equals(location)) && containingFeature.getName().equals(spec.get("feature-value"))) {
+					EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);
+					if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+							&& containingFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
+							&& eOperationTargetInfo.getRole() == Role.operation
+							&& isVisible(context, obj, eOperation)) {
 						Map<String, String> queryParameters = new HashMap<>();
 						queryParameters.put("feature", containingFeature.getName());					
 						if (obj instanceof CDOObject) {
@@ -2371,15 +2378,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		@SuppressWarnings("unchecked")
 		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-		String action = (String) spec.get("action");
-		if (action == null) {
-			action = AuthorizationProvider.StandardAction.execute.name();
-		}
-		String qualifier = (String) spec.get("qualifier");
-		if (qualifier == null) {
-			qualifier = eOperation.getName();
-		}		
-		if (context.authorize(obj, action, qualifier, null)) {
+		EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation);				
+		if (context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Fragment ret = htmlFactory.fragment(); 
 			Modal docModal = renderDocumentationModal(context, eOperation);
@@ -3401,9 +3401,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 			if (yamlRenderAnnotation instanceof Map) {
 				@SuppressWarnings("unchecked")
-				Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
-				Object location = spec.get("location");
-				if ((location == null || "view".equals(location)) && feature.getName().equals(spec.get("feature"))) {
+				EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);				
+				if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+						&& feature.getName().equals(eOperationTargetInfo.getFeature())
+						&& eOperationTargetInfo.getRole() == Role.operation
+						&& isVisible(context, obj, eOperation)) {
 					ret.content(renderEOperationButton(context, obj, eOperation, Collections.singletonMap("feature", feature.getName()), null, appConsumer));
 				}				
 			}
@@ -3746,9 +3748,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Object webOperationYamlAnnotation = valueRenderer.getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 				if (webOperationYamlAnnotation instanceof Map) {
 					@SuppressWarnings("unchecked")
-					Map<String, Object> spec = (Map<String, Object>) webOperationYamlAnnotation;
-					Object location = spec.get("location");
-					if ((location == null || "view".equals(location)) && spec.get("feature") == null && spec.get("feature-value") == null) {
+					EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) webOperationYamlAnnotation);
+					if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+							&& eOperationTargetInfo.getFeature() == null 
+							&& eOperationTargetInfo.getFeatureValue() == null
+							&& eOperationTargetInfo.getRole() == Role.operation
+							&& isVisible(context, obj, eOperation)) {
 						ret.content(valueRenderer.renderEOperationButton(context, eObjectValue, eOperation, null, null, appConsumer));
 					}				
 				}
@@ -3761,9 +3766,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
 				if (yamlRenderAnnotation instanceof Map) {
 					@SuppressWarnings("unchecked")
-					Map<String, Object> spec = (Map<String, Object>) yamlRenderAnnotation;
-					Object location = spec.get("location");
-					if ((location == null || "view".equals(location)) && typedElement.getName().equals(spec.get("feature-value"))) {
+					EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);
+					if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+							&& typedElement.getName().equals(eOperationTargetInfo.getFeatureValue())
+							&& eOperationTargetInfo.getRole() == Role.operation
+							&& isVisible(context, obj, eOperation)) {
 						Map<String,String> queryParameters = new HashMap<>();
 						queryParameters.put("feature", typedElement.getName());					
 						if (idx != -1) {
