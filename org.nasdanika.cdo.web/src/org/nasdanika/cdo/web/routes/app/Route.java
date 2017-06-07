@@ -54,7 +54,6 @@ import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
-import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
@@ -2209,13 +2208,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					
 					boolean horizontalForm = !"false".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.HORIZONTAL_FORM));
 					boolean noValidate = "true".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.NO_VALIDATE));
-					Map<EParameter, Object> formParameters = new LinkedHashMap<EParameter, Object>();
-					for (EParameter eParameter: eOperation.getEParameters()) {
-						if (eOperationTarget.isFormParameter(eParameter)) {
-							formParameters.put(eParameter, getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE));
-						}
-					}
-					Form inputForm = renderInputForm(context, target, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, null, appConsumer)
+					Form inputForm = renderInputForm(context, target, getParameterValues(context, target, eOperation), Collections.emptyList(), Collections.emptyMap(), horizontalForm, null, appConsumer)
 						.novalidate(noValidate)
 						.action(context.getRequest().getRequestURL())
 						.method(Method.post);

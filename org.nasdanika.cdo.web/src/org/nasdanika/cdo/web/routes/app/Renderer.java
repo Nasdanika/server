@@ -1336,7 +1336,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				EEnum featureEnum = (EEnum) featureType;
 				EEnumLiteral enumLiteral = featureEnum.getEEnumLiteral(enumeratorValue.getName());
 				Object literalIcon = renderModelElementIcon(context, enumLiteral);
-				Tag literalDocumentationIcon = renderDocumentationIcon(context, enumLiteral, null, true);
+				Tag literalDocumentationIcon = renderDocumentationIcon(context, enumLiteral, appConsumer, true);
 				return htmlFactory.fragment(literalIcon, " ", ret, literalDocumentationIcon);
 			}
 			
@@ -2310,47 +2310,40 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		ret.content(renderEditButton(context, obj, true, containerContext, appConsumer));
 		ret.content(renderDeleteButton(context, obj));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
-			Object webOperationAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-			if (webOperationAnnotation instanceof Map) {
-				@SuppressWarnings("unchecked")
-				EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) webOperationAnnotation);
-				if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
-						&& eOperationTargetInfo.getFeature() == null 
-						&& eOperationTargetInfo.getFeatureValue() == null 
-						&& eOperationTargetInfo.getRole() == Role.operation
-						&& isVisible(context, obj, eOperation)) {
-					ret.content(renderEOperationButton(context, obj, eOperation, null, null, appConsumer));
-				}				
-			}
+			EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
+			if (eOperationTargetInfo != null 
+					&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+					&& eOperationTargetInfo.getFeature() == null 
+					&& eOperationTargetInfo.getFeatureValue() == null 
+					&& eOperationTargetInfo.getRole() == Role.operation
+					&& isVisible(context, obj, eOperation)) {
+				ret.content(renderEOperationButton(context, obj, eOperation, null, null, appConsumer));
+			}				
 		}
 		
 		EObject eContainer = obj.eContainer();
 		EStructuralFeature containingFeature = obj.eContainingFeature();
 		if (eContainer != null && containingFeature != null) {
 			for (EOperation eOperation: eContainer.eClass().getEAllOperations()) {
-				Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-				if (yamlRenderAnnotation instanceof Map) {
-					@SuppressWarnings("unchecked")
-					EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);
-					if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
-							&& containingFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
-							&& eOperationTargetInfo.getRole() == Role.operation
-							&& isVisible(context, obj, eOperation)) {
-						Map<String, String> queryParameters = new HashMap<>();
-						queryParameters.put("feature", containingFeature.getName());					
-						if (obj instanceof CDOObject) {
-							String formControlValue = getFormControlValue(context, obj, containingFeature, obj, appConsumer);
-							queryParameters.put("element", formControlValue);
-							queryParameters.put("context-object", formControlValue);
-						}
-						
-						Map<String, Object> vars = new HashMap<>();
-						vars.put("element", obj);
-						ret.content(getRenderer(eContainer).renderEOperationButton(context, eContainer, eOperation, queryParameters, vars, appConsumer));
-					}				
-				}
+				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
+				if (eOperationTargetInfo != null
+						&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+						&& containingFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
+						&& eOperationTargetInfo.getRole() == Role.operation
+						&& isVisible(context, obj, eOperation)) {
+					Map<String, String> queryParameters = new HashMap<>();
+					queryParameters.put("feature", containingFeature.getName());					
+					if (obj instanceof CDOObject) {
+						String formControlValue = getFormControlValue(context, obj, containingFeature, obj, appConsumer);
+						queryParameters.put("element", formControlValue);
+						queryParameters.put("context-object", formControlValue);
+					}
+					
+					Map<String, Object> vars = new HashMap<>();
+					vars.put("element", obj);
+					ret.content(getRenderer(eContainer).renderEOperationButton(context, eContainer, eOperation, queryParameters, vars, appConsumer));
+				}				
 			}
-			
 		}
 		
 		return ret;
@@ -2375,33 +2368,22 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			Map<String, Object> jxPathContextVariables,
 			Consumer<Object> appConsumer) throws Exception {
 		
-		@SuppressWarnings("unchecked")
-		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-		EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation);				
+		EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
 		if (context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Fragment ret = htmlFactory.fragment(); 
 			Modal docModal = renderDocumentationModal(context, eOperation);
 			if (docModal != null) {
-				ret.content(docModal);
+				appConsumer.accept(docModal);
 			}
 			Button eOperationButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation));
-			String style = (String) spec.get("style");
-			if (style == null) {
-				eOperationButton.style(Style.INFO);
-			} else {
-				eOperationButton.style(Style.valueOf(style));				
-			}
+			eOperationButton.style(eOperationTargetInfo.getStyle());				
 			Button documentationButton = renderDocumentationButton(context, eOperation, docModal);
 			if (documentationButton == null) {
 				ret.content(eOperationButton/*.style().margin().right("5px")*/);
 			} else {
 //				documentationButton.style().margin().right("5px");
-				if (style == null) {
-					documentationButton.style(Style.INFO);
-				} else {
-					documentationButton.style(Style.valueOf(style));				
-				}
+				documentationButton.style(eOperationTargetInfo.getStyle());
 				ret.content(htmlFactory.buttonGroup(eOperationButton, documentationButton));
 			}
 			
@@ -2420,8 +2402,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			String guard = "";
 			
-			Object confirm = spec.get("confirm");
-			if (confirm instanceof String) {
+			String confirm = eOperationTargetInfo.getConfirm();
+			if (!CoreUtil.isBlank(confirm)) {
 				Map<String, Object> env = new HashMap<>();
 				env.put("object-label", renderLabel(context, obj));
 				if (jxPathContextVariables != null) {
@@ -2507,21 +2489,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	default void wireEditButton(C context, T obj, Button editButton, boolean containerContext, Consumer<Object> appConsumer) throws Exception {
 		// Editor web operation
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
-			Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-			if (yamlRenderAnnotation instanceof Map) {
-				@SuppressWarnings("unchecked")
-				EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);				
-				if (eOperationTargetInfo.getRole() == Role.editor) {
-					if (getEOperationModalType(context, obj, eOperation) == ModalType.NONE) {					
-						editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+eOperationTargetInfo.getPath()+"';");
-					} else {
-						String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-eoperation-"+eOperation.getName()+"-"+getHTMLFactory(context).nextId();
-						appConsumer.accept(renderEOperationModalDialogApplication(context, obj, eOperation, Collections.emptyMap(), appId, appConsumer));
-						editButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
-					}					
-					return;
-				}				
-			}
+			EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
+			if (eOperationTargetInfo != null && eOperationTargetInfo.getRole() == Role.editor) {
+				if (getEOperationModalType(context, obj, eOperation) == ModalType.NONE) {					
+					editButton.on(Event.click, "window.location='"+getObjectURI(context, obj)+"/"+eOperationTargetInfo.getPath()+"';");
+				} else {
+					String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-eoperation-"+eOperation.getName()+"-"+getHTMLFactory(context).nextId();
+					appConsumer.accept(renderEOperationModalDialogApplication(context, obj, eOperation, Collections.emptyMap(), appId, appConsumer));
+					editButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+				}					
+				return;
+			}				
 		}
 		
 		if (getEditModalType(context, obj) == ModalType.NONE) {
@@ -3410,17 +3388,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Fragment ret = getHTMLFactory(context).fragment(); 
 		ret.content(renderFeatureAddButton(context, obj, feature, appConsumer));
 		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
-			Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-			if (yamlRenderAnnotation instanceof Map) {
-				@SuppressWarnings("unchecked")
-				EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);				
-				if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
-						&& feature.getName().equals(eOperationTargetInfo.getFeature())
-						&& eOperationTargetInfo.getRole() == Role.operation
-						&& isVisible(context, obj, eOperation)) {
-					ret.content(renderEOperationButton(context, obj, eOperation, Collections.singletonMap("feature", feature.getName()), null, appConsumer));
-				}				
-			}
+			EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
+			if (eOperationTargetInfo != null
+					&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+					&& feature.getName().equals(eOperationTargetInfo.getFeature())
+					&& eOperationTargetInfo.getRole() == Role.operation
+					&& isVisible(context, obj, eOperation)) {
+				ret.content(renderEOperationButton(context, obj, eOperation, Collections.singletonMap("feature", feature.getName()), null, appConsumer));
+			}				
 		}
 		return ret;
 	}
@@ -3475,11 +3450,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default void wireFeatureAddButton(C context, T obj, EStructuralFeature feature, Button addButton, Consumer<Object> appConsumer) throws Exception {
+		// TODO - four types of items
+		// - classes
+		// - template objects
+		// - builder eoperations
+		// - dividers
+		// collect them all as Consumer<Button> and then apply to the button itself if single, or to items is multiple - check size from the consumers.
+
+		// Use Callable<Void> for wiring
+		
 		String objectURI = getObjectURI(context, obj);	
 		addButton.type(Type.BUTTON); // No submitting.
+		
+		List<Task> wirerers = new ArrayList<>();
+		
 		if (feature instanceof EReference && ((EReference) feature).isContainment()) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			List<EClass> featureElementTypes = new ArrayList<>();
+			
+			// Classes			
 			for (EClass ec: getReferenceElementTypes(context, obj, (EReference) feature)) {
 				String qualifier = feature.getName()+"/"+ec.getName();
 				if (feature.getEContainingClass().getEPackage() != ec.getEPackage()) {
@@ -3489,38 +3478,89 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					featureElementTypes.add(ec);
 				}
 			}
-			if (featureElementTypes.isEmpty()) {
-				addButton.disabled();
-			} else if (featureElementTypes.size() == 1) {
-				EClass featureElementType = featureElementTypes.iterator().next();
-				String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* StandardCharsets.UTF_8.name()? */));
-				Renderer<C, EObject> fetr = getRenderer(featureElementType);
-				if (fetr.getCreateModalType(context) == ModalType.NONE) {
-					addButton.on(Event.click, "window.location='"+objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+".html';");
-				} else {
-					String appId = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj)) + "-" + feature.getName() + "-create-" + featureElementType.getName()+ "-" + htmlFactory.nextId(); 
-					appConsumer.accept(fetr.renderCreateContainmentReferenceElementModalDialogApplication(context, obj, feature, featureElementType, appId, appConsumer));					
-					addButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
-				}
-			} else {
-				for (EClass featureElementType: featureElementTypes) {
-					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* StandardCharsets.UTF_8.name()? */));		
-					String createURL = objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
+			
+			for (EClass featureElementType: featureElementTypes) {
+				wirerers.add(() -> {
+					String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* StandardCharsets.UTF_8.name()? */));
 					Renderer<C, EObject> fetr = getRenderer(featureElementType);
-					Object iconAndLabel = fetr.renderNamedElementIconAndLabel(context, featureElementType);
+					String createURL = objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
 					if (fetr.getCreateModalType(context) == ModalType.NONE) {
-						addButton.item(htmlFactory.link(createURL, iconAndLabel));
+						if (wirerers.size() == 1) {
+							addButton.on(Event.click, "window.location='"+createURL+"';");
+						} else {
+							addButton.item(htmlFactory.link(createURL, fetr.renderNamedElementIconAndLabel(context, featureElementType)));
+						}
 					} else {
 						String appId = CDOIDCodec.INSTANCE.encode(context, ((CDOObject) obj)) + "-" + feature.getName() + "-create-" + featureElementType.getName()+ "-" + htmlFactory.nextId(); 
-						appConsumer.accept(fetr.renderCreateContainmentReferenceElementModalDialogApplication(context, obj, feature, featureElementType, appId, appConsumer));					
-						addButton.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
-					}
-				}
+						appConsumer.accept(fetr.renderCreateContainmentReferenceElementModalDialogApplication(context, obj, feature, featureElementType, appId, appConsumer));
+						UIElement<?> modalToggle;
+						if (wirerers.size() == 1) {
+							modalToggle = addButton;
+						} else {
+							modalToggle = htmlFactory.link("#", fetr.renderNamedElementIconAndLabel(context, featureElementType));
+							addButton.item(modalToggle);
+						}						
+						modalToggle.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+					}					
+				});
+				
 			}
+			
+			// Template objects
+			
+			// Builder operations
+			boolean createBuilderDivider = !wirerers.isEmpty();
+			for (EOperation eOperation: obj.eClass().getEAllOperations()) {				
+				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
+				if (eOperationTargetInfo != null
+						&& feature.getName().equals(eOperationTargetInfo.getFeature())
+						&& eOperationTargetInfo.getRole() == Role.builder
+						&& isVisible(context, obj, eOperation)
+						&& context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
+					
+					if (createBuilderDivider) {
+						wirerers.add(() -> addButton.divider());
+						createBuilderDivider = false;
+					}
+					
+					wirerers.add(() -> {
+						if (getEOperationModalType(context, obj, eOperation) == ModalType.NONE) {
+							String webOperationURL = getObjectURI(context, obj)+"/"+eOperationTargetInfo.getPath();
+							if (wirerers.size() == 1) {
+								addButton.on(Event.click, "window.location='"+webOperationURL+"';");
+							} else {
+								addButton.item(htmlFactory.link(webOperationURL, renderNamedElementIconAndLabel(context, eOperation)));
+							}
+						} else {
+							String appId = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-eoperation-"+eOperation.getName()+"-"+htmlFactory.nextId();
+							appConsumer.accept(renderEOperationModalDialogApplication(context, obj, eOperation, Collections.emptyMap(), appId, appConsumer));
+							UIElement<?> modalToggle;
+							if (wirerers.size() == 1) {
+								modalToggle = addButton;
+							} else {
+								modalToggle = htmlFactory.link("#", renderNamedElementIconAndLabel(context, eOperation));
+								addButton.item(modalToggle);
+							}						
+							modalToggle.attribute("data-toggle", "modal").attribute("data-target", "#"+appId+"-modal");
+						}					
+					});
+				}				
+			}						
 		} else if (feature instanceof EAttribute) {
-			addButton.on(Event.click, "window.location='"+objectURI+"/attribute/"+feature.getName()+"/add.html';"); // TODO - modal support.
+			wirerers.add(() -> {
+				addButton.on(Event.click, "window.location='"+objectURI+"/attribute/"+feature.getName()+"/add.html';"); // TODO - modal support.
+			});
 		} else {
-			addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/select.html';"); // TODO - modal support
+			wirerers.add(() -> {
+				addButton.on(Event.click, "window.location='"+objectURI+"/feature/"+feature.getName()+"/select.html';"); // TODO - modal support
+			});
+		}
+		
+		for (Task wirerer: wirerers) {
+			wirerer.execute();
+		}
+		if (wirerers.isEmpty()) {
+			addButton.disabled();
 		}
 	}	
 	
@@ -3757,47 +3797,41 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			EObject eObjectValue = (EObject) value;
 			Renderer<C, EObject> valueRenderer = getRenderer(eObjectValue);
 			for (EOperation eOperation: eObjectValue.eClass().getEAllOperations()) {
-				Object webOperationYamlAnnotation = valueRenderer.getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-				if (webOperationYamlAnnotation instanceof Map) {
-					@SuppressWarnings("unchecked")
-					EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) webOperationYamlAnnotation);
-					if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
-							&& eOperationTargetInfo.getFeature() == null 
-							&& eOperationTargetInfo.getFeatureValue() == null
-							&& eOperationTargetInfo.getRole() == Role.operation
-							&& isVisible(context, obj, eOperation)) {
-						ret.content(valueRenderer.renderEOperationButton(context, eObjectValue, eOperation, null, null, appConsumer));
-					}				
-				}
+				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
+				if (eOperationTargetInfo != null
+						&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+						&& eOperationTargetInfo.getFeature() == null 
+						&& eOperationTargetInfo.getFeatureValue() == null
+						&& eOperationTargetInfo.getRole() == Role.operation
+						&& isVisible(context, obj, eOperation)) {
+					ret.content(valueRenderer.renderEOperationButton(context, eObjectValue, eOperation, null, null, appConsumer));
+				}				
 			}
 		}
 		
 		if (typedElement instanceof EStructuralFeature) {
 			// ??? - ret.content(renderFeatureViewButtons(context, obj, (EReference) typedElement));
 			for (EOperation eOperation: obj.eClass().getEAllOperations()) {
-				Object yamlRenderAnnotation = getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-				if (yamlRenderAnnotation instanceof Map) {
-					@SuppressWarnings("unchecked")
-					EOperationTargetInfo eOperationTargetInfo = new EOperationTargetInfo(context, this, eOperation, (Map<String, Object>) yamlRenderAnnotation);
-					if (getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
-							&& typedElement.getName().equals(eOperationTargetInfo.getFeatureValue())
-							&& eOperationTargetInfo.getRole() == Role.operation
-							&& isVisible(context, obj, eOperation)) {
-						Map<String,String> queryParameters = new HashMap<>();
-						queryParameters.put("feature", typedElement.getName());					
-						if (idx != -1) {
-							queryParameters.put("position", String.valueOf(idx));
-						}
-						if (value instanceof CDOObject) {
-							queryParameters.put("element", getFormControlValue(context, obj, typedElement, value, appConsumer));
-						}
-						
-						Map<String, Object> vars = new HashMap<>();
-						vars.put("element", value);
-						vars.put("position", idx);
-						ret.content(renderEOperationButton(context, obj, eOperation, queryParameters, vars, appConsumer));
-					}				
-				}
+				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
+				if (eOperationTargetInfo != null
+						&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+						&& typedElement.getName().equals(eOperationTargetInfo.getFeatureValue())
+						&& eOperationTargetInfo.getRole() == Role.operation
+						&& isVisible(context, obj, eOperation)) {
+					Map<String,String> queryParameters = new HashMap<>();
+					queryParameters.put("feature", typedElement.getName());					
+					if (idx != -1) {
+						queryParameters.put("position", String.valueOf(idx));
+					}
+					if (value instanceof CDOObject) {
+						queryParameters.put("element", getFormControlValue(context, obj, typedElement, value, appConsumer));
+					}
+					
+					Map<String, Object> vars = new HashMap<>();
+					vars.put("element", value);
+					vars.put("position", idx);
+					ret.content(renderEOperationButton(context, obj, eOperation, queryParameters, vars, appConsumer));
+				}				
 			}
 		}
 				
@@ -5580,6 +5614,34 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return editForm;
 	}
 	
+	/**
+	 * Returns default/initial values to use in EOperation dialogs. This implementation returns a map with
+	 * values from ``default-value`` {@link EParameter} annotations. If there is no such annotation and EOperation is in ``editor`` role, 
+	 * then parameter value is the value of the feature matching parameter name.
+	 * @param context
+	 * @param obj
+	 * @param eOperation
+	 * @return
+	 */
+	default Map<EParameter, Object> getParameterValues(C context, T obj, EOperation eOperation) throws Exception {
+		Map<EParameter, Object> ret = new LinkedHashMap<>();
+		EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
+		for (EParameter eParameter: eOperation.getEParameters()) {
+			if (eOperationTargetInfo.isFormParameter(eParameter)) {
+				String defaultValue = getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE);
+				if (defaultValue == null && eOperationTargetInfo.getRole() == Role.editor) {
+					EStructuralFeature msf = obj.eClass().getEStructuralFeature(eParameter.getName());
+					if (msf != null 
+							&& msf.isMany() == eParameter.isMany() 
+							&& eParameter.getEType().getInstanceClass().isAssignableFrom(msf.getEType().getInstanceClass())) {
+						
+						ret.put(eParameter, obj.eGet(msf));
+					}
+				}
+			}
+		}
+		return ret;
+	}	
 	
 	/**
 	 * Renders an edit form for a single feature, e.g. a reference with checkboxes for selecting multiple values and radios or select for selecting a single value.
@@ -5741,7 +5803,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						@Override
 						public UIElement<?> onFormControlRendering(C context, EObject obj, EStructuralFeature typedElement, Object value, UIElement<?> control) throws Exception {
 							if (control instanceof InputBase) {
-								control.knockout().value("data."+typedElement.getName());
+								if (control instanceof Input && (((Input) control).getType() == InputType.checkbox || ((Input) control).getType() == InputType.radio)) {
+									control.knockout().checked("data."+typedElement.getName());							
+								} else {
+									control.knockout().value("data."+typedElement.getName());
+								}
 								if (koDataBindings.length() > 0) {
 									koDataBindings.append(",").append(System.lineSeparator());
 								}
@@ -5896,6 +5962,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			StringBuilder koDataBindings = new StringBuilder();
 			StringBuilder koStatusBindings = new StringBuilder();
+			
+			Set<ETypedElement> boundElements = new HashSet<>();
 							
 			FormRenderingListener<C, T, EStructuralFeature> koBinder = new FormRenderingListener<C, T, EStructuralFeature>() {
 				
@@ -5907,20 +5975,27 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						} else {
 							control.knockout().value("data."+typedElement.getName());
 						}
-						if (koDataBindings.length() > 0) {
-							koDataBindings.append(",").append(System.lineSeparator());
+						if (boundElements.add(typedElement)) {
+							if (koDataBindings.length() > 0) {
+								koDataBindings.append(",").append(System.lineSeparator());
+							}
+							if (typedElement.isMany()) {
+								JSONArray jsonValue = new JSONArray();
+								if (value instanceof Iterable) {
+									for (Object ve: (Iterable<?>) value) {
+										jsonValue.put(getFormControlValue(context, obj, typedElement, ve, appConsumer));
+									}
+								}
+								koDataBindings.append(typedElement.getName()+": ko.observableArray("+jsonValue+")");
+							} else {
+								koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value, appConsumer))+"')");									
+							}
+							
+							if (koStatusBindings.length() > 0) {
+								koStatusBindings.append(",").append(System.lineSeparator());
+							}								
+							koStatusBindings.append(typedElement.getName()+": ko.observable()");									
 						}
-						if (typedElement.isMany()) {
-							// TODO - values
-							koDataBindings.append(typedElement.getName()+": ko.observableArray()");
-						} else {
-							koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value, appConsumer))+"')");									
-						}
-						
-						if (koStatusBindings.length() > 0) {
-							koStatusBindings.append(",").append(System.lineSeparator());
-						}								
-						koStatusBindings.append(typedElement.getName()+": ko.observable()");									
 					}
 					
 					return super.onFormControlRendering(context, obj, typedElement, value, control);
@@ -6059,10 +6134,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @return NONE for EOperations with confirmation as they are typically input-less or EOperations with "part" parameter bindings (file uploads), and MEDIUM otherwise.
 	 */
 	default ModalType getEOperationModalType(C context, T obj, EOperation eOperation) throws Exception {
-		@SuppressWarnings("unchecked")
-		Map<String, Object> spec = (Map<String, Object>) getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
-		EOperationTargetInfo info = new EOperationTargetInfo(context, this, eOperation, spec);
-		return spec == null || spec.get("confirm") instanceof String || info.hasPartParameters() || !info.hasFormParameters() ? ModalType.NONE : ModalType.MEDIUM;
+		EOperationTargetInfo info = EOperationTargetInfo.create(context, this, eOperation);
+		return info == null || info.getConfirm() instanceof String || info.hasPartParameters() || !info.hasFormParameters() ? ModalType.NONE : ModalType.MEDIUM;
 	}		
 	
 	/**
@@ -6077,7 +6150,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Fragment ret = htmlFactory.fragment();
 		ModalType modalType = getEditModalType(context, obj);
 		// TODO - proper authorization...
-		EOperationTargetInfo info = new EOperationTargetInfo(context, this, eOperation);
+		EOperationTargetInfo info = EOperationTargetInfo.create(context, this, eOperation);
 		if (obj instanceof CDOObject && modalType != ModalType.NONE && context.authorize(obj, info.getAction(), info.getQualifier(), null)) {		
 			Modal formModal = htmlFactory.modal().id(appId+"-modal");
 			switch (modalType) {
@@ -6102,6 +6175,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			StringBuilder koDataBindings = new StringBuilder();
 			StringBuilder koStatusBindings = new StringBuilder();
+			
+			Set<ETypedElement> boundElements = new HashSet<>();
 							
 			FormRenderingListener<C, T, EParameter> koBinder = new FormRenderingListener<C, T, EParameter>() {
 				
@@ -6113,20 +6188,27 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						} else {
 							control.knockout().value("data."+typedElement.getName());
 						}
-						if (koDataBindings.length() > 0) {
-							koDataBindings.append(",").append(System.lineSeparator());
+						if (boundElements.add(typedElement)) {
+							if (koDataBindings.length() > 0) {
+								koDataBindings.append(",").append(System.lineSeparator());
+							}
+							if (typedElement.isMany()) {
+								JSONArray jsonValue = new JSONArray();
+								if (value instanceof Iterable) {
+									for (Object ve: (Iterable<?>) value) {
+										jsonValue.put(getFormControlValue(context, obj, typedElement, ve, appConsumer));
+									}
+								}
+								koDataBindings.append(typedElement.getName()+": ko.observableArray("+jsonValue+")");
+							} else {
+								koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value, appConsumer))+"')");									
+							}
+							
+							if (koStatusBindings.length() > 0) {
+								koStatusBindings.append(",").append(System.lineSeparator());
+							}								
+							koStatusBindings.append(typedElement.getName()+": ko.observable()");									
 						}
-						if (typedElement.isMany()) {
-							// TODO - values
-							koDataBindings.append(typedElement.getName()+": ko.observableArray()");
-						} else {
-							koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(getFormControlValue(context, obj, typedElement, value, appConsumer))+"')");									
-						}
-						
-						if (koStatusBindings.length() > 0) {
-							koStatusBindings.append(",").append(System.lineSeparator());
-						}								
-						koStatusBindings.append(typedElement.getName()+": ko.observable()");									
 					}
 					
 					return super.onFormControlRendering(context, obj, typedElement, value, control);
@@ -6153,13 +6235,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 			};
 			
-			Map<EParameter, Object> formParameters = new LinkedHashMap<EParameter, Object>();
-			for (EParameter eParameter: eOperation.getEParameters()) {
-				if (info.isFormParameter(eParameter)) {
-					formParameters.put(eParameter, getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE));
-				}
-			}
-			Form form = renderInputForm(context, obj, formParameters, Collections.emptyList(), Collections.emptyMap(), horizontalForm, koBinder, appConsumer)
+			Form form = renderInputForm(context, obj, getParameterValues(context, obj, eOperation), Collections.emptyList(), Collections.emptyMap(), horizontalForm, koBinder, appConsumer)
 				.novalidate(noValidate)
 				.knockout().submit("submit")
 				.knockout().visible("result() == undefined");

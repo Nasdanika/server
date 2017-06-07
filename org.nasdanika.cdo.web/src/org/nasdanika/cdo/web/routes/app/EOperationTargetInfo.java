@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.EParameter;
 import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.web.RequestMethod;
 
 /**
@@ -46,13 +47,23 @@ public class EOperationTargetInfo {
 	private String feature;
 	private String featureValue;
 	private Role role;	
+	private Style style = Style.INFO;
+	private String confirm;
 	
+	/**
+	 * Creates info if {@link RenderAnnotation}.WEB_OPERATION YAML annotation is of type {@link Map}.
+	 * @param context
+	 * @param renderer
+	 * @param eOperation
+	 * @return Info or null if there is no annotation or it is not of type Map.
+	 */
 	@SuppressWarnings("unchecked")
-	public <C extends Context, T extends EObject> EOperationTargetInfo(C context, Renderer<C,T> renderer, EOperation eOperation) throws Exception {
-		this(context, renderer, eOperation, (Map<String, Object>) renderer.getYamlRenderAnnotation((C) context, eOperation, RenderAnnotation.WEB_OPERATION));
+	public static <C extends Context, T extends EObject> EOperationTargetInfo create(C context, Renderer<C,T> renderer, EOperation eOperation) throws Exception {
+		Object yamlRenderAnnotation = renderer.getYamlRenderAnnotation(context, eOperation, RenderAnnotation.WEB_OPERATION);
+		return yamlRenderAnnotation instanceof Map ? new EOperationTargetInfo(context, renderer, eOperation, (Map<String, Object>) yamlRenderAnnotation) : null;				
 	}
-
-	public <C extends Context, T extends EObject> EOperationTargetInfo(
+	
+	protected <C extends Context, T extends EObject> EOperationTargetInfo(
 			C context, 
 			Renderer<C,T> renderer, 
 			EOperation eOperation, 
@@ -76,12 +87,25 @@ public class EOperationTargetInfo {
 //			for (EParameter eParameter: eOperation.getEParameters()) {
 //				path += "-" + eParameter.getEType().getInstanceTypeName();
 //			}
-		}
+		}		
+		this.path = path;
 		
 		String roleStr = (String) spec.get("role");
 		role = CoreUtil.isBlank(roleStr) ? Role.operation : Role.valueOf(roleStr);
 		
-		this.path = path;
+		String styleStr = (String) spec.get("style");
+		if (!CoreUtil.isBlank(styleStr)) {
+			style = Style.valueOf(styleStr);
+		}
+		confirm = (String) spec.get("confirm");		
+	}
+	
+	public Style getStyle() {
+		return style;
+	}
+	
+	public String getConfirm() {
+		return confirm;
 	}
 	
 	public String getFeature() {

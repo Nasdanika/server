@@ -1,11 +1,7 @@
 package org.nasdanika.cdo.web.routes.app;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.jxpath.JXPathContext;
 import org.eclipse.emf.cdo.CDOLock;
@@ -15,13 +11,11 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
-import org.nasdanika.core.AuthorizationProvider;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.TransactionContext;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.DispatchingRoute.Target;
 import org.nasdanika.web.HttpServletRequestContext;
-import org.nasdanika.web.RequestMethod;
 
 /**
  * Dispatching target invoking EOperation.
@@ -31,7 +25,7 @@ import org.nasdanika.web.RequestMethod;
 public class EOperationTarget<C extends HttpServletRequestContext, T extends EObject> extends EOperationTargetInfo implements Target {
 		
 	private Route<C, T> route;
-
+	
 	public EOperationTarget(C context, Route<C,T> route, EOperation eOperation, Map<String, Object> spec) throws Exception {
 		super(context, route, eOperation, spec);
 		this.route = route;

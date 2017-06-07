@@ -4,9 +4,9 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.nasdanika.core.Context;
+import org.nasdanika.html.RowContainer.Row;
 import org.nasdanika.html.RowContainer.Row.Cell;
 import org.nasdanika.html.Table;
-import org.nasdanika.html.RowContainer.Row;
 
 /**
  * Filtering listener.
