@@ -4,7 +4,7 @@ $(function () {
 			'data' : {{data}}, 
 			"multiple" : false 
 		}, 
-		'plugins' : ['state', 'sort', 'search'],
+		'plugins' : ['state', 'sort', 'search', 'contextmenu'],
 		'state' : { 
 			"filter" : function (k) { 
 				delete k.core.selected; return k; 
@@ -13,6 +13,14 @@ $(function () {
 		'search' : {
 			show_only_matches : true,
 			show_only_matches_children : true
+		},
+		'contextmenu' : {
+			'show_at_node' : false,
+			'items' : function(node) {
+				return { 
+					{{context-menu-items}}
+				}[node.id];
+			}
 		}
 	});
 	

@@ -2873,13 +2873,37 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				for (JsTreeNode child: rootNode.children()) {
 					data.put(child.toJSON(filter));					
 				}
-			}			
+			}
+				
 			if (data.length() > 0) {
 				Tag treeContainer = htmlFactory.div().id("left-panel-tree");
 				Tag treeSearch = htmlFactory.div(htmlFactory.input(InputType.text).id(treeContainer.getId()+"-search").style().width("100%").placeholder(getResourceString(context, "search")));
 				Map<String, Object> env = new HashMap<>();
 				env.put("container-id", treeContainer.getId());
 				env.put("data", data);
+				
+				// Collecting context menus.
+				String contextMenuItems = rootNode.accept((node, childMenus) -> {
+					StringBuilder cmb = new StringBuilder();
+					Object ncm = node.getData("context-menu");
+					if (ncm != null) {
+						if (cmb.length() > 0) {
+							cmb.append(",").append(System.lineSeparator());
+						}
+						cmb.append("\"").append(node.getId()).append("\": ").append(ncm);
+					}
+					for (String ccm: childMenus) {
+						if (!CoreUtil.isBlank(ccm)) {
+							if (cmb.length() > 0) {
+								cmb.append(",").append(System.lineSeparator());
+							}
+							cmb.append(ccm);
+						}					
+					}
+					return cmb.toString();
+				});								
+				env.put("context-menu-items", contextMenuItems);
+				
 				Tag treeScript = htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("jstree-initializer.js"), env));
 				ret.content(treeSearch, treeContainer, treeScript);
 			}
@@ -5305,6 +5329,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		ret.id(objID);		
 		ret.anchorAttribute("title", renderNamedElementLabel(context, obj.eClass()));
 		
+		Object objContextMenu = renderJsTreeNodeContextMenu(context, obj);
+		if (objContextMenu != null) {
+			ret.setData("context-menu", objContextMenu);
+		}
+		
 		String contextFeatureName = null;
 		if (context instanceof HttpServletRequestContext) {
 			HttpServletRequest request = ((HttpServletRequestContext) context).getRequest();
@@ -5361,8 +5390,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			featureNode.setData(obj);
 			featureNode.setData("readable", readable);
 			featureNode.setData("feature", nodeFeature);
+			featureNode.id(objID+"-"+nodeFeature.getName());
 			if (readable) {
 				featureNode.anchorAttribute("onclick", "window.location='"+objectHome+"?context-feature="+URLEncoder.encode(nodeFeature.getName(), StandardCharsets.UTF_8.name())+"';");
+				Object featureContextMenu = renderJsTreeFeatureNodeContextMenu(context, obj, nodeFeature);
+				if (featureContextMenu != null) {
+					featureNode.setData("context-menu", featureContextMenu);
+				}
+
 			} else {
 				featureNode.anchorAttribute("style", "cursor:default");
 			}
@@ -5457,6 +5492,42 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}		
 		
 		return ret;
+	}
+	
+	/**
+	 * Renders jsTree context menu items for the object node. See https://www.jstree.com/api/#/?q=$.jstree.defaults.contextmenu&f=$.jstree.defaults.contextmenu.items for details
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderJsTreeNodeContextMenu(C context, T obj) throws Exception {
+		/* TODO - no modals.
+		 * - Edit
+		 * - Delete
+		 * - EOperations
+		 * - References/ features - call renderJsTreeFeatureNodeContextMenu below
+		 *   - Create
+		 *   - EOperations 
+		 */
+		
+		return null;
+	}
+
+	/**
+	 * Renders jsTree context menu items for the feature node. See https://www.jstree.com/api/#/?q=$.jstree.defaults.contextmenu&f=$.jstree.defaults.contextmenu.items for details
+	 * @param context
+	 * @param obj
+	 * @param eReference
+	 * @return
+	 * @throws Exception
+	 */
+	default Object renderJsTreeFeatureNodeContextMenu(C context, T obj, EStructuralFeature feature) throws Exception {
+		/* TODO - no modals.
+		 * - Create
+		 * - EOperations
+		 */
+		return null;
 	}
 		
 	/**
@@ -5628,16 +5699,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
 		for (EParameter eParameter: eOperation.getEParameters()) {
 			if (eOperationTargetInfo.isFormParameter(eParameter)) {
-				String defaultValue = getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE);
+				Object defaultValue = getRenderAnnotation(context, eParameter, RenderAnnotation.DEFAULT_VALUE);
 				if (defaultValue == null && eOperationTargetInfo.getRole() == Role.editor) {
 					EStructuralFeature msf = obj.eClass().getEStructuralFeature(eParameter.getName());
 					if (msf != null 
 							&& msf.isMany() == eParameter.isMany() 
 							&& eParameter.getEType().getInstanceClass().isAssignableFrom(msf.getEType().getInstanceClass())) {
 						
-						ret.put(eParameter, obj.eGet(msf));
+						defaultValue = obj.eGet(msf);
 					}
 				}
+				ret.put(eParameter, defaultValue);
 			}
 		}
 		return ret;
