@@ -8,10 +8,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Consumer;
@@ -35,6 +37,7 @@ import org.eclipse.emf.common.util.BasicEList;
 import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -49,6 +52,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
@@ -62,6 +66,7 @@ import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Breadcrumbs;
 import org.nasdanika.html.Button;
+import org.nasdanika.html.Container;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.Form.EncType;
@@ -171,10 +176,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @throws Exception
 	 */
 	@RouteMethod(comment="Renders object view with breadcrumbs, single features in a table, edit button, and many features in tabs with add/edit/delete controls")
-	public Object getIndexHtml(
-			@ContextParameter C context, 
-			@TargetParameter T target) throws Exception {
-		
+	public Object getIndexHtml(@ContextParameter C context,	@TargetParameter T target) throws Exception {
 		EClass targetEClass = target.eClass();
 		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
 		HTMLFactory htmlFactory = getHTMLFactory(context);
@@ -209,6 +211,156 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 						
 		return renderPage(context, target, title, content);		
 	}
+	
+	/**
+	 * Renders user home page - a list of root objects which are readable by the current user. 
+	 * @throws Exception
+	 */
+	@RouteMethod(comment="Renders user home page - a list of root objects which are readable by the current user.")
+	public Object getHomeHtml(@ContextParameter C context,	@TargetParameter T target) throws Exception {
+		EClass targetEClass = target.eClass();
+		String title = StringEscapeUtils.escapeHtml4(nameToLabel(targetEClass.getName()));
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Fragment content = htmlFactory.fragment();
+		Fragment appConsumer = htmlFactory.fragment();
+		content.content(appConsumer);
+		
+		// Object header
+		Tag objectHeader = content.getFactory().tag(TagName.h3, renderObjectHeader(context, target, appConsumer));
+		content.content(objectHeader);		
+						
+		EObject root = EcoreUtil.getRootContainer(target);		
+		List<EObject> entryPoints = new ArrayList<>();
+		if (context.authorizeRead(root, null, null)) {
+			entryPoints.add(root);
+		} else {
+			TreeIterator<EObject> cit = root.eAllContents();
+			while (cit.hasNext()) {
+				EObject next = cit.next();
+				if (context.authorizeRead(next, null, null)) {
+					if (context instanceof CDOViewContext) {
+						if (((CDOViewContext<?,?>) context).getPrincipals().contains(next)) {
+							continue;
+						}
+					}
+					entryPoints.add(next);
+					cit.prune();
+				}
+			}
+		}
+		
+		// Single entry point (e.g. root) - redirect to it.
+		if (entryPoints.size() == 1) {
+			context.getResponse().sendRedirect(context.getObjectPath(entryPoints.iterator().next())+"/"+INDEX_HTML);
+			return Action.NOP;
+		}
+		
+		// Rendering entry points tree
+		Comparator<? super EObject> labelComparator = (e1, e2) -> {
+			try {
+				Object l1 = getRenderer(e1).renderLabel(context, e1);
+				Object l2 = getRenderer(e2).renderLabel(context, e2);					
+				return Jsoup.parse(String.valueOf(l1)).text().compareTo(Jsoup.parse(String.valueOf(l2)).text());
+			} catch (Exception e) {
+				return e1.hashCode() - e2.hashCode();
+			}
+		};		
+		
+		// Finds the common root for all entry points.
+		List<EObject> roots = new ArrayList<>(entryPoints);
+		for (int i=0; i < roots.size() - 1; ++i) {
+			for (EObject eObj = roots.get(i); eObj != null; eObj = eObj.eContainer()) {
+				roots.set(i, eObj);
+				if (i < roots.size() - 1) {
+					ListIterator<EObject> nrit = roots.listIterator(i + 1);
+					while (nrit.hasNext()) {
+						if (EcoreUtil.isAncestor(eObj, nrit.next())) {
+							nrit.remove();
+						}
+					}
+				} 
+				if (i == roots.size() - 1) {
+					break;
+				}
+			}
+		}
+		if (roots.size() > 1) {
+			Collections.sort(roots, labelComparator);				
+		}
+				
+		class EntryPointsRenderer {
+			
+			void render(EObject obj, boolean includingThis, Container<?> container) throws Exception {
+				if (includingThis) {
+					Tag li = htmlFactory.tag(TagName.li);
+					container.content(li);
+					if (entryPoints.contains(obj)) {
+						li.content(getRenderer(obj).renderLink(context, obj, false));
+					} else {
+						li.content(getRenderer(obj).renderIconAndLabel(context, obj));
+						Tag ul = htmlFactory.tag(TagName.ul);
+						for (EReference ref: obj.eClass().getEAllReferences()) {
+							if (ref.isContainment()) {
+								render(obj, ref, ul);
+							}
+						}
+						if (!ul.isEmpty()) {
+							li.content(ul);
+						}						
+					}
+				} else {
+					for (EReference ref: obj.eClass().getEAllReferences()) {
+						if (ref.isContainment()) {
+							render(obj, ref, container);
+						}
+					}
+				}
+			}
+			
+			@SuppressWarnings("unchecked")
+			void render(EObject obj, EReference ref, Container<?> container) throws Exception {
+				Collection<EObject> refElements = new ArrayList<>();
+				if (ref.isMany()) {
+					refElements.addAll((Collection<EObject>) obj.eGet(ref));
+				} else {
+					refElements.add((EObject) obj.eGet(ref));
+				}
+				Iterator<EObject> rit = refElements.iterator();
+				Z: while (rit.hasNext()) {
+					EObject re = rit.next();
+					for (EObject ch: entryPoints) {
+						if (EcoreUtil.isAncestor(re, ch)) {
+							continue Z;
+						}
+					}
+					rit.remove();
+				}
+				if (!refElements.isEmpty()) {
+					if (refElements.size() > 1) {
+						Collections.sort(roots, labelComparator);					
+					}
+					Tag li = htmlFactory.tag(TagName.li);
+					li.content(getRenderer(obj).renderNamedElementIconAndLabel(context, ref));
+					Tag ul = htmlFactory.tag(TagName.ul);
+					for (EObject re: refElements) {
+						render(re, true, ul);
+					}
+					if (!ul.isEmpty()) {
+						li.content(ul);
+						container.content(li);
+					}
+				}
+			}
+			
+		}	
+		
+		EntryPointsRenderer epr = new EntryPointsRenderer();
+		for (EObject rt: roots) {
+			epr.render(rt, roots.size() > 1, content);
+		}
+						
+		return renderPage(context, target, title, content);				
+	}	
 		
 	/**
 	 * Renders page using page template and bootstrap theme.
@@ -2760,5 +2912,5 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object filterEOperationResult(C context, EOperation eOperation, Object result) throws Exception {
 		return result;
 	}
-		
+			
 }
