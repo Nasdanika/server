@@ -58,6 +58,7 @@ import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.web.routes.EDispatchingRoute;
+import org.nasdanika.cdo.web.routes.app.EOperationTargetInfo.Role;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.CoreUtil;
@@ -2141,10 +2142,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								} else if (parameterType.isAssignableFrom(InputStream.class)) {
 									partValues.add(part.getInputStream());
 								} else {
-									Object val = context.convert(part.getInputStream(), parameterType);
+									Object val = context.convert(part, parameterType);
 									if (val == null) {
-										throw new IllegalArgumentException("Parameter type "+parameterType+" is not assignable from "+Part.class);
+										val = context.convert(part.getInputStream(), parameterType);
 									}
+									if (val == null) {
+										throw new IllegalArgumentException("Neither "+Part.class+" or "+InputStream.class+" can be conveted to parameter type "+parameterType);
+									}									
 									partValues.add(val);
 								}
 							}
@@ -2270,7 +2274,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		
 		String methodName = (String) eOperationTarget.getSpec().get("method");
 
-		String contextObjectID = context.getRequest().getParameter("context-object");
+		HttpServletRequest request = context.getRequest();
+		String contextObjectID = request.getParameter("context-object");
 		EObject contextObject = target;
 		String featureName = (String) eOperationTarget.getSpec().get("feature");
 		if (featureName == null) {
@@ -2279,7 +2284,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 				if (contextObjectID != null && context instanceof CDOViewContext) {
 					contextObject = ((CDOViewContext<?, ?>) context).getView().getObject(CDOIDCodec.INSTANCE.decode(context, contextObjectID));
 					featureName = null;
-					context.getRequest().setAttribute(LEFT_PANEL_GUARD_KEY, false);
+					request.setAttribute(LEFT_PANEL_GUARD_KEY, false);
 				}
 			}
 		}
@@ -2292,18 +2297,23 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			}
 		}
 		
-		String contentType = context.getRequest().getContentType();
+		String contentType = request.getContentType();
 		boolean isMultiPart = context.getMethod() == RequestMethod.POST && contentType != null && contentType.startsWith(Form.EncType.multipart.literal+";");
-		String originalReferrer = context.getRequest().getParameter(REFERRER_KEY);
+		String originalReferrer = request.getParameter(REFERRER_KEY);
 		if (isMultiPart) {
-			for (Part part: context.getRequest().getParts()) {
+			String multipartConfigElementKey = "org.eclipse.jetty.multipartConfig";
+			if (request.getAttribute(multipartConfigElementKey) == null) {
+				request.setAttribute(multipartConfigElementKey, new MultipartConfigElement((String) null));
+			};	
+			
+			for (Part part: request.getParts()) {
 				if (REFERRER_KEY.equals(part.getName())) {
 					originalReferrer = CoreUtil.stringify(part.getInputStream());
 				}
 			}
 		}
 		if (originalReferrer == null) {
-			originalReferrer = context.getRequest().getHeader(REFERRER_HEADER);
+			originalReferrer = request.getHeader(REFERRER_HEADER);
 		}
 		
 		// Location to load in the page when eoperation dialog closes.
@@ -2362,13 +2372,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					boolean noValidate = "true".equals(getRenderAnnotation(context, eOperation, RenderAnnotation.NO_VALIDATE));
 					Form inputForm = renderInputForm(context, target, getParameterValues(context, target, eOperation), Collections.emptyList(), Collections.emptyMap(), horizontalForm, null, appConsumer)
 						.novalidate(noValidate)
-						.action(context.getRequest().getRequestURL())
+						.action(request.getRequestURL())
 						.method(Method.post);
 					
 					for (EParameter eParameter: eOperation.getEParameters()) {
 						String queryParameterName = eOperationTarget.getQueryParameterName(eParameter);
 						if (queryParameterName != null) {
-							String queryParameterValue = context.getRequest().getParameter(queryParameterName);
+							String queryParameterValue = request.getParameter(queryParameterName);
 							if (queryParameterValue != null) {
 								Input queryParameterInput = htmlFactory.input(InputType.hidden)
 										.name(queryParameterName)
@@ -2392,7 +2402,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					configureForm(inputForm, horizontalForm, ModalType.NONE);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
 					
-					Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
+					Object buttonContent = eOperationTarget.getRole() == Role.operation ? renderNamedElementIconAndLabel(context, eOperation) : htmlFactory.fragment(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save"));
+					Button executeButton = htmlFactory.button(buttonContent).style(Style.PRIMARY);
 					executeButton.type(org.nasdanika.html.Button.Type.SUBMIT);
 					buttonBar.content(executeButton.style().margin().right("5px"));
 					
@@ -2566,7 +2577,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 				}				
 			} else {
-				boolean isJSON = CONTENT_TYPE_APPLICATION_JSON.equals(context.getRequest().getContentType());
+				boolean isJSON = CONTENT_TYPE_APPLICATION_JSON.equals(request.getContentType());
 				
 				// POST - validate, re-render form if failure, invoke and render result or error if validation passed.
 				EList<EParameterBinding> bindings = ECollections.newBasicEList();
@@ -2626,13 +2637,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					}
 					Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm, null, appConsumer)
 						.novalidate(noValidate)
-						.action(context.getRequest().getRequestURL())
+						.action(request.getRequestURL())
 						.method(Method.post);
 					
 					for (EParameter eParameter: eOperation.getEParameters()) {
 						String queryParameterName = eOperationTarget.getQueryParameterName(eParameter);
 						if (queryParameterName != null) {
-							String queryParameterValue = context.getRequest().getParameter(queryParameterName);
+							String queryParameterValue = request.getParameter(queryParameterName);
 							if (queryParameterValue != null) {
 								Input queryParameterInput = htmlFactory.input(InputType.hidden)
 										.name(queryParameterName)
@@ -2656,7 +2667,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					configureForm(inputForm, horizontalForm, ModalType.NONE);
 					Tag buttonBar = htmlFactory.div().style().text().align().right();
 					
-					Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
+					Object buttonContent = eOperationTarget.getRole() == Role.operation ? renderNamedElementIconAndLabel(context, eOperation) : htmlFactory.fragment(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save"));
+					Button executeButton = htmlFactory.button(buttonContent).style(Style.PRIMARY);
 					executeButton.type(org.nasdanika.html.Button.Type.SUBMIT);
 					buttonBar.content(executeButton.style().margin().right("5px"));
 					
@@ -2729,13 +2741,13 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							}
 							Form inputForm = renderInputForm(context, target, formParameters, diagnosticConsumer.getValidationResults(), diagnosticConsumer.getNamedElementValidationResults(), horizontalForm, null, appConsumer)
 								.novalidate(noValidate)
-								.action(context.getRequest().getRequestURL())
+								.action(request.getRequestURL())
 								.method(Method.post);
 							
 							for (EParameter eParameter: eOperation.getEParameters()) {
 								String queryParameterName = eOperationTarget.getQueryParameterName(eParameter);
 								if (queryParameterName != null) {
-									String queryParameterValue = context.getRequest().getParameter(queryParameterName);
+									String queryParameterValue = request.getParameter(queryParameterName);
 									if (queryParameterValue != null) {
 										Input queryParameterInput = htmlFactory.input(InputType.hidden)
 												.name(queryParameterName)
@@ -2759,7 +2771,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							configureForm(inputForm, horizontalForm, ModalType.NONE);
 							Tag buttonBar = htmlFactory.div().style().text().align().right();
 							
-							Button executeButton = htmlFactory.button(renderNamedElementIconAndLabel(context, eOperation)).style(Style.PRIMARY);
+							Object buttonContent = eOperationTarget.getRole() == Role.operation ? renderNamedElementIconAndLabel(context, eOperation) : htmlFactory.fragment(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save"));
+							Button executeButton = htmlFactory.button(buttonContent).style(Style.PRIMARY);
 							executeButton.type(org.nasdanika.html.Button.Type.SUBMIT);
 							buttonBar.content(executeButton.style().margin().right("5px"));
 							
