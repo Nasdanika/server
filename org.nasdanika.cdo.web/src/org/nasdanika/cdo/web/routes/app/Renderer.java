@@ -1254,7 +1254,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		if (modelElement instanceof ETypedElement) {
 			EClassifier eType = ((ETypedElement) modelElement).getEType();
-			return (eType instanceof EClass ? getRenderer((EClass) eType) : this).getModelElementIcon(context, eType);
+			if (eType != null) {
+				return (eType instanceof EClass ? getRenderer((EClass) eType) : this).getModelElementIcon(context, eType);
+			}
 		}
 		
 		if (modelElement instanceof EClassifier) {
@@ -6328,7 +6330,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			configureForm(form, horizontalForm, modalType);
 			
 			form.content(htmlFactory.tag(TagName.hr));
-			form.button(getResourceString(context, "execute")).type(Button.Type.SUBMIT).style(Style.PRIMARY);
+			
+			Object buttonContent = info.getRole() == Role.operation ? renderNamedElementIconAndLabel(context, eOperation) : htmlFactory.fragment(renderSaveIcon(context).style().margin().right("5px"), getResourceString(context, "save"));
+			form.button(buttonContent).type(Button.Type.SUBMIT).style(Style.PRIMARY);
 			form.button(getResourceString(context, "cancel")).type(Button.Type.BUTTON).style(Style.DEFAULT).attribute("data-dismiss", "modal");
 						
 			Tag resultDiv = htmlFactory.div(
