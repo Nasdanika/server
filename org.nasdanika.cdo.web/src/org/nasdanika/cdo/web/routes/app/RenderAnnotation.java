@@ -5,6 +5,8 @@ import java.io.Reader;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 
+import javax.servlet.http.Part;
+
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.ENamedElement;
@@ -276,7 +278,7 @@ public enum RenderAnnotation {
 		 * * ``header`` - Binds the parameter to a header with the same name as the parameter name.
 		 * * ``header: name`` - Binds the parameter to the named header.
 		 * * ``null`` - Binds parameter to ``null``.
-		 * * ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be Part, {@link InputStream}, byte[], {@link Reader}, or String.
+		 * * ``part`` - Binds the parameter to a part with the same name as the parameter name. Parameter type shall be {@link Part}, {@link InputStream}, byte[], {@link Reader}, String, or other type which Part or InputStream can be converted to.
 		 * * ``part: name`` - Binds the parameter to the named part.
 		 * * ``part-file-name: name`` - Binds the parameter to the named part. Parameter type shall be String. This binding would typically be used with ``part`` binding to avoid introducing dependency on the servlet API in the model.
 		 * * ``path`` - Binds the parameter to a path parameter with the same name as the parameter name.
