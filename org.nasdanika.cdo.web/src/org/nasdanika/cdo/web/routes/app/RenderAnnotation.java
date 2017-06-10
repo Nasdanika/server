@@ -44,15 +44,15 @@ public enum RenderAnnotation {
 		 */
 		EDITABLE("editable"),
 		
-		/**
-		 * {@link EStructuralFeature} annotation defining whether elements can be deleted from the feature, i.e. delete or clear buttons shall be shown next to the element values. 
-		 * The value of this annotation can be one of the following:
-		 * 
-		 *   * ``true`` boolean literal or empty string - the feature is deletable (default).
-		 *   * ``false`` boolean literal - the feature is not deletables.
-		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is deletable.
-		 */
-		DELETABLE("deletable"),
+//		/**
+//		 * {@link EStructuralFeature} annotation defining whether elements can be deleted from the feature, i.e. delete or clear buttons shall be shown next to the element values. 
+//		 * The value of this annotation can be one of the following:
+//		 * 
+//		 *   * ``true`` boolean literal or empty string - the feature is deletable (default).
+//		 *   * ``false`` boolean literal - the feature is not deletables.
+//		 *   * [JXPath](https://commons.apache.org/proper/commons-jxpath/index.html) expression. If this expression evaluates to ``true`` (compared with ``Boolean.TRUE``), then the feature is deletable.
+//		 */
+//		DELETABLE("deletable"),
 		
 		/**
 		 * {@link EStructuralFeature} annotation defining whether an editable feature is disabled, i.e. it shall be displayed in the edit form, but the edit control shall be disabled.
@@ -159,8 +159,8 @@ public enum RenderAnnotation {
 		 * {@link EReference} annotation specifying {@link EClass}es of elements which can be instantiated and set/added to the reference.  
 		 * The list of element types shall be space-separated. Elements shall be in
 		 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
-		 * feature's declaring EClass.
-		 * 
+		 * feature's declaring EClass. If the annotation starts with ``#`` then the rest of it is considered as a comment. This can be used to clearly
+		 * specify an empty list of element types, e.g. if ``builder`` EOperations or template objects are used to populate the references.
 		 */
 		ELEMENT_TYPES("element-types"),
 
@@ -370,10 +370,10 @@ public enum RenderAnnotation {
 		CHOICE_TREE("choice-tree"), 
 				
 		/**
-		 * {@link EClass} annotation. It lists references to render as children of the class object in the tree representation. Feature names shall be space-separated.
-		 * In the absense of this annotation containing many features are considered as tree features. 
+		 * {@link EStructuralFeature} annotation indicating whether the feature elements shall be shown in the left panel tree. True or false.
+		 * In the absence of this annotation containing many features are considered as tree features. 
 		 */
-		TREE_REFERENCES("tree-references"),
+		TREE_FEATURE("tree-feature"),
 		
 		/**
 		  * {@link EStructuralFeature} annotation. If it is set to false, then feature elements
