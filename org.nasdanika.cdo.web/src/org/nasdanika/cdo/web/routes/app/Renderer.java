@@ -448,34 +448,34 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return true;		
 	}
 
-	/**
-	 * Returns true if ``deletable`` annotation is absent, its value is ``true``, or its value is not ``false``
-	 * , obj is and instance of {@link CDOObject} and the value is an XPath expression evaluating to ``true``.
-	 * is evaluated as 
-	 * @param context
-	 * @param obj
-	 * @param modelElement
-	 * @return
-	 * @throws Exception 
-	 */
-	default boolean isDeletable(C context, T obj, EModelElement modelElement) throws Exception {
-		String editableRenderAnnotation = getRenderAnnotation(context, modelElement, RenderAnnotation.DELETABLE);
-		if (CoreUtil.isBlank(editableRenderAnnotation) || "true".equals(editableRenderAnnotation)) {
-			return true;
-		} 
-		
-		if ("false".equals(editableRenderAnnotation)) {
-			return false;
-		}
-		
-		if (obj instanceof CDOObject) {
-			// XPath
-			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
-			return Boolean.TRUE.equals(jxPathContext.getValue(editableRenderAnnotation, Boolean.class));
-		}	
-		
-		return true;		
-	}
+//	/**
+//	 * Returns true if ``deletable`` annotation is absent, its value is ``true``, or its value is not ``false``
+//	 * , obj is and instance of {@link CDOObject} and the value is an XPath expression evaluating to ``true``.
+//	 * is evaluated as 
+//	 * @param context
+//	 * @param obj
+//	 * @param modelElement
+//	 * @return
+//	 * @throws Exception 
+//	 */
+//	default boolean isDeletable(C context, T obj, EModelElement modelElement) throws Exception {
+//		String editableRenderAnnotation = getRenderAnnotation(context, modelElement, RenderAnnotation.DELETABLE);
+//		if (CoreUtil.isBlank(editableRenderAnnotation) || "true".equals(editableRenderAnnotation)) {
+//			return true;
+//		} 
+//		
+//		if ("false".equals(editableRenderAnnotation)) {
+//			return false;
+//		}
+//		
+//		if (obj instanceof CDOObject) {
+//			// XPath
+//			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+//			return Boolean.TRUE.equals(jxPathContext.getValue(editableRenderAnnotation, Boolean.class));
+//		}	
+//		
+//		return true;		
+//	}
 	
 	/**
 	 * Parses result of getRenderAnnotation() as {@link Yaml}.
@@ -543,7 +543,17 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default List<EStructuralFeature> getTreeFeatures(C context, T obj) throws Exception {
-		return getVisibleFeatures(context, obj, feature -> feature instanceof EReference && ((EReference) feature).isContainment());
+		FeaturePredicate treeFeaturePredicate = feature -> {
+			String treeFeatureAnnotation = getRenderAnnotation(context, feature, RenderAnnotation.TREE_FEATURE);
+			if ("true".equals(treeFeatureAnnotation)) {
+				return true;
+			}
+			if ("false".equals(treeFeatureAnnotation)) {
+				return false;
+			}
+			return feature instanceof EReference && ((EReference) feature).isContainment();
+		};
+		return getVisibleFeatures(context, obj, treeFeaturePredicate);
 	}
 	
 	/**
@@ -2679,14 +2689,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 		
 	/**
-	 * Renders edit button. 
+	 * Renders delete button. 
 	 * @param context
 	 * @param obj
 	 * @return
 	 * @throws Exception
 	 */
 	default Button renderDeleteButton(C context, T obj) throws Exception {
-		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isDeletable(context, obj, obj.eContainingFeature())) {
+		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainingFeature())) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete")).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
@@ -3594,7 +3604,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * Returns a list of {@link EClass}'es which can be instantiated and instances can be added as elements to the specified feature.
 	 * This implementation reads element types from ``element-types`` annotation. The list of element types shall be space-separated. Elements shall be in
 	 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
-	 * feature's declaring EClass.
+	 * feature's declaring EClass. If the annotation starts with ``#`` then the rest of it is considered as a comment. This can be used to clearly
+	 * specify an empty list of element types, e.g. if ``builder`` EOperations or template objects are used to populate the references.
 	 *   
 	 * If there is no ``element-types`` annotation, this implementation returns a list of all concrete classes from the session package registry which are compatible with the feature type.
 	 * @param context
@@ -3624,7 +3635,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 				}
 			}
-		} else {
+		} else if (!elementTypesAnnotation.startsWith("#")) {
 			for (String etSpec: elementTypesAnnotation.split("\\s+")) {
 				if (!CoreUtil.isBlank(etSpec)) {
 					int atIdx = etSpec.indexOf("@");
@@ -3661,7 +3672,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default Button renderTypedElementValueDeleteButton(C context, T obj, ETypedElement typedElement, int idx, Object value) throws Exception {
 		boolean authorized;
-		if (typedElement instanceof EStructuralFeature && !(((EStructuralFeature) typedElement).isChangeable() && isDeletable(context, obj, typedElement))) {
+		if (typedElement instanceof EStructuralFeature && !(((EStructuralFeature) typedElement).isChangeable() && isEditable(context, obj, typedElement))) {
 			return null;
 		}
 		boolean isDelete = typedElement instanceof EOperation || typedElement instanceof EReference && ((EReference) typedElement).isContainment();
@@ -5190,116 +5201,116 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		return bd;
 	}
 		
-	/**
-	 * Renders a tree item for the object with the tree features under.
-	 * @param context Context
-	 * @param obj Object
-	 * @param depth tree depth, -1 - infinite depth.
-	 * @param itemFilter If not null, it is invoked when object list items are created. Filters can decorate or replace list items. Filter is invoked twice per item - first for the label and then for 
-	 * the entire ``li`` tag. In both cases data is set to the object. For the ``li`` invocation ``role`` property is set to ``item``
-	 * @param jsTree If true, list items are rendered for jsTree. It is responsibility of the caller code to create jsTree container and provide event handler for clicks.
-	 * @return
-	 */
-	default Object renderTreeItem(C context, T obj, int depth, Function<Object, Object> itemFilter, boolean jsTree) throws Exception {
-		HTMLFactory htmlFactory = getHTMLFactory(context);
-		Tag ret = htmlFactory.tag(TagName.li);
-		ret.setData(obj);
-		ret.setData("role", "item");
-		if (jsTree) {
-			JsTree jt = ret.jsTree();
-			jt.icon(getIcon(context, obj));
-			String objectURI = getObjectURI(context, obj);
-			Object link = htmlFactory.link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderLabel(context, obj)).setData(obj);
-			if (itemFilter != null) {
-				link = itemFilter.apply(link);
-			}
-			ret.content(link);
-		} else {
-			Object link = renderLink(context, obj, true);
-			if (itemFilter != null) {
-				link = itemFilter.apply(link);
-			}
-			ret.content(link);
-		}
-		
-		ret.content(renderReferencesTree(context, obj, depth, itemFilter, jsTree));
-		return itemFilter == null ? ret : itemFilter.apply(ret);
-	}	
+//	/**
+//	 * Renders a tree item for the object with the tree features under.
+//	 * @param context Context
+//	 * @param obj Object
+//	 * @param depth tree depth, -1 - infinite depth.
+//	 * @param itemFilter If not null, it is invoked when object list items are created. Filters can decorate or replace list items. Filter is invoked twice per item - first for the label and then for 
+//	 * the entire ``li`` tag. In both cases data is set to the object. For the ``li`` invocation ``role`` property is set to ``item``
+//	 * @param jsTree If true, list items are rendered for jsTree. It is responsibility of the caller code to create jsTree container and provide event handler for clicks.
+//	 * @return
+//	 */
+//	default Object renderTreeItem(C context, T obj, int depth, Function<Object, Object> itemFilter, boolean jsTree) throws Exception {
+//		HTMLFactory htmlFactory = getHTMLFactory(context);
+//		Tag ret = htmlFactory.tag(TagName.li);
+//		ret.setData(obj);
+//		ret.setData("role", "item");
+//		if (jsTree) {
+//			JsTree jt = ret.jsTree();
+//			jt.icon(getIcon(context, obj));
+//			String objectURI = getObjectURI(context, obj);
+//			Object link = htmlFactory.link(objectURI == null ? "#" : objectURI+"/"+INDEX_HTML, renderLabel(context, obj)).setData(obj);
+//			if (itemFilter != null) {
+//				link = itemFilter.apply(link);
+//			}
+//			ret.content(link);
+//		} else {
+//			Object link = renderLink(context, obj, true);
+//			if (itemFilter != null) {
+//				link = itemFilter.apply(link);
+//			}
+//			ret.content(link);
+//		}
+//		
+//		ret.content(renderReferencesTree(context, obj, depth, itemFilter, jsTree));
+//		return itemFilter == null ? ret : itemFilter.apply(ret);
+//	}	
 
-	/**
-	 * Renders an object tree of tree references of the argument object. Tree features are those listed in the ``tree-references`` annotation separated by space.
-	 * If there is no annotation, then containing many features are considered as tree features. If ``tree-node`` annotation of the feature is set to false, then feature elements
-	 * appear directly under the container. Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 
-	 * @param context Context
-	 * @param obj Object
-	 * @param depth tree depth, -1 - infinite depth.
-	 * @param itemFilter If not null, it is invoked when object list items are created. Filters can decorate or replace list items. 
-	 * @param jsTree If true, list items are rendered for jsTree.
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	default Object renderReferencesTree(C context, T obj, int depth, Function<Object, Object> itemFilter, boolean jsTree) throws Exception {
-		if (depth == 0) {
-			return null;
-		}
-		
-		List<EReference> treeReferences = new ArrayList<EReference>();
-		EClass eClass = obj.eClass();
-		String treeReferencesAnnotation = getRenderAnnotation(context, eClass, RenderAnnotation.TREE_REFERENCES);
-		if (treeReferencesAnnotation == null) {
-			for (EReference ref: eClass.getEAllReferences()) {
-				if (ref.isContainment() && ref.isMany() && context.authorizeRead(obj, ref.getName(), null)) {
-					treeReferences.add(ref);
-				}
-			}
-		} else {
-			for (String refName: treeReferencesAnnotation.split("\\s+")) {
-				if (!CoreUtil.isBlank(refName)) {
-					EReference sf = (EReference) eClass.getEStructuralFeature(refName.trim());
-					if (sf instanceof EReference && context.authorizeRead(obj, sf.getName(), null)) {
-						treeReferences.add(sf);
-					}
-				}
-			}
-		}
-		
-		// TODO - category nodes.
-		
-		HTMLFactory htmlFactory = getHTMLFactory(context);
-		Tag ret = htmlFactory.tag(TagName.ul);
-		for (EReference treeReference: treeReferences) {
-			String treeNodeAnnotation = getRenderAnnotation(context, treeReference, RenderAnnotation.TREE_NODE);
-			boolean isTreeNode = !"false".equals(treeNodeAnnotation);
-			Tag itemContainer = ret;
-			if (isTreeNode) {
-				Tag refNode = htmlFactory.tag(TagName.li);
-				refNode.setData(treeReference);
-				refNode.setData("role", "item");
-				if (jsTree) {
-					JsTree jt = refNode.jsTree();
-					jt.icon(getModelElementIcon(context, treeReference));
-					refNode.content(renderNamedElementLabel(context, treeReference));
-				} else {
-					refNode.content(renderNamedElementIconAndLabel(context, treeReference));
-				}
-				itemContainer = htmlFactory.tag(TagName.ul);
-				refNode.content(itemContainer);
-			} 
-			
-			if (treeReference.isMany()) {
-				for (EObject ref: (Collection<? extends EObject>) obj.eGet(treeReference)) {
-					itemContainer.content(getReferenceRenderer(treeReference, ref).renderTreeItem(context, ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
-				}
-			} else {
-				Object ref = obj.eGet(treeReference);
-				if (ref instanceof EObject) {
-					itemContainer.content(getReferenceRenderer(treeReference, (EObject) ref).renderTreeItem(context, (EObject) ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
-				}				
-			}
-		}
-		
-		return ret.isEmpty() ? null : ret;
-	}
+//	/**
+//	 * Renders an object tree of tree references of the argument object. Tree features are those listed in the ``tree-references`` annotation separated by space.
+//	 * If there is no annotation, then containing many features are considered as tree features. If ``tree-node`` annotation of the feature is set to false, then feature elements
+//	 * appear directly under the container. Otherwise, a tree node with feature name and icon (if available) is created to hold feature elements. 
+//	 * @param context Context
+//	 * @param obj Object
+//	 * @param depth tree depth, -1 - infinite depth.
+//	 * @param itemFilter If not null, it is invoked when object list items are created. Filters can decorate or replace list items. 
+//	 * @param jsTree If true, list items are rendered for jsTree.
+//	 * @return
+//	 */
+//	@SuppressWarnings("unchecked")
+//	default Object renderReferencesTree(C context, T obj, int depth, Function<Object, Object> itemFilter, boolean jsTree) throws Exception {
+//		if (depth == 0) {
+//			return null;
+//		}
+//		
+//		List<EReference> treeReferences = new ArrayList<EReference>();
+//		EClass eClass = obj.eClass();
+//		String treeReferencesAnnotation = getRenderAnnotation(context, eClass, RenderAnnotation.TREE_REFERENCES);
+//		if (treeReferencesAnnotation == null) {
+//			for (EReference ref: eClass.getEAllReferences()) {
+//				if (ref.isContainment() && ref.isMany() && context.authorizeRead(obj, ref.getName(), null)) {
+//					treeReferences.add(ref);
+//				}
+//			}
+//		} else {
+//			for (String refName: treeReferencesAnnotation.split("\\s+")) {
+//				if (!CoreUtil.isBlank(refName)) {
+//					EReference sf = (EReference) eClass.getEStructuralFeature(refName.trim());
+//					if (sf instanceof EReference && context.authorizeRead(obj, sf.getName(), null)) {
+//						treeReferences.add(sf);
+//					}
+//				}
+//			}
+//		}
+//		
+//		// TODO - category nodes.
+//		
+//		HTMLFactory htmlFactory = getHTMLFactory(context);
+//		Tag ret = htmlFactory.tag(TagName.ul);
+//		for (EReference treeReference: treeReferences) {
+//			String treeNodeAnnotation = getRenderAnnotation(context, treeReference, RenderAnnotation.TREE_NODE);
+//			boolean isTreeNode = !"false".equals(treeNodeAnnotation);
+//			Tag itemContainer = ret;
+//			if (isTreeNode) {
+//				Tag refNode = htmlFactory.tag(TagName.li);
+//				refNode.setData(treeReference);
+//				refNode.setData("role", "item");
+//				if (jsTree) {
+//					JsTree jt = refNode.jsTree();
+//					jt.icon(getModelElementIcon(context, treeReference));
+//					refNode.content(renderNamedElementLabel(context, treeReference));
+//				} else {
+//					refNode.content(renderNamedElementIconAndLabel(context, treeReference));
+//				}
+//				itemContainer = htmlFactory.tag(TagName.ul);
+//				refNode.content(itemContainer);
+//			} 
+//			
+//			if (treeReference.isMany()) {
+//				for (EObject ref: (Collection<? extends EObject>) obj.eGet(treeReference)) {
+//					itemContainer.content(getReferenceRenderer(treeReference, ref).renderTreeItem(context, ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
+//				}
+//			} else {
+//				Object ref = obj.eGet(treeReference);
+//				if (ref instanceof EObject) {
+//					itemContainer.content(getReferenceRenderer(treeReference, (EObject) ref).renderTreeItem(context, (EObject) ref, depth == -1 ? -1 : depth - 1, itemFilter, jsTree));
+//				}				
+//			}
+//		}
+//		
+//		return ret.isEmpty() ? null : ret;
+//	}
 	
 	/**
 	 * Creates JsTree node with containment references as children and contextObject selected if it is not null
