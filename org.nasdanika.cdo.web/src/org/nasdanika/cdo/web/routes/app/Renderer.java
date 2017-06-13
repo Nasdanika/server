@@ -31,7 +31,6 @@ import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.function.Consumer;
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -101,6 +100,7 @@ import org.nasdanika.html.FieldContainer;
 import org.nasdanika.html.FieldSet;
 import org.nasdanika.html.FontAwesome;
 import org.nasdanika.html.FontAwesome.Spinner;
+import org.nasdanika.html.FontAwesome.TextEditor;
 import org.nasdanika.html.FontAwesome.WebApplication;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.FormGroup;
@@ -112,7 +112,7 @@ import org.nasdanika.html.HTMLFactory.InputType;
 import org.nasdanika.html.HTMLFactory.TokenSource;
 import org.nasdanika.html.Input;
 import org.nasdanika.html.InputBase;
-import org.nasdanika.html.JsTree;
+import org.nasdanika.html.JsTreeContextMenuItem;
 import org.nasdanika.html.JsTreeNode;
 import org.nasdanika.html.LinkGroup;
 import org.nasdanika.html.ListGroup;
@@ -2614,7 +2614,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderEditIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.edit);		
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.pencil).getTarget();
 	}
 
 	/**
@@ -2624,7 +2624,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderDeleteIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.trash);		
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.trash_o).getTarget();
 	}
 
 	/**
@@ -2634,7 +2634,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderClearIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.erase);		
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.eraser).getTarget();
 	}
 	
 	/**
@@ -2644,7 +2644,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderDetailsIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.option_horizontal);		
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.ellipsis_h).getTarget();
 	}
 
 	/**
@@ -2664,7 +2664,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderAddIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.plus_sign);		
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.plus_circle).getTarget();
 	}
 
 	/**
@@ -2674,7 +2674,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderCancelIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.remove);		
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.times).getTarget();
 	}
 	
 
@@ -2685,9 +2685,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception 
 	 */
 	default Tag renderSaveIcon(C context) throws Exception {
-		return getHTMLFactory(context).glyphicon(Glyphicon.save);		
+		return getHTMLFactory(context).fontAwesome().textEditor(TextEditor.floppy_o).getTarget();
 	}
-		
+			
 	/**
 	 * Renders delete button. 
 	 * @param context
@@ -3492,8 +3492,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		// - builder eoperations
 		// - dividers
 		// collect them all as Consumer<Button> and then apply to the button itself if single, or to items is multiple - check size from the consumers.
-
-		// Use Callable<Void> for wiring
 		
 		String objectURI = getObjectURI(context, obj);	
 		addButton.type(Type.BUTTON); // No submitting.
@@ -4690,7 +4688,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Tag renderHelpIcon(C context) throws Exception {
-		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.question_circle_o).getTarget();
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.question_circle).getTarget();
 	}
 	
 	/**
@@ -5515,18 +5513,202 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Object renderJsTreeNodeContextMenu(C context, T obj) throws Exception {
-		/* TODO - no modals.
-		 * - Edit
-		 * - Delete
-		 * - EOperations
-		 * - References/ features - call renderJsTreeFeatureNodeContextMenu below
-		 *   - Create
-		 *   - EOperations 
-		 */
+		Map<String, JsTreeContextMenuItem> menuItems = new LinkedHashMap<>();
+		HTMLFactory htmlFactory = getHTMLFactory(context);
 		
-		return null;
-	}
+		// Edit context menu item
+		if (isEditable(context, obj, obj.eClass()) && context.authorizeUpdate(obj, null, null)) {
+			JsTreeContextMenuItem editMenuItem = htmlFactory.jsTreeContextMenuItem();
+			menuItems.put("edit", editMenuItem);
+			editMenuItem.icon("fa fa-pencil").label(getResourceString(context, "edit"));
 
+			Map<String, Object> env = new HashMap<>();
+			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "editTooltip"), env);
+			editMenuItem.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(tooltip)));
+			
+			// Wire
+			boolean hasEditOperation = false;
+			// Editor web operation
+			for (EOperation eOperation: obj.eClass().getEAllOperations()) {
+				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
+				if (eOperationTargetInfo != null && eOperationTargetInfo.getRole() == Role.editor) {
+					hasEditOperation = true;
+					editMenuItem.action("function() { window.location='"+getObjectURI(context, obj)+"/"+eOperationTargetInfo.getPath()+"'; }");
+					break;
+				}				
+			}
+			
+			if (!hasEditOperation) {
+				editMenuItem.action("function() { window.location='"+getObjectURI(context, obj)+"/edit.html'; }");		
+			}						
+		}
+
+		// Delete context menu item
+		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainingFeature())) {
+			JsTreeContextMenuItem deleteMenuItem = htmlFactory.jsTreeContextMenuItem();
+			menuItems.put("delete", deleteMenuItem);
+			deleteMenuItem.icon("fa fa-trash-o").label(getResourceString(context, "delete"));
+			
+			Map<String, Object> env = new HashMap<>();
+			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
+			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip"), env);
+			deleteMenuItem.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(tooltip)));
+			String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete"), env));
+			deleteMenuItem.action("function() { if (confirm('"+deleteConfirmationMessage+"')) window.location='delete.html'; }"); 
+		}
+		
+		// Web operations
+		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
+			EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
+			if (eOperationTargetInfo != null 
+					&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+					&& eOperationTargetInfo.getFeature() == null 
+					&& eOperationTargetInfo.getFeatureValue() == null 
+					&& eOperationTargetInfo.getRole() == Role.operation
+					&& isVisible(context, obj, eOperation)
+					&& context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
+				
+				menuItems.put("webOperation_"+htmlFactory.nextId(), createEOperationJsTreeContextMenuItem(context, obj, eOperationTargetInfo, null, null));
+			}				
+		}
+		
+		EObject eContainer = obj.eContainer();
+		EStructuralFeature containingFeature = obj.eContainingFeature();
+		if (eContainer != null && containingFeature != null) {
+			for (EOperation eOperation: eContainer.eClass().getEAllOperations()) {
+				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
+				if (eOperationTargetInfo != null
+						&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+						&& containingFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
+						&& eOperationTargetInfo.getRole() == Role.operation
+						&& isVisible(context, obj, eOperation)
+						&& context.authorize(eContainer, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
+					Map<String, String> queryParameters = new HashMap<>();
+					queryParameters.put("feature", containingFeature.getName());					
+					if (obj instanceof CDOObject) {
+						String formControlValue = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
+						queryParameters.put("element", formControlValue);
+						queryParameters.put("context-object", formControlValue);
+					}
+					
+					Map<String, Object> vars = new HashMap<>();
+					vars.put("element", obj);
+					menuItems.put("featureValueWebOperation_"+htmlFactory.nextId(), getRenderer(eContainer).createEOperationJsTreeContextMenuItem(context, eContainer, eOperationTargetInfo, queryParameters, vars));
+				}				
+			}
+		}
+		
+		boolean needFeatureSeparator = !menuItems.isEmpty();
+		
+		for (EStructuralFeature sf: getTreeFeatures(context, obj)) {
+			Object fcm = renderJsTreeFeatureNodeContextMenu(context, obj, sf);
+			if (fcm != null) {
+				JsTreeContextMenuItem featureContextMenuItem = htmlFactory.jsTreeContextMenuItem()
+					.icon(getModelElementIcon(context, sf))
+					.label(StringEscapeUtils.escapeEcmaScript(String.valueOf(renderNamedElementLabel(context, sf))));
+				
+				Object firstDocSentence = renderFirstDocumentationSentence(context, sf);
+				if (firstDocSentence != null) {
+					featureContextMenuItem.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(firstDocSentence.toString())));
+				}
+				featureContextMenuItem.subMenu(fcm);
+				if (needFeatureSeparator) {
+					featureContextMenuItem.separatorBefore();
+					needFeatureSeparator = false;
+				}
+				menuItems.put("feature_"+sf.getName(), featureContextMenuItem);
+			}
+		}
+				
+		if (menuItems.isEmpty()) {
+			return null;
+		}
+		
+		StringBuilder ret = new StringBuilder("{").append(System.lineSeparator());		
+		int initialLength = ret.length();
+		for (Entry<String, JsTreeContextMenuItem> mie: menuItems.entrySet()) {
+			if (ret.length() > initialLength) {
+				ret.append(",").append(System.lineSeparator());
+			}
+			ret.append(mie.getKey()).append(": ").append(mie.getValue());
+		}
+		ret.append(System.lineSeparator()).append("}");		
+		return ret.toString();
+	}
+	
+	default JsTreeContextMenuItem createEOperationJsTreeContextMenuItem(
+			C context, 
+			T obj, 
+			EOperationTargetInfo eOperationTargetInfo, 
+			Map<String,String> queryParameters, 
+			Map<String, Object> jxPathContextVariables) throws Exception {
+		
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		JsTreeContextMenuItem ret = htmlFactory.jsTreeContextMenuItem()
+				.icon(getModelElementIcon(context, eOperationTargetInfo.getEOperation()))
+				.label(StringEscapeUtils.escapeEcmaScript(String.valueOf(renderNamedElementLabel(context, eOperationTargetInfo.getEOperation()))));
+		
+		String path = eOperationTargetInfo.getPath();
+		
+		if (queryParameters != null && !queryParameters.isEmpty()) {
+			StringBuilder query = new StringBuilder();
+			for (Entry<String, String> qp: queryParameters.entrySet()) {
+				if (query.length()>0) {
+					query.append("&");
+				}
+				query.append(qp.getKey()).append("=").append(URLEncoder.encode(qp.getValue(), StandardCharsets.UTF_8.name()));
+			}
+			path += "?" + query;
+		}
+		
+		String guard = "";
+		
+		String confirm = eOperationTargetInfo.getConfirm();
+		if (!CoreUtil.isBlank(confirm)) {
+			Map<String, Object> env = new HashMap<>();
+			env.put("object-label", renderLabel(context, obj));
+			if (jxPathContextVariables != null) {
+				Object element = jxPathContextVariables.get("element");
+				if (element instanceof EObject) {
+					env.put("element-label", getRenderer((EObject) element).renderLabel(context, (EObject) element));						
+				}						
+			}
+			String confirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(confirm, env));			
+			guard = "if (confirm('"+confirmationMessage+"')) ";
+		}			
+	
+		ret.action("function() { "+ guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"'; }");
+		
+		// Disabled 
+		boolean disabled;
+		String disabledRenderAnnotation = getRenderAnnotation(context, eOperationTargetInfo.getEOperation(), RenderAnnotation.DISABLED);
+		if (CoreUtil.isBlank(disabledRenderAnnotation) || "false".equals(disabledRenderAnnotation)) {
+			disabled = false;
+		} else if ("true".equals(disabledRenderAnnotation)) {
+			disabled = true;
+		} else if (obj instanceof CDOObject) {
+			// XPath
+			JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+			if (jxPathContextVariables != null) {
+				for (Entry<String, Object> ve: jxPathContextVariables.entrySet()) {
+					jxPathContext.getVariables().declareVariable(ve.getKey(), ve.getValue());
+				}
+			}
+			disabled = Boolean.TRUE.equals(jxPathContext.getValue(disabledRenderAnnotation, Boolean.class));
+		} else {
+			disabled = false;
+		}
+		ret.disabled(disabled);
+
+		Object firstDocSentence = renderFirstDocumentationSentence(context, eOperationTargetInfo.getEOperation());
+		if (firstDocSentence != null) {
+			ret.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(firstDocSentence.toString())));
+		}
+		
+		return ret;
+	}
+	
 	/**
 	 * Renders jsTree context menu items for the feature node. See https://www.jstree.com/api/#/?q=$.jstree.defaults.contextmenu&f=$.jstree.defaults.contextmenu.items for details
 	 * @param context
@@ -5536,11 +5718,150 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Object renderJsTreeFeatureNodeContextMenu(C context, T obj, EStructuralFeature feature) throws Exception {
-		/* TODO - no modals.
-		 * - Create
-		 * - EOperations
-		 */
-		return null;
+		Map<String, JsTreeContextMenuItem> menuItems = new LinkedHashMap<>();
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		
+		// Add
+		if (feature.isChangeable() && isEditable(context, obj, feature) && context.authorizeCreate(obj, feature.getName(), null)) { // Adding to a reference is considered create.
+			Map<String, Object> env = new HashMap<>();
+			env.put(NAME_KEY, feature.getName());
+			
+			JsTreeContextMenuItem addItem = htmlFactory.jsTreeContextMenuItem();
+			menuItems.put("add", addItem);
+			if (feature instanceof EReference && ((EReference) feature).isContainment()) {
+				addItem.icon("fa fa-magic");
+				addItem.label(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(getResourceString(context, "create"))));
+				String tooltip = htmlFactory.interpolate(getResourceString(context, "createTooltip"), env);
+				if (tooltip != null) {
+					addItem.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(tooltip)));					
+				}
+			} else if (feature instanceof EAttribute) {
+				addItem.icon("fa fa-plus-circle");
+				addItem.label(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(getResourceString(context, "add"))));
+			} else {
+				addItem.icon("fa fa-plus-circle");
+				addItem.label(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(getResourceString(context, "select"))));
+				String tooltip = htmlFactory.interpolate(getResourceString(context, "selectTooltip"), env);
+				if (tooltip != null) {
+					addItem.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(tooltip)));					
+				}
+			}
+
+			// Four types of items
+			// - classes
+			// - template objects
+			// - builder eoperations
+			// - dividers
+			// collect them all as Consumer<Button> and then apply to the button itself if single, or to items is multiple - check size from the consumers.
+			
+			String objectURI = getObjectURI(context, obj);	
+			
+			List<Task> wirerers = new ArrayList<>();
+			
+			if (feature instanceof EReference && ((EReference) feature).isContainment()) {
+				List<EClass> featureElementTypes = new ArrayList<>();
+				
+				// Classes			
+				for (EClass ec: getReferenceElementTypes(context, obj, (EReference) feature)) {
+					String qualifier = feature.getName()+"/"+ec.getName();
+					if (feature.getEContainingClass().getEPackage() != ec.getEPackage()) {
+						qualifier += "@"+ec.getEPackage().getNsURI();
+					}
+					if (context.authorizeCreate(obj, qualifier, null)) {
+						featureElementTypes.add(ec);
+					}
+				}
+				
+				for (EClass featureElementType: featureElementTypes) {
+					wirerers.add(() -> {
+						String encodedPackageNsURI = Hex.encodeHexString(featureElementType.getEPackage().getNsURI().getBytes(/* StandardCharsets.UTF_8.name()? */));
+						Renderer<C, EObject> fetr = getRenderer(featureElementType);
+						String createURL = objectURI+"/reference/"+feature.getName()+"/create/"+encodedPackageNsURI+"/"+featureElementType.getName()+EXTENSION_HTML;
+						if (wirerers.size() == 1) {
+							addItem.action("function() { window.location='"+createURL+"'; }");
+						} else {
+							JsTreeContextMenuItem subItem = addItem.createSubMenuItem("createEClass_"+htmlFactory.nextId());
+							subItem.action("function() { window.location='"+createURL+"'; }");
+							subItem.icon(fetr.getModelElementIcon(context, featureElementType));
+							subItem.label(StringEscapeUtils.escapeEcmaScript(String.valueOf(fetr.renderNamedElementLabel(context, featureElementType))));
+						}
+					});
+					
+				}
+				
+				// Template objects
+				
+				// Builder operations
+				for (EOperation eOperation: obj.eClass().getEAllOperations()) {				
+					EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
+					if (eOperationTargetInfo != null
+							&& feature.getName().equals(eOperationTargetInfo.getFeature())
+							&& eOperationTargetInfo.getRole() == Role.builder
+							&& isVisible(context, obj, eOperation)
+							&& context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
+						
+						wirerers.add(() -> {
+							String webOperationURL = getObjectURI(context, obj)+"/"+eOperationTargetInfo.getPath();
+							if (wirerers.size() == 1) {
+								addItem.action("function() { window.location='"+webOperationURL+"'; }");
+							} else {
+								JsTreeContextMenuItem subItem = addItem.createSubMenuItem("eOperation_"+htmlFactory.nextId());
+								subItem.icon(getModelElementIcon(context, eOperation));
+								subItem.label(StringEscapeUtils.escapeEcmaScript(String.valueOf(renderNamedElementLabel(context, eOperation))));
+								Object tooltip = renderFirstDocumentationSentence(context, eOperation);
+								if (tooltip != null) {
+									addItem.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(tooltip.toString())));					
+								}
+							}
+						});
+					}				
+				}						
+			} else if (feature instanceof EAttribute) {
+				wirerers.add(() -> {
+					addItem.action("function() { window.location='"+objectURI+"/attribute/"+feature.getName()+"/add.html'; }"); 
+				});
+			} else {
+				wirerers.add(() -> {
+					addItem.action("function() { window.location='"+objectURI+"/feature/"+feature.getName()+"/select.html'; }");
+				});
+			}
+			
+			for (Task wirerer: wirerers) {
+				wirerer.execute();
+			}
+			if (wirerers.isEmpty()) {
+				addItem.disabled();
+			}
+		}
+		
+		// Web Operations
+		for (EOperation eOperation: obj.eClass().getEAllOperations()) {
+			EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
+			if (eOperationTargetInfo != null 
+					&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
+					&& feature.getName().equals(eOperationTargetInfo.getFeature())
+					&& eOperationTargetInfo.getRole() == Role.operation
+					&& isVisible(context, obj, eOperation)
+					&& context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
+				
+				menuItems.put("webOperation_"+htmlFactory.nextId(), createEOperationJsTreeContextMenuItem(context, obj, eOperationTargetInfo, Collections.singletonMap("feature", feature.getName()), null));
+			}				
+		}
+								
+		if (menuItems.isEmpty()) {
+			return null;
+		}
+		
+		StringBuilder ret = new StringBuilder("{").append(System.lineSeparator());		
+		int initialLength = ret.length();
+		for (Entry<String, JsTreeContextMenuItem> mie: menuItems.entrySet()) {
+			if (ret.length() > initialLength) {
+				ret.append(",").append(System.lineSeparator());
+			}
+			ret.append(mie.getKey()).append(": ").append(mie.getValue());
+		}
+		ret.append(System.lineSeparator()).append("}");		
+		return ret.toString();
 	}
 		
 	/**
