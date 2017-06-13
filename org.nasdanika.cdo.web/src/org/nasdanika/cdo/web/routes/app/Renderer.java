@@ -2506,11 +2506,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			guard = "if (confirm('"+confirm+"')) ";
 		}			
 		ret.on(Event.click, guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"';");
-		ret.disabled(!action.canExecute());			
+		ret.disabled(!action.canExecute());	
+		
+		String comment = action.getComment();
+		if (!CoreUtil.isBlank(comment)) {
+			ret.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(comment));
+		}
 		
 		return ret;
 	}
-	
 
 	/**
 	 * Renders edit button. 
@@ -5657,6 +5661,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
+		for (org.nasdanika.cdo.web.routes.app.Action<C, T> action: getActions(context, obj)) {
+			if (action.getRole() == org.nasdanika.cdo.web.routes.app.Action.Role.action && action.getFeature() == null) {
+				menuItems.put("action_"+htmlFactory.nextId(), createActionJsTreeContextMenuItem(context, obj, action));
+			}
+		}					
+		
 		boolean needFeatureSeparator = !menuItems.isEmpty();
 		
 		for (EStructuralFeature sf: getTreeFeatures(context, obj)) {
@@ -5766,6 +5776,36 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		return ret;
 	}
+	
+	default JsTreeContextMenuItem createActionJsTreeContextMenuItem(C context, T obj, org.nasdanika.cdo.web.routes.app.Action<C, T> action) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		JsTreeContextMenuItem ret = htmlFactory.jsTreeContextMenuItem()
+				.icon(action.getIcon())
+				.label(StringEscapeUtils.escapeEcmaScript(action.getLabel()));
+		
+		String path = action.getPath();
+		if (path.endsWith("/")) {
+			path += INDEX_HTML;
+		}
+				
+		String guard = "";
+		
+		String confirm = action.getConfirmation();
+		if (!CoreUtil.isBlank(confirm)) {
+			guard = "if (confirm('"+confirm+"')) ";
+		}			
+	
+		ret.action("function() { "+ guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"'; }");
+		
+		ret.disabled(!action.canExecute());
+		
+		String comment = action.getComment();
+		if (!CoreUtil.isBlank(comment)) {
+			ret.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(comment)));
+		}
+		
+		return ret;
+	}	
 	
 	/**
 	 * Renders jsTree context menu items for the feature node. See https://www.jstree.com/api/#/?q=$.jstree.defaults.contextmenu&f=$.jstree.defaults.contextmenu.items for details
@@ -5904,8 +5944,15 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				menuItems.put("webOperation_"+htmlFactory.nextId(), createEOperationJsTreeContextMenuItem(context, obj, eOperationTargetInfo, Collections.singletonMap("feature", feature.getName()), null));
 			}				
-		}
-								
+		}		
+		
+		// Action buttons
+		for (org.nasdanika.cdo.web.routes.app.Action<C, T> action: getActions(context, obj)) {
+			if (action.getRole() == org.nasdanika.cdo.web.routes.app.Action.Role.action && action.getFeature() == feature) {
+				menuItems.put("action_"+htmlFactory.nextId(), createActionJsTreeContextMenuItem(context, obj, action));
+			}
+		}			
+										
 		if (menuItems.isEmpty()) {
 			return null;
 		}
