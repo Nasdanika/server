@@ -1992,6 +1992,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			}
 		}		
 		
+		ret.addAll(getActions((C) context, (T) context.getTarget()));
+		
 		return ret;
 	}	
 	
@@ -2925,5 +2927,5 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object filterEOperationResult(C context, EOperation eOperation, Object result) throws Exception {
 		return result;
 	}
-			
+	
 }

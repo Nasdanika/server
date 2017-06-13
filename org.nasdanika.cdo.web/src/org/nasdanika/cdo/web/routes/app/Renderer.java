@@ -2358,6 +2358,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 		}
 		
+		// Action buttons
+		for (org.nasdanika.cdo.web.routes.app.Action<C, T> action: getActions(context, obj)) {
+			if (action.getRole() == org.nasdanika.cdo.web.routes.app.Action.Role.action && action.getFeature() == null) {
+				ret.content(renderActionButton(context, obj, action));
+			}
+		}			
+		
 		return ret;
 	}
 	
@@ -2461,6 +2468,49 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		return null;		
 	}
+	
+	/**
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param action
+	 * @return
+	 * @throws Exception
+	 */
+	default Button renderActionButton(C context, T obj, org.nasdanika.cdo.web.routes.app.Action<C, T> action) throws Exception {
+		HTMLFactory htmlFactory = getHTMLFactory(context);
+		Button ret = htmlFactory.button().style(Style.PRIMARY);
+		String icon = action.getIcon();
+		if (icon != null) {
+			if (icon.indexOf("/") == -1) {
+				ret.content(htmlFactory.span().addClass(icon).style().margin().right("0.3em"));
+			} else {
+				ret.content(htmlFactory.tag(TagName.img).attribute("src", icon).style().margin().right("0.3em"));
+			}
+		}
+		
+		String label = action.getLabel();
+		if (label != null) {
+			ret.content(label);
+		}
+		
+		String path = action.getPath();
+		if (path.endsWith("/")) {
+			path += INDEX_HTML;
+		}
+		
+		String guard = "";
+		
+		String confirm = action.getConfirmation();
+		if (!CoreUtil.isBlank(confirm)) {
+			guard = "if (confirm('"+confirm+"')) ";
+		}			
+		ret.on(Event.click, guard + "window.location='"+getObjectURI(context, obj)+"/"+path+"';");
+		ret.disabled(!action.canExecute());			
+		
+		return ret;
+	}
+	
 
 	/**
 	 * Renders edit button. 
@@ -3433,6 +3483,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				ret.content(renderEOperationButton(context, obj, eOperation, Collections.singletonMap("feature", feature.getName()), null, appConsumer));
 			}				
 		}
+		
+		// Action buttons
+		for (org.nasdanika.cdo.web.routes.app.Action<C, T> action: getActions(context, obj)) {
+			if (action.getRole() == org.nasdanika.cdo.web.routes.app.Action.Role.action && action.getFeature() == feature) {
+				ret.content(renderActionButton(context, obj, action));
+			}
+		}			
+		
 		return ret;
 	}
 	
@@ -6735,6 +6793,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				.horizontal(Bootstrap.DeviceSize.LARGE, 3);						
 		}		
 	}
-	
+
+	default List<org.nasdanika.cdo.web.routes.app.Action<C,T>> getActions(C context, T obj) {
+		return Collections.emptyList();
+	}
 	
 }
