@@ -49,7 +49,7 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 		Pattern getPattern();
 		
 		/**
-		 * Route method path. Takes precedence over pattern. May contain path parameter specs, e.g. <code>{something}</code>
+		 * Target path. Takes precedence over pattern. May contain path parameter specs, e.g. <code>{something}</code>
 		 * @return
 		 */
 		String getPath();
