@@ -371,7 +371,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception 
 	 */
-	protected Object renderPage(C context, T obj, String title, Object content) throws Exception {
+	public Object renderPage(C context, T obj, String title, Object content) throws Exception {
 		Map<String, Object> env = createRenderPageEnvironment(context);
 
 		env.put(PageTemplateTokens.TITLE.literal, title == null ? "" : title);
