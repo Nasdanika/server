@@ -2777,7 +2777,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");
 		String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete"), env));			
 		// Delete through GET, not REST-compliant, but works with simple JavaScript. 
-		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"')) window.location='delete.html';"); 
+		deleteButton.on(Event.click, "if (confirm('"+deleteConfirmationMessage+"')) window.location='"+getObjectURI(context, obj)+"/delete.html';"); 
 	}
 	
 	/**
@@ -5617,7 +5617,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String tooltip = htmlFactory.interpolate(getResourceString(context, "deleteTooltip"), env);
 			deleteMenuItem.title(StringEscapeUtils.escapeEcmaScript(StringEscapeUtils.escapeXml11(tooltip)));
 			String deleteConfirmationMessage = StringEscapeUtils.escapeEcmaScript(htmlFactory.interpolate(getResourceString(context, "confirmDelete"), env));
-			deleteMenuItem.action("function() { if (confirm('"+deleteConfirmationMessage+"')) window.location='delete.html'; }"); 
+			deleteMenuItem.action("function() { if (confirm('"+deleteConfirmationMessage+"')) window.location='"+getObjectURI(context, obj)+"/delete.html'; }"); 
 		}
 		
 		// Web operations
