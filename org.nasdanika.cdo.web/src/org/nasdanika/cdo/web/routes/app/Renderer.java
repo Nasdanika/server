@@ -6307,6 +6307,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				StringBuilder koDataBindings = new StringBuilder();
 				StringBuilder koStatusBindings = new StringBuilder();
+				Set<ETypedElement> boundElements = new HashSet<>();
+				JSONObject labels = new JSONObject();			
 								
 				try {
 					FormRenderingListener<C, EObject, EStructuralFeature> koBinder = new FormRenderingListener<C, EObject, EStructuralFeature>() {
@@ -6319,21 +6321,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								} else {
 									control.knockout().value("data."+typedElement.getName());
 								}
-								if (koDataBindings.length() > 0) {
-									koDataBindings.append(",").append(System.lineSeparator());
+								if (boundElements.add(typedElement)) {
+									if (koDataBindings.length() > 0) {
+										koDataBindings.append(",").append(System.lineSeparator());
+									}
+									if (typedElement.isMany()) {
+										// TODO - values
+										koDataBindings.append(typedElement.getName()+": ko.observableArray()");
+									} else {
+										// TODO - initial/default values
+										koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(renderer.getFormControlValue(context, instance, typedElement, value, appConsumer))+"')");									
+									}
+									
+									if (koStatusBindings.length() > 0) {
+										koStatusBindings.append(",").append(System.lineSeparator());
+									}								
+									koStatusBindings.append(typedElement.getName()+": ko.observable()");
+									labels.put(typedElement.getName(), renderNamedElementLabel(context, typedElement));									
 								}
-								if (typedElement.isMany()) {
-									// TODO - values
-									koDataBindings.append(typedElement.getName()+": ko.observableArray()");
-								} else {
-									// TODO - initial/default values
-									koDataBindings.append(typedElement.getName()+": ko.observable('"+StringEscapeUtils.escapeEcmaScript(renderer.getFormControlValue(context, instance, typedElement, value, appConsumer))+"')");									
-								}
-								
-								if (koStatusBindings.length() > 0) {
-									koStatusBindings.append(",").append(System.lineSeparator());
-								}								
-								koStatusBindings.append(typedElement.getName()+": ko.observable()");									
 							}
 							
 							return super.onFormControlRendering(context, obj, typedElement, value, control);
@@ -6384,6 +6389,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					declarationsBuilder.append("this.data = {").append(koDataBindings).append("};").append(System.lineSeparator());
 					declarationsBuilder.append("this.status = {").append(koStatusBindings).append("};").append(System.lineSeparator());
 					declarationsBuilder.append("this.messages = ko.observableArray();").append(System.lineSeparator());
+
+					declarationsBuilder.append("var labels = ").append(labels.toString(4)).append(";").append(System.lineSeparator());
 					
 					StringBuilder ajaxConfigBuilder = new StringBuilder();
 					ajaxConfigBuilder.append("type: 'POST',").append(System.lineSeparator());
@@ -6475,6 +6482,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			StringBuilder koStatusBindings = new StringBuilder();
 			
 			Set<ETypedElement> boundElements = new HashSet<>();
+			JSONObject labels = new JSONObject();			
 							
 			FormRenderingListener<C, T, EStructuralFeature> koBinder = new FormRenderingListener<C, T, EStructuralFeature>() {
 				
@@ -6505,7 +6513,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							if (koStatusBindings.length() > 0) {
 								koStatusBindings.append(",").append(System.lineSeparator());
 							}								
-							koStatusBindings.append(typedElement.getName()+": ko.observable()");									
+							koStatusBindings.append(typedElement.getName()+": ko.observable()");
+							labels.put(typedElement.getName(), renderNamedElementLabel(context, typedElement));
 						}
 					}
 					
@@ -6573,6 +6582,8 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			declarationsBuilder.append("this.data = {").append(koDataBindings).append("};").append(System.lineSeparator());
 			declarationsBuilder.append("this.status = {").append(koStatusBindings).append("};").append(System.lineSeparator());
 			declarationsBuilder.append("this.messages = ko.observableArray();").append(System.lineSeparator());
+			
+			declarationsBuilder.append("var labels = ").append(labels.toString(4)).append(";").append(System.lineSeparator());
 			
 			StringBuilder ajaxConfigBuilder = new StringBuilder();
 			ajaxConfigBuilder.append("type: 'PUT',").append(System.lineSeparator());
@@ -6686,6 +6697,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			StringBuilder koDataBindings = new StringBuilder();
 			StringBuilder koStatusBindings = new StringBuilder();
+			JSONObject labels = new JSONObject();			
 			
 			Set<ETypedElement> boundElements = new HashSet<>();
 							
@@ -6719,6 +6731,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								koStatusBindings.append(",").append(System.lineSeparator());
 							}								
 							koStatusBindings.append(typedElement.getName()+": ko.observable()");									
+							labels.put(typedElement.getName(), renderNamedElementLabel(context, typedElement));
 						}
 					}
 					
@@ -6787,6 +6800,9 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			declarationsBuilder.append("this.messages = ko.observableArray();").append(System.lineSeparator());
 			declarationsBuilder.append("this.result = ko.observable();").append(System.lineSeparator());
 			declarationsBuilder.append("this.location = ko.observable();").append(System.lineSeparator());
+			
+			declarationsBuilder.append("var labels = ").append(labels.toString(4)).append(";").append(System.lineSeparator());			
+			
 			declarationsBuilder.append("this.close = function() { $('#"+appId+"-modal').modal('hide'); window.location = this.location(); };").append(System.lineSeparator());
 			
 			StringBuilder ajaxConfigBuilder = new StringBuilder();

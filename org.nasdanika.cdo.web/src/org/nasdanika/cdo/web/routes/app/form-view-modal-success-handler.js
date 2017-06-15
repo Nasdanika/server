@@ -23,7 +23,7 @@ if (data.result) {
 		var nvra = vr.namedElementValidationResults[nr];
 		for (var r in nvra) {
 			this.messages.push({
-				name: nr,
+				name: labels[nr],
 				style: 'list-group-item-'+nvra[r].statusStyle.toLowerCase(),
 				message: nvra[r].message
 			});					
