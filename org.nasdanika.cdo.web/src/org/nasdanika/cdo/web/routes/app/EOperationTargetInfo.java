@@ -22,7 +22,7 @@ import org.nasdanika.web.RequestMethod;
  */
 public class EOperationTargetInfo {
 	
-	enum Role {
+	public enum Role {
 		
 		/**
 		 * Default role, web operation is rendered as a button.

@@ -5,6 +5,6 @@ package org.nasdanika.cdo.web.routes.app;
  * @author Pavel Vlasov
  *
  */
-interface Task {
+public interface Task {
 	void execute() throws Exception;
 }
