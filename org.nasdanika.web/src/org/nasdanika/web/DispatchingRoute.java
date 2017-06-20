@@ -492,7 +492,7 @@ public abstract class DispatchingRoute implements Route, DocumentationProvider {
 	@Override
 	public String getDocumentation(String format) {
 		if ("text/html".equals(format)) {
-			return generateApiHtmlTable(null).toString();
+			return "Web API.<p/>" + generateApiHtmlTable(null).toString();
 		}
 		if ("text/markdown".equals(format)) {
 			return System.lineSeparator()
