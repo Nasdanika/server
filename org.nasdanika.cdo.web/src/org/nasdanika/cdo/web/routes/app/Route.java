@@ -1826,7 +1826,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							EObject eObject = (EObject) value;
 							Renderer<C, EObject> re = getRenderer(eObject);
 							EClass eClass = eObject.eClass();
-							Object resultClassDocIcon = renderDocumentationIcon(context, eClass, null, true);
+							Object resultClassDocIcon = renderDocumentationIcon(context, eClass, appConsumer, true);
 							if (resultClassDocIcon == null) {
 								resultClassDocIcon = "";
 							}
@@ -1849,7 +1849,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								EObject eObject = (EObject) value;
 								Renderer<C, EObject> re = getRenderer(eObject);
 								EClass eClass = eObject.eClass();
-								Object resultClassDocIcon = renderDocumentationIcon(context, eClass, null, true);
+								Object resultClassDocIcon = renderDocumentationIcon(context, eClass, appConsumer, true);
 								if (resultClassDocIcon == null) {
 									resultClassDocIcon = "";
 								}
@@ -1867,6 +1867,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			} catch (Exception e) {
 				xPathFormGroup.status(Status.ERROR);
 				content.content(htmlFactory.label(Style.DANGER, "ERROR: "+e));
+				e.printStackTrace();
 			}
 		}		
 		
