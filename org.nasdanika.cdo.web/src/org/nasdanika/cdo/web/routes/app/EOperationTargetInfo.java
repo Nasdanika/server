@@ -30,9 +30,9 @@ public class EOperationTargetInfo {
 		operation, 
 		
 		/**
-		 * Builder operations are used to construct elements of containment features and contribute to the "Create" button items.
+		 * Factory operations are used to construct elements of containment features and contribute to the "Create" button items.
 		 */
-		builder, 
+		factory, 
 		
 		/**
 		 * Editor operations are used to edit objects, they replace the "Edit" button default wiring.
@@ -220,7 +220,7 @@ public class EOperationTargetInfo {
 			return action;
 		}
 		switch (getRole()) {
-		case builder:
+		case factory:
 			return AuthorizationProvider.StandardAction.create.name();
 		case editor:
 			return AuthorizationProvider.StandardAction.update.name();

@@ -2270,6 +2270,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @return
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	protected Object executeEOperation(C context, EOperationTarget<C, T> eOperationTarget, Map<String, String> pathParameters, Object[] arguments) throws Exception {
 		EOperation eOperation = eOperationTarget.getEOperation();				
 		@SuppressWarnings("unchecked")
@@ -2325,9 +2326,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 //		if (referrer == null) {
 //			referrer = referrerHeader;
 //		}
-//		if (referrer == null) {
-//			referrer = context.getObjectPath(target)+"/"+INDEX_HTML;
-//		}
+		if (location == null) {
+			location = context.getObjectPath(target)+"/"+INDEX_HTML;
+		}
 //		int referrerQueryStart = referrer.indexOf("?");
 //		if (referrerQueryStart == -1) {
 //			referrer +=  "?";
@@ -2342,6 +2343,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 //		}
 //		referrer += "context-feature="+URLEncoder.encode(reference, StandardCharsets.UTF_8.name());
 		
+		HttpServletResponse response = context.getResponse();
 		if (methodName == null) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			
@@ -2424,7 +2426,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					for (EParameterBinding binding: bindings) {
 						args.put(binding.getEParameter().getName(), binding.getValue());
 					}
-					@SuppressWarnings("unchecked")
 					Diagnostic diagnostic = validate(context, (T) context.getTarget(), eOperation, args);
 					if (diagnostic.getSeverity() == Diagnostic.ERROR) {
 						ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
@@ -2473,7 +2474,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							Object result = eOperationTarget.invoke(context, bindings);	
 							
 							if (result == null && originalReferrer != null) {
-								context.getResponse().sendRedirect(originalReferrer);
+								response.sendRedirect(originalReferrer);
 								return Action.NOP;
 							}
 							
@@ -2524,6 +2525,20 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 									}
 								}			
 							} else {
+								// Factory operation returning constructed object - add/set feature, redirect to the referrer or object home.
+								if (eOperationTarget.getRole() == Role.factory && featureName != null) {
+									EStructuralFeature opFeature = target.eClass().getEStructuralFeature(featureName);
+									if (opFeature != null && opFeature.getEType().getInstanceClass().isInstance(result)) {
+										if (opFeature.isMany()) {
+											((Collection<Object>) target.eGet(opFeature)).add(result);
+										} else {
+											target.eSet(opFeature, result);
+										}
+										response.sendRedirect(location);
+										return Action.NOP;
+									}
+								}
+								
 								// Breadcrumbs
 								Breadcrumbs breadCrumbs = content.getFactory().breadcrumbs();
 								String resultStr = "Result"; // TODO - resource string
@@ -2689,7 +2704,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 								return jsonResult;
 							} 
 							
-							context.getResponse().sendRedirect(originalReferrer);
+							response.sendRedirect(originalReferrer);
 							return Action.NOP;
 						}
 						
@@ -2783,7 +2798,26 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 							inputForm.content(buttonBar);
 							
 							content.content(inputForm);												
-						} else {						
+						} else {	
+							// Factory operation returning constructed object - add/set feature, redirect to the referrer or object home.
+							if (eOperationTarget.getRole() == Role.factory && featureName != null) {
+								EStructuralFeature opFeature = target.eClass().getEStructuralFeature(featureName);
+								if (opFeature != null && opFeature.getEType().getInstanceClass().isInstance(result)) {
+									if (opFeature.isMany()) {
+										((Collection<Object>) target.eGet(opFeature)).add(result);
+									} else {
+										target.eSet(opFeature, result);
+									}
+									if (isJSON) {
+										JSONObject jsonResult = new JSONObject();
+										jsonResult.put("location", location);
+										return jsonResult;
+									}  
+									response.sendRedirect(location);
+									return Action.NOP;
+								}
+							}
+							
 							String resultStr = "Result"; // TODO - resource string
 							Fragment renderedResult = htmlFactory.fragment();						
 							if (result == null) {
@@ -2873,7 +2907,6 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		for (EParameterBinding binding: bindings) {
 			args.put(binding.getEParameter().getName(), binding.getValue());
 		}
-		@SuppressWarnings("unchecked")
 		Diagnostic diagnostic = validate(context, (T) context.getTarget(), eOperation, args);
 		if (diagnostic.getSeverity() == Diagnostic.ERROR) {
 			ValidationResultsDiagnostiConsumer diagnosticConsumer = new ValidationResultsDiagnostiConsumer() {
@@ -2910,11 +2943,25 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 					jvr.put("status", nevr.status.name());			
 				}
 			}
-			context.getResponse().sendError(HttpServletResponse.SC_BAD_REQUEST, msg.toString());
+			response.sendError(HttpServletResponse.SC_BAD_REQUEST, msg.toString());
 			return Action.NOP;
 		}
 		
-		return filterEOperationResult(context, eOperation, eOperationTarget.invoke(context, bindings));				
+		Object result = eOperationTarget.invoke(context, bindings);
+		// Factory operation returning constructed object - add/set feature.
+		if (eOperationTarget.getRole() == Role.factory && featureName != null) {
+			EStructuralFeature opFeature = target.eClass().getEStructuralFeature(featureName);
+			if (opFeature != null && opFeature.getEType().getInstanceClass().isInstance(result)) {
+				if (opFeature.isMany()) {
+					((Collection<Object>) target.eGet(opFeature)).add(result);
+				} else {
+					target.eSet(opFeature, result);
+				}
+				return filterEOperationResult(context, eOperation, null);								
+			}
+		}
+		
+		return filterEOperationResult(context, eOperation, result);				
 	}
 		
 	/**

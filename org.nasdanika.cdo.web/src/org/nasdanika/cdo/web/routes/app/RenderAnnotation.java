@@ -160,7 +160,7 @@ public enum RenderAnnotation {
 		 * The list of element types shall be space-separated. Elements shall be in
 		 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
 		 * feature's declaring EClass. If the annotation starts with ``#`` then the rest of it is considered as a comment. This can be used to clearly
-		 * specify an empty list of element types, e.g. if ``builder`` EOperations or template objects are used to populate the references.
+		 * specify an empty list of element types, e.g. if ``factory`` EOperations or template objects are used to populate the references.
 		 */
 		ELEMENT_TYPES("element-types"),
 

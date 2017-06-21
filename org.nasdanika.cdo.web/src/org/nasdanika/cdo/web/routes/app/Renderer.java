@@ -3604,19 +3604,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			
 			// Template objects
 			
-			// Builder operations
-			boolean createBuilderDivider = !wirerers.isEmpty();
+			// Factory operations
+			boolean createFactoryDivider = !wirerers.isEmpty();
 			for (EOperation eOperation: obj.eClass().getEAllOperations()) {				
 				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
 				if (eOperationTargetInfo != null
 						&& feature.getName().equals(eOperationTargetInfo.getFeature())
-						&& eOperationTargetInfo.getRole() == Role.builder
+						&& eOperationTargetInfo.getRole() == Role.factory
 						&& isVisible(context, obj, eOperation)
 						&& context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
 					
-					if (createBuilderDivider) {
+					if (createFactoryDivider) {
 						wirerers.add(() -> addButton.divider());
-						createBuilderDivider = false;
+						createFactoryDivider = false;
 					}
 					
 					wirerers.add(() -> {
@@ -3665,7 +3665,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * This implementation reads element types from ``element-types`` annotation. The list of element types shall be space-separated. Elements shall be in
 	 * the following format: ``<eclass name>[@<epackage ns uri>]``. EPackage namespace URI part can be omitted if the class is in the same package with the 
 	 * feature's declaring EClass. If the annotation starts with ``#`` then the rest of it is considered as a comment. This can be used to clearly
-	 * specify an empty list of element types, e.g. if ``builder`` EOperations or template objects are used to populate the references.
+	 * specify an empty list of element types, e.g. if ``factory`` EOperations or template objects are used to populate the references.
 	 *   
 	 * If there is no ``element-types`` annotation, this implementation returns a list of all concrete classes from the session package registry which are compatible with the feature type.
 	 * @param context
@@ -5848,7 +5848,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			// Four types of items
 			// - classes
 			// - template objects
-			// - builder eoperations
+			// - factory eoperations
 			// - dividers
 			// collect them all as Consumer<Button> and then apply to the button itself if single, or to items is multiple - check size from the consumers.
 			
@@ -5889,12 +5889,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				
 				// Template objects
 				
-				// Builder operations
+				// Factory operations
 				for (EOperation eOperation: obj.eClass().getEAllOperations()) {				
 					EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);				
 					if (eOperationTargetInfo != null
 							&& feature.getName().equals(eOperationTargetInfo.getFeature())
-							&& eOperationTargetInfo.getRole() == Role.builder
+							&& eOperationTargetInfo.getRole() == Role.factory
 							&& isVisible(context, obj, eOperation)
 							&& context.authorize(obj, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
 						
