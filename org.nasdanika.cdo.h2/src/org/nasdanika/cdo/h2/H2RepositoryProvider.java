@@ -13,6 +13,7 @@ import org.eclipse.net4j.db.IDBAdapter;
 import org.eclipse.net4j.db.h2.H2Adapter;
 import org.h2.jdbcx.JdbcDataSource;
 import org.nasdanika.cdo.AbstractDatabaseRepositoryProvider;
+import org.nasdanika.core.CoreUtil;
 import org.osgi.service.component.ComponentContext;
 
 public class H2RepositoryProvider extends AbstractDatabaseRepositoryProvider {
@@ -60,6 +61,9 @@ public class H2RepositoryProvider extends AbstractDatabaseRepositoryProvider {
 		if (urlStr==null) {
 			// If URL is not specified then database is created in bundle's storage area.
 			urlStr = context.getBundleContext().getDataFile("db").getAbsolutePath()+File.separator+componentName;
+		} else if (urlStr instanceof String) {
+			// Interpolate with system properties
+			urlStr = CoreUtil.interpolate((String) urlStr, token -> System.getProperty(token));
 		}
 		
 		dataSource.setURL("jdbc:h2:"+urlStr);
@@ -69,7 +73,7 @@ public class H2RepositoryProvider extends AbstractDatabaseRepositoryProvider {
 	@Override
 	protected IMappingStrategy createMappingStrategy(ComponentContext context) {
 		IMappingStrategy mappingStrategy = CDODBUtil.createHorizontalMappingStrategy(isAudits(context), isBranches(context));
-		mappingStrategy.getProperties().put(IMappingStrategy.PROP_QUALIFIED_NAMES, "true");
+		mappingStrategy.getProperties().put(IMappingStrategy.Props.QUALIFIED_NAMES, "true");
 		return mappingStrategy;
 	}
 	
