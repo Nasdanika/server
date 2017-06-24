@@ -2989,7 +2989,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		Map<String,Object> categoriesIconsAndLabels = new HashMap<>();
 		List<EStructuralFeature> leftPanelFeatures = getVisibleFeatures(context, obj, vf -> getTypedElementLocation(context, vf) == TypedElementLocation.leftPanel);
 		if (leftPanelFeatures.isEmpty()) {
-			return null;
+			return ret;
 		}
 		
 		Object feature = context instanceof HttpServletRequestContext ? ((HttpServletRequestContext) context).getRequest().getAttribute(CONTEXT_ESTRUCTURAL_FEATURE_KEY) : null;
