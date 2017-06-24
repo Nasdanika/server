@@ -431,7 +431,9 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (leftPanel == null) {
 			bodyDiv.content(contentDiv);			
 		} else {			
-			Tag leftPanelDiv = bodyDiv.getFactory().div(leftPanel);
+			Tag leftPanelDiv = bodyDiv.getFactory().div(leftPanel)
+					.style("overflow-x", "scroll")
+					.style().border().right("solid silver 1px");
 			setLeftPanelAndContentColSizes(context, leftPanelDiv, contentDiv);
 			bodyDiv.content(bodyDiv.getFactory().div(leftPanelDiv, contentDiv).bootstrap().grid().row());			
 		}
@@ -518,8 +520,8 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * Sets left panel and content sizes.
 	 */
 	protected void setLeftPanelAndContentColSizes(C context, UIElement<?> leftPanel,  UIElement<?> content) {
-		leftPanel.bootstrap().grid().col(2);
-		content.bootstrap().grid().col(10);
+		leftPanel.bootstrap().grid().col(3);
+		content.bootstrap().grid().col(9);
 	}
 	
 	@RouteMethod(
