@@ -2023,7 +2023,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			};	
 		}
 		JSONObject jsonData = null;
-		if (CONTENT_TYPE_APPLICATION_JSON.contentEquals(request.getContentType())) {
+		if (CONTENT_TYPE_APPLICATION_JSON.equals(request.getContentType())) {
 			// Cache in request to avoid multiple parsing attempts.
 			jsonData = (JSONObject) request.getAttribute(JSON_DATA_REQUEST_ATTRIBUTE_KEY);
 			if (jsonData == null) {
