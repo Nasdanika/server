@@ -359,7 +359,13 @@ public enum RenderAnnotation {
 		 * 
 		 * In the absence of feature value (null or blank string for strings) placeholder values are displayed in the view in a small {@link Well}.
 		 */
-		PLACEHOLDER("placeholder"),				
+		PLACEHOLDER("placeholder"),
+		
+		/**
+		 * {@link EClass} or {@link EReference} annotation containing a list of features to group by left panel menu items. 
+		 * A tree node is created for each feature value.
+		 */
+		GROUP_BY("group-by"),
 
 //===		
 		/**

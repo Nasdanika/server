@@ -5488,10 +5488,76 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}			
 			
 			if (nodeFeature.isMany()) {
+				// Grouping
+				List<EStructuralFeature> groupByFeatures = new ArrayList<>();
+				if (nodeFeature instanceof EReference) {
+					EClass nodeFeatureType = ((EReference) nodeFeature).getEReferenceType();
+					Object groupByAnnotation = getYamlRenderAnnotation(context, nodeFeature, RenderAnnotation.GROUP_BY);
+					if (groupByAnnotation == null) {					
+						groupByAnnotation = getYamlRenderAnnotation(context, nodeFeatureType, RenderAnnotation.GROUP_BY); 
+					}
+					if (groupByAnnotation instanceof String) {
+						for (String gbfn: ((String) groupByAnnotation).split("\\s+")) {
+							EStructuralFeature gbf = nodeFeatureType.getEStructuralFeature(gbfn);
+							if (gbf != null) {
+								groupByFeatures.add(gbf);
+							}
+						}
+					} else if (groupByAnnotation instanceof List) {
+						for (String gbfn: (List<String>) groupByAnnotation) {
+							EStructuralFeature gbf = nodeFeatureType.getEStructuralFeature(gbfn);
+							if (gbf != null) {
+								groupByFeatures.add(gbf);
+							}
+						}						
+					}
+				}
+				
 				for (EObject element: (Collection<EObject>) obj.eGet(nodeFeature)) {
 					JsTreeNode elementNode = getRenderer(element).renderJsTreeNode(context, element, contextObject);
-					if (elementNode != null) {
-						featureNode.children().add(elementNode);
+				
+					if (elementNode != null) {					
+						JsTreeNode contextNode = featureNode;
+						
+						// Grouping
+						for (EStructuralFeature groupByFeature: groupByFeatures) {
+							Object groupByFeatureValue = element.eGet(groupByFeature);
+							if (groupByFeatureValue == null) {
+								break;
+							} 
+							
+							final String groupByDataKey = "group-by";														
+							Map<Object, JsTreeNode> contextGroupingNodes = (Map<Object, JsTreeNode>) contextNode.getData(groupByDataKey);
+							if (contextGroupingNodes == null) {
+								contextGroupingNodes = new HashMap<>();
+								contextNode.setData(groupByDataKey, contextGroupingNodes);								
+							}
+							JsTreeNode groupByFeatureValueNode = contextGroupingNodes.get(groupByFeatureValue);
+							if (groupByFeatureValueNode == null) {
+								groupByFeatureValueNode = htmlFactory.jsTreeNode();
+								if (groupByFeatureValue instanceof EObject) {
+									EObject eGroupByFeatureValue = (EObject) groupByFeatureValue;
+									Renderer<C, EObject> eGroupByFeatureValueRenderer = getRenderer(eGroupByFeatureValue);
+									groupByFeatureValueNode.icon(eGroupByFeatureValueRenderer.getIcon(context, eGroupByFeatureValue));
+									groupByFeatureValueNode.text(eGroupByFeatureValueRenderer.renderLabel(context, eGroupByFeatureValue));
+								} else {
+									groupByFeatureValueNode.icon(getModelElementIcon(context, groupByFeature));
+									groupByFeatureValueNode.text(groupByFeatureValue.toString());										
+								}
+								groupByFeatureValueNode.anchorAttribute("title", "Group");
+								groupByFeatureValueNode.anchorAttribute("style", "cursor:default");
+								groupByFeatureValueNode.setData(groupByFeatureValue);
+								groupByFeatureValueNode.setData("readable", readable);
+								groupByFeatureValueNode.setData("feature", groupByFeature);
+								groupByFeatureValueNode.id(objID+"-"+nodeFeature.getName()+"-group-"+htmlFactory.nextId()); 
+
+								contextNode.children().add(groupByFeatureValueNode);
+								contextGroupingNodes.put(groupByFeatureValue, groupByFeatureValueNode);
+							}
+							contextNode = groupByFeatureValueNode;
+						}
+						
+						contextNode.children().add(elementNode);
 					}					
 				}
 			} else {
