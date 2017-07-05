@@ -21,7 +21,7 @@
          id="org.eclipse.equinox.preferences"
          download-size="0"
          install-size="0"
-         version="3.6.1.v20160815-1406"
+         version="3.7.0.v20170126-2132"
          unpack="false"/>
 
    <plugin
@@ -35,7 +35,7 @@
          id="org.eclipse.core.jobs"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160509-0411"
+         version="3.9.0.v20170322-0013"
          unpack="false"/>
 
    <plugin
@@ -49,21 +49,21 @@
          id="org.eclipse.osgi.util"
          download-size="0"
          install-size="0"
-         version="3.3.100.v20150423-1351"
+         version="3.4.0.v20170111-1608"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.console"
          download-size="0"
          install-size="0"
-         version="1.1.200.v20150929-1405"
+         version="1.1.300.v20170512-2111"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.core.runtime"
          download-size="0"
          install-size="0"
-         version="3.12.0.v20160606-1342"
+         version="3.13.0.v20170207-1030"
          unpack="false"/>
 
    <plugin
@@ -77,7 +77,7 @@
          id="org.eclipse.equinox.common"
          download-size="0"
          install-size="0"
-         version="3.8.0.v20160509-1230"
+         version="3.9.0.v20170207-1454"
          unpack="false"/>
 
    <plugin
@@ -91,35 +91,35 @@
          id="org.eclipse.core.contenttype"
          download-size="0"
          install-size="0"
-         version="3.5.100.v20160418-1621"
+         version="3.6.0.v20170207-1037"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.osgi"
          download-size="0"
          install-size="0"
-         version="3.11.3.v20170209-1843"
+         version="3.12.0.v20170512-1932"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.osgi.services"
          download-size="0"
          install-size="0"
-         version="3.5.100.v20160504-1419"
+         version="3.6.0.v20170228-1906"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.registry"
          download-size="0"
          install-size="0"
-         version="3.6.100.v20160223-2218"
+         version="3.7.0.v20170222-1344"
          unpack="false"/>
 
    <plugin
          id="org.eclipse.equinox.ds"
          download-size="0"
          install-size="0"
-         version="1.4.400.v20160226-2036"
+         version="1.5.0.v20170307-1429"
          unpack="false"/>
 
    <plugin
@@ -133,7 +133,7 @@
          id="org.eclipse.osgi.compatibility.state"
          download-size="0"
          install-size="0"
-         version="1.0.200.v20160504-1419"
+         version="1.1.0.v20170516-1513"
          fragment="true"
          unpack="false"/>
 
@@ -141,7 +141,7 @@
          id="org.eclipse.core.resources"
          download-size="0"
          install-size="0"
-         version="3.11.1.v20161107-2032"
+         version="3.12.0.v20170417-1558"
          unpack="false"/>
 
 </feature>
