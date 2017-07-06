@@ -47,8 +47,9 @@ import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.felix.scr.Component;
-import org.apache.felix.scr.ScrService;
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -168,7 +169,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	public static final String CONTEXT_MODEL_ELEMENT_PATH_KEY = "contextModelElementPath";
 	public static final int MARKDOWN_OPTIONS = 	Extensions.ALL ^ Extensions.HARDWRAPS ^ Extensions.SUPPRESS_HTML_BLOCKS ^ Extensions.SUPPRESS_ALL_HTML;
 
-	private ScrService scrService;
+	private ServiceComponentRuntime serviceComponentRuntime;
 	private int pathOffset = 1;
 	private BundleContext bundleContext;
 	private Directory searchIndexDirectory;
@@ -1291,27 +1292,27 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()), 
 						false);
 				
-				if (scrService != null) {
-					Component[] components = scrService.getComponents(bundle);
-					if (components != null) {
-						Map<String, Component> componentMap = new TreeMap<>();
-						for (Component component: components) {
-							componentMap.put(component.getName(), component);
-						}
-						for (Component component: componentMap.values()) {
+				if (serviceComponentRuntime != null) {
+					Collection<ComponentDescriptionDTO> componentDescriptions = serviceComponentRuntime.getComponentDescriptionDTOs(bundle);
+					Map<String, ComponentDescriptionDTO> componentMap = new TreeMap<>();
+					for (ComponentDescriptionDTO component: componentDescriptions) {
+						componentMap.put(component.name, component);
+					}
+					for (ComponentDescriptionDTO componentDescription: componentMap.values()) {
+						for (ComponentConfigurationDTO componentConfiguration: serviceComponentRuntime.getComponentConfigurationDTOs(componentDescription)) {
 							TocNode componentToc = bundleToc.createChild(
-									component.getName(), 
-									COMPONENT_INFO_PATH+component.getId()+"/index.html", 
+									componentDescription.name, 
+									COMPONENT_INFO_PATH+componentConfiguration.id+"/index.html", 
 									"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
 									null,
 									null,
-									obj->obj instanceof Component && ((Component) obj).getId() == component.getId(), 
+									obj->obj instanceof ComponentConfigurationDTO && ((ComponentConfigurationDTO) obj).id == componentConfiguration.id,  
 									false);
-
+	
 							synchronized (bundleTocNodeFactories) {
 								BundleTocNodeFactoryEntry be = matchVersion(bundle);
 								if (be!=null) {
-									List<TocNodeFactory> ctnfl = be.componentTocNodeFactories.get(component.getName());
+									List<TocNodeFactory> ctnfl = be.componentTocNodeFactories.get(componentDescription.name);
 									if (ctnfl!=null) {
 										for (TocNodeFactory tnf: ctnfl) {
 											if (!tnf.isSection() && !tnf.isElementDoc() && tnf.isRoot(be.tocNodeFactories)) {
@@ -1320,7 +1321,7 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 										}
 									}
 								}
-							}						
+							}
 						}
 					}
 				}
@@ -1387,21 +1388,21 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 							obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()), 
 							false);
 					
-					if (scrService != null) {
-						Component[] components = scrService.getComponents(bundle);
-						if (components != null) {
-							Map<String, Component> componentMap = new TreeMap<>();
-							for (Component component: components) {
-								componentMap.put(component.getName(), component);
-							}
-							for (Component component: componentMap.values()) {
+					if (serviceComponentRuntime != null) {
+						Collection<ComponentDescriptionDTO> componentDescriptions = serviceComponentRuntime.getComponentDescriptionDTOs(bundle);
+						Map<String, ComponentDescriptionDTO> componentMap = new TreeMap<>();
+						for (ComponentDescriptionDTO component: componentDescriptions) {
+							componentMap.put(component.name, component);
+						}
+						for (ComponentDescriptionDTO componentDescription: componentMap.values()) {
+							for (ComponentConfigurationDTO componentConfiguration: serviceComponentRuntime.getComponentConfigurationDTOs(componentDescription)) {
 								bundleToc.createChild(
-										component.getName(), 
-										COMPONENT_INFO_PATH+component.getId()+"/index.html", 
+										componentDescription.name, 
+										COMPONENT_INFO_PATH+componentConfiguration.id+"/index.html", 
 										"/bundle/org.nasdanika.icons/fatcow-hosting-icons/FatCow_Icons16x16/cog.png", 
 										null, 
 										null,
-										obj->obj instanceof Component && ((Component) obj).getId() == component.getId(), 
+										obj->obj instanceof ComponentConfigurationDTO && ((ComponentConfigurationDTO) obj).id == componentConfiguration.id, 
 										false);
 							}
 						}
@@ -1708,20 +1709,26 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			String tail = path.substring(COMPONENT_INFO_PATH.length());
 			
 			String[] ta = tail.split("/");
-			if (ta.length != 2 || scrService == null) {
+			if (ta.length != 2 || serviceComponentRuntime == null) {
 				return null;
 			}
-			Component component = scrService.getComponent(Long.parseLong(ta[0]));
-			if (component != null) {
-				if (INDEX_HTML.equals(ta[1])) {
-					return componentDocumentationGenerator.generateComponentInfo(component);
+			// Looping through - there is no get component by id method in the new API. 
+			for (Bundle bundle: bundleContext.getBundles()) {
+				for (ComponentDescriptionDTO componentDescription: serviceComponentRuntime.getComponentDescriptionDTOs(bundle)) {
+					for (ComponentConfigurationDTO componentConfiguration: serviceComponentRuntime.getComponentConfigurationDTOs(componentDescription)) {
+						if (componentConfiguration.id == Long.parseLong(ta[0])) {
+							if (INDEX_HTML.equals(ta[1])) {
+								return componentDocumentationGenerator.generateComponentInfo(componentConfiguration);
+							}
+							
+							if (DIAGRAM_PNG.equals(ta[1])) {
+								return componentDocumentationGenerator.generateComponentContextDiagram(context, componentConfiguration);
+							}
+							
+							return null;
+						}
+					}
 				}
-				
-				if (DIAGRAM_PNG.equals(ta[1])) {
-					return componentDocumentationGenerator.generateComponentContextDiagram(context, component);
-				}
-				
-				return null;
 			}
 			return null;
 		}
@@ -2752,12 +2759,12 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 		scheduleReloading();		
 	}
 	
-	public void setScrService(ScrService scrService) {
-		this.scrService = scrService;		
+	public void setServiceComponentRuntime(ServiceComponentRuntime scrService) {
+		this.serviceComponentRuntime = scrService;		
 	}
 	
-	public ScrService getScrService() {
-		return scrService;
+	public ServiceComponentRuntime getServiceComponentRuntime() {
+		return serviceComponentRuntime;
 	}
 
 	protected void addTocExtension(IExtensionTracker tracker, IExtension extension, IConfigurationElement ce) {
@@ -3107,21 +3114,19 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 	public Tag componentLink(String componentName, long componentId) {
 		return htmlFactory.link(ROUTER_DOC_CONTENT_FRAGMENT_PREFIX+docRoutePath+COMPONENT_INFO_PATH+componentId+"/index.html", StringEscapeUtils.escapeHtml4(componentName));		
 	}	
-	
-	public Tag componentLink(Component component) {
-		return componentLink(component.getName(), component.getId());
+	 
+	public Tag componentLink(ComponentConfigurationDTO componentConfigurationDTO) {
+		return componentLink(componentConfigurationDTO.description.name, componentConfigurationDTO.id);
 	}
 	
 	public Tag componentLink(Bundle bundle, String componentName) {
-		if (scrService == null) {
-			return htmlFactory.span(StringEscapeUtils.escapeHtml4("SCR service not available, component not found: '"+componentName+"' in "+bundle.getSymbolicName()+" "+bundle.getVersion()));
+		if (serviceComponentRuntime == null) {
+			return htmlFactory.span(StringEscapeUtils.escapeHtml4("ServiceConfigurationRuntime service not available, component not found: '"+componentName+"' in "+bundle.getSymbolicName()+" "+bundle.getVersion()));
 		}
-		Component[] bundleComponents = scrService.getComponents(bundle);
-		if (bundleComponents != null) {
-			for (Component cmp: bundleComponents) {
-				if (componentName.equals(cmp.getName())) {
-					return componentLink(cmp);
-				}
+		ComponentDescriptionDTO componentDescriptionDTO = serviceComponentRuntime.getComponentDescriptionDTO(bundle, componentName);
+		if (componentDescriptionDTO != null) {
+			for (ComponentConfigurationDTO configuration: serviceComponentRuntime.getComponentConfigurationDTOs(componentDescriptionDTO)) {
+				return componentLink(configuration);
 			}
 		}
 				

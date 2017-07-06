@@ -11,21 +11,21 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.felix.scr.Component;
 import org.eclipse.emf.common.util.ECollections;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Form;
 import org.nasdanika.html.HTMLFactory;
 import org.nasdanika.html.Modal;
 import org.nasdanika.html.Tag;
-import org.nasdanika.html.TextArea;
-import org.nasdanika.html.Bootstrap.Style;
 import org.nasdanika.html.Tag.TagName;
+import org.nasdanika.html.TextArea;
 import org.nasdanika.osgi.model.Element;
 import org.nasdanika.osgi.model.ModelFactory;
 import org.nasdanika.osgi.model.Runtime;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
 
 import net.sourceforge.plantuml.SourceStringReader;
 
@@ -61,7 +61,7 @@ class BundleAndComponentDocumentationGeneratorBase {
 			OutputStream out) throws IOException, BundleException {
 				
 		Runtime runtime = ModelFactory.eINSTANCE.createRuntime();
-		runtime.load(ECollections.newBasicEList(docRoute.getBundleContext().getBundles()), docRoute.getScrService());
+		runtime.load(ECollections.newBasicEList(docRoute.getBundleContext().getBundles()), docRoute.getServiceComponentRuntime());
 		
 		Collection<Pattern> includePatterns = new ArrayList<>();
 		if (!CoreUtil.isBlank(includes)) {
@@ -95,7 +95,7 @@ class BundleAndComponentDocumentationGeneratorBase {
 					}
 				} else {
 					for (org.nasdanika.osgi.model.Component mComponent: mBundle.getComponents()) {
-						if (((Component) contextObject).getId() == mComponent.getId()) {
+						if (((ComponentConfigurationDTO) contextObject).id == mComponent.getId()) {
 							contextElement = mComponent;
 							contextElements.add(contextElement);
 							break;
@@ -210,7 +210,7 @@ class BundleAndComponentDocumentationGeneratorBase {
 				//System.out.println(source.eClass().getName());
 				// Require bundle
 				String sourceAlias = source.eClass().getName()+"_"+source.getId();
-				if (dependencies && source instanceof org.nasdanika.osgi.model.Bundle) {
+				if (dependencies && source instanceof org.nasdanika.osgi.model.Bundle && (!components || ((org.nasdanika.osgi.model.Bundle) source).getComponents().isEmpty()) ) { // references from packages are not supported - hiding.
 					for (org.nasdanika.osgi.model.Bundle rb: ((org.nasdanika.osgi.model.Bundle) source).getRequires()) {
 						if (diagramElements.contains(rb)) {
 							specBuilder.append(sourceAlias+" .d.> "+rb.eClass().getName()+"_"+rb.getId()).append(System.lineSeparator());
@@ -220,57 +220,59 @@ class BundleAndComponentDocumentationGeneratorBase {
 				
 				// References
 				if (services) {
-					if (source instanceof org.nasdanika.osgi.model.Bundle) {						
-						for (org.nasdanika.osgi.model.ServiceReference ref: source.getOutboundReferences()) {
-							Element trg = ref.getReferenceTarget();							
-							if (trg instanceof org.nasdanika.osgi.model.Component && !components) {
-								trg = (Element) trg.eContainer();
-							}
-							if (trg != source && diagramElements.contains(trg)) {
-								specBuilder.append("["+sourceAlias+"] -d-> ");
-								String targetAlias = trg.eClass().getName()+"_"+trg.getId();
-								boolean serviceMatched = false;
-								if (trg instanceof org.nasdanika.osgi.model.Component && ref.getObjectClass().size() == 1) {
-									for (String svc: ((org.nasdanika.osgi.model.Component) trg).getServices()) {
-										if (svc.equals(ref.getObjectClass().get(0))) {
-											specBuilder.append(targetAlias+"_"+svc);
-											serviceMatched = true;
-											break;
+					if (source instanceof org.nasdanika.osgi.model.Bundle) {		
+						if (!components || ((org.nasdanika.osgi.model.Bundle) source).getComponents().isEmpty()) { // No support for references from packages - hiding.
+							for (org.nasdanika.osgi.model.ServiceReference ref: source.getOutboundReferences()) {
+								Element trg = ref.getReferenceTarget();							
+								if (trg instanceof org.nasdanika.osgi.model.Component && !components) {
+									trg = (Element) trg.eContainer();
+								}
+								if (trg != source && diagramElements.contains(trg)) {
+									specBuilder.append("["+sourceAlias+"] -d-> ");
+									String targetAlias = trg.eClass().getName()+"_"+trg.getId();
+									boolean serviceMatched = false;
+									if (trg instanceof org.nasdanika.osgi.model.Component && ref.getObjectClass().size() == 1) {
+										for (String svc: ((org.nasdanika.osgi.model.Component) trg).getServices()) {
+											if (svc.equals(ref.getObjectClass().get(0))) {
+												specBuilder.append(targetAlias+"_"+svc);
+												serviceMatched = true;
+												break;
+											}
 										}
 									}
-								}
-								
-								if (!serviceMatched) {
-									specBuilder.append("["+targetAlias+"]");
-									if (types != Types.hide) {
-										for (int i=0; i < ref.getObjectClass().size(); ++i) {
-											specBuilder.append(i == 0 ? " : " : ", ");
-											String oc = ref.getObjectClass().get(i);
-											specBuilder.append(types == Types.fullyQualifiedName ? oc : oc.substring(oc.lastIndexOf('.')+1));
-										}
-									}
-								}
-								specBuilder.append(System.lineSeparator());	
-							}
-						}
-						if (!components) {
-							for (org.nasdanika.osgi.model.Component cmp: ((org.nasdanika.osgi.model.Bundle) source).getComponents()) {
-								for (org.nasdanika.osgi.model.ServiceReference ref: cmp.getOutboundReferences()) {
-									Element trg = ref.getReferenceTarget();							
-									if (trg instanceof org.nasdanika.osgi.model.Component && !components) {
-										trg = (Element) trg.eContainer();
-									}
-									if (trg != source && diagramElements.contains(trg)) {
-										String targetAlias = trg.eClass().getName()+"_"+trg.getId();
-										specBuilder.append("["+sourceAlias+"] -d-> ["+targetAlias+"]");
+									
+									if (!serviceMatched) {
+										specBuilder.append("["+targetAlias+"]");
 										if (types != Types.hide) {
 											for (int i=0; i < ref.getObjectClass().size(); ++i) {
 												specBuilder.append(i == 0 ? " : " : ", ");
 												String oc = ref.getObjectClass().get(i);
 												specBuilder.append(types == Types.fullyQualifiedName ? oc : oc.substring(oc.lastIndexOf('.')+1));
 											}
-										}																		
-										specBuilder.append(System.lineSeparator());
+										}
+									}
+									specBuilder.append(System.lineSeparator());	
+								}
+							}
+							if (!components) {
+								for (org.nasdanika.osgi.model.Component cmp: ((org.nasdanika.osgi.model.Bundle) source).getComponents()) {
+									for (org.nasdanika.osgi.model.ServiceReference ref: cmp.getOutboundReferences()) {
+										Element trg = ref.getReferenceTarget();							
+										if (trg instanceof org.nasdanika.osgi.model.Component && !components) {
+											trg = (Element) trg.eContainer();
+										}
+										if (trg != source && diagramElements.contains(trg)) {
+											String targetAlias = trg.eClass().getName()+"_"+trg.getId();
+											specBuilder.append("["+sourceAlias+"] -d-> ["+targetAlias+"]");
+											if (types != Types.hide) {
+												for (int i=0; i < ref.getObjectClass().size(); ++i) {
+													specBuilder.append(i == 0 ? " : " : ", ");
+													String oc = ref.getObjectClass().get(i);
+													specBuilder.append(types == Types.fullyQualifiedName ? oc : oc.substring(oc.lastIndexOf('.')+1));
+												}
+											}																		
+											specBuilder.append(System.lineSeparator());
+										}
 									}
 								}
 							}

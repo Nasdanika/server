@@ -6,13 +6,14 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.felix.scr.Component;
-import org.apache.felix.scr.ScrService;
 import org.nasdanika.cdo.web.doc.DocRoute;
 import org.nasdanika.cdo.web.doc.WikiLinkProcessor.Renderer;
 import org.nasdanika.cdo.web.doc.WikiLinkResolver;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Version;
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
 import org.pegdown.LinkRenderer.Rendering;
 
 public class ComponentInfoResolver implements WikiLinkResolver, Renderer {
@@ -24,8 +25,8 @@ public class ComponentInfoResolver implements WikiLinkResolver, Renderer {
 	@Override
 	public String resolve(String spec, String docRoutePath, Map<Object, Object> environment) {
 		DocRoute docRoute = (DocRoute) environment.get(DocRoute.class);
-		ScrService scrService = docRoute.getScrService();
-		if (scrService == null) {
+		ServiceComponentRuntime serviceComponentRuntime = docRoute.getServiceComponentRuntime();
+		if (serviceComponentRuntime == null) {
 			return null;
 		}
 		
@@ -69,17 +70,14 @@ public class ComponentInfoResolver implements WikiLinkResolver, Renderer {
 			}
 		}
 		
-		Component[] components = scrService.getComponents(matchedBundle);
-		if (components == null) {
-			return null;
-		}
-		
 		String componentName = sa[sa.length == 2 ?  1 : 2];
-		for (Component component: components) {
-			if (component.getName().equals(componentName)) {
-				specTL.set(spec);
-				docRoutePathTL.set(docRoutePath);
-				return docRoutePath+DocRoute.COMPONENT_INFO_PATH+component.getId()+"/index.html";				
+		for (ComponentDescriptionDTO description: serviceComponentRuntime.getComponentDescriptionDTOs(matchedBundle)) {
+			if (description.name.equals(componentName)) {
+				for (ComponentConfigurationDTO configuration: serviceComponentRuntime.getComponentConfigurationDTOs(description)) {
+					specTL.set(spec);
+					docRoutePathTL.set(docRoutePath);
+					return docRoutePath+DocRoute.COMPONENT_INFO_PATH+configuration.id+"/index.html";				
+				}
 			}
 		}
 

@@ -157,7 +157,7 @@ class BundleDocumentationGenerator extends BundleAndComponentDocumentationGenera
 			.style().border().right("dashed 1px silver")
 			.style().padding().right("5px");
 		
-		if (docRoute.getScrService() != null && docRoute.getScrService().getComponents() != null) {
+		if (docRoute.getServiceComponentRuntime() != null && !docRoute.getServiceComponentRuntime().getComponentDescriptionDTOs(docRoute.getBundleContext().getBundles()).isEmpty()) {
 			Input componentsCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("components");
 			diagramConfigurationForm.formGroup("Components", componentsCheckbox, "Show components in bundles")
 				.style().border().right("dashed 1px silver")
@@ -231,7 +231,7 @@ class BundleDocumentationGenerator extends BundleAndComponentDocumentationGenera
 			.style().border().right("dashed 1px silver")
 			.style().padding().right("5px");
 		
-		if (docRoute.getScrService() != null && docRoute.getScrService().getComponents() != null) {
+		if (docRoute.getServiceComponentRuntime() != null && !docRoute.getServiceComponentRuntime().getComponentDescriptionDTOs(docRoute.getBundleContext().getBundles()).isEmpty()) {
 			Input componentsCheckbox = getHtmlFactory().input(InputType.checkbox).knockout().checked("components");
 			diagramConfigurationForm.formGroup("Components", componentsCheckbox, "Show components in bundles")
 				.style().border().right("dashed 1px silver")
