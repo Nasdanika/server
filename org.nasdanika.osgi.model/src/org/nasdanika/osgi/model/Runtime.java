@@ -2,11 +2,11 @@
  */
 package org.nasdanika.osgi.model;
 
-import org.apache.felix.scr.ScrService;
 import org.eclipse.emf.cdo.CDOObject;
 
 import org.eclipse.emf.common.util.EList;
 import org.osgi.framework.BundleException;
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
 
 /**
  * <!-- begin-user-doc -->
@@ -48,9 +48,9 @@ public interface Runtime extends CDOObject {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @model exceptions="org.nasdanika.osgi.model.BundleException" bundlesDataType="org.nasdanika.osgi.model.FrameworkBundle" bundlesMany="true" scrServiceDataType="org.nasdanika.osgi.model.ScrService"
+	 * @model exceptions="org.nasdanika.osgi.model.BundleException" bundlesDataType="org.nasdanika.osgi.model.FrameworkBundle" bundlesMany="true" serviceComponentRuntimeDataType="org.nasdanika.osgi.model.ServiceComponentRuntime"
 	 * @generated
 	 */
-	void load(EList<org.osgi.framework.Bundle> bundles, ScrService scrService) throws BundleException;
+	void load(EList<org.osgi.framework.Bundle> bundles, ServiceComponentRuntime serviceComponentRuntime) throws BundleException;
 
 } // Runtime

@@ -10,14 +10,14 @@
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Model" basePackage="org.nasdanika.osgi" disposableProviderFactory="true"
       ecorePackage="model.ecore#/">
-    <genDataTypes ecoreDataType="model.ecore#//ScrService"/>
+    <genDataTypes ecoreDataType="model.ecore#//ServiceComponentRuntime"/>
     <genDataTypes ecoreDataType="model.ecore#//FrameworkBundle"/>
     <genDataTypes ecoreDataType="model.ecore#//BundleException"/>
     <genClasses ecoreClass="model.ecore#//Runtime">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference model.ecore#//Runtime/bundles"/>
       <genOperations ecoreOperation="model.ecore#//Runtime/load">
         <genParameters ecoreParameter="model.ecore#//Runtime/load/bundles"/>
-        <genParameters ecoreParameter="model.ecore#//Runtime/load/scrService"/>
+        <genParameters ecoreParameter="model.ecore#//Runtime/load/serviceComponentRuntime"/>
       </genOperations>
     </genClasses>
     <genClasses ecoreClass="model.ecore#//Element">

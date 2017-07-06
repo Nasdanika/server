@@ -10,7 +10,7 @@
     </eAnnotations>
     <eOperations name="load" eExceptions="#//BundleException">
       <eParameters name="bundles" upperBound="-1" eType="#//FrameworkBundle"/>
-      <eParameters name="scrService" eType="#//ScrService"/>
+      <eParameters name="serviceComponentRuntime" eType="#//ServiceComponentRuntime"/>
     </eOperations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bundles" upperBound="-1"
         eType="#//Bundle" containment="true">
@@ -56,7 +56,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="services" upperBound="-1"
         eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="ScrService" instanceClassName="org.apache.felix.scr.ScrService"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="ServiceComponentRuntime" instanceClassName="org.osgi.service.component.runtime.ServiceComponentRuntime"/>
   <eClassifiers xsi:type="ecore:EDataType" name="FrameworkBundle" instanceClassName="org.osgi.framework.Bundle"/>
   <eClassifiers xsi:type="ecore:EDataType" name="BundleException" instanceClassName="org.osgi.framework.BundleException"/>
 </ecore:EPackage>

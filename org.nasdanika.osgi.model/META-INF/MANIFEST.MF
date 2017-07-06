@@ -13,5 +13,6 @@ Export-Package: org.nasdanika.osgi.model,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.cdo;visibility:=reexport,
- org.eclipse.equinox.ds;bundle-version="1.4.300"
+ org.eclipse.equinox.ds;bundle-version="1.4.300",
+ org.eclipse.osgi.services
 Bundle-ActivationPolicy: lazy

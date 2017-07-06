@@ -2,7 +2,6 @@
  */
 package org.nasdanika.osgi.model.impl;
 
-import org.apache.felix.scr.ScrService;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -19,6 +18,7 @@ import org.nasdanika.osgi.model.ModelFactory;
 import org.nasdanika.osgi.model.ModelPackage;
 import org.nasdanika.osgi.model.ServiceReference;
 import org.osgi.framework.BundleException;
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
 
 /**
  * <!-- begin-user-doc -->
@@ -67,7 +67,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EDataType scrServiceEDataType = null;
+	private EDataType serviceComponentRuntimeEDataType = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -167,7 +167,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EOperation getRuntime__Load__EList_ScrService() {
+	public EOperation getRuntime__Load__EList_ServiceComponentRuntime() {
 		return runtimeEClass.getEOperations().get(0);
 	}
 
@@ -338,8 +338,8 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EDataType getScrService() {
-		return scrServiceEDataType;
+	public EDataType getServiceComponentRuntime() {
+		return serviceComponentRuntimeEDataType;
 	}
 
 	/**
@@ -390,7 +390,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		// Create classes and their features
 		runtimeEClass = createEClass(RUNTIME);
 		createEReference(runtimeEClass, RUNTIME__BUNDLES);
-		createEOperation(runtimeEClass, RUNTIME___LOAD__ELIST_SCRSERVICE);
+		createEOperation(runtimeEClass, RUNTIME___LOAD__ELIST_SERVICECOMPONENTRUNTIME);
 
 		elementEClass = createEClass(ELEMENT);
 		createEReference(elementEClass, ELEMENT__OUTBOUND_REFERENCES);
@@ -415,7 +415,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(componentEClass, COMPONENT__SERVICES);
 
 		// Create data types
-		scrServiceEDataType = createEDataType(SCR_SERVICE);
+		serviceComponentRuntimeEDataType = createEDataType(SERVICE_COMPONENT_RUNTIME);
 		frameworkBundleEDataType = createEDataType(FRAMEWORK_BUNDLE);
 		bundleExceptionEDataType = createEDataType(BUNDLE_EXCEPTION);
 	}
@@ -455,9 +455,9 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEClass(runtimeEClass, org.nasdanika.osgi.model.Runtime.class, "Runtime", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEReference(getRuntime_Bundles(), this.getBundle(), null, "bundles", null, 0, -1, org.nasdanika.osgi.model.Runtime.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
-		EOperation op = initEOperation(getRuntime__Load__EList_ScrService(), null, "load", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EOperation op = initEOperation(getRuntime__Load__EList_ServiceComponentRuntime(), null, "load", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getFrameworkBundle(), "bundles", 0, -1, IS_UNIQUE, IS_ORDERED);
-		addEParameter(op, this.getScrService(), "scrService", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEParameter(op, this.getServiceComponentRuntime(), "serviceComponentRuntime", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEException(op, this.getBundleException());
 
 		initEClass(elementEClass, Element.class, "Element", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -483,7 +483,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getComponent_Services(), ecorePackage.getEString(), "services", null, 0, -1, Component.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		// Initialize data types
-		initEDataType(scrServiceEDataType, ScrService.class, "ScrService", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(serviceComponentRuntimeEDataType, ServiceComponentRuntime.class, "ServiceComponentRuntime", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(frameworkBundleEDataType, org.osgi.framework.Bundle.class, "FrameworkBundle", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(bundleExceptionEDataType, BundleException.class, "BundleException", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 

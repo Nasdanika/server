@@ -96,7 +96,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int RUNTIME___LOAD__ELIST_SCRSERVICE = 0;
+	int RUNTIME___LOAD__ELIST_SERVICECOMPONENTRUNTIME = 0;
 
 	/**
 	 * The number of operations of the '<em>Runtime</em>' class.
@@ -401,14 +401,14 @@ public interface ModelPackage extends EPackage {
 
 
 	/**
-	 * The meta object id for the '<em>Scr Service</em>' data type.
+	 * The meta object id for the '<em>Service Component Runtime</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.apache.felix.scr.ScrService
-	 * @see org.nasdanika.osgi.model.impl.ModelPackageImpl#getScrService()
+	 * @see org.osgi.service.component.runtime.ServiceComponentRuntime
+	 * @see org.nasdanika.osgi.model.impl.ModelPackageImpl#getServiceComponentRuntime()
 	 * @generated
 	 */
-	int SCR_SERVICE = 5;
+	int SERVICE_COMPONENT_RUNTIME = 5;
 
 	/**
 	 * The meta object id for the '<em>Framework Bundle</em>' data type.
@@ -454,14 +454,14 @@ public interface ModelPackage extends EPackage {
 	EReference getRuntime_Bundles();
 
 	/**
-	 * Returns the meta object for the '{@link org.nasdanika.osgi.model.Runtime#load(org.eclipse.emf.common.util.EList, org.apache.felix.scr.ScrService) <em>Load</em>}' operation.
+	 * Returns the meta object for the '{@link org.nasdanika.osgi.model.Runtime#load(org.eclipse.emf.common.util.EList, org.osgi.service.component.runtime.ServiceComponentRuntime) <em>Load</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the '<em>Load</em>' operation.
-	 * @see org.nasdanika.osgi.model.Runtime#load(org.eclipse.emf.common.util.EList, org.apache.felix.scr.ScrService)
+	 * @see org.nasdanika.osgi.model.Runtime#load(org.eclipse.emf.common.util.EList, org.osgi.service.component.runtime.ServiceComponentRuntime)
 	 * @generated
 	 */
-	EOperation getRuntime__Load__EList_ScrService();
+	EOperation getRuntime__Load__EList_ServiceComponentRuntime();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.osgi.model.Element <em>Element</em>}'.
@@ -658,15 +658,15 @@ public interface ModelPackage extends EPackage {
 	EAttribute getComponent_Services();
 
 	/**
-	 * Returns the meta object for data type '{@link org.apache.felix.scr.ScrService <em>Scr Service</em>}'.
+	 * Returns the meta object for data type '{@link org.osgi.service.component.runtime.ServiceComponentRuntime <em>Service Component Runtime</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for data type '<em>Scr Service</em>'.
-	 * @see org.apache.felix.scr.ScrService
-	 * @model instanceClass="org.apache.felix.scr.ScrService"
+	 * @return the meta object for data type '<em>Service Component Runtime</em>'.
+	 * @see org.osgi.service.component.runtime.ServiceComponentRuntime
+	 * @model instanceClass="org.osgi.service.component.runtime.ServiceComponentRuntime"
 	 * @generated
 	 */
-	EDataType getScrService();
+	EDataType getServiceComponentRuntime();
 
 	/**
 	 * Returns the meta object for data type '{@link org.osgi.framework.Bundle <em>Framework Bundle</em>}'.
@@ -737,7 +737,7 @@ public interface ModelPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EOperation RUNTIME___LOAD__ELIST_SCRSERVICE = eINSTANCE.getRuntime__Load__EList_ScrService();
+		EOperation RUNTIME___LOAD__ELIST_SERVICECOMPONENTRUNTIME = eINSTANCE.getRuntime__Load__EList_ServiceComponentRuntime();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.osgi.model.impl.ElementImpl <em>Element</em>}' class.
@@ -892,14 +892,14 @@ public interface ModelPackage extends EPackage {
 		EAttribute COMPONENT__SERVICES = eINSTANCE.getComponent_Services();
 
 		/**
-		 * The meta object literal for the '<em>Scr Service</em>' data type.
+		 * The meta object literal for the '<em>Service Component Runtime</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.apache.felix.scr.ScrService
-		 * @see org.nasdanika.osgi.model.impl.ModelPackageImpl#getScrService()
+		 * @see org.osgi.service.component.runtime.ServiceComponentRuntime
+		 * @see org.nasdanika.osgi.model.impl.ModelPackageImpl#getServiceComponentRuntime()
 		 * @generated
 		 */
-		EDataType SCR_SERVICE = eINSTANCE.getScrService();
+		EDataType SERVICE_COMPONENT_RUNTIME = eINSTANCE.getServiceComponentRuntime();
 
 		/**
 		 * The meta object literal for the '<em>Framework Bundle</em>' data type.

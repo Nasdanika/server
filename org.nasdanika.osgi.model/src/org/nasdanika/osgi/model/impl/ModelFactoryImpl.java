@@ -2,7 +2,6 @@
  */
 package org.nasdanika.osgi.model.impl;
 
-import org.apache.felix.scr.ScrService;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
@@ -19,6 +18,7 @@ import org.nasdanika.osgi.model.ModelFactory;
 import org.nasdanika.osgi.model.ModelPackage;
 import org.nasdanika.osgi.model.ServiceReference;
 import org.osgi.framework.BundleException;
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
 
 /**
  * <!-- begin-user-doc -->
@@ -82,8 +82,8 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
-			case ModelPackage.SCR_SERVICE:
-				return createScrServiceFromString(eDataType, initialValue);
+			case ModelPackage.SERVICE_COMPONENT_RUNTIME:
+				return createServiceComponentRuntimeFromString(eDataType, initialValue);
 			case ModelPackage.FRAMEWORK_BUNDLE:
 				return createFrameworkBundleFromString(eDataType, initialValue);
 			case ModelPackage.BUNDLE_EXCEPTION:
@@ -101,8 +101,8 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
-			case ModelPackage.SCR_SERVICE:
-				return convertScrServiceToString(eDataType, instanceValue);
+			case ModelPackage.SERVICE_COMPONENT_RUNTIME:
+				return convertServiceComponentRuntimeToString(eDataType, instanceValue);
 			case ModelPackage.FRAMEWORK_BUNDLE:
 				return convertFrameworkBundleToString(eDataType, instanceValue);
 			case ModelPackage.BUNDLE_EXCEPTION:
@@ -167,8 +167,8 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public ScrService createScrServiceFromString(EDataType eDataType, String initialValue) {
-		return (ScrService)super.createFromString(eDataType, initialValue);
+	public ServiceComponentRuntime createServiceComponentRuntimeFromString(EDataType eDataType, String initialValue) {
+		return (ServiceComponentRuntime)super.createFromString(eDataType, initialValue);
 	}
 
 	/**
@@ -176,7 +176,7 @@ public class ModelFactoryImpl extends EFactoryImpl implements ModelFactory {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String convertScrServiceToString(EDataType eDataType, Object instanceValue) {
+	public String convertServiceComponentRuntimeToString(EDataType eDataType, Object instanceValue) {
 		return super.convertToString(eDataType, instanceValue);
 	}
 

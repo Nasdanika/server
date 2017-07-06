@@ -5,11 +5,10 @@ package org.nasdanika.osgi.model.impl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.felix.scr.Reference;
-import org.apache.felix.scr.ScrService;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
@@ -21,6 +20,11 @@ import org.nasdanika.osgi.model.ModelPackage;
 import org.nasdanika.osgi.model.ServiceReference;
 import org.osgi.framework.BundleException;
 import org.osgi.framework.VersionRange;
+import org.osgi.framework.dto.ServiceReferenceDTO;
+import org.osgi.service.component.runtime.ServiceComponentRuntime;
+import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
+import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
+import org.osgi.service.component.runtime.dto.SatisfiedReferenceDTO;
 
 /**
  * <!-- begin-user-doc -->
@@ -40,6 +44,8 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 	private static final String REQUIRE_BUNDLE = "Require-Bundle";
 	private static final String OBJECT_CLASS = "objectClass";
 	private static final String COMPONENT_ID = "component.id";
+	private static final String SERVICE_ID = "service.id";
+	private static final String SERVICE_BUNDLE_ID = "service.bundleid";
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -85,11 +91,12 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public void load(EList<org.osgi.framework.Bundle> bundles, ScrService scrService) throws BundleException {
+	public void load(EList<org.osgi.framework.Bundle> bundles, ServiceComponentRuntime serviceComponentRuntime) throws BundleException {
 		// Pass 1 - loading elements
 		getBundles().clear();
 		Map<Long, Bundle> bundleMap = new HashMap<>();
 		Map<Long, Component> componentMap = new HashMap<>();
+		Map<Long, ComponentConfigurationDTO> componentConfigurationMap = new HashMap<>();
 		for (org.osgi.framework.Bundle frameworkBundle: bundles) {
 			Bundle bundle = ModelFactory.eINSTANCE.createBundle();
 			getBundles().add(bundle);
@@ -97,22 +104,19 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 			bundle.setSymbolicName(frameworkBundle.getSymbolicName());
 			bundle.setVersion(frameworkBundle.getVersion().toString());
 			bundleMap.put(bundle.getId(), bundle);
-			if (scrService != null) {
-				org.apache.felix.scr.Component[] dsComponents = scrService.getComponents(frameworkBundle);
-				if (dsComponents != null) {
-					for (org.apache.felix.scr.Component dsComponent: dsComponents) {
+			if (serviceComponentRuntime != null) {
+				for (ComponentDescriptionDTO componentDescription: serviceComponentRuntime.getComponentDescriptionDTOs(frameworkBundle)) {
+					for (ComponentConfigurationDTO componentConfiguration: serviceComponentRuntime.getComponentConfigurationDTOs(componentDescription)) {
 						Component component = ModelFactory.eINSTANCE.createComponent();
 						bundle.getComponents().add(component);
-						component.setClassName(dsComponent.getClassName());
-						component.setName(dsComponent.getName());
-						component.setId(dsComponent.getId());
+						component.setClassName(componentDescription.implementationClass);
+						component.setName(componentDescription.name);
+						component.setId(componentConfiguration.id);
 						componentMap.put(component.getId(), component);
-						String[] svcs = dsComponent.getServices();
-						if (svcs != null) {
-							for (String svc: svcs) {
-								component.getServices().add(svc);
-							}
-						}
+						componentConfigurationMap.put(componentConfiguration.id, componentConfiguration);
+						for (String svc: componentDescription.serviceInterfaces) {
+							component.getServices().add(svc);
+						}	
 					}
 				}
 			}
@@ -156,34 +160,41 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 			}
 			
 			for (Component component: bundle.getComponents()) {
-				org.apache.felix.scr.Component dsComponent = scrService.getComponent(component.getId());
-				Reference[] componentReferences = dsComponent.getReferences();
-				if (componentReferences != null) {
-					for (Reference componentReference: componentReferences) {
-						org.osgi.framework.ServiceReference<?>[] csra = componentReference.getServiceReferences();
-						if (csra != null) {
-							for (org.osgi.framework.ServiceReference<?> csr: csra) {
-								bundleReferencesInUse.remove(csr);
+				ComponentConfigurationDTO componentConfiguration = componentConfigurationMap.get(component.getId());
+				SatisfiedReferenceDTO[] satisfiedReferences = componentConfiguration.satisfiedReferences;
+				if (satisfiedReferences != null) {
+					for (SatisfiedReferenceDTO satisfiedReference: satisfiedReferences) {
+						ServiceReferenceDTO[] boundServices = satisfiedReference.boundServices;
+						if (boundServices != null) {
+							for (ServiceReferenceDTO boundServiceReference: boundServices) {
+								// Removing bundle reference.
+								Iterator<org.osgi.framework.ServiceReference<?>> briuIt = bundleReferencesInUse.iterator();
+								while (briuIt.hasNext()) {
+									org.osgi.framework.ServiceReference<?> briu = briuIt.next();
+									Object serviceId = briu.getProperty(SERVICE_ID);
+									if (serviceId instanceof Number && ((Number) serviceId).longValue() == boundServiceReference.id) {
+										briuIt.remove();
+									}
+								}
 								
 								ServiceReference serviceReference = ModelFactory.eINSTANCE.createServiceReference();
-								serviceReference.setName(componentReference.getName());
+								serviceReference.setName(satisfiedReference.name);
 								component.getOutboundReferences().add(serviceReference);
-								Object oca = csr.getProperty(OBJECT_CLASS);
+								Object oca = boundServiceReference.properties.get(OBJECT_CLASS);
 								if (oca instanceof String[]) {
 									for (String oc: (String[]) oca) {
 										serviceReference.getObjectClass().add(oc);
 									}
 								}
-								Object componentId = csr.getProperty(COMPONENT_ID);
-								if (componentId instanceof Long) {
-									serviceReference.setReferenceTarget(componentMap.get((Long) componentId));								
-								} else {
-									serviceReference.setReferenceTarget(bundleMap.get(csr.getBundle().getBundleId()));
+								serviceReference.setReferenceTarget(componentMap.get(boundServiceReference.properties.get(COMPONENT_ID)));
+								if (serviceReference.getReferenceTarget() == null) {
+									serviceReference.setReferenceTarget(bundleMap.get(boundServiceReference.bundle));
 								}								
 							}
 						}
 					}
 				}
+				// TODO - unsatisfied references.
 			}
 			
 			for (org.osgi.framework.ServiceReference<?> bsr: bundleReferencesInUse) {
@@ -214,9 +225,9 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case ModelPackage.RUNTIME___LOAD__ELIST_SCRSERVICE:
+			case ModelPackage.RUNTIME___LOAD__ELIST_SERVICECOMPONENTRUNTIME:
 				try {
-					load((EList<org.osgi.framework.Bundle>)arguments.get(0), (ScrService)arguments.get(1));
+					load((EList<org.osgi.framework.Bundle>)arguments.get(0), (ServiceComponentRuntime)arguments.get(1));
 					return null;
 				}
 				catch (Throwable throwable) {
