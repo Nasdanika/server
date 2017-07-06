@@ -15,14 +15,14 @@
 
 	<properties>
 		<tycho-version>1.0.0</tycho-version>
-		<neon-repo.url>http://download.eclipse.org/releases/oxygen</neon-repo.url>
+		<oxygen-repo.url>http://download.eclipse.org/releases/oxygen</oxygen-repo.url>
 	</properties>
 
 	<repositories>
 		<!-- configure p2 repository to resolve against -->
 		<repository>
 			<id>neon</id>
-			<url>${neon-repo.url}</url>
+			<url>${oxygen-repo.url}</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
