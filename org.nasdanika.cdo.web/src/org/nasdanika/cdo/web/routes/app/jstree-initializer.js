@@ -31,7 +31,7 @@ $(function () {
     			$(".nsd-jstree-context-menu-"+k).contextmenu(function(idx, e) {
     				var selected = data.instance.get_selected(true);
     				var obj = data.instance._model.data[idx];
-    				data.instance.show_contextmenu(obj, e.clientX, e.clientY, e);
+    				data.instance.show_contextmenu(obj, e.pageX, e.pageY, e);
     				data.instance.deselect_all();
     				data.instance.select_node(selected);
     				return false;
