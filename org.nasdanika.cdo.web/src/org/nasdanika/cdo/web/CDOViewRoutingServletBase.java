@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.eresource.CDOResourceNode;
+import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeRequest;
 import org.eclipse.jetty.websocket.servlet.ServletUpgradeResponse;
@@ -241,7 +242,11 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 					CDOID id = CDOIDCodec.INSTANCE.decode(context, NasdanikaCDOUtil.stripExtension(context.getPath()[1]));
 					@SuppressWarnings("unchecked")
 					CDOView view = ((CDOViewContext<?, CR>) context).getView();
-					return context.getAction(view.getObject(id), 1, null, context.getPath()[1]);
+					try {
+						return context.getAction(view.getObject(id), 1, null, context.getPath()[1]);
+					} catch (ObjectNotFoundException e) {
+						return Action.NOT_FOUND;
+					}
 				}
 
 				@Override
