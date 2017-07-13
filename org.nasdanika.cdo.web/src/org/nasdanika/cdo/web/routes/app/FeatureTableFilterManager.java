@@ -18,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.jsoup.Jsoup;
+import org.nasdanika.core.AuthorizationProvider.StandardAction;
 import org.nasdanika.core.Context;
 import org.nasdanika.html.Bootstrap.Color;
 import org.nasdanika.html.Dropdown;
@@ -68,14 +69,17 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 		
 		if (featureSpec instanceof Map && Boolean.TRUE.equals(((Map<?,?>) featureSpec).get("filter")) && context instanceof HttpServletRequestContext) {
 			Set<Object> filterChoices = new HashSet<>(); 
-			((Collection<EObject>) typedElementValue).forEach(element -> {
-				if (test(element)) {
+			for (EObject element: (Collection<EObject>) typedElementValue) {
+				if (test(element) && context.authorize(element, StandardAction.read, null, null)) {
 					Object fv = element.eGet(tableFeature);
 					if (fv != null) {
+						if (fv instanceof EObject && !context.authorize(fv, StandardAction.read, null, null)) {
+							continue;
+						}						
 						filterChoices.add(fv);
 					}
-				}
-			});
+				}								
+			}
 			
 			boolean showFilter = filterChoices.size() > 1;
 			
