@@ -30,7 +30,7 @@ $(function () {
         	if (k != "#") {
     			$(".nsd-jstree-context-menu-"+k).contextmenu(function(idx, e) {
     				var selected = data.instance.get_selected(true);
-    				var obj = data.instance._model.data[idx];
+    				var obj = data.instance.get_node(idx);
     				data.instance.show_contextmenu(obj, e.pageX, e.pageY, e);
     				data.instance.deselect_all();
     				data.instance.select_node(selected);
