@@ -1573,6 +1573,17 @@ public interface SecurityPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '<em>Exception</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.Exception
+	 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getException()
+	 * @generated
+	 */
+	int EXCEPTION = 19;
+
+
+	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.security.Realm <em>Realm</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2384,6 +2395,17 @@ public interface SecurityPackage extends EPackage {
 	EDataType getAccessDecision();
 
 	/**
+	 * Returns the meta object for data type '{@link java.lang.Exception <em>Exception</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Exception</em>'.
+	 * @see java.lang.Exception
+	 * @model instanceClass="java.lang.Exception"
+	 * @generated
+	 */
+	EDataType getException();
+
+	/**
 	 * Returns the factory that creates the instances of the model.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3059,6 +3081,16 @@ public interface SecurityPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType ACCESS_DECISION = eINSTANCE.getAccessDecision();
+
+		/**
+		 * The meta object literal for the '<em>Exception</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.Exception
+		 * @see org.nasdanika.cdo.security.impl.SecurityPackageImpl#getException()
+		 * @generated
+		 */
+		EDataType EXCEPTION = eINSTANCE.getException();
 
 	}
 

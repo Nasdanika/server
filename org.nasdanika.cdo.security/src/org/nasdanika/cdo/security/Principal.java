@@ -110,10 +110,10 @@ public interface Principal extends CDOObject {
 	 *   Authorization environment, e.g. for ``transferFunds`` environment may contain ``transferAmount`` key.
 	 *   Environment may be used by conditional actions and/or conditional permissions.
 	 * <!-- end-model-doc -->
-	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" contextDataType="org.nasdanika.cdo.security.Context"
+	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" exceptions="org.nasdanika.cdo.security.Exception" contextDataType="org.nasdanika.cdo.security.Context"
 	 * @generated
 	 */
-	AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment);
+	AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) throws Exception;
 
 	/**
 	 * <!-- begin-user-doc -->

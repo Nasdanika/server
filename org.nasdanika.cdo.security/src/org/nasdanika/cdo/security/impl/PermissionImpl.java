@@ -182,7 +182,7 @@ public abstract class PermissionImpl extends CDOObjectImpl implements Permission
 	 * <!-- end-user-doc -->
 	 * @generated NOT
 	 */
-	public AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment) {
+	public AccessDecision authorize(Context context, String action, String qualifier, Map<String, Object> environment) throws Exception {
 //		System.out.println(getTarget() + " "+action+" "+qualifier);
 		
 		Date now = new Date();
@@ -243,7 +243,12 @@ public abstract class PermissionImpl extends CDOObjectImpl implements Permission
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case SecurityPackage.PERMISSION___AUTHORIZE__CONTEXT_STRING_STRING_MAP:
-				return authorize((Context)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), (Map<String, Object>)arguments.get(3));
+				try {
+					return authorize((Context)arguments.get(0), (String)arguments.get(1), (String)arguments.get(2), (Map<String, Object>)arguments.get(3));
+				}
+				catch (Throwable throwable) {
+					throw new InvocationTargetException(throwable);
+				}
 			case SecurityPackage.PERMISSION___GET_PRINCIPAL:
 				return getPrincipal();
 			case SecurityPackage.PERMISSION___GET_TARGET:

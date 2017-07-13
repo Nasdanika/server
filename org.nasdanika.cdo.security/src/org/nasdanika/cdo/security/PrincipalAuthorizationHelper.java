@@ -43,7 +43,7 @@ public class PrincipalAuthorizationHelper {
 	 * @param environment
 	 * @return
 	 */
-	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		if (target!=null) {
 			environment = environment == null ? new HashMap<String, Object>() : new HashMap<String, Object>(environment); 
 			environment.put("target", target);
@@ -171,7 +171,7 @@ public class PrincipalAuthorizationHelper {
 			String qualifier, 
 			List<EStructuralFeature> path, 
 			Map<String, Object> environment,
-			Set<Principal> traversed) {
+			Set<Principal> traversed) throws Exception {
 		
 //		System.out.println("Authorizing: "+target+" "+action+" "+qualifier+" "+path);
 		

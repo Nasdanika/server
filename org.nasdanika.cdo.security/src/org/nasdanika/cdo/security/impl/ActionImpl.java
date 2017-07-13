@@ -234,7 +234,7 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	 * @generated NOT
 	 */
 	@Override
-	public boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+	public boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		String[] toMatch;
 		if (CoreUtil.isBlank(qualifier)) {
 			toMatch = new String[] {action, action+":this"}; // So, say read:* matches read because read is the same as read:this
@@ -330,7 +330,12 @@ public class ActionImpl extends CDOObjectImpl implements Action {
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case SecurityPackage.ACTION___MATCH__CONTEXT_EOBJECT_STRING_STRING_MAP:
-				return match((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
+				try {
+					return match((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
+				}
+				catch (Throwable throwable) {
+					throw new InvocationTargetException(throwable);
+				}
 			case SecurityPackage.ACTION___CREATE_PRINCIPAL_PERMISSION:
 				return createPrincipalPermission();
 			case SecurityPackage.ACTION___CREATE_PROTECTED_PERMISSION:

@@ -13,6 +13,7 @@
     <genDataTypes ecoreDataType="security.ecore#//Context"/>
     <genDataTypes ecoreDataType="security.ecore#//PrincipalVisitor"/>
     <genDataTypes ecoreDataType="security.ecore#//AccessDecision"/>
+    <genDataTypes ecoreDataType="security.ecore#//Exception"/>
     <genClasses image="false" ecoreClass="security.ecore#//Realm">
       <genTypeParameters ecoreTypeParameter="security.ecore#//Realm/CR"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference security.ecore#//Realm/administrators"/>

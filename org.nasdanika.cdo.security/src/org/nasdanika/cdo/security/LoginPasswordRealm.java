@@ -14,7 +14,7 @@ package org.nasdanika.cdo.security;
  *
  *
  * @see org.nasdanika.cdo.security.SecurityPackage#getLoginPasswordRealm()
- * @model abstract="true" superTypes="org.nasdanika.cdo.security.Realm<org.nasdanika.cdo.security.LoginPasswordCredentials>"
+ * @model abstract="true" superTypes="org.nasdanika.cdo.security.Realm&lt;org.nasdanika.cdo.security.LoginPasswordCredentials&gt;"
  * @generated
  */
 public interface LoginPasswordRealm extends Realm<LoginPasswordCredentials> {

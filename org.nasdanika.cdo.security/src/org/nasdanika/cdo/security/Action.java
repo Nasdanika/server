@@ -254,10 +254,10 @@ public interface Action extends CDOObject {
 	 *   Then the application model may contain ``largeTransfer`` action instance with amount set to, say, ``10000``. Permission to execute this action then can be allowed to denied  to some principals.
 	 *   
 	 * <!-- end-model-doc -->
-	 * @model contextDataType="org.nasdanika.cdo.security.Context"
+	 * @model exceptions="org.nasdanika.cdo.security.Exception" contextDataType="org.nasdanika.cdo.security.Context"
 	 * @generated
 	 */
-	boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment);
+	boolean match(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) throws Exception;
 
 	/**
 	 * <!-- begin-user-doc -->

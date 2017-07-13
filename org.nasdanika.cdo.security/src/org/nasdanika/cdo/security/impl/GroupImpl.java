@@ -3,18 +3,13 @@
 package org.nasdanika.cdo.security.impl;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.cdo.security.PrincipalAuthorizationHelper;
 import org.nasdanika.cdo.security.Group;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.PrincipalVisitor;
 import org.nasdanika.cdo.security.SecurityPackage;
-import org.nasdanika.core.AuthorizationProvider.AccessDecision;
-import org.nasdanika.core.Context;
 
 /**
  * <!-- begin-user-doc -->
@@ -116,18 +111,6 @@ public class GroupImpl extends PrincipalImpl implements Group {
 			}
 		}
 		return false;
-	}
-	
-	private PrincipalAuthorizationHelper authorizationHelper = new PrincipalAuthorizationHelper(this);	
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated NOT
-	 */
-	@Override
-	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
-		return authorizationHelper.authorize(context, target, action, qualifier, environment);
 	}
 	
 	/**

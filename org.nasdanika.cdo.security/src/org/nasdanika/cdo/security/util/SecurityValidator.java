@@ -151,6 +151,8 @@ public class SecurityValidator extends EObjectValidator {
 				return validatePrincipalVisitor((PrincipalVisitor)value, diagnostics, context);
 			case SecurityPackage.ACCESS_DECISION:
 				return validateAccessDecision((AccessDecision)value, diagnostics, context);
+			case SecurityPackage.EXCEPTION:
+				return validateException((Exception)value, diagnostics, context);
 			default:
 				return true;
 		}
@@ -344,6 +346,15 @@ public class SecurityValidator extends EObjectValidator {
 	 * @generated
 	 */
 	public boolean validateAccessDecision(AccessDecision accessDecision, DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateException(Exception exception, DiagnosticChain diagnostics, Map<Object, Object> context) {
 		return true;
 	}
 

@@ -45,7 +45,7 @@ public interface Protected extends CDOObject {
 	 * @return the value of the '<em>Permissions</em>' containment reference list.
 	 * @see org.nasdanika.cdo.security.SecurityPackage#getProtected_Permissions()
 	 * @model containment="true"
-	 *        annotation="org.nasdanika.cdo.web.render view-features='- principal:\r\n    filter: true\r\n- action:\r\n    filter: true\r\n- allow\r\n- startDate\r\n- endDate\r\n- condition\r\n- comment'"
+	 *        annotation="org.nasdanika.cdo.web.render view-features='- principal:\r\n    filter: true\r\n- action:\r\n    filter: true\r\n- allow\r\n- startDate\r\n- endDate\r\n- condition\r\n- comment' tree-feature='false'"
 	 * @generated
 	 */
 	EList<ProtectedPermission> getPermissions();
@@ -70,14 +70,34 @@ public interface Protected extends CDOObject {
 	 * @model dataType="org.nasdanika.cdo.security.AccessDecision" contextDataType="org.nasdanika.cdo.security.Context"
 	 * @generated NOT
 	 */
-	default AccessDecision authorize(Context context, Principal principal, String action, String qualifier, Map<String, Object> environment) {
+	default AccessDecision authorize(Context context, Principal principal, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		for (ProtectedPermission p: getPermissions()) {
-			if (p.getPrincipal() == principal) {
+			// Direct grant
+			Principal permissionPrincipal = p.getPrincipal();
+			if (permissionPrincipal == principal) {
 				AccessDecision ad = p.authorize(context, action, qualifier, environment);
 				if (ad != AccessDecision.ABSTAIN) {
 					return ad;
 				}
 			}
+			
+			// Group membership
+			if (permissionPrincipal instanceof Group && (((Group) permissionPrincipal).isMember(principal))) {
+				AccessDecision ad = p.authorize(context, action, qualifier, environment);
+				if (ad != AccessDecision.ABSTAIN) {
+					return ad;
+				}				
+			}
+			
+			// Everyone
+			Principal everyone = principal.getRealm().getEveryone();
+			if (everyone != null && everyone != principal && principal.getRealm().getGuest() != principal) {
+				AccessDecision ad = p.authorize(context, action, qualifier, environment);
+				if (ad != AccessDecision.ABSTAIN) {
+					return ad;
+				}				
+			}
+			
 		}
 		return AccessDecision.ABSTAIN;
 	}

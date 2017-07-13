@@ -115,7 +115,7 @@ public class PrincipalImpl extends CDOObjectImpl implements Principal {
 	 * @generated NOT
 	 */
 	@Override
-	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) {
+	public AccessDecision authorize(Context context, EObject target, String action, String qualifier, Map<String, Object> environment) throws Exception {
 		return authorizationHelper.authorize(context, target, action, qualifier, environment);
 	}
 
@@ -146,7 +146,12 @@ public class PrincipalImpl extends CDOObjectImpl implements Principal {
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
 			case SecurityPackage.PRINCIPAL___AUTHORIZE__CONTEXT_EOBJECT_STRING_STRING_MAP:
-				return authorize((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
+				try {
+					return authorize((Context)arguments.get(0), (EObject)arguments.get(1), (String)arguments.get(2), (String)arguments.get(3), (Map<String, Object>)arguments.get(4));
+				}
+				catch (Throwable throwable) {
+					throw new InvocationTargetException(throwable);
+				}
 			case SecurityPackage.PRINCIPAL___ACCEPT__PRINCIPALVISITOR:
 				accept((PrincipalVisitor)arguments.get(0));
 				return null;

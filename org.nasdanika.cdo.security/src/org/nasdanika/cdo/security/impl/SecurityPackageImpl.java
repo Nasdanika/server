@@ -164,6 +164,13 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EDataType exceptionEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EDataType contextEDataType = null;
 
 	/**
@@ -923,6 +930,15 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EDataType getException() {
+		return exceptionEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getContext() {
 		return contextEDataType;
 	}
@@ -1058,6 +1074,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		contextEDataType = createEDataType(CONTEXT);
 		principalVisitorEDataType = createEDataType(PRINCIPAL_VISITOR);
 		accessDecisionEDataType = createEDataType(ACCESS_DECISION);
+		exceptionEDataType = createEDataType(EXCEPTION);
 	}
 
 	/**
@@ -1171,6 +1188,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
 		initEOperation(getAction__CreatePrincipalPermission(), this.getPrincipalPermission(), "createPrincipalPermission", 0, 1, IS_UNIQUE, IS_ORDERED);
 
@@ -1198,6 +1216,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
 		op = initEOperation(getPrincipal__Accept__PrincipalVisitor(), null, "accept", 0, 1, IS_UNIQUE, IS_ORDERED);
 		addEParameter(op, this.getPrincipalVisitor(), "visitor", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -1226,6 +1245,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
 		initEOperation(getPermission__GetPrincipal(), this.getPrincipal(), "getPrincipal", 0, 1, IS_UNIQUE, IS_ORDERED);
 
@@ -1289,6 +1309,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		g2 = createEGenericType(ecorePackage.getEJavaObject());
 		g1.getETypeArguments().add(g2);
 		addEParameter(op, g1, "environment", 0, 1, IS_UNIQUE, IS_ORDERED);
+		addEException(op, this.getException());
 
 		initEOperation(getProtected__GetGrantees(), this.getPrincipal(), "getGrantees", 0, -1, IS_UNIQUE, IS_ORDERED);
 
@@ -1296,6 +1317,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		initEDataType(contextEDataType, Context.class, "Context", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(principalVisitorEDataType, PrincipalVisitor.class, "PrincipalVisitor", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 		initEDataType(accessDecisionEDataType, AccessDecision.class, "AccessDecision", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
+		initEDataType(exceptionEDataType, Exception.class, "Exception", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
@@ -2001,7 +2023,8 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getProtected_Permissions(), 
 		   source, 
 		   new String[] {
-			 "view-features", "- principal:\r\n    filter: true\r\n- action:\r\n    filter: true\r\n- allow\r\n- startDate\r\n- endDate\r\n- condition\r\n- comment"
+			 "view-features", "- principal:\r\n    filter: true\r\n- action:\r\n    filter: true\r\n- allow\r\n- startDate\r\n- endDate\r\n- condition\r\n- comment",
+			 "tree-feature", "false"
 		   });
 	}
 

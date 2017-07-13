@@ -126,7 +126,8 @@
     <eAnnotations source="org.nasdanika.cdo.web.render">
       <details key="icon" value="fa fa-cog"/>
     </eAnnotations>
-    <eOperations name="match" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+    <eOperations name="match" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        eExceptions="#//Exception">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Matches this action to action string, qualifier in a given context and environment.&#xD;&#xA;The default implementation constructs a string ``&lt;action>:&lt;qualifier>`` and uses name as a simplified glob pattern to match the string.&#xD;&#xA;&#xD;&#xA;For example:&#xD;&#xA;&#xD;&#xA;* ``*:*`` matches any request.&#xD;&#xA;* ``read:description`` matches action ``read`` for the qualifier ``descriptor``.&#xD;&#xA;* ``*:accounts`` matches any action for the ``accounts`` qualifier."/>
       </eAnnotations>
@@ -235,7 +236,7 @@
       <details key="label" value="{{eclass-name}}"/>
       <details key="icon" value="fa fa-user-o"/>
     </eAnnotations>
-    <eOperations name="authorize" eType="#//AccessDecision">
+    <eOperations name="authorize" eType="#//AccessDecision" eExceptions="#//Exception">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Authorizes to execute an action with a qualifier on an object in a context and an environment.&#xD;&#xA;If target is instanceof Protected then its authorize() method is invoked and takes precedence over the Principal's authorize()."/>
       </eAnnotations>
@@ -309,7 +310,7 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Permission allows/denies a principal to perform an action on a model element."/>
     </eAnnotations>
-    <eOperations name="authorize" eType="#//AccessDecision">
+    <eOperations name="authorize" eType="#//AccessDecision" eExceptions="#//Exception">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value=""/>
       </eAnnotations>
@@ -568,7 +569,7 @@
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Classes extending this interface maintain a list of permissions referencing principals."/>
     </eAnnotations>
-    <eOperations name="authorize" eType="#//AccessDecision">
+    <eOperations name="authorize" eType="#//AccessDecision" eExceptions="#//Exception">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Authorizes the principal to execute an action with a qualifier in a context and an environment.&#xD;&#xA;If return value of this methos is ALLOW or DENY, it takes precedence over Principal's authorize() return value&#xD;&#xA;(i.e. Principal's authorize() is not invoked if this method returns anything other than ABSTAIN).&#xD;&#xA;&#xD;&#xA;The default implementation of this method iterates over protected permissions."/>
       </eAnnotations>
@@ -614,7 +615,9 @@
       </eAnnotations>
       <eAnnotations source="org.nasdanika.cdo.web.render">
         <details key="view-features" value="- principal:&#xD;&#xA;    filter: true&#xD;&#xA;- action:&#xD;&#xA;    filter: true&#xD;&#xA;- allow&#xD;&#xA;- startDate&#xD;&#xA;- endDate&#xD;&#xA;- condition&#xD;&#xA;- comment"/>
+        <details key="tree-feature" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="Exception" instanceClassName="java.lang.Exception"/>
 </ecore:EPackage>

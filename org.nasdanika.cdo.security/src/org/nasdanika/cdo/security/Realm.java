@@ -39,7 +39,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 public interface Realm<CR> extends CDOObject {
 	/**
 	 * Returns the value of the '<em><b>Administrators</b></em>' reference list.
-	 * The list contents are of type {@link org.nasdanika.cdo.security.User}&lt;CR>.
+	 * The list contents are of type {@link org.nasdanika.cdo.security.User}<code>&lt;CR&gt;</code>.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
