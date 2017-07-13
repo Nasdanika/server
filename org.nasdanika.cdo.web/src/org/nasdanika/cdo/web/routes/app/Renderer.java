@@ -5597,7 +5597,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								groupByFeatureValueNode.anchorAttribute("title", "Group");
 								groupByFeatureValueNode.anchorAttribute("style", "cursor:default");
 								groupByFeatureValueNode.setData(groupByFeatureValue);
-								groupByFeatureValueNode.setData("readable", readable);
+								groupByFeatureValueNode.setData("readable", false);
 								groupByFeatureValueNode.setData("feature", groupByFeature);
 								groupByFeatureValueNode.id(objID+"-"+nodeFeature.getName()+"-group-"+htmlFactory.nextId()); 
 
@@ -5643,7 +5643,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						categoryNode.text(categoryLabel);
 						categoryNode.anchorAttribute("title", "Category");								
 						categoryNode.setData(obj);
-						categoryNode.setData("readable", readable);
+						categoryNode.setData("readable", false);
 						categoryNode.setData("category", true);
 						categoryNode.anchorAttribute("style", "cursor:default");
 					}
