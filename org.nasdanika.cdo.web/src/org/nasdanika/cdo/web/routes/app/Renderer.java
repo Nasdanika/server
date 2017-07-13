@@ -147,6 +147,7 @@ import org.yaml.snakeyaml.Yaml;
  */
 public interface Renderer<C extends Context, T extends EObject> extends ResourceProvider<C> {
 		
+	public static final String NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX = "nsd-jstree-context-menu-";
 	public static final String JSON_DATA_REQUEST_ATTRIBUTE_KEY = Renderer.class.getName()+":jsonData";
 	public static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
 	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
@@ -611,12 +612,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 									}
 								}
-								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
+								Tag featureIconAndLabel = TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature");
+								if (c instanceof CDOObject) {
+									featureIconAndLabel.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) c)+"-"+containmentFeature.getName());
+								}								
+								breadCrumbs.item(featureURI, featureIconAndLabel);
 							}
 						}
 					}
 					String objectURI = cRenderer.getObjectURI(context, c);
-					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(cIconAndLabel).attribute("title", nameToLabel(c.eClass().getName()))); // TODO - class label and then Jsoup to plain text
+					Tag cIconAndLabelSpan = TagName.span.create(cIconAndLabel).attribute("title", nameToLabel(c.eClass().getName()));
+					if (c instanceof CDOObject) {
+						cIconAndLabelSpan.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) c));
+					}					
+					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabelSpan); // TODO - class label and then Jsoup to plain text
 				}
 			}
 		}
@@ -642,17 +651,25 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 						}
 					}
-					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
+					Tag featureIconAndLabel = TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature");
+					if (objContainer instanceof CDOObject) {
+						featureIconAndLabel.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) objContainer)+"-"+containmentFeature.getName());
+					}								
+					breadCrumbs.item(featureURI, featureIconAndLabel);
 				}
 			}
 		}
 				
 		String objTitle = nameToLabel(obj.eClass().getName()); // TODO - class label and to text.
+		Tag objIconAndLabelSpan = TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", objTitle);
+		if (obj instanceof CDOObject) {
+			objIconAndLabelSpan.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj));
+		}		
 		if (action == null) {
-			breadCrumbs.item(null , TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", objTitle)); 
+			breadCrumbs.item(null , objIconAndLabelSpan); 
 		} else {
 			String objectURI = getObjectURI(context, obj);
-			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", objTitle));
+			breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, objIconAndLabelSpan);
 			breadCrumbs.item(null, breadCrumbs.getFactory().tag(TagName.b, action).attribute("title", "Action"));
 		}
 	}
@@ -702,12 +719,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 										featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 									}
 								}
-								breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
+								Tag featureIconAndLabel = TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature");
+								if (c instanceof CDOObject) {
+									featureIconAndLabel.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) c)+"-"+containmentFeature.getName());
+								}																
+								breadCrumbs.item(featureURI, featureIconAndLabel);
 							}
 						}
 					}
 					String objectURI = cRenderer.getObjectURI(context, c);
-					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(cIconAndLabel).attribute("title", nameToLabel(c.eClass().getName()))); // TODO class label to text with JSoup
+					Tag cIconAndLabelSpan = TagName.span.create(cIconAndLabel).attribute("title", nameToLabel(c.eClass().getName()));
+					if (c instanceof CDOObject) {
+						cIconAndLabelSpan.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) c));
+					}					
+					breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, cIconAndLabelSpan); // TODO class label to text with JSoup
 				}
 			}
 		}
@@ -733,19 +758,30 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 							featureURI += "/"+INDEX_HTML+"?context-feature="+URLEncoder.encode(containmentFeature.getName(), StandardCharsets.UTF_8.name());										
 						}
 					}
-					breadCrumbs.item(featureURI, TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature"));
+					Tag featureIconAndLabel = TagName.i.create(containerRenderer.renderNamedElementIconAndLabel(context, containmentFeature, containerVisibleFeatures)).attribute("title", "Feature");
+					if (objContainer instanceof CDOObject) {
+						featureIconAndLabel.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) objContainer)+"-"+containmentFeature.getName());
+					}								
+					breadCrumbs.item(featureURI, featureIconAndLabel);
 				}
 			}
 		}
 		
 		String objectURI = getObjectURI(context, obj);
-		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", nameToLabel(obj.eClass().getName())));	// TODO class label to text with JSoup	
+		Tag objIconAndLabelSpan = TagName.span.create(renderIconAndLabel(context, obj)).attribute("title", nameToLabel(obj.eClass().getName()));
+		if (obj instanceof CDOObject) {
+			objIconAndLabelSpan.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj));
+		}		
+		breadCrumbs.item(objectURI == null ? objectURI : objectURI+"/"+INDEX_HTML, objIconAndLabelSpan);	// TODO class label to text with JSoup	
 		List<EStructuralFeature> visibleFeatures = getVisibleFeatures(context, obj, null);
 		Object categoryIconAndLabel = renderNamedElementCategoryIconAndLabel(context, feature, visibleFeatures);
 		if (categoryIconAndLabel != null) {
 			breadCrumbs.item(null, TagName.i.create(categoryIconAndLabel).attribute("title", "Category"));
 		}
 		Tag featureCrumb = TagName.i.create(renderNamedElementIconAndLabel(context, feature, visibleFeatures)).attribute("title", "Feature");
+		if (obj instanceof CDOObject) {
+			featureCrumb.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj)+"-"+feature.getName());
+		}										
 		if (action == null) {
 			breadCrumbs.item(null, featureCrumb);
 		} else {
@@ -965,11 +1001,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String pathTxt = Jsoup.parse(renderObjectPath(context, obj, " > ").toString() + " ["+renderNamedElementLabel(context, obj.eClass())+"]").text();			
 			ret.attribute("title", pathTxt);
 		}
+		if (obj instanceof CDOObject) {
+			ret.addClass(NSD_JSTREE_CONTEXT_MENU_CLASS_PREFIX+CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj));
+		}
 		ret.setData(obj);
 		return ret;
 	}
-	
-	
+		
 	/**
 	 * Detect common prefix in named element and uses it as a category. E.g. ``miscKey`` and miscValue`` will 
 	 * get an auto-category ``Misc``. Names are tokenized by camel case. Category contains at least two
@@ -2680,12 +2718,24 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	}
 
 	/**
-	 * Renders delete icon. This implementation renders Bootstrap Glyphicon trash.
+	 * Renders delete icon. Deletion means removal from containing reference and as such from the model.
+	 * This implementation renders FontAwesome trash bin.
 	 * @param context
 	 * @return
 	 * @throws Exception 
 	 */
 	default Tag renderDeleteIcon(C context) throws Exception {
+		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.trash).getTarget();
+	}
+
+	/**
+	 * Renders delete icon. Removal means removal from non-containing reference, so the object remains in the model.
+	 * This implementation renders FontAwesome trash open bin.
+	 * @param context
+	 * @return
+	 * @throws Exception 
+	 */
+	default Tag renderRemoveIcon(C context) throws Exception {
 		return getHTMLFactory(context).fontAwesome().webApplication(WebApplication.trash_o).getTarget();
 	}
 
@@ -2890,7 +2940,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 		
 	/**
-	 * Renders left panel. This implementation renders link groups for visible features with location set to ``leftPanel``.
+	 * Renders left panel. This implementation renders jsTree and link groups for visible features with location set to ``leftPanel``.
 	 * @param context
 	 * @return
 	 * @throws Exception
@@ -3774,7 +3824,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			String tooltip = htmlFactory.interpolate(tooltipResourceString, env);
 	
 			// Again, deletion through GET, not REST-compliant, but JavaScript part is kept simple.
-			Button deleteButton = htmlFactory.button(idx == -1 ? renderClearIcon(context) : renderDeleteIcon(context))
+			Button deleteButton = htmlFactory.button(idx == -1 ? renderClearIcon(context) : (isDelete ? renderDeleteIcon(context) : renderRemoveIcon(context)))
 					.style(Style.DANGER)
 //					.style().margin().left("5px")
 					.attribute(TITLE_KEY, StringEscapeUtils.escapeHtml4(tooltip));
@@ -5684,7 +5734,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainingFeature())) {
 			JsTreeContextMenuItem deleteMenuItem = htmlFactory.jsTreeContextMenuItem();
 			menuItems.put("delete", deleteMenuItem);
-			deleteMenuItem.icon("fa fa-trash-o").label(getResourceString(context, "delete"));
+			deleteMenuItem.icon("fa fa-trash").label(getResourceString(context, "delete"));
 			
 			Map<String, Object> env = new HashMap<>();
 			env.put(NAME_KEY, renderNamedElementLabel(context, obj.eClass())+" '"+renderLabel(context, obj)+"'");

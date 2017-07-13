@@ -1,5 +1,6 @@
 $(function () {
-	$('#{{container-id}}').jstree({ 
+	var container = $('#{{container-id}}');
+	container.jstree({ 
 		'core' : { 
 			'data' : {{data}}, 
 			"multiple" : false 
@@ -24,6 +25,21 @@ $(function () {
 		}
 	});
 	
+    container.bind('ready.jstree', function(e, data) {
+        for (var k in data.instance._model.data) {
+        	if (k != "#") {
+    			$(".nsd-jstree-context-menu-"+k).contextmenu(function(idx, e) {
+    				var selected = data.instance.get_selected(true);
+    				var obj = data.instance._model.data[idx];
+    				data.instance.show_contextmenu(obj, e.clientX, e.clientY, e);
+    				data.instance.deselect_all();
+    				data.instance.select_node(selected);
+    				return false;
+    			}.bind(this, k));	
+        	}
+        }
+    });
+     
 	var to = false;
 
 	$('#{{container-id}}-search').keyup(function () {
