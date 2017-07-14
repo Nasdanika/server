@@ -7,7 +7,10 @@ import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.transaction.CDOCommitContext;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
+import org.eclipse.emf.cdo.util.ObjectNotFoundException;
 import org.eclipse.emf.cdo.view.CDOView;
+import org.nasdanika.cdo.security.LoginPasswordHashUser;
+import org.nasdanika.cdo.security.LoginPasswordRealm;
 import org.nasdanika.cdo.security.LoginUser;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.User;
@@ -34,9 +37,15 @@ public abstract class AbstractCDOViewContextSubject<V extends CDOView, CR> imple
 		List<CDOID> principalIDs = getPrincipalIDs();
 		if (!principalIDs.isEmpty()) {
 			for (CDOID principalID: principalIDs) {
-				principals.add((Principal) context.getView().getObject(principalID));
+				try {
+					principals.add((Principal) context.getView().getObject(principalID));
+				} catch (ObjectNotFoundException e) {
+					System.err.println("Invalid principal ID: "+principalID);
+				}
 			}
-			return principals;
+			if (!principals.isEmpty()) {
+				return principals;
+			}
 		}
 		
 		if (context.getSecurityRealm()!=null) {
@@ -49,16 +58,23 @@ public abstract class AbstractCDOViewContextSubject<V extends CDOView, CR> imple
 				}
 			} else {
 				for (String principalName: principalNames) {
-					for (User<?> pdu : context.getSecurityRealm().getAllUsers()) { 
-						// TODO - find(login) to optimize search in large user populations
-						if (pdu instanceof LoginUser && ((LoginUser<?>) pdu).getLogin().equalsIgnoreCase(principalName)) {
-							// Not clear why this check was here - (pdu instanceof LoginPasswordHashUser && ((LoginPasswordHashUser) pdu).getPasswordHash() != null)
-							if (!((LoginUser<?>) pdu).isDisabled()) { 
-								principals.add(pdu);
-							}
-							break;
+					if (context.getSecurityRealm() instanceof LoginPasswordRealm) {
+						LoginPasswordHashUser user = ((LoginPasswordRealm) context.getSecurityRealm()).getUser(principalName);
+						if (user!= null && !user.isDisabled()) {
+							principals.add(user);
 						}
-					}				
+					} else {
+						for (User<?> pdu : context.getSecurityRealm().getAllUsers()) { 
+							// TODO - find(login) to optimize search in large user populations
+							if (pdu instanceof LoginUser && ((LoginUser<?>) pdu).getLogin().equalsIgnoreCase(principalName)) {
+								// Not clear why this check was here - (pdu instanceof LoginPasswordHashUser && ((LoginPasswordHashUser) pdu).getPasswordHash() != null)
+								if (!((LoginUser<?>) pdu).isDisabled()) { 
+									principals.add(pdu);
+								}
+								break;
+							}
+						}
+					}
 				}
 			}
 			setPrincipals(context, principals);
@@ -76,11 +92,9 @@ public abstract class AbstractCDOViewContextSubject<V extends CDOView, CR> imple
 
 					@Override
 					public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {
-						List<CDOID> principalIDs = getPrincipalIDs();
 						for (Principal principal: principals) {
-							principalIDs.add(principal.cdoID());
+							getPrincipalIDs().add(principal.cdoID());
 						}		
-						setPrincipalIDs(principalIDs);
 					}
 
 					@Override
@@ -96,10 +110,9 @@ public abstract class AbstractCDOViewContextSubject<V extends CDOView, CR> imple
 					}
 					
 				});
-				return;
+			} else {
+				principalIDs.add(principal.cdoID());
 			}
-
-			principalIDs.add(principal.cdoID());
 		}		
 		setPrincipalIDs(principalIDs);
 	}
