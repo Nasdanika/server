@@ -141,10 +141,10 @@ public interface Realm<CR> extends CDOObject {
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
-	 * Realm does not have a containment reference for principals, subclasses may
-	 * have one or more principal containment references, direct or through contained objects.
+	 * Realm does not have a containment reference for users, subclasses may
+	 * have one or more user containment references, direct or through contained objects.
 	 * 
-	 * This method returns all principals defined in the realm.
+	 * This method returns all users defined in the realm.
 	 * 
 	 * <!-- end-model-doc -->
 	 * @model kind="operation"
@@ -186,7 +186,10 @@ public interface Realm<CR> extends CDOObject {
 	 * @generated NOT
 	 */
 	default boolean isAdministrator(Principal principal) {
-		return principal != getGuest() && (getAdministrators().isEmpty() || getAdministrators().contains(principal));
+		if (principal == getGuest()) {
+			return getAllUsers().isEmpty();
+		}
+		return getAdministrators().isEmpty() || getAdministrators().contains(principal);
 	};	
 
 } // Realm

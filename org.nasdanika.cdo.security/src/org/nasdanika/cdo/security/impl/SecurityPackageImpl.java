@@ -1353,7 +1353,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getRealm__GetAllUsers(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Realm does not have a containment reference for principals, subclasses may\r\nhave one or more principal containment references, direct or through contained objects.\r\n\r\nThis method returns all principals defined in the realm.\r\n"
+			 "documentation", "Realm does not have a containment reference for users, subclasses may\r\nhave one or more user containment references, direct or through contained objects.\r\n\r\nThis method returns all users defined in the realm.\r\n"
 		   });	
 		addAnnotation
 		  (getRealm__ClearPermissions__EObject(), 
@@ -1371,7 +1371,7 @@ public class SecurityPackageImpl extends EPackageImpl implements SecurityPackage
 		  (getRealm__IsAdministrator__Principal(), 
 		   source, 
 		   new String[] {
-			 "documentation", "Returns true if principal is administrator. The default implementation returns true\r\nif principal is not guest, is part of the administrators reference or if the administrators reference is empty."
+			 "documentation", "Returns true if principal is administrator. The default implementation returns true\r\nif:\r\n\r\n* There are no users in the realm and the principal is guest.\r\n* If there are users in the realm, the principal is not guest, and is part of the administrators reference or if the administrators reference is empty."
 		   });	
 		addAnnotation
 		  (getRealm_Administrators(), 

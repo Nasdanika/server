@@ -17,7 +17,7 @@
     </eOperations>
     <eOperations name="getAllUsers" upperBound="-1">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Realm does not have a containment reference for principals, subclasses may&#xD;&#xA;have one or more principal containment references, direct or through contained objects.&#xD;&#xA;&#xD;&#xA;This method returns all principals defined in the realm.&#xD;&#xA;"/>
+        <details key="documentation" value="Realm does not have a containment reference for users, subclasses may&#xD;&#xA;have one or more user containment references, direct or through contained objects.&#xD;&#xA;&#xD;&#xA;This method returns all users defined in the realm.&#xD;&#xA;"/>
       </eAnnotations>
       <eGenericType eTypeParameter="#//Realm/getAllUsers/U"/>
       <eTypeParameters name="U">
@@ -38,7 +38,7 @@
     </eOperations>
     <eOperations name="isAdministrator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Returns true if principal is administrator. The default implementation returns true&#xD;&#xA;if principal is not guest, is part of the administrators reference or if the administrators reference is empty."/>
+        <details key="documentation" value="Returns true if principal is administrator. The default implementation returns true&#xD;&#xA;if:&#xD;&#xA;&#xD;&#xA;* There are no users in the realm and the principal is guest.&#xD;&#xA;* If there are users in the realm, the principal is not guest, and is part of the administrators reference or if the administrators reference is empty."/>
       </eAnnotations>
       <eParameters name="principal" eType="#//Principal"/>
     </eOperations>
