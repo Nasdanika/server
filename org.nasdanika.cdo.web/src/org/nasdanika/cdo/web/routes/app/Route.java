@@ -1973,7 +1973,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		if (referrer == null) {
 			return "Log out successful";
 		}
-		context.getResponse().sendRedirect(referrer);
+		context.getResponse().sendRedirect(context.getRequest().getContextPath()+"/index.html");
 		return Action.NOP;
 	}
 
