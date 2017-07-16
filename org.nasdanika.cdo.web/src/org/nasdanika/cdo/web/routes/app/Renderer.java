@@ -3745,8 +3745,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						for (EClassifier ec: ePackage.getEClassifiers()) {
 							if (ec instanceof EClass) {
 								EClass eClass = (EClass) ec;
-								if (!eClass.isAbstract() && !eClass.isInterface() && reference.getEReferenceType().isSuperTypeOf(eClass)) {
-									ret.add(eClass);
+								EClass eReferenceType = reference.getEReferenceType();
+								if (!eClass.isAbstract() && !eClass.isInterface() && eReferenceType.isSuperTypeOf(eClass)) {
+									// Testing for generic types compatibility
+									if (eReferenceType.isInstance(eClass.getEPackage().getEFactoryInstance().create(eClass))) {
+										ret.add(eClass);
+									}
 								}
 							}
 						}
