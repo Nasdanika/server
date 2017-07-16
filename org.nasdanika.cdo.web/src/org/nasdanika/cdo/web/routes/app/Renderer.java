@@ -78,6 +78,7 @@ import org.jsoup.Jsoup;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.security.Action;
 import org.nasdanika.cdo.security.Package;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Protected;
 import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
@@ -2949,6 +2950,20 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		HTMLFactory htmlFactory = getHTMLFactory(context);
 		Fragment ret = htmlFactory.fragment();
 		
+		if (context instanceof CDOViewContext<?, ?>) {
+			for (Principal principal: ((CDOViewContext<?,?>) context).getPrincipals()) {
+				// User
+				if (principal.getRealm().getAllUsers().contains(principal)) {
+					Renderer<C, Principal> principalRenderer = getRenderer(principal);
+					Object principalLink = principalRenderer.renderLink(context, principal, false);
+					Tag logOutLink = htmlFactory.link(principalRenderer.getObjectURI(context, principal)+"/logout.html", principalRenderer.getResourceString(context, "logOut"));
+					logOutLink.on(Event.click, "return confirm('"+getResourceString(context, "logOutConfirmation")+"');");
+					ret.content(htmlFactory.tag(TagName.div, principalLink, ": ", logOutLink).style().padding("3px"));
+					break;
+				}
+			}
+		}
+		
 		// Tree
 		EObject root = EcoreUtil.getRootContainer(obj);
 		Renderer<C, EObject> rootRenderer = getRenderer(root);
@@ -4655,7 +4670,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					List<Action> grantableActions = new ArrayList<>();
 					List<EClass> classesToMatch = new ArrayList<>();
 					classesToMatch.add(obj.eContainer().eClass());
-					classesToMatch.addAll(obj.eClass().getEAllSuperTypes());
+					classesToMatch.addAll(obj.eContainer().eClass().getEAllSuperTypes());
 					for (Package pkg: realm.getPackages()) {
 						for (org.nasdanika.cdo.security.Class cls: pkg.getClasses()) {
 							for (EClass eClass: classesToMatch) {
