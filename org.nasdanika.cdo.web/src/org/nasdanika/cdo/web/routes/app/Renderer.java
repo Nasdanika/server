@@ -6032,6 +6032,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 								addItem.action("function() { window.location='"+webOperationURL+"'; }");
 							} else {
 								JsTreeContextMenuItem subItem = addItem.createSubMenuItem("eOperation_"+htmlFactory.nextId());
+								subItem.action("function() { window.location='"+webOperationURL+"'; }");
 								subItem.icon(getModelElementIcon(context, eOperation));
 								subItem.label(StringEscapeUtils.escapeEcmaScript(String.valueOf(renderNamedElementLabel(context, eOperation))));
 								Object tooltip = renderFirstDocumentationSentence(context, eOperation);
