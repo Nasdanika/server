@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.server.jetty.feature"
       label="Nasdanika Server Jetty Feature"
-      version="0.1.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Nasdanika LLC">
 
    <description url="http://www.example.com/description">

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.nasdanika.cdo.function;singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -13,8 +13,8 @@ Export-Package: org.nasdanika.cdo.function,
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.cdo;visibility:=reexport,
- org.nasdanika.function.cdo;bundle-version="0.1.0";visibility:=reexport,
- org.nasdanika.cdo.boxing;bundle-version="0.1.0";visibility:=reexport,
+ org.nasdanika.function.cdo;bundle-version="1.0.0";visibility:=reexport,
+ org.nasdanika.cdo.boxing;bundle-version="1.0.0";visibility:=reexport,
  org.nasdanika.cdo.security;visibility:=reexport,
  org.mozilla.rhino;bundle-version="1.0.0"
 Bundle-ActivationPolicy: lazy

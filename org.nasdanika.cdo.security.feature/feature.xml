@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.cdo.security.feature"
       label="Secuirity Model and Edit Support"
-      version="0.1.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="Nasdanika LLC">
 
    <description url="http://www.example.com/description">

@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.webtest.performance.feature"
       label="Nasdanika Web Performance Model"
-      version="0.1.0.qualifier">
+      version="1.0.0.qualifier">
 
    <description>
       Navigation/resource timing model.

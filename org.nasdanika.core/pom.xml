@@ -3,7 +3,7 @@
   <parent>
     <artifactId>org.nasdanika.parent</artifactId>
     <groupId>org.nasdanika</groupId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../org.nasdanika.parent</relativePath>
   </parent>
   <artifactId>org.nasdanika.core</artifactId>
