@@ -72,7 +72,7 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 					
 				};
 			} catch (Exception e) {
-				throw new NasdanikaException("Cannot create CDO View context", e);
+				throw new NasdanikaException("Cannot create CDO transaction context", e);
 			}
 		}
 		return null;
