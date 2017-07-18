@@ -50,6 +50,6 @@ $(function () {
 			var v = $('#{{container-id}}-search').val();
 			$('#{{container-id}}').jstree(true).search(v);
 		}, 250);
-  });	
+	});	
 	
 });
