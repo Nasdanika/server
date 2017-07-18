@@ -78,7 +78,6 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 	}
 	
 	private void generateComponentPropertiesTab(ComponentConfigurationDTO componentConfiguration, Tabs tabs) {
-		@SuppressWarnings("unchecked")
 		Map<String, Object> properties = componentConfiguration.properties;
 		if (properties != null && !properties.isEmpty()) {
 			Map<String, Object> cProperties = new TreeMap<>();
@@ -195,6 +194,7 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 				if (boundServices != null && boundServices.length > 0) {
 					Table serviceReferencesTable = getHtmlFactory().table().bordered();
 					Row hr1 = serviceReferencesTable.row().style(Style.PRIMARY);
+//					hr1.header("Interface").rowspan(2);
 					hr1.header("Class(es)").rowspan(2);
 					hr1.header("Bundle").rowspan(2);
 					hr1.header("Component").rowspan(2);
@@ -223,6 +223,9 @@ class ComponentDocumentationGenerator extends BundleAndComponentDocumentationGen
 						int rowSpan = serviceProperties.isEmpty() ? 1 : serviceProperties.size();
 						
 						Row serviceRow = serviceReferencesTable.row();
+
+						// Interface
+//						serviceRow.cell(docRoute.javaDocLink(objectClass[0], true, false)).rowspan(rowSpan);	
 						
 						// Service class
 						if (objectClass.length == 0) {
