@@ -18,12 +18,7 @@ test:
     
     - mkdir $CIRCLE_ARTIFACTS/apidocs
     
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.h2
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.promise
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca.edit
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.scheduler
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security.edit
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security
@@ -32,18 +27,20 @@ test:
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.web
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core.test
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function.cdo
-    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.osgi.model
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.web
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.provisioning
     
-    - mv org.nasdanika.cdo.boxing/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
-    - mv org.nasdanika.cdo.function/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
+#    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
+#    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
+#    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.promise
+#    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca.edit
+#    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca
+#    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function.cdo
+#    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function
+    
+    
     - mv org.nasdanika.cdo.h2/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.h2
-    - mv org.nasdanika.cdo.promise/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.promise
-    - mv org.nasdanika.cdo.sca.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca.edit
-    - mv org.nasdanika.cdo.sca/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca
     - mv org.nasdanika.cdo.scheduler/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.scheduler
     - mv org.nasdanika.cdo.security.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security.edit
     - mv org.nasdanika.cdo.security/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.security
@@ -52,12 +49,17 @@ test:
     - mv org.nasdanika.cdo.web/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.web
     - mv org.nasdanika.core/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core
     - mv org.nasdanika.core.tests/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core.tests
-    - mv org.nasdanika.function.cdo/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function.cdo
-    - mv org.nasdanika.function/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function
     - mv org.nasdanika.osgi.model/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.osgi.model
     - mv org.nasdanika.web/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.web
     - mv org.nasdanika.provisioning/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.provisioning
     
+#    - mv org.nasdanika.cdo.boxing/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.boxing
+#    - mv org.nasdanika.cdo.function/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.function
+#    - mv org.nasdanika.cdo.promise/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.promise
+#    - mv org.nasdanika.cdo.sca.edit/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca.edit
+#    - mv org.nasdanika.cdo.sca/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.sca
+#    - mv org.nasdanika.function.cdo/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function.cdo
+#    - mv org.nasdanika.function/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.function
     
 deployment:
   staging:
