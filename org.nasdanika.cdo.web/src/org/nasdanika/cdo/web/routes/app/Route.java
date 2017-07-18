@@ -1506,9 +1506,10 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	 * @throws Exception
 	 */
 	@RouteMethod(
-			comment="Processes AJAX update.",
-			consumes=CONTENT_TYPE_APPLICATION_JSON,
-			produces=CONTENT_TYPE_APPLICATION_JSON)
+			comment = "Processes AJAX update.",
+			consumes = CONTENT_TYPE_APPLICATION_JSON,
+			produces = CONTENT_TYPE_APPLICATION_JSON,
+			lock = @RouteMethod.Lock(type = Type.WRITE))
 	public Object putUpdate(
 			@ContextParameter C context,
 			@TargetParameter T target,
