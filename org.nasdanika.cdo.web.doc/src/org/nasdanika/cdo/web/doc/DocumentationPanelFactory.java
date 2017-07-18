@@ -41,8 +41,7 @@ public class DocumentationPanelFactory {
 	
 	protected Tabs leftTabs() {
 		Tabs leftTabs = htmlFactory.tabs();
-		Tag tocDIV = tocDiv();
-		leftTabs.item(htmlFactory.glyphicon(Glyphicon.book)+"&nbsp;Content", tocDIV);
+		leftTabs.item(htmlFactory.glyphicon(Glyphicon.book)+"&nbsp;Content", htmlFactory.fragment(tocSearchDiv(), tocDiv()));
 		
 		Tag searchContainer = searchDiv();	
 		Tag searchModule = htmlFactory.tag(TagName.script, "require(['"+docRoutePath+"/resources/js/left-panel.js'], function(tocTree) { /* NOP */ })");
@@ -96,5 +95,9 @@ public class DocumentationPanelFactory {
 		return htmlFactory.div().id("toc");
 	}
 	
+	protected Tag tocSearchDiv() {
+		Input searchText = htmlFactory.input(InputType.text).id("toc-search").style().width("100%").placeholder("Search the table of contents");
+		return htmlFactory.div(searchText);
+	}
 
 }
