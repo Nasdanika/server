@@ -2,13 +2,14 @@
  */
 package org.nasdanika.cdo.scheduler.impl;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Date;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
+import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
-import org.nasdanika.cdo.security.Principal;
 
 /**
  * <!-- begin-user-doc -->
@@ -18,16 +19,15 @@ import org.nasdanika.cdo.security.Principal;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getRunAt <em>Run At</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getPeriod <em>Period</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#isFixedRate <em>Fixed Rate</em>}</li>
- *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getRunAs <em>Run As</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#isActive <em>Active</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class SchedulerTaskImpl extends CDOObjectImpl implements SchedulerTask {
+public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements SchedulerTask<CR> {
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -62,8 +62,8 @@ public class SchedulerTaskImpl extends CDOObjectImpl implements SchedulerTask {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EObject getTarget() {
-		return (EObject)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__TARGET, true);
+	public Date getRunAt() {
+		return (Date)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AT, true);
 	}
 
 	/**
@@ -71,25 +71,7 @@ public class SchedulerTaskImpl extends CDOObjectImpl implements SchedulerTask {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTarget(EObject newTarget) {
-		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__TARGET, newTarget);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public long getRunAt() {
-		return (Long)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AT, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setRunAt(long newRunAt) {
+	public void setRunAt(Date newRunAt) {
 		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AT, newRunAt);
 	}
 
@@ -98,7 +80,7 @@ public class SchedulerTaskImpl extends CDOObjectImpl implements SchedulerTask {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Long getPeriod() {
+	public long getPeriod() {
 		return (Long)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__PERIOD, true);
 	}
 
@@ -107,7 +89,7 @@ public class SchedulerTaskImpl extends CDOObjectImpl implements SchedulerTask {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setPeriod(Long newPeriod) {
+	public void setPeriod(long newPeriod) {
 		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__PERIOD, newPeriod);
 	}
 
@@ -134,9 +116,44 @@ public class SchedulerTaskImpl extends CDOObjectImpl implements SchedulerTask {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isActive() {
+		return (Boolean)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__ACTIVE, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setActive(boolean newActive) {
+		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__ACTIVE, newActive);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void execute(CDOTransactionContext<CR> context) {
+		// TODO: implement this method
+		// Ensure that you remove @generated or mark it @generated NOT
+		throw new UnsupportedOperationException();
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	@SuppressWarnings("unchecked")
-	public EList<Principal> getRunAs() {
-		return (EList<Principal>)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AS, true);
+	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
+		switch (operationID) {
+			case SchedulerPackage.SCHEDULER_TASK___EXECUTE__CDOTRANSACTIONCONTEXT:
+				execute((CDOTransactionContext<CR>)arguments.get(0));
+				return null;
+		}
+		return super.eInvoke(operationID, arguments);
 	}
 
 } //SchedulerTaskImpl

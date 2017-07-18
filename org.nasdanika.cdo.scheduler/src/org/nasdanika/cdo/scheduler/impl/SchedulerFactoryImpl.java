@@ -3,13 +3,14 @@
 package org.nasdanika.cdo.scheduler.impl;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
+import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.scheduler.SchedulerFactory;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
-import org.nasdanika.cdo.scheduler.SchedulerTask;
 
 /**
  * <!-- begin-user-doc -->
@@ -55,7 +56,6 @@ public class SchedulerFactoryImpl extends EFactoryImpl implements SchedulerFacto
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case SchedulerPackage.SCHEDULER_TASK: return (EObject)createSchedulerTask();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
 		}
@@ -66,9 +66,47 @@ public class SchedulerFactoryImpl extends EFactoryImpl implements SchedulerFacto
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public SchedulerTask createSchedulerTask() {
-		SchedulerTaskImpl schedulerTask = new SchedulerTaskImpl();
-		return schedulerTask;
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			case SchedulerPackage.CDO_TRANSACTION_CONTEXT:
+				return createCDOTransactionContextFromString(eDataType, initialValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			case SchedulerPackage.CDO_TRANSACTION_CONTEXT:
+				return convertCDOTransactionContextToString(eDataType, instanceValue);
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier");
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public CDOTransactionContext<?> createCDOTransactionContextFromString(EDataType eDataType, String initialValue) {
+		return (CDOTransactionContext<?>)super.createFromString(initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertCDOTransactionContextToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(instanceValue);
 	}
 
 	/**

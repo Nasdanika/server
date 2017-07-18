@@ -66,7 +66,7 @@ public class SchedulerAdapterFactory extends AdapterFactoryImpl {
 	protected SchedulerSwitch<Adapter> modelSwitch =
 		new SchedulerSwitch<Adapter>() {
 			@Override
-			public Adapter caseSchedulerTask(SchedulerTask object) {
+			public <CR> Adapter caseSchedulerTask(SchedulerTask<CR> object) {
 				return createSchedulerTaskAdapter();
 			}
 			@Override

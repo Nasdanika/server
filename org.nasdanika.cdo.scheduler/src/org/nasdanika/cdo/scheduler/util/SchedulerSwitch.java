@@ -66,7 +66,7 @@ public class SchedulerSwitch<T> extends Switch<T> {
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
 			case SchedulerPackage.SCHEDULER_TASK: {
-				SchedulerTask schedulerTask = (SchedulerTask)theEObject;
+				SchedulerTask<?> schedulerTask = (SchedulerTask<?>)theEObject;
 				T result = caseSchedulerTask(schedulerTask);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -86,7 +86,7 @@ public class SchedulerSwitch<T> extends Switch<T> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseSchedulerTask(SchedulerTask object) {
+	public <CR> T caseSchedulerTask(SchedulerTask<CR> object) {
 		return null;
 	}
 

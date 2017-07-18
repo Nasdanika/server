@@ -22,15 +22,6 @@ public interface SchedulerFactory extends EFactory {
 	SchedulerFactory eINSTANCE = org.nasdanika.cdo.scheduler.impl.SchedulerFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Task</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Task</em>'.
-	 * @generated
-	 */
-	SchedulerTask createSchedulerTask();
-
-	/**
 	 * Returns the package supported by this factory.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

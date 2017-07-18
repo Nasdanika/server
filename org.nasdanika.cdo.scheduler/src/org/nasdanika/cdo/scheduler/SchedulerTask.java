@@ -2,59 +2,35 @@
  */
 package org.nasdanika.cdo.scheduler;
 
+import java.util.Date;
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.common.util.EList;
-import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.cdo.security.Principal;
+import org.nasdanika.cdo.CDOTransactionContext;
 
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Task</b></em>'.
  * <!-- end-user-doc -->
  *
+ * <!-- begin-model-doc -->
+ * Supertype for scheduler tasks.
+ * <!-- end-model-doc -->
+ *
  * <p>
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#getTarget <em>Target</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAt <em>Run At</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#getPeriod <em>Period</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#isFixedRate <em>Fixed Rate</em>}</li>
- *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs <em>Run As</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.SchedulerTask#isActive <em>Active</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask()
- * @model
+ * @model abstract="true"
  * @extends CDOObject
  * @generated
  */
-public interface SchedulerTask extends CDOObject {
-	/**
-	 * Returns the value of the '<em><b>Target</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Target</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Target</em>' containment reference.
-	 * @see #setTarget(EObject)
-	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask_Target()
-	 * @model containment="true"
-	 * @generated
-	 */
-	EObject getTarget();
-
-	/**
-	 * Sets the value of the '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getTarget <em>Target</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Target</em>' containment reference.
-	 * @see #getTarget()
-	 * @generated
-	 */
-	void setTarget(EObject value);
-
+public interface SchedulerTask<CR> extends CDOObject {
 	/**
 	 * Returns the value of the '<em><b>Run At</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -63,13 +39,16 @@ public interface SchedulerTask extends CDOObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * When to execute task. Submits task if this value is before the current time.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Run At</em>' attribute.
-	 * @see #setRunAt(long)
+	 * @see #setRunAt(Date)
 	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask_RunAt()
 	 * @model
 	 * @generated
 	 */
-	long getRunAt();
+	Date getRunAt();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAt <em>Run At</em>}' attribute.
@@ -79,7 +58,7 @@ public interface SchedulerTask extends CDOObject {
 	 * @see #getRunAt()
 	 * @generated
 	 */
-	void setRunAt(long value);
+	void setRunAt(Date value);
 
 	/**
 	 * Returns the value of the '<em><b>Period</b></em>' attribute.
@@ -89,13 +68,16 @@ public interface SchedulerTask extends CDOObject {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Task period/interval. One-off task if set to non-positive value.
+	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Period</em>' attribute.
-	 * @see #setPeriod(Long)
+	 * @see #setPeriod(long)
 	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask_Period()
 	 * @model
 	 * @generated
 	 */
-	Long getPeriod();
+	long getPeriod();
 
 	/**
 	 * Sets the value of the '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getPeriod <em>Period</em>}' attribute.
@@ -105,7 +87,7 @@ public interface SchedulerTask extends CDOObject {
 	 * @see #getPeriod()
 	 * @generated
 	 */
-	void setPeriod(Long value);
+	void setPeriod(long value);
 
 	/**
 	 * Returns the value of the '<em><b>Fixed Rate</b></em>' attribute.
@@ -134,19 +116,41 @@ public interface SchedulerTask extends CDOObject {
 	void setFixedRate(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Run As</b></em>' reference list.
-	 * The list contents are of type {@link org.nasdanika.cdo.security.Principal}.
+	 * Returns the value of the '<em><b>Active</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Run As</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Run As</em>' reference list.
-	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask_RunAs()
-	 * @model
+	 * <!-- begin-model-doc -->
+	 * Task's execute() method is invoked by the scheduler only if the task is active.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Active</em>' attribute.
+	 * @see #setActive(boolean)
+	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getSchedulerTask_Active()
+	 * @model default="true"
 	 * @generated
 	 */
-	EList<Principal> getRunAs();
+	boolean isActive();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.cdo.scheduler.SchedulerTask#isActive <em>Active</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Active</em>' attribute.
+	 * @see #isActive()
+	 * @generated
+	 */
+	void setActive(boolean value);
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Invoked by the scheduler to execute the task.
+	 * If this method returns false, then the task is canceled.
+	 * <!-- end-model-doc -->
+	 * @model contextDataType="org.nasdanika.cdo.scheduler.CDOTransactionContext&lt;CR&gt;"
+	 * @generated
+	 */
+	void execute(CDOTransactionContext<CR> context);
 
 } // SchedulerTask

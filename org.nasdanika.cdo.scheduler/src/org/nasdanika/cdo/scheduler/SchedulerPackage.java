@@ -4,8 +4,9 @@ package org.nasdanika.cdo.scheduler;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
 
 /**
  * <!-- begin-user-doc -->
@@ -67,22 +68,13 @@ public interface SchedulerPackage extends EPackage {
 	int SCHEDULER_TASK = 0;
 
 	/**
-	 * The feature id for the '<em><b>Target</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SCHEDULER_TASK__TARGET = 0;
-
-	/**
 	 * The feature id for the '<em><b>Run At</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULER_TASK__RUN_AT = 1;
+	int SCHEDULER_TASK__RUN_AT = 0;
 
 	/**
 	 * The feature id for the '<em><b>Period</b></em>' attribute.
@@ -91,7 +83,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULER_TASK__PERIOD = 2;
+	int SCHEDULER_TASK__PERIOD = 1;
 
 	/**
 	 * The feature id for the '<em><b>Fixed Rate</b></em>' attribute.
@@ -100,16 +92,16 @@ public interface SchedulerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULER_TASK__FIXED_RATE = 3;
+	int SCHEDULER_TASK__FIXED_RATE = 2;
 
 	/**
-	 * The feature id for the '<em><b>Run As</b></em>' reference list.
+	 * The feature id for the '<em><b>Active</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULER_TASK__RUN_AS = 4;
+	int SCHEDULER_TASK__ACTIVE = 3;
 
 	/**
 	 * The number of structural features of the '<em>Task</em>' class.
@@ -118,7 +110,16 @@ public interface SchedulerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULER_TASK_FEATURE_COUNT = 5;
+	int SCHEDULER_TASK_FEATURE_COUNT = 4;
+
+	/**
+	 * The operation id for the '<em>Execute</em>' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SCHEDULER_TASK___EXECUTE__CDOTRANSACTIONCONTEXT = 0;
 
 	/**
 	 * The number of operations of the '<em>Task</em>' class.
@@ -127,7 +128,18 @@ public interface SchedulerPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULER_TASK_OPERATION_COUNT = 0;
+	int SCHEDULER_TASK_OPERATION_COUNT = 1;
+
+
+	/**
+	 * The meta object id for the '<em>CDO Transaction Context</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.nasdanika.cdo.CDOTransactionContext
+	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getCDOTransactionContext()
+	 * @generated
+	 */
+	int CDO_TRANSACTION_CONTEXT = 1;
 
 
 	/**
@@ -139,17 +151,6 @@ public interface SchedulerPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getSchedulerTask();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getTarget <em>Target</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Target</em>'.
-	 * @see org.nasdanika.cdo.scheduler.SchedulerTask#getTarget()
-	 * @see #getSchedulerTask()
-	 * @generated
-	 */
-	EReference getSchedulerTask_Target();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAt <em>Run At</em>}'.
@@ -185,15 +186,36 @@ public interface SchedulerPackage extends EPackage {
 	EAttribute getSchedulerTask_FixedRate();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs <em>Run As</em>}'.
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.scheduler.SchedulerTask#isActive <em>Active</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Run As</em>'.
-	 * @see org.nasdanika.cdo.scheduler.SchedulerTask#getRunAs()
+	 * @return the meta object for the attribute '<em>Active</em>'.
+	 * @see org.nasdanika.cdo.scheduler.SchedulerTask#isActive()
 	 * @see #getSchedulerTask()
 	 * @generated
 	 */
-	EReference getSchedulerTask_RunAs();
+	EAttribute getSchedulerTask_Active();
+
+	/**
+	 * Returns the meta object for the '{@link org.nasdanika.cdo.scheduler.SchedulerTask#execute(org.nasdanika.cdo.CDOTransactionContext) <em>Execute</em>}' operation.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the '<em>Execute</em>' operation.
+	 * @see org.nasdanika.cdo.scheduler.SchedulerTask#execute(org.nasdanika.cdo.CDOTransactionContext)
+	 * @generated
+	 */
+	EOperation getSchedulerTask__Execute__CDOTransactionContext();
+
+	/**
+	 * Returns the meta object for data type '{@link org.nasdanika.cdo.CDOTransactionContext <em>CDO Transaction Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>CDO Transaction Context</em>'.
+	 * @see org.nasdanika.cdo.CDOTransactionContext
+	 * @model instanceClass="org.nasdanika.cdo.CDOTransactionContext" typeParameters="CR"
+	 * @generated
+	 */
+	EDataType getCDOTransactionContext();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -229,14 +251,6 @@ public interface SchedulerPackage extends EPackage {
 		EClass SCHEDULER_TASK = eINSTANCE.getSchedulerTask();
 
 		/**
-		 * The meta object literal for the '<em><b>Target</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference SCHEDULER_TASK__TARGET = eINSTANCE.getSchedulerTask_Target();
-
-		/**
 		 * The meta object literal for the '<em><b>Run At</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -261,12 +275,30 @@ public interface SchedulerPackage extends EPackage {
 		EAttribute SCHEDULER_TASK__FIXED_RATE = eINSTANCE.getSchedulerTask_FixedRate();
 
 		/**
-		 * The meta object literal for the '<em><b>Run As</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Active</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference SCHEDULER_TASK__RUN_AS = eINSTANCE.getSchedulerTask_RunAs();
+		EAttribute SCHEDULER_TASK__ACTIVE = eINSTANCE.getSchedulerTask_Active();
+
+		/**
+		 * The meta object literal for the '<em><b>Execute</b></em>' operation.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EOperation SCHEDULER_TASK___EXECUTE__CDOTRANSACTIONCONTEXT = eINSTANCE.getSchedulerTask__Execute__CDOTransactionContext();
+
+		/**
+		 * The meta object literal for the '<em>CDO Transaction Context</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.nasdanika.cdo.CDOTransactionContext
+		 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getCDOTransactionContext()
+		 * @generated
+		 */
+		EDataType CDO_TRANSACTION_CONTEXT = eINSTANCE.getCDOTransactionContext();
 
 	}
 

@@ -1,18 +1,9 @@
 package org.nasdanika.cdo.scheduler;
 
-import java.util.concurrent.TimeUnit;
-
-import org.nasdanika.cdo.CDOTransactionContextCommand;
-
-public interface Scheduler<CR, K> {
+public interface Scheduler<CR> {
 	
-	K schedule(CDOTransactionContextCommand<CR, Object, Object> command, long delay, TimeUnit timeUnit);
-
-	K scheduleAtFixedRate(CDOTransactionContextCommand<CR, Object, Object> command, long initialDelay, long period, TimeUnit timeUnit);
+	void schedule(SchedulerTask<CR> task);
 	
-	K scheduleWithFixedDelay(CDOTransactionContextCommand<CR, Object, Object> command, long initialDelay, long delay, TimeUnit timeUnit);
+	boolean cancel(SchedulerTask<CR> task);
 	
-	boolean cancel(K taskKey);
-	
-	K submit(CDOTransactionContextCommand<CR, Object, Object> command);
 }

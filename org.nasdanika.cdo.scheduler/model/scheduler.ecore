@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="scheduler" nsURI="urn:org.nasdanika.cdo.scheduler" nsPrefix="org.nasdanika.cdo.scheduler">
-  <eClassifiers xsi:type="ecore:EClass" name="SchedulerTask">
-    <eStructuralFeatures xsi:type="ecore:EReference" name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject"
-        containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runAt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELongObject"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="CDOTransactionContext" instanceClassName="org.nasdanika.cdo.CDOTransactionContext">
+    <eTypeParameters name="CR"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SchedulerTask" abstract="true">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Supertype for scheduler tasks."/>
+    </eAnnotations>
+    <eTypeParameters name="CR"/>
+    <eOperations name="execute">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Invoked by the scheduler to execute the task.&#xD;&#xA;If this method returns false, then the task is canceled."/>
+      </eAnnotations>
+      <eParameters name="context">
+        <eGenericType eClassifier="#//CDOTransactionContext">
+          <eTypeArguments eTypeParameter="#//SchedulerTask/CR"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runAt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="When to execute task. Submits task if this value is before the current time."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Task period/interval. One-off task if set to non-positive value."/>
+      </eAnnotations>
+    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedRate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="runAs" upperBound="-1"
-        eType="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//Principal"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="active" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Task's execute() method is invoked by the scheduler only if the task is active."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
 </ecore:EPackage>

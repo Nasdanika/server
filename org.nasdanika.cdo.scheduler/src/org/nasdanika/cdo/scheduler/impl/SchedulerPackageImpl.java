@@ -4,13 +4,16 @@ package org.nasdanika.cdo.scheduler.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EGenericType;
+import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EReference;
+import org.eclipse.emf.ecore.ETypeParameter;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.scheduler.SchedulerFactory;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
-import org.nasdanika.cdo.security.SecurityPackage;
 
 /**
  * <!-- begin-user-doc -->
@@ -25,6 +28,13 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * @generated
 	 */
 	private EClass schedulerTaskEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType cdoTransactionContextEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -72,9 +82,6 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 
 		isInited = true;
 
-		// Initialize simple dependencies
-		SecurityPackage.eINSTANCE.eClass();
-
 		// Create package meta-data objects
 		theSchedulerPackage.createPackageContents();
 
@@ -104,17 +111,8 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getSchedulerTask_Target() {
-		return (EReference)schedulerTaskEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getSchedulerTask_RunAt() {
-		return (EAttribute)schedulerTaskEClass.getEStructuralFeatures().get(1);
+		return (EAttribute)schedulerTaskEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -123,7 +121,7 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * @generated
 	 */
 	public EAttribute getSchedulerTask_Period() {
-		return (EAttribute)schedulerTaskEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)schedulerTaskEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -132,6 +130,15 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * @generated
 	 */
 	public EAttribute getSchedulerTask_FixedRate() {
+		return (EAttribute)schedulerTaskEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSchedulerTask_Active() {
 		return (EAttribute)schedulerTaskEClass.getEStructuralFeatures().get(3);
 	}
 
@@ -140,8 +147,17 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getSchedulerTask_RunAs() {
-		return (EReference)schedulerTaskEClass.getEStructuralFeatures().get(4);
+	public EOperation getSchedulerTask__Execute__CDOTransactionContext() {
+		return schedulerTaskEClass.getEOperations().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getCDOTransactionContext() {
+		return cdoTransactionContextEDataType;
 	}
 
 	/**
@@ -173,11 +189,14 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 
 		// Create classes and their features
 		schedulerTaskEClass = createEClass(SCHEDULER_TASK);
-		createEReference(schedulerTaskEClass, SCHEDULER_TASK__TARGET);
 		createEAttribute(schedulerTaskEClass, SCHEDULER_TASK__RUN_AT);
 		createEAttribute(schedulerTaskEClass, SCHEDULER_TASK__PERIOD);
 		createEAttribute(schedulerTaskEClass, SCHEDULER_TASK__FIXED_RATE);
-		createEReference(schedulerTaskEClass, SCHEDULER_TASK__RUN_AS);
+		createEAttribute(schedulerTaskEClass, SCHEDULER_TASK__ACTIVE);
+		createEOperation(schedulerTaskEClass, SCHEDULER_TASK___EXECUTE__CDOTRANSACTIONCONTEXT);
+
+		// Create data types
+		cdoTransactionContextEDataType = createEDataType(CDO_TRANSACTION_CONTEXT);
 	}
 
 	/**
@@ -203,22 +222,29 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 		setNsPrefix(eNS_PREFIX);
 		setNsURI(eNS_URI);
 
-		// Obtain other dependent packages
-		SecurityPackage theSecurityPackage = (SecurityPackage)EPackage.Registry.INSTANCE.getEPackage(SecurityPackage.eNS_URI);
-
 		// Create type parameters
+		ETypeParameter schedulerTaskEClass_CR = addETypeParameter(schedulerTaskEClass, "CR");
+		addETypeParameter(cdoTransactionContextEDataType, "CR");
 
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
 
 		// Initialize classes, features, and operations; add parameters
-		initEClass(schedulerTaskEClass, SchedulerTask.class, "SchedulerTask", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEReference(getSchedulerTask_Target(), ecorePackage.getEObject(), null, "target", null, 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSchedulerTask_RunAt(), ecorePackage.getELong(), "runAt", null, 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEAttribute(getSchedulerTask_Period(), ecorePackage.getELongObject(), "period", null, 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEClass(schedulerTaskEClass, SchedulerTask.class, "SchedulerTask", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getSchedulerTask_RunAt(), ecorePackage.getEDate(), "runAt", null, 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSchedulerTask_Period(), ecorePackage.getELong(), "period", null, 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSchedulerTask_FixedRate(), ecorePackage.getEBoolean(), "fixedRate", null, 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getSchedulerTask_RunAs(), theSecurityPackage.getPrincipal(), null, "runAs", null, 0, -1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getSchedulerTask_Active(), ecorePackage.getEBoolean(), "active", "true", 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+		EOperation op = initEOperation(getSchedulerTask__Execute__CDOTransactionContext(), null, "execute", 0, 1, IS_UNIQUE, IS_ORDERED);
+		EGenericType g1 = createEGenericType(this.getCDOTransactionContext());
+		EGenericType g2 = createEGenericType(schedulerTaskEClass_CR);
+		g1.getETypeArguments().add(g2);
+		addEParameter(op, g1, "context", 0, 1, IS_UNIQUE, IS_ORDERED);
+
+		// Initialize data types
+		initEDataType(cdoTransactionContextEDataType, CDOTransactionContext.class, "CDOTransactionContext", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS);
 
 		// Create resource
 		createResource(eNS_URI);
