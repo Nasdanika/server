@@ -60,27 +60,30 @@
 		<module>org.nasdanika.cdo.web</module>
 		<module>org.nasdanika.cdo.web.doc</module>
 		<module>org.nasdanika.osgi.model</module>
-		<module>org.nasdanika.cdo.boxing</module>
-		<module>org.nasdanika.function</module>
-		<!--<module>org.nasdanika.promise</module>-->
-		<module>org.nasdanika.function.cdo</module>
-		<!--<module>org.nasdanika.promise.cdo</module>-->
-		<module>org.nasdanika.cdo.function</module>
 		<module>org.nasdanika.cdo.scheduler</module>
-		<module>org.nasdanika.cdo.promise</module>
 		<module>org.nasdanika.equinox.feature</module>
 		<module>org.nasdanika.cdo.feature</module>
 		<module>org.nasdanika.feature</module>
-		<!-- <module>org.nasdanika.transaction</module> -->
-		<!-- <module>org.nasdanika.server.third_party.feature</module> -->
 		<module>org.nasdanika.server.jetty.feature</module>
 		<module>org.nasdanika.repository</module>
 
-		<module>org.nasdanika.cdo.sca</module>
-		<module>org.nasdanika.cdo.sca.edit</module>
-
 		<module>org.nasdanika.provisioning</module>
 		<module>org.nasdanika.provisioning.feature</module>
+
+		<!-- 
+		<module>org.nasdanika.cdo.boxing</module>
+		<module>org.nasdanika.function</module>
+		<module>org.nasdanika.promise</module>
+		<module>org.nasdanika.function.cdo</module>
+		<module>org.nasdanika.promise.cdo</module>
+		<module>org.nasdanika.cdo.function</module>
+		<module>org.nasdanika.cdo.promise</module>
+		<module>org.nasdanika.cdo.sca</module>
+		<module>org.nasdanika.cdo.sca.edit</module>
+		-->
+		
+		<!-- <module>org.nasdanika.transaction</module> -->
+		<!-- <module>org.nasdanika.server.third_party.feature</module> -->
 
 	</modules>
 </project>
