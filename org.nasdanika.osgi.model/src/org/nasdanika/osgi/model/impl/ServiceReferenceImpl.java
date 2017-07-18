@@ -20,6 +20,7 @@ import org.nasdanika.osgi.model.ServiceReference;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.nasdanika.osgi.model.impl.ServiceReferenceImpl#getInterfaceName <em>Interface Name</em>}</li>
  *   <li>{@link org.nasdanika.osgi.model.impl.ServiceReferenceImpl#getObjectClass <em>Object Class</em>}</li>
  *   <li>{@link org.nasdanika.osgi.model.impl.ServiceReferenceImpl#getReferenceTarget <em>Reference Target</em>}</li>
  *   <li>{@link org.nasdanika.osgi.model.impl.ServiceReferenceImpl#getName <em>Name</em>}</li>
@@ -55,6 +56,24 @@ public class ServiceReferenceImpl extends CDOObjectImpl implements ServiceRefere
 	@Override
 	protected int eStaticFeatureCount() {
 		return 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getInterfaceName() {
+		return (String)eGet(ModelPackage.Literals.SERVICE_REFERENCE__INTERFACE_NAME, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setInterfaceName(String newInterfaceName) {
+		eSet(ModelPackage.Literals.SERVICE_REFERENCE__INTERFACE_NAME, newInterfaceName);
 	}
 
 	/**

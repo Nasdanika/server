@@ -173,13 +173,22 @@ public interface ModelPackage extends EPackage {
 	int SERVICE_REFERENCE = 2;
 
 	/**
+	 * The feature id for the '<em><b>Interface Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SERVICE_REFERENCE__INTERFACE_NAME = 0;
+
+	/**
 	 * The feature id for the '<em><b>Object Class</b></em>' attribute list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_REFERENCE__OBJECT_CLASS = 0;
+	int SERVICE_REFERENCE__OBJECT_CLASS = 1;
 
 	/**
 	 * The feature id for the '<em><b>Reference Target</b></em>' reference.
@@ -188,7 +197,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_REFERENCE__REFERENCE_TARGET = 1;
+	int SERVICE_REFERENCE__REFERENCE_TARGET = 2;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -197,7 +206,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_REFERENCE__NAME = 2;
+	int SERVICE_REFERENCE__NAME = 3;
 
 	/**
 	 * The number of structural features of the '<em>Service Reference</em>' class.
@@ -206,7 +215,7 @@ public interface ModelPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SERVICE_REFERENCE_FEATURE_COUNT = 3;
+	int SERVICE_REFERENCE_FEATURE_COUNT = 4;
 
 	/**
 	 * The number of operations of the '<em>Service Reference</em>' class.
@@ -517,6 +526,17 @@ public interface ModelPackage extends EPackage {
 	EClass getServiceReference();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.osgi.model.ServiceReference#getInterfaceName <em>Interface Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Interface Name</em>'.
+	 * @see org.nasdanika.osgi.model.ServiceReference#getInterfaceName()
+	 * @see #getServiceReference()
+	 * @generated
+	 */
+	EAttribute getServiceReference_InterfaceName();
+
+	/**
 	 * Returns the meta object for the attribute list '{@link org.nasdanika.osgi.model.ServiceReference#getObjectClass <em>Object Class</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -782,6 +802,14 @@ public interface ModelPackage extends EPackage {
 		 * @generated
 		 */
 		EClass SERVICE_REFERENCE = eINSTANCE.getServiceReference();
+
+		/**
+		 * The meta object literal for the '<em><b>Interface Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute SERVICE_REFERENCE__INTERFACE_NAME = eINSTANCE.getServiceReference_InterfaceName();
 
 		/**
 		 * The meta object literal for the '<em><b>Object Class</b></em>' attribute list feature.

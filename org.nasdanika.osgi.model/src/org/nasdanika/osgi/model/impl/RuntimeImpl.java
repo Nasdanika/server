@@ -24,6 +24,7 @@ import org.osgi.framework.dto.ServiceReferenceDTO;
 import org.osgi.service.component.runtime.ServiceComponentRuntime;
 import org.osgi.service.component.runtime.dto.ComponentConfigurationDTO;
 import org.osgi.service.component.runtime.dto.ComponentDescriptionDTO;
+import org.osgi.service.component.runtime.dto.ReferenceDTO;
 import org.osgi.service.component.runtime.dto.SatisfiedReferenceDTO;
 
 /**
@@ -97,6 +98,7 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 		Map<Long, Bundle> bundleMap = new HashMap<>();
 		Map<Long, Component> componentMap = new HashMap<>();
 		Map<Long, ComponentConfigurationDTO> componentConfigurationMap = new HashMap<>();
+		Map<Long, ComponentDescriptionDTO> componentDescriptionMap = new HashMap<>();
 		for (org.osgi.framework.Bundle frameworkBundle: bundles) {
 			Bundle bundle = ModelFactory.eINSTANCE.createBundle();
 			getBundles().add(bundle);
@@ -114,6 +116,7 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 						component.setId(componentConfiguration.id);
 						componentMap.put(component.getId(), component);
 						componentConfigurationMap.put(componentConfiguration.id, componentConfiguration);
+						componentDescriptionMap.put(componentConfiguration.id, componentDescription);					
 						for (String svc: componentDescription.serviceInterfaces) {
 							component.getServices().add(svc);
 						}	
@@ -160,6 +163,7 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 			}
 			
 			for (Component component: bundle.getComponents()) {
+				ComponentDescriptionDTO componentDescription = componentDescriptionMap.get(component.getId());
 				ComponentConfigurationDTO componentConfiguration = componentConfigurationMap.get(component.getId());
 				SatisfiedReferenceDTO[] satisfiedReferences = componentConfiguration.satisfiedReferences;
 				if (satisfiedReferences != null) {
@@ -175,11 +179,28 @@ public class RuntimeImpl extends CDOObjectImpl implements org.nasdanika.osgi.mod
 									if (serviceId instanceof Number && ((Number) serviceId).longValue() == boundServiceReference.id) {
 										briuIt.remove();
 									}
-								}
+								}																
 								
 								ServiceReference serviceReference = ModelFactory.eINSTANCE.createServiceReference();
+//								for (ServiceReference esr: component.getOutboundReferences()) {
+//									if (satisfiedReference.name.equals(esr.getName())) {
+//										serviceReference = esr;
+//										break;
+//									}
+//								}
+//								if (serviceReference == null) {
+//									serviceReference = ;
+//								}
 								serviceReference.setName(satisfiedReference.name);
 								component.getOutboundReferences().add(serviceReference);
+								
+								for (ReferenceDTO ref: componentDescription.references) {
+									if (ref.name.equals(serviceReference.getName())) {
+										serviceReference.setInterfaceName(ref.interfaceName);
+										break;
+									}
+								}								
+								
 								Object oca = boundServiceReference.properties.get(OBJECT_CLASS);
 								if (oca instanceof String[]) {
 									for (String oc: (String[]) oca) {

@@ -221,7 +221,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getServiceReference_ObjectClass() {
+	public EAttribute getServiceReference_InterfaceName() {
 		return (EAttribute)serviceReferenceEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -230,8 +230,17 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getServiceReference_ObjectClass() {
+		return (EAttribute)serviceReferenceEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EReference getServiceReference_ReferenceTarget() {
-		return (EReference)serviceReferenceEClass.getEStructuralFeatures().get(1);
+		return (EReference)serviceReferenceEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -240,7 +249,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 	 * @generated
 	 */
 	public EAttribute getServiceReference_Name() {
-		return (EAttribute)serviceReferenceEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)serviceReferenceEClass.getEStructuralFeatures().get(3);
 	}
 
 	/**
@@ -398,6 +407,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		createEAttribute(elementEClass, ELEMENT__ID);
 
 		serviceReferenceEClass = createEClass(SERVICE_REFERENCE);
+		createEAttribute(serviceReferenceEClass, SERVICE_REFERENCE__INTERFACE_NAME);
 		createEAttribute(serviceReferenceEClass, SERVICE_REFERENCE__OBJECT_CLASS);
 		createEReference(serviceReferenceEClass, SERVICE_REFERENCE__REFERENCE_TARGET);
 		createEAttribute(serviceReferenceEClass, SERVICE_REFERENCE__NAME);
@@ -466,6 +476,7 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		initEAttribute(getElement_Id(), ecorePackage.getELong(), "id", null, 0, 1, Element.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(serviceReferenceEClass, ServiceReference.class, "ServiceReference", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+		initEAttribute(getServiceReference_InterfaceName(), ecorePackage.getEString(), "interfaceName", null, 0, 1, ServiceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getServiceReference_ObjectClass(), ecorePackage.getEString(), "objectClass", null, 0, -1, ServiceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getServiceReference_ReferenceTarget(), this.getElement(), this.getElement_InboundReferences(), "referenceTarget", null, 0, 1, ServiceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getServiceReference_Name(), ecorePackage.getEString(), "name", null, 0, 1, ServiceReference.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -526,6 +537,18 @@ public class ModelPackageImpl extends EPackageImpl implements ModelPackage {
 		   source, 
 		   new String[] {
 			 "documentation", "Base class for OSGi runtime element which can expose and consume services - bundles and components."
+		   });	
+		addAnnotation
+		  (getServiceReference_InterfaceName(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Reference interface."
+		   });	
+		addAnnotation
+		  (getServiceReference_ObjectClass(), 
+		   source, 
+		   new String[] {
+			 "documentation", "Satisfied reference object classes (service interfaces)."
 		   });	
 		addAnnotation
 		  (getServiceReference_Name(), 
