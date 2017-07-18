@@ -172,7 +172,7 @@ class BundleAndComponentDocumentationGeneratorBase {
 							
 							for (org.nasdanika.osgi.model.Component component: bundleComponents) {
 								String componentAlias = component.eClass().getName()+"_"+component.getId();
-								specBuilder.append("\tcomponent \""+component.getName()+"\" as "+componentAlias+"<<Component>>");
+								specBuilder.append("\tcomponent \""+component.getName()+"\" as "+componentAlias+" <<Component>>");
 								if (!contextElements.contains(component)) {
 									specBuilder.append(" #DDDDDD");
 								}		
@@ -231,9 +231,9 @@ class BundleAndComponentDocumentationGeneratorBase {
 									specBuilder.append("["+sourceAlias+"] -d-> ");
 									String targetAlias = trg.eClass().getName()+"_"+trg.getId();
 									boolean serviceMatched = false;
-									if (trg instanceof org.nasdanika.osgi.model.Component && ref.getObjectClass().size() == 1) {
+									if (trg instanceof org.nasdanika.osgi.model.Component) {
 										for (String svc: ((org.nasdanika.osgi.model.Component) trg).getServices()) {
-											if (svc.equals(ref.getObjectClass().get(0))) {
+											if (svc.equals(ref.getInterfaceName())) {
 												specBuilder.append(targetAlias+"_"+svc);
 												serviceMatched = true;
 												break;
@@ -284,9 +284,9 @@ class BundleAndComponentDocumentationGeneratorBase {
 								String targetAlias = trg.eClass().getName()+"_"+trg.getId();
 								specBuilder.append("["+sourceAlias+"] -d-> ");
 								boolean serviceMatched = false;
-								if (trg instanceof org.nasdanika.osgi.model.Component && ref.getObjectClass().size() == 1) {
+								if (trg instanceof org.nasdanika.osgi.model.Component) {
 									for (String svc: ((org.nasdanika.osgi.model.Component) trg).getServices()) {
-										if (svc.equals(ref.getObjectClass().get(0))) {
+										if (svc.equals(ref.getInterfaceName())) {
 											specBuilder.append(targetAlias+"_"+svc);
 											if (ref.getName() != null) {
 												specBuilder.append(" : ").append(ref.getName());
