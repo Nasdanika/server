@@ -29,7 +29,16 @@ import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOTransactionContextProvider;
 import org.osgi.service.component.ComponentContext;
 
-public abstract class AbstractSchedulerComponent<CR> implements Scheduler<CR>, CDOSessionInitializer, CDOTransactionHandler2 {
+/**
+ * Scheduler component during activation creates a thread pool executor service and then schedules tasks returned by <code>getTasks()</code> method.
+ * After activation changes in tasks state such as modification, deletion, and creation of new {@link SchedulerTask}s is detected
+ * by <code>committedTransaction()</code> method and appropriate changes are made in the executor service tasks - they are cancelled for deleted, scheduled
+ * for new, and cancelled and scheduled again for modified. 
+ * @author Pavel Vlasov
+ *
+ * @param <CR>
+ */
+public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitializer, CDOTransactionHandler2 {
 	
 	private int threadPoolSize = 1; 
 	private ScheduledExecutorService scheduledExecutorService;
@@ -93,11 +102,21 @@ public abstract class AbstractSchedulerComponent<CR> implements Scheduler<CR>, C
 		
 	}
 	
+	/**
+	 * Handles task exception. This method prints task id and exception stack trace to System.err.
+	 * @param taskId
+	 * @param e
+	 */
 	protected void handleException(CDOID taskId, Exception e) {
 		System.err.println("Task ID: "+taskId);
 		e.printStackTrace(); 
 	}
 
+	/**
+	 * Creates a thread pool executor service and then schedules tasks returned by <code>getTasks()</code> method.
+	 * @param componentContext
+	 * @throws Exception
+	 */
 	public void activate(ComponentContext componentContext) throws Exception {
 		scheduledExecutorService = Executors.newScheduledThreadPool(threadPoolSize);
 		try (CDOTransactionContext<CR> transactionContext = createContext()) {
@@ -108,6 +127,11 @@ public abstract class AbstractSchedulerComponent<CR> implements Scheduler<CR>, C
 		}		
 	}
 
+	/**
+	 * Cancels scheduled tasks and shuts down the executor service.
+	 * @param componentContext
+	 * @throws Exception
+	 */
 	public void deactivate(ComponentContext componentContext) throws Exception {
 		for (Future<?> st: scheduledTasks.values()) {
 			st.cancel(false);
@@ -117,14 +141,17 @@ public abstract class AbstractSchedulerComponent<CR> implements Scheduler<CR>, C
 	
 	private CDOTransactionContextProvider<CR> transactionContextProvider;
 	
+	/**
+	 * Sets {@link CDOTransactionContextProvider} reference.
+	 * @param transactionContextProvider
+	 */
 	public void setTransactionContextProvider(CDOTransactionContextProvider<CR> transactionContextProvider) {
 		this.transactionContextProvider = transactionContextProvider;
 	}
 	
 	protected abstract Iterator<SchedulerTask<CR>> getTasks(CDOTransactionContext<CR> context); 
 	
-	@Override
-	public void schedule(SchedulerTask<CR> schedulerTask) {
+	protected void schedule(SchedulerTask<CR> schedulerTask) {
 		if (schedulerTask.isActive()) {
 			CDOID taskId = schedulerTask.cdoID();
 			SchedulerTaskRunnable taskRunnable = new SchedulerTaskRunnable(taskId);
@@ -152,8 +179,7 @@ public abstract class AbstractSchedulerComponent<CR> implements Scheduler<CR>, C
 		}
 	}
 	
-	@Override
-	public boolean cancel(SchedulerTask<CR> task) {
+	protected boolean cancel(SchedulerTask<CR> task) {
 		Future<?> sf = scheduledTasks.get(task.cdoID());
 		return sf != null && sf.cancel(false);
 	}
@@ -170,7 +196,11 @@ public abstract class AbstractSchedulerComponent<CR> implements Scheduler<CR>, C
 	 */
 	protected abstract boolean shallSchedule(SchedulerTask<CR> task); 
 
-	// Listening for changes in scheduled tasks.
+	/**
+	 * Detects changes in {@link SchedulerTask}s state such as modification, deletion, and creation of new tasks. 
+	 * Makes appropriate changes in the executor service tasks - they are cancelled for deleted, scheduled
+	 * for new, and cancelled and scheduled again for modified. 	 
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void committedTransaction(CDOTransaction transaction, CDOCommitContext commitContext) {

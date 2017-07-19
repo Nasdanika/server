@@ -9,7 +9,6 @@ import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.ecore.EObject;
 import org.nasdanika.cdo.CDOTransactionContext;
-import org.nasdanika.core.NasdanikaException;
 
 /**
  * Scheduler which keeps tasks in a resource.
@@ -19,18 +18,6 @@ import org.nasdanika.core.NasdanikaException;
  */
 public class ResourceTaskContainerSchedulerComponent<CR> extends AbstractSchedulerComponent<CR> {
 	
-	@Override
-	public void schedule(SchedulerTask<CR> schedulerTask) {
-		super.schedule(schedulerTask);
-		if (schedulerTask.eResource() == null) {
-			try (CDOTransactionContext<CR> transactionContext = createContext()) {
-				getTasksResource(transactionContext.getView()).getContents().add(schedulerTask);
-			} catch (Exception e) {
-				throw new NasdanikaException(e);
-			}
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@Override
 	protected Iterator<SchedulerTask<CR>> getTasks(CDOTransactionContext<CR> context) {
