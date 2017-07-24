@@ -1,11 +1,16 @@
 package org.nasdanika.cdo.web;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
+import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOViewContextSubject;
@@ -86,6 +91,37 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 	
 	@Override
 	public boolean authorize(Object target, String action, String qualifier, Map<String, Object> environment) throws Exception {
+		// Caching - TODO make configurable
+		if ((environment == null || environment.isEmpty()) && target instanceof CDOObject) {
+			CDOID cdoId = ((CDOObject) target).cdoID();
+			if (!cdoId.isTemporary()) {
+				List<CDOID> principalIDs = new ArrayList<>();
+				for (Principal principal: getPrincipals()) {
+					CDOID pid = principal.cdoID();
+					if (pid.isTemporary()) {
+						return transactionContext.authorize(target, action, qualifier, environment);						
+					}
+					principalIDs.add(pid);
+				}
+				
+				HttpSession session = getRequest().getSession();
+				String cacheKey = "org.nasdanika.core.Context.authorize:cache";
+				@SuppressWarnings("unchecked")
+				Map<CDOObjectAuthorizationKey, CDOObjectAuthorizationValue> authorizationCache = (Map<CDOObjectAuthorizationKey, CDOObjectAuthorizationValue>) session.getAttribute(cacheKey);
+				if (authorizationCache == null) {
+					authorizationCache = new ConcurrentHashMap<>();
+					session.setAttribute(cacheKey, authorizationCache);
+				}						
+				CDOObjectAuthorizationKey key = new CDOObjectAuthorizationKey(principalIDs, cdoId, action, qualifier);
+				CDOObjectAuthorizationValue av = authorizationCache.get(key);
+				if (av == null || av.isExpired()) {
+					av = new CDOObjectAuthorizationValue(transactionContext.authorize(target, action, qualifier, environment), System.currentTimeMillis() + 5 * 60 * 1000); // 5 minutes, make configurable if needed
+					authorizationCache.put(key, av);
+				}
+				return av.isAuthorized();				
+			}
+		}
+		
 		return transactionContext.authorize(target, action, qualifier, environment);
 	}
 	
