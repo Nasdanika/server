@@ -433,12 +433,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default boolean isEditable(C context, T obj, EModelElement modelElement) throws Exception {
 		String editableRenderAnnotation = getRenderAnnotation(context, modelElement, RenderAnnotation.EDITABLE);
-		if (CoreUtil.isBlank(editableRenderAnnotation) || "true".equals(editableRenderAnnotation)) {
+		if ("true".equals(editableRenderAnnotation)) {
 			return true;
 		} 
 		
 		if ("false".equals(editableRenderAnnotation)) {
 			return false;
+		}
+		
+		if (CoreUtil.isBlank(editableRenderAnnotation)) {
+			if (modelElement instanceof EStructuralFeature) {
+				return isEditable(context, obj, ((EStructuralFeature) modelElement).getEContainingClass());
+			}
+			return true;
 		}
 		
 		if (obj instanceof CDOObject) {
@@ -1338,10 +1345,12 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @param context
 	 * @param typedElement
 	 * @param value
+	 * @param forEditing
 	 * @return
 	 * @throws Exception 
 	 */
-	default Object renderTypedElementValue(C context, ETypedElement typedElement, Object value, Consumer<Object> appConsumer) throws Exception {
+	@SuppressWarnings("unchecked")
+	default Object renderTypedElementValue(C context, ETypedElement typedElement, Object value, Consumer<Object> appConsumer, boolean forEditing) throws Exception {
 		if (typedElement instanceof EReference && !typedElement.isMany() && !context.authorize(value, StandardAction.read, null, null)) {
 			value = null;
 		}
@@ -1355,7 +1364,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) target);
 					Object pv = jxPathContext.getValue(pra);
 					if (pv != null) {
-						return htmlFactory.well(renderTypedElementValue(context, typedElement, pv, appConsumer)).small();
+						return htmlFactory.well(renderTypedElementValue(context, typedElement, pv, appConsumer, false)).small();
 					}
 				}
 			}
@@ -1418,11 +1427,11 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				return rdf;
 			}
 			if (diagnostic.getChildren().size() == 1 && CoreUtil.isBlank(diagnostic.getMessage())) {
-				return renderTypedElementValue(context, typedElement, diagnostic.getChildren().iterator().next(), appConsumer);
+				return renderTypedElementValue(context, typedElement, diagnostic.getChildren().iterator().next(), appConsumer, false);
 			}
 			Tag ul = htmlFactory.tag(TagName.ul);
 			for (Diagnostic child: diagnostic.getChildren()) {
-				ul.content(htmlFactory.tag(TagName.li, renderTypedElementValue(context, typedElement, child, appConsumer)));
+				ul.content(htmlFactory.tag(TagName.li, renderTypedElementValue(context, typedElement, child, appConsumer, false)));
 			}
 			if (CoreUtil.isBlank(diagnostic.getMessage())) {
 				return ul;
@@ -1432,14 +1441,26 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		if (value instanceof Date) {
-			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
+			Object formatAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);				
+			String format = null;
+			if (formatAnnotation instanceof String) {
+				format = (String) formatAnnotation;
+			} else if (formatAnnotation instanceof Map) {
+				format = (String) ((Map<String, Object>) formatAnnotation).get(forEditing ? "edit" : "display");
+			}
 			if (format == null) {
 				format = "yyyy-MM-dd"; // Default web format for dates.
 			}
 			SimpleDateFormat sdf = new SimpleDateFormat(format, getLocale(context));
 			return sdf.format((Date) value);
 		} else if (value instanceof Number) {
-			String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
+			Object formatAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);				
+			String format = null;
+			if (formatAnnotation instanceof String) {
+				format = (String) formatAnnotation;
+			} else if (formatAnnotation instanceof Map) {
+				format = (String) ((Map<String, Object>) formatAnnotation).get(forEditing ? "edit" : "display");
+			}
 			if (format != null) {
 				DecimalFormat df = new DecimalFormat(format,  DecimalFormatSymbols.getInstance(getLocale(context)));
 				return df.format(value);
@@ -1518,7 +1539,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			if (Date.class == featureTypeInstanceClass) {
-				String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
+				Object formatAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);				
+				String format = null;
+				if (formatAnnotation instanceof String) {
+					format = (String) formatAnnotation;
+				} else if (formatAnnotation instanceof Map) {
+					format = (String) ((Map<String, Object>) formatAnnotation).get("edit");
+				}
 				if (format == null) {
 					format = "yyyy-MM-dd"; // Default web format for dates.
 				}
@@ -1527,7 +1554,13 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			}
 			
 			if (Number.class.isAssignableFrom(featureTypeInstanceClass)) {
-				String format = getRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);
+				Object formatAnnotation = getYamlRenderAnnotation(context, typedElement, RenderAnnotation.FORMAT);				
+				String format = null;
+				if (formatAnnotation instanceof String) {
+					format = (String) formatAnnotation;
+				} else if (formatAnnotation instanceof Map) {
+					format = (String) ((Map<String, Object>) formatAnnotation).get("edit");
+				}
 				if (format == null) {
 					if (Byte.class == featureTypeInstanceClass || byte.class == featureTypeInstanceClass) {
 						return Byte.parseByte(strValue);
@@ -3450,7 +3483,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 				if (typedElementValues.size() == 1) {
 					Object v = typedElementValues.iterator().next();
-					Object renderedValue = renderTypedElementValue(context, typedElement, v, appConsumer);					
+					Object renderedValue = renderTypedElementValue(context, typedElement, v, appConsumer, false);					
 					
 					// Non-html multi-line - wrap in PRE - use annotations to decide whether pre or not?
 					if (v instanceof String) { 
@@ -3487,7 +3520,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 					}
 					
 					for (ValueEntry<Object> featureValueEntry: featureValueEntries) {
-						Object renderedValue = renderTypedElementValue(context, typedElement, featureValueEntry.value, appConsumer);
+						Object renderedValue = renderTypedElementValue(context, typedElement, featureValueEntry.value, appConsumer, false);
 						
 						// Non-html multi-line - wrap in PRE
 						if (featureValueEntry.value instanceof String) { 
@@ -3520,7 +3553,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 				}
 			}
 		} else {
-			Object renderedValue = renderTypedElementValue(context, typedElement, typedElementValue, appConsumer);
+			Object renderedValue = renderTypedElementValue(context, typedElement, typedElementValue, appConsumer, false);
 			
 			// Non-html multi-line - wrap in PRE
 			if (typedElementValue instanceof String) { 
@@ -4126,7 +4159,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return ((Enum<?>) value).name();
 		}	
 		
-		Object rfv = renderTypedElementValue(context, typedElement, value, appConsumer);
+		Object rfv = renderTypedElementValue(context, typedElement, value, appConsumer, true);
 		return rfv == null ? "" : StringEscapeUtils.escapeHtml4(rfv.toString());						
 	}
 	
@@ -4180,7 +4213,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			} else if (((EReference) typedElement).isContainment()) {				
 				// Link and create button.
 				Well well = htmlFactory.well(
-						renderTypedElementValue(context, typedElement, value, appConsumer), 
+						renderTypedElementValue(context, typedElement, value, appConsumer, false), 
 						renderFeatureViewButtons(context, contextObject, (EStructuralFeature) typedElement, appConsumer)).small();
 				return theFormRenderingListener.onFormControlRendering(context, contextObject, typedElement, value, well);
 			} else {
@@ -5176,7 +5209,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 						String currentValue = StringEscapeUtils.escapeHtml4(getFormControlValue(context, obj, feature, obj.eGet(feature), appConsumer));
 						if (!originalValue.equals(currentValue)) {
 							Map<String, Object> env = new HashMap<>();
-							env.put("value", renderTypedElementValue(context, feature, obj.eGet(feature), appConsumer));
+							env.put("value", renderTypedElementValue(context, feature, obj.eGet(feature), appConsumer, false));
 							String msg = getHTMLFactory(context).interpolate(getResourceString(context, "concurrentModification.feature"), env);
 							diagnosticConsumer.accept(new BasicDiagnostic(Diagnostic.WARNING, getClass().getName(), 0, msg, new Object[] { obj, feature }));
 							noDiscrepancies = false;

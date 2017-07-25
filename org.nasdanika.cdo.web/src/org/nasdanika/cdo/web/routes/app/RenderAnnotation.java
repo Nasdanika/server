@@ -85,6 +85,7 @@ public enum RenderAnnotation {
 
 		/**
 		 * Format is used for rendering and parsing date and number feature values. {@link SimpleDateFormat} for dates, {@link DecimalFormat} for numbers.
+		 * Can be a string or YAML map with display and edit keys if different formats are desired for display and editing.
 		 */
 		FORMAT("format"),
 

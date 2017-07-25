@@ -123,7 +123,7 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 				if (filterValue instanceof EObject) {
 					filterIconAndLabel = renderer.getRenderer((EObject) filterValue).renderIconAndLabel(context, (EObject) filterValue);
 				} else {
-					filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue, appConsumer);
+					filterIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterValue, appConsumer, false);
 				}
 				Tag trashCanIcon = htmlFactory.fontAwesome().webApplication(WebApplication.trash_o).getTarget().style().color().bootstrapColor(Color.PRIMARY);
 				// TODO - build query
@@ -140,7 +140,7 @@ public class FeatureTableFilterManager<C extends Context, T extends EObject> ext
 					if (filterChoice instanceof EObject) {
 						filterChoiceIconAndLabel = renderer.getRenderer((EObject) filterChoice).renderIconAndLabel(context, (EObject) filterChoice);
 					} else {
-						filterChoiceIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterChoice, appConsumer);
+						filterChoiceIconAndLabel = typeRenderer.renderTypedElementValue(context, typedElement, filterChoice, appConsumer, false);
 					}			
 					dropDownItems.add(new Object[] { 
 							filterChoice, 
