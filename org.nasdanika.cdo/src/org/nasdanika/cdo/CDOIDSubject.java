@@ -20,18 +20,7 @@ public class CDOIDSubject<V extends CDOView, CR> extends AbstractCDOViewContextS
 	private List<CDOID> principalIDs = Collections.emptyList();
 	private List<String> principalNames = Collections.emptyList();
 
-	public CDOIDSubject(List<Principal> principals, List<String> principalNames) {
-		if (principals == null) {
-			principalNames = new ArrayList<>();
-			for (String name: principalNames) {
-				principalNames.add(name);
-			}
-		} else {
-			principalIDs = new ArrayList<>();
-			for (Principal principal: principals) {
-				principalIDs.add(principal.cdoID());
-			}
-		} 
+	protected CDOIDSubject() {
 	}
 	
 	@Override
@@ -49,5 +38,25 @@ public class CDOIDSubject<V extends CDOView, CR> extends AbstractCDOViewContextS
 		return principalNames;
 	}
 	
+	public static <V extends CDOView, CR> CDOIDSubject<V, CR> createPrincipalsSubject(List<Principal> principals) {
+		CDOIDSubject<V, CR> ret = new CDOIDSubject<V, CR>();
+		ret.principalIDs = new ArrayList<>();
+		for (Principal principal: principals) {
+			ret.principalIDs.add(principal.cdoID());
+		}
+		return ret;
+	}
+		
+	public static <V extends CDOView, CR> CDOIDSubject<V, CR> createPrincipalIDsSubject(List<CDOID> principalIDs) {
+		CDOIDSubject<V, CR> ret = new CDOIDSubject<V, CR>();
+		ret.principalIDs = new ArrayList<>(principalIDs);
+		return ret;
+	}	
+	
+	public static <V extends CDOView, CR> CDOIDSubject<V, CR> createPrincipalNamesSubject(List<String> principalNames) {
+		CDOIDSubject<V, CR> ret = new CDOIDSubject<V, CR>();
+		ret.principalNames = new ArrayList<>(principalNames);
+		return ret;
+	}
 }
 
