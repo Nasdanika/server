@@ -4,10 +4,18 @@ package org.nasdanika.cdo.scheduler.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
+
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+
 import org.eclipse.emf.ecore.EObject;
+import org.nasdanika.cdo.scheduler.Diagnostic;
+import org.nasdanika.cdo.scheduler.FixedDelaySchedulerTask;
+import org.nasdanika.cdo.scheduler.FixedRateSchedulerTask;
+import org.nasdanika.cdo.scheduler.RecurringSchedulerTask;
+import org.nasdanika.cdo.scheduler.RunEntry;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
+import org.nasdanika.cdo.scheduler.StackTraceEntry;
 
 /**
  * <!-- begin-user-doc -->
@@ -66,8 +74,36 @@ public class SchedulerAdapterFactory extends AdapterFactoryImpl {
 	protected SchedulerSwitch<Adapter> modelSwitch =
 		new SchedulerSwitch<Adapter>() {
 			@Override
+			public Adapter caseDiagnostic(Diagnostic object) {
+				return createDiagnosticAdapter();
+			}
+			@Override
+			public Adapter caseRunEntry(RunEntry object) {
+				return createRunEntryAdapter();
+			}
+			@Override
 			public <CR> Adapter caseSchedulerTask(SchedulerTask<CR> object) {
 				return createSchedulerTaskAdapter();
+			}
+			@Override
+			public <CR> Adapter caseRecurringSchedulerTask(RecurringSchedulerTask<CR> object) {
+				return createRecurringSchedulerTaskAdapter();
+			}
+			@Override
+			public <CR> Adapter caseFixedDelaySchedulerTask(FixedDelaySchedulerTask<CR> object) {
+				return createFixedDelaySchedulerTaskAdapter();
+			}
+			@Override
+			public <CR> Adapter caseFixedRateSchedulerTask(FixedRateSchedulerTask<CR> object) {
+				return createFixedRateSchedulerTaskAdapter();
+			}
+			@Override
+			public Adapter caseThrowable(org.nasdanika.cdo.scheduler.Throwable object) {
+				return createThrowableAdapter();
+			}
+			@Override
+			public Adapter caseStackTraceEntry(StackTraceEntry object) {
+				return createStackTraceEntryAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -90,6 +126,34 @@ public class SchedulerAdapterFactory extends AdapterFactoryImpl {
 
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.Diagnostic <em>Diagnostic</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.scheduler.Diagnostic
+	 * @generated
+	 */
+	public Adapter createDiagnosticAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.RunEntry <em>Run Entry</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.scheduler.RunEntry
+	 * @generated
+	 */
+	public Adapter createRunEntryAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.SchedulerTask <em>Task</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -100,6 +164,76 @@ public class SchedulerAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createSchedulerTaskAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.RecurringSchedulerTask <em>Recurring Scheduler Task</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.scheduler.RecurringSchedulerTask
+	 * @generated
+	 */
+	public Adapter createRecurringSchedulerTaskAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.FixedRateSchedulerTask <em>Fixed Rate Scheduler Task</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.scheduler.FixedRateSchedulerTask
+	 * @generated
+	 */
+	public Adapter createFixedRateSchedulerTaskAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.FixedDelaySchedulerTask <em>Fixed Delay Scheduler Task</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.scheduler.FixedDelaySchedulerTask
+	 * @generated
+	 */
+	public Adapter createFixedDelaySchedulerTaskAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.Throwable <em>Throwable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.scheduler.Throwable
+	 * @generated
+	 */
+	public Adapter createThrowableAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.StackTraceEntry <em>Stack Trace Entry</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.nasdanika.cdo.scheduler.StackTraceEntry
+	 * @generated
+	 */
+	public Adapter createStackTraceEntryAdapter() {
 		return null;
 	}
 

@@ -4,9 +4,16 @@ package org.nasdanika.cdo.scheduler.util;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
+
 import org.eclipse.emf.ecore.util.Switch;
+import org.nasdanika.cdo.scheduler.Diagnostic;
+import org.nasdanika.cdo.scheduler.FixedDelaySchedulerTask;
+import org.nasdanika.cdo.scheduler.FixedRateSchedulerTask;
+import org.nasdanika.cdo.scheduler.RecurringSchedulerTask;
+import org.nasdanika.cdo.scheduler.RunEntry;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
+import org.nasdanika.cdo.scheduler.StackTraceEntry;
 
 /**
  * <!-- begin-user-doc -->
@@ -65,14 +72,92 @@ public class SchedulerSwitch<T> extends Switch<T> {
 	@Override
 	protected T doSwitch(int classifierID, EObject theEObject) {
 		switch (classifierID) {
+			case SchedulerPackage.DIAGNOSTIC: {
+				Diagnostic diagnostic = (Diagnostic)theEObject;
+				T result = caseDiagnostic(diagnostic);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SchedulerPackage.RUN_ENTRY: {
+				RunEntry runEntry = (RunEntry)theEObject;
+				T result = caseRunEntry(runEntry);
+				if (result == null) result = caseDiagnostic(runEntry);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case SchedulerPackage.SCHEDULER_TASK: {
 				SchedulerTask<?> schedulerTask = (SchedulerTask<?>)theEObject;
 				T result = caseSchedulerTask(schedulerTask);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case SchedulerPackage.RECURRING_SCHEDULER_TASK: {
+				RecurringSchedulerTask<?> recurringSchedulerTask = (RecurringSchedulerTask<?>)theEObject;
+				T result = caseRecurringSchedulerTask(recurringSchedulerTask);
+				if (result == null) result = caseSchedulerTask(recurringSchedulerTask);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SchedulerPackage.FIXED_DELAY_SCHEDULER_TASK: {
+				FixedDelaySchedulerTask<?> fixedDelaySchedulerTask = (FixedDelaySchedulerTask<?>)theEObject;
+				T result = caseFixedDelaySchedulerTask(fixedDelaySchedulerTask);
+				if (result == null) result = caseRecurringSchedulerTask(fixedDelaySchedulerTask);
+				if (result == null) result = caseSchedulerTask(fixedDelaySchedulerTask);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SchedulerPackage.FIXED_RATE_SCHEDULER_TASK: {
+				FixedRateSchedulerTask<?> fixedRateSchedulerTask = (FixedRateSchedulerTask<?>)theEObject;
+				T result = caseFixedRateSchedulerTask(fixedRateSchedulerTask);
+				if (result == null) result = caseRecurringSchedulerTask(fixedRateSchedulerTask);
+				if (result == null) result = caseSchedulerTask(fixedRateSchedulerTask);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SchedulerPackage.THROWABLE: {
+				org.nasdanika.cdo.scheduler.Throwable throwable = (org.nasdanika.cdo.scheduler.Throwable)theEObject;
+				T result = caseThrowable(throwable);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case SchedulerPackage.STACK_TRACE_ENTRY: {
+				StackTraceEntry stackTraceEntry = (StackTraceEntry)theEObject;
+				T result = caseStackTraceEntry(stackTraceEntry);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Diagnostic</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Diagnostic</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseDiagnostic(Diagnostic object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Run Entry</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Run Entry</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseRunEntry(RunEntry object) {
+		return null;
 	}
 
 	/**
@@ -87,6 +172,81 @@ public class SchedulerSwitch<T> extends Switch<T> {
 	 * @generated
 	 */
 	public <CR> T caseSchedulerTask(SchedulerTask<CR> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Recurring Scheduler Task</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Recurring Scheduler Task</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR> T caseRecurringSchedulerTask(RecurringSchedulerTask<CR> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Fixed Rate Scheduler Task</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Fixed Rate Scheduler Task</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR> T caseFixedRateSchedulerTask(FixedRateSchedulerTask<CR> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Fixed Delay Scheduler Task</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Fixed Delay Scheduler Task</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <CR> T caseFixedDelaySchedulerTask(FixedDelaySchedulerTask<CR> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Throwable</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Throwable</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseThrowable(org.nasdanika.cdo.scheduler.Throwable object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Stack Trace Entry</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Stack Trace Entry</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseStackTraceEntry(StackTraceEntry object) {
 		return null;
 	}
 

@@ -8,7 +8,7 @@ import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.eresource.CDOResource;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.ecore.EObject;
-import org.nasdanika.cdo.CDOTransactionContext;
+import org.nasdanika.cdo.concurrent.SchedulerContext;
 
 /**
  * Scheduler which keeps tasks in a resource.
@@ -20,7 +20,7 @@ public class ResourceTaskContainerSchedulerComponent<CR> extends AbstractSchedul
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Iterator<SchedulerTask<CR>> getTasks(CDOTransactionContext<CR> context) {
+	protected Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context) {
 		CDOResource tasksResource = getTasksResource(context.getView());
 		CDOLock readLock = tasksResource.cdoReadLock();
 		try {
@@ -49,7 +49,7 @@ public class ResourceTaskContainerSchedulerComponent<CR> extends AbstractSchedul
 
 	@Override
 	protected boolean shallSchedule(SchedulerTask<CR> task) {
-		return task.isActive() && task.eResource() == task.cdoView().getResource(tasksResource);
+		return !task.isDone() && task.eResource() == task.cdoView().getResource(tasksResource);
 	}
 
 }

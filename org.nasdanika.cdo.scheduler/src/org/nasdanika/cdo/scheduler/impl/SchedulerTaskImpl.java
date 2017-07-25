@@ -2,14 +2,18 @@
  */
 package org.nasdanika.cdo.scheduler.impl;
 
+import java.lang.Throwable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
-import org.nasdanika.cdo.CDOTransactionContext;
+import org.nasdanika.cdo.concurrent.SchedulerContext;
+import org.nasdanika.cdo.scheduler.Diagnostic;
+import org.nasdanika.cdo.scheduler.RunEntry;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
+import org.nasdanika.cdo.security.Principal;
 
 /**
  * <!-- begin-user-doc -->
@@ -19,10 +23,10 @@ import org.nasdanika.cdo.scheduler.SchedulerTask;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getRunAt <em>Run At</em>}</li>
- *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getPeriod <em>Period</em>}</li>
- *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#isFixedRate <em>Fixed Rate</em>}</li>
- *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#isActive <em>Active</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getStart <em>Start</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getSubject <em>Subject</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getRunHistory <em>Run History</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#isDone <em>Done</em>}</li>
  * </ul>
  *
  * @generated
@@ -62,8 +66,8 @@ public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements Sch
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Date getRunAt() {
-		return (Date)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AT, true);
+	public Date getStart() {
+		return (Date)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__START, true);
 	}
 
 	/**
@@ -71,8 +75,8 @@ public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements Sch
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setRunAt(Date newRunAt) {
-		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AT, newRunAt);
+	public void setStart(Date newStart) {
+		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__START, newStart);
 	}
 
 	/**
@@ -80,8 +84,8 @@ public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements Sch
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public long getPeriod() {
-		return (Long)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__PERIOD, true);
+	public boolean isDone() {
+		return (Boolean)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__DONE, true);
 	}
 
 	/**
@@ -89,8 +93,8 @@ public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements Sch
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setPeriod(long newPeriod) {
-		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__PERIOD, newPeriod);
+	public void setDone(boolean newDone) {
+		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__DONE, newDone);
 	}
 
 	/**
@@ -98,43 +102,7 @@ public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements Sch
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isFixedRate() {
-		return (Boolean)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__FIXED_RATE, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setFixedRate(boolean newFixedRate) {
-		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__FIXED_RATE, newFixedRate);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isActive() {
-		return (Boolean)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__ACTIVE, true);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setActive(boolean newActive) {
-		eSet(SchedulerPackage.Literals.SCHEDULER_TASK__ACTIVE, newActive);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void execute(CDOTransactionContext<CR> context) {
+	public Diagnostic run(SchedulerContext<CR> context) throws Exception {
 		// TODO: implement this method
 		// Ensure that you remove @generated or mark it @generated NOT
 		throw new UnsupportedOperationException();
@@ -149,11 +117,35 @@ public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements Sch
 	@SuppressWarnings("unchecked")
 	public Object eInvoke(int operationID, EList<?> arguments) throws InvocationTargetException {
 		switch (operationID) {
-			case SchedulerPackage.SCHEDULER_TASK___EXECUTE__CDOTRANSACTIONCONTEXT:
-				execute((CDOTransactionContext<CR>)arguments.get(0));
-				return null;
+			case SchedulerPackage.SCHEDULER_TASK___RUN__SCHEDULERCONTEXT:
+				try {
+					return run((SchedulerContext<CR>)arguments.get(0));
+				}
+				catch (Throwable throwable) {
+					throw new InvocationTargetException(throwable);
+				}
 		}
 		return super.eInvoke(operationID, arguments);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<Principal> getSubject() {
+		return (EList<Principal>)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__SUBJECT, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@SuppressWarnings("unchecked")
+	public EList<RunEntry> getRunHistory() {
+		return (EList<RunEntry>)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_HISTORY, true);
 	}
 
 } //SchedulerTaskImpl

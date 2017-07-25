@@ -3,24 +3,70 @@
     xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.nasdanika.cdo.scheduler/src" modelPluginID="org.nasdanika.cdo.scheduler"
     modelName="Scheduler" rootExtendsInterface="org.eclipse.emf.cdo.CDOObject" rootExtendsClass="org.eclipse.emf.internal.cdo.CDOObjectImpl"
     reflectiveDelegation="true" importerID="org.eclipse.emf.importer.cdo" featureDelegation="Reflective"
-    complianceLevel="7.0" copyrightFields="false" providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter"
+    complianceLevel="7.0" suppressGenModelAnnotations="false" copyrightFields="false"
+    providerRootExtendsClass="org.eclipse.emf.cdo.edit.CDOItemProviderAdapter" usedGenPackages="../../org.nasdanika.cdo.security/model/security.genmodel#//security"
     operationReflection="true" importOrganizing="true">
   <foreignModel>scheduler.ecore</foreignModel>
   <modelPluginVariables>CDO=org.eclipse.emf.cdo</modelPluginVariables>
   <genPackages prefix="Scheduler" basePackage="org.nasdanika.cdo" disposableProviderFactory="true"
       ecorePackage="scheduler.ecore#/">
-    <genDataTypes ecoreDataType="scheduler.ecore#//CDOTransactionContext">
-      <genTypeParameters ecoreTypeParameter="scheduler.ecore#//CDOTransactionContext/CR"/>
+    <genEnums typeSafeEnumCompatible="false" ecoreEnum="scheduler.ecore#//Status">
+      <genEnumLiterals ecoreEnumLiteral="scheduler.ecore#//Status/Pending"/>
+      <genEnumLiterals ecoreEnumLiteral="scheduler.ecore#//Status/InProgress"/>
+      <genEnumLiterals ecoreEnumLiteral="scheduler.ecore#//Status/Success"/>
+      <genEnumLiterals ecoreEnumLiteral="scheduler.ecore#//Status/Warning"/>
+      <genEnumLiterals ecoreEnumLiteral="scheduler.ecore#//Status/Error"/>
+      <genEnumLiterals ecoreEnumLiteral="scheduler.ecore#//Status/Cancelled"/>
+    </genEnums>
+    <genDataTypes ecoreDataType="scheduler.ecore#//SchedulerContext">
+      <genTypeParameters ecoreTypeParameter="scheduler.ecore#//SchedulerContext/CR"/>
     </genDataTypes>
+    <genDataTypes ecoreDataType="scheduler.ecore#//TimeUnit"/>
+    <genClasses ecoreClass="scheduler.ecore#//Diagnostic">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Diagnostic/time"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Diagnostic/status"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Diagnostic/message"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//Diagnostic/children"/>
+    </genClasses>
+    <genClasses ecoreClass="scheduler.ecore#//RunEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//RunEntry/duration"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//RunEntry/exception"/>
+    </genClasses>
     <genClasses ecoreClass="scheduler.ecore#//SchedulerTask">
       <genTypeParameters ecoreTypeParameter="scheduler.ecore#//SchedulerTask/CR"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/runAt"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/period"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/fixedRate"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/active"/>
-      <genOperations ecoreOperation="scheduler.ecore#//SchedulerTask/execute">
-        <genParameters ecoreParameter="scheduler.ecore#//SchedulerTask/execute/context"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/start"/>
+      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference scheduler.ecore#//SchedulerTask/subject"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//SchedulerTask/runHistory"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/done"/>
+      <genOperations ecoreOperation="scheduler.ecore#//SchedulerTask/run">
+        <genParameters ecoreParameter="scheduler.ecore#//SchedulerTask/run/context"/>
       </genOperations>
+    </genClasses>
+    <genClasses image="false" ecoreClass="scheduler.ecore#//RecurringSchedulerTask">
+      <genTypeParameters ecoreTypeParameter="scheduler.ecore#//RecurringSchedulerTask/CR"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//RecurringSchedulerTask/timeUnit"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="scheduler.ecore#//FixedDelaySchedulerTask">
+      <genTypeParameters ecoreTypeParameter="scheduler.ecore#//FixedDelaySchedulerTask/CR"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//FixedDelaySchedulerTask/delay"/>
+    </genClasses>
+    <genClasses image="false" ecoreClass="scheduler.ecore#//FixedRateSchedulerTask">
+      <genTypeParameters ecoreTypeParameter="scheduler.ecore#//FixedRateSchedulerTask/CR"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//FixedRateSchedulerTask/period"/>
+    </genClasses>
+    <genClasses ecoreClass="scheduler.ecore#//Throwable">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Throwable/type"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Throwable/message"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//Throwable/stackTrace"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//Throwable/suppressed"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//Throwable/cause"/>
+    </genClasses>
+    <genClasses ecoreClass="scheduler.ecore#//StackTraceEntry">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//StackTraceEntry/className"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//StackTraceEntry/fileName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//StackTraceEntry/methodName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//StackTraceEntry/lineNumber"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//StackTraceEntry/native"/>
     </genClasses>
   </genPackages>
 </genmodel:GenModel>

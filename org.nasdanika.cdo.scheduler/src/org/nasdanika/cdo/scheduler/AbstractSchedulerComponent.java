@@ -1,17 +1,14 @@
 package org.nasdanika.cdo.scheduler;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.WeakHashMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.emf.cdo.CDOLock;
@@ -24,13 +21,17 @@ import org.eclipse.emf.cdo.transaction.CDOCommitContext;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandler2;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.nasdanika.cdo.CDOIDSubject;
 import org.nasdanika.cdo.CDOSessionInitializer;
-import org.nasdanika.cdo.CDOTransactionContext;
-import org.nasdanika.cdo.CDOTransactionContextProvider;
+import org.nasdanika.cdo.CDOViewContextSubject;
+import org.nasdanika.cdo.concurrent.Scheduler;
+import org.nasdanika.cdo.concurrent.SchedulerContext;
+import org.nasdanika.core.ContextRunnable;
 import org.osgi.service.component.ComponentContext;
 
 /**
- * Scheduler component during activation creates a thread pool executor service and then schedules tasks returned by <code>getTasks()</code> method.
+ * This component schedules instances of {@link SchedulerTask} using {@link Scheduler} service.
+ * At activation tasks are loaded from the repository by getTasks() method.
  * After activation changes in tasks state such as modification, deletion, and creation of new {@link SchedulerTask}s is detected
  * by <code>committedTransaction()</code> method and appropriate changes are made in the executor service tasks - they are cancelled for deleted, scheduled
  * for new, and cancelled and scheduled again for modified. 
@@ -40,93 +41,138 @@ import org.osgi.service.component.ComponentContext;
  */
 public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitializer, CDOTransactionHandler2 {
 	
-	private int threadPoolSize = 1; 
-	private ScheduledExecutorService scheduledExecutorService;
+	private Scheduler<CR> scheduler;
 	private Map<CDOID, Future<?>> scheduledTasks = new ConcurrentHashMap<>();
-	
-	/**
-	 * If scheduler modifies task attributes, it puts modified features to this map to avoid unnecessary rescheduling. 
-	 */
-	private Map<CDOTransaction, Map<CDOID, Set<EStructuralFeature>>> taskModificationsMap = new WeakHashMap<>();
-	
-	public void setThreadPoolSize(int threadPoolSize) {
-		this.threadPoolSize = threadPoolSize;
-	}
-	
-	protected CDOTransactionContext<CR> createContext() {
-		return transactionContextProvider.createContext(null);
-	}
-	
-	private class SchedulerTaskRunnable implements Runnable {
-		
-		private CDOID taskId;
 
-		SchedulerTaskRunnable(CDOID taskId) {
-			this.taskId = taskId;
-		}
-
-		@Override
-		public void run() {
-			try (CDOTransactionContext<CR> transactionContext = createContext()) {
-				CDOTransaction transaction = transactionContext.getView();
-				@SuppressWarnings("unchecked")
-				SchedulerTask<CR> task = (SchedulerTask<CR>) transaction.getObject(taskId);
-				task.execute(transactionContext);
-				CDOLock lock = task.cdoWriteLock();
-				try {
-					lock.lock();
-					Set<EStructuralFeature> modifiedFeatures = new HashSet<>();
-					if (task.isActive() && task.getPeriod() > 0) {
-						task.setRunAt(new Date(System.currentTimeMillis() + task.getPeriod()));
-					} else {
-						Future<?> sf = scheduledTasks.get(taskId);
-						if (sf!=null) {
-							sf.cancel(false);
-						}
-						scheduledTasks.remove(taskId);
-						task.setActive(false);
-						task.setRunAt(null);
-						modifiedFeatures.add(SchedulerPackage.Literals.SCHEDULER_TASK__ACTIVE);
-					}
-					modifiedFeatures.add(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AT);
-					synchronized(taskModificationsMap) {
-						taskModificationsMap.put(transaction, Collections.singletonMap(taskId, modifiedFeatures));
-					}
-				} finally {
-					lock.unlock();
-				}
-			} catch (Exception e) {
-				handleException(taskId, e);
-			}
-		}
-		
+	public void setScheduler(Scheduler<CR> scheduler) {
+		this.scheduler = scheduler;
 	}
 	
-	/**
-	 * Handles task exception. This method prints task id and exception stack trace to System.err.
-	 * @param taskId
-	 * @param e
-	 */
-	protected void handleException(CDOID taskId, Exception e) {
-		System.err.println("Task ID: "+taskId);
-		e.printStackTrace(); 
-	}
-
 	/**
 	 * Creates a thread pool executor service and then schedules tasks returned by <code>getTasks()</code> method.
 	 * @param componentContext
 	 * @throws Exception
 	 */
 	public void activate(ComponentContext componentContext) throws Exception {
-		scheduledExecutorService = Executors.newScheduledThreadPool(threadPoolSize);
-		try (CDOTransactionContext<CR> transactionContext = createContext()) {
-			Iterator<SchedulerTask<CR>> tit = getTasks(transactionContext);
-			while (tit.hasNext()) {
-				schedule(tit.next());
-			}
-		}		
-	}
+		scheduler.submit(new ContextRunnable<SchedulerContext<CR>>() {
 
+			@Override
+			public void run(SchedulerContext<CR> context) throws Exception {
+				Iterator<SchedulerTask<CR>> tit = getTasks(context);
+				while (tit.hasNext()) {
+					schedule(tit.next());
+				}
+			}
+			
+		}, null);
+	}
+			
+	protected abstract Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context);
+	
+	protected void schedule(SchedulerTask<CR> schedulerTask) {
+		if (!schedulerTask.isDone()) {
+			CDOID schedulerTaskID = schedulerTask.cdoID();
+			CDOViewContextSubject<CDOTransaction, CR> subject = CDOIDSubject.createPrincipalsSubject(schedulerTask.getSubject());
+			Date now = new Date();				
+			
+			ContextRunnable<SchedulerContext<CR>> wrapperTask = new ContextRunnable<SchedulerContext<CR>>() {
+
+				@SuppressWarnings("unchecked")
+				@Override
+				public void run(SchedulerContext<CR> context) throws Exception {
+					long start = System.currentTimeMillis();
+					Exception[] exception = {null};
+					Diagnostic[] diagnostic = {null}; 
+					try {
+						diagnostic[0] = ((SchedulerTask<CR>) context.getView().getObject(schedulerTaskID)).run(context);
+					} catch (Exception e) {
+						exception[0] = e;
+						context.setRollbackOnly();
+						e.printStackTrace();
+					} finally {
+						long finish = System.currentTimeMillis();
+						ContextRunnable<SchedulerContext<CR>> updateRunHistoryTask = new ContextRunnable<SchedulerContext<CR>>() {
+
+							@Override
+							public void run(SchedulerContext<CR> context) throws Exception {
+								// May execute in a different transaction, need to get the task by ID.
+								SchedulerTask<CR> schedulerTaskToUpdate = (SchedulerTask<CR>) context.getView().getObject(schedulerTaskID);
+								CDOLock writeLock = schedulerTaskToUpdate.cdoWriteLock();
+								try {
+									writeLock.lock();
+									// One-off task
+									if (!(schedulerTaskToUpdate instanceof RecurringSchedulerTask)) {
+										schedulerTaskToUpdate.setDone(true);
+										scheduledTasks.remove(schedulerTaskID);
+									}
+									RunEntry runEntry = SchedulerFactory.eINSTANCE.createRunEntry();
+									runEntry.setTime(new Date(start));
+									runEntry.setDuration(finish - start);
+									if (exception[0] != null) {
+										runEntry.setException(SchedulerFactory.eINSTANCE.createThrowable(exception[0]));
+										runEntry.setStatus(Status.ERROR);
+										runEntry.setMessage("Exception: "+exception[0].toString());
+									} else if (diagnostic[0] != null) {
+										runEntry.setStatus(diagnostic[0].getStatus());
+										runEntry.setMessage(diagnostic[0].getMessage());
+										runEntry.getChildren().addAll(new ArrayList<>(diagnostic[0].getChildren()));
+									}
+									schedulerTaskToUpdate.getRunHistory().add(runEntry);
+								} finally {
+									writeLock.unlock();
+								}
+							}
+						};
+						
+						if (context.isRollbackOnly()) {
+							// This transaction will be rolled back - executing update in another transaction.
+							context.submit(updateRunHistoryTask, subject);
+						} else {
+							// All good - updating history in this transaction.
+							updateRunHistoryTask.run(context);
+						}
+					}
+				}
+				
+			};
+			
+			if (schedulerTask instanceof FixedDelaySchedulerTask) {
+				FixedDelaySchedulerTask<?> fixedDelaySchedulerTask = (FixedDelaySchedulerTask<?>) schedulerTask;
+				long start = schedulerTask.getStart().getTime();
+				for (RunEntry re: schedulerTask.getRunHistory()) {
+					start = re.getTime().getTime() + re.getDuration() + fixedDelaySchedulerTask.getDelay();
+				}
+				long initialDelay = start - System.currentTimeMillis();
+				if (initialDelay < 0) {
+					initialDelay = 0;
+				}
+				Future<?> future = scheduler.scheduleWithFixedDelay(wrapperTask, subject, initialDelay, fixedDelaySchedulerTask.getDelay(), fixedDelaySchedulerTask.getTimeUnit());
+				scheduledTasks.put(schedulerTask.cdoID(), future);				
+			} else if (schedulerTask instanceof FixedRateSchedulerTask) {
+				FixedRateSchedulerTask<?> fixedRateSchedulerTask = (FixedRateSchedulerTask<?>) schedulerTask;
+				long start = schedulerTask.getStart().getTime();
+				for (RunEntry re: schedulerTask.getRunHistory()) {
+					start = re.getTime().getTime() + fixedRateSchedulerTask.getPeriod();
+				}
+				long initialDelay = start - System.currentTimeMillis();
+				if (initialDelay < 0) {
+					initialDelay = 0;
+				}
+				Future<?> future = scheduler.scheduleAtFixedRate(wrapperTask, subject, initialDelay, fixedRateSchedulerTask.getPeriod(), fixedRateSchedulerTask.getTimeUnit());
+				scheduledTasks.put(schedulerTask.cdoID(), future);								
+			} else {				
+				Date start = schedulerTask.getStart();
+				Future<?> future;
+				if (start.before(now)) {
+					future = scheduler.submit(wrapperTask, subject);
+				} else {
+					future = scheduler.schedule(wrapperTask, subject, start.getTime() - now.getTime(), TimeUnit.MILLISECONDS);
+				}
+				scheduledTasks.put(schedulerTask.cdoID(), future);
+			}
+		}
+	}
+	
 	/**
 	 * Cancels scheduled tasks and shuts down the executor service.
 	 * @param componentContext
@@ -136,51 +182,10 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 		for (Future<?> st: scheduledTasks.values()) {
 			st.cancel(false);
 		}
-		scheduledExecutorService.shutdown();
 	}
-	
-	private CDOTransactionContextProvider<CR> transactionContextProvider;
-	
-	/**
-	 * Sets {@link CDOTransactionContextProvider} reference.
-	 * @param transactionContextProvider
-	 */
-	public void setTransactionContextProvider(CDOTransactionContextProvider<CR> transactionContextProvider) {
-		this.transactionContextProvider = transactionContextProvider;
-	}
-	
-	protected abstract Iterator<SchedulerTask<CR>> getTasks(CDOTransactionContext<CR> context); 
-	
-	protected void schedule(SchedulerTask<CR> schedulerTask) {
-		if (schedulerTask.isActive()) {
-			CDOID taskId = schedulerTask.cdoID();
-			SchedulerTaskRunnable taskRunnable = new SchedulerTaskRunnable(taskId);
-			// One time
-			long now = System.currentTimeMillis();
-			long runAt = schedulerTask.getRunAt() == null ? now : schedulerTask.getRunAt().getTime();
-			Future<?> future;
-			if (schedulerTask.getPeriod() > 0) {
-				// Repetitive task
-				long delay = Math.max(runAt - now, 1);
-				if (schedulerTask.isFixedRate()) {
-					future = scheduledExecutorService.scheduleAtFixedRate(taskRunnable, delay, schedulerTask.getPeriod(), TimeUnit.MILLISECONDS);
-				} else {
-					future = scheduledExecutorService.scheduleWithFixedDelay(taskRunnable, delay, schedulerTask.getPeriod(), TimeUnit.MILLISECONDS);
-				}						
-			} else {
-				// One-shot task
-				if (runAt > now) {
-					future = scheduledExecutorService.schedule(taskRunnable, runAt - now, TimeUnit.MILLISECONDS);							
-				} else {
-					future = scheduledExecutorService.submit(taskRunnable);
-				}
-			}
-			scheduledTasks.put(taskId, future);
-		}
-	}
-	
+		
 	protected boolean cancel(SchedulerTask<CR> task) {
-		Future<?> sf = scheduledTasks.get(task.cdoID());
+		Future<?> sf = scheduledTasks.remove(task.cdoID());
 		return sf != null && sf.cancel(false);
 	}
 	
@@ -192,7 +197,7 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 	
 	/**
 	 * @param task
-	 * @return true if a new task created withing the transaction shall be scheduled.
+	 * @return true if a new task created within the transaction shall be scheduled.
 	 */
 	protected abstract boolean shallSchedule(SchedulerTask<CR> task); 
 
@@ -216,21 +221,12 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 		for (Entry<CDOID, CDOObject> doe: commitContext.getDirtyObjects().entrySet()) {
 			if (scheduledTasks.containsKey(doe.getKey())) {
 				Set<EStructuralFeature> featuresOfInterest = new HashSet<>();
-				featuresOfInterest.add(SchedulerPackage.Literals.SCHEDULER_TASK__ACTIVE);
-				featuresOfInterest.add(SchedulerPackage.Literals.SCHEDULER_TASK__FIXED_RATE);
-				featuresOfInterest.add(SchedulerPackage.Literals.SCHEDULER_TASK__PERIOD);
-				featuresOfInterest.add(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_AT);
+				featuresOfInterest.add(SchedulerPackage.Literals.SCHEDULER_TASK__DONE);
+				featuresOfInterest.add(SchedulerPackage.Literals.SCHEDULER_TASK__START);
+				featuresOfInterest.add(SchedulerPackage.Literals.SCHEDULER_TASK__SUBJECT);
+				featuresOfInterest.add(SchedulerPackage.Literals.FIXED_DELAY_SCHEDULER_TASK__DELAY);
+				featuresOfInterest.add(SchedulerPackage.Literals.FIXED_RATE_SCHEDULER_TASK__PERIOD);
 
-				synchronized (taskModificationsMap) {
-					Map<CDOID, Set<EStructuralFeature>> schedulerModifiedTasks = taskModificationsMap.remove(transaction);
-					if (schedulerModifiedTasks != null) {
-						Set<EStructuralFeature> schedulerModifiedFeatures = schedulerModifiedTasks.get(doe.getKey());
-						if (schedulerModifiedFeatures != null) {
-							featuresOfInterest.removeAll(schedulerModifiedFeatures);
-						}
-					}
-				}
-								
 				CDORevisionDelta revisionDelta = commitContext.getRevisionDeltas().get(doe.getKey());
 				for (EStructuralFeature fi: featuresOfInterest) {
 					if (revisionDelta.getFeatureDelta(fi) != null) {

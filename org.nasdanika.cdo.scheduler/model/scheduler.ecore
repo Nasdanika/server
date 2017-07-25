@@ -1,40 +1,221 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="scheduler" nsURI="urn:org.nasdanika.cdo.scheduler" nsPrefix="org.nasdanika.cdo.scheduler">
-  <eClassifiers xsi:type="ecore:EDataType" name="CDOTransactionContext" instanceClassName="org.nasdanika.cdo.CDOTransactionContext">
+  <eClassifiers xsi:type="ecore:EEnum" name="Status">
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-check-circle-o"/>
+    </eAnnotations>
+    <eLiterals name="Pending" literal="Pending"/>
+    <eLiterals name="InProgress" value="1" literal="In progress">
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-spinner fa-spin"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="Success" value="2">
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-check-square text-success"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="Warning" value="3">
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-warning text-warning"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="Error" value="4">
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-exclamation-circle text-danger"/>
+      </eAnnotations>
+    </eLiterals>
+    <eLiterals name="Cancelled" value="5" literal="Cancelled">
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-times-circle-o text-info"/>
+      </eAnnotations>
+    </eLiterals>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Diagnostic">
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="editable" value="false"/>
+    </eAnnotations>
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Diagnostic of the task run. The root diagnostic returned by the run() method is merged into the run history entry."/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="time" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Time of task execution."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="format" value="yyyy-MM-dd HH:mm:ss.SSS z"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="status" lowerBound="1"
+        eType="#//Status"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//Diagnostic" containment="true">
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="editable" value="false"/>
+        <details key="tree-feature" value="false"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="SchedulerContext" instanceClassName="org.nasdanika.cdo.concurrent.SchedulerContext">
     <eTypeParameters name="CR"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RunEntry" eSuperTypes="#//Diagnostic">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Time and duration of SchedulerTask execution."/>
+    </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-cog"/>
+      <details key="editable" value="false"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="duration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Duration of task execution in milliseconds."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exception" eType="#//Throwable"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SchedulerTask" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
       <details key="documentation" value="Supertype for scheduler tasks."/>
     </eAnnotations>
     <eTypeParameters name="CR"/>
-    <eOperations name="execute">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Invoked by the scheduler to execute the task.&#xD;&#xA;If this method returns false, then the task is canceled."/>
-      </eAnnotations>
+    <eOperations name="run" eType="#//Diagnostic" eExceptions="ecore:EDataType ../../org.nasdanika.cdo.security/model/security.ecore#//Exception">
       <eParameters name="context">
-        <eGenericType eClassifier="#//CDOTransactionContext">
+        <eGenericType eClassifier="#//SchedulerContext">
           <eTypeArguments eTypeParameter="#//SchedulerTask/CR"/>
         </eGenericType>
       </eParameters>
     </eOperations>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="runAt" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="start" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="When to execute task. Submits task if this value is before the current time."/>
       </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
-      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Task period/interval. One-off task if set to non-positive value."/>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="format" value="display: yyyy-MM-dd HH:mm:ss.SSS z&#xD;&#xA;edit: yyyy-MM-dd'T'HH:mm"/>
+        <details key="input-type" value="datetime_local"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fixedRate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="active" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
-        defaultValueLiteral="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="subject" upperBound="-1"
+        eType="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//Principal"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="runHistory" upperBound="-1"
+        eType="#//RunEntry" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-        <details key="documentation" value="Task's execute() method is invoked by the scheduler only if the task is active."/>
+        <details key="documentation" value="History of task execution."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="tree-feature" value="false"/>
+        <details key="editable" value="false"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="done" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Tasks are scheduled only if they are not done. Scheduler sets done to true for&#xD;&#xA;one-off tasks (not fixed rate or fixed delay)."/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="RecurringSchedulerTask" abstract="true">
+    <eTypeParameters name="CR"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="timeUnit" lowerBound="1"
+        eType="#//TimeUnit" defaultValueLiteral="SECONDS"/>
+    <eGenericSuperTypes eClassifier="#//SchedulerTask">
+      <eTypeArguments eTypeParameter="#//RecurringSchedulerTask/CR"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FixedDelaySchedulerTask" abstract="true">
+    <eTypeParameters name="CR"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="delay" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Task delay in time units."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//RecurringSchedulerTask">
+      <eTypeArguments eTypeParameter="#//FixedDelaySchedulerTask/CR"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="FixedRateSchedulerTask" abstract="true">
+    <eTypeParameters name="CR"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="period" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Task period in time units."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//RecurringSchedulerTask">
+      <eTypeArguments eTypeParameter="#//FixedRateSchedulerTask/CR"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Throwable">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Models java.lang.Throwable."/>
+    </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-bolt"/>
+      <details key="editable" value="false"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Throwable class name."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="message" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Error message."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="stackTrace" upperBound="-1"
+        eType="#//StackTraceEntry" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Stack trace."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="suppressed" upperBound="-1"
+        eType="#//Throwable" containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Stack trace."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="cause" eType="#//Throwable"
+        containment="true">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Stack trace."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="StackTraceEntry">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value=""/>
+    </eAnnotations>
+    <eAnnotations source="org.nasdanika.cdo.web.render">
+      <details key="icon" value="fa fa-bars"/>
+      <details key="editable" value="false"/>
+    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="className" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Class name."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="fileName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="File name."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="methodName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Method name."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="lineNumber" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Line number."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="native" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="'true' for native methods."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="TimeUnit" instanceClassName="java.util.concurrent.TimeUnit"/>
 </ecore:EPackage>
