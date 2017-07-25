@@ -48,7 +48,7 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 		if (subject == null) {
 			List<Principal> principals = getPrincipals();
 			if (!principals.isEmpty()) {
-				subject = new CDOIDSubject<V,CR>(principals, null);
+				subject = CDOIDSubject.createPrincipalsSubject(principals);
 			}
 		}
 		return subject;
