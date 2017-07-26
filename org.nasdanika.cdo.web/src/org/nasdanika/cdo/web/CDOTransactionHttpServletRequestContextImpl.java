@@ -94,7 +94,7 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 		// Caching - TODO make configurable
 		if ((environment == null || environment.isEmpty()) && target instanceof CDOObject) {
 			CDOID cdoId = ((CDOObject) target).cdoID();
-			if (!cdoId.isTemporary()) {
+			if (cdoId != null && !cdoId.isTemporary()) {
 				List<CDOID> principalIDs = new ArrayList<>();
 				for (Principal principal: getPrincipals()) {
 					CDOID pid = principal.cdoID();
