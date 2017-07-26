@@ -40,13 +40,13 @@ import org.json.JSONObject;
 import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOTransactionContextProvider;
 import org.nasdanika.cdo.CDOViewContextSubject;
+import org.nasdanika.cdo.Deletable;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.web.SessionWebSocketServlet.WebSocketContext;
 import org.nasdanika.cdo.web.routes.CDOWebUtil;
 import org.nasdanika.cdo.web.routes.CDOWebUtil.DataDefinitionFilter;
 import org.nasdanika.core.Context;
-import org.nasdanika.core.Deletable;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.ServerException;
 import org.osgi.framework.BundleContext;
@@ -106,7 +106,6 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 			CDOLock writeLock = target.cdoView()==null ? null : target.cdoWriteLock();
 			if (writeLock == null || writeLock.tryLock(15, TimeUnit.SECONDS)) {
 				try {	
-					@SuppressWarnings("unchecked")
 					Iterator<String> dit = inDelta.keys();
 					while (dit.hasNext()) {
 						String dk = dit.next();
@@ -598,7 +597,7 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 							if ("$delete".equals(opName)) {
 								if (webSocketContext.authorize(target, "write", null, null)) {
 									if (target instanceof Deletable) {
-										((Deletable<Context>) target).delete(webSocketContext);
+										((Deletable<WebSocketContext<CR>>) target).delete(webSocketContext);
 									} else {
 										EcoreUtil.delete(target, true);
 									}
