@@ -53,7 +53,9 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.jsoup.Jsoup;
+import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.Deletable;
 import org.nasdanika.cdo.security.LoginPasswordCredentials;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.CDOIDCodec;
@@ -1584,6 +1586,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		return result;
 	}		
 		
+	@SuppressWarnings("unchecked")
 	@RouteMethod(
 			comment="Deletes this element and redirects either to the referrer or to the parent's index.html if the referrer is one of 'this' object pages.",
 			lock = @RouteMethod.Lock(type=Type.WRITE, path=".."), 
@@ -1622,7 +1625,11 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			}
 		}
 		
-		EcoreUtil.delete(target, true);
+		if (target instanceof Deletable && context instanceof CDOTransactionContext) {
+			((Deletable<CDOTransactionContext<?>>) target).delete((CDOTransactionContext<?>) context);
+		} else {
+			EcoreUtil.delete(target, true);
+		}
 		if (redirectURL == null) {
 			return "Deleted";
 		}
