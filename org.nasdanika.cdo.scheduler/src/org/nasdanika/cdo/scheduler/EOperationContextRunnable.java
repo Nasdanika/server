@@ -1,5 +1,6 @@
 package org.nasdanika.cdo.scheduler;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -118,7 +119,7 @@ public class EOperationContextRunnable<CR, R> implements ContextRunnable<Schedul
 					}
 					arguments.add(argument);
 				}
-				target.eInvoke(eOperation, arguments);
+				invoke(target, arguments);
 			} finally {
 				for (ServiceReference<?> sr: toUnget) {
 					context.getBundleContext().ungetService(sr);
@@ -128,6 +129,17 @@ public class EOperationContextRunnable<CR, R> implements ContextRunnable<Schedul
 			context.setRollbackOnly();
 			context.submit(ctx -> processException(ctx, e), context.getSubject());
 		}
+	}
+
+	/**
+	 * Invokes EOperation on the target object. Override as needed, e.g. to apply locks.
+	 * @param target
+	 * @param arguments
+	 * @return
+	 * @throws InvocationTargetException
+	 */
+	protected Object invoke(CDOObject target, EList<Object> arguments) throws Exception {
+		return target.eInvoke(eOperation, arguments);
 	}
 	
 	/**
