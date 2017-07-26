@@ -20,11 +20,11 @@ public class ResourceTaskContainerSchedulerComponent<CR> extends AbstractSchedul
 	
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context) {
+	protected Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context) throws Exception {
 		CDOResource tasksResource = getTasksResource(context.getView());
 		CDOLock readLock = tasksResource.cdoReadLock();
 		try {
-			readLock.lock();
+			readLock.lock(lockTimeout);
 			List<SchedulerTask<CR>> tasks = new ArrayList<>();
 			for (EObject obj: tasksResource.getContents()) {
 				if (obj instanceof SchedulerTask<?>) {
