@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
 import org.nasdanika.cdo.concurrent.SchedulerContext;
 import org.nasdanika.core.ContextRunnable;
+import org.nasdanika.core.Provider;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.yaml.snakeyaml.Yaml;
@@ -46,6 +47,7 @@ public class EOperationContextRunnable<CR, R> implements ContextRunnable<Schedul
 		this.args = args;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void run(SchedulerContext<CR> context) throws Exception {
 		try {
@@ -71,7 +73,6 @@ public class EOperationContextRunnable<CR, R> implements ContextRunnable<Schedul
 							Yaml yaml = new Yaml();
 							Object bindSpec = yaml.load(bindStr);
 							if (bindSpec instanceof Map) {
-								@SuppressWarnings("unchecked")
 								Map<String, Map<String, String>> bindSpecMap = (Map<String, Map<String, String>>) bindSpec;
 								Map<String, String> serviceSpecMap = bindSpecMap.get("service");
 								if (serviceSpecMap != null) {
@@ -111,7 +112,11 @@ public class EOperationContextRunnable<CR, R> implements ContextRunnable<Schedul
 							continue;
 						}
 					}
-					arguments.add(argIdx < args.length ? args[argIdx++] : null);
+					Object argument = argIdx < args.length ? args[argIdx++] : null;
+					if (argument instanceof Provider && !(eParameter.getEType().getInstanceClass().isInstance(argument))) {
+						argument = ((Provider<SchedulerContext<CR>, ?>) argument).get(context);
+					}
+					arguments.add(argument);
 				}
 				target.eInvoke(eOperation, arguments);
 			} finally {
