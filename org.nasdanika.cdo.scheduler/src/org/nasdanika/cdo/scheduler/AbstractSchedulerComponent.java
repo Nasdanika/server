@@ -48,6 +48,16 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 		this.scheduler = scheduler;
 	}
 	
+	protected long lockTimeout = 60000; 
+	
+	/**
+	 * Lock timeout in milliseconds. Default is 1 minute.
+	 * @param lockTimeout
+	 */
+	public void setLockTimeout(long lockTimeout) {
+		this.lockTimeout = lockTimeout;
+	}
+	
 	/**
 	 * Creates a thread pool executor service and then schedules tasks returned by <code>getTasks()</code> method.
 	 * @param componentContext
@@ -67,7 +77,7 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 		}, null);
 	}
 			
-	protected abstract Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context);
+	protected abstract Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context) throws Exception;
 	
 	protected void schedule(SchedulerTask<CR> schedulerTask) {
 		if (!schedulerTask.isDone()) {
@@ -99,7 +109,7 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 								SchedulerTask<CR> schedulerTaskToUpdate = (SchedulerTask<CR>) context.getView().getObject(schedulerTaskID);
 								CDOLock writeLock = schedulerTaskToUpdate.cdoWriteLock();
 								try {
-									writeLock.lock();
+									writeLock.lock(lockTimeout);
 									// One-off task
 									if (!(schedulerTaskToUpdate instanceof RecurringSchedulerTask)) {
 										schedulerTaskToUpdate.setDone(true);
