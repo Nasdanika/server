@@ -93,7 +93,7 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 				return new SchedulerContextImpl(context);
 			}
 		}
-		throw new IllegalStateException("Transaction context provider is not set or returned null context.");
+		return null;
 	}
 	
 	private class SchedulerRunnable implements Runnable {
@@ -113,11 +113,18 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 
 		@Override
 		public void run() {
-			try (SchedulerContext<CR> schedulerContext = createContext(subject, future)) {  
-				task.run(schedulerContext);
+			try {
+				SchedulerContext<CR> schedulerContext = createContext(subject, future);
+				if (schedulerContext != null) {
+					try {  
+						task.run(schedulerContext);
+					} finally {
+						schedulerContext.close();
+					}
+				}
 			} catch (Exception e) {
 				handleException(task, future, e);
-			}
+			}				
 		}
 		
 	}
