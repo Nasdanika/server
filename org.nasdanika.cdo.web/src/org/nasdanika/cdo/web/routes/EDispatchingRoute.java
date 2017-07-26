@@ -16,12 +16,14 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
-import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
 import org.eclipse.emf.cdo.view.CDOView;
@@ -42,6 +44,7 @@ import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.Provider;
 import org.nasdanika.web.Action;
 import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.HttpServletRequestContext;
@@ -143,45 +146,17 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 			 */
 			@Override
 			public Object execute(HttpServletRequestContext context, Object target, Object[] arguments)	throws Exception {
-				CDOLock cdoLock = null;
-				if (context.getTarget() instanceof CDOObject) {
-					CDOObject lockTarget = (CDOObject) context.getTarget();
-					if (!CoreUtil.isBlank(getLock().path())) {
-						lockTarget = (CDOObject) JXPathContext.newContext(lockTarget).getValue(getLock().path());
-					}
-					switch (getLock().type()) {
-					case READ:
-						cdoLock = lockTarget.cdoReadLock();
-						break;
-					case WRITE:
-						cdoLock = lockTarget.cdoWriteLock();
-						break;
-					case IMPLY_FROM_HTTP_METHOD:
-						switch (context.getMethod()) {
-						case DELETE:
-						case PATCH:
-						case POST:
-						case PUT:
-							cdoLock = lockTarget.cdoWriteLock();
-							break;
-						default:
-							cdoLock = lockTarget.cdoReadLock();							
-							break;
-						}
-					default:
-						break;					
-					}
-				}
+				Lock lock = EDispatchingRoute.this.getLock(context, target, arguments, getLock());
 				
 				Object ret;
-				if (cdoLock == null) {
+				if (lock == null) {
 					ret = super.execute(context, target, arguments);
 				} else {
-					if (cdoLock.tryLock(getLock().timeout(), getLock().timeUnit())) {
+					if (lock.tryLock(getLock().timeout(), getLock().timeUnit())) {
 						try {
 							ret = super.execute(context, target, arguments);
 						} finally {
-							cdoLock.unlock();
+							lock.unlock();
 						}						
 					} else {
 						return Action.SERVICE_UNAVAILABLE;
@@ -686,6 +661,82 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 			}
 		}
 		return ret;
+	}
+	
+	/**
+	 * Returns a lock for executing route methods. This implementation uses an application-wide lock retrieved from
+	 * "org.nasdanika.web:application-lock" {@link ServletContext} attribute if its value is of type {@link ReadWriteLock}
+	 * or is a {@link Provider} of ReadWriteLock.
+	 *   
+	 * Otherwise it uses CDOLocks on context target objects.
+	 * 
+	 * @param context
+	 * @param target
+	 * @param arguments
+	 * @param lockAnnotation
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected Lock getLock(HttpServletRequestContext context, Object target, Object[] arguments, org.nasdanika.web.RouteMethod.Lock lockAnnotation) throws Exception {
+		ServletContext servletContext = context.getRequest().getServletContext();
+		String applicationLockKey = "org.nasdanika.web:application-lock";
+		Object applicationLock = servletContext.getAttribute(applicationLockKey);
+		ReadWriteLock applicationReadWriteLock = null;
+		if (applicationLock instanceof ReadWriteLock) {
+			applicationReadWriteLock = (ReadWriteLock) applicationLock;
+		} else if (applicationLock instanceof Provider) {
+			applicationLock = ((Provider<HttpServletRequestContext, ?>) applicationLock).get(context);
+			if (applicationLock instanceof ReadWriteLock) {
+				applicationReadWriteLock = (ReadWriteLock) applicationLock;
+			}			
+		}
+		
+		if (applicationReadWriteLock != null) {
+			switch (lockAnnotation.type()) {
+			case READ:
+				return applicationReadWriteLock.readLock();
+			case WRITE:
+				return applicationReadWriteLock.writeLock();
+			case IMPLY_FROM_HTTP_METHOD:
+				switch (context.getMethod()) {
+				case DELETE:
+				case PATCH:
+				case POST:
+				case PUT:
+					return applicationReadWriteLock.writeLock();
+				default:
+					return applicationReadWriteLock.readLock();							
+				}
+			default:
+				break;					
+			}			
+		}
+		
+		if (context.getTarget() instanceof CDOObject) {
+			CDOObject lockTarget = (CDOObject) context.getTarget();
+			if (!CoreUtil.isBlank(lockAnnotation.path())) {
+				lockTarget = (CDOObject) JXPathContext.newContext(lockTarget).getValue(lockAnnotation.path());
+			}
+			switch (lockAnnotation.type()) {
+			case READ:
+				return lockTarget.cdoReadLock();
+			case WRITE:
+				return lockTarget.cdoWriteLock();
+			case IMPLY_FROM_HTTP_METHOD:
+				switch (context.getMethod()) {
+				case DELETE:
+				case PATCH:
+				case POST:
+				case PUT:
+					return lockTarget.cdoWriteLock();
+				default:
+					return lockTarget.cdoReadLock();							
+				}
+			default:
+				break;					
+			}
+		}
+		return null;
 	}
 	
 
