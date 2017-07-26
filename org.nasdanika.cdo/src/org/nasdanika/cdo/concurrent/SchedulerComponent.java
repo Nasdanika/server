@@ -2,6 +2,7 @@ package org.nasdanika.cdo.concurrent;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -48,7 +49,7 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 		this.bundleContext = componentContext.getBundleContext();
 	}
 	
-	protected SchedulerContext<CR> createContext(CDOViewContextSubject<CDOTransaction, CR> subject, Future<?> future) {		
+	protected SchedulerContext<CR> createContext(CDOViewContextSubject<CDOTransaction, CR> subject, Future<?> future) throws Exception {		
 		class SchedulerContextImpl extends CDOTransactionContextFilter<CR> implements SchedulerContext<CR> {
 
 			public SchedulerContextImpl(CDOTransactionContext<CR> target) {
@@ -84,14 +85,15 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 			public BundleContext getBundleContext() {
 				return bundleContext;
 			}
-			
-			@Override
-			public void close() throws Exception {
-				super.close();
-			}
 
 		}
-		return new SchedulerContextImpl(transactionContextProvider.createContext(subject));
+		if (transactionContextProvider != null) {
+			CDOTransactionContext<CR> context = transactionContextProvider.createContext(subject);
+			if (context != null) {
+				return new SchedulerContextImpl(context);
+			}
+		}
+		throw new IllegalStateException("Transaction context provider is not set or returned null context.");
 	}
 	
 	private class SchedulerRunnable implements Runnable {
@@ -148,6 +150,9 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 
 	@Override
 	public ScheduledFuture<?> schedule(ContextRunnable<SchedulerContext<CR>> task, CDOViewContextSubject<CDOTransaction, CR> subject, long delay, TimeUnit unit) {
+		if (scheduledExecutorService == null || scheduledExecutorService.isShutdown()) {
+			throw new RejectedExecutionException("Executor service is not set or has been shut down");
+		}
 		SchedulerComponent<CR>.SchedulerRunnable schedulerRunnable = new SchedulerRunnable(task, subject);		
 		ScheduledFuture<?> future = scheduledExecutorService.schedule(schedulerRunnable, delay, unit);
 		return future;
@@ -155,6 +160,9 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 
 	@Override
 	public ScheduledFuture<?> scheduleAtFixedRate(ContextRunnable<SchedulerContext<CR>> task, CDOViewContextSubject<CDOTransaction, CR> subject, long initialDelay, long period, TimeUnit unit) {
+		if (scheduledExecutorService == null || scheduledExecutorService.isShutdown()) {
+			throw new RejectedExecutionException("Executor service is not set or has been shut down");
+		}
 		SchedulerComponent<CR>.SchedulerRunnable schedulerRunnable = new SchedulerRunnable(task, subject);		
 		ScheduledFuture<?> future = scheduledExecutorService.scheduleAtFixedRate(schedulerRunnable, initialDelay, period, unit);
 		schedulerRunnable.setFuture(future);
@@ -163,6 +171,9 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 
 	@Override
 	public ScheduledFuture<?> scheduleWithFixedDelay(ContextRunnable<SchedulerContext<CR>> task, CDOViewContextSubject<CDOTransaction, CR> subject, long initialDelay, long delay, TimeUnit unit) {
+		if (scheduledExecutorService == null || scheduledExecutorService.isShutdown()) {
+			throw new RejectedExecutionException("Executor service is not set or has been shut down");
+		}
 		SchedulerComponent<CR>.SchedulerRunnable schedulerRunnable = new SchedulerRunnable(task, subject);		
 		ScheduledFuture<?> future = scheduledExecutorService.scheduleWithFixedDelay(schedulerRunnable, initialDelay, delay, unit);
 		schedulerRunnable.setFuture(future);
