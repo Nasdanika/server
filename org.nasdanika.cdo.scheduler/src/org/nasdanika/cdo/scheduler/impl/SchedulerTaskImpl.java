@@ -10,7 +10,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.internal.cdo.CDOObjectImpl;
 import org.nasdanika.cdo.concurrent.SchedulerContext;
 import org.nasdanika.cdo.scheduler.Diagnostic;
-import org.nasdanika.cdo.scheduler.RunEntry;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
 import org.nasdanika.cdo.security.Principal;
@@ -25,7 +24,7 @@ import org.nasdanika.cdo.security.Principal;
  * <ul>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getStart <em>Start</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getSubject <em>Subject</em>}</li>
- *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getRunHistory <em>Run History</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#getHistory <em>History</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl#isDone <em>Done</em>}</li>
  * </ul>
  *
@@ -144,8 +143,8 @@ public abstract class SchedulerTaskImpl<CR> extends CDOObjectImpl implements Sch
 	 * @generated
 	 */
 	@SuppressWarnings("unchecked")
-	public EList<RunEntry> getRunHistory() {
-		return (EList<RunEntry>)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__RUN_HISTORY, true);
+	public EList<Diagnostic> getHistory() {
+		return (EList<Diagnostic>)eGet(SchedulerPackage.Literals.SCHEDULER_TASK__HISTORY, true);
 	}
 
 } //SchedulerTaskImpl

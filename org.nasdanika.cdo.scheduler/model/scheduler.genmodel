@@ -27,16 +27,14 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Diagnostic/status"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Diagnostic/message"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//Diagnostic/children"/>
-    </genClasses>
-    <genClasses ecoreClass="scheduler.ecore#//RunEntry">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//RunEntry/duration"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//RunEntry/exception"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//Diagnostic/exception"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//Diagnostic/duration"/>
     </genClasses>
     <genClasses ecoreClass="scheduler.ecore#//SchedulerTask">
       <genTypeParameters ecoreTypeParameter="scheduler.ecore#//SchedulerTask/CR"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/start"/>
       <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference scheduler.ecore#//SchedulerTask/subject"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//SchedulerTask/runHistory"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference scheduler.ecore#//SchedulerTask/history"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute scheduler.ecore#//SchedulerTask/done"/>
       <genOperations ecoreOperation="scheduler.ecore#//SchedulerTask/run">
         <genParameters ecoreParameter="scheduler.ecore#//SchedulerTask/run/context"/>

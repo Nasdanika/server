@@ -21,7 +21,7 @@ public class RealmSchedulerComponent<CR> extends AbstractSchedulerComponent<CR> 
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context) {
+	protected Iterator<SchedulerTask<CR>> getTasks(SchedulerContext<CR> context) throws Exception {
 		Realm<CR> realm = context.getSecurityRealm();
 		return realm instanceof SchedulerTaskProvider ? ((SchedulerTaskProvider<CR>) realm).getSchedulerTasks(context) : Collections.emptyIterator();
 	}

@@ -25,6 +25,8 @@ import org.nasdanika.cdo.scheduler.Status;
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.DiagnosticImpl#getStatus <em>Status</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.DiagnosticImpl#getMessage <em>Message</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.impl.DiagnosticImpl#getChildren <em>Children</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.DiagnosticImpl#getException <em>Exception</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.impl.DiagnosticImpl#getDuration <em>Duration</em>}</li>
  * </ul>
  *
  * @generated
@@ -103,6 +105,42 @@ public class DiagnosticImpl extends CDOObjectImpl implements Diagnostic {
 	@SuppressWarnings("unchecked")
 	public EList<Diagnostic> getChildren() {
 		return (EList<Diagnostic>)eGet(SchedulerPackage.Literals.DIAGNOSTIC__CHILDREN, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public org.nasdanika.cdo.scheduler.Throwable getException() {
+		return (org.nasdanika.cdo.scheduler.Throwable)eGet(SchedulerPackage.Literals.DIAGNOSTIC__EXCEPTION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setException(org.nasdanika.cdo.scheduler.Throwable newException) {
+		eSet(SchedulerPackage.Literals.DIAGNOSTIC__EXCEPTION, newException);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public long getDuration() {
+		return (Long)eGet(SchedulerPackage.Literals.DIAGNOSTIC__DURATION, true);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDuration(long newDuration) {
+		eSet(SchedulerPackage.Literals.DIAGNOSTIC__DURATION, newDuration);
 	}
 
 	/**

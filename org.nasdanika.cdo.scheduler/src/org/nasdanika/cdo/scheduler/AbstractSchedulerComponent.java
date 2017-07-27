@@ -115,19 +115,19 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 										schedulerTaskToUpdate.setDone(true);
 										scheduledTasks.remove(schedulerTaskID);
 									}
-									RunEntry runEntry = SchedulerFactory.eINSTANCE.createRunEntry();
-									runEntry.setTime(new Date(start));
-									runEntry.setDuration(finish - start);
+									Diagnostic historyEntry = SchedulerFactory.eINSTANCE.createDiagnostic();
+									historyEntry.setTime(new Date(start));
+									historyEntry.setDuration(finish - start);
 									if (exception[0] != null) {
-										runEntry.setException(SchedulerFactory.eINSTANCE.createThrowable(exception[0]));
-										runEntry.setStatus(Status.ERROR);
-										runEntry.setMessage("Exception: "+exception[0].toString());
+										historyEntry.setException(SchedulerFactory.eINSTANCE.createThrowable(exception[0]));
+										historyEntry.setStatus(Status.ERROR);
+										historyEntry.setMessage("Exception: "+exception[0].toString());
 									} else if (diagnostic[0] != null) {
-										runEntry.setStatus(diagnostic[0].getStatus());
-										runEntry.setMessage(diagnostic[0].getMessage());
-										runEntry.getChildren().addAll(new ArrayList<>(diagnostic[0].getChildren()));
+										historyEntry.setStatus(diagnostic[0].getStatus());
+										historyEntry.setMessage(diagnostic[0].getMessage());
+										historyEntry.getChildren().addAll(new ArrayList<>(diagnostic[0].getChildren()));
 									}
-									schedulerTaskToUpdate.getRunHistory().add(runEntry);
+									schedulerTaskToUpdate.getHistory().add(historyEntry);
 								} finally {
 									writeLock.unlock();
 								}
@@ -149,8 +149,8 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 			if (schedulerTask instanceof FixedDelaySchedulerTask) {
 				FixedDelaySchedulerTask<?> fixedDelaySchedulerTask = (FixedDelaySchedulerTask<?>) schedulerTask;
 				long start = schedulerTask.getStart().getTime();
-				for (RunEntry re: schedulerTask.getRunHistory()) {
-					start = re.getTime().getTime() + re.getDuration() + fixedDelaySchedulerTask.getDelay();
+				for (Diagnostic he: schedulerTask.getHistory()) {
+					start = he.getTime().getTime() + he.getDuration() + fixedDelaySchedulerTask.getDelay();
 				}
 				long initialDelay = start - System.currentTimeMillis();
 				if (initialDelay < 0) {
@@ -161,8 +161,8 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 			} else if (schedulerTask instanceof FixedRateSchedulerTask) {
 				FixedRateSchedulerTask<?> fixedRateSchedulerTask = (FixedRateSchedulerTask<?>) schedulerTask;
 				long start = schedulerTask.getStart().getTime();
-				for (RunEntry re: schedulerTask.getRunHistory()) {
-					start = re.getTime().getTime() + fixedRateSchedulerTask.getPeriod();
+				for (Diagnostic he: schedulerTask.getHistory()) {
+					start = he.getTime().getTime() + fixedRateSchedulerTask.getPeriod();
 				}
 				long initialDelay = start - System.currentTimeMillis();
 				if (initialDelay < 0) {

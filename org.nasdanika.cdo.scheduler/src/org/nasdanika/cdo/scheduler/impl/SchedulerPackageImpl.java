@@ -18,7 +18,6 @@ import org.nasdanika.cdo.scheduler.Diagnostic;
 import org.nasdanika.cdo.scheduler.FixedDelaySchedulerTask;
 import org.nasdanika.cdo.scheduler.FixedRateSchedulerTask;
 import org.nasdanika.cdo.scheduler.RecurringSchedulerTask;
-import org.nasdanika.cdo.scheduler.RunEntry;
 import org.nasdanika.cdo.scheduler.SchedulerFactory;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
@@ -39,13 +38,6 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * @generated
 	 */
 	private EClass diagnosticEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	private EClass runEntryEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -215,35 +207,26 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EReference getDiagnostic_Exception() {
+		return (EReference)diagnosticEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getDiagnostic_Duration() {
+		return (EAttribute)diagnosticEClass.getEStructuralFeatures().get(5);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EAttribute getDiagnostic_Time() {
 		return (EAttribute)diagnosticEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getRunEntry() {
-		return runEntryEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getRunEntry_Duration() {
-		return (EAttribute)runEntryEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getRunEntry_Exception() {
-		return (EReference)runEntryEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -314,7 +297,7 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getSchedulerTask_RunHistory() {
+	public EReference getSchedulerTask_History() {
 		return (EReference)schedulerTaskEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -522,15 +505,13 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 		createEAttribute(diagnosticEClass, DIAGNOSTIC__STATUS);
 		createEAttribute(diagnosticEClass, DIAGNOSTIC__MESSAGE);
 		createEReference(diagnosticEClass, DIAGNOSTIC__CHILDREN);
-
-		runEntryEClass = createEClass(RUN_ENTRY);
-		createEAttribute(runEntryEClass, RUN_ENTRY__DURATION);
-		createEReference(runEntryEClass, RUN_ENTRY__EXCEPTION);
+		createEReference(diagnosticEClass, DIAGNOSTIC__EXCEPTION);
+		createEAttribute(diagnosticEClass, DIAGNOSTIC__DURATION);
 
 		schedulerTaskEClass = createEClass(SCHEDULER_TASK);
 		createEAttribute(schedulerTaskEClass, SCHEDULER_TASK__START);
 		createEReference(schedulerTaskEClass, SCHEDULER_TASK__SUBJECT);
-		createEReference(schedulerTaskEClass, SCHEDULER_TASK__RUN_HISTORY);
+		createEReference(schedulerTaskEClass, SCHEDULER_TASK__HISTORY);
 		createEAttribute(schedulerTaskEClass, SCHEDULER_TASK__DONE);
 		createEOperation(schedulerTaskEClass, SCHEDULER_TASK___RUN__SCHEDULERCONTEXT);
 
@@ -601,7 +582,6 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 		// Set bounds for type parameters
 
 		// Add supertypes to classes
-		runEntryEClass.getESuperTypes().add(this.getDiagnostic());
 		EGenericType g1 = createEGenericType(this.getSchedulerTask());
 		EGenericType g2 = createEGenericType(recurringSchedulerTaskEClass_CR);
 		g1.getETypeArguments().add(g2);
@@ -621,15 +601,13 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 		initEAttribute(getDiagnostic_Status(), this.getStatus(), "status", null, 1, 1, Diagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getDiagnostic_Message(), ecorePackage.getEString(), "message", null, 0, 1, Diagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getDiagnostic_Children(), this.getDiagnostic(), null, "children", null, 0, -1, Diagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-
-		initEClass(runEntryEClass, RunEntry.class, "RunEntry", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-		initEAttribute(getRunEntry_Duration(), ecorePackage.getELong(), "duration", null, 0, 1, RunEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getRunEntry_Exception(), this.getThrowable(), null, "exception", null, 0, 1, RunEntry.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getDiagnostic_Exception(), this.getThrowable(), null, "exception", null, 0, 1, Diagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEAttribute(getDiagnostic_Duration(), ecorePackage.getELong(), "duration", null, 0, 1, Diagnostic.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(schedulerTaskEClass, SchedulerTask.class, "SchedulerTask", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getSchedulerTask_Start(), ecorePackage.getEDate(), "start", null, 1, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getSchedulerTask_Subject(), theSecurityPackage.getPrincipal(), null, "subject", null, 0, -1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getSchedulerTask_RunHistory(), this.getRunEntry(), null, "runHistory", null, 0, -1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+		initEReference(getSchedulerTask_History(), this.getDiagnostic(), null, "history", null, 0, -1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEAttribute(getSchedulerTask_Done(), ecorePackage.getEBoolean(), "done", null, 0, 1, SchedulerTask.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		EOperation op = initEOperation(getSchedulerTask__Run__SchedulerContext(), this.getDiagnostic(), "run", 0, 1, IS_UNIQUE, IS_ORDERED);
@@ -749,13 +727,6 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 			 "tree-feature", "false"
 		   });	
 		addAnnotation
-		  (runEntryEClass, 
-		   source, 
-		   new String[] {
-			 "icon", "fa fa-cog",
-			 "editable", "false"
-		   });	
-		addAnnotation
 		  (getSchedulerTask_Start(), 
 		   source, 
 		   new String[] {
@@ -763,11 +734,12 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 			 "input-type", "datetime_local"
 		   });	
 		addAnnotation
-		  (getSchedulerTask_RunHistory(), 
+		  (getSchedulerTask_History(), 
 		   source, 
 		   new String[] {
 			 "tree-feature", "false",
-			 "editable", "false"
+			 "editable", "false",
+			 "icon", "fa fa-cog"
 		   });	
 		addAnnotation
 		  (throwableEClass, 
@@ -806,13 +778,7 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 			 "documentation", "Time of task execution."
 		   });	
 		addAnnotation
-		  (runEntryEClass, 
-		   source, 
-		   new String[] {
-			 "documentation", "Time and duration of SchedulerTask execution."
-		   });	
-		addAnnotation
-		  (getRunEntry_Duration(), 
+		  (getDiagnostic_Duration(), 
 		   source, 
 		   new String[] {
 			 "documentation", "Duration of task execution in milliseconds."
@@ -830,7 +796,7 @@ public class SchedulerPackageImpl extends EPackageImpl implements SchedulerPacka
 			 "documentation", "When to execute task. Submits task if this value is before the current time."
 		   });	
 		addAnnotation
-		  (getSchedulerTask_RunHistory(), 
+		  (getSchedulerTask_History(), 
 		   source, 
 		   new String[] {
 			 "documentation", "History of task execution."

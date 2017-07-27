@@ -24,6 +24,8 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.nasdanika.cdo.scheduler.Diagnostic#getStatus <em>Status</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.Diagnostic#getMessage <em>Message</em>}</li>
  *   <li>{@link org.nasdanika.cdo.scheduler.Diagnostic#getChildren <em>Children</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.Diagnostic#getException <em>Exception</em>}</li>
+ *   <li>{@link org.nasdanika.cdo.scheduler.Diagnostic#getDuration <em>Duration</em>}</li>
  * </ul>
  *
  * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getDiagnostic()
@@ -103,6 +105,57 @@ public interface Diagnostic extends CDOObject {
 	 * @generated
 	 */
 	EList<Diagnostic> getChildren();
+
+	/**
+	 * Returns the value of the '<em><b>Exception</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Exception</em>' containment reference isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Exception</em>' containment reference.
+	 * @see #setException(org.nasdanika.cdo.scheduler.Throwable)
+	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getDiagnostic_Exception()
+	 * @model containment="true"
+	 * @generated
+	 */
+	org.nasdanika.cdo.scheduler.Throwable getException();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.cdo.scheduler.Diagnostic#getException <em>Exception</em>}' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Exception</em>' containment reference.
+	 * @see #getException()
+	 * @generated
+	 */
+	void setException(org.nasdanika.cdo.scheduler.Throwable value);
+
+	/**
+	 * Returns the value of the '<em><b>Duration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * <!-- begin-model-doc -->
+	 * Duration of task execution in milliseconds.
+	 * <!-- end-model-doc -->
+	 * @return the value of the '<em>Duration</em>' attribute.
+	 * @see #setDuration(long)
+	 * @see org.nasdanika.cdo.scheduler.SchedulerPackage#getDiagnostic_Duration()
+	 * @model
+	 * @generated
+	 */
+	long getDuration();
+
+	/**
+	 * Sets the value of the '{@link org.nasdanika.cdo.scheduler.Diagnostic#getDuration <em>Duration</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Duration</em>' attribute.
+	 * @see #getDuration()
+	 * @generated
+	 */
+	void setDuration(long value);
 
 	/**
 	 * Returns the value of the '<em><b>Time</b></em>' attribute.

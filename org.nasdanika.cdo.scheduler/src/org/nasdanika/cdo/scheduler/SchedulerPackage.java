@@ -106,13 +106,31 @@ public interface SchedulerPackage extends EPackage {
 	int DIAGNOSTIC__CHILDREN = 3;
 
 	/**
+	 * The feature id for the '<em><b>Exception</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIAGNOSTIC__EXCEPTION = 4;
+
+	/**
+	 * The feature id for the '<em><b>Duration</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIAGNOSTIC__DURATION = 5;
+
+	/**
 	 * The number of structural features of the '<em>Diagnostic</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIAGNOSTIC_FEATURE_COUNT = 4;
+	int DIAGNOSTIC_FEATURE_COUNT = 6;
 
 	/**
 	 * The number of operations of the '<em>Diagnostic</em>' class.
@@ -124,16 +142,6 @@ public interface SchedulerPackage extends EPackage {
 	int DIAGNOSTIC_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.nasdanika.cdo.scheduler.impl.RunEntryImpl <em>Run Entry</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.nasdanika.cdo.scheduler.impl.RunEntryImpl
-	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getRunEntry()
-	 * @generated
-	 */
-	int RUN_ENTRY = 1;
-
-	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl <em>Task</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -141,7 +149,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getSchedulerTask()
 	 * @generated
 	 */
-	int SCHEDULER_TASK = 2;
+	int SCHEDULER_TASK = 1;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.scheduler.impl.FixedRateSchedulerTaskImpl <em>Fixed Rate Scheduler Task</em>}' class.
@@ -151,7 +159,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getFixedRateSchedulerTask()
 	 * @generated
 	 */
-	int FIXED_RATE_SCHEDULER_TASK = 5;
+	int FIXED_RATE_SCHEDULER_TASK = 4;
 
 	/**
 	 * The meta object id for the '{@link org.nasdanika.cdo.scheduler.impl.FixedDelaySchedulerTaskImpl <em>Fixed Delay Scheduler Task</em>}' class.
@@ -161,7 +169,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getFixedDelaySchedulerTask()
 	 * @generated
 	 */
-	int FIXED_DELAY_SCHEDULER_TASK = 4;
+	int FIXED_DELAY_SCHEDULER_TASK = 3;
 
 	/**
 	 * The meta object id for the '<em>Context</em>' data type.
@@ -171,7 +179,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getSchedulerContext()
 	 * @generated
 	 */
-	int SCHEDULER_CONTEXT = 9;
+	int SCHEDULER_CONTEXT = 8;
 
 	/**
 	 * The meta object id for the '<em>Time Unit</em>' data type.
@@ -181,7 +189,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getTimeUnit()
 	 * @generated
 	 */
-	int TIME_UNIT = 10;
+	int TIME_UNIT = 9;
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.scheduler.Diagnostic <em>Diagnostic</em>}'.
@@ -227,6 +235,28 @@ public interface SchedulerPackage extends EPackage {
 	EReference getDiagnostic_Children();
 
 	/**
+	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.scheduler.Diagnostic#getException <em>Exception</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Exception</em>'.
+	 * @see org.nasdanika.cdo.scheduler.Diagnostic#getException()
+	 * @see #getDiagnostic()
+	 * @generated
+	 */
+	EReference getDiagnostic_Exception();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.scheduler.Diagnostic#getDuration <em>Duration</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Duration</em>'.
+	 * @see org.nasdanika.cdo.scheduler.Diagnostic#getDuration()
+	 * @see #getDiagnostic()
+	 * @generated
+	 */
+	EAttribute getDiagnostic_Duration();
+
+	/**
 	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.scheduler.Diagnostic#getTime <em>Time</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -236,78 +266,6 @@ public interface SchedulerPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getDiagnostic_Time();
-
-	/**
-	 * The feature id for the '<em><b>Time</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY__TIME = DIAGNOSTIC__TIME;
-
-	/**
-	 * The feature id for the '<em><b>Status</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY__STATUS = DIAGNOSTIC__STATUS;
-
-	/**
-	 * The feature id for the '<em><b>Message</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY__MESSAGE = DIAGNOSTIC__MESSAGE;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY__CHILDREN = DIAGNOSTIC__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Duration</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY__DURATION = DIAGNOSTIC_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Exception</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY__EXCEPTION = DIAGNOSTIC_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Run Entry</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY_FEATURE_COUNT = DIAGNOSTIC_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of operations of the '<em>Run Entry</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int RUN_ENTRY_OPERATION_COUNT = DIAGNOSTIC_OPERATION_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Start</b></em>' attribute.
@@ -328,13 +286,13 @@ public interface SchedulerPackage extends EPackage {
 	int SCHEDULER_TASK__SUBJECT = 1;
 
 	/**
-	 * The feature id for the '<em><b>Run History</b></em>' containment reference list.
+	 * The feature id for the '<em><b>History</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SCHEDULER_TASK__RUN_HISTORY = 2;
+	int SCHEDULER_TASK__HISTORY = 2;
 
 	/**
 	 * The feature id for the '<em><b>Done</b></em>' attribute.
@@ -380,7 +338,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getRecurringSchedulerTask()
 	 * @generated
 	 */
-	int RECURRING_SCHEDULER_TASK = 3;
+	int RECURRING_SCHEDULER_TASK = 2;
 
 	/**
 	 * The feature id for the '<em><b>Start</b></em>' attribute.
@@ -401,13 +359,13 @@ public interface SchedulerPackage extends EPackage {
 	int RECURRING_SCHEDULER_TASK__SUBJECT = SCHEDULER_TASK__SUBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Run History</b></em>' containment reference list.
+	 * The feature id for the '<em><b>History</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int RECURRING_SCHEDULER_TASK__RUN_HISTORY = SCHEDULER_TASK__RUN_HISTORY;
+	int RECURRING_SCHEDULER_TASK__HISTORY = SCHEDULER_TASK__HISTORY;
 
 	/**
 	 * The feature id for the '<em><b>Done</b></em>' attribute.
@@ -473,13 +431,13 @@ public interface SchedulerPackage extends EPackage {
 	int FIXED_DELAY_SCHEDULER_TASK__SUBJECT = RECURRING_SCHEDULER_TASK__SUBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Run History</b></em>' containment reference list.
+	 * The feature id for the '<em><b>History</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FIXED_DELAY_SCHEDULER_TASK__RUN_HISTORY = RECURRING_SCHEDULER_TASK__RUN_HISTORY;
+	int FIXED_DELAY_SCHEDULER_TASK__HISTORY = RECURRING_SCHEDULER_TASK__HISTORY;
 
 	/**
 	 * The feature id for the '<em><b>Done</b></em>' attribute.
@@ -554,13 +512,13 @@ public interface SchedulerPackage extends EPackage {
 	int FIXED_RATE_SCHEDULER_TASK__SUBJECT = RECURRING_SCHEDULER_TASK__SUBJECT;
 
 	/**
-	 * The feature id for the '<em><b>Run History</b></em>' containment reference list.
+	 * The feature id for the '<em><b>History</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int FIXED_RATE_SCHEDULER_TASK__RUN_HISTORY = RECURRING_SCHEDULER_TASK__RUN_HISTORY;
+	int FIXED_RATE_SCHEDULER_TASK__HISTORY = RECURRING_SCHEDULER_TASK__HISTORY;
 
 	/**
 	 * The feature id for the '<em><b>Done</b></em>' attribute.
@@ -624,7 +582,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getThrowable()
 	 * @generated
 	 */
-	int THROWABLE = 6;
+	int THROWABLE = 5;
 
 	/**
 	 * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -697,7 +655,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getStackTraceEntry()
 	 * @generated
 	 */
-	int STACK_TRACE_ENTRY = 7;
+	int STACK_TRACE_ENTRY = 6;
 
 	/**
 	 * The feature id for the '<em><b>Class Name</b></em>' attribute.
@@ -770,39 +728,7 @@ public interface SchedulerPackage extends EPackage {
 	 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getStatus()
 	 * @generated
 	 */
-	int STATUS = 8;
-
-	/**
-	 * Returns the meta object for class '{@link org.nasdanika.cdo.scheduler.RunEntry <em>Run Entry</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Run Entry</em>'.
-	 * @see org.nasdanika.cdo.scheduler.RunEntry
-	 * @generated
-	 */
-	EClass getRunEntry();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.nasdanika.cdo.scheduler.RunEntry#getDuration <em>Duration</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Duration</em>'.
-	 * @see org.nasdanika.cdo.scheduler.RunEntry#getDuration()
-	 * @see #getRunEntry()
-	 * @generated
-	 */
-	EAttribute getRunEntry_Duration();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.nasdanika.cdo.scheduler.RunEntry#getException <em>Exception</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Exception</em>'.
-	 * @see org.nasdanika.cdo.scheduler.RunEntry#getException()
-	 * @see #getRunEntry()
-	 * @generated
-	 */
-	EReference getRunEntry_Exception();
+	int STATUS = 7;
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.scheduler.SchedulerTask <em>Task</em>}'.
@@ -879,15 +805,15 @@ public interface SchedulerPackage extends EPackage {
 	EReference getSchedulerTask_Subject();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getRunHistory <em>Run History</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.nasdanika.cdo.scheduler.SchedulerTask#getHistory <em>History</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Run History</em>'.
-	 * @see org.nasdanika.cdo.scheduler.SchedulerTask#getRunHistory()
+	 * @return the meta object for the containment reference list '<em>History</em>'.
+	 * @see org.nasdanika.cdo.scheduler.SchedulerTask#getHistory()
 	 * @see #getSchedulerTask()
 	 * @generated
 	 */
-	EReference getSchedulerTask_RunHistory();
+	EReference getSchedulerTask_History();
 
 	/**
 	 * Returns the meta object for class '{@link org.nasdanika.cdo.scheduler.FixedRateSchedulerTask <em>Fixed Rate Scheduler Task</em>}'.
@@ -1151,22 +1077,12 @@ public interface SchedulerPackage extends EPackage {
 		EReference DIAGNOSTIC__CHILDREN = eINSTANCE.getDiagnostic_Children();
 
 		/**
-		 * The meta object literal for the '<em><b>Time</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Exception</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute DIAGNOSTIC__TIME = eINSTANCE.getDiagnostic_Time();
-
-		/**
-		 * The meta object literal for the '{@link org.nasdanika.cdo.scheduler.impl.RunEntryImpl <em>Run Entry</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.nasdanika.cdo.scheduler.impl.RunEntryImpl
-		 * @see org.nasdanika.cdo.scheduler.impl.SchedulerPackageImpl#getRunEntry()
-		 * @generated
-		 */
-		EClass RUN_ENTRY = eINSTANCE.getRunEntry();
+		EReference DIAGNOSTIC__EXCEPTION = eINSTANCE.getDiagnostic_Exception();
 
 		/**
 		 * The meta object literal for the '<em><b>Duration</b></em>' attribute feature.
@@ -1174,15 +1090,15 @@ public interface SchedulerPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute RUN_ENTRY__DURATION = eINSTANCE.getRunEntry_Duration();
+		EAttribute DIAGNOSTIC__DURATION = eINSTANCE.getDiagnostic_Duration();
 
 		/**
-		 * The meta object literal for the '<em><b>Exception</b></em>' containment reference feature.
+		 * The meta object literal for the '<em><b>Time</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference RUN_ENTRY__EXCEPTION = eINSTANCE.getRunEntry_Exception();
+		EAttribute DIAGNOSTIC__TIME = eINSTANCE.getDiagnostic_Time();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.scheduler.impl.SchedulerTaskImpl <em>Task</em>}' class.
@@ -1245,12 +1161,12 @@ public interface SchedulerPackage extends EPackage {
 		EReference SCHEDULER_TASK__SUBJECT = eINSTANCE.getSchedulerTask_Subject();
 
 		/**
-		 * The meta object literal for the '<em><b>Run History</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>History</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference SCHEDULER_TASK__RUN_HISTORY = eINSTANCE.getSchedulerTask_RunHistory();
+		EReference SCHEDULER_TASK__HISTORY = eINSTANCE.getSchedulerTask_History();
 
 		/**
 		 * The meta object literal for the '{@link org.nasdanika.cdo.scheduler.impl.FixedRateSchedulerTaskImpl <em>Fixed Rate Scheduler Task</em>}' class.

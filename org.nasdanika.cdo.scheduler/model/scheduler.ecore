@@ -57,25 +57,16 @@
         <details key="tree-feature" value="false"/>
       </eAnnotations>
     </eStructuralFeatures>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="SchedulerContext" instanceClassName="org.nasdanika.cdo.concurrent.SchedulerContext">
-    <eTypeParameters name="CR"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="RunEntry" eSuperTypes="#//Diagnostic">
-    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="Time and duration of SchedulerTask execution."/>
-    </eAnnotations>
-    <eAnnotations source="org.nasdanika.cdo.web.render">
-      <details key="icon" value="fa fa-cog"/>
-      <details key="editable" value="false"/>
-    </eAnnotations>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="exception" eType="#//Throwable"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="duration" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//ELong">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="Duration of task execution in milliseconds."/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="exception" eType="#//Throwable"
-        containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="SchedulerContext" instanceClassName="org.nasdanika.cdo.concurrent.SchedulerContext">
+    <eTypeParameters name="CR"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SchedulerTask" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
@@ -100,14 +91,15 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="subject" upperBound="-1"
         eType="ecore:EClass ../../org.nasdanika.cdo.security/model/security.ecore#//Principal"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="runHistory" upperBound="-1"
-        eType="#//RunEntry" containment="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="history" upperBound="-1"
+        eType="#//Diagnostic" containment="true">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="History of task execution."/>
       </eAnnotations>
       <eAnnotations source="org.nasdanika.cdo.web.render">
         <details key="tree-feature" value="false"/>
         <details key="editable" value="false"/>
+        <details key="icon" value="fa fa-cog"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="done" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean">

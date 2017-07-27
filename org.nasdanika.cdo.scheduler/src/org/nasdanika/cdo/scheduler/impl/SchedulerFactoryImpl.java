@@ -11,7 +11,6 @@ import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
 import org.nasdanika.cdo.concurrent.SchedulerContext;
 import org.nasdanika.cdo.scheduler.Diagnostic;
-import org.nasdanika.cdo.scheduler.RunEntry;
 import org.nasdanika.cdo.scheduler.SchedulerFactory;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.StackTraceEntry;
@@ -63,7 +62,6 @@ public class SchedulerFactoryImpl extends EFactoryImpl implements SchedulerFacto
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case SchedulerPackage.DIAGNOSTIC: return (EObject)createDiagnostic();
-			case SchedulerPackage.RUN_ENTRY: return (EObject)createRunEntry();
 			case SchedulerPackage.THROWABLE: return (EObject)createThrowable();
 			case SchedulerPackage.STACK_TRACE_ENTRY: return (EObject)createStackTraceEntry();
 			default:
@@ -117,16 +115,6 @@ public class SchedulerFactoryImpl extends EFactoryImpl implements SchedulerFacto
 	public Diagnostic createDiagnostic() {
 		DiagnosticImpl diagnostic = new DiagnosticImpl();
 		return diagnostic;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public RunEntry createRunEntry() {
-		RunEntryImpl runEntry = new RunEntryImpl();
-		return runEntry;
 	}
 
 	/**

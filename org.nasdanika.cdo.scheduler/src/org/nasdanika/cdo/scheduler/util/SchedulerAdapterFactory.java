@@ -12,7 +12,6 @@ import org.nasdanika.cdo.scheduler.Diagnostic;
 import org.nasdanika.cdo.scheduler.FixedDelaySchedulerTask;
 import org.nasdanika.cdo.scheduler.FixedRateSchedulerTask;
 import org.nasdanika.cdo.scheduler.RecurringSchedulerTask;
-import org.nasdanika.cdo.scheduler.RunEntry;
 import org.nasdanika.cdo.scheduler.SchedulerPackage;
 import org.nasdanika.cdo.scheduler.SchedulerTask;
 import org.nasdanika.cdo.scheduler.StackTraceEntry;
@@ -78,10 +77,6 @@ public class SchedulerAdapterFactory extends AdapterFactoryImpl {
 				return createDiagnosticAdapter();
 			}
 			@Override
-			public Adapter caseRunEntry(RunEntry object) {
-				return createRunEntryAdapter();
-			}
-			@Override
 			public <CR> Adapter caseSchedulerTask(SchedulerTask<CR> object) {
 				return createSchedulerTaskAdapter();
 			}
@@ -136,20 +131,6 @@ public class SchedulerAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createDiagnosticAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.nasdanika.cdo.scheduler.RunEntry <em>Run Entry</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.nasdanika.cdo.scheduler.RunEntry
-	 * @generated
-	 */
-	public Adapter createRunEntryAdapter() {
 		return null;
 	}
 

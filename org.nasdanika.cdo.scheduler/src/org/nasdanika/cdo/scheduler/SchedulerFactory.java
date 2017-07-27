@@ -31,15 +31,6 @@ public interface SchedulerFactory extends EFactory {
 	Diagnostic createDiagnostic();
 
 	/**
-	 * Returns a new object of class '<em>Run Entry</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Run Entry</em>'.
-	 * @generated
-	 */
-	RunEntry createRunEntry();
-
-	/**
 	 * Returns a new object of class '<em>Throwable</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
