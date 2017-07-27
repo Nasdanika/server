@@ -1292,6 +1292,11 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 						obj->obj instanceof Bundle && ((Bundle) obj).getSymbolicName().equals(bundle.getSymbolicName()) && ((Bundle) obj).getVersion().equals(bundle.getVersion()), 
 						false);
 				
+				String bundleName = bundle.getHeaders().get("Bundle-Name");
+				if (!CoreUtil.isBlank(bundleName) && !bundle.getSymbolicName().equals(bundleName)) {
+					bundleToc.setTooltip(bundleName);
+				}
+				
 				if (serviceComponentRuntime != null) {
 					Collection<ComponentDescriptionDTO> componentDescriptions = serviceComponentRuntime.getComponentDescriptionDTOs(bundle);
 					Map<String, ComponentDescriptionDTO> componentMap = new TreeMap<>();
