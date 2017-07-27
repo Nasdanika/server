@@ -161,8 +161,7 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 			throw new RejectedExecutionException("Executor service is not set or has been shut down");
 		}
 		SchedulerComponent<CR>.SchedulerRunnable schedulerRunnable = new SchedulerRunnable(task, subject);		
-		ScheduledFuture<?> future = scheduledExecutorService.schedule(schedulerRunnable, delay, unit);
-		return future;
+		return scheduledExecutorService.schedule(schedulerRunnable, delay, unit);
 	}
 
 	@Override
