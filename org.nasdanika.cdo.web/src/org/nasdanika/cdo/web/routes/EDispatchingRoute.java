@@ -16,6 +16,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
@@ -24,8 +26,10 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
+import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
+import org.eclipse.emf.cdo.util.LockTimeoutException;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -36,6 +40,8 @@ import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.net4j.util.WrappedException;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -717,9 +723,72 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 			if (!CoreUtil.isBlank(lockAnnotation.path())) {
 				lockTarget = (CDOObject) JXPathContext.newContext(lockTarget).getValue(lockAnnotation.path());
 			}
+			
+			class RecursiveLock implements Lock {
+				
+				private Set<CDOObject> objects;
+				private LockType lockType;
+				private CDOView view;
+
+				public RecursiveLock(CDOObject obj, LockType lockType) {
+					this.view = obj.cdoView();
+					this.objects = Collections.singleton(obj);
+					this.lockType = lockType;
+				}
+
+				@Override
+				public void lock() {
+					view.unlockObjects(objects, lockType);
+				}
+
+				@Override
+				public void lockInterruptibly() throws InterruptedException {
+					lock();					
+				}
+
+				@Override
+				public boolean tryLock() {
+					try {
+						view.lockObjects(objects, lockType, CDOLock.NO_WAIT);
+						return true;
+					} catch (LockTimeoutException ex) {
+						return false;
+					} catch (InterruptedException ex) {
+						throw WrappedException.wrap(ex);
+					}
+				}
+
+				@Override
+				public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
+					try {
+						view.lockObjects(objects, lockType, unit.toMillis(time));
+						return true;
+					} catch (LockTimeoutException ex) {
+						return false;
+					}
+				}
+
+				@Override
+				public void unlock() {
+					view.unlockObjects(objects, lockType);
+				}
+
+				@Override
+				public Condition newCondition() {
+					throw new UnsupportedOperationException();
+				}
+				
+
+				@Override
+				public String toString() {
+					return MessageFormat.format("RecursiveCDOLock[object={0}, type={1}]", objects, lockType);
+				}
+				
+			}
+			
 			switch (lockAnnotation.type()) {
 			case READ:
-				return lockTarget.cdoReadLock();
+				return lockAnnotation.recursive() ? new RecursiveLock(lockTarget, LockType.READ) : lockTarget.cdoReadLock();
 			case WRITE:
 				return lockTarget.cdoWriteLock();
 			case IMPLY_FROM_HTTP_METHOD:
@@ -728,16 +797,15 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 				case PATCH:
 				case POST:
 				case PUT:
-					return lockTarget.cdoWriteLock();
+					return lockAnnotation.recursive() ? new RecursiveLock(lockTarget, LockType.WRITE) : lockTarget.cdoWriteLock();
 				default:
-					return lockTarget.cdoReadLock();							
+					return lockAnnotation.recursive() ? new RecursiveLock(lockTarget, LockType.READ) : lockTarget.cdoReadLock();							
 				}
 			default:
 				break;					
 			}
 		}
 		return null;
-	}
-	
+	}	
 
 }

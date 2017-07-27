@@ -144,6 +144,12 @@ public @interface RouteMethod {
 		 */
 		String path() default "";
 		
+		/**
+		 * If set to true, the lock is applied recursively to all object contents.
+		 * @return
+		 */
+		boolean recursive() default false;
+		
 	}
 	
 	Lock lock() default @Lock();
