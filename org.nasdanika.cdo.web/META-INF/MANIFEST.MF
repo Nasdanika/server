@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Nasdanika CDO Web components
 Bundle-SymbolicName: org.nasdanika.cdo.web;singleton:=true
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Nasdanika
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.nasdanika.web;bundle-version="1.0.0";visibility:=reexport,
- org.nasdanika.cdo;bundle-version="1.0.0";visibility:=reexport,
+Require-Bundle: org.nasdanika.web;bundle-version="1.1.0";visibility:=reexport,
+ org.nasdanika.cdo;bundle-version="1.1.0";visibility:=reexport,
  org.apache.commons.lang3;bundle-version="3.3.2",
  org.mozilla.rhino;bundle-version="1.0.0",
  org.pegdown;visibility:=reexport,

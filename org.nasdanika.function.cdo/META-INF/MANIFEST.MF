@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Binding of generic function types to CDO context(s)
 Bundle-SymbolicName: org.nasdanika.function.cdo
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: Nasdanika LLC
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: org.nasdanika.function;bundle-version="1.0.0";visibility:=reexport,
- org.nasdanika.cdo;bundle-version="1.0.0";visibility:=reexport
+Require-Bundle: org.nasdanika.function;bundle-version="1.1.0";visibility:=reexport,
+ org.nasdanika.cdo;bundle-version="1.1.0";visibility:=reexport
 Export-Package: org.nasdanika.function.cdo

@@ -2,7 +2,7 @@
 <feature
       id="org.nasdanika.feature"
       label="Nasdanika Bundles"
-      version="1.0.0.qualifier">
+      version="1.1.0.qualifier">
 
    <description>
       Nasdanika foundation server components.
