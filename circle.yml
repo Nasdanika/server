@@ -26,6 +26,7 @@ test:
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.web.doc
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.web
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core
+    - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.doc.ecore
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core.test
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.osgi.model
     - mkdir $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.web
@@ -48,6 +49,7 @@ test:
     - mv org.nasdanika.cdo.web.doc/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.web.doc
     - mv org.nasdanika.cdo.web/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.cdo.web
     - mv org.nasdanika.core/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core
+    - mv org.nasdanika.doc.ecore/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.doc.ecore
     - mv org.nasdanika.core.tests/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.core.tests
     - mv org.nasdanika.osgi.model/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.osgi.model
     - mv org.nasdanika.web/target/site/apidocs $CIRCLE_ARTIFACTS/apidocs/org.nasdanika.web

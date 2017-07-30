@@ -48,6 +48,8 @@
 		<!--<module>org.nasdanika.thirdparty</module>-->
 		<module>org.nasdanika.core</module>
 		
+		<module>org.nasdanika.doc.ecore</module>
+
 		<module>org.nasdanika.cdo.security</module>
 		<module>org.nasdanika.cdo.security.edit</module>
 		<module>org.nasdanika.cdo.security.feature</module>
