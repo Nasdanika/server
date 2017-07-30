@@ -18,9 +18,9 @@ Require-Bundle: org.nasdanika.cdo.web;bundle-version="1.1.0",
  org.nasdanika.webtest.model;bundle-version="0.1.0",
  org.eclipse.emf.ecore.xmi,
  org.apache.lucene;bundle-version="6.1.0",
- org.nasdanika.web.resources;bundle-version="1.0.0"
+ org.nasdanika.web.resources;bundle-version="1.0.0",
+ net.sourceforge.plantuml;bundle-version="8042.0.0"
 Export-Package: org.nasdanika.cdo.web.doc,
  org.nasdanika.cdo.web.doc.extensions
 Import-Package: javax.servlet;version="2.6.0",
- javax.servlet.http;version="2.6.0",
- net.sourceforge.plantuml
+ javax.servlet.http;version="2.6.0"
