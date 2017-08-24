@@ -1,5 +1,7 @@
 package org.nasdanika.cdo.web;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -42,11 +44,19 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	protected ServiceTracker<CDOViewContextProvider<V,CR,C>, CDOViewContextProvider<V,CR,C>> cdoViewContextProviderServiceTracker;
 	private String sessionWebSocketServletPath;
 	private String userNameHeader;
+	private InetAddress userNameHeaderHost;
 	
 	@Override
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		userNameHeader = config.getInitParameter("user-name-header");
+		String userNameHeaderHostStr = config.getInitParameter("user-name-header-host");
+		try {
+			userNameHeaderHost = userNameHeaderHostStr == null ? InetAddress.getLocalHost() : InetAddress.getByName(userNameHeaderHostStr);
+		} catch (UnknownHostException e) {
+			throw new ServletException("Unknown user-name-header-host", e);
+		}
+		
 		sessionWebSocketServletPath = config.getInitParameter("ws-session-path");
 		
 		BundleContext bundleContext = getBundleContext();
@@ -133,9 +143,22 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 		if (userNameHeader == null) {
 			return Collections.emptyList();
 		}
-		
 		String principalName = req.getHeader(userNameHeader);
-		return principalName == null ? Collections.emptyList() : Collections.singletonList(principalName);
+		if (principalName == null) {
+			return Collections.emptyList();
+		}
+		// Validating correctness of the remote address
+		try {
+			InetAddress remoteAddr = InetAddress.getByName(req.getRemoteAddr());
+			if (!userNameHeaderHost.equals(remoteAddr)) {
+				return Collections.emptyList();				
+			}
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+			return Collections.emptyList();
+		}		
+				
+		return Collections.singletonList(principalName);
 	}
 	
 	protected abstract HttpServletRequestContext createCompositeContext(String[] path, final HttpServletRequest req, HttpServletResponse resp, String reqUrl, C viewContext, Context[] chain) throws Exception;
