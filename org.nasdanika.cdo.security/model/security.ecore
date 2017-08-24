@@ -518,6 +518,85 @@
       <details key="icon" value="fa fa-user"/>
     </eAnnotations>
     <eTypeParameters name="CR"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="tokens" upperBound="-1"
+        eType="#//Token" containment="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Token">
+    <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+      <details key="documentation" value="Authentication/authorization tokens issued by users. &#xD;&#xA;Tokens inherit all or some of the issuer permissions.&#xD;&#xA;"/>
+    </eAnnotations>
+    <eOperations name="authorize" eType="#//AccessDecision" eExceptions="#//Exception">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Authorizes to execute an action with a qualifier on an object in a context and an environment.&#xD;&#xA;If target is instanceof Protected then its authorize() method is invoked and takes precedence over the Principal's authorize()."/>
+      </eAnnotations>
+      <eParameters name="context" eType="#//Context">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Authorization context."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="target" eType="ecore:EClass http://www.eclipse.org/emf/2002/Ecore#//EObject">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Permission target object."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="action" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Action name, e.g. ``read``, ``add``, or ``invoke``."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="qualifier" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Action qualifier. E.g. attribute name for ``read`` or operation signature for ``invoke``."/>
+        </eAnnotations>
+      </eParameters>
+      <eParameters name="environment">
+        <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+          <details key="documentation" value="Authorization environment, e.g. for ``transferFunds`` environment may contain ``transferAmount`` key.&#xD;&#xA;Environment may be used by conditional actions and/or conditional permissions."/>
+        </eAnnotations>
+        <eGenericType eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EMap">
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+          <eTypeArguments eClassifier="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"/>
+        </eGenericType>
+      </eParameters>
+    </eOperations>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="hashedValue" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EByteArray">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Token one-way hash allows to verify the token provided during authentication, &#xD;&#xA;but recovery of the original token from the hash would require considerable &#xD;&#xA;computational resources."/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="startDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Token effective start date. Can be ``null``."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-calendar"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="endDate" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EDate">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Token effective end date, can be ``null``."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-calendar"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="comment" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Comment."/>
+      </eAnnotations>
+      <eAnnotations source="org.nasdanika.cdo.web.render">
+        <details key="icon" value="fa fa-pencil"/>
+        <details key="control" value="textarea"/>
+        <details key="content-type" value="text/html"/>
+      </eAnnotations>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="permissions" upperBound="-1"
+        eType="#//PrincipalPermission">
+      <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
+        <details key="documentation" value="Permissions inherited by the token."/>
+      </eAnnotations>
+    </eStructuralFeatures>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LoginUser" abstract="true">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
