@@ -42,6 +42,10 @@ public class EOperationContextRunnable<CR, R> implements ContextRunnable<Schedul
 	private EOperation eOperation;
 	private Object[] args;
 
+	public EOperationContextRunnable(CDOObject target, EOperation eOperation, Object... args) {
+		this(target.cdoID(), eOperation, args); // Transaction handler if ID is temporary - to get the permanent one upon commit?
+	}
+
 	public EOperationContextRunnable(CDOID targetId, EOperation eOperation, Object... args) {
 		this.targetId = targetId;
 		this.eOperation = eOperation;
