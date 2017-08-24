@@ -1471,7 +1471,10 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			return value;
 		}
 		
-		return StringEscapeUtils.escapeHtml4(value.toString());		
+		String escapeRenderAnnotation = getRenderAnnotation(context, typedElement, RenderAnnotation.ESCAPE);
+		// Default "view"?
+		boolean escape = "both".equals(escapeRenderAnnotation) || (forEditing ? "edit" : "view").equals(escapeRenderAnnotation);		
+		return escape ? StringEscapeUtils.escapeHtml4(value.toString()) : value.toString();		
 	}
 	
 	/**
@@ -4160,7 +4163,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}	
 		
 		Object rfv = renderTypedElementValue(context, typedElement, value, appConsumer, true);
-		return rfv == null ? "" : StringEscapeUtils.escapeHtml4(rfv.toString());						
+		return rfv == null ? "" : rfv.toString();						
 	}
 	
 	// TODO - placeholder - might be an implicit default, placeholder selector

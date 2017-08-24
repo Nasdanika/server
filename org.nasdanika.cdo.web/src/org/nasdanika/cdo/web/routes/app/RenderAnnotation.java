@@ -44,6 +44,11 @@ public enum RenderAnnotation {
 		 */
 		EDITABLE("editable"),
 		
+		/**
+		 * Set this annotation to "both" to HTML-escape feature value for view and edit, to "view" for view escaping and to "edit" for edit escaping. 
+		 */
+		ESCAPE("escape"),
+		
 //		/**
 //		 * {@link EStructuralFeature} annotation defining whether elements can be deleted from the feature, i.e. delete or clear buttons shall be shown next to the element values. 
 //		 * The value of this annotation can be one of the following:
