@@ -1,14 +1,17 @@
 package org.nasdanika.cdo.web.routes.app;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -16,6 +19,8 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
 import javax.servlet.MultipartConfigElement;
@@ -30,6 +35,8 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.cdo.CDOObject;
+import org.eclipse.emf.cdo.common.id.CDOIDUtil;
+import org.eclipse.emf.cdo.common.lock.CDOLockUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicDiagnostic;
@@ -38,6 +45,7 @@ import org.eclipse.emf.common.util.Diagnostic;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
+import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EClassifier;
@@ -48,7 +56,11 @@ import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EParameter;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
+import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -1983,6 +1995,34 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 		}
 		context.getResponse().sendRedirect(context.getRequest().getContextPath()+"/index.html");
 		return Action.NOP;
+	}
+	
+	/**
+	 * @return
+	 * @throws Exception
+	 */
+	@RouteMethod(comment="Exports the current object to XMI")
+	public void getExportXml(@ContextParameter C context, @TargetParameter T target) throws Exception {
+		if (target instanceof CDOObject) {
+			ResourceSet resourceSet = new ResourceSetImpl();
+			CDOObject cdoTarget = (CDOObject) target;
+			CDOView view = cdoTarget.cdoView();
+			Set<CDOObject> toLock = Collections.singleton(cdoTarget);
+			view.lockObjects(toLock, LockType.READ, TimeUnit.MINUTES.toMillis(1), true);
+			try {
+				resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(org.eclipse.emf.ecore.resource.Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());			
+				String targetID = CDOIDCodec.INSTANCE.encode(context, cdoTarget.cdoID());
+				URI sourceURI = URI.createFileURI(File.createTempFile(targetID+"-export-", ".xml").getAbsolutePath());
+				org.eclipse.emf.ecore.resource.Resource resource = resourceSet.createResource(sourceURI);
+				resource.getContents().add(EcoreUtil.copy(target));	
+				HttpServletResponse response = context.getResponse();
+				response.setContentType("text/xml");
+				response.setHeader("Content-Disposition", "attachment; filename="+target.eClass().getName()+"-"+targetID+"-"+new SimpleDateFormat("yyyy-MM-dd").format(new Date())+".xml");
+				resource.save(response.getOutputStream(), null);
+			} finally {
+				view.unlockObjects(toLock, LockType.READ, true);
+			}
+		}
 	}
 
 	// --- Web Operations ---
