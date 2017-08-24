@@ -1,6 +1,5 @@
 package org.nasdanika.cdo.concurrent;
 
-import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
@@ -23,14 +22,9 @@ import org.osgi.service.component.ComponentContext;
  */
 public class SchedulerComponent<CR> implements Scheduler<CR> {
 	
-	private int threadPoolSize = 1; 
-	private ScheduledExecutorService scheduledExecutorService;
-	private BundleContext bundleContext;
-	
-	public void setThreadPoolSize(int threadPoolSize) {
-		this.threadPoolSize = threadPoolSize;
-	}
-	
+	protected ScheduledExecutorService scheduledExecutorService;
+	protected BundleContext bundleContext;
+
 	/**
 	 * Sets {@link CDOTransactionContextProvider} reference.
 	 * @param transactionContextProvider
@@ -40,14 +34,34 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 	}
 	
 	/**
+	 * Clears {@link CDOTransactionContextProvider} reference.
+	 * @param transactionContextProvider
+	 */
+	public void unsetTransactionContextProvider(CDOTransactionContextProvider<CR> transactionContextProvider) {
+		if (this.transactionContextProvider == transactionContextProvider) {
+			this.transactionContextProvider = null;
+		}
+	}
+	
+	/**
 	 * Creates a thread pool executor service and then schedules tasks returned by <code>getTasks()</code> method.
 	 * @param componentContext
 	 * @throws Exception
 	 */
 	public void activate(ComponentContext componentContext) throws Exception {
-		scheduledExecutorService = Executors.newScheduledThreadPool(threadPoolSize);
 		this.bundleContext = componentContext.getBundleContext();
 	}
+	
+	public void setScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+		this.scheduledExecutorService = scheduledExecutorService;
+	}
+	
+	public void unsetScheduledExecutorService(ScheduledExecutorService scheduledExecutorService) {
+		if (this.scheduledExecutorService == scheduledExecutorService) {
+			this.scheduledExecutorService = null;
+		}
+	}
+	
 	
 	protected SchedulerContext<CR> createContext(CDOViewContextSubject<CDOTransaction, CR> subject, Future<?> future) throws Exception {		
 		class SchedulerContextImpl extends CDOTransactionContextFilter<CR> implements SchedulerContext<CR> {
@@ -143,7 +157,7 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 	 * @throws Exception
 	 */
 	public void deactivate(ComponentContext componentContext) throws Exception {
-		scheduledExecutorService.shutdown();
+		scheduledExecutorService = null;
 	}
 	
 	private CDOTransactionContextProvider<CR> transactionContextProvider;
