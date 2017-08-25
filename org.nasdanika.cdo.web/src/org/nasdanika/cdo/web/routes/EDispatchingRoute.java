@@ -738,12 +738,16 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 
 				@Override
 				public void lock() {
-					view.unlockObjects(objects, lockType);
+					try {
+						view.lockObjects(objects, lockType, CDOLock.NO_WAIT, true);
+					} catch (InterruptedException e) {
+						throw new RuntimeException(e);
+					}
 				}
 
 				@Override
 				public void lockInterruptibly() throws InterruptedException {
-					lock();					
+					view.lockObjects(objects, lockType, CDOLock.NO_WAIT, true);
 				}
 
 				@Override
@@ -761,7 +765,7 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 				@Override
 				public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
 					try {
-						view.lockObjects(objects, lockType, unit.toMillis(time));
+						view.lockObjects(objects, lockType, unit.toMillis(time), true);
 						return true;
 					} catch (LockTimeoutException ex) {
 						return false;
@@ -770,7 +774,7 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 
 				@Override
 				public void unlock() {
-					view.unlockObjects(objects, lockType);
+					view.unlockObjects(objects, lockType, true);
 				}
 
 				@Override
