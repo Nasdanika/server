@@ -108,29 +108,25 @@ public abstract class AbstractSchedulerComponent<CR> implements CDOSessionInitia
 								// May execute in a different transaction, need to get the task by ID.
 								SchedulerTask<CR> schedulerTaskToUpdate = (SchedulerTask<CR>) context.getView().getObject(schedulerTaskID);
 								CDOLock writeLock = schedulerTaskToUpdate.cdoWriteLock();
-								try {
-									writeLock.lock(lockTimeout);
-									// One-off task
-									if (!(schedulerTaskToUpdate instanceof RecurringSchedulerTask)) {
-										schedulerTaskToUpdate.setDone(true);
-										scheduledTasks.remove(schedulerTaskID);
-									}
-									Diagnostic historyEntry = SchedulerFactory.eINSTANCE.createDiagnostic();
-									historyEntry.setTime(new Date(start));
-									historyEntry.setDuration(finish - start);
-									if (exception[0] != null) {
-										historyEntry.setException(SchedulerFactory.eINSTANCE.createThrowable(exception[0]));
-										historyEntry.setStatus(Status.ERROR);
-										historyEntry.setMessage("Exception: "+exception[0].toString());
-									} else if (diagnostic[0] != null) {
-										historyEntry.setStatus(diagnostic[0].getStatus());
-										historyEntry.setMessage(diagnostic[0].getMessage());
-										historyEntry.getChildren().addAll(new ArrayList<>(diagnostic[0].getChildren()));
-									}
-									schedulerTaskToUpdate.getHistory().add(historyEntry);
-								} finally {
-									writeLock.unlock();
+								writeLock.lock(lockTimeout);
+								// One-off task
+								if (!(schedulerTaskToUpdate instanceof RecurringSchedulerTask)) {
+									schedulerTaskToUpdate.setDone(true);
+									scheduledTasks.remove(schedulerTaskID);
 								}
+								Diagnostic historyEntry = SchedulerFactory.eINSTANCE.createDiagnostic();
+								historyEntry.setTime(new Date(start));
+								historyEntry.setDuration(finish - start);
+								if (exception[0] != null) {
+									historyEntry.setException(SchedulerFactory.eINSTANCE.createThrowable(exception[0]));
+									historyEntry.setStatus(Status.ERROR);
+									historyEntry.setMessage("Exception: "+exception[0].toString());
+								} else if (diagnostic[0] != null) {
+									historyEntry.setStatus(diagnostic[0].getStatus());
+									historyEntry.setMessage(diagnostic[0].getMessage());
+									historyEntry.getChildren().addAll(new ArrayList<>(diagnostic[0].getChildren()));
+								}
+								schedulerTaskToUpdate.getHistory().add(historyEntry);
 							}
 						};
 						
