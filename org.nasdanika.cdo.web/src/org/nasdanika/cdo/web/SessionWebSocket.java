@@ -105,25 +105,19 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 			}
 			CDOLock writeLock = target.cdoView()==null ? null : target.cdoWriteLock();
 			if (writeLock == null || writeLock.tryLock(15, TimeUnit.SECONDS)) {
-				try {	
-					Iterator<String> dit = inDelta.keys();
-					while (dit.hasNext()) {
-						String dk = dit.next();
-						if (!CDOWebUtil.VERSION_KEY.equals(dk)) {
-							EStructuralFeature feature = targetClass.getEStructuralFeature(dk);
-							if (feature == null) {
-								throw new ServerException("Feature "+dk+" not found in "+targetClass.getName()+" at "+path);
-							}
-							if (feature instanceof EAttribute) {
-								applyAttributeInDelta(inDelta.getJSONObject(dk), (EAttribute) feature);
-							} else {
-								applyReferenceInDelta(inDelta.get(dk), (EReference) feature);							
-							}
+				Iterator<String> dit = inDelta.keys();
+				while (dit.hasNext()) {
+					String dk = dit.next();
+					if (!CDOWebUtil.VERSION_KEY.equals(dk)) {
+						EStructuralFeature feature = targetClass.getEStructuralFeature(dk);
+						if (feature == null) {
+							throw new ServerException("Feature "+dk+" not found in "+targetClass.getName()+" at "+path);
 						}
-					}
-				} finally {
-					if (writeLock!=null) {
-						writeLock.unlock();
+						if (feature instanceof EAttribute) {
+							applyAttributeInDelta(inDelta.getJSONObject(dk), (EAttribute) feature);
+						} else {
+							applyReferenceInDelta(inDelta.get(dk), (EReference) feature);							
+						}
 					}
 				}
 				return CDOWebUtil.validateEObject(context, target);
