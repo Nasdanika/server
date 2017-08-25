@@ -2417,19 +2417,19 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		EObject eContainer = obj.eContainer();
-		EStructuralFeature containingFeature = obj.eContainingFeature();
-		if (eContainer != null && containingFeature != null) {
+		EStructuralFeature containmentFeature = obj.eContainmentFeature();
+		if (eContainer != null && containmentFeature != null) {
 			for (EOperation eOperation: eContainer.eClass().getEAllOperations()) {
 				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
 				if (eOperationTargetInfo != null
 						&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
-						&& containingFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
+						&& containmentFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
 						&& eOperationTargetInfo.getRole() == Role.operation
 						&& isVisible(context, obj, eOperation)) {
 					Map<String, String> queryParameters = new HashMap<>();
-					queryParameters.put("feature", containingFeature.getName());					
+					queryParameters.put("feature", containmentFeature.getName());					
 					if (obj instanceof CDOObject) {
-						String formControlValue = getFormControlValue(context, obj, containingFeature, obj, appConsumer);
+						String formControlValue = getFormControlValue(context, obj, containmentFeature, obj, appConsumer);
 						queryParameters.put("element", formControlValue);
 						queryParameters.put("context-object", formControlValue);
 					}
@@ -2845,7 +2845,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Button renderDeleteButton(C context, T obj) throws Exception {
-		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainingFeature())) {
+		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainmentFeature())) {
 			HTMLFactory htmlFactory = getHTMLFactory(context);
 			Button deleteButton = htmlFactory.button(renderDeleteIcon(context).style().margin().right("5px"), getResourceString(context, "delete")).style(Style.DANGER);
 			Map<String, Object> env = new HashMap<>();
@@ -5786,7 +5786,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 
 		// Delete context menu item
-		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainingFeature())) {
+		if (obj.eContainer() != null && context.authorizeDelete(obj, null, null) && isEditable(context, obj, obj.eContainmentFeature())) {
 			JsTreeContextMenuItem deleteMenuItem = htmlFactory.jsTreeContextMenuItem();
 			menuItems.put("delete", deleteMenuItem);
 			deleteMenuItem.icon("fa fa-trash").label(getResourceString(context, "delete"));
@@ -5815,18 +5815,18 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		}
 		
 		EObject eContainer = obj.eContainer();
-		EStructuralFeature containingFeature = obj.eContainingFeature();
-		if (eContainer != null && containingFeature != null) {
+		EStructuralFeature containmentFeature = obj.eContainmentFeature();
+		if (eContainer != null && containmentFeature != null) {
 			for (EOperation eOperation: eContainer.eClass().getEAllOperations()) {
 				EOperationTargetInfo eOperationTargetInfo = EOperationTargetInfo.create(context, this, eOperation);
 				if (eOperationTargetInfo != null
 						&& getTypedElementLocation(context, eOperation) == TypedElementLocation.view 
-						&& containingFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
+						&& containmentFeature.getName().equals(eOperationTargetInfo.getFeatureValue())
 						&& eOperationTargetInfo.getRole() == Role.operation
 						&& isVisible(context, obj, eOperation)
 						&& context.authorize(eContainer, eOperationTargetInfo.getAction(), eOperationTargetInfo.getQualifier(), null)) {
 					Map<String, String> queryParameters = new HashMap<>();
-					queryParameters.put("feature", containingFeature.getName());					
+					queryParameters.put("feature", containmentFeature.getName());					
 					if (obj instanceof CDOObject) {
 						String formControlValue = CDOIDCodec.INSTANCE.encode(context, (CDOObject) obj);
 						queryParameters.put("element", formControlValue);
