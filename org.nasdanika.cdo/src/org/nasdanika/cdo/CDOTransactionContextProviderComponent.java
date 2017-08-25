@@ -60,15 +60,15 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 					@Override
 					protected CDOTransaction openView() {
 						CDOTransaction transaction = sessionProvider.getSession().openTransaction();
-						{
-							for (CDOTransactionHandlerBase handler: transactionHandlers) {
-								transaction.addTransactionHandler(handler);
-							}
-							// TODO - content adapters
-						}
+						onOpenTransaction(this, transaction);
 						return transaction;
 					}
 
+					@Override
+					public void close() throws Exception {
+						onCloseContext(this);
+						super.close();						
+					}
 					
 				};
 			} catch (Exception e) {
@@ -76,6 +76,24 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 			}
 		}
 		return null;
+	}
+	
+	/**
+	 * Invoked on opening transaction.
+	 * @param transaction
+	 */
+	protected void onOpenTransaction(CDOTransactionContext<CR> context, CDOTransaction transaction) {
+		for (CDOTransactionHandlerBase handler: transactionHandlers) {
+			transaction.addTransactionHandler(handler);
+		}		
+	}
+	
+	/**
+	 * Invoked when context is closed.
+	 * @param context
+	 */
+	protected void onCloseContext(CDOTransactionContext<CR> context) {
+		
 	}
 
 	protected abstract Realm<CR> getSecurityRealm(CDOTransaction view);
