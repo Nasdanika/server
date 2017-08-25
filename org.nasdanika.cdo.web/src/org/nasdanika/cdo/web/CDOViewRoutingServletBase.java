@@ -41,6 +41,12 @@ import org.osgi.util.tracker.ServiceTracker;
 @SuppressWarnings("serial")
 public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends CDOViewContext<V, CR>> extends RoutingServlet {
 	
+	/**
+	 * Name of the host which passes user name header for SSO.  * matches any host. If not set then 
+	 * defaults to localhost.
+	 */
+	public static final String USER_NAME_HEADER_HOST_PROPERTY = "org.nasdanika.cdo.web.userNameHeaderHost";
+	
 	protected ServiceTracker<CDOViewContextProvider<V,CR,C>, CDOViewContextProvider<V,CR,C>> cdoViewContextProviderServiceTracker;
 	private String sessionWebSocketServletPath;
 	private String userNameHeader;
@@ -50,9 +56,18 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		userNameHeader = config.getInitParameter("user-name-header");
-		String userNameHeaderHostStr = config.getInitParameter("user-name-header-host");
+		String userNameHeaderHostStr = System.getProperty(USER_NAME_HEADER_HOST_PROPERTY);
 		try {
-			userNameHeaderHost = userNameHeaderHostStr == null ? InetAddress.getLocalHost() : InetAddress.getByName(userNameHeaderHostStr);
+			if (userNameHeaderHostStr == null) {
+				userNameHeaderHostStr = "127.0.0.1";
+			}
+			
+			if ("*".equals(userNameHeaderHostStr)) {
+				System.out.println("Accepting user name header " +userNameHeader + " from any host");				
+			} else {
+				userNameHeaderHost = InetAddress.getByName(userNameHeaderHostStr);
+				System.out.println("Accepting user name header " +userNameHeader + " from "+userNameHeaderHost);
+			}
 		} catch (UnknownHostException e) {
 			throw new ServletException("Unknown user-name-header-host", e);
 		}
@@ -148,15 +163,17 @@ public abstract class CDOViewRoutingServletBase<V extends CDOView, CR, C extends
 			return Collections.emptyList();
 		}
 		// Validating correctness of the remote address
-		try {
-			InetAddress remoteAddr = InetAddress.getByName(req.getRemoteAddr());
-			if (!userNameHeaderHost.equals(remoteAddr)) {
-				return Collections.emptyList();				
+		if (userNameHeaderHost!= null) {
+			try {
+				InetAddress remoteAddr = InetAddress.getByName(req.getRemoteAddr());
+				if (!userNameHeaderHost.equals(remoteAddr)) {
+					return Collections.emptyList();				
+				}
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+				return Collections.emptyList();
 			}
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
-			return Collections.emptyList();
-		}		
+		}
 				
 		return Collections.singletonList(principalName);
 	}
