@@ -71,6 +71,13 @@ import org.osgi.framework.BundleContext;
  */
 public class EDispatchingRoute extends MethodDispatchingRoute {
 	
+	/**
+	 * If servlet context contains {@link ReadWriteLock} under this attribute then this lock is used
+	 * by getLock(). It might be useful if there is a single JVM accessing the CDO server and 
+	 * all access is performed through the web ui.
+	 */
+	public static final String APPLICATION_LOCK_KEY = "org.nasdanika.web:application-lock";	
+	
 	static {
 		JXPathContextReferenceImpl.addNodePointerFactory(new CDOObjectPointerFactory());
 	}			
@@ -685,8 +692,7 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 	@SuppressWarnings("unchecked")
 	protected Lock getLock(HttpServletRequestContext context, Object target, Object[] arguments, org.nasdanika.web.RouteMethod.Lock lockAnnotation) throws Exception {
 		ServletContext servletContext = context.getRequest().getServletContext();
-		String applicationLockKey = "org.nasdanika.web:application-lock";
-		Object applicationLock = servletContext.getAttribute(applicationLockKey);
+		Object applicationLock = servletContext.getAttribute(APPLICATION_LOCK_KEY);
 		ReadWriteLock applicationReadWriteLock = null;
 		if (applicationLock instanceof ReadWriteLock) {
 			applicationReadWriteLock = (ReadWriteLock) applicationLock;
@@ -720,8 +726,10 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 		
 		if (context.getTarget() instanceof CDOObject) {
 			CDOObject lockTarget = (CDOObject) context.getTarget();
-			if (!CoreUtil.isBlank(lockAnnotation.path())) {
-				lockTarget = (CDOObject) JXPathContext.newContext(lockTarget).getValue(lockAnnotation.path());
+						
+			String lockPath = lockAnnotation.path();
+			if (!CoreUtil.isBlank(lockPath)) {
+				lockTarget = (CDOObject) JXPathContext.newContext(lockTarget).getValue(lockPath);
 			}
 			
 			class RecursiveLock implements Lock {
