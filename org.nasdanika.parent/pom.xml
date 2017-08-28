@@ -15,14 +15,19 @@
 
 	<properties>
 		<tycho-version>1.0.0</tycho-version>
-		<oxygen-repo.url>http://download.eclipse.org/releases/oxygen</oxygen-repo.url>
 	</properties>
 
 	<repositories>
-		<!-- configure p2 repository to resolve against -->
+	
+		<repository>
+			<id>cdo</id>
+			<url>http://download.eclipse.org/modeling/emf/cdo/drops/R20170614-0227</url>
+			<layout>p2</layout>
+		</repository>
+		
 		<repository>
 			<id>oxygen</id>
-			<url>${oxygen-repo.url}</url>
+			<url>http://download.eclipse.org/releases/oxygen</url>
 			<layout>p2</layout>
 		</repository>
 		<repository>
