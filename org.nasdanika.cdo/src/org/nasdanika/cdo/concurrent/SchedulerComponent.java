@@ -164,6 +164,9 @@ public class SchedulerComponent<CR> implements Scheduler<CR> {
 	
 	@Override
 	public Future<?> submit(ContextRunnable<SchedulerContext<CR>> task,	CDOViewContextSubject<CDOTransaction, CR> subject) {
+		if (scheduledExecutorService == null || scheduledExecutorService.isShutdown()) {
+			throw new RejectedExecutionException("Executor service is not set or has been shut down");
+		}
 		SchedulerComponent<CR>.SchedulerRunnable schedulerRunnable = new SchedulerRunnable(task, subject);		
 		Future<?> future = scheduledExecutorService.submit(schedulerRunnable); 
 		return future;
