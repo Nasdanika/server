@@ -131,8 +131,11 @@ public abstract class CDOViewContextImpl<V extends CDOView, CR> extends ContextI
 
 	@Override
 	public void close() throws Exception {
-		view.close();
-		super.close();
+		try {
+			view.close();
+		} finally {
+			super.close();
+		}
 	}
 
 	@Override

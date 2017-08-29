@@ -19,12 +19,15 @@ public abstract class CDOTransactionContextImpl<CR> extends CDOViewContextImpl<C
 
 	@Override
 	public void close() throws Exception {
-		if (rollbackOnly) {
-			getView().rollback();
-		} else {
-			getView().commit();
+		try {
+			if (rollbackOnly) {
+				getView().rollback();
+			} else {
+				getView().commit();
+			}
+		} finally {
+			super.close();
 		}
-		super.close();
 	}
 
 	@Override
