@@ -18,6 +18,7 @@ public class EReferenceClosureJsonExtensionRoute implements Route {
 		@SuppressWarnings("unchecked")
 		EReferenceClosure<CDOObject> refClosure = (EReferenceClosure<CDOObject>) context.getTarget();
 		
+		// TODO Use context lock manager locks.
 		CDOLock readLock = refClosure.getObject().cdoReadLock();
 		if (readLock.tryLock(15, TimeUnit.SECONDS)) {
 			try {

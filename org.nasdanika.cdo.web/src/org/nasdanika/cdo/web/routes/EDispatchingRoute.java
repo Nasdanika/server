@@ -16,20 +16,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.jxpath.ri.JXPathContextReferenceImpl;
-import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.model.CDOPackageRegistry;
-import org.eclipse.emf.cdo.util.LockTimeoutException;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
@@ -40,8 +33,6 @@ import org.eclipse.emf.ecore.EPackage.Registry;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.net4j.util.WrappedException;
-import org.eclipse.net4j.util.concurrent.IRWLockManager.LockType;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -50,12 +41,9 @@ import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 import org.nasdanika.core.Context;
 import org.nasdanika.core.CoreUtil;
-import org.nasdanika.core.Provider;
-import org.nasdanika.web.Action;
 import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.MethodDispatchingRoute;
-import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.RouteMethodCommand;
 import org.osgi.framework.BundleContext;
 
@@ -169,22 +157,7 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 			 */
 			@Override
 			public Object execute(HttpServletRequestContext context, Object target, Object[] arguments)	throws Exception {
-				Lock lock = EDispatchingRoute.this.getLock(context, target, arguments, getLock());
-				
-				Object ret;
-				if (lock == null) {
-					ret = super.execute(context, target, arguments);
-				} else {
-					if (lock.tryLock(getLock().timeout(), getLock().timeUnit())) {
-						try {
-							ret = super.execute(context, target, arguments);
-						} finally {
-							lock.unlock();
-						}						
-					} else {
-						return Action.SERVICE_UNAVAILABLE;
-					}
-				}					
+				Object ret = super.execute(context, target, arguments);
 				
 				HttpServletResponse response = context.getResponse();
 				if (response!=null && JSON_CONTENT_TYPE.equals(response.getContentType())) {
@@ -685,149 +658,5 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 		}
 		return ret;
 	}
-	
-	/**
-	 * Returns a lock for executing route methods. This implementation uses an application-wide lock retrieved from
-	 * "org.nasdanika.web:application-lock" {@link ServletContext} attribute if its value is of type {@link ReadWriteLock}
-	 * or is a {@link Provider} of ReadWriteLock.
-	 *   
-	 * Otherwise it uses CDOLocks on context target objects.
-	 * 
-	 * @param context
-	 * @param target
-	 * @param arguments
-	 * @param lockAnnotation
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	protected Lock getLock(HttpServletRequestContext context, Object target, Object[] arguments, org.nasdanika.web.RouteMethod.Lock lockAnnotation) throws Exception {
-		ServletContext servletContext = context.getRequest().getServletContext();
-		Object applicationLock = servletContext.getAttribute(APPLICATION_LOCK_KEY);
-		ReadWriteLock applicationReadWriteLock = null;
-		if (applicationLock instanceof ReadWriteLock) {
-			applicationReadWriteLock = (ReadWriteLock) applicationLock;
-		} else if (applicationLock instanceof Provider) {
-			applicationLock = ((Provider<HttpServletRequestContext, ?>) applicationLock).get(context);
-			if (applicationLock instanceof ReadWriteLock) {
-				applicationReadWriteLock = (ReadWriteLock) applicationLock;
-			}			
-		}
-		
-		if (applicationReadWriteLock != null) {
-			switch (lockAnnotation.type()) {
-			case READ:
-				return applicationReadWriteLock.readLock();
-			case WRITE:
-				return applicationReadWriteLock.writeLock();
-			case IMPLY_FROM_HTTP_METHOD:
-				switch (context.getMethod()) {
-				case DELETE:
-				case PATCH:
-				case POST:
-				case PUT:
-					return applicationReadWriteLock.writeLock();
-				default:
-					return applicationReadWriteLock.readLock();							
-				}
-			default:
-				break;					
-			}			
-		}
-		
-		if (context.getTarget() instanceof CDOObject) {
-			CDOObject lockTarget = (CDOObject) context.getTarget();
-						
-			String lockPath = lockAnnotation.path();
-			if (!CoreUtil.isBlank(lockPath)) {
-				lockTarget = (CDOObject) JXPathContext.newContext(lockTarget).getValue(lockPath);
-			}
-			
-			class RecursiveLock implements Lock {
-				
-				private Set<CDOObject> objects;
-				private LockType lockType;
-				private CDOView view;
-
-				public RecursiveLock(CDOObject obj, LockType lockType) {
-					this.view = obj.cdoView();
-					this.objects = Collections.singleton(obj);
-					this.lockType = lockType;
-				}
-
-				@Override
-				public void lock() {
-					try {
-						view.lockObjects(objects, lockType, CDOLock.NO_WAIT, true);
-					} catch (InterruptedException e) {
-						throw new RuntimeException(e);
-					}
-				}
-
-				@Override
-				public void lockInterruptibly() throws InterruptedException {
-					view.lockObjects(objects, lockType, CDOLock.NO_WAIT, true);
-				}
-
-				@Override
-				public boolean tryLock() {
-					try {
-						view.lockObjects(objects, lockType, CDOLock.NO_WAIT);
-						return true;
-					} catch (LockTimeoutException ex) {
-						return false;
-					} catch (InterruptedException ex) {
-						throw WrappedException.wrap(ex);
-					}
-				}
-
-				@Override
-				public boolean tryLock(long time, TimeUnit unit) throws InterruptedException {
-					try {
-						view.lockObjects(objects, lockType, unit.toMillis(time), true);
-						return true;
-					} catch (LockTimeoutException ex) {
-						return false;
-					}
-				}
-
-				@Override
-				public void unlock() {
-					view.unlockObjects(objects, lockType, true);
-				}
-
-				@Override
-				public Condition newCondition() {
-					throw new UnsupportedOperationException();
-				}
-				
-
-				@Override
-				public String toString() {
-					return MessageFormat.format("RecursiveCDOLock[object={0}, type={1}]", objects, lockType);
-				}
-				
-			}
-			
-			switch (lockAnnotation.type()) {
-			case READ:
-				return lockAnnotation.recursive() ? new RecursiveLock(lockTarget, LockType.READ) : lockTarget.cdoReadLock();
-			case WRITE:
-				return lockTarget.cdoWriteLock();
-			case IMPLY_FROM_HTTP_METHOD:
-				switch (context.getMethod()) {
-				case DELETE:
-				case PATCH:
-				case POST:
-				case PUT:
-					return lockAnnotation.recursive() ? new RecursiveLock(lockTarget, LockType.WRITE) : lockTarget.cdoWriteLock();
-				default:
-					return lockAnnotation.recursive() ? new RecursiveLock(lockTarget, LockType.READ) : lockTarget.cdoReadLock();							
-				}
-			default:
-				break;					
-			}
-		}
-		return null;
-	}	
 
 }

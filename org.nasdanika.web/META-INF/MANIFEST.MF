@@ -14,7 +14,8 @@ Require-Bundle: javax.servlet;bundle-version="3.0.0";visibility:=reexport,
  org.eclipse.jetty.websocket.api;bundle-version="9.3.5";visibility:=reexport,
  org.eclipse.jetty.websocket.common;bundle-version="9.3.5";visibility:=reexport,
  org.eclipse.jetty.websocket.server;bundle-version="9.3.5";visibility:=reexport,
- org.eclipse.jetty.util;bundle-version="9.3.5";visibility:=reexport
+ org.eclipse.jetty.util;bundle-version="9.3.5";visibility:=reexport,
+ org.apache.commons.jxpath
 Export-Package: org.nasdanika.web,
  org.nasdanika.web.html,
  org.nasdanika.web.routes

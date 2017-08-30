@@ -2,10 +2,12 @@ package org.nasdanika.cdo.web;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.CDOViewContext;
 import org.nasdanika.cdo.CDOViewContextSubject;
@@ -99,5 +101,15 @@ public class CDOViewHttpServletRequestContextImpl<CR> extends HttpServletRequest
 	public CDOViewContextSubject<CDOView, CR> getSubject() throws Exception {
 		return viewContext.getSubject();
 	}
+	
+	@Override
+	public Lock getReadLock(CDOObject obj) throws Exception {
+		return viewContext.getReadLock(obj);
+	}
+	
+	@Override
+	public Lock getWriteLock(CDOObject obj) throws Exception {
+		return viewContext.getWriteLock(obj);
+	}	
 
 }

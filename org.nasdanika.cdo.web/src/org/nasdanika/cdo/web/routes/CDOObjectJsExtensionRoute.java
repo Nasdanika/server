@@ -46,6 +46,7 @@ public class CDOObjectJsExtensionRoute implements Route {
 //				}
 //			}
 //		}
+		// TODO Use context lock manager locks.
 		CDOLock readLock = cdoObject.cdoReadLock();
 		if (readLock.tryLock(15, TimeUnit.SECONDS)) {
 			try {				

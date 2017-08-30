@@ -1,13 +1,16 @@
 package org.nasdanika.cdo;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.core.Context;
+import org.nasdanika.core.LockManager;
 
-public interface CDOViewContext<V extends CDOView, CR> extends Context {
+public interface CDOViewContext<V extends CDOView, CR> extends Context, LockManager<CDOObject> {
 
 	V getView();
 	
@@ -34,5 +37,27 @@ public interface CDOViewContext<V extends CDOView, CR> extends Context {
 	 * @return authenticated principals if authentication was successful, or empty list.
 	 */
 	List<Principal> authenticate(CR credentials) throws Exception;
+	
+	/**
+	 * Delegates to the object's cdoReadLock()
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	default Lock getReadLock(CDOObject obj) throws Exception {
+		return obj.cdoReadLock();
+	}
+	
+	/**
+	 * Delegates to the object's cdoWriteLock()
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	@Override
+	default Lock getWriteLock(CDOObject obj) throws Exception {
+		return obj.cdoWriteLock();
+	}
 	
 }

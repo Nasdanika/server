@@ -2,7 +2,9 @@ package org.nasdanika.cdo;
 
 import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.Lock;
 
+import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.session.CDOSessionProvider;
 import org.eclipse.emf.cdo.transaction.CDOTransaction;
 import org.eclipse.emf.cdo.transaction.CDOTransactionHandlerBase;
@@ -70,6 +72,16 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 						super.close();						
 					}
 					
+					@Override
+					public Lock getReadLock(CDOObject obj) throws Exception {
+						return CDOTransactionContextProviderComponent.this.getReadLock(this, obj);
+					}
+					
+					@Override
+					public Lock getWriteLock(CDOObject obj) throws Exception {
+						return CDOTransactionContextProviderComponent.this.getWriteLock(this, obj);
+					}
+					
 				};
 			} catch (Exception e) {
 				throw new NasdanikaException("Cannot create CDO transaction context", e);
@@ -97,5 +109,29 @@ public abstract class CDOTransactionContextProviderComponent<CR> implements CDOT
 	}
 
 	protected abstract Realm<CR> getSecurityRealm(CDOTransaction view);
+	
+	/**
+	 * Override to customize locking. E.g. return a lock which invokes CDOLock.lock(timeout) from lock().
+	 * Or record locks acquired for a given context and unlock them in onCloseContext().
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	protected Lock getReadLock(CDOTransactionContext<CR> context, CDOObject obj) throws Exception {
+		return obj.cdoReadLock();
+	}
+	
+	/**
+	 * Override to customize locking
+	 * @param context
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	protected Lock getWriteLock(CDOTransactionContext<CR> context, CDOObject obj) throws Exception {
+		return obj.cdoWriteLock();
+	}
+	
 
 }

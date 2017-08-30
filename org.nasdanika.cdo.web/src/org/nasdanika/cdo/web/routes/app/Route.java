@@ -2010,6 +2010,7 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 			CDOObject cdoTarget = (CDOObject) target;
 			CDOView view = cdoTarget.cdoView();
 			Set<CDOObject> toLock = Collections.singleton(cdoTarget);
+			// TODO - use context locking
 			view.lockObjects(toLock, LockType.READ, TimeUnit.MINUTES.toMillis(1), true);
 			try {
 				resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(org.eclipse.emf.ecore.resource.Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());			

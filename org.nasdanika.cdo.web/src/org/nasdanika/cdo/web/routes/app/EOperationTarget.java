@@ -2,15 +2,16 @@ package org.nasdanika.cdo.web.routes.app;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import org.apache.commons.jxpath.JXPathContext;
-import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EOperation;
 import org.eclipse.emf.ecore.EParameter;
+import org.nasdanika.cdo.CDOTransactionContext;
 import org.nasdanika.core.CoreUtil;
 import org.nasdanika.core.TransactionContext;
 import org.nasdanika.web.Action;
@@ -77,7 +78,7 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 		}
 		
 		try {
-			CDOLock cdoLock = null;
+			Lock cdoLock = null;
 			if (context.getTarget() instanceof CDOObject) {
 				CDOObject lockTarget = (CDOObject) context.getTarget();
 				if (!CoreUtil.isBlank(lockPath)) {
@@ -85,10 +86,10 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 				}
 				switch (lockType) {
 				case "read":
-					cdoLock = lockTarget.cdoReadLock();
+					cdoLock = ((CDOTransactionContext<?>) context).getReadLock(lockTarget);
 					break;
 				case "write":
-					cdoLock = lockTarget.cdoWriteLock();
+					cdoLock = ((CDOTransactionContext<?>) context).getWriteLock(lockTarget);
 					break;
 				case "imply-from-http-method":
 					switch (context.getMethod()) {
@@ -96,10 +97,10 @@ public class EOperationTarget<C extends HttpServletRequestContext, T extends EOb
 					case PATCH:
 					case POST:
 					case PUT:
-						cdoLock = lockTarget.cdoWriteLock();
+						cdoLock = ((CDOTransactionContext<?>) context).getWriteLock(lockTarget);
 						break;
 					default:
-						cdoLock = lockTarget.cdoReadLock();							
+						cdoLock = ((CDOTransactionContext<?>) context).getReadLock(lockTarget);							
 						break;
 					}
 				default:

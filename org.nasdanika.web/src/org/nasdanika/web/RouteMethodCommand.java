@@ -5,6 +5,9 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.regex.Pattern;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.jxpath.JXPathContext;
 import org.apache.commons.lang3.StringUtils;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.WebSocketListener;
@@ -13,6 +16,7 @@ import org.nasdanika.core.Context;
 import org.nasdanika.core.ContextParameter;
 import org.nasdanika.core.ContextProvider;
 import org.nasdanika.core.CoreUtil;
+import org.nasdanika.core.LockManager;
 import org.nasdanika.web.RouteMethod.Lock;
 import org.osgi.framework.BundleContext;
 
@@ -241,7 +245,23 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	@SuppressWarnings("unchecked")
 	@Override
 	public R execute(C context, Object target, Object[] arguments) throws Exception {
-		R ret = super.execute(context, target, arguments);
+		java.util.concurrent.locks.Lock lock = getTargetLock(context, target, arguments);
+		
+		R ret;
+		if (lock == null) {
+			ret = super.execute(context, target, arguments);
+		} else {
+			if (lock.tryLock(getLock().timeout(), getLock().timeUnit())) {
+				try {
+					ret = super.execute(context, target, arguments);
+				} finally {
+					lock.unlock();
+				}						
+			} else {
+				throw new ServerException("Cannot acquire lock", HttpServletResponse.SC_SERVICE_UNAVAILABLE);
+			}
+		}					
+		
 		if (context.getMethod() == RequestMethod.CREATE_WEB_SOCKET) {
 			WebSocketUpgradeInfo webSocketUpgradeInfo = context.adapt(WebSocketUpgradeInfo.class);
 			if (webSocketUpgradeInfo == null) {
@@ -341,6 +361,49 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 		return "RouteMethodCommand [path=" + path + ", requestMethods=" + Arrays.toString(requestMethods) + ", pattern="
 				+ pattern + ", produces=" + produces + ", consumes=" + Arrays.toString(consumes) + ", action=" + action
 				+ ", qualifier=" + qualifier + ", comment=" + comment + ", method=" + method + ", keepWebSocketContext="+keepWebSocketContext+"]";
+	}
+	
+	/**
+	 * Returns a lock for executing route methods. 
+	 * Adapts context to {@link LockManager} and returns a lock according to the lock annotation.
+	 * @param context
+	 * @param target
+	 * @param arguments
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	protected java.util.concurrent.locks.Lock getTargetLock(HttpServletRequestContext context, Object target, Object[] arguments) throws Exception {
+		LockManager<Object> lockManager = context.adapt(LockManager.class);
+		Lock lockAnnotation = getLock();
+		if (lockManager == null || lockAnnotation == null) {
+			return null;
+		}
+		
+		Object lockTarget = context.getTarget();
+		
+		String lockPath = lockAnnotation.path();
+		if (!CoreUtil.isBlank(lockPath)) {
+			lockTarget = JXPathContext.newContext(lockTarget).getValue(lockPath);
+		}
+		
+		switch (lockAnnotation.type()) {
+		case READ:
+			return lockManager.getReadLock(lockTarget);
+		case WRITE:
+			return lockManager.getWriteLock(lockTarget);
+		case IMPLY_FROM_HTTP_METHOD:
+			switch (context.getMethod()) {
+			case DELETE:
+			case PATCH:
+			case POST:
+			case PUT:
+				return lockManager.getWriteLock(lockTarget);
+			default:
+				return lockManager.getReadLock(lockTarget);							
+			}
+		default:
+			return null;					
+		}			
 	}
 		
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.locks.Lock;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,6 +68,16 @@ public class CDOTransactionHttpServletRequestContextImpl<CR> extends HttpServlet
 	public void close() throws Exception {
 		super.close();
 		transactionContext.close();
+	}
+	
+	@Override
+	public Lock getReadLock(CDOObject obj) throws Exception {
+		return transactionContext.getReadLock(obj);
+	}
+	
+	@Override
+	public Lock getWriteLock(CDOObject obj) throws Exception {
+		return transactionContext.getWriteLock(obj);
 	}
 
 	@Override

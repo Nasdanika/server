@@ -9,11 +9,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.eclipse.emf.cdo.CDOLock;
 import org.eclipse.emf.cdo.CDOObject;
 import org.eclipse.emf.cdo.common.id.CDOID;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
@@ -103,24 +103,30 @@ public class SessionWebSocket<CR> implements WebSocketListener {
 			if (!isSameVersion && targetClass.getEAnnotation(CDOWebUtil.ANNOTATION_STRICT)!=null) {
 				throw new ServerException("Object was modified, versions don't match: "+path);
 			}
-			CDOLock writeLock = target.cdoView()==null ? null : target.cdoWriteLock();
+			Lock writeLock = context.getReadLock(target);
 			if (writeLock == null || writeLock.tryLock(15, TimeUnit.SECONDS)) {
-				Iterator<String> dit = inDelta.keys();
-				while (dit.hasNext()) {
-					String dk = dit.next();
-					if (!CDOWebUtil.VERSION_KEY.equals(dk)) {
-						EStructuralFeature feature = targetClass.getEStructuralFeature(dk);
-						if (feature == null) {
-							throw new ServerException("Feature "+dk+" not found in "+targetClass.getName()+" at "+path);
-						}
-						if (feature instanceof EAttribute) {
-							applyAttributeInDelta(inDelta.getJSONObject(dk), (EAttribute) feature);
-						} else {
-							applyReferenceInDelta(inDelta.get(dk), (EReference) feature);							
+				try {
+					Iterator<String> dit = inDelta.keys();
+					while (dit.hasNext()) {
+						String dk = dit.next();
+						if (!CDOWebUtil.VERSION_KEY.equals(dk)) {
+							EStructuralFeature feature = targetClass.getEStructuralFeature(dk);
+							if (feature == null) {
+								throw new ServerException("Feature "+dk+" not found in "+targetClass.getName()+" at "+path);
+							}
+							if (feature instanceof EAttribute) {
+								applyAttributeInDelta(inDelta.getJSONObject(dk), (EAttribute) feature);
+							} else {
+								applyReferenceInDelta(inDelta.get(dk), (EReference) feature);							
+							}
 						}
 					}
+					return CDOWebUtil.validateEObject(context, target);
+				} finally {
+					if (writeLock != null) {
+						writeLock.unlock();
+					}
 				}
-				return CDOWebUtil.validateEObject(context, target);
 			}
 			
 			throw new ServerException("Unable to obtain write lock for "+path);
