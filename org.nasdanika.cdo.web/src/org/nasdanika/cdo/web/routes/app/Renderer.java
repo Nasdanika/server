@@ -154,7 +154,6 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	String ORIGINAL_ELEMENT_VALUE_NAME_PREFIX = ".original.";
 	String CONTEXT_ESTRUCTURAL_FEATURE_KEY = EStructuralFeature.class.getName()+":context";
 	
-
 	String TITLE_KEY = "title";
 
 	String NAME_KEY = "name";
@@ -204,6 +203,57 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	
 	Renderer<Context, EObject> INSTANCE = new Renderer<Context, EObject>() {
 		
+	};
+	
+	/**
+	 * Simple cache interface for caching, for example, expensive rendering results such as left panel object tree.
+	 * Cache is responsible for recognizing change in the context and invalidating results.
+	 * @author Pavel Vlasov
+	 *
+	 */
+	interface Cache {
+		
+		Object createCompositeKey(Object... keys);
+	
+		Object get(Object key) throws Exception;
+		
+		void put(Object key, Object value) throws Exception;
+		
+		void remove(Object key) throws Exception;
+	}
+	
+	Cache NO_CACHE = new Cache() {
+		
+		@Override
+		public void remove(Object key) throws Exception {
+			// NOP
+		}
+		
+		@Override
+		public void put(Object key, Object value) throws Exception {
+			// NOP
+			
+		}
+		
+		@Override
+		public Object get(Object key) throws Exception {
+			return null;
+		}
+
+		@Override
+		public Object createCompositeKey(Object... keys) {
+			return null;
+		}
+		
+	};
+	
+	/**
+	 * Returns cache for given context.
+	 * @param context
+	 * @return
+	 */
+	default Cache getCache(C context) {
+		return NO_CACHE;
 	};
 	
 	/**
@@ -2973,9 +3023,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		return ret;
 	}
-	
-	
-		
+			
 	/**
 	 * Renders left panel. This implementation renders jsTree and link groups for visible features with location set to ``leftPanel``.
 	 * @param context
@@ -3002,87 +3050,95 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 		
 		// Tree
 		EObject root = EcoreUtil.getRootContainer(obj);
-		Renderer<C, EObject> rootRenderer = getRenderer(root);
-		if (rootRenderer != null) {
-			JsTreeNode rootNode = rootRenderer.renderJsTreeNode(context, root, obj);
-			// Mark nodes as has-readable
-			rootNode.<Boolean>accept((node, childResults) -> {
-				
-				if (Boolean.TRUE.equals(node.getData("readable"))) {
-					return true;
-				}
-				for (Boolean cr: childResults) {
-					if (cr) {
-						node.setData("has-readable", true);
+		Cache cache = getCache(context);
+		Object treeKey = cache.createCompositeKey("left-panel-tree", root, obj);
+		Object leftPanelTree = cache.get(treeKey);
+		if (leftPanelTree == null) {
+			leftPanelTree = "";
+			Renderer<C, EObject> rootRenderer = getRenderer(root);
+			if (rootRenderer != null) {
+				JsTreeNode rootNode = rootRenderer.renderJsTreeNode(context, root, obj);
+				// Mark nodes as has-readable
+				rootNode.<Boolean>accept((node, childResults) -> {
+					
+					if (Boolean.TRUE.equals(node.getData("readable"))) {
 						return true;
 					}
-				}
-				return false;
-			});
-			
-			Predicate<JsTreeNode> filter = node -> Boolean.TRUE.equals(node.getData("readable")) || Boolean.TRUE.equals(node.getData("has-readable"));
-			
-			// Remove non-readable
-			rootNode.<Void>accept((node, childResult) -> {
-				Iterator<JsTreeNode> cit = node.children().iterator();
-				while (cit.hasNext()) {
-					JsTreeNode child = cit.next();
-					if (!filter.test(child)) {
-						cit.remove();
-					}
-				}
-				
-				return null;
-			});
-			
-			// Find common root
-			while (!Boolean.TRUE.equals(rootNode.getData("readable")) && rootNode.children().size() == 1) {
-				rootNode = rootNode.children().get(0);
-			}
-			
-			JSONArray data = new JSONArray();
-			
-			if (Boolean.TRUE.equals(rootNode.getData("readable"))) {
-				data.put(rootNode.toJSON(filter));
-			} else {
-				for (JsTreeNode child: rootNode.children()) {
-					data.put(child.toJSON(filter));					
-				}
-			}
-				
-			if (data.length() > 0) {
-				Tag treeContainer = htmlFactory.div().id("left-panel-tree");
-				Tag treeSearch = htmlFactory.div(htmlFactory.input(InputType.text).id(treeContainer.getId()+"-search").style().width("100%").placeholder(getResourceString(context, "search")));
-				Map<String, Object> env = new HashMap<>();
-				env.put("container-id", treeContainer.getId());
-				env.put("data", data);
-				
-				// Collecting context menus.
-				String contextMenuItems = rootNode.accept((node, childMenus) -> {
-					StringBuilder cmb = new StringBuilder();
-					Object ncm = node.getData("context-menu");
-					if (ncm != null) {
-						if (cmb.length() > 0) {
-							cmb.append(",").append(System.lineSeparator());
+					for (Boolean cr: childResults) {
+						if (cr) {
+							node.setData("has-readable", true);
+							return true;
 						}
-						cmb.append("\"").append(node.getId()).append("\": ").append(ncm);
 					}
-					for (String ccm: childMenus) {
-						if (!CoreUtil.isBlank(ccm)) {
+					return false;
+				});
+				
+				Predicate<JsTreeNode> filter = node -> Boolean.TRUE.equals(node.getData("readable")) || Boolean.TRUE.equals(node.getData("has-readable"));
+				
+				// Remove non-readable
+				rootNode.<Void>accept((node, childResult) -> {
+					Iterator<JsTreeNode> cit = node.children().iterator();
+					while (cit.hasNext()) {
+						JsTreeNode child = cit.next();
+						if (!filter.test(child)) {
+							cit.remove();
+						}
+					}
+					
+					return null;
+				});
+				
+				// Find common root
+				while (!Boolean.TRUE.equals(rootNode.getData("readable")) && rootNode.children().size() == 1) {
+					rootNode = rootNode.children().get(0);
+				}
+				
+				JSONArray data = new JSONArray();
+				
+				if (Boolean.TRUE.equals(rootNode.getData("readable"))) {
+					data.put(rootNode.toJSON(filter));
+				} else {
+					for (JsTreeNode child: rootNode.children()) {
+						data.put(child.toJSON(filter));					
+					}
+				}
+					
+				if (data.length() > 0) {
+					Tag treeContainer = htmlFactory.div().id("left-panel-tree");
+					Tag treeSearch = htmlFactory.div(htmlFactory.input(InputType.text).id(treeContainer.getId()+"-search").style().width("100%").placeholder(getResourceString(context, "search")));
+					Map<String, Object> env = new HashMap<>();
+					env.put("container-id", treeContainer.getId());
+					env.put("data", data);
+					
+					// Collecting context menus.
+					String contextMenuItems = rootNode.accept((node, childMenus) -> {
+						StringBuilder cmb = new StringBuilder();
+						Object ncm = node.getData("context-menu");
+						if (ncm != null) {
 							if (cmb.length() > 0) {
 								cmb.append(",").append(System.lineSeparator());
 							}
-							cmb.append(ccm);
-						}					
-					}
-					return cmb.toString();
-				});								
-				env.put("context-menu-items", contextMenuItems);
-				
-				Tag treeScript = htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("jstree-initializer.js"), env));
-				ret.content(treeSearch, treeContainer, treeScript);
+							cmb.append("\"").append(node.getId()).append("\": ").append(ncm);
+						}
+						for (String ccm: childMenus) {
+							if (!CoreUtil.isBlank(ccm)) {
+								if (cmb.length() > 0) {
+									cmb.append(",").append(System.lineSeparator());
+								}
+								cmb.append(ccm);
+							}					
+						}
+						return cmb.toString();
+					});								
+					env.put("context-menu-items", contextMenuItems);
+					
+					Tag treeScript = htmlFactory.tag(TagName.script, htmlFactory.interpolate(Renderer.class.getResource("jstree-initializer.js"), env));
+					leftPanelTree = htmlFactory.fragment(treeSearch, treeContainer, treeScript).toString();
+				}
 			}
+			cache.put(treeKey, leftPanelTree);
 		}
+		ret.content(leftPanelTree);
 		
 		// Left panel features
 		LinkGroup linkGroup = htmlFactory.linkGroup();

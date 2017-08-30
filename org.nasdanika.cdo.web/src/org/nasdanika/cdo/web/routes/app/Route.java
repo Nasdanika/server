@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +21,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -27,6 +29,7 @@ import javax.servlet.MultipartConfigElement;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
 import org.apache.commons.codec.binary.Hex;
@@ -35,8 +38,6 @@ import org.apache.commons.lang3.StringEscapeUtils;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.emf.cdo.CDOObject;
-import org.eclipse.emf.cdo.common.id.CDOIDUtil;
-import org.eclipse.emf.cdo.common.lock.CDOLockUtil;
 import org.eclipse.emf.cdo.common.revision.CDORevision;
 import org.eclipse.emf.cdo.view.CDOView;
 import org.eclipse.emf.common.util.BasicDiagnostic;
@@ -116,6 +117,7 @@ import org.nasdanika.web.WebMethodCommand;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
+
 
 /**
  * Application route providing CRUD operations for the underlying EObject.
@@ -3025,5 +3027,110 @@ public class Route<C extends HttpServletRequestContext, T extends EObject> exten
 	public Object filterEOperationResult(C context, EOperation eOperation, Object result) throws Exception {
 		return result;
 	}
+		
+	/**
+	 * Returns cache which stores data in session. Data gets invalidated if context view last modified changes.
+	 * CDOObjects in key get replaced with their CDOID's.
+	 */
+	@Override
+	public Cache getCache(C context) {
+		if (context instanceof CDOViewContext) {
+			HttpSession session = context.getRequest().getSession();
+			String storageKey = Cache.class.getName()+":storage";
+			long contextViewLastUpdateTime = ((CDOViewContext<?,?>) context).getView().getLastUpdateTime();
+			class Value {
+				Value(Object value) {
+					this.value = value;
+				}
+				final long viewLastUpdateTime = contextViewLastUpdateTime;
+				final Object value;
+			}
+			@SuppressWarnings("unchecked")
+			Map<Object, Object> storage = (Map<Object, Object>) session.getAttribute(storageKey);
+			if (storage == null) {
+				storage = new ConcurrentHashMap<Object, Object>();
+				session.setAttribute(storageKey, storage);
+			}
+			Map<Object, Object> theStorage = storage;
+			
+			class CompositeKey {
+				
+				private Object[] elements;
+
+				CompositeKey(Object[] elements) {
+					this.elements = elements;
+				}
+				
+				@Override
+				public int hashCode() {
+					final int prime = 31;
+					int result = 1;
+					result = prime * result + Arrays.hashCode(elements);
+					return result;
+				}
+
+				@Override
+				public boolean equals(Object obj) {
+					if (this == obj)
+						return true;
+					if (obj == null)
+						return false;
+					if (getClass() != obj.getClass())
+						return false;
+					CompositeKey other = (CompositeKey) obj;
+					if (!Arrays.equals(elements, other.elements))
+						return false;
+					return true;
+				}
+
+				@Override
+				public String toString() {
+					return "CompositeKey [elements=" + Arrays.toString(elements) + "]";
+				}
+								
+			}
+			
+			return new Cache() {
+
+				@Override
+				public Object createCompositeKey(Object... keys) {					
+					for (int i=0; i<keys.length; ++i) {
+						if (keys[i] instanceof CDOObject) {
+							keys[i] = ((CDOObject) keys[i]).cdoID();
+						}
+					}
+					return keys.length == 1 ? keys[0] : new CompositeKey(keys);
+				}
+
+				@Override
+				public Object get(Object key) throws Exception {
+					Object ck = createCompositeKey(key);
+					@SuppressWarnings("unchecked")
+					Value ret = (Value) theStorage.get(ck);
+					if (ret == null) {
+						return null;
+					}
+					if (ret.viewLastUpdateTime != contextViewLastUpdateTime) {
+						theStorage.remove(ck);
+						return null;
+					}
+					return ret.value;
+				}
+
+				@Override
+				public void put(Object key, Object value) throws Exception {
+					theStorage.put(createCompositeKey(key), new Value(value));
+				}
+
+				@Override
+				public void remove(Object key) throws Exception {
+					theStorage.remove(createCompositeKey(key));
+				}
+				
+			};
+		}
+		return Renderer.super.getCache(context);
+	}
+	
 	
 }
