@@ -72,14 +72,14 @@ import org.osgi.framework.BundleContext;
  */
 public class EDispatchingRoute extends MethodDispatchingRoute {
 	
-	@Override
-	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
-		if (context.getMethod() == RequestMethod.GET && context instanceof CDOViewContext) {
-			// Set Last-Modified?
-			context.getResponse().setHeader("ETag", Long.toString(((CDOViewContext<?,?>) context).getView().getLastUpdateTime(), Character.MAX_RADIX));
-		}
-		return super.execute(context, args);
-	}
+//	@Override
+//	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+//		if (context.getMethod() == RequestMethod.GET && context instanceof CDOViewContext) {
+//			// Set Last-Modified?
+//			context.getResponse().setHeader("ETag", Long.toString(((CDOViewContext<?,?>) context).getView().getLastUpdateTime(), Character.MAX_RADIX));
+//		}
+//		return super.execute(context, args);
+//	}
 	
 	/**
 	 * If servlet context contains {@link ReadWriteLock} under this attribute then this lock is used
