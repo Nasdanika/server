@@ -55,6 +55,7 @@ import org.nasdanika.web.Action;
 import org.nasdanika.web.BodyParameter;
 import org.nasdanika.web.HttpServletRequestContext;
 import org.nasdanika.web.MethodDispatchingRoute;
+import org.nasdanika.web.RequestMethod;
 import org.nasdanika.web.RouteMethodCommand;
 import org.osgi.framework.BundleContext;
 
@@ -70,6 +71,15 @@ import org.osgi.framework.BundleContext;
  *
  */
 public class EDispatchingRoute extends MethodDispatchingRoute {
+	
+	@Override
+	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
+		if (context.getMethod() == RequestMethod.GET && context instanceof CDOViewContext) {
+			// Set Last-Modified?
+			context.getResponse().setHeader("ETag", Long.toString(((CDOViewContext<?,?>) context).getView().getLastUpdateTime(), Character.MAX_RADIX));
+		}
+		return super.execute(context, args);
+	}
 	
 	/**
 	 * If servlet context contains {@link ReadWriteLock} under this attribute then this lock is used
