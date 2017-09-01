@@ -252,6 +252,11 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	@Override
 	public R execute(C context, Object target, Object[] arguments) throws Exception {
 		java.util.concurrent.locks.Lock lock = getTargetLock(context, target, arguments);
+				
+		if (!isCache) {
+			context.getResponse().setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate"); // Dynamic.
+			context.getResponse().setHeader("Pragma", "no-cache");
+		}
 		
 		R ret;
 		if (lock == null) {

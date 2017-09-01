@@ -289,6 +289,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 		        }
 	        }
 		}
+		context.getResponse().setHeader("Expires", "-1");			
 		return super.execute(context, target, arguments);
 	}
 
