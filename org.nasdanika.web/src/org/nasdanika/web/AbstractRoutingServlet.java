@@ -34,6 +34,8 @@ import org.osgi.framework.FrameworkUtil;
 @SuppressWarnings("serial")
 public abstract class AbstractRoutingServlet extends WebSocketServlet {
 	
+	private static final String CACHE_KEY = "org.nasdanika.web.cache";
+
 	private WebSocketServletFactory webSocketServletFactory;
 	
     @Override
@@ -228,9 +230,12 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 				resp.sendRedirect(loginURL+"?url="+URLEncoder.encode(requestURL.toString(), StandardCharsets.UTF_8.toString()));
 			} else {
 				try {
-					resp.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate"); // Dynamic.
-					resp.setHeader("Pragma", "no-cache");
-					resp.setHeader("Expires", "-1");
+					if ("false".equals(System.getProperty(CACHE_KEY))) { // Allows to disable caching for development.
+						req.setAttribute(CACHE_KEY, false);
+						resp.setHeader("Cache-Control", "private, no-store, no-cache, must-revalidate"); // Dynamic.
+						resp.setHeader("Pragma", "no-cache");
+						resp.setHeader("Expires", "-1");
+					}
 					resultToResponse(action.execute(), resp);
 				} catch (IOException | ServletException e) {
 					throw e;
@@ -239,6 +244,10 @@ public abstract class AbstractRoutingServlet extends WebSocketServlet {
 				}
 			}
         }
+	}
+
+	public static boolean isCachingDisabled(HttpServletRequest req) {
+		return Boolean.FALSE.equals(req.getAttribute(CACHE_KEY));
 	}
 
 	/**

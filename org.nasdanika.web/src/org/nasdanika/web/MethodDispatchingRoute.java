@@ -12,7 +12,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.core.runtime.Platform;
 import org.nasdanika.core.ContextParameter;
@@ -296,6 +299,9 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 	
 	private List<ResourceEntry> resourceEntries = new ArrayList<>();
 
+    private static final String HEADER_IFMODSINCE = "If-Modified-Since";
+    private static final String HEADER_LASTMOD = "Last-Modified";	
+
 	@Override
 	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {						
 		String[] path = context.getPath();
@@ -306,6 +312,24 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 				if (jp.equals(resEntry.path) || (resEntry.path.endsWith("/") && jp.startsWith(resEntry.path))) {
 					URL result = resEntry.resolve(jp.substring(resEntry.path.length()));					
 					if (result!=null) {
+						if (!AbstractRoutingServlet.isCachingDisabled(context.getRequest())) {					        
+					        int maxInactiveInterval = context.getRequest().getSession().getMaxInactiveInterval();
+					        if (maxInactiveInterval > 0) {	
+					        	context.getResponse().setDateHeader("Expires", System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(maxInactiveInterval));
+					        }
+					        
+					        long lastModified = result.openConnection().getLastModified();
+					        long ifModifiedSince = context.getRequest().getDateHeader(HEADER_IFMODSINCE);
+					        
+					        if (lastModified - ifModifiedSince < 1000) { // Seconds precision.				        	
+					        	context.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					        	return Action.NOP;
+					        }
+	
+					        if (lastModified != -1 && !context.getResponse().containsHeader(HEADER_LASTMOD)) {
+					            context.getResponse().setDateHeader(HEADER_LASTMOD, lastModified);        	
+					        }
+						}
 						return new ValueAction(result);
 					}
 				}				

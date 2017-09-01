@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
 
 import org.json.JSONArray;
@@ -265,5 +266,38 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 		}
 		return model;
 	}
+	
+    private static final String HEADER_IFMODSINCE = "If-Modified-Since";
+    private static final String HEADER_LASTMOD = "Last-Modified";	
 
+    /**
+     * Handles NOT_MODIFIED and last modified.
+     */
+	@Override
+	public R execute(C context, Object target, Object[] arguments) throws Exception {
+		if (!AbstractRoutingServlet.isCachingDisabled(context.getRequest())) {
+	        long lastModified = getLastModified(context, target, arguments);
+	        long ifModifiedSince = context.getRequest().getDateHeader(HEADER_IFMODSINCE);
+	        if (lastModified != -1) {
+		        if (lastModified - ifModifiedSince < 1000) { // Seconds precision.
+		        	context.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+		        	return null;
+		        }
+		
+		        if (lastModified != -1 && !context.getResponse().containsHeader(HEADER_LASTMOD)) {
+		            context.getResponse().setDateHeader(HEADER_LASTMOD, lastModified);        	
+		        }
+	        }
+		}
+		return super.execute(context, target, arguments);
+	}
+
+	/**
+	 * 
+	 * @return modification date of the target object.
+	 */
+	protected long getLastModified(C context, Object target, Object[] arguments) {
+		return -1;
+	}
+	
 }

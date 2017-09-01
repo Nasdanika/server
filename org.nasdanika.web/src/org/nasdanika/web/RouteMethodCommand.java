@@ -39,6 +39,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	private String comment;
 	private boolean keepWebSocketContext;
 	private Lock lock;
+	private boolean isCache;
 	
 	public Lock getLock() {
 		return lock;
@@ -63,6 +64,10 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 	public Pattern getPattern() {
 		return pattern;
 	}
+	
+	public boolean isCache() {
+		return isCache;
+	}
 
 	public RouteMethodCommand(BundleContext bundleContext, Method method) throws Exception {
 		super(bundleContext, method);
@@ -77,6 +82,7 @@ public class RouteMethodCommand<C extends HttpServletRequestContext, R> extends 
 		keepWebSocketContext = routeMethod.keepWebSocketContext();
 		action = routeMethod.action();
 		lock = routeMethod.lock();
+		isCache = routeMethod.cache();
 		
 		// Implying path and possibly request method from method name
 		if (CoreUtil.isBlank(path) && CoreUtil.isBlank(routeMethod.pattern())) {

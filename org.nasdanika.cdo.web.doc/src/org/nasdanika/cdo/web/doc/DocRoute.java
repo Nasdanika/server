@@ -39,6 +39,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.activation.MimetypesFileTypeMap;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 // TODO? - switch to org.osgi.service.component.runtime.ServiceComponentRuntime when it is (easily) available in Equinox
@@ -122,6 +123,9 @@ import org.pegdown.LinkRenderer.Rendering;
 import org.pegdown.PegDownProcessor;
 
 public class DocRoute implements Route, BundleListener, DocumentationContentProvider {
+	
+    private static final String HEADER_IFMODSINCE = "If-Modified-Since";
+    private static final String HEADER_LASTMOD = "Last-Modified";		
 		
 	public static final String TRACE_DIV_KEY = DocRoute.class.getName()+":trace";
 	private static final String TOC_TRACE_ATTRIBUTE_KEY = TocNode.class.getName()+":trace";
@@ -1671,14 +1675,64 @@ public class DocRoute implements Route, BundleListener, DocumentationContentProv
 			
 			for (Bundle targetBundle: bundleContext.getBundles()) {
 				if (bundleId.equals(targetBundle.getSymbolicName())) {
-					return targetBundle.getEntry(path.substring(idx+1));
+					URL result = targetBundle.getEntry(path.substring(idx+1));
+					if (result!=null && context!=null && !AbstractRoutingServlet.isCachingDisabled(context.getRequest())) {
+						try {
+					        int maxInactiveInterval = context.getRequest().getSession().getMaxInactiveInterval();
+					        if (maxInactiveInterval > 0) {	
+					        	context.getResponse().setDateHeader("Expires", System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(maxInactiveInterval));
+					        }
+					        
+					        long lastModified = result.openConnection().getLastModified();
+					        long ifModifiedSince = context.getRequest().getDateHeader(HEADER_IFMODSINCE);
+					        
+					        if (lastModified - ifModifiedSince < 1000) { // Seconds precision.				        	
+					        	context.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+					        	return Action.NOP;
+					        }
+			
+					        if (lastModified != -1 && !context.getResponse().containsHeader(HEADER_LASTMOD)) {
+					            context.getResponse().setDateHeader(HEADER_LASTMOD, lastModified);        	
+					        }
+						} catch (IOException e) {
+							// Suppressing, we tried at least.
+							e.printStackTrace();
+						}
+					}
+					
+					return result;
 				}
 			}
 			return null;
 		} 
 		
 		if (path.startsWith(RESOURCES_PATH)) {
-			return getResource(getClass(), path.substring(RESOURCES_PATH.length()));
+			URL result = getResource(getClass(), path.substring(RESOURCES_PATH.length()));
+			if (result!=null && !AbstractRoutingServlet.isCachingDisabled(context.getRequest())) {
+				try {
+			        int maxInactiveInterval = context.getRequest().getSession().getMaxInactiveInterval();
+			        if (maxInactiveInterval > 0) {	
+			        	context.getResponse().setDateHeader("Expires", System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(maxInactiveInterval));
+			        }
+			        
+			        long lastModified = result.openConnection().getLastModified();
+			        long ifModifiedSince = context.getRequest().getDateHeader(HEADER_IFMODSINCE);
+			        
+			        if (lastModified - ifModifiedSince < 1000) { // Seconds precision.				        	
+			        	context.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+			        	return Action.NOP;
+			        }
+	
+			        if (lastModified != -1 && !context.getResponse().containsHeader(HEADER_LASTMOD)) {
+			            context.getResponse().setDateHeader(HEADER_LASTMOD, lastModified);        	
+			        }
+				} catch (IOException e) {
+					// Suppressing, we tried at least.
+					e.printStackTrace();
+				}
+			}
+			
+			return result;
 		}
 		
 		if (path.startsWith(BUNDLE_INFO_PATH)) {

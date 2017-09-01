@@ -147,5 +147,14 @@ public @interface RouteMethod {
 	}
 	
 	Lock lock() default @Lock();
+	
+	/**
+	 * Applies only to GET requests. Indicates whether method execution results shall be cached if
+	 * application-wide caching is enabled ('org.nasdanika.web.cache' system property is not set to 'false').
+	 * 
+	 * Default is true.
+	 * @return
+	 */
+	boolean cache() default true;
 
 }

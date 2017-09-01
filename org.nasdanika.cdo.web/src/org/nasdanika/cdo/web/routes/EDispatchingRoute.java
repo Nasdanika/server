@@ -59,16 +59,7 @@ import org.osgi.framework.BundleContext;
  *
  */
 public class EDispatchingRoute extends MethodDispatchingRoute {
-	
-//	@Override
-//	public Action execute(HttpServletRequestContext context, Object... args) throws Exception {
-//		if (context.getMethod() == RequestMethod.GET && context instanceof CDOViewContext) {
-//			// Set Last-Modified?
-//			context.getResponse().setHeader("ETag", Long.toString(((CDOViewContext<?,?>) context).getView().getLastUpdateTime(), Character.MAX_RADIX));
-//		}
-//		return super.execute(context, args);
-//	}
-	
+		
 	/**
 	 * If servlet context contains {@link ReadWriteLock} under this attribute then this lock is used
 	 * by getLock(). It might be useful if there is a single JVM accessing the CDO server and 
@@ -153,7 +144,18 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 			}
 			
 			/**
-			 * Manages locks and converts EObject to JSONObject.
+			 * Uses view last update time as last modified.
+			 */
+			@Override
+			protected long getLastModified(HttpServletRequestContext context, Object target, Object[] arguments) {
+				if (context instanceof CDOViewContext && isCache()) {
+					return ((CDOViewContext<?,?>) context).getView().getLastUpdateTime();
+				}
+				return super.getLastModified(context, target, arguments);
+			}
+			
+			/**
+			 * Converts EObject to JSONObject.
 			 */
 			@Override
 			public Object execute(HttpServletRequestContext context, Object target, Object[] arguments)	throws Exception {
