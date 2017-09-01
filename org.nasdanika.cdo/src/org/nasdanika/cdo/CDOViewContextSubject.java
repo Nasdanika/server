@@ -17,5 +17,10 @@ public interface CDOViewContextSubject<V extends CDOView, CR> {
 	List<Principal> getPrincipals(CDOViewContext<V, CR> context);
 	
 	void setPrincipals(CDOViewContext<V, CR> context, List<Principal> principals);
+	
+	/**
+	 * @return Time when subject was associated with principals.
+	 */
+	long getTimestamp();
 	                                                 
 }

@@ -275,6 +275,7 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
      */
 	@Override
 	public R execute(C context, Object target, Object[] arguments) throws Exception {
+		preProcess(context, target, arguments);			
 		if (!AbstractRoutingServlet.isCachingDisabled(context.getRequest())) {
 	        long lastModified = getLastModified(context, target, arguments);
 	        long ifModifiedSince = context.getRequest().getDateHeader(HEADER_IFMODSINCE);
@@ -289,15 +290,24 @@ public class WebMethodCommand<C extends HttpServletRequestContext, R> extends Me
 		        }
 	        }
 		}
-		context.getResponse().setHeader("Expires", "-1");			
 		return super.execute(context, target, arguments);
+	}
+	
+	/**
+	 * Invoked before method execution. This implementation sets Expires header to -1.
+	 * @param context
+	 * @param target
+	 * @param arguments
+	 */
+	protected void preProcess(C context, Object target, Object[] arguments) throws Exception {
+		context.getResponse().setHeader("Expires", "-1");			
 	}
 
 	/**
 	 * 
 	 * @return modification date of the target object.
 	 */
-	protected long getLastModified(C context, Object target, Object[] arguments) {
+	protected long getLastModified(C context, Object target, Object[] arguments) throws Exception {
 		return -1;
 	}
 	

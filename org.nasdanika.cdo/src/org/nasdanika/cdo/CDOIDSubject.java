@@ -23,9 +23,17 @@ public class CDOIDSubject<V extends CDOView, CR> extends AbstractCDOViewContextS
 	protected CDOIDSubject() {
 	}
 	
+	protected long timestamp;
+	
+	@Override
+	public long getTimestamp() {
+		return timestamp;
+	}
+	
 	@Override
 	protected void setPrincipalIDs(List<CDOID> principalIDs) {
 		this.principalIDs = principalIDs;
+		timestamp = System.currentTimeMillis();
 	}
 
 	@Override

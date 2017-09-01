@@ -168,6 +168,25 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 			}
 		}		
 	}
+	
+	protected class DelegatingRouteMethodCommand extends RouteMethodCommand<HttpServletRequestContext, Object> {
+		
+		public DelegatingRouteMethodCommand(BundleContext bundleContext, Method method) throws Exception {
+			super(bundleContext, method);
+		}
+
+		@Override
+		protected long getLastModified(HttpServletRequestContext context, Object target, Object[] arguments) throws Exception {
+			return isCache() ? MethodDispatchingRoute.this.getLastModified(context, target, method, arguments) : -1;
+		}
+		
+		@Override
+		protected void preProcess(HttpServletRequestContext context, Object target, Object[] arguments) throws Exception {
+			MethodDispatchingRoute.this.preProcess(context, target, method, arguments);
+		}
+		
+	};
+	
 
 	/**
 	 * Subclasses may override this method to return customized route method commands 
@@ -177,7 +196,22 @@ public class MethodDispatchingRoute extends DispatchingRoute {
 	 * @throws Exception
 	 */
 	protected RouteMethodCommand<HttpServletRequestContext, Object> createRouteMethodCommand(BundleContext bundleContext, Method method) throws Exception {
-		return new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method);
+		return new DelegatingRouteMethodCommand(bundleContext, method);
+	}
+	
+	protected long getLastModified(HttpServletRequestContext context, Object target, Method method, Object[] arguments) throws Exception {
+		return -1;
+	}
+
+	/**
+	 * Invoked before method execution. This implementation sets Expires header to -1.
+	 * @param context
+	 * @param target
+	 * @param method
+	 * @param arguments
+	 */
+	protected void preProcess(HttpServletRequestContext context, Object target, Method method, Object[] arguments) throws Exception {
+		context.getResponse().setHeader("Expires", "-1");			
 	}
 	
 	private void collectResourceEntries(Class<?> clazz, int distance, int position, Set<Class<?>> traversed) {

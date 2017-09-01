@@ -1,6 +1,7 @@
 package org.nasdanika.cdo.web;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpSession;
@@ -20,6 +21,7 @@ import org.nasdanika.cdo.security.Principal;
 public class HttpSessionCDOViewContextSubject<V extends CDOView, CR> extends AbstractCDOViewContextSubject<V, CR> {
 	
 	private static final String PRINCIPAL_ID_KEY = Principal.class.getName()+":id";
+	private static final String TIMESTAMP_KEY = HttpSessionCDOViewContextSubject.class.getName()+":timestamp";
 
 	private HttpSession session;
 	private List<String> principalNames;
@@ -32,6 +34,13 @@ public class HttpSessionCDOViewContextSubject<V extends CDOView, CR> extends Abs
 	@Override
 	protected void setPrincipalIDs(List<CDOID> principalIDs) {
 		session.setAttribute(PRINCIPAL_ID_KEY, principalIDs);
+		session.setAttribute(TIMESTAMP_KEY, System.currentTimeMillis());
+	}
+	
+	@Override
+	public long getTimestamp() {
+		Object timestamp = session.getAttribute(TIMESTAMP_KEY);
+		return timestamp instanceof Long ? (long) timestamp : -1;
 	}
 
 	@Override
@@ -44,6 +53,11 @@ public class HttpSessionCDOViewContextSubject<V extends CDOView, CR> extends Abs
 	@Override
 	protected List<String> getPrincipalNames() {
 		return principalNames;
+	}
+
+	@Override
+	public String toString() {
+		return "HttpSessionCDOViewContextSubject " + getPrincipalIDs() + " " + new Date(getTimestamp());
 	}
 		
 }

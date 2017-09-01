@@ -37,6 +37,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.nasdanika.cdo.CDOViewContext;
+import org.nasdanika.cdo.CDOViewContextSubject;
+import org.nasdanika.cdo.security.Principal;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.xpath.CDOObjectPointerFactory;
 import org.nasdanika.core.Context;
@@ -81,8 +83,8 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 	
 	@Override
 	protected RouteMethodCommand<HttpServletRequestContext, Object> createRouteMethodCommand(BundleContext bundleContext, Method method) throws Exception {
-		return new RouteMethodCommand<HttpServletRequestContext, Object>(bundleContext, method) {
-
+		return new DelegatingRouteMethodCommand(bundleContext, method) {
+			
 			@Override
 			protected Object processBodyParameter(HttpServletRequestContext context, Class<?> parameterType, Annotation[] parameterAnnotations) throws Exception {
 				if (JSON_CONTENT_TYPE.equals(context.getRequest().getContentType())) {
@@ -144,17 +146,6 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 			}
 			
 			/**
-			 * Uses view last update time as last modified.
-			 */
-			@Override
-			protected long getLastModified(HttpServletRequestContext context, Object target, Object[] arguments) {
-				if (context instanceof CDOViewContext && isCache()) {
-					return ((CDOViewContext<?,?>) context).getView().getLastUpdateTime();
-				}
-				return super.getLastModified(context, target, arguments);
-			}
-			
-			/**
 			 * Converts EObject to JSONObject.
 			 */
 			@Override
@@ -207,6 +198,37 @@ public class EDispatchingRoute extends MethodDispatchingRoute {
 			}
 			
 		};
+	}
+	
+	/**
+	 * Uses view last update time as last modified or session creation time, whatever is the latest.
+	 */
+	@Override
+	protected long getLastModified(HttpServletRequestContext context, Object target, Method method, Object[] arguments) throws Exception {
+		if (context instanceof CDOViewContext) {
+			long subjectTime = ((CDOViewContext<?,?>) context).getSubject().getTimestamp();
+			long viewLastUpdateTime = ((CDOViewContext<?,?>) context).getView().getLastUpdateTime();
+			return viewLastUpdateTime > subjectTime ? viewLastUpdateTime : subjectTime;
+		}
+		return super.getLastModified(context, target, method, arguments);
+	}
+	
+	/**
+	 * Adds ETag - timestamp and principal specific.
+	 */
+	@Override
+	protected void preProcess(HttpServletRequestContext context, Object target, Method method, Object[] arguments) throws Exception {
+		super.preProcess(context, target, method, arguments);
+		if (context instanceof CDOViewContext) {
+			long lastModified = getLastModified(context, target, method, arguments);
+			if (lastModified != -1) {
+				StringBuilder eTagBuilder = new StringBuilder(Long.toString(lastModified, Character.MAX_RADIX));
+				for (Principal p: ((CDOViewContext<?,?>) context).getPrincipals()) {
+					eTagBuilder.append("-").append(CDOIDCodec.INSTANCE.encode(context, p));
+				}
+				context.getResponse().setHeader("ETag", eTagBuilder.toString());
+			}
+		}
 	}
 	
 	/**
