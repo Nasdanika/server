@@ -117,6 +117,13 @@ public enum RenderAnnotation {
 		CHOICES_SELECTOR("choices-selector"),
 		
 		/**
+		 * {@link EReference} or {@link EParameter} annotation - [JXPath](https://commons.apache.org/proper/commons-jxpath/) filter of choices to assign to the reference.
+		 * The expression shall return true for the choice to be used. Choice object is available in 'choice' variable.
+		 * Choice filter is ignored when choices selector is used.
+		 */
+		CHOICE_FILTER("choice-filter"),
+				
+		/**
 		 * {@link ENamedElement} category. Categories are displayed as panels in the view and field sets in edit forms.
 		 */
 		CATEGORY("category"),

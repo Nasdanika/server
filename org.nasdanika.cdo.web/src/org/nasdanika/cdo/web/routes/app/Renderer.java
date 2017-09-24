@@ -69,7 +69,6 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.ETypedElement;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
-import org.eclipse.emf.ecore.util.Diagnostician;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -83,6 +82,7 @@ import org.nasdanika.cdo.security.Protected;
 import org.nasdanika.cdo.security.ProtectedPermission;
 import org.nasdanika.cdo.security.Realm;
 import org.nasdanika.cdo.security.SecurityPackage;
+import org.nasdanika.cdo.validation.DelegatingDiagnostician;
 import org.nasdanika.cdo.web.CDOIDCodec;
 import org.nasdanika.cdo.web.routes.app.EOperationTargetInfo.Role;
 import org.nasdanika.core.AuthorizationProvider.StandardAction;
@@ -4754,6 +4754,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 */
 	default Collection<? extends EObject> getEObjectTypedElementChoices(C context, T obj, ETypedElement eObjectTypedElement) throws Exception {
 		String choicesSelector = getRenderAnnotation(context, eObjectTypedElement, RenderAnnotation.CHOICES_SELECTOR);
+		String choiceFilter = getRenderAnnotation(context, eObjectTypedElement, RenderAnnotation.CHOICE_FILTER);
 		List<EObject> ret = new ArrayList<>(); 
 		if (choicesSelector == null) {
 			if (SecurityPackage.Literals.PERMISSION__ACTION == eObjectTypedElement  && obj instanceof ProtectedPermission && context instanceof CDOViewContext) {
@@ -4803,6 +4804,14 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 			while (tit != null && tit.hasNext()) {
 				Notifier next = tit.next();
 				if (eObjectTypedElement.getEType().isInstance(next) && context.authorize(next, StandardAction.read, null, null)) {
+					if (choiceFilter != null) {
+						// XPath
+						JXPathContext jxPathContext = RenderUtil.newJXPathContext(context, (CDOObject) obj);
+						jxPathContext.getVariables().declareVariable("choice", next);
+						if (!Boolean.TRUE.equals(jxPathContext.getValue(choiceFilter, Boolean.class))) {
+							continue;
+						}						
+					}
 					ret.add((EObject) next);
 				}
 			}
@@ -5288,7 +5297,7 @@ public interface Renderer<C extends Context, T extends EObject> extends Resource
 	 * @throws Exception
 	 */
 	default Diagnostic validate(C context, T obj) throws Exception {
-		Diagnostician diagnostician = new Diagnostician() {
+		DelegatingDiagnostician diagnostician = new DelegatingDiagnostician() {
 			
 			@Override
 			public String getObjectLabel(EObject eObject) {
